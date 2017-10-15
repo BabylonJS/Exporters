@@ -14,6 +14,19 @@ namespace Unity3D2Babylon
         private static void ExportAnimations(Transform transform, BabylonIAnimatable animatable)
         {
             var animator = transform.gameObject.GetComponent<Animator>();
+            
+            // if transform is root object
+            if (transform.parent == null)
+            {
+                // Do not apply animation to root
+                animator = null;
+            }
+            // else if my root has Animator
+            else if (transform.root && transform.root.gameObject.GetComponent<Animator>())
+            {
+                animator = transform.root.gameObject.GetComponent<Animator>();
+            }
+
             if (animator != null)
             {
                 AnimatorController ac = animator.runtimeAnimatorController as AnimatorController;
@@ -33,7 +46,7 @@ namespace Unity3D2Babylon
                     AnimationClip clip = state.motion as AnimationClip;
                     if (clip != null)
                     {
-                        ExportAnimationClip(clip, true, animatable);
+                        ExportAnimationClip(clip, true, animatable, transform.name);
                     }
                 }
             }
@@ -42,7 +55,7 @@ namespace Unity3D2Babylon
                 var animation = transform.gameObject.GetComponent<Animation>();
                 if (animation != null && animation.clip != null)
                 {
-                    ExportAnimationClip(animation.clip, animation.playAutomatically, animatable);
+                    ExportAnimationClip(animation.clip, animation.playAutomatically, animatable, transform.name);
                 }
             }
         }
@@ -140,7 +153,7 @@ namespace Unity3D2Babylon
             }
         }
 
-        private static void ExportAnimationClip(AnimationClip clip, bool autoPlay, BabylonIAnimatable animatable)
+        private static void ExportAnimationClip(AnimationClip clip, bool autoPlay, BabylonIAnimatable animatable, string name)
         {
             var curveBindings = AnimationUtility.GetCurveBindings(clip);
             var animations = new List<BabylonAnimation>();
@@ -151,6 +164,13 @@ namespace Unity3D2Babylon
             {
                 var curve = AnimationUtility.GetEditorCurve(clip, binding);
                 string property;
+
+                // pass only my item
+                var pathItems = binding.path.Split('/');
+                if (pathItems[pathItems.Length - 1] != name)
+                {
+                    continue;
+                }
 
                 switch (binding.propertyName)
                 {
