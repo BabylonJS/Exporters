@@ -445,7 +445,7 @@ namespace Unity3D2Babylon
                 bool hasLightmap = (exportationOptions.ExportLightmaps && lightmapIndex >= 0 && lightmapIndex != 65535 && LightmapSettings.lightmaps.Length > lightmapIndex);
                 if (hasLightmap && bMat.ambientTexture == null)
                 {
-                    var lightmap = LightmapSettings.lightmaps[lightmapIndex].lightmapLight;
+                    var lightmap = LightmapSettings.lightmaps[lightmapIndex].lightmapColor;
                     var texturePath = AssetDatabase.GetAssetPath(lightmap);
                     if (!String.IsNullOrEmpty(texturePath))
                     {
@@ -585,7 +585,7 @@ namespace Unity3D2Babylon
             bool hasLightmap = (exportationOptions.ExportLightmaps && lightmapIndex >= 0 && lightmapIndex != 65535 && LightmapSettings.lightmaps.Length > lightmapIndex);
             if (hasLightmap && babylonPbrMaterial.ambientTexture == null)
             {
-                var lightmap = LightmapSettings.lightmaps[lightmapIndex].lightmapLight;
+                var lightmap = LightmapSettings.lightmaps[lightmapIndex].lightmapColor;
                 var texturePath = AssetDatabase.GetAssetPath(lightmap);
                 if (!String.IsNullOrEmpty(texturePath))
                 {
