@@ -160,6 +160,9 @@ namespace Unity3D2Babylon
 
             var maxFrame = 0;
 
+            // get Quatanion values and inTangent and outTangent List for one mesh
+            List<CurveValueData> curveDataItems = CurveUtil.GetQuatanionItems(curveBindings, clip, name);
+
             foreach (var binding in curveBindings)
             {
                 var curve = AnimationUtility.GetEditorCurve(clip, binding);
@@ -184,17 +187,28 @@ namespace Unity3D2Babylon
                         property = "position.z";
                         break;
 
+                    // EulerAnglesRaw
+                    case "localEulerAnglesRaw.x":
+                        property = "rotation.x";
+                        break;
+                    case "localEulerAnglesRaw.y":
+                        property = "rotation.y";
+                        break;
+                    case "localEulerAnglesRaw.z":
+                        property = "rotation.z";
+                        break;
+
+                    // Quaternion rotation
+                    // if rotation interpolation type is Quaternion, Quaternion xyzw curves exist.
+                    // so we use only one curve -> "m_LocalRotation.x"
                     case "m_LocalRotation.x":
-                        property = "rotationQuaternion.x";
+                        property = "rotationQuaternion";
                         break;
+                    // canceling
                     case "m_LocalRotation.y":
-                        property = "rotationQuaternion.y";
-                        break;
                     case "m_LocalRotation.z":
-                        property = "rotationQuaternion.z";
-                        break;
                     case "m_LocalRotation.w":
-                        property = "rotationQuaternion.w";
+                        continue;
                         break;
 
                     case "m_LocalScale.x":
@@ -210,19 +224,64 @@ namespace Unity3D2Babylon
                         continue;
                 }
 
+                var isLocalEulerAnglesRaw = binding.propertyName.IndexOf("localEulerAnglesRaw") >= 0;
+                var isRotationQuaternion = binding.propertyName.IndexOf("m_LocalRotation") >= 0;
+
                 var babylonAnimation = new BabylonAnimation
                 {
                     dataType = (int)BabylonAnimation.DataType.Float,
                     name = property + " animation",
-                    keys = curve.keys.Select(keyFrame => new BabylonAnimationKey
-                    {
-                        frame = (int)(keyFrame.time * clip.frameRate),
-                        values = new[] { keyFrame.value }
-                    }).ToArray(),
+                    
                     framePerSecond = (int)clip.frameRate,
                     loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                     property = property
                 };
+
+                // rotationQuaternion curve
+                if (isRotationQuaternion)
+                {
+                    var ratio = 1 / clip.frameRate;
+                    var keys = new List<BabylonAnimationKey>();
+                    
+                    for (int i = 0; i < curve.keys.Length; i++)
+                    {
+                        float time = curve.keys[i].time;
+                        // we use merged array (value, inTangent and outTangent)
+                        var values = curveDataItems[i].getValuesAndTowTangentArray();
+
+                        // if BabylonAnimationKey has inTangent property, we can use it.
+                        //var inTangent = curveDataItems[i].getInTangentArray();
+                        //var outTangent = curveDataItems[i].getOutTangentArray();
+
+                        var babylonAnimationKey = new BabylonAnimationKey();
+                        babylonAnimationKey.frame = (int)(time * clip.frameRate);
+                        babylonAnimationKey.values = values;
+                        
+                        keys.Add(babylonAnimationKey);
+                    }
+
+                    babylonAnimation.keys = keys.ToArray();
+
+                    babylonAnimation.name = "quaternion animation";
+                    babylonAnimation.property = "rotationQuaternion";
+                    babylonAnimation.dataType = (int)BabylonAnimation.DataType.Quaternion;
+                }
+                // isLocalEulerAnglesRaw or other parameter
+                else
+                {
+                    var ratio = 1/clip.frameRate * (isLocalEulerAnglesRaw ? (float)Math.PI / 180 : 1);
+
+                    babylonAnimation.keys = curve.keys.Select(keyFrame => new BabylonAnimationKey
+                    {
+                        frame = (int)(keyFrame.time * clip.frameRate),
+                        values = new[] { isLocalEulerAnglesRaw ? keyFrame.value * (float)Math.PI / 180 : keyFrame.value
+                        // we use merged array
+                        ,keyFrame.inTangent * ratio,
+                        keyFrame.outTangent * ratio
+                        }
+
+                    }).ToArray();
+                }
 
                 maxFrame = Math.Max(babylonAnimation.keys.Last().frame, maxFrame);
 
