@@ -1,0 +1,13 @@
+{
+  "name": "BabylonJSExporters",
+  "version": "3.0.0",
+  "description": "Babylon.js is a 3D engine based on webgl and javascript",
+  "main": "",
+  "repository": { "url": "https://github.com/BabylonJS/Babylon.js/" },
+  "readme": "https://github.com/BabylonJS/Babylon.js/edit/master/readme.md",
+  "license": "(Apache-2.0)",
+  "devDependencies": {
+    "gulp": "^3.8.11",  
+    "gulp-zip": "~3.2.0"
+  }
+}
