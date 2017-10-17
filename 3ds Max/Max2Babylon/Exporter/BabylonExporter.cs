@@ -267,7 +267,7 @@ namespace Max2Babylon
 
             // Output
             babylonScene.Prepare(false, false);
-            if (outputFormat == "babylon" || outputFormat == "babylon binary")
+            if (outputFormat == "babylon" || outputFormat == "binary babylon")
             {
                 RaiseMessage("Saving to output file");
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
@@ -291,7 +291,7 @@ namespace Max2Babylon
                 });
 
                 // Binary
-                if (outputFormat == "babylon binary")
+                if (outputFormat == "binary babylon")
                 {
                     RaiseMessage("Generating binary files");
                     BabylonFileConverter.BinaryConverter.Convert(outputFile, Path.GetDirectoryName(outputFile) + "\\Binary",

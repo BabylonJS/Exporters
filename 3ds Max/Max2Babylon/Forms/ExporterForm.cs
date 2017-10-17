@@ -243,7 +243,7 @@ namespace Max2Babylon
             switch (outputFormat)
             {
                 case "babylon":
-                case "babylon binary":
+                case "binary babylon":
                     this.saveFileDialog.DefaultExt = "babylon";
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
                     break;
@@ -262,6 +262,11 @@ namespace Max2Babylon
         
 
         private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkOnlySelected_CheckedChanged(object sender, EventArgs e)
         {
 
         }
