@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -31,8 +32,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
             Tools.PrepareCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave", 1);
             Tools.PrepareCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
-            Tools.PrepareCheckBox(chkBinary, Loader.Core.RootNode, "babylonjs_binary");
-            Tools.PrepareCheckBox(chkGltf, Loader.Core.RootNode, "babylonjs_exportGltf");
+            Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");
         }
 
         private void butBrowse_Click(object sender, EventArgs e)
@@ -55,8 +55,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
             Tools.UpdateCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave");
             Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
-            Tools.UpdateCheckBox(chkBinary, Loader.Core.RootNode, "babylonjs_binary");
-            Tools.UpdateCheckBox(chkGltf, Loader.Core.RootNode, "babylonjs_exportGltf");
+            Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
@@ -123,7 +122,7 @@ namespace Max2Babylon
                 exporter.AutoSave3dsMaxFile = chkAutoSave.Checked;
                 exporter.ExportHiddenObjects = chkHidden.Checked;
                 exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
-                await exporter.ExportAsync(txtFilename.Text, chkManifest.Checked, chkOnlySelected.Checked, chkBinary.Checked, chkGltf.Checked, this);
+                await exporter.ExportAsync(txtFilename.Text, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this);
             }
             catch (OperationCanceledException)
             {
@@ -229,6 +228,40 @@ namespace Max2Babylon
         }
 
         private void chkGltf_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboOutputFormat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var outputFormat = comboOutputFormat.SelectedItem.ToString();
+            switch (outputFormat)
+            {
+                case "babylon":
+                case "babylon binary":
+                    this.saveFileDialog.DefaultExt = "babylon";
+                    this.saveFileDialog.Filter = "Babylon files|*.babylon";
+                    break;
+                case "gltf":
+                    this.saveFileDialog.DefaultExt = "gltf";
+                    this.saveFileDialog.Filter = "glTF files|*.gltf";
+                    break;
+                case "glb":
+                    this.saveFileDialog.DefaultExt = "glb";
+                    this.saveFileDialog.Filter = "glb files|*.glb";
+                    break;
+            }
+            this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
+        }
+
+        
+
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }
