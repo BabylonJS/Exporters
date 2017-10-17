@@ -565,7 +565,7 @@ namespace Max2Babylon
             }
             else
             {
-                RaiseWarning(string.Format("Texture {0} not found.", Path.GetFileName(absolutePath), 2));
+                RaiseWarning(string.Format("Texture {0} not found.", Path.GetFileName(absolutePath)), 2);
                 return null;
             }
         }
