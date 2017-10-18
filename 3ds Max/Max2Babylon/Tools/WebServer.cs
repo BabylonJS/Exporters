@@ -21,6 +21,7 @@ namespace Max2Babylon
     <script type='text/javascript' src='https://preview.babylonjs.com/oimo.js'></script>
     <script type='text/javascript' src='https://preview.babylonjs.com/cannon.js'></script>
     <script type='text/javascript' src='https://preview.babylonjs.com/babylon.js'></script>
+    <script type='text/javascript' src='https://preview.babylonjs.com/loaders/babylon.glTFFileLoader.js'></script>
     <script type='text/javascript' src='https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js'></script>
     <style type='text/css'>
         html, body, canvas {
@@ -52,6 +53,30 @@ namespace Max2Babylon
         var engine = new BABYLON.Engine(canvas, true);
        
         BABYLON.SceneLoader.Load('', '###SCENE###', engine, function (newScene) {
+
+            // Attach camera to canvas inputs
+            if (!newScene.activeCamera || newScene.lights.length === 0) {
+                newScene.createDefaultCameraOrLight(true);
+                // Enable camera's behaviors
+                newScene.activeCamera.useFramingBehavior = true;
+
+                var framingBehavior = newScene.activeCamera.getBehaviorByName('Framing');
+                framingBehavior.framingTime = 0;
+                framingBehavior.elevationReturnTime = -1;
+
+                if (newScene.meshes.length) {
+                    var worldExtends = newScene.getWorldExtends();
+                    newScene.activeCamera.lowerRadiusLimit = null;
+                    framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
+                }
+
+                newScene.activeCamera.pinchPrecision = 200 / newScene.activeCamera.radius;
+                newScene.activeCamera.upperRadiusLimit = 5 * newScene.activeCamera.radius;
+
+                newScene.activeCamera.wheelDeltaPercentage = 0.01;
+                newScene.activeCamera.pinchDeltaPercentage = 0.01;
+            }
+
             newScene.activeCamera.attachControl(canvas);
 
             var keyboard = newScene.activeCamera.inputs.attached.keyboard;
