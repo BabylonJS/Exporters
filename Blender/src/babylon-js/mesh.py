@@ -53,16 +53,16 @@ class Mesh(FCurveAnimatable):
         self.tags = object.data.tags
 
         # hasSkeleton detection & skeletonID determination
-        hasSkeleton = False
+        self.hasSkeleton = False
         objArmature = None      # if there's an armature, this will be the one!
         if len(object.vertex_groups) > 0 and not object.data.ignoreSkeleton:
             objArmature = object.find_armature()
             if objArmature != None:
                 # used to get bone index, since could be skipping IK bones
                 skeleton = exporter.get_skeleton(objArmature.name)
-                hasSkeleton = skeleton is not None
+                self.hasSkeleton = skeleton is not None
                 
-                if not hasSkeleton:
+                if not self.hasSkeleton:
                     Logger.warn('No skeleton with name "' + objArmature.name + '" found skeleton ignored.')
                 else:
                     i = 0
@@ -214,7 +214,7 @@ class Mesh(FCurveAnimatable):
         if hasVertexColor:
             Colormap = mesh.tessface_vertex_colors.active.data
 
-        if hasSkeleton:
+        if self.hasSkeleton:
             weightsPerVertex = []
             indicesPerVertex = []
             influenceCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0] # 9, so accessed orign 1; 0 used for all those greater than 8
@@ -285,7 +285,7 @@ class Mesh(FCurveAnimatable):
                     normal = face.normal if useFlatShading else vertex.normal
 
                     #skeletons
-                    if hasSkeleton:
+                    if self.hasSkeleton:
                         matricesWeights = []
                         matricesIndices = []
 
@@ -342,7 +342,7 @@ class Mesh(FCurveAnimatable):
                                 if vColor.r != vertex_Color.r or vColor.g != vertex_Color.g or vColor.b != vertex_Color.b:
                                     continue
 
-                            if hasSkeleton:
+                            if self.hasSkeleton:
                                 vSkWeight = vertices_sk_weights[vertex_index]
                                 vSkIndices = vertices_sk_indices[vertex_index]
                                 if not same_array(vSkWeight[index_UV], matricesWeights) or not same_array(vSkIndices[index_UV], matricesIndices):
@@ -379,7 +379,7 @@ class Mesh(FCurveAnimatable):
                             self.colors.append(vertex_Color.g)
                             self.colors.append(vertex_Color.b)
                             self.colors.append(1.0)
-                        if hasSkeleton:
+                        if self.hasSkeleton:
                             vertices_sk_weights[vertex_index].append(matricesWeights)
                             vertices_sk_indices[vertex_index].append(matricesIndices)
                             nInfluencers = len(matricesWeights)
@@ -417,7 +417,7 @@ class Mesh(FCurveAnimatable):
         Logger.log('num colors         :  ' + str(len(self.colors   )), 2)
         Logger.log('num indices        :  ' + str(len(self.indices  )), 2)
         
-        if hasSkeleton:
+        if self.hasSkeleton:
             Logger.log('Skeleton stats:  ', 2)
             self.toFixedInfluencers(weightsPerVertex, indicesPerVertex, object.data.maxInfluencers, highestInfluenceObserved)
 

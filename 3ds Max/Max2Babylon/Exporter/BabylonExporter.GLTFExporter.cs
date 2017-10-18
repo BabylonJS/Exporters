@@ -125,26 +125,25 @@ namespace Max2Babylon
 
             // Output
             RaiseMessage("GLTFExporter | Saving to output file");
-            
-            // Write .gltf file
-            string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
-            File.WriteAllText(outputGltfFile, gltfToJson(gltf));
+            if (!generateBinary) {
 
-            // Write .bin file
-            string outputBinaryFile = Path.ChangeExtension(outputFile, "bin");
-            using (BinaryWriter writer = new BinaryWriter(File.Open(outputBinaryFile, FileMode.Create)))
-            {
-                gltf.BuffersList.ForEach(buffer =>
+                // Write .gltf file
+                string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
+                File.WriteAllText(outputGltfFile, gltfToJson(gltf));
+
+                // Write .bin file
+                string outputBinaryFile = Path.ChangeExtension(outputFile, "bin");
+                using (BinaryWriter writer = new BinaryWriter(File.Open(outputBinaryFile, FileMode.Create)))
                 {
-                    buffer.bytesList.ForEach(b => writer.Write(b));
-                });
+                    gltf.BuffersList.ForEach(buffer =>
+                    {
+                        buffer.bytesList.ForEach(b => writer.Write(b));
+                    });
+                }
             }
-
-            // Binary
-            if (generateBinary)
+            else
             {
                 // Export glTF data to binary format .glb
-                RaiseMessage("GLTFExporter | Generating .glb file");
 
                 // Header
                 UInt32 magic = 0x46546C67; // ASCII code for glTF
