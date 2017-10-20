@@ -325,9 +325,9 @@ namespace Max2Babylon
                 RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapY=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapY, 3);
 
                 // Emissive
-                for (int i = 0; i < babylonPBRMetallicRoughnessMaterial.emissiveColor.Length; i++)
+                for (int i = 0; i < babylonPBRMetallicRoughnessMaterial.emissive.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.emissiveColor[i], 3);
+                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.emissive[i], 3);
                 }
                 if (babylonPBRMetallicRoughnessMaterial.emissiveTexture == null)
                 {
@@ -372,7 +372,7 @@ namespace Max2Babylon
                 gltfMaterial.occlusionTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.occlusionTexture, gltf);
 
                 // Emissive
-                gltfMaterial.emissiveFactor = babylonPBRMetallicRoughnessMaterial.emissiveColor;
+                gltfMaterial.emissiveFactor = babylonPBRMetallicRoughnessMaterial.emissive;
                 gltfMaterial.emissiveTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.emissiveTexture, gltf);
 
 

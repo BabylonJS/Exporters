@@ -47,7 +47,7 @@ namespace Max2Babylon
             return null;
         }
 
-        private BabylonTexture ExportBaseColorAlphaTexture(IIGameMaterial materialNode, BabylonScene babylonScene, string materialName)
+        private BabylonTexture ExportBaseColorAlphaTexture(IIGameMaterial materialNode, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName)
         {
             ITexmap baseColorTexMap = _getTexMap(materialNode, 1);
             ITexmap alphaTexMap = _getTexMap(materialNode, 9); // Transparency weight map
@@ -63,19 +63,17 @@ namespace Max2Babylon
             {
                 return null;
             }
-
-            var hasAlpha = alphaTexMap != null || (baseColorTexture != null && baseColorTexture.AlphaSource == 0); // Alpha source is 'Image Alpha'
             
             var babylonTexture = new BabylonTexture
             {
-                name = materialName + "_baseColor" + (hasAlpha ? ".png" : ".jpg") // TODO - unsafe name, may conflict with another texture name
+                name = materialName + "_baseColor.png" // TODO - unsafe name, may conflict with another texture name
             };
 
             // Level
             babylonTexture.level = 1.0f;
 
             // Alpha
-            babylonTexture.hasAlpha = hasAlpha;
+            babylonTexture.hasAlpha = true;
             babylonTexture.getAlphaFromRGB = false;
 
             // UVs
@@ -107,33 +105,38 @@ namespace Max2Babylon
             }
 
             // Create baseColor+alpha map
+            var _baseColor = Color.FromArgb(
+                (int)(baseColor[0] * 255),
+                (int)(baseColor[1] * 255),
+                (int)(baseColor[2] * 255));
+            var _alpha = (int)(alpha * 255);
             Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    var baseColor = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : Color.FromArgb(255, 255, 255);
+                    var baseColorAtPixel = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : _baseColor;
 
                     Color baseColorAlpha;
-                    if (babylonTexture.hasAlpha)
+                    if (alphaBitmap != null)
                     {
-                        if (alphaBitmap != null)
-                        {
-                            // Retreive alpha from alpha texture
-                            var alphaColor = alphaBitmap.GetPixel(x, y);
-                            var alpha = getAlphaFromRGB ? alphaColor.R : alphaColor.A;
-                            baseColorAlpha = Color.FromArgb(alpha, baseColor);
-                        }
-                        else
-                        {
-                            // Use all channels from base color
-                            baseColorAlpha = baseColor;
-                        }
+                        // Retreive alpha from alpha texture
+                        var alphaColor = alphaBitmap.GetPixel(x, y);
+                        var alphaAtPixel = getAlphaFromRGB ? alphaColor.R : alphaColor.A;
+                        baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
                     }
-                    else
+                    else if (baseColorTexture != null && baseColorTexture.AlphaSource == 0) // Alpha source is 'Image Alpha'
                     {
-                        // Only use RGB channels from base color
-                        baseColorAlpha = Color.FromArgb(baseColor.R, baseColor.G, baseColor.B);
+                        // Use all channels from base color
+                        baseColorAlpha = baseColorAtPixel;
+                    } else
+                    {
+                        // Use RGB channels from base color and default alpha
+                        // Note that it's suboptimal to export a constant alpha.
+                        // But for glTF, if there is a baseColorTexture, the baseColor is ignored.
+                        // Thus the alpha within baseColor is ignored.
+                        // Adding constant alpha here avoid to do it later for glTF export, hence reducing export duration.
+                        baseColorAlpha = Color.FromArgb(_alpha, baseColorAtPixel.R, baseColorAtPixel.G, baseColorAtPixel.B);
                     }
                     baseColorAlphaBitmap.SetPixel(x, y, baseColorAlpha);
                 }
