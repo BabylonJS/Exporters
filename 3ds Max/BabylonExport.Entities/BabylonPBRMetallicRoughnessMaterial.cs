@@ -38,9 +38,6 @@ namespace BabylonExport.Entities
         public bool disableLighting { get; set; }
 
         [DataMember]
-        public BabylonTexture environmentTexture { get; set; }
-
-        [DataMember]
         public bool invertNormalMapX { get; set; }
 
         [DataMember]

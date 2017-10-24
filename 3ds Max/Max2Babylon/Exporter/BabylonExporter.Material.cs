@@ -247,8 +247,6 @@ namespace Max2Babylon
                 }
 
                 babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name);
-                
-                babylonMaterial.environmentTexture = ExportPBRTexture(materialNode, 3, babylonScene);
 
                 var normalMapAmount = propertyContainer.GetFloatProperty(91);
                 babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);

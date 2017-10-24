@@ -17,6 +17,9 @@ namespace Max2Babylon
             Tools.UpdateVector3Control(gravityControl, Loader.Core.RootNode, "babylonjs_gravity");
             Tools.UpdateCheckBox(chkQuaternions, Loader.Core.RootNode, "babylonjs_exportquaternions");
             Tools.UpdateCheckBox(chkAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
+            
+            Tools.UpdateCheckBox(chkCreateDefaultSkybox, Loader.Core.RootNode, "babylonjs_createDefaultSkybox");
+            Tools.UpdateNumericUpDown(nupSkyboxBlurLevel, new List<IINode> { Loader.Core.RootNode }, "babylonjs_skyboxBlurLevel");
 
             Tools.UpdateCheckBox(chkAutoPlay, Loader.Core.RootNode, "babylonjs_sound_autoplay");
             Tools.UpdateCheckBox(chkLoop, Loader.Core.RootNode, "babylonjs_sound_loop");
@@ -31,6 +34,9 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkQuaternions, Loader.Core.RootNode, "babylonjs_exportquaternions", 1);
             Tools.PrepareCheckBox(chkAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations", 0);
 
+            Tools.PrepareCheckBox(chkCreateDefaultSkybox, Loader.Core.RootNode, "babylonjs_createDefaultSkybox", 1);
+            Tools.PrepareNumericUpDown(nupSkyboxBlurLevel, new List<IINode> { Loader.Core.RootNode }, "babylonjs_skyboxBlurLevel", 0.0f);
+
             Tools.PrepareCheckBox(chkAutoPlay, Loader.Core.RootNode, "babylonjs_sound_autoplay", 1);
             Tools.PrepareCheckBox(chkLoop, Loader.Core.RootNode, "babylonjs_sound_loop", 1);
             Tools.PrepareNumericUpDown(nupVolume, new List<IINode>{Loader.Core.RootNode}, "babylonjs_sound_volume", 1.0f);
@@ -44,6 +50,11 @@ namespace Max2Babylon
             {
                 txtSound.Text = ofdOpenSound.FileName;
             }
+        }
+
+        private void nupSkyboxBlurLevel_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

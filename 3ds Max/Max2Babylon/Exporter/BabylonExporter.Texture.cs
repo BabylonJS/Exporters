@@ -34,15 +34,15 @@ namespace Max2Babylon
 
             var amount = stdMat.GetTexmapAmt(index, 0);
 
-            return _exportTexture(texMap, amount, babylonScene, allowCube, forceAlpha);
+            return ExportTexture(texMap, amount, babylonScene, allowCube, forceAlpha);
         }
 
-        private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, int index, BabylonScene babylonScene, float amount = 1.0f)
+        private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, int index, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false)
         {
             var texMap = _getTexMap(materialNode, index);
             if (texMap != null)
             {
-                return _exportTexture(texMap, amount, babylonScene);
+                return ExportTexture(texMap, amount, babylonScene, allowCube);
             }
             return null;
         }
@@ -63,7 +63,7 @@ namespace Max2Babylon
             {
                 return null;
             }
-            
+
             var babylonTexture = new BabylonTexture
             {
                 name = materialName + "_baseColor.png" // TODO - unsafe name, may conflict with another texture name
@@ -71,10 +71,6 @@ namespace Max2Babylon
 
             // Level
             babylonTexture.level = 1.0f;
-
-            // Alpha
-            babylonTexture.hasAlpha = true;
-            babylonTexture.getAlphaFromRGB = false;
 
             // UVs
             var uvGen = _exportUV(texture, babylonTexture);
@@ -88,6 +84,10 @@ namespace Max2Babylon
             // Load bitmaps
             var baseColorBitmap = _loadTexture(baseColorTexMap);
             var alphaBitmap = _loadTexture(alphaTexMap);
+
+            // Alpha
+            babylonTexture.hasAlpha = alphaBitmap != null || (baseColorBitmap != null && baseColorTexture.AlphaSource == 0) || alpha != 1.0f;
+            babylonTexture.getAlphaFromRGB = false;
 
             // Retreive dimensions
             int width = 0;
@@ -236,7 +236,7 @@ namespace Max2Babylon
         // -- Export sub methods ---
         // -------------------------
 
-        private BabylonTexture _exportTexture(ITexmap texMap, float amount, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false)
+        private BabylonTexture ExportTexture(ITexmap texMap, float amount, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false)
         {
             if (texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
             {

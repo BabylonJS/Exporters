@@ -310,12 +310,6 @@ namespace Max2Babylon
                     RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture=null", 3);
                 }
 
-                // Environment
-                if (babylonPBRMetallicRoughnessMaterial.environmentTexture == null)
-                {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.environmentTexture=null", 3);
-                }
-
                 // Normal / bump
                 if (babylonPBRMetallicRoughnessMaterial.normalTexture == null)
                 {
