@@ -122,7 +122,7 @@ namespace Max2Babylon
                     {
                         // Retreive alpha from alpha texture
                         var alphaColor = alphaBitmap.GetPixel(x, y);
-                        var alphaAtPixel = getAlphaFromRGB ? alphaColor.R : alphaColor.A;
+                        var alphaAtPixel = 255 - (getAlphaFromRGB ? alphaColor.R : alphaColor.A);
                         baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
                     }
                     else if (baseColorTexture != null && baseColorTexture.AlphaSource == 0) // Alpha source is 'Image Alpha'
@@ -150,7 +150,7 @@ namespace Max2Babylon
             return babylonTexture;
         }
 
-        private BabylonTexture ExportMetallicRoughnessTexture(IIGameMaterial materialNode, float metallic, float roughness, BabylonScene babylonScene, string materialName)
+        private BabylonTexture ExportMetallicRoughnessTexture(IIGameMaterial materialNode, float metallic, float roughness, BabylonScene babylonScene, string materialName, bool invertRoughness)
         {
             ITexmap metallicTexMap = _getTexMap(materialNode, 5);
             ITexmap roughnessTexMap = _getTexMap(materialNode, 4);
@@ -209,8 +209,8 @@ namespace Max2Babylon
                 {
                     var _metallic = metallicBitmap != null ? metallicBitmap.GetPixel(x, y).R :
                                     metallic * 255.0f;
-                    var _roughness = roughnessBitmap != null ? roughnessBitmap.GetPixel(x, y).R :
-                                    roughness * 255.0f;
+                    var _roughness = roughnessBitmap != null ? (invertRoughness ? 255 - roughnessBitmap.GetPixel(x, y).R : roughnessBitmap.GetPixel(x, y).R) :
+                                     roughness * 255.0f;
 
                     // The metalness values are sampled from the B channel.
                     // The roughness values are sampled from the G channel.

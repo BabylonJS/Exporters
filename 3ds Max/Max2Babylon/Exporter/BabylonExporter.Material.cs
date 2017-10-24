@@ -226,7 +226,8 @@ namespace Max2Babylon
                 babylonMaterial.metallic = propertyContainer.GetFloatProperty(6);
 
                 babylonMaterial.roughness = propertyContainer.GetFloatProperty(4);
-                if (propertyContainer.GetIntProperty(5) == 1)
+                var invertRoughness = propertyContainer.GetBoolProperty(5);
+                if (invertRoughness)
                 {
                     // Inverse roughness
                     babylonMaterial.roughness = 1 - babylonMaterial.roughness;
@@ -246,7 +247,7 @@ namespace Max2Babylon
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
 
-                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name);
+                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name, invertRoughness);
 
                 var normalMapAmount = propertyContainer.GetFloatProperty(91);
                 babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
