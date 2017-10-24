@@ -273,7 +273,11 @@
             this.nupSkyboxBlurLevel.Name = "nupSkyboxBlurLevel";
             this.nupSkyboxBlurLevel.Size = new System.Drawing.Size(120, 20);
             this.nupSkyboxBlurLevel.TabIndex = 12;
-            this.nupSkyboxBlurLevel.ValueChanged += new System.EventHandler(this.nupSkyboxBlurLevel_ValueChanged);
+            this.nupSkyboxBlurLevel.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            65536});
             // 
             // lblSkyboxBlurLevel
             // 

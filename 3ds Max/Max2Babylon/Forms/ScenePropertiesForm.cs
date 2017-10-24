@@ -35,7 +35,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations", 0);
 
             Tools.PrepareCheckBox(chkCreateDefaultSkybox, Loader.Core.RootNode, "babylonjs_createDefaultSkybox", 1);
-            Tools.PrepareNumericUpDown(nupSkyboxBlurLevel, new List<IINode> { Loader.Core.RootNode }, "babylonjs_skyboxBlurLevel", 0.0f);
+            Tools.PrepareNumericUpDown(nupSkyboxBlurLevel, new List<IINode> { Loader.Core.RootNode }, "babylonjs_skyboxBlurLevel", 0.3f);
 
             Tools.PrepareCheckBox(chkAutoPlay, Loader.Core.RootNode, "babylonjs_sound_autoplay", 1);
             Tools.PrepareCheckBox(chkLoop, Loader.Core.RootNode, "babylonjs_sound_loop", 1);
@@ -50,11 +50,6 @@ namespace Max2Babylon
             {
                 txtSound.Text = ofdOpenSound.FileName;
             }
-        }
-
-        private void nupSkyboxBlurLevel_ValueChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
