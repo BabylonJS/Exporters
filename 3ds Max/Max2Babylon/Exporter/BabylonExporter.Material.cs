@@ -215,47 +215,39 @@ namespace Max2Babylon
                 // --- Global ---
 
                 // Alpha
-                // ---
-                // TODO - Unclear if alpha must be stored within 'alpha' property of BABYLON.Material
-                // or within alpha channel of 'baseColor' of BABYLON.PBRMetallicRoughnessMaterial
-                // ---
-                // TODO - XParency seems computed from several parameters
-                // 'Transparency' property is one of them
-                // Which value to use?
-                var alphaFromXParency = 1.0f - materialNode.MaxMaterial.GetXParency(0, false);
+                //var alphaFromXParency = 1.0f - materialNode.MaxMaterial.GetXParency(0, false);
                 var alphaFromPropertyContainer = 1.0f - propertyContainer.GetFloatProperty(17);
-                RaiseMessage("alphaFromXParency=" + alphaFromXParency, 2);
-                RaiseMessage("alphaFromPropertyContainer=" + alphaFromPropertyContainer, 2);
-                babylonMaterial.alpha = alphaFromXParency;
+                //RaiseMessage("alphaFromXParency=" + alphaFromXParency, 2);
+                //RaiseMessage("alphaFromPropertyContainer=" + alphaFromPropertyContainer, 2);
+                babylonMaterial.alpha = alphaFromPropertyContainer;
 
                 babylonMaterial.baseColor = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray();
 
                 babylonMaterial.metallic = propertyContainer.GetFloatProperty(6);
 
                 babylonMaterial.roughness = propertyContainer.GetFloatProperty(4);
-                if (propertyContainer.GetIntProperty(5) == 1)
+                var invertRoughness = propertyContainer.GetBoolProperty(5);
+                if (invertRoughness)
                 {
                     // Inverse roughness
                     babylonMaterial.roughness = 1 - babylonMaterial.roughness;
                 }
 
                 // Self illumination is computed from emission color, luminance, temperature and weight
-                babylonMaterial.emissiveColor = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
+                babylonMaterial.emissive = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
                                                 ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
                                                 : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false));
 
                 // --- Textures ---
-                
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonScene, name);
+
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
 
                 if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
 
-                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name);
-                
-                babylonMaterial.environmentTexture = ExportPBRTexture(materialNode, 3, babylonScene);
+                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name, invertRoughness);
 
                 var normalMapAmount = propertyContainer.GetFloatProperty(91);
                 babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
@@ -266,11 +258,18 @@ namespace Max2Babylon
                 if (babylonMaterial.baseTexture != null)
                 {
                     babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.alpha = 1.0f;
                 }
 
                 if (babylonMaterial.emissiveTexture != null)
                 {
-                    babylonMaterial.emissiveColor = new float[] { 0, 0, 0 };
+                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                }
+
+                if (babylonMaterial.metallicRoughnessTexture != null)
+                {
+                    babylonMaterial.metallic = 1.0f;
+                    babylonMaterial.roughness = 1.0f;
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);

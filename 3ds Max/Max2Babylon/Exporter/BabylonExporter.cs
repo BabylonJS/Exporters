@@ -136,6 +136,18 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
+            
+            if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
+            {
+                // Environment texture
+                var environmentMap = Loader.Core.EnvironmentMap;
+                babylonScene.environmentTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
+                babylonScene.environmentTexture.coordinatesMode = 2; // force coordinates mode
+
+                // Skybox
+                babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
+                babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+            }
 
             // Sounds
             var soundName = rawScene.GetStringProperty("babylonjs_sound_filename", "");
