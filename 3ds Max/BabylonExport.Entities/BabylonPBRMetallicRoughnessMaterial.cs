@@ -38,9 +38,6 @@ namespace BabylonExport.Entities
         public bool disableLighting { get; set; }
 
         [DataMember]
-        public BabylonTexture environmentTexture { get; set; }
-
-        [DataMember]
         public bool invertNormalMapX { get; set; }
 
         [DataMember]
@@ -50,7 +47,7 @@ namespace BabylonExport.Entities
         public BabylonTexture normalTexture { get; set; }
 
         [DataMember]
-        public float[] emissiveColor { get; set; }
+        public float[] emissive { get; set; }
 
         [DataMember]
         public BabylonTexture emissiveTexture { get; set; }
@@ -75,7 +72,7 @@ namespace BabylonExport.Entities
             customType = "BABYLON.PBRMetallicRoughnessMaterial";
 
             maxSimultaneousLights = 4;
-            emissiveColor = new[] { 0f, 0f, 0f };
+            emissive = new[] { 0f, 0f, 0f };
             occlusionStrength = 1.0f;
             alphaCutOff = 0.4f;
             transparencyMode = (int)TransparencyMode.OPAQUE;

@@ -77,7 +77,7 @@ namespace Max2Babylon
             }
         }
 
-        public async Task ExportAsync(string outputFile, bool generateManifest, bool onlySelected, bool generateBinary, bool exportGltf, Form callerForm)
+        public async Task ExportAsync(string outputFile, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
         {
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
@@ -87,6 +87,9 @@ namespace Max2Babylon
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
+
+            // Force output file extension to be babylon
+            outputFile = Path.ChangeExtension(outputFile, "babylon");
 
             IsCancelled = false;
             RaiseMessage("Exportation started", Color.Blue);
@@ -105,10 +108,9 @@ namespace Max2Babylon
             watch.Start();
 
             // Save scene
-            RaiseMessage("Saving 3ds max file");
-
             if (AutoSave3dsMaxFile)
             {
+                RaiseMessage("Saving 3ds max file");
                 var forceSave = Loader.Core.FileSave;
 
                 callerForm?.BringToFront();
@@ -134,6 +136,19 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
+            
+            if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
+            {
+                // Environment texture
+                var environmentMap = Loader.Core.EnvironmentMap;
+                // Copy image file to output if necessary
+                var babylonTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
+                babylonScene.environmentTexture = babylonTexture.name;
+
+                // Skybox
+                babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
+                babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+            }
 
             // Sounds
             var soundName = rawScene.GetStringProperty("babylonjs_sound_filename", "");
@@ -264,42 +279,46 @@ namespace Max2Babylon
             babylonScene.actions = ExportNodeAction(gameScene.GetIGameNode(rawScene));
 
             // Output
-            RaiseMessage("Saving to output file");
             babylonScene.Prepare(false, false);
-            var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
-            var sb = new StringBuilder();
-            var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-
-            await Task.Run(() =>
+            if (outputFormat == "babylon" || outputFormat == "binary babylon")
             {
-                using (var jsonWriter = new JsonTextWriterOptimized(sw))
-                {
-                    jsonWriter.Formatting = Formatting.None;
-                    jsonSerializer.Serialize(jsonWriter, babylonScene);
-                }
-                File.WriteAllText(outputFile, sb.ToString());
+                RaiseMessage("Saving to output file");
+                var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
+                var sb = new StringBuilder();
+                var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
 
-                if (generateManifest)
+                await Task.Run(() =>
                 {
-                    File.WriteAllText(outputFile + ".manifest",
-                        "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
-                }
-            });
+                    using (var jsonWriter = new JsonTextWriterOptimized(sw))
+                    {
+                        jsonWriter.Formatting = Formatting.None;
+                        jsonSerializer.Serialize(jsonWriter, babylonScene);
+                    }
+                    File.WriteAllText(outputFile, sb.ToString());
 
-            // Binary
-            if (generateBinary)
-            {
-                RaiseMessage("Generating binary files");
-                BabylonFileConverter.BinaryConverter.Convert(outputFile, Path.GetDirectoryName(outputFile) + "\\Binary",
-                    message => RaiseMessage(message, 1),
-                    error => RaiseError(error, 1));
+                    if (generateManifest)
+                    {
+                        File.WriteAllText(outputFile + ".manifest",
+                            "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
+                    }
+                });
+
+                // Binary
+                if (outputFormat == "binary babylon")
+                {
+                    RaiseMessage("Generating binary files");
+                    BabylonFileConverter.BinaryConverter.Convert(outputFile, Path.GetDirectoryName(outputFile) + "\\Binary",
+                        message => RaiseMessage(message, 1),
+                        error => RaiseError(error, 1));
+                }
             }
 
             ReportProgressChanged(100);
 
             // Export glTF
-            if (exportGltf)
+            if (outputFormat == "gltf" || outputFormat == "glb")
             {
+                bool generateBinary = outputFormat == "glb";
                 ExportGltf(babylonScene, outputFile, generateBinary);
             }
 
