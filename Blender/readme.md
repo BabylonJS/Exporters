@@ -2,6 +2,7 @@
 
 ## Installation ##
 <img src="./preferences.jpg">
+
 - Download the [latest version](https://github.com/BabylonJS/Exporters/blob/master/Blender/Blender2Babylon-5.4.zip?raw=true).
 - Goto Blender `User Preferences` from the `File` menu.
 -  Switch to the `Add-ons` tab.
