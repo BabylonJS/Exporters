@@ -21,7 +21,7 @@ namespace BabylonExport.Entities
         public float[] ambientColor { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public BabylonTexture environmentTexture { get; set; }
+        public string environmentTexture { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public bool? createDefaultSkybox { get; set; }

@@ -141,8 +141,9 @@ namespace Max2Babylon
             {
                 // Environment texture
                 var environmentMap = Loader.Core.EnvironmentMap;
-                babylonScene.environmentTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
-                babylonScene.environmentTexture.coordinatesMode = 2; // force coordinates mode
+                // Copy image file to output if necessary
+                var babylonTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
+                babylonScene.environmentTexture = babylonTexture.name;
 
                 // Skybox
                 babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
