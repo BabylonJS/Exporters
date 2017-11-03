@@ -1,0 +1,61 @@
+/* Babylon Shader Controller Template */
+/* <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
+
+module PROJECT {
+    export class NewShaderController extends BABYLON.UniversalShaderMaterial {
+        constructor(name: string, scene: BABYLON.Scene, tick:boolean = true) {
+            super(name, scene, tick);
+            this.program = "default";
+            // Example runtime property
+            this.setFloat("time", 0.0);
+        }
+
+        protected ready() :void {
+            // Scene execute when ready
+        }
+
+        protected start() :void {
+            // Start component function
+            this.setFloat("time", 0.0);
+        }
+
+        protected update() :void {
+            // Update render loop function
+            this.setFloat("time", this.getManager().time);
+        }
+
+        protected define(locals:BABYLON.UniversalShaderDefines):void {
+            // Shader define loop function
+            locals.defineBoolean("TIME");
+        }
+
+        protected after() :void {
+            // After render loop function
+        }
+
+        protected destroy() :void {
+            // Destroy component function
+        }
+
+        /* Shader Material Factory Class Functions */
+
+        public clone(name: string): PROJECT.NewShaderController {
+            var result = BABYLON.SerializationHelper.Clone(() => new PROJECT.NewShaderController(name, this.getScene()), this);
+            BABYLON.UniversalShaderMaterial.CloneCustomProperties(this, result);            
+            return result;
+        }
+
+        public serialize(): any {
+            var serializationObject = BABYLON.SerializationHelper.Serialize(this);
+            serializationObject.customType = "PROJECT.NewShaderController";
+            BABYLON.UniversalShaderMaterial.SerializeCustomProperties(this, serializationObject);            
+            return serializationObject;
+        }
+
+        public static Parse(source: any, scene: BABYLON.Scene, rootUrl: string): PROJECT.NewShaderController {
+            var material = BABYLON.SerializationHelper.Parse(() => new PROJECT.NewShaderController(source.name, scene), source, scene, rootUrl);
+            BABYLON.UniversalShaderMaterial.ParseCustomProperties(material, source, scene, rootUrl);
+            return material;
+        }
+    }
+}

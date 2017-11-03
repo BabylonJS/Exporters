@@ -1,14 +1,16 @@
 /*
- * Unity VSCode Support
+ * Unity VSCode Support (Modified By: Mackey Kinard)
  *
  * Seamless support for Microsoft Visual Studio Code in Unity
  *
  * Version:
- *   2.7
+ *   2.8
  *
  * Authors:
  *   Matthew Davey <matthew.davey@dotbunny.com>
  */
+ 
+
 namespace dotBunny.Unity
 {
     using System;
@@ -23,7 +25,7 @@ namespace dotBunny.Unity
         /// <summary>
         /// Current Version Number
         /// </summary>
-        public const float Version = 2.7f;
+        public const float Version = 2.8f;
 
         /// <summary>
         /// Current Version Code
@@ -33,7 +35,7 @@ namespace dotBunny.Unity
         /// <summary>
         /// Additional File Extensions
         /// </summary>
-        public const string FileExtensions = ".ts, .bjs, .javascript, .json, .html";
+        public const string FileExtensions = ".ts, .bjs, .javascript, .json, .html, .shader, .template, .fx, .md, .txt, .config";
         
         /// <summary>
         /// Download URL for Unity Debbuger
@@ -966,7 +968,7 @@ namespace dotBunny.Unity
         /// <summary>
         /// Executed when the Editor's playmode changes allowing for capture of required data
         /// </summary>
-        static void OnPlaymodeStateChanged()
+        static void OnPlaymodeStateChanged(PlayModeStateChange state)
         {
             if (UnityEngine.Application.isPlaying && EditorApplication.isPlayingOrWillChangePlaymode)
             {
@@ -980,8 +982,8 @@ namespace dotBunny.Unity
         [UnityEditor.Callbacks.DidReloadScripts()]
         static void OnScriptReload()
         {
-            EditorApplication.playmodeStateChanged -= OnPlaymodeStateChanged;
-            EditorApplication.playmodeStateChanged += OnPlaymodeStateChanged;
+            EditorApplication.playModeStateChanged -= OnPlaymodeStateChanged;
+            EditorApplication.playModeStateChanged += OnPlaymodeStateChanged;
         }
 
         /// <summary>
@@ -1263,6 +1265,7 @@ namespace dotBunny.Unity
                 "\t\"files.associations\":\n" +
                 "\t{\n" +
                 "\t\t\"*.bjs\":\"javascript\",\n" +
+                "\t\t\"*.babylon\":\"json\",\n" +
                 "\t\t\"*.javascript\":\"javascript\"\n" +
                 "\t},\n" +
                 "\t\"files.exclude\":\n" +
@@ -1275,6 +1278,10 @@ namespace dotBunny.Unity
                 "\t\t\"**/.gitmodules\":true,\n" +
                 "\t\t\"**/.svn\":true,\n" +
 
+                // Compressed Files
+                "\t\t\"**/*.zip\":true,\n" +
+                "\t\t\"**/*.gz\":true,\n" +
+                "\t\t\"**/*.7z\":true,\n" +
 
                 // Project Files
                 "\t\t\"**/*.booproj\":true,\n" +
@@ -1310,6 +1317,7 @@ namespace dotBunny.Unity
                 "\t\t\"**/*.tif\":true,\n" +
                 "\t\t\"**/*.tiff\":true,\n" +
                 "\t\t\"**/*.hdr\":true,\n" +
+                "\t\t\"**/*.dds\":true,\n" +
                 "\t\t\"**/*.exr\":true,\n" +
 
                 // Models
@@ -1332,6 +1340,8 @@ namespace dotBunny.Unity
                 "\t\t\"**/*.meta\":true,\n" +
                 "\t\t\"**/*.prefab\":true,\n" +
                 "\t\t\"**/*.unity\":true,\n" +
+                "\t\t\"**/*.anim\":true,\n" +
+                "\t\t\"**/*.controller\":true,\n" +
 
                 // Folders
                 "\t\t\"build/\":true,\n" +

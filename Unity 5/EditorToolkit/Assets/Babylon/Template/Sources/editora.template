@@ -1,0 +1,31 @@
+/* Babylon Editor Script Component (C# UnityScript) */
+
+using System;
+using UnityEditor;
+using UnityEngine;
+
+namespace MyProject
+{
+	public class NewScriptComponent : EditorScriptComponent
+	{
+        [Header("[Script Properties]")]
+
+        [BabylonProperty]
+        public string hello = "Hello World";
+
+		protected NewScriptComponent()
+		{
+			this.babylonClass = "BABYLON.SceneComponent";
+		}
+	}
+
+    [CustomEditor(typeof(NewScriptComponent)), CanEditMultipleObjects]
+    public class NewScriptComponentEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+            NewScriptComponent script = (NewScriptComponent)target;
+        }
+    }
+}

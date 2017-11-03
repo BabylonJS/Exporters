@@ -1,0 +1,68 @@
+/* Babylon Shader Controller Template */
+/* <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
+
+var PROJECT;
+(function (PROJECT) {
+    var NewShaderController = (function (_super) {
+        __extends(NewShaderController, _super);
+        function NewShaderController(name, scene, tick) {
+            if (tick === void 0) { tick = true; }
+            var _this = _super.call(this, name, scene, tick) || this;
+            _this.program = "default";
+            // Example runtime property
+            _this.setFloat("time", 0.0);
+            return _this;
+        }
+
+        NewShaderController.prototype.ready = function () {
+            // Scene execute when ready
+        };
+
+        NewShaderController.prototype.start = function () {
+            // Start component function
+            this.setFloat("time", 0.0);
+        };
+        
+        NewShaderController.prototype.update = function () {
+            // Update render loop function
+            this.setFloat("time", this.getManager().time);
+        };
+        
+        NewShaderController.prototype.define = function (locals) {
+            // Shader define loop function
+            locals.defineBoolean("TIME");
+        };
+        
+        NewShaderController.prototype.after = function () {
+            // After render loop function
+        };
+        
+        NewShaderController.prototype.destroy = function () {
+            // Destroy component function
+        };
+
+        /* Shader Material Factory Class Functions */
+
+        NewShaderController.prototype.clone = function (name) {
+            var _this = this;
+            var result = BABYLON.SerializationHelper.Clone(function () { return new PROJECT.NewShaderController(name, _this.getScene()); }, this);
+            BABYLON.UniversalShaderMaterial.CloneCustomProperties(this, result);            
+            return result;
+        };
+
+        NewShaderController.prototype.serialize = function () {
+            var serializationObject = BABYLON.SerializationHelper.Serialize(this);
+            serializationObject.customType = "PROJECT.NewShaderController";
+            BABYLON.UniversalShaderMaterial.SerializeCustomProperties(this, serializationObject);
+            return serializationObject;
+        };
+        
+        NewShaderController.Parse = function (source, scene, rootUrl) {
+            var material = BABYLON.SerializationHelper.Parse(function () { return new PROJECT.NewShaderController(source.name, scene); }, source, scene, rootUrl);
+            BABYLON.UniversalShaderMaterial.ParseCustomProperties(material, source, scene, rootUrl);
+            return material;
+        };
+        return NewShaderController;
+    }(BABYLON.UniversalShaderMaterial));
+    PROJECT.NewShaderController = NewShaderController;
+})(PROJECT || (PROJECT = {}));

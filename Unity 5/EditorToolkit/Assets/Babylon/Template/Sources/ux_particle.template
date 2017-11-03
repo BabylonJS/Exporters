@@ -1,0 +1,23 @@
+//////////////////////////////////////////////////////////
+// BABYLON WEBGL BABYLON SHADER PROGRAM SECTIONS (GLSL) //
+//////////////////////////////////////////////////////////
+//
+// attributes: "position, color, options, uv"
+// uniforms: "invView, view, projection, textureMask, vClipPlane"
+// samplers: "diffuseSampler"
+//
+//////////////////////////////////////////////////////////
+#ifdef GL_ES
+precision highp float;
+#endif
+
+varying vec2 vUV;                   // Provided by babylon.js vertex fragment
+varying vec4 vColor;                // Provided by babylon.js vertex fragment
+uniform sampler2D diffuseSampler;   // Provided by babylon.js vertex fragment
+
+void main(void) {
+
+    vec4 baseColor = texture2D(diffuseSampler, vUV);
+
+    gl_FragColor = baseColor * vColor;
+}

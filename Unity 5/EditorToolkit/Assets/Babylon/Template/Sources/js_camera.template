@@ -1,0 +1,35 @@
+/* Babylon Camera Component Template */
+/* <reference path="{*path*}/Assets/Babylon/Library/babylon.bjs" /> */
+
+var PROJECT;
+(function (PROJECT) {
+    var NewCameraComponent = (function (_super) {
+        __extends(NewCameraComponent, _super);
+        function NewCameraComponent() {
+            return _super.apply(this, arguments) || this;
+        }
+
+        NewCameraComponent.prototype.ready = function () {
+            // Scene execute when ready
+        };
+
+        NewCameraComponent.prototype.start = function () {
+            // Start component function
+        };
+
+        NewCameraComponent.prototype.update = function () {
+            // Update render loop function
+        };
+
+        NewCameraComponent.prototype.after = function () {
+            // After render loop function
+        };
+
+        NewCameraComponent.prototype.destroy = function () {
+            // Destroy component function
+        };
+        
+        return NewCameraComponent;
+    }(BABYLON.CameraComponent));
+    PROJECT.NewCameraComponent = NewCameraComponent;
+})(PROJECT || (PROJECT = {}));

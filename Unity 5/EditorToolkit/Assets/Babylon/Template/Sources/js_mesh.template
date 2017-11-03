@@ -1,0 +1,35 @@
+/* Babylon Mesh Component Template */
+/* <reference path="{*path*}/Assets/Babylon/Library/babylon.bjs" /> */
+
+var PROJECT;
+(function (PROJECT) {
+    var NewMeshComponent = (function (_super) {
+        __extends(NewMeshComponent, _super);
+        function NewMeshComponent() {
+            return _super.apply(this, arguments) || this;
+        }
+
+        NewMeshComponent.prototype.ready = function () {
+            // Scene execute when ready
+        };
+
+        NewMeshComponent.prototype.start = function () {
+            // Start component function
+        };
+
+        NewMeshComponent.prototype.update = function () {
+            // Update render loop function
+        };
+
+        NewMeshComponent.prototype.after = function () {
+            // After render loop function
+        };
+
+        NewMeshComponent.prototype.destroy = function () {
+            // Destroy component function
+        };
+        
+        return NewMeshComponent;
+    }(BABYLON.MeshComponent));
+    PROJECT.NewMeshComponent = NewMeshComponent;
+})(PROJECT || (PROJECT = {}));
