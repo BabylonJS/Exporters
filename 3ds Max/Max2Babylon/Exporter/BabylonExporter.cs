@@ -136,6 +136,19 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
+            
+            if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
+            {
+                // Environment texture
+                var environmentMap = Loader.Core.EnvironmentMap;
+                // Copy image file to output if necessary
+                var babylonTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
+                babylonScene.environmentTexture = babylonTexture.name;
+
+                // Skybox
+                babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
+                babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+            }
 
             // Sounds
             var soundName = rawScene.GetStringProperty("babylonjs_sound_filename", "");
