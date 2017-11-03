@@ -1,0 +1,35 @@
+/* Babylon Light Component Template */
+/* <reference path="{*path*}/Assets/Babylon/Library/babylon.bjs" /> */
+
+var PROJECT;
+(function (PROJECT) {
+    var NewLightComponent = (function (_super) {
+        __extends(NewLightComponent, _super);
+        function NewLightComponent() {
+            return _super.apply(this, arguments) || this;
+        }
+
+        NewLightComponent.prototype.ready = function () {
+            // Scene execute when ready
+        };
+
+        NewLightComponent.prototype.start = function () {
+            // Start component function
+        };
+
+        NewLightComponent.prototype.update = function () {
+            // Update render loop function
+        };
+
+        NewLightComponent.prototype.after = function () {
+            // After render loop function
+        };
+
+        NewLightComponent.prototype.destroy = function () {
+            // Destroy component function
+        };
+        
+        return NewLightComponent;
+    }(BABYLON.LightComponent));
+    PROJECT.NewLightComponent = NewLightComponent;
+})(PROJECT || (PROJECT = {}));
