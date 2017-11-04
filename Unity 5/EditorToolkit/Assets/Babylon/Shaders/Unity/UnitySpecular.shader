@@ -361,5 +361,5 @@ Shader "BabylonJS/System/Specular Setup"
     }
 
     FallBack "VertexLit"
-    CustomEditor "StandardShaderGUI"
+    CustomEditor "ShaderInterface"
 }

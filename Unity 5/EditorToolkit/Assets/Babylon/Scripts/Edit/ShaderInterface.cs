@@ -249,7 +249,7 @@ namespace UnityEditor
 				// Primary properties
 				GUILayout.Label (Styles.primaryMapsText, EditorStyles.boldLabel);
 				DoAlbedoArea(material);
-				DoSpecularMetallicArea();
+				DoSpecularMetallicArea(material);
 
 				if (brightness != null) m_MaterialEditor.ShaderProperty(brightness, Styles.brightnessText, 0);
 				m_MaterialEditor.TexturePropertySingleLine(Styles.normalMapText, bumpMap, bumpMap.textureValue != null ? bumpScale : null);
@@ -440,7 +440,7 @@ namespace UnityEditor
 			}
 		}
 
-		void DoSpecularMetallicArea()
+		void DoSpecularMetallicArea(Material material)
 		{
 			bool hasGlossMap = false;
 			if (m_WorkflowMode == WorkflowMode.Specular)
@@ -464,6 +464,9 @@ namespace UnityEditor
 
 			int indentation = 2; // align with labels of texture properties
 
+			// Support roughness label
+			bool roughness = material.HasProperty("_Roughness");
+			Styles.smoothnessText.text = (roughness) ? "Roughness" : "Smoothness";
 			m_MaterialEditor.ShaderProperty(showSmoothnessScale ? smoothnessScale : smoothness, showSmoothnessScale ? Styles.smoothnessScaleText : Styles.smoothnessText, indentation);
 		
 			++indentation;
