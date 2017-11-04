@@ -64,6 +64,8 @@ Shader "BabylonJS/System/Roughness Setup"
 		_LightmapScale("Lightmap Scale", Range(0.0, 10.0)) = 1.0
 		_EnvironmentScale("Environment Scale", Range(0.0, 10.0)) = 1.0
 
+		[HideInInspector] _Roughness("__roughness", Float) = 1.0
+
         // Blending state
         [HideInInspector] _Mode ("__mode", Float) = 0.0
         [HideInInspector] _SrcBlend ("__src", Float) = 1.0
@@ -352,5 +354,5 @@ Shader "BabylonJS/System/Roughness Setup"
 
 
     FallBack "VertexLit"
-    CustomEditor "StandardRoughnessShaderGUI"
+    CustomEditor "ShaderInterface"
 }

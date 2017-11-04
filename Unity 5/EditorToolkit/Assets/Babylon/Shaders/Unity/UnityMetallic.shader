@@ -366,5 +366,5 @@ Shader "BabylonJS/System/Metallic Setup"
 
 
     FallBack "VertexLit"
-    CustomEditor "StandardShaderGUI"
+    CustomEditor "ShaderInterface"
 }
