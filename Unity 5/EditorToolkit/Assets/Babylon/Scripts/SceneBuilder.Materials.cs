@@ -202,11 +202,15 @@ namespace Unity3D2Babylon
         {
             if (material.shader.name == "Standard" || material.shader.name == "BabylonJS/System/Metallic Setup")
             {
-                return DumpPBRMaterial(material, lightmapIndex, lightmapScaleOffset, true, lightmapCoordIndex);
+                return DumpPBRMaterial(material, lightmapIndex, lightmapScaleOffset, lightmapCoordIndex, true, false);
+            }
+            else if (material.shader.name == "Standard (Roughness setup)" || material.shader.name == "BabylonJS/System/Roughness Setup")
+            {
+                return DumpPBRMaterial(material, lightmapIndex, lightmapScaleOffset, lightmapCoordIndex, true, true);
             }
             else if (material.shader.name == "Standard (Specular setup)" || material.shader.name == "BabylonJS/System/Specular Setup")
             {
-                return DumpPBRMaterial(material, lightmapIndex, lightmapScaleOffset, false, lightmapCoordIndex);
+                return DumpPBRMaterial(material, lightmapIndex, lightmapScaleOffset, lightmapCoordIndex, false, false);
             }
             else if (material.shader.name == "BabylonJS/System/Standard Material")
             {
@@ -410,7 +414,7 @@ namespace Unity3D2Babylon
             return materialsDictionary[material.name];
         }
 
-        private BabylonMaterial DumpPBRMaterial(Material material, int lightmapIndex = -1, Vector4 lightmapScaleOffset = default(Vector4), bool metallic = true, int lightmapCoordIndex = -1)
+        private BabylonMaterial DumpPBRMaterial(Material material, int lightmapIndex = -1, Vector4 lightmapScaleOffset = default(Vector4), int lightmapCoordIndex = -1, bool metallic = true, bool roughness = false)
         {
             bool hasLightmap = (exportationOptions.ExportLightmaps && lightmapIndex >= 0 && lightmapIndex != 65535 && LightmapSettings.lightmaps.Length > lightmapIndex);
             var materialNotSupported = false;
@@ -594,7 +598,7 @@ namespace Unity3D2Babylon
             DumpTransparency(material, babylonPbrMaterial);
 
             // Glossiess/Reflectivity
-            DumpGlossinessReflectivity(material, metallic, babylonPbrMaterial);
+            DumpGlossinessReflectivity(material, metallic, roughness, babylonPbrMaterial);
 
             // Occlusion
             babylonPbrMaterial.ambientTexture = DumpTextureFromMaterial(material, "_OcclusionMap");
@@ -762,7 +766,7 @@ namespace Unity3D2Babylon
             return DumpStandardMaterial(material, lightmapIndex, lightmapScaleOffset, lightmapCoordIndex, babylonShaderMaterial);
         }
 
-        private void DumpGlossinessReflectivity(Material material, bool metallic, BabylonSystemMaterial babylonPbrMaterial)
+        private void DumpGlossinessReflectivity(Material material, bool metallic, bool roughness, BabylonSystemMaterial babylonPbrMaterial)
         {
             float glossiness = 0.5f;
             if (material.HasProperty("_Glossiness"))
@@ -773,12 +777,12 @@ namespace Unity3D2Babylon
             {
                 // Metallic-Roughness Workflow
                 float metalness = 0.0f;
-                float roughness = (1.0f - glossiness);
+                float roughvalue = (roughness == true) ? glossiness : (1.0f - glossiness);
                 if (material.HasProperty("_Metallic"))
                 {
                     metalness = material.GetFloat("_Metallic");
                     babylonPbrMaterial.metallic = metalness;
-                    babylonPbrMaterial.roughness = roughness;
+                    babylonPbrMaterial.roughness = roughvalue;
                     babylonPbrMaterial.microSurface = glossiness;
                     babylonPbrMaterial.reflectivity = new float[] { metalness * babylonPbrMaterial.albedo[0], metalness * babylonPbrMaterial.albedo[1], metalness * babylonPbrMaterial.albedo[2] };
                     babylonPbrMaterial.reflectivityTexture = DumpTextureFromMaterial(material, "_MetallicGlossMap");
@@ -834,7 +838,7 @@ namespace Unity3D2Babylon
                 else
                 {
                     babylonPbrMaterial.metallic = metalness;
-                    babylonPbrMaterial.roughness = roughness;
+                    babylonPbrMaterial.roughness = roughvalue;
                     babylonPbrMaterial.microSurface = glossiness;
                     babylonPbrMaterial.reflectivity = new float[] { metalness * babylonPbrMaterial.albedo[0], metalness * babylonPbrMaterial.albedo[1], metalness * babylonPbrMaterial.albedo[2] };
                 }
