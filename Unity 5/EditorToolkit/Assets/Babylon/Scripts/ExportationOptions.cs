@@ -16,6 +16,7 @@ namespace Unity3D2Babylon
         public bool AdaptToDeviceRatio { get; set; }
         public string RemoteServerPath { get; set; }
         public bool AttachUnityEditor { get; set; }
+        public int ScenePackingOptions { get; set; }
         public bool ShowDebugControls { get; set; }
         public bool ShowDebugSockets { get; set; }
         public bool ShowDebugColliders { get; set; }
@@ -55,10 +56,8 @@ namespace Unity3D2Babylon
         public string DefaultScenePath { get; set; }
         public string DefaultScriptPath { get; set; }
         public int DefaultServerPort { get; set; }
-        public string DefaultProjectFolder { get; set; }
         public string DefaultTypeScriptPath { get; set; }
         public string DefaultNodeRuntimePath { get; set; }
-        public int ScenePackingOptions { get; set; }
 
         public ExportationOptions()
         {
@@ -95,6 +94,9 @@ namespace Unity3D2Babylon
             LightmapMapFactor = 5.0f;
             CreateMaterialInstance = true;
             ImageEncodingOptions = 0;
+            MinifyScriptFiles = false;
+            PrecompressContent = false;
+            PrettyPrintExport = false;
             DefaultTextureQuality = 100;
             DefaultUpdateOptions = 0;
             DefaultLightmapBaking = 1;
@@ -106,13 +108,9 @@ namespace Unity3D2Babylon
             DefaultBuildPath = "build";
             DefaultScenePath = "scenes";
             DefaultScriptPath = "scripts";
-            DefaultIndexPage = "project.html";
+            DefaultIndexPage = "index.html";
             DefaultTypeScriptPath = Tools.GetDefaultTypeScriptPath();
             DefaultNodeRuntimePath = Tools.GetDefaultNodeRuntimePath();
-            DefaultProjectFolder = Tools.FormatSafePath(Application.dataPath.Replace("/Assets", "/Project"));
-            MinifyScriptFiles = false;
-            PrecompressContent = false;
-            PrettyPrintExport = false;
         }
     }
 }
