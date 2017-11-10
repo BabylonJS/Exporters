@@ -4327,6 +4327,25 @@ namespace Unity3D2Babylon
             return result;
         }
 
+        public static void RebuildProjectSourceCode()
+        {
+            string tag = "REBUILD";
+            string tagx = tag + ";";
+            string rebuild = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
+            if (rebuild.IndexOf(tagx) >= 0) {
+                rebuild = rebuild.Replace(tagx, "");
+            } else if (rebuild.IndexOf(tag) >= 0) {
+                rebuild = rebuild.Replace(tag, "");
+            } else {
+                if (!String.IsNullOrEmpty(rebuild)) {
+                    rebuild = tagx + rebuild;
+                } else {
+                    rebuild = tag + rebuild;
+                }
+            }
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, rebuild);
+        }
+
         public static string GetDefaultProjectFolder()
         {
             string project = Tools.FormatSafePath(Application.dataPath.Replace("/Assets", "/Export"));

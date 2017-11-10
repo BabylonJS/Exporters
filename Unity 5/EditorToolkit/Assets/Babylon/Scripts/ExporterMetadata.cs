@@ -639,8 +639,7 @@ namespace UnityEditor
     [Serializable]
     public enum BabylonLightmapBaking
     {
-        Auto = 0,
-        Manual = 1
+        Auto = 0
     }
 
     [Serializable]

@@ -2,39 +2,22 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.SceneManagement;
 using BabylonHosting;
 
 namespace Unity3D2Babylon
 {
-
-    public class ExporterProgress : EditorWindow
-    {
-        void OnEnable()
-        {
-
-        }
-
-        void OnGUI()
-        {
-
-        }
-
-        void OnInspectorUpdate()
-        {
-            this.Repaint();
-        }
-    }
-
     [ExecuteInEditMode]
     public class ExporterWindow : EditorWindow
     {
         public const double BabylonVersion = 3.1;
-        public const string ToolkitVersion = "3.1.025 Alpha";
+        public const string ToolkitVersion = "3.1.028 Alpha";
         public const string DefaultHost = "localhost";
         public const string StaticLabel = "Babylon Static";
         public const string PrefabLabel = "Babylon Prefab";
@@ -740,7 +723,7 @@ namespace Unity3D2Babylon
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginHorizontal();
                 exportationOptions.ExportLightmaps = EditorGUILayout.Toggle("Export Lightmaps", exportationOptions.ExportLightmaps);
-                exportationOptions.DefaultLightmapBaking = (int)(BabylonLightmapBaking)EditorGUILayout.EnumPopup("Build Final Lightmaps", (BabylonLightmapBaking)exportationOptions.DefaultLightmapBaking, GUILayout.ExpandWidth(true));
+                exportationOptions.DefaultLightmapBaking = (int)(BabylonLightmapBaking)EditorGUILayout.EnumPopup("Bake Iterative Lightmap", (BabylonLightmapBaking)exportationOptions.DefaultLightmapBaking, GUILayout.ExpandWidth(true));
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Space();
                 exportationOptions.DefaultCoordinatesIndex = (int)EditorGUILayout.Slider("Coordinates Index", exportationOptions.DefaultCoordinatesIndex, 0, 1);
@@ -821,8 +804,8 @@ namespace Unity3D2Babylon
             }
             if (GUILayout.Button("Rebuild Web Server"))
             {
-                if (UnityEditor.EditorApplication.isCompiling == false) {                    
-                    PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "REBUILD");
+                if (UnityEditor.EditorApplication.isCompiling == false) {
+                    Tools.RebuildProjectSourceCode();
                     UnityEngine.Debug.Log("Queued project web server rebuild.");
                 } else {
                     string msg = "There is a project compile in progress.";
@@ -961,14 +944,18 @@ namespace Unity3D2Babylon
                 AssetDatabase.Refresh(ImportAssetOptions.Default);
                 ReportProgress(0, "Exporting scene assets: " + scenePath);
 
-                // Auto lightmap baking
-                if (exportationOptions.ExportLightmaps && exportationOptions.DefaultLightmapBaking == (int)BabylonLightmapBaking.Auto)
+                // Iterative lightmap baking
+                if (exportationOptions.ExportLightmaps && Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative)
                 {
-                    ReportProgress(1, "Baking final lightmap textures... This may take a while.");
-                    Lightmapping.GIWorkflowMode workflow = Lightmapping.giWorkflowMode;
-                    Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
-                    Lightmapping.Bake();
-                    Lightmapping.giWorkflowMode = workflow;
+                    ReportProgress(1, "Baking iterative lightmap textures... This may take a while.");
+                    try {
+                        Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
+                        Lightmapping.Bake();
+                    } catch(Exception baker) {
+                        UnityEngine.Debug.LogException(baker);
+                    } finally {
+                        Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.Iterative;
+                    }
                 }
 
                 // Save all open scenes
