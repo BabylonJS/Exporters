@@ -99,7 +99,7 @@ namespace Unity3D2Babylon
             PrettyPrintExport = false;
             DefaultTextureQuality = 100;
             DefaultUpdateOptions = 0;
-            DefaultLightmapBaking = 1;
+            DefaultLightmapBaking = 0;
             DefaultCoordinatesIndex = 1;
             DefaultColliderDetail = 2;
             DefaultPhysicsEngine = 0;
