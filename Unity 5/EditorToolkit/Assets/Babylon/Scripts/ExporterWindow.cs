@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEditor;
@@ -10,11 +11,30 @@ using BabylonHosting;
 
 namespace Unity3D2Babylon
 {
+
+    public class ExporterProgress : EditorWindow
+    {
+        void OnEnable()
+        {
+
+        }
+
+        void OnGUI()
+        {
+
+        }
+
+        void OnInspectorUpdate()
+        {
+            this.Repaint();
+        }
+    }
+
     [ExecuteInEditMode]
     public class ExporterWindow : EditorWindow
     {
         public const double BabylonVersion = 3.1;
-        public const string ToolkitVersion = "3.1 Alpha";
+        public const string ToolkitVersion = "3.1.025 Alpha";
         public const string DefaultHost = "localhost";
         public const string StaticLabel = "Babylon Static";
         public const string PrefabLabel = "Babylon Prefab";
@@ -38,6 +58,9 @@ namespace Unity3D2Babylon
         bool showPreview = false;
         bool showCompiler = false;
         int buildResult = 0;
+        string defaultProjectFolder = String.Empty;
+        string guiProjectFolder = String.Empty;
+        public bool previewThread = false;
 
         public static void ReportProgress(float value, string message = "")
         {
@@ -530,12 +553,6 @@ namespace Unity3D2Babylon
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance(DoCreateScriptAsset) as UnityEditor.ProjectWindowCallback.EndNameEditAction, filename, icon, template);
         }
 
-        //[MenuItem("BabylonJS/Cubemap Splitter Tool", false, 999)]
-        //public static void InitCubemapSpliter()
-        //{
-        //    Application.OpenURL("http://mackey.cloud/tools/splitter");
-        //}
-
         [MenuItem("BabylonJS/Babylon Dashboard", false, 9999)]
         public static void InitDashboard()
         {
@@ -545,13 +562,22 @@ namespace Unity3D2Babylon
         public void OnEnable()
         {
             this.titleContent = new GUIContent("Exporter");
-            if (ExporterWindow.exportationOptions == null)
-            {
+            this.defaultProjectFolder = Tools.GetDefaultProjectFolder();
+            this.guiProjectFolder = this.defaultProjectFolder;
+            if (ExporterWindow.exportationOptions == null) {
                 ExporterWindow.exportationOptions = CreateSettings();
             }
 
             // Validate project layers
             Tools.ValidateProjectLayers();
+
+            // Validate compiler locations
+            if (String.IsNullOrEmpty(exportationOptions.DefaultTypeScriptPath)) {
+                exportationOptions.DefaultTypeScriptPath = Tools.GetDefaultTypeScriptPath();
+            }
+            if (String.IsNullOrEmpty(exportationOptions.DefaultNodeRuntimePath)) {
+                exportationOptions.DefaultNodeRuntimePath = Tools.GetDefaultNodeRuntimePath();
+            }
             
             // Attach unity editor buttons
             UnityEditor.EditorApplication.playModeStateChanged += (PlayModeStateChange change) =>
@@ -575,14 +601,14 @@ namespace Unity3D2Babylon
             if (WebServer.IsStarted == false && exportationOptions.HostPreviewPage)
             {
                 // Validate default project folder selected
-                if (String.IsNullOrEmpty(exportationOptions.DefaultProjectFolder))
+                if (String.IsNullOrEmpty(this.defaultProjectFolder))
                 {
                     UnityEngine.Debug.LogWarning("No default project file selected. Web server not started.");
                     return;
                 }
 
                 // Validate default project folder exists
-                if (!Directory.Exists(exportationOptions.DefaultProjectFolder))
+                if (!Directory.Exists(this.defaultProjectFolder))
                 {
                     UnityEngine.Debug.LogWarning("No default project file created. Web server not started.");
                     return;
@@ -593,7 +619,7 @@ namespace Unity3D2Babylon
                 {
                     string prefix = "http://*:";
                     string unity = Tools.GetAssetsRootPath();
-                    string root = exportationOptions.DefaultProjectFolder;
+                    string root = this.defaultProjectFolder;
                     int port = exportationOptions.DefaultServerPort;
                     bool started = WebServer.Activate(prefix, root, port, unity);
                     if (started) UnityEngine.Debug.Log("Babylon.js web server started on port: " + port.ToString());
@@ -610,12 +636,8 @@ namespace Unity3D2Babylon
         {
             GUILayout.Label("BabylonJS Toolkit - Version: " + ExporterWindow.ToolkitVersion, EditorStyles.boldLabel);
             EditorGUI.BeginDisabledGroup(true);
-            exportationOptions.DefaultProjectFolder = EditorGUILayout.TextField("", exportationOptions.DefaultProjectFolder);
+            guiProjectFolder = EditorGUILayout.TextField("", guiProjectFolder);
             EditorGUI.EndDisabledGroup();
-            if (GUILayout.Button("Select Project Folder"))
-            {
-                SelectFolder();
-            }
             if (GUILayout.Button("Save Export Settings"))
             {
                 SaveSettings();
@@ -745,6 +767,12 @@ namespace Unity3D2Babylon
                 EditorGUILayout.Space();
                 exportationOptions.DefaultUpdateOptions = (int)(BabylonUpdateOptions)EditorGUILayout.EnumPopup("Github Update Version", (BabylonUpdateOptions)exportationOptions.DefaultUpdateOptions, GUILayout.ExpandWidth(true));
                 EditorGUILayout.Space();
+                if (GUILayout.Button("Detect Runtime Compiler Locations"))
+                {
+                    exportationOptions.DefaultTypeScriptPath = Tools.GetDefaultTypeScriptPath();
+                    exportationOptions.DefaultNodeRuntimePath = Tools.GetDefaultNodeRuntimePath();
+                }
+                EditorGUILayout.Space();
                 EditorGUI.indentLevel -= 1;
             }            
 
@@ -814,54 +842,25 @@ namespace Unity3D2Babylon
             this.Repaint();
         }
 
-        public void SelectFolder()
-        {
-            exportationOptions.DefaultProjectFolder = EditorUtility.SaveFolderPanel("Please select a folder", exportationOptions.DefaultProjectFolder, "");
-        }
-
-        public string Build(bool solo, string[] info = null)
+        public string Build(string[] info = null)
         {
             string javascriptFile = null;
-            if (solo)
-            {
-                // Validate default project folder selected
-                if (String.IsNullOrEmpty(exportationOptions.DefaultProjectFolder))
-                {
-                    ShowMessage("No default project file selected.");
-                    return null;
-                }
-
-                // Validate default project folder exists
-                if (!Directory.Exists(exportationOptions.DefaultProjectFolder))
-                {
-                    ShowMessage("No default project file created.");
-                    return null;
-                }
-            }
-
             try
             {
                 var sceneInfo = info ?? GetSceneInfomation(false);
                 string scriptPath = sceneInfo[2];
                 string projectScript = sceneInfo[4];
 
-                // Save and clear console
-                if (solo)
-                {
-                    try { UnityEngine.Debug.ClearDeveloperConsole(); } catch { }
-                    SaveSettings();
-                }
-
                 // Assemble javascript files
                 javascriptFile = Tools.FormatProjectJavaScript(scriptPath, projectScript);
-                if (solo || exportationOptions.BuildJavaScript)
+                if (exportationOptions.BuildJavaScript)
                 {
                     ReportProgress(1, "Building project javascript files...");
                     Tools.BuildProjectJavaScript(scriptPath, javascriptFile);
                 }
 
                 // Compile typescript files
-                if (solo || exportationOptions.CompileTypeScript)
+                if (exportationOptions.CompileTypeScript)
                 {
                     ReportProgress(1, "Compiling project typescript files... This may take a while.");
                     string config = String.Empty;
@@ -874,10 +873,6 @@ namespace Unity3D2Babylon
             {
                 UnityEngine.Debug.LogException(ex);
             }
-            finally
-            {
-                if (solo) EditorUtility.ClearProgressBar();
-            }
             return javascriptFile;
         }
 
@@ -888,49 +883,55 @@ namespace Unity3D2Babylon
             
             // Validate Project Platform
             if (!Tools.ValidateProjectPlatform()) return;
+
+            // Validate lightmap bake in progress
+            if (UnityEditor.EditorApplication.isCompiling == true)
+            {
+                string msg = "There is a project compile in progress.";
+                UnityEngine.Debug.LogWarning(msg);
+                ShowMessage(msg);
+                return;
+            }
             
+            // Validate lightmap bake in progress
+            if (Lightmapping.isRunning)
+            {
+                string msg = "There is a lightmap bake in progress.";
+                UnityEngine.Debug.LogWarning(msg);
+                ShowMessage(msg);
+                return;
+            }
+
+            // Validate default project folder selected
+            if (String.IsNullOrEmpty(this.defaultProjectFolder))
+            {
+                string msg = "No default project file selected.";
+                UnityEngine.Debug.LogWarning(msg);
+                ShowMessage(msg);
+                return;
+            }
+
+            // Validate default project folder exists
+            if (!Directory.Exists(this.defaultProjectFolder))
+            {
+                Directory.CreateDirectory(this.defaultProjectFolder);
+                if (!Directory.Exists(this.defaultProjectFolder))
+                {
+                    string msg = "Failed to create default project file created.";
+                    UnityEngine.Debug.LogWarning(msg);
+                    ShowMessage(msg);
+                    return;
+                }
+            }
+            this.previewThread = preview;
+            this.ExportSceneFiles();
+        }
+
+        public void ExportSceneFiles()
+        {
+            bool preview = this.previewThread;
             try
             {
-                // Validate lightmap bake in progress
-                if (UnityEditor.EditorApplication.isCompiling == true)
-                {
-                    string msg = "There is a project compile in progress.";
-                    UnityEngine.Debug.LogWarning(msg);
-                    ShowMessage(msg);
-                    return;
-                }
-                
-                // Validate lightmap bake in progress
-                if (Lightmapping.isRunning)
-                {
-                    string msg = "There is a lightmap bake in progress.";
-                    UnityEngine.Debug.LogWarning(msg);
-                    ShowMessage(msg);
-                    return;
-                }
-
-                // Validate default project folder selected
-                if (String.IsNullOrEmpty(exportationOptions.DefaultProjectFolder))
-                {
-                    string msg = "No default project file selected.";
-                    UnityEngine.Debug.LogWarning(msg);
-                    ShowMessage(msg);
-                    return;
-                }
-
-                // Validate default project folder exists
-                if (!Directory.Exists(exportationOptions.DefaultProjectFolder))
-                {
-                    if (ExporterWindow.ShowMessage("Create default project folder: " + exportationOptions.DefaultProjectFolder, "Babylon.js - Project not found", "Create", "Cancel"))
-                    {
-                        Directory.CreateDirectory(exportationOptions.DefaultProjectFolder);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
                 // Get validate scene path info
                 string[] sceneInfo = GetSceneInfomation(true);
                 string sceneName = sceneInfo[0];
@@ -980,10 +981,10 @@ namespace Unity3D2Babylon
                 string javascriptFile = null;
                 // Full build and preview 
                 if (preview) {
-                    Tools.GenerateProjectIndexPage(exportationOptions.DefaultProjectFolder, exportationOptions.ShowDebugControls, exportationOptions.DefaultScenePath, Path.GetFileName(outputFile), exportationOptions.DefaultScriptPath, Path.GetFileName(projectScript), exportationOptions.DefaultBinPath, exportationOptions.EnableAntiAliasing, exportationOptions.AdaptToDeviceRatio);
+                    Tools.GenerateProjectIndexPage(this.defaultProjectFolder, exportationOptions.ShowDebugControls, exportationOptions.DefaultScenePath, Path.GetFileName(outputFile), exportationOptions.DefaultScriptPath, Path.GetFileName(projectScript), exportationOptions.DefaultBinPath, exportationOptions.EnableAntiAliasing, exportationOptions.AdaptToDeviceRatio);
                     if (exportationOptions.BuildJavaScript || exportationOptions.CompileTypeScript)
                     {
-                        javascriptFile = Build(false, sceneInfo);
+                        javascriptFile = Build(sceneInfo);
                     }
                 }
                 if (this.buildResult == 0)
@@ -1101,7 +1102,7 @@ namespace Unity3D2Babylon
             {
                 exportationOptions.DefaultBinPath = "bin";
             }
-            string binPath = Tools.FormatSafePath(Path.Combine(exportationOptions.DefaultProjectFolder, exportationOptions.DefaultBinPath));
+            string binPath = Tools.FormatSafePath(Path.Combine(this.defaultProjectFolder, exportationOptions.DefaultBinPath));
             if (validate && !Directory.Exists(binPath))
             {
                 Directory.CreateDirectory(binPath);
@@ -1110,7 +1111,7 @@ namespace Unity3D2Babylon
             {
                 exportationOptions.DefaultBuildPath = "build";
             }
-            string buildPath = Tools.FormatSafePath(Path.Combine(exportationOptions.DefaultProjectFolder, exportationOptions.DefaultBuildPath));
+            string buildPath = Tools.FormatSafePath(Path.Combine(this.defaultProjectFolder, exportationOptions.DefaultBuildPath));
             if (validate && !Directory.Exists(buildPath))
             {
                 Directory.CreateDirectory(buildPath);
@@ -1119,7 +1120,7 @@ namespace Unity3D2Babylon
             {
                 exportationOptions.DefaultScenePath = "scenes";
             }
-            string scenePath = Tools.FormatSafePath(Path.Combine(exportationOptions.DefaultProjectFolder, exportationOptions.DefaultScenePath));
+            string scenePath = Tools.FormatSafePath(Path.Combine(this.defaultProjectFolder, exportationOptions.DefaultScenePath));
             if (validate && !Directory.Exists(scenePath))
             {
                 Directory.CreateDirectory(scenePath);
@@ -1128,14 +1129,14 @@ namespace Unity3D2Babylon
             {
                 exportationOptions.DefaultScriptPath = "scripts";
             }
-            string scriptPath = Tools.FormatSafePath(Path.Combine(exportationOptions.DefaultProjectFolder, exportationOptions.DefaultScriptPath));
+            string scriptPath = Tools.FormatSafePath(Path.Combine(this.defaultProjectFolder, exportationOptions.DefaultScriptPath));
             if (validate && !Directory.Exists(scriptPath))
             {
                 Directory.CreateDirectory(scriptPath);
             }
             if (String.IsNullOrEmpty(exportationOptions.DefaultIndexPage))
             {
-                exportationOptions.DefaultIndexPage = "project.html";
+                exportationOptions.DefaultIndexPage = "index.html";
             }
             if (String.IsNullOrEmpty(exportationOptions.DefaultTypeScriptPath))
             {

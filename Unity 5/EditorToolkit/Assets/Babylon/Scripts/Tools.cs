@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Ajax.Utilities;
@@ -4326,44 +4327,53 @@ namespace Unity3D2Babylon
             return result;
         }
 
-        public static string GetDefaultImageMagickPath()
+        public static string GetDefaultProjectFolder()
         {
-            string result = "magick";
-            if (Application.platform == RuntimePlatform.OSXEditor)
+            string project = Tools.FormatSafePath(Application.dataPath.Replace("/Assets", "/Export"));
+            if (!Directory.Exists(project))
             {
-                result = "/usr/local/bin/magick";
-            }
-            else if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                result = "C:/Program Files/ImageMagick/magick";
-            }
-            return result;
+                Directory.CreateDirectory(project);
+            }   
+            return project;
         }
 
         public static string GetDefaultTypeScriptPath()
         {
-            string result = "tsc";
+            string result = String.Empty;
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
-                result = "/usr/local/bin/tsc";
+                string tscOSX = "/usr/local/bin/tsc";
+                if (File.Exists(tscOSX)) {
+                    result = tscOSX;
+                }
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                result = "C:/Program Files/nodejs/node_modules/typescript/bin/tsc";
+                string username = Environment.UserName;
+                string tscWIN = "C:/Users/" + username + "/AppData/Roaming/npm/node_modules/typescript/bin/tsc";
+                if (File.Exists(tscWIN)) {
+                    result = tscWIN;
+                }
             }
             return result;
         }
 
         public static string GetDefaultNodeRuntimePath()
         {
-            string result = "node";
+            string result = String.Empty;
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
-                result = "/usr/local/bin/node";
+                string nodeOSX = "/usr/local/bin/node";
+                if (File.Exists(nodeOSX)) {
+                    result = nodeOSX;
+                }
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                result = "C:/Program Files/nodejs/node.exe";
+                string nodeWIN = "C:/Program Files/nodejs/node.exe";
+                if (File.Exists(nodeWIN)) {
+                    result = nodeWIN;
+                }
             }
             return result;
         }
@@ -4442,7 +4452,7 @@ namespace Unity3D2Babylon
             string responseText = String.Empty;
             string binariesPath = Path.Combine(project, binaries);
             string previewLibrary = Path.Combine(Application.dataPath, "Babylon/Library/");
-            string previewTemplate = Path.Combine(Application.dataPath, "Babylon/Template/Config/project.html");
+            string previewTemplate = Path.Combine(Application.dataPath, "Babylon/Template/Config/index.html");
             if (!String.IsNullOrEmpty(previewTemplate) && File.Exists(previewTemplate))
             {
                 responseText = File.ReadAllText(previewTemplate);
