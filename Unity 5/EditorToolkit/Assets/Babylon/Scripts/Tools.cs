@@ -4368,8 +4368,8 @@ namespace Unity3D2Babylon
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                string username = Environment.UserName;
-                string tscWIN = "C:/Users/" + username + "/AppData/Roaming/npm/node_modules/typescript/bin/tsc";
+                string home = Environment.GetFolderPath(Environment.SpecialFolder.Personal).Replace("\\My Documents", "\\").Replace("\\Documents", "\\");
+                string tscWIN = Path.Combine(home, "AppData\\Roaming\\npm\\node_modules\\typescript\\bin\\tsc");
                 if (File.Exists(tscWIN)) {
                     result = tscWIN;
                 }
@@ -4389,7 +4389,7 @@ namespace Unity3D2Babylon
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                string nodeWIN = "C:/Program Files/nodejs/node.exe";
+                string nodeWIN = "C:\\Program Files\\nodejs\\node.exe";
                 if (File.Exists(nodeWIN)) {
                     result = nodeWIN;
                 }

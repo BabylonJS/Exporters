@@ -17,7 +17,7 @@ namespace Unity3D2Babylon
     public class ExporterWindow : EditorWindow
     {
         public const double BabylonVersion = 3.1;
-        public const string ToolkitVersion = "3.1.028 Alpha";
+        public const string ToolkitVersion = "3.1.032 (Alpha)";
         public const string DefaultHost = "localhost";
         public const string StaticLabel = "Babylon Static";
         public const string PrefabLabel = "Babylon Prefab";
