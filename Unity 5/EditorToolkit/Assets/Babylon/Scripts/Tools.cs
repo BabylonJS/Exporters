@@ -2113,9 +2113,21 @@ namespace Unity3D2Babylon
             }
         }
 
+        public static void CallStaticReflectionMethod(Assembly assembly, string type, string method, params object[] args)
+        {
+            Type result = assembly.GetType(type);
+            Tools.CallStaticReflectionMethod<object>(result, method, args);
+        }
+
         public static void CallStaticReflectionMethod(Type type, string method, params object[] args)
         {
             Tools.CallStaticReflectionMethod<object>(type, method, args);
+        }
+
+        public static T CallStaticReflectionMethod<T>(Assembly assembly, string type, string method, params object[] args)
+        {
+            Type result = assembly.GetType(type);
+            return Tools.CallStaticReflectionMethod<T>(result, method, args);
         }
 
         public static T CallStaticReflectionMethod<T>(Type type, string method, params object[] args)
@@ -2128,6 +2140,7 @@ namespace Unity3D2Babylon
             }
             return (T)result;
         }
+
 
         public static Type GetTypeFromAllAssemblies(string typeName)
         {
@@ -4327,6 +4340,31 @@ namespace Unity3D2Babylon
             return result;
         }
 
+        public static void ValidateLightmapSettings()
+        {
+            if (Lightmapping.realtimeGI != false) {
+                UnityEngine.Debug.LogWarning("Lightmapping: Realtime global illumination should be disabled.");
+            }
+            if (Lightmapping.bakedGI != true) {
+                UnityEngine.Debug.LogWarning("Lightmapping: Baked global illumination should be enabled.");
+            }
+            try
+            {
+                UnityEngine.Object lightmapSettings = Tools.GetLightmapSettings();
+                if (lightmapSettings != null) {
+                    SerializedObject serializedSettings = new SerializedObject(lightmapSettings);
+                    SerializedProperty mixedLightingMode = serializedSettings.FindProperty("m_LightmapEditorSettings.m_MixedBakeMode");
+                    if (mixedLightingMode.intValue != 1) {
+                        UnityEngine.Debug.LogWarning("Lightmapping: Mixed lighting mode should be subtractive.");
+                    }
+                } else {
+                    UnityEngine.Debug.LogWarning("Lightmapping: Failed to get lightmap editor settings");
+                }
+            } catch (Exception ex) {
+                UnityEngine.Debug.LogException(ex);
+            }
+        }
+
         public static void RebuildProjectSourceCode()
         {
             string tag = "REBUILD";
@@ -4368,8 +4406,8 @@ namespace Unity3D2Babylon
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                string username = Environment.UserName;
-                string tscWIN = "C:/Users/" + username + "/AppData/Roaming/npm/node_modules/typescript/bin/tsc";
+                string home = Environment.GetFolderPath(Environment.SpecialFolder.Personal).Replace("\\My Documents", "\\").Replace("\\Documents", "\\");
+                string tscWIN = Path.Combine(home, "AppData\\Roaming\\npm\\node_modules\\typescript\\bin\\tsc");
                 if (File.Exists(tscWIN)) {
                     result = tscWIN;
                 }
@@ -4389,7 +4427,7 @@ namespace Unity3D2Babylon
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                string nodeWIN = "C:/Program Files/nodejs/node.exe";
+                string nodeWIN = "C:\\Program Files\\nodejs\\node.exe";
                 if (File.Exists(nodeWIN)) {
                     result = nodeWIN;
                 }
@@ -4783,15 +4821,21 @@ namespace Unity3D2Babylon
         private static Assembly editorAsm;
         private static MethodInfo AddSortingLayer_Method;
          /// <summary> add a new sorting layer with default name </summary>
-        private static void AddSortingLayer()
+        public static void AddSortingLayer()
         {
             if (AddSortingLayer_Method == null)
             {
                 if (editorAsm == null) editorAsm = Assembly.GetAssembly(typeof(Editor));
                 System.Type t = editorAsm.GetType("UnityEditorInternal.InternalEditorUtility");
-                AddSortingLayer_Method = t.GetMethod("AddSortingLayer", (BindingFlags.Static | BindingFlags.NonPublic), null, new System.Type[0], null);
+                AddSortingLayer_Method = t.GetMethod("AddSortingLayer", (BindingFlags.Static | BindingFlags.NonPublic));
             }
             AddSortingLayer_Method.Invoke(null, null);
+        }
+
+        /// <summary> Gets Lightmap Editor Settings </summary>
+        public static UnityEngine.Object GetLightmapSettings()
+        {
+            return Tools.CallStaticReflectionMethod<UnityEngine.Object>(typeof(UnityEditor.LightmapEditorSettings), "GetLightmapSettings");
         }
     }
 

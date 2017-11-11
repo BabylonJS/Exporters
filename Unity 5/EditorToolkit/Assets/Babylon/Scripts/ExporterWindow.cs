@@ -17,7 +17,7 @@ namespace Unity3D2Babylon
     public class ExporterWindow : EditorWindow
     {
         public const double BabylonVersion = 3.1;
-        public const string ToolkitVersion = "3.1.028 Alpha";
+        public const string ToolkitVersion = "3.1.044 (Alpha)";
         public const string DefaultHost = "localhost";
         public const string StaticLabel = "Babylon Static";
         public const string PrefabLabel = "Babylon Prefab";
@@ -723,7 +723,7 @@ namespace Unity3D2Babylon
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginHorizontal();
                 exportationOptions.ExportLightmaps = EditorGUILayout.Toggle("Export Lightmaps", exportationOptions.ExportLightmaps);
-                exportationOptions.DefaultLightmapBaking = (int)(BabylonLightmapBaking)EditorGUILayout.EnumPopup("Bake Iterative Lightmap", (BabylonLightmapBaking)exportationOptions.DefaultLightmapBaking, GUILayout.ExpandWidth(true));
+                exportationOptions.DefaultLightmapBaking = (int)(BabylonLightmapBaking)EditorGUILayout.EnumPopup("Bake Iterative Maps", (BabylonLightmapBaking)exportationOptions.DefaultLightmapBaking, GUILayout.ExpandWidth(true));
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Space();
                 exportationOptions.DefaultCoordinatesIndex = (int)EditorGUILayout.Slider("Coordinates Index", exportationOptions.DefaultCoordinatesIndex, 0, 1);
@@ -744,18 +744,24 @@ namespace Unity3D2Babylon
                 EditorGUILayout.Space();
                 exportationOptions.CompileTypeScript = EditorGUILayout.Toggle("Build Typescript Files", exportationOptions.CompileTypeScript);
                 EditorGUILayout.Space();
-                exportationOptions.DefaultTypeScriptPath = EditorGUILayout.TextField("Typescript Compiler", exportationOptions.DefaultTypeScriptPath);
-                EditorGUILayout.Space();
-                exportationOptions.DefaultNodeRuntimePath = EditorGUILayout.TextField("Node Runtime System", exportationOptions.DefaultNodeRuntimePath);
-                EditorGUILayout.Space();
+                if (exportationOptions.CompileTypeScript == true)
+                {
+                    exportationOptions.DefaultTypeScriptPath = EditorGUILayout.TextField("Typescript Compiler", exportationOptions.DefaultTypeScriptPath);
+                    EditorGUILayout.Space();
+                    exportationOptions.DefaultNodeRuntimePath = EditorGUILayout.TextField("Node Runtime System", exportationOptions.DefaultNodeRuntimePath);
+                    EditorGUILayout.Space();
+                }
                 exportationOptions.DefaultUpdateOptions = (int)(BabylonUpdateOptions)EditorGUILayout.EnumPopup("Github Update Version", (BabylonUpdateOptions)exportationOptions.DefaultUpdateOptions, GUILayout.ExpandWidth(true));
                 EditorGUILayout.Space();
-                if (GUILayout.Button("Detect Runtime Compiler Locations"))
+                if (exportationOptions.CompileTypeScript == true)
                 {
-                    exportationOptions.DefaultTypeScriptPath = Tools.GetDefaultTypeScriptPath();
-                    exportationOptions.DefaultNodeRuntimePath = Tools.GetDefaultNodeRuntimePath();
+                    if (GUILayout.Button("Detect Runtime Compiler Locations"))
+                    {
+                        exportationOptions.DefaultTypeScriptPath = Tools.GetDefaultTypeScriptPath();
+                        exportationOptions.DefaultNodeRuntimePath = Tools.GetDefaultNodeRuntimePath();
+                    }
+                    EditorGUILayout.Space();
                 }
-                EditorGUILayout.Space();
                 EditorGUI.indentLevel -= 1;
             }            
 
@@ -944,17 +950,21 @@ namespace Unity3D2Babylon
                 AssetDatabase.Refresh(ImportAssetOptions.Default);
                 ReportProgress(0, "Exporting scene assets: " + scenePath);
 
-                // Iterative lightmap baking
-                if (exportationOptions.ExportLightmaps && Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative)
+                // Lightmap shadow baking
+                if (exportationOptions.ExportLightmaps)
                 {
-                    ReportProgress(1, "Baking iterative lightmap textures... This may take a while.");
-                    try {
-                        Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
-                        Lightmapping.Bake();
-                    } catch(Exception baker) {
-                        UnityEngine.Debug.LogException(baker);
-                    } finally {
-                        Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.Iterative;
+                    Tools.ValidateLightmapSettings();
+                    if (Lightmapping.giWorkflowMode == Lightmapping.GIWorkflowMode.Iterative)
+                    {
+                        ReportProgress(1, "Baking iterative lightmap textures... This may take a while.");
+                        try {
+                            Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
+                            Lightmapping.Bake();
+                        } catch(Exception baker) {
+                            UnityEngine.Debug.LogException(baker);
+                        } finally {
+                            Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.Iterative;
+                        }
                     }
                 }
 
@@ -967,7 +977,8 @@ namespace Unity3D2Babylon
                 this.buildResult = 0;
                 string javascriptFile = null;
                 // Full build and preview 
-                if (preview) {
+                if (preview)
+                {
                     Tools.GenerateProjectIndexPage(this.defaultProjectFolder, exportationOptions.ShowDebugControls, exportationOptions.DefaultScenePath, Path.GetFileName(outputFile), exportationOptions.DefaultScriptPath, Path.GetFileName(projectScript), exportationOptions.DefaultBinPath, exportationOptions.EnableAntiAliasing, exportationOptions.AdaptToDeviceRatio);
                     if (exportationOptions.BuildJavaScript || exportationOptions.CompileTypeScript)
                     {
