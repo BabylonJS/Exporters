@@ -165,7 +165,6 @@ namespace Unity3D2Babylon
             if (!babylonScene.AddTextureCube(textureName)) return;
             ExporterWindow.ReportProgress(1, "Copying texture cube face: " + textureName);
             var srcTexturePath = AssetDatabase.GetAssetPath(textureFace);
-            UnityEngine.Debug.Log("CopyTextureFace(): " + srcTexturePath);
             File.Copy(srcTexturePath, texturePath, true);
         }
 
