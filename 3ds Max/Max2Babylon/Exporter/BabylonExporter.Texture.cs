@@ -145,7 +145,7 @@ namespace Max2Babylon
             // Write bitmap
             var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
             RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-            baseColorAlphaBitmap.Save(absolutePath);
+            baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
 
             return babylonTexture;
         }
@@ -227,7 +227,7 @@ namespace Max2Babylon
             // Write bitmap
             var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
             RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-            metallicRoughnessBitmap.Save(absolutePath);
+            metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
 
             return babylonTexture;
         }
