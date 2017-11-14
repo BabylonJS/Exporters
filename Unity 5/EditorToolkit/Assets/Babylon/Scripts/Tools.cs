@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Ajax.Utilities;
@@ -2112,9 +2113,21 @@ namespace Unity3D2Babylon
             }
         }
 
+        public static void CallStaticReflectionMethod(Assembly assembly, string type, string method, params object[] args)
+        {
+            Type result = assembly.GetType(type);
+            Tools.CallStaticReflectionMethod<object>(result, method, args);
+        }
+
         public static void CallStaticReflectionMethod(Type type, string method, params object[] args)
         {
             Tools.CallStaticReflectionMethod<object>(type, method, args);
+        }
+
+        public static T CallStaticReflectionMethod<T>(Assembly assembly, string type, string method, params object[] args)
+        {
+            Type result = assembly.GetType(type);
+            return Tools.CallStaticReflectionMethod<T>(result, method, args);
         }
 
         public static T CallStaticReflectionMethod<T>(Type type, string method, params object[] args)
@@ -2127,6 +2140,7 @@ namespace Unity3D2Babylon
             }
             return (T)result;
         }
+
 
         public static Type GetTypeFromAllAssemblies(string typeName)
         {
@@ -4326,44 +4340,97 @@ namespace Unity3D2Babylon
             return result;
         }
 
-        public static string GetDefaultImageMagickPath()
+        public static void ValidateLightmapSettings()
         {
-            string result = "magick";
-            if (Application.platform == RuntimePlatform.OSXEditor)
-            {
-                result = "/usr/local/bin/magick";
+            if (Lightmapping.realtimeGI != false) {
+                UnityEngine.Debug.LogWarning("Lightmapping: Realtime global illumination should be disabled.");
             }
-            else if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                result = "C:/Program Files/ImageMagick/magick";
+            if (Lightmapping.bakedGI != true) {
+                UnityEngine.Debug.LogWarning("Lightmapping: Baked global illumination should be enabled.");
             }
-            return result;
+            try
+            {
+                UnityEngine.Object lightmapSettings = Tools.GetLightmapSettings();
+                if (lightmapSettings != null) {
+                    SerializedObject serializedSettings = new SerializedObject(lightmapSettings);
+                    SerializedProperty mixedLightingMode = serializedSettings.FindProperty("m_LightmapEditorSettings.m_MixedBakeMode");
+                    if (mixedLightingMode.intValue != 1) {
+                        UnityEngine.Debug.LogWarning("Lightmapping: Mixed lighting mode should be subtractive.");
+                    }
+                } else {
+                    UnityEngine.Debug.LogWarning("Lightmapping: Failed to get lightmap editor settings");
+                }
+            } catch (Exception ex) {
+                UnityEngine.Debug.LogException(ex);
+            }
+        }
+
+        public static void RebuildProjectSourceCode()
+        {
+            string tag = "REBUILD";
+            string tagx = tag + ";";
+            string rebuild = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
+            if (rebuild.IndexOf(tagx) >= 0) {
+                rebuild = rebuild.Replace(tagx, "");
+            } else if (rebuild.IndexOf(tag) >= 0) {
+                rebuild = rebuild.Replace(tag, "");
+            } else {
+                if (!String.IsNullOrEmpty(rebuild)) {
+                    rebuild = tagx + rebuild;
+                } else {
+                    rebuild = tag + rebuild;
+                }
+            }
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, rebuild);
+        }
+
+        public static string GetDefaultProjectFolder()
+        {
+            string project = Tools.FormatSafePath(Application.dataPath.Replace("/Assets", "/Export"));
+            if (!Directory.Exists(project))
+            {
+                Directory.CreateDirectory(project);
+            }   
+            return project;
         }
 
         public static string GetDefaultTypeScriptPath()
         {
-            string result = "tsc";
+            string result = String.Empty;
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
-                result = "/usr/local/bin/tsc";
+                string tscOSX = "/usr/local/bin/tsc";
+                if (File.Exists(tscOSX)) {
+                    result = tscOSX;
+                }
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                result = "C:/Program Files/nodejs/node_modules/typescript/bin/tsc";
+                string home = Environment.GetFolderPath(Environment.SpecialFolder.Personal).Replace("\\My Documents", "\\").Replace("\\Documents", "\\");
+                string tscWIN = Path.Combine(home, "AppData\\Roaming\\npm\\node_modules\\typescript\\bin\\tsc");
+                if (File.Exists(tscWIN)) {
+                    result = tscWIN;
+                }
             }
             return result;
         }
 
         public static string GetDefaultNodeRuntimePath()
         {
-            string result = "node";
+            string result = String.Empty;
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
-                result = "/usr/local/bin/node";
+                string nodeOSX = "/usr/local/bin/node";
+                if (File.Exists(nodeOSX)) {
+                    result = nodeOSX;
+                }
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                result = "C:/Program Files/nodejs/node.exe";
+                string nodeWIN = "C:\\Program Files\\nodejs\\node.exe";
+                if (File.Exists(nodeWIN)) {
+                    result = nodeWIN;
+                }
             }
             return result;
         }
@@ -4442,7 +4509,7 @@ namespace Unity3D2Babylon
             string responseText = String.Empty;
             string binariesPath = Path.Combine(project, binaries);
             string previewLibrary = Path.Combine(Application.dataPath, "Babylon/Library/");
-            string previewTemplate = Path.Combine(Application.dataPath, "Babylon/Template/Config/project.html");
+            string previewTemplate = Path.Combine(Application.dataPath, "Babylon/Template/Config/index.html");
             if (!String.IsNullOrEmpty(previewTemplate) && File.Exists(previewTemplate))
             {
                 responseText = File.ReadAllText(previewTemplate);
@@ -4754,15 +4821,21 @@ namespace Unity3D2Babylon
         private static Assembly editorAsm;
         private static MethodInfo AddSortingLayer_Method;
          /// <summary> add a new sorting layer with default name </summary>
-        private static void AddSortingLayer()
+        public static void AddSortingLayer()
         {
             if (AddSortingLayer_Method == null)
             {
                 if (editorAsm == null) editorAsm = Assembly.GetAssembly(typeof(Editor));
                 System.Type t = editorAsm.GetType("UnityEditorInternal.InternalEditorUtility");
-                AddSortingLayer_Method = t.GetMethod("AddSortingLayer", (BindingFlags.Static | BindingFlags.NonPublic), null, new System.Type[0], null);
+                AddSortingLayer_Method = t.GetMethod("AddSortingLayer", (BindingFlags.Static | BindingFlags.NonPublic));
             }
             AddSortingLayer_Method.Invoke(null, null);
+        }
+
+        /// <summary> Gets Lightmap Editor Settings </summary>
+        public static UnityEngine.Object GetLightmapSettings()
+        {
+            return Tools.CallStaticReflectionMethod<UnityEngine.Object>(typeof(UnityEditor.LightmapEditorSettings), "GetLightmapSettings");
         }
     }
 
