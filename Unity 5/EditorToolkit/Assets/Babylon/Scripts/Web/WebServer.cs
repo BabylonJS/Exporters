@@ -98,11 +98,7 @@ namespace BabylonHosting
                                         path = Path.Combine(WebServer.Root, "default.htm");
                                         if (!File.Exists(path))
                                         {
-                                            path = Path.Combine(WebServer.Root, "project.html");
-                                            if (!File.Exists(path))
-                                            {
-                                                path = Path.Combine(WebServer.Root, "index.html");
-                                            }
+                                            path = Path.Combine(WebServer.Root, "index.html");
                                         }
                                     }
                                 }

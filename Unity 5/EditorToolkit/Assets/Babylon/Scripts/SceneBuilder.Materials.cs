@@ -165,7 +165,6 @@ namespace Unity3D2Babylon
             if (!babylonScene.AddTextureCube(textureName)) return;
             ExporterWindow.ReportProgress(1, "Copying texture cube face: " + textureName);
             var srcTexturePath = AssetDatabase.GetAssetPath(textureFace);
-            UnityEngine.Debug.Log("CopyTextureFace(): " + srcTexturePath);
             File.Copy(srcTexturePath, texturePath, true);
         }
 
@@ -370,7 +369,6 @@ namespace Unity3D2Babylon
                 }
 
                 if (bMat.emissiveTexture == null) bMat.emissiveTexture = DumpTextureFromMaterial(material, "_Illum");
-                bMat.ambientTexture = DumpTextureFromMaterial(material, "_LightMap");
                 bMat.reflectionTexture = DumpTextureFromMaterial(material, "_Cube");
                 if (material.HasProperty("_ReflectionScale"))
                 {
@@ -387,8 +385,9 @@ namespace Unity3D2Babylon
                     lightmapScale *= material.GetFloat("_LightmapScale");
                 }
 
-                // Lightmapping Texture
-                if (hasLightmap)
+                // Lightmapping Texture (Support Manual Lightmaps)
+                bMat.ambientTexture = DumpTextureFromMaterial(material, "_LightMap");
+                if (bMat.ambientTexture == null && hasLightmap)
                 {
                     var lightmap = LightmapSettings.lightmaps[lightmapIndex].lightmapColor;
                     var texturePath = AssetDatabase.GetAssetPath(lightmap);

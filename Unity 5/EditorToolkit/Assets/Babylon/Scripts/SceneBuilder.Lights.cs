@@ -79,8 +79,8 @@ namespace Unity3D2Babylon
 
         private void ConvertUnityLightToBabylon(Light light, GameObject gameObject, float progress, ref UnityMetaData metaData, ref List<UnityFlareSystem> lensFlares, ref string componentTags)
         {
-            // No Inactive Or Area Baking Lights
-			if (light.isActiveAndEnabled == false || light.type == LightType.Area/* || light.lightmapBakeType == LightmapBakeType.Baked*/) return;
+            // Note: No Inactive Or Full Baking Lights Exported
+			if (light.isActiveAndEnabled == false || light.type == LightType.Area || light.lightmapBakeType == LightmapBakeType.Baked) return;
 
             ExporterWindow.ReportProgress(progress, "Exporting light: " + light.name);
             BabylonLight babylonLight = (light.type == LightType.Directional) ? new BabylonDirectionalLight() : new BabylonLight();
