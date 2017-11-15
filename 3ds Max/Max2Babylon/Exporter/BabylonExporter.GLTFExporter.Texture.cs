@@ -1,5 +1,6 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using System;
 using System.Drawing;
 using System.IO;
 
@@ -18,19 +19,43 @@ namespace Max2Babylon
         /// <returns></returns>
         private GLTFTextureInfo ExportBitmapTexture(BabylonTexture babylonTexture, Bitmap bitmap, string name, GLTF gltf)
         {
-            // Copy image to output
-            if (CopyTexturesToOutput)
+            return ExportTexture(babylonTexture, gltf, name, () =>
             {
-                var absolutePath = Path.Combine(gltf.OutputFolder, name);
-                var imageFormat = Path.GetExtension(name) == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 1);
-                bitmap.Save(absolutePath, imageFormat);
-            }
-
-            return ExportTexture(babylonTexture, gltf, name);
+                // Write image to output
+                if (CopyTexturesToOutput)
+                {
+                    var absolutePath = Path.Combine(gltf.OutputFolder, name);
+                    var imageFormat = Path.GetExtension(name) == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
+                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 1);
+                    bitmap.Save(absolutePath, imageFormat);
+                }
+            });
         }
 
-        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name = null)
+        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf)
+        {
+            return ExportTexture(babylonTexture, gltf, null, () =>
+             {
+                 // Copy texture to output
+                 var sourceFileName = Path.Combine(outputBabylonDirectory, babylonTexture.name);
+                 try
+                 {
+                     if (File.Exists(sourceFileName))
+                     {
+                         if (CopyTexturesToOutput)
+                         {
+                             File.Copy(sourceFileName, Path.Combine(gltf.OutputFolder, babylonTexture.name), true);
+                         }
+                     }
+                 }
+                 catch
+                 {
+                     // silently fails
+                 }
+             });
+        }
+
+        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Action callback = null)
         {
             if (babylonTexture == null)
             {
@@ -111,8 +136,10 @@ namespace Max2Babylon
                 index = gltfTexture.index
             };
 
-
-            // TODO - Animations
+            if (callback != null)
+            {
+                callback.Invoke();
+            }
 
             return gltfTextureInfo;
         }
