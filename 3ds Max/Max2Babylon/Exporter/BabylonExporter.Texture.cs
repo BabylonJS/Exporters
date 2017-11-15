@@ -564,7 +564,27 @@ namespace Max2Babylon
         {
             if (File.Exists(absolutePath))
             {
-                return new Bitmap(absolutePath);
+                switch (Path.GetExtension(absolutePath))
+                {
+                    case ".dds":
+                        // External library GDImageLibrary.dll + TQ.Texture.dll
+                        return GDImageLibrary._DDS.LoadImage(absolutePath);
+                    case ".tga":
+                        // External library TargaImage.dll
+                        return Paloma.TargaImage.LoadTargaImage(absolutePath);
+                    case ".bmp":
+                    case ".gif":
+                    case ".exif":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".png":
+                    case ".tif":
+                    case ".tiff":
+                        return new Bitmap(absolutePath);
+                    default:
+                        RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), 2);
+                        return null;
+                }
             }
             else
             {
