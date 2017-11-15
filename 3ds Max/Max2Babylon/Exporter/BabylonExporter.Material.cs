@@ -251,9 +251,12 @@ namespace Max2Babylon
 
                 var normalMapAmount = propertyContainer.GetFloatProperty(91);
                 babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
-                
+
                 babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
-                
+
+                // Use diffuse roughness map as ambient occlusion
+                babylonMaterial.occlusionTexture = ExportPBRTexture(materialNode, 6, babylonScene);
+
                 // Constraints
                 if (babylonMaterial.baseTexture != null)
                 {
