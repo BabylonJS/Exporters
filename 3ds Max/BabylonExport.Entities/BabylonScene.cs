@@ -116,8 +116,6 @@ namespace BabylonExport.Entities
         public List<BabylonSkeleton> SkeletonsList { get; private set; }
         public List<BabylonMorphTargetManager> MorphTargetManagersList { get; private set; }
 
-        readonly List<string> exportedTextures = new List<string>();
-
         public BabylonScene(string outputPath)
         {
             OutputPath = outputPath;
@@ -198,26 +196,6 @@ namespace BabylonExport.Entities
             {
                 activeCameraID = CamerasList[0].id;
             }
-        }
-
-        public void AddTexture(string texture)
-        {
-            if (exportedTextures.Contains(texture))
-                return;
-
-            exportedTextures.Add(texture);
-
-            File.Copy(texture, Path.Combine(OutputPath, Path.GetFileName(texture)), true);
-        }
-
-        public bool AddTextureCube(string textureName)
-        {
-            if (exportedTextures.Contains(textureName))
-                return false;
-
-            exportedTextures.Add(textureName);
-
-            return true;
         }
     }
 }
