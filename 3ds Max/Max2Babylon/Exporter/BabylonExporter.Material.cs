@@ -202,7 +202,10 @@ namespace Max2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
-            else if (materialNode.MaterialClass == "Physical Material")
+            // TODO - Find another way to detect if material is physical
+            else if (materialNode.MaterialClass.ToLower() == "physical material" || // English
+                     materialNode.MaterialClass.ToLower() == "physisches material" || // German // TODO - check if translation is ok
+                     materialNode.MaterialClass.ToLower() == "matériau physique") // French
             {
                 var propertyContainer = materialNode.IPropertyContainer;
 

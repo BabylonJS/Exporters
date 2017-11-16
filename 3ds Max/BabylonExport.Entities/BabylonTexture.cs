@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -97,6 +98,11 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public SamplingMode samplingMode { get; set; }
+
+        // Used for gltf export
+        public string originalPath;
+        // Used for gltf export
+        public Bitmap bitmap;
 
         public BabylonTexture()
         {
