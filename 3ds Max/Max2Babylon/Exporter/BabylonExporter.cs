@@ -151,7 +151,7 @@ namespace Max2Babylon
                 // Environment texture
                 var environmentMap = Loader.Core.EnvironmentMap;
                 // Copy image file to output if necessary
-                var babylonTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
+                var babylonTexture = ExportEnvironmnentTexture(environmentMap, babylonScene);
                 babylonScene.environmentTexture = babylonTexture.name;
 
                 // Skybox
