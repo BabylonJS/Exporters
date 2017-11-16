@@ -251,6 +251,51 @@ namespace Max2Babylon
             return babylonTexture;
         }
 
+        private BabylonTexture ExportEnvironmnentTexture(ITexmap texMap, BabylonScene babylonScene)
+        {
+            if (texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
+            {
+                return null;
+            }
+
+            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
+
+            if (texture == null)
+            {
+                return null;
+            }
+
+            var sourcePath = texture.Map.FullFilePath;
+
+            var babylonTexture = new BabylonTexture
+            {
+                name = Path.GetFileName(sourcePath)
+            };
+
+            // Copy texture to output
+            if (isBabylonExported)
+            {
+                var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+
+                if (CopyTexturesToOutput)
+                {
+                    try
+                    {
+                        if (File.Exists(sourcePath))
+                        {
+                            File.Copy(sourcePath, destPath, true);
+                        }
+                    }
+                    catch
+                    {
+                        // silently fails
+                    }
+                }
+            }
+
+            return babylonTexture;
+        }
+
         // -------------------------
         // -- Export sub methods ---
         // -------------------------
