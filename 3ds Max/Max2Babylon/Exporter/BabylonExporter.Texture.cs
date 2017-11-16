@@ -88,6 +88,11 @@ namespace Max2Babylon
             var baseColorBitmap = _loadTexture(baseColorTexMap);
             var alphaBitmap = _loadTexture(alphaTexMap);
 
+            if (baseColorBitmap == null && alphaBitmap == null)
+            {
+                return null;
+            }
+
             // Alpha
             babylonTexture.hasAlpha = alphaBitmap != null || (baseColorBitmap != null && baseColorTexture.AlphaSource == 0) || alpha != 1.0f;
             babylonTexture.getAlphaFromRGB = false;
@@ -202,6 +207,11 @@ namespace Max2Babylon
             // Load bitmaps
             var metallicBitmap = _loadTexture(metallicTexMap);
             var roughnessBitmap = _loadTexture(roughnessTexMap);
+
+            if (metallicBitmap == null && roughnessBitmap == null)
+            {
+                return null;
+            }
 
             // Retreive dimensions
             int width = 0;
