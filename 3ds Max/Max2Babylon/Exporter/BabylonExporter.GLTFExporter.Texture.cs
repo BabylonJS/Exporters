@@ -1,6 +1,7 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
@@ -8,6 +9,9 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        private static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
+        private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
+
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
         /// Write the bitmap file
@@ -17,45 +21,60 @@ namespace Max2Babylon
         /// <param name="name"></param>
         /// <param name="gltf"></param>
         /// <returns></returns>
-        private GLTFTextureInfo ExportBitmapTexture(BabylonTexture babylonTexture, Bitmap bitmap, string name, GLTF gltf)
+        private GLTFTextureInfo ExportBitmapTexture(GLTF gltf, BabylonTexture babylonTexture, Bitmap bitmap = null, string name = null)
         {
+            if (babylonTexture != null)
+            {
+                if (bitmap == null)
+                {
+                    bitmap = babylonTexture.bitmap;
+                }
+                if (name == null)
+                {
+                    name = babylonTexture.name;
+                }
+            }
+
             return ExportTexture(babylonTexture, gltf, name, () =>
             {
+                var extension = Path.GetExtension(name);
+
                 // Write image to output
                 if (CopyTexturesToOutput)
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
-                    var imageFormat = Path.GetExtension(name) == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 1);
+                    var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
+                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 2);
                     bitmap.Save(absolutePath, imageFormat);
                 }
+
+                return extension.Substring(1); // remove the dot
             });
         }
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf)
         {
             return ExportTexture(babylonTexture, gltf, null, () =>
-             {
-                 // Copy texture to output
-                 var sourceFileName = Path.Combine(outputBabylonDirectory, babylonTexture.name);
-                 try
-                 {
-                     if (File.Exists(sourceFileName))
-                     {
-                         if (CopyTexturesToOutput)
-                         {
-                             File.Copy(sourceFileName, Path.Combine(gltf.OutputFolder, babylonTexture.name), true);
-                         }
-                     }
-                 }
-                 catch
-                 {
-                     // silently fails
-                 }
+            {
+                var sourcePath = babylonTexture.originalPath;
+                var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
+
+                if (validImageFormat == null)
+                {
+                    // Image format is not supported by the exporter
+                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                }
+
+                // Copy texture to output
+                var destPath = Path.Combine(gltf.OutputFolder, babylonTexture.name);
+                destPath = Path.ChangeExtension(destPath, validImageFormat);
+                CopyGltfTexture(sourcePath, destPath);
+
+                return validImageFormat;
              });
         }
 
-        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Action callback = null)
+        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Func<string> writeImageFunc)
         {
             if (babylonTexture == null)
             {
@@ -68,6 +87,9 @@ namespace Max2Babylon
             }
 
             RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 1);
+            
+            string validImageFormat = writeImageFunc.Invoke();
+            name = Path.ChangeExtension(name, validImageFormat);
 
             // --------------------------
             // -------- Sampler ---------
@@ -102,12 +124,12 @@ namespace Max2Babylon
 
             gltfImage.index = gltf.ImagesList.Count;
             gltf.ImagesList.Add(gltfImage);
-            switch (Path.GetExtension(name))
+            switch (validImageFormat)
             {
-                case ".jpg":
+                case "jpg":
                     gltfImage.FileExtension = "jpeg";
                     break;
-                case ".png":
+                case "png":
                     gltfImage.FileExtension = "png";
                     break;
             }
@@ -135,11 +157,6 @@ namespace Max2Babylon
             {
                 index = gltfTexture.index
             };
-
-            if (callback != null)
-            {
-                callback.Invoke();
-            }
 
             return gltfTextureInfo;
         }
@@ -218,6 +235,16 @@ namespace Max2Babylon
                     RaiseError("GLTFExporter.Texture | texture wrap mode not found");
                     return null;
             }
+        }
+
+        private string GetGltfValidImageFormat(string extension)
+        {
+            return _getValidImageFormat(extension, validGltfFormats, invalidGltfFormats);
+        }
+
+        private void CopyGltfTexture(string sourcePath, string destPath)
+        {
+            _copyTexture(sourcePath, destPath, validFormats, invalidFormats);
         }
     }
 }

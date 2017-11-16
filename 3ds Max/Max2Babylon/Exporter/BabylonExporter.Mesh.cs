@@ -159,12 +159,15 @@ namespace Max2Babylon
 
                 babylonScene.SoundsList.Add(meshSound);
 
-                try
+                if (isBabylonExported)
                 {
-                    File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
-                }
-                catch
-                {
+                    try
+                    {
+                        File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 

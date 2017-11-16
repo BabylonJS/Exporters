@@ -213,9 +213,6 @@ namespace Max2Babylon
                 };
             }
 
-            // Delete temporary babylon folder
-            Directory.Delete(outputBabylonDirectory, true);
-
             ReportProgressChanged(100);
         }
 

@@ -31,7 +31,7 @@ namespace Max2Babylon
 
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
-        private string outputBabylonDirectory;
+        private bool isBabylonExported;
 
         void ReportProgressChanged(int progress)
         {
@@ -102,16 +102,7 @@ namespace Max2Babylon
                 return;
             }
 
-            if (outputFormat == "gltf" || outputFormat == "glb")
-            {
-                // Create temporary babylon subdirectory
-                outputBabylonDirectory = Path.Combine(outputDirectory, "_tmp_babylon");
-                Directory.CreateDirectory(outputBabylonDirectory); // nothing done if directory already exists
-            }
-            else
-            {
-                outputBabylonDirectory = outputDirectory;
-            }
+            var outputBabylonDirectory = outputDirectory;
 
             // Force output file extension to be babylon
             outputFileName = Path.ChangeExtension(outputFileName, "babylon");
@@ -122,6 +113,8 @@ namespace Max2Babylon
 
             var watch = new Stopwatch();
             watch.Start();
+
+            isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
             // Save scene
             if (AutoSave3dsMaxFile)
@@ -182,12 +175,15 @@ namespace Max2Babylon
 
                 babylonScene.SoundsList.Add(globalSound);
 
-                try
+                if (isBabylonExported)
                 {
-                    File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
-                }
-                catch
-                {
+                    try
+                    {
+                        File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 
@@ -296,7 +292,7 @@ namespace Max2Babylon
 
             // Output
             babylonScene.Prepare(false, false);
-            if (outputFormat == "babylon" || outputFormat == "binary babylon")
+            if (isBabylonExported)
             {
                 RaiseMessage("Saving to output file");
                 

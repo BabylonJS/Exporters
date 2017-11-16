@@ -190,30 +190,25 @@ namespace Max2Babylon
 
                 if (babylonTexture != null)
                 {
-                    Func<string, Bitmap> loadTextureFromBabylonOutput = delegate (string textureName)
-                   {
-                       return LoadTexture(Path.Combine(outputBabylonDirectory, textureName));
-                   };
-
                     // Diffuse
                     Bitmap diffuseBitmap = null;
                     if (babylonStandardMaterial.diffuseTexture != null)
                     {
-                        diffuseBitmap = loadTextureFromBabylonOutput(babylonStandardMaterial.diffuseTexture.name);
+                        diffuseBitmap = LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath);
                     }
 
                     // Specular
                     Bitmap specularBitmap = null;
                     if (babylonStandardMaterial.specularTexture != null)
                     {
-                        specularBitmap = loadTextureFromBabylonOutput(babylonStandardMaterial.specularTexture.name);
+                        specularBitmap = LoadTexture(babylonStandardMaterial.specularTexture.originalPath);
                     }
 
                     // Opacity / Alpha / Transparency
                     Bitmap opacityBitmap = null;
                     if ((babylonStandardMaterial.diffuseTexture == null || babylonStandardMaterial.diffuseTexture.hasAlpha == false) && babylonStandardMaterial.opacityTexture != null)
                     {
-                        opacityBitmap = loadTextureFromBabylonOutput(babylonStandardMaterial.opacityTexture.name);
+                        opacityBitmap = LoadTexture(babylonStandardMaterial.opacityTexture.originalPath);
                     }
 
                     if (diffuseBitmap != null || specularBitmap != null || opacityBitmap != null)
@@ -278,10 +273,10 @@ namespace Max2Babylon
 
                         // Export maps and textures
                         var baseColorFileName = babylonMaterial.name + "_baseColor" + (hasAlpha ? ".png" : ".jpg");
-                        gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(babylonTexture, baseColorBitmap, baseColorFileName, gltf);
+                        gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
                         if (specularBitmap != null)
                         {
-                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(babylonTexture, metallicRoughnessBitmap, babylonMaterial.name + "_metallicRoughness" + ".jpg", gltf);
+                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, babylonMaterial.name + "_metallicRoughness" + ".jpg");
                         }
                     }
                 }
@@ -418,12 +413,12 @@ namespace Max2Babylon
                     babylonPBRMetallicRoughnessMaterial.baseColor[2],
                     babylonPBRMetallicRoughnessMaterial.alpha
                 };
-                gltfPbrMetallicRoughness.baseColorTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.baseTexture, gltf);
+                gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.baseTexture);
 
                 // Metallic roughness
                 gltfPbrMetallicRoughness.metallicFactor = babylonPBRMetallicRoughnessMaterial.metallic;
                 gltfPbrMetallicRoughness.roughnessFactor = babylonPBRMetallicRoughnessMaterial.roughness;
-                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture);
             }
             else
             {
