@@ -17,10 +17,15 @@ namespace Max2Babylon
 
         private List<BabylonNode> babylonNodes;
 
-        public void ExportGltf(BabylonScene babylonScene, string outputFile, bool generateBinary)
+        public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
-            RaiseMessage("GLTFExporter | Export outputFile=" + outputFile + " generateBinary=" + generateBinary);
             RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
+
+            // Force output file extension to be gltf
+            outputFileName = Path.ChangeExtension(outputFileName, "gltf");
+
+            // Update path of output .gltf file to include subdirectory
+            var outputFile = Path.Combine(outputDirectory, outputFileName);
 
             float progressionStep;
             var progression = 0.0f;

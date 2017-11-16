@@ -122,7 +122,9 @@ namespace Max2Babylon
                 exporter.AutoSave3dsMaxFile = chkAutoSave.Checked;
                 exporter.ExportHiddenObjects = chkHidden.Checked;
                 exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
-                await exporter.ExportAsync(txtFilename.Text, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this);
+                var directoryName = Path.GetDirectoryName(txtFilename.Text);
+                var fileName = Path.GetFileName(txtFilename.Text);
+                await exporter.ExportAsync(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this);
             }
             catch (OperationCanceledException)
             {

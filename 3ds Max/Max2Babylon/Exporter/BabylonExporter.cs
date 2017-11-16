@@ -31,6 +31,8 @@ namespace Max2Babylon
 
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
+        private bool isBabylonExported;
+
         void ReportProgressChanged(int progress)
         {
             if (OnImportProgressChanged != null)
@@ -77,7 +79,7 @@ namespace Max2Babylon
             }
         }
 
-        public async Task ExportAsync(string outputFile, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
+        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
         {
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
@@ -88,24 +90,31 @@ namespace Max2Babylon
 
             MaxSceneFileName = gameScene.SceneFileName;
 
-            // Force output file extension to be babylon
-            outputFile = Path.ChangeExtension(outputFile, "babylon");
-
             IsCancelled = false;
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
-            var babylonScene = new BabylonScene(Path.GetDirectoryName(outputFile));
-            var rawScene = Loader.Core.RootNode;
 
-            if (!Directory.Exists(babylonScene.OutputPath))
+            // Check directory exists
+            if (!Directory.Exists(outputDirectory))
             {
                 RaiseError("Exportation stopped: Output folder does not exist");
                 ReportProgressChanged(100);
                 return;
             }
 
+            var outputBabylonDirectory = outputDirectory;
+
+            // Force output file extension to be babylon
+            outputFileName = Path.ChangeExtension(outputFileName, "babylon");
+
+            var babylonScene = new BabylonScene(outputBabylonDirectory);
+
+            var rawScene = Loader.Core.RootNode;
+
             var watch = new Stopwatch();
             watch.Start();
+
+            isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
             // Save scene
             if (AutoSave3dsMaxFile)
@@ -126,7 +135,7 @@ namespace Max2Babylon
                 version = Loader.Core.ProductVersion.ToString(),
 #endif
                 exporter_version = "0.4.5",
-                file = Path.GetFileName(outputFile)
+                file = outputFileName
             };
 
             // Global
@@ -142,7 +151,7 @@ namespace Max2Babylon
                 // Environment texture
                 var environmentMap = Loader.Core.EnvironmentMap;
                 // Copy image file to output if necessary
-                var babylonTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
+                var babylonTexture = ExportEnvironmnentTexture(environmentMap, babylonScene);
                 babylonScene.environmentTexture = babylonTexture.name;
 
                 // Skybox
@@ -166,12 +175,15 @@ namespace Max2Babylon
 
                 babylonScene.SoundsList.Add(globalSound);
 
-                try
+                if (isBabylonExported)
                 {
-                    File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
-                }
-                catch
-                {
+                    try
+                    {
+                        File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 
@@ -280,9 +292,12 @@ namespace Max2Babylon
 
             // Output
             babylonScene.Prepare(false, false);
-            if (outputFormat == "babylon" || outputFormat == "binary babylon")
+            if (isBabylonExported)
             {
                 RaiseMessage("Saving to output file");
+                
+                var outputFile = Path.Combine(outputBabylonDirectory, outputFileName);
+
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
@@ -307,7 +322,7 @@ namespace Max2Babylon
                 if (outputFormat == "binary babylon")
                 {
                     RaiseMessage("Generating binary files");
-                    BabylonFileConverter.BinaryConverter.Convert(outputFile, Path.GetDirectoryName(outputFile) + "\\Binary",
+                    BabylonFileConverter.BinaryConverter.Convert(outputFile, outputBabylonDirectory + "\\Binary",
                         message => RaiseMessage(message, 1),
                         error => RaiseError(error, 1));
                 }
@@ -319,7 +334,7 @@ namespace Max2Babylon
             if (outputFormat == "gltf" || outputFormat == "glb")
             {
                 bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, outputFile, generateBinary);
+                ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
             }
 
             watch.Stop();

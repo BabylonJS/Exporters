@@ -9,6 +9,9 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        private static List<string> validFormats = new List<string>(new string[] { "png", "jpg", "jpeg", "tga", "bmp", "gif" });
+        private static List<string> invalidFormats = new List<string>(new string[] { "dds", "tif", "tiff" });
+
         // -------------------------------
         // --- "public" export methods ---
         // -------------------------------
@@ -73,10 +76,10 @@ namespace Max2Babylon
             babylonTexture.level = 1.0f;
 
             // UVs
-            var uvGen = _exportUV(texture, babylonTexture);
+            var uvGen = _exportUV(texture.UVGen, babylonTexture);
 
             // Is cube
-            _exportIsCube(texture, babylonTexture, false);
+            _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
 
 
             // --- Merge baseColor and alpha maps ---
@@ -84,6 +87,11 @@ namespace Max2Babylon
             // Load bitmaps
             var baseColorBitmap = _loadTexture(baseColorTexMap);
             var alphaBitmap = _loadTexture(alphaTexMap);
+
+            if (baseColorBitmap == null && alphaBitmap == null)
+            {
+                return null;
+            }
 
             // Alpha
             babylonTexture.hasAlpha = alphaBitmap != null || (baseColorBitmap != null && baseColorTexture.AlphaSource == 0) || alpha != 1.0f;
@@ -143,9 +151,17 @@ namespace Max2Babylon
             }
 
             // Write bitmap
-            var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-            RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-            baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
+            if (isBabylonExported)
+            {
+                var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+                RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
+                baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
+            }
+            else
+            {
+				// Store created bitmap for further use in gltf export
+                babylonTexture.bitmap = baseColorAlphaBitmap;
+            }
 
             return babylonTexture;
         }
@@ -180,10 +196,10 @@ namespace Max2Babylon
             babylonTexture.getAlphaFromRGB = false;
 
             // UVs
-            var uvGen = _exportUV(texture, babylonTexture);
+            var uvGen = _exportUV(texture.UVGen, babylonTexture);
 
             // Is cube
-            _exportIsCube(texture, babylonTexture, false);
+            _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
 
 
             // --- Merge metallic and roughness maps ---
@@ -191,6 +207,11 @@ namespace Max2Babylon
             // Load bitmaps
             var metallicBitmap = _loadTexture(metallicTexMap);
             var roughnessBitmap = _loadTexture(roughnessTexMap);
+
+            if (metallicBitmap == null && roughnessBitmap == null)
+            {
+                return null;
+            }
 
             // Retreive dimensions
             int width = 0;
@@ -225,9 +246,62 @@ namespace Max2Babylon
             }
 
             // Write bitmap
-            var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-            RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-            metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+            if (isBabylonExported)
+            {
+                var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+                RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
+                metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+            }
+            else
+            {
+				// Store created bitmap for further use in gltf export
+                babylonTexture.bitmap = metallicRoughnessBitmap;
+            }
+
+            return babylonTexture;
+        }
+
+        private BabylonTexture ExportEnvironmnentTexture(ITexmap texMap, BabylonScene babylonScene)
+        {
+            if (texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
+            {
+                return null;
+            }
+
+            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
+
+            if (texture == null)
+            {
+                return null;
+            }
+
+            var sourcePath = texture.Map.FullFilePath;
+
+            var babylonTexture = new BabylonTexture
+            {
+                name = Path.GetFileName(sourcePath)
+            };
+
+            // Copy texture to output
+            if (isBabylonExported)
+            {
+                var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+
+                if (CopyTexturesToOutput)
+                {
+                    try
+                    {
+                        if (File.Exists(sourcePath))
+                        {
+                            File.Copy(sourcePath, destPath, true);
+                        }
+                    }
+                    catch
+                    {
+                        // silently fails
+                    }
+                }
+            }
 
             return babylonTexture;
         }
@@ -250,9 +324,19 @@ namespace Max2Babylon
                 return null;
             }
 
+            var sourcePath = texture.Map.FullFilePath;
+
+            var validImageFormat = GetValidImageFormat(Path.GetExtension(sourcePath));
+            if (validImageFormat == null)
+            {
+                // Image format is not supported by the exporter
+                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                return null;
+            }
+
             var babylonTexture = new BabylonTexture
             {
-                name = Path.GetFileName(texture.MapName)
+                name = Path.GetFileNameWithoutExtension(texture.MapName) + "." + validImageFormat
             };
 
             // Level
@@ -271,7 +355,7 @@ namespace Max2Babylon
             }
 
             // UVs
-            var uvGen = _exportUV(texture, babylonTexture);
+            var uvGen = _exportUV(texture.UVGen, babylonTexture);
 
             // Animations
             var animations = new List<BabylonAnimation>();
@@ -283,25 +367,20 @@ namespace Max2Babylon
             ExportFloatAnimation("vAng", animations, key => new[] { uvGen.GetVAng(key) });
             ExportFloatAnimation("wAng", animations, key => new[] { uvGen.GetWAng(key) });
             babylonTexture.animations = animations.ToArray();
-
-            // Is cube
-            _exportIsCube(texture, babylonTexture, allowCube);
-
+            
             // Copy texture to output
-            var absolutePath = texture.Map.FullFilePath;
-            try
+            if (isBabylonExported)
             {
-                if (File.Exists(absolutePath))
-                {
-                    if (CopyTexturesToOutput)
-                    {
-                        File.Copy(absolutePath, Path.Combine(babylonScene.OutputPath, babylonTexture.name), true);
-                    }
-                }
+                var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+                CopyTexture(sourcePath, destPath);
+
+                // Is cube
+                _exportIsCube(Path.Combine(babylonScene.OutputPath, babylonTexture.name), babylonTexture, allowCube);
             }
-            catch
+            else
             {
-                // silently fails
+                babylonTexture.originalPath = sourcePath;
+                babylonTexture.isCube = false;
             }
 
             return babylonTexture;
@@ -363,10 +442,8 @@ namespace Max2Babylon
             return texMap;
         }
 
-        private IStdUVGen _exportUV(IBitmapTex texture, BabylonTexture babylonTexture)
+        private IStdUVGen _exportUV(IStdUVGen uvGen, BabylonTexture babylonTexture)
         {
-            var uvGen = texture.UVGen;
-
             switch (uvGen.GetCoordMapping(0))
             {
                 case 1: //MAP_SPHERICAL
@@ -392,7 +469,7 @@ namespace Max2Babylon
             babylonTexture.uScale = uvGen.GetUScl(0);
             babylonTexture.vScale = uvGen.GetVScl(0);
 
-            if (Path.GetExtension(texture.MapName).ToLower() == ".dds")
+            if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
                 babylonTexture.vScale *= -1; // Need to invert Y-axis for DDS texture
             }
@@ -424,30 +501,35 @@ namespace Max2Babylon
             return uvGen;
         }
 
-        private void _exportIsCube(IBitmapTex texture, BabylonTexture babylonTexture, bool allowCube)
+        private void _exportIsCube(string absolutePath, BabylonTexture babylonTexture, bool allowCube)
         {
-            var absolutePath = texture.Map.FullFilePath;
-
-            try
+            if (Path.GetExtension(absolutePath).ToLower() != ".dds")
             {
-                if (File.Exists(absolutePath))
-                {
-                    babylonTexture.isCube = _isTextureCube(absolutePath);
-                }
-                else
-                {
-                    RaiseWarning(string.Format("Texture {0} not found.", babylonTexture.name), 2);
-                }
-
+                babylonTexture.isCube = false;
             }
-            catch
+            else
             {
-                // silently fails
-            }
+                try
+                {
+                    if (File.Exists(absolutePath))
+                    {
+                        babylonTexture.isCube = _isTextureCube(absolutePath);
+                    }
+                    else
+                    {
+                        RaiseWarning(string.Format("Texture {0} not found.", absolutePath), 2);
+                    }
 
-            if (babylonTexture.isCube && !allowCube)
-            {
-                RaiseWarning(string.Format("Cube texture are only supported for reflection channel"), 2);
+                }
+                catch
+                {
+                    // silently fails
+                }
+
+                if (babylonTexture.isCube && !allowCube)
+                {
+                    RaiseWarning(string.Format("Cube texture are only supported for reflection channel"), 2);
+                }
             }
         }
 
@@ -455,11 +537,6 @@ namespace Max2Babylon
         {
             try
             {
-                if (Path.GetExtension(filepath).ToLower() != ".dds")
-                {
-                    return false;
-                }
-
                 var data = File.ReadAllBytes(filepath);
                 var intArray = new int[data.Length / 4];
 
@@ -564,7 +641,26 @@ namespace Max2Babylon
         {
             if (File.Exists(absolutePath))
             {
-                return new Bitmap(absolutePath);
+                switch (Path.GetExtension(absolutePath))
+                {
+                    case ".dds":
+                        // External library GDImageLibrary.dll + TQ.Texture.dll
+                        return GDImageLibrary._DDS.LoadImage(absolutePath);
+                    case ".tga":
+                        // External library TargaImage.dll
+                        return Paloma.TargaImage.LoadTargaImage(absolutePath);
+                    case ".bmp":
+                    case ".gif":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".png":
+                    case ".tif":
+                    case ".tiff":
+                        return new Bitmap(absolutePath);
+                    default:
+                        RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), 2);
+                        return null;
+                }
             }
             else
             {
@@ -588,6 +684,136 @@ namespace Max2Babylon
             }
 
             return LoadTexture(texture.Map.FullFilePath);
+        }
+
+        private void CopyTexture(string sourcePath, string destPath)
+        {
+            _copyTexture(sourcePath, destPath, validFormats, invalidFormats);
+        }
+
+        private string GetValidImageFormat(string extension)
+        {
+            return _getValidImageFormat(extension, validFormats, invalidFormats);
+        }
+
+        private string _getValidImageFormat(string extension, List<string> validFormats, List<string> invalidFormats)
+        {
+            var imageFormat = extension.Substring(1).ToLower(); // remove the dot
+
+            if (validFormats.Contains(imageFormat))
+            {
+                return imageFormat;
+            }
+            else if (invalidFormats.Contains(imageFormat))
+            {
+                switch (imageFormat)
+                {
+                    case "dds":
+                    case "tga":
+                    case "tif":
+                    case "tiff":
+                    case "gif":
+                    case "png":
+                        return "png";
+                    case "bmp":
+                    case "jpg":
+                    case "jpeg":
+                        return "jpg";
+                    default:
+                        return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Copy image from source to dest.
+        /// The copy process may include a conversion to another image format:
+        /// - a source with a valid format is copied directly
+        /// - a source with an invalid format is converted to png or jpg before being copied
+        /// - a source with neither a valid nor an invalid format raises a warning and is not copied
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="destPath"></param>
+        /// <param name="validFormats"></param>
+        /// <param name="invalidFormats"></param>
+        private void _copyTexture(string sourcePath, string destPath, List<string> validFormats, List<string> invalidFormats)
+        {
+            if (CopyTexturesToOutput)
+            {
+                try
+                {
+                    if (File.Exists(sourcePath))
+                    {
+                        string imageFormat = Path.GetExtension(sourcePath).Substring(1).ToLower(); // remove the dot
+
+                        if (validFormats.Contains(imageFormat))
+                        {
+                            File.Copy(sourcePath, destPath, true);
+                        }
+                        else if (invalidFormats.Contains(imageFormat))
+                        {
+                            _convertToBitmapAndSave(sourcePath, destPath, imageFormat);
+                        }
+                        else
+                        {
+                            RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                        }
+                    }
+                }
+                catch
+                {
+                    // silently fails
+                }
+            }
+        }
+
+        /// <summary>
+        /// Load image from source to a bitmap and save it to dest as png or jpg.
+        /// Loading process to a bitmap depends on extension.
+        /// Saved image format depends on alpha presence.
+        /// png and jpg are copied directly.
+        /// Unsupported format raise a warning and are not copied.
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="destPath"></param>
+        /// <param name="imageFormat"></param>
+        private void _convertToBitmapAndSave(string sourcePath, string destPath, string imageFormat)
+        {
+            Bitmap bitmap;
+            switch (imageFormat)
+            {
+                case "dds":
+                    // External libraries GDImageLibrary.dll + TQ.Texture.dll
+                    bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
+                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    break;
+                case "tga":
+                    // External library TargaImage.dll
+                    bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
+                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    break;
+                case "bmp":
+                    bitmap = new Bitmap(sourcePath);
+                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Jpeg); // no alpha
+                    break;
+                case "tif":
+                case "tiff":
+                case "gif":
+                    bitmap = new Bitmap(sourcePath);
+                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    break;
+                case "jpeg":
+                case "png":
+                    File.Copy(sourcePath, destPath, true);
+                    break;
+                default:
+                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                    break;
+            }
         }
     }
 }
