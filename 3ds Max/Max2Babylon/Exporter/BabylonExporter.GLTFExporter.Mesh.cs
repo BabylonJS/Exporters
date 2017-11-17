@@ -84,8 +84,7 @@ namespace Max2Babylon
             }
 
             // Retreive indices from babylon mesh
-            List<ushort> babylonIndices = new List<ushort>();
-            babylonIndices = babylonMesh.indices.ToList().ConvertAll(new Converter<int, ushort>(n => (ushort)n));
+            List<int> babylonIndices = babylonMesh.indices.ToList();
 
 
             // --------------------------
@@ -118,7 +117,7 @@ namespace Max2Babylon
 
                 List<GLTFGlobalVertex> globalVerticesSubMesh = globalVertices.GetRange(babylonSubMesh.verticesStart, babylonSubMesh.verticesCount);
 
-                List<ushort> gltfIndices = babylonIndices.GetRange(babylonSubMesh.indexStart, babylonSubMesh.indexCount);
+                var gltfIndices = babylonIndices.GetRange(babylonSubMesh.indexStart, babylonSubMesh.indexCount);
                 // In gltf, indices of each mesh primitive are 0-based (ie: min value is 0)
                 // Thus, the gltf indices list is a concatenation of sub lists all 0-based
                 // Example for 2 triangles, each being a submesh:
@@ -178,16 +177,29 @@ namespace Max2Babylon
                 var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
 
                 // --- Indices ---
+                var componentType = GLTFAccessor.ComponentType.UNSIGNED_SHORT;
+                if (nbVertices >= 65536)
+                {
+                    componentType = GLTFAccessor.ComponentType.UNSIGNED_INT;
+                }
                 var accessorIndices = GLTFBufferService.Instance.CreateAccessor(
                     gltf,
                     GLTFBufferService.Instance.GetBufferViewScalar(gltf, buffer),
                     "accessorIndices",
-                    GLTFAccessor.ComponentType.UNSIGNED_SHORT,
+                    componentType,
                     GLTFAccessor.TypeEnum.SCALAR
                 );
                 meshPrimitive.indices = accessorIndices.index;
                 // Populate accessor
-                gltfIndices.ForEach(n => accessorIndices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                if (componentType == GLTFAccessor.ComponentType.UNSIGNED_INT)
+                {
+                    gltfIndices.ForEach(n => accessorIndices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                }
+                else
+                {
+                    var gltfIndicesShort = gltfIndices.ConvertAll(new Converter<int, ushort>(n => (ushort)n));
+                    gltfIndicesShort.ForEach(n => accessorIndices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                }
                 accessorIndices.count = gltfIndices.Count;
                 
                 // --- Positions ---
