@@ -326,6 +326,12 @@ namespace Max2Babylon
 
             var sourcePath = texture.Map.FullFilePath;
 
+            if (sourcePath == null || sourcePath == "")
+            {
+                RaiseWarning("Texture path is missing.", 2);
+                return null;
+            }
+
             var validImageFormat = GetValidImageFormat(Path.GetExtension(sourcePath));
             if (validImageFormat == null)
             {
