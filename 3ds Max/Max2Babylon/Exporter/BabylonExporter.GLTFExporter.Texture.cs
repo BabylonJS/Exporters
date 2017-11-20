@@ -57,12 +57,20 @@ namespace Max2Babylon
             return ExportTexture(babylonTexture, gltf, null, () =>
             {
                 var sourcePath = babylonTexture.originalPath;
+
+                if (sourcePath == null || sourcePath == "")
+                {
+                    RaiseWarning("Texture path is missing.", 2);
+                    return null;
+                }
+
                 var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
 
                 if (validImageFormat == null)
                 {
                     // Image format is not supported by the exporter
                     RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                    return null;
                 }
 
                 // Copy texture to output
@@ -87,8 +95,13 @@ namespace Max2Babylon
             }
 
             RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 1);
-            
+
             string validImageFormat = writeImageFunc.Invoke();
+            if (validImageFormat == null)
+            {
+                return null;
+            }
+
             name = Path.ChangeExtension(name, validImageFormat);
 
             // --------------------------
