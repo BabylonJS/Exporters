@@ -14,11 +14,22 @@ namespace Max2Babylon
             var channelList = new List<GLTFChannel>();
             var samplerList = new List<GLTFAnimationSampler>();
 
-            if (babylonNode.animations != null && babylonNode.animations.Length > 0)
+            if ((babylonNode.animations != null && babylonNode.animations.Length > 0) ||
+                (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0))
             {
                 RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
 
-                foreach (BabylonAnimation babylonAnimation in babylonNode.animations)
+                // Combine babylon animations from .babylon file and cached ones
+                var babylonAnimations = new List<BabylonAnimation>();
+                if (babylonNode.animations != null)
+                {
+                    babylonAnimations.AddRange(babylonNode.animations);
+                }
+                if (babylonNode.extraAnimations != null)
+                {
+                    babylonAnimations.AddRange(babylonNode.extraAnimations);
+                }
+                foreach (BabylonAnimation babylonAnimation in babylonAnimations)
                 {
                     // Target
                     var gltfTarget = new GLTFChannelTarget
@@ -29,7 +40,7 @@ namespace Max2Babylon
                     if (gltfTarget.path == null)
                     {
                         // Unkown babylon animation property
-                        RaiseWarning("GLTFExporter.Animation | Unkown animation property '" + babylonAnimation.property + "'", 3);
+                        //RaiseWarning("GLTFExporter.Animation | Unkown animation property '" + babylonAnimation.property + "'", 3);
                         // Ignore this babylon animation
                         continue;
                     }

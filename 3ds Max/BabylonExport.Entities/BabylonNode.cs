@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -28,5 +29,8 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public bool autoAnimateLoop { get; set; }
+
+		// Animations exported for glTF but not for Babylon
+        public List<BabylonAnimation> extraAnimations;
     }
 }
