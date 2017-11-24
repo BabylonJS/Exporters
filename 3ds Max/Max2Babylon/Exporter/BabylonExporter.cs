@@ -499,5 +499,31 @@ namespace Max2Babylon
                 return list;
             }
         }
+
+        private bool IsNodeExportable(IIGameNode gameNode)
+        {
+            if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
+            {
+                return false;
+            }
+
+            if (!ExportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private IGMatrix GetLocalTM(IIGameNode gameNode, int key)
+        {
+            var worldMatrix = gameNode.GetObjectTM(key);
+            if (gameNode.NodeParent != null)
+            {
+                var parentWorld = gameNode.NodeParent.GetObjectTM(key);
+                worldMatrix.MultiplyBy(parentWorld.Inverse);
+            }
+            return worldMatrix;
+        }
     }
 }

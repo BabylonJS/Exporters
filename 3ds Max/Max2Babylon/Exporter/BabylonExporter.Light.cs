@@ -27,12 +27,7 @@ namespace Max2Babylon
 
         private bool IsLightExportable(IIGameNode lightNode)
         {
-            if (lightNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
-            {
-                return false;
-            }
-
-            return true;
+            return IsNodeExportable(lightNode);
         }
 
         private BabylonLight ExportLight(IIGameScene scene, IIGameNode lightNode, BabylonScene babylonScene)
@@ -94,12 +89,8 @@ namespace Max2Babylon
             }
 
             // Position
-            var wm = lightNode.GetObjectTM(0);
-            if (lightNode.NodeParent != null)
-            {
-                var parentWorld = lightNode.NodeParent.GetObjectTM(0);
-                wm.MultiplyBy(parentWorld.Inverse);
-            }
+            var wm = GetLocalTM(lightNode, 0);
+
             var position = wm.Translation;
             babylonLight.position = new[] { position.X, position.Y, position.Z };
 
@@ -176,26 +167,12 @@ namespace Max2Babylon
             // Animations
             var animations = new List<BabylonAnimation>();
 
-            ExportVector3Animation("position", animations, key =>
-            {
-                var mat = lightNode.GetObjectTM(key);
-                if (lightNode.NodeParent != null)
-                {
-                    var parentWorld = lightNode.NodeParent.GetObjectTM(key);
-                    mat.MultiplyBy(parentWorld.Inverse);
-                }
-                var pos = mat.Translation;
-                return new[] { pos.X, pos.Y, pos.Z };
-            });
+            GeneratePositionAnimation(lightNode, animations);
 
             ExportVector3Animation("direction", animations, key =>
             {
-                var wmLight = lightNode.GetObjectTM(key);
-                if (lightNode.NodeParent != null)
-                {
-                    var parentWorld = lightNode.NodeParent.GetObjectTM(key);
-                    wmLight.MultiplyBy(parentWorld.Inverse);
-                }
+                var wmLight = GetLocalTM(lightNode, key);
+
                 var positionLight = wmLight.Translation;
                 var lightTarget = gameLight.LightTarget;
                 if (lightTarget != null)
@@ -213,6 +190,13 @@ namespace Max2Babylon
                     return new[] { vDir.X, vDir.Y, vDir.Z };
                 }
             });
+
+            // Animation temporary stored for gltf but not exported for babylon
+            // TODO - Will cause an issue when externalizing the glTF export process
+            var extraAnimations = new List<BabylonAnimation>();
+            // Do not check if node rotation properties are animated
+            GenerateRotationAnimation(lightNode, extraAnimations, true);
+            babylonLight.extraAnimations = extraAnimations;
 
             ExportFloatAnimation("intensity", animations, key => new[] { maxLight.GetIntensity(key, Tools.Forever) });
 
