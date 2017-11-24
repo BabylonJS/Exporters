@@ -16,17 +16,7 @@ namespace Max2Babylon
         
         private bool IsMeshExportable(IIGameNode meshNode)
         {
-            if (meshNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
-            {
-                return false;
-            }
-
-            if (!ExportHiddenObjects && meshNode.MaxNode.IsHidden(NodeHideFlags.None, false))
-            {
-                return false;
-            }
-
-            return true;
+            return IsNodeExportable(meshNode);
         }
 
         private BabylonNode ExportDummy(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
@@ -809,12 +799,7 @@ namespace Max2Babylon
         private void exportTransform(BabylonAbstractMesh babylonAbstractMesh, IIGameNode maxGameNode)
         {
             // Position / rotation / scaling
-            var localTM = maxGameNode.GetObjectTM(0);
-            if (maxGameNode.NodeParent != null)
-            {
-                var parentWorld = maxGameNode.NodeParent.GetObjectTM(0);
-                localTM.MultiplyBy(parentWorld.Inverse);
-            }
+            var localTM = GetLocalTM(maxGameNode, 0);
 
             var meshTrans = localTM.Translation;
             var meshRotation = localTM.Rotation;
@@ -859,59 +844,9 @@ namespace Max2Babylon
 
         public void GenerateCoordinatesAnimations(IIGameNode meshNode, List<BabylonAnimation> animations)
         {
-            if (meshNode.IGameControl.IsAnimated(IGameControlType.Pos) ||
-                meshNode.IGameControl.IsAnimated(IGameControlType.PosX) ||
-                meshNode.IGameControl.IsAnimated(IGameControlType.PosY) ||
-                meshNode.IGameControl.IsAnimated(IGameControlType.PosZ))
-            {
-                ExportVector3Animation("position", animations, key =>
-                {
-                    var worldMatrix = meshNode.GetObjectTM(key);
-                    if (meshNode.NodeParent != null)
-                    {
-                        var parentWorld = meshNode.NodeParent.GetObjectTM(key);
-                        worldMatrix.MultiplyBy(parentWorld.Inverse);
-                    }
-                    var trans = worldMatrix.Translation;
-                    return new[] { trans.X, trans.Y, trans.Z };
-                });
-            }
-
-            if (meshNode.IGameControl.IsAnimated(IGameControlType.Rot) ||
-                meshNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
-                meshNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
-                meshNode.IGameControl.IsAnimated(IGameControlType.EulerZ))
-            {
-                ExportQuaternionAnimation("rotationQuaternion", animations, key =>
-                {
-                    var worldMatrix = meshNode.GetObjectTM(key);
-                    if (meshNode.NodeParent != null)
-                    {
-                        var parentWorld = meshNode.NodeParent.GetObjectTM(key);
-                        worldMatrix.MultiplyBy(parentWorld.Inverse);
-                    }
-
-
-                    var rot = worldMatrix.Rotation;
-                    return new[] { rot.X, rot.Y, rot.Z, -rot.W };
-                });
-            }
-
-            if (meshNode.IGameControl.IsAnimated(IGameControlType.Scale))
-            {
-                ExportVector3Animation("scaling", animations, key =>
-                {
-                    var worldMatrix = meshNode.GetObjectTM(key);
-                    if (meshNode.NodeParent != null)
-                    {
-                        var parentWorld = meshNode.NodeParent.GetObjectTM(key);
-                        worldMatrix.MultiplyBy(parentWorld.Inverse);
-                    }
-                    var scale = worldMatrix.Scaling;
-
-                    return new[] { scale.X, scale.Y, scale.Z };
-                });
-            }
+            GeneratePositionAnimation(meshNode, animations);
+            GenerateRotationAnimation(meshNode, animations);
+            GenerateScalingAnimation(meshNode, animations);
         }
     }
 }

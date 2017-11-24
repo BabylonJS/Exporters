@@ -82,9 +82,6 @@ namespace BabylonExport.Entities
 
         public BabylonCamera()
         {
-            position = new[] { 0f, 0f, 0f };
-            rotation = new[] { 0f, 0f, 0f };
-
             // Default values
             fov = 0.8f;
             minZ = 0.1f;

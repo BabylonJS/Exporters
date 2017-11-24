@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Autodesk.Max;
+﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Max2Babylon
@@ -398,6 +398,52 @@ namespace Max2Babylon
                 }
             }
             return null;
+        }
+
+        public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
+        {
+            if (gameNode.IGameControl.IsAnimated(IGameControlType.Pos) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosX) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosY) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosZ))
+            {
+                ExportVector3Animation("position", animations, key =>
+                {
+                    var localMatrix = GetLocalTM(gameNode, key);
+                    var trans = localMatrix.Translation;
+                    return new[] { trans.X, trans.Y, trans.Z };
+                });
+            }
+        }
+
+        public void GenerateRotationAnimation(IIGameNode gameNode, List<BabylonAnimation> animations, bool force = false)
+        {
+            if (gameNode.IGameControl.IsAnimated(IGameControlType.Rot) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerZ) ||
+                force)
+            {
+                ExportQuaternionAnimation("rotationQuaternion", animations, key =>
+                {
+                    var localMatrix = GetLocalTM(gameNode, key);
+                    var rot = localMatrix.Rotation;
+                    return new[] { rot.X, rot.Y, rot.Z, -rot.W };
+                });
+            }
+        }
+
+        public void GenerateScalingAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
+        {
+            if (gameNode.IGameControl.IsAnimated(IGameControlType.Scale))
+            {
+                ExportVector3Animation("scaling", animations, key =>
+                {
+                    var localMatrix = GetLocalTM(gameNode, key);
+                    var scale = localMatrix.Scaling;
+                    return new[] { scale.X, scale.Y, scale.Z };
+                });
+            }
         }
     }
 }
