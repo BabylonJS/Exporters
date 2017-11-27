@@ -33,6 +33,8 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
+        private bool _onlySelected;
+
         void ReportProgressChanged(int progress)
         {
             if (OnImportProgressChanged != null)
@@ -85,7 +87,8 @@ namespace Max2Babylon
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            gameScene.InitialiseIGame(onlySelected);
+            gameScene.InitialiseIGame(false);
+            this._onlySelected = onlySelected;
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
@@ -503,6 +506,11 @@ namespace Max2Babylon
         private bool IsNodeExportable(IIGameNode gameNode)
         {
             if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
+            {
+                return false;
+            }
+
+            if (_onlySelected && !gameNode.MaxNode.Selected)
             {
                 return false;
             }

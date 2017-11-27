@@ -268,13 +268,13 @@ namespace Max2Babylon
             return ExportAnimation(property, extractValueFunc, BabylonAnimation.DataType.Matrix, removeLinearAnimationKeys);
         }
 
-        static void RemoveLinearAnimationKeys(List<BabylonAnimationKey> keys)
+        static void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
             for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
             {
                 while (keys.Count - ixFirst >= 3)
                 {
-                    if (!RemoveAnimationKey(keys, ixFirst))
+                    if (!RemoveAnimationKey(keys, ixFirst, removeLinearAnimationKeys))
                     {
                         break;
                     }
@@ -294,7 +294,7 @@ namespace Max2Babylon
             return result;
         }
 
-        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst)
+        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
         {
             var first = keys[ixFirst];
             var middle = keys[ixFirst + 1];
@@ -308,11 +308,14 @@ namespace Max2Babylon
             }
 
             // second pass : linear interpolation detection
-            var computedMiddleValue = weightedLerp(first.frame, middle.frame, last.frame, first.values, last.values);
-            if (computedMiddleValue.IsEqualTo(middle.values))
+            if (removeLinearAnimationKeys)
             {
-                keys.RemoveAt(ixFirst + 1);
-                return true;
+                var computedMiddleValue = weightedLerp(first.frame, middle.frame, last.frame, first.values, last.values);
+                if (computedMiddleValue.IsEqualTo(middle.values))
+                {
+                    keys.RemoveAt(ixFirst + 1);
+                    return true;
+                }
             }
             return false;
 
@@ -340,13 +343,6 @@ namespace Max2Babylon
             {
                 var current = extractValueFunc(key);
 
-                // if animations are not optimized, all keys from start to end are created
-                // otherwise, keys are added only for non constant values
-                if (optimizeAnimations && previous != null && previous.IsEqualTo(current))
-                {
-                    continue; // Do not add key
-                }
-
                 keys.Add(new BabylonAnimationKey()
                 {
                     frame = key / Ticks,
@@ -355,11 +351,10 @@ namespace Max2Babylon
 
                 previous = current;
             }
-
-            // if animations are not optimized, do the following as minimal optimization
-            if (removeLinearAnimationKeys && !optimizeAnimations)
+            
+            if (optimizeAnimations)
             {
-                RemoveLinearAnimationKeys(keys);
+                OptimizeAnimations(keys, removeLinearAnimationKeys);
             }
 
             if (keys.Count > 1)

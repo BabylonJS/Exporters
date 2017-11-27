@@ -143,27 +143,38 @@ namespace Max2Babylon
                 if (babylonMesh.materialId != null)
                 {
                     // Retreive the babylon material
+                    BabylonMaterial babylonMaterial;
                     var babylonMaterialId = babylonMesh.materialId;
+                    // From multi materials first, if any
+                    // Loop recursively even though it shouldn't be a real use case
+                    var babylonMultiMaterials = new List<BabylonMultiMaterial>(babylonScene.multiMaterials);
+                    BabylonMultiMaterial babylonMultiMaterial;
+                    do
+                    {
+                        babylonMultiMaterial = babylonMultiMaterials.Find(_babylonMultiMaterial => _babylonMultiMaterial.id == babylonMaterialId);
+                        if (babylonMultiMaterial != null)
+                        {
+                            babylonMaterialId = babylonMultiMaterial.materials[babylonSubMesh.materialIndex];
+                        }
+                    }
+                    while (babylonMultiMaterial != null);
+                    // Then from materials
                     var babylonMaterials = new List<BabylonMaterial>(babylonScene.materials);
-                    var babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
-                    if (babylonMaterial == null)
-                    {
-                        // It's a multi material
-                        var babylonMultiMaterials = new List<BabylonMultiMaterial>(babylonScene.multiMaterials);
-                        var babylonMultiMaterial = babylonMultiMaterials.Find(_babylonMultiMaterial => _babylonMultiMaterial.id == babylonMesh.materialId);
-                        babylonMaterialId = babylonMultiMaterial.materials[babylonSubMesh.materialIndex];
-                        babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
-                    }
+                    babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
 
-                    // Update primitive material index
-                    var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
-                    if (indexMaterial == -1)
+                    // If babylon material was exported successfully
+                    if (babylonMaterial != null)
                     {
-                        // Store material for exportation
-                        indexMaterial = babylonMaterialsToExport.Count;
-                        babylonMaterialsToExport.Add(babylonMaterial);
+                        // Update primitive material index
+                        var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
+                        if (indexMaterial == -1)
+                        {
+                            // Store material for exportation
+                            indexMaterial = babylonMaterialsToExport.Count;
+                            babylonMaterialsToExport.Add(babylonMaterial);
+                        }
+                        meshPrimitive.material = indexMaterial;
                     }
-                    meshPrimitive.material = indexMaterial;
 
                     // TODO - Add and retreive info from babylon material
                     meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
