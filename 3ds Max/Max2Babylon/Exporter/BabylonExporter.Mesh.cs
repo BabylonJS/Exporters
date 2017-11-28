@@ -191,7 +191,15 @@ namespace Max2Babylon
             if (isSkinned)
             {
                 bonesCount = skin.TotalSkinBoneCount;
-                skins.Add(skin);
+                var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
+                if (skinAlreadyStored == null)
+                {
+                    skins.Add(skin);
+                }
+                else
+                {
+                    skin = skinAlreadyStored;
+                }
 
                 skinnedNodes.Add(meshNode);
                 babylonMesh.skeletonId = skins.IndexOf(skin);
