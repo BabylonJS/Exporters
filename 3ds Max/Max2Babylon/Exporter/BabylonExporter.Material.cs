@@ -17,63 +17,65 @@ namespace Max2Babylon
             RaiseMessage(name, 1);
 
             // --- prints ---
+            #region prints
             {
-                RaiseMessage("materialNode.MaterialClass=" + materialNode.MaterialClass, 2);
-                RaiseMessage("materialNode.NumberOfTextureMaps=" + materialNode.NumberOfTextureMaps, 2);
+                RaiseVerbose("materialNode.MaterialClass=" + materialNode.MaterialClass, 2);
+                RaiseVerbose("materialNode.NumberOfTextureMaps=" + materialNode.NumberOfTextureMaps, 2);
 
                 var propertyContainer = materialNode.IPropertyContainer;
-                RaiseMessage("propertyContainer=" + propertyContainer, 2);
+                RaiseVerbose("propertyContainer=" + propertyContainer, 2);
                 if (propertyContainer != null)
                 {
-                    RaiseMessage("propertyContainer.NumberOfProperties=" + propertyContainer.NumberOfProperties, 3);
+                    RaiseVerbose("propertyContainer.NumberOfProperties=" + propertyContainer.NumberOfProperties, 3);
                     for (int i = 0; i < propertyContainer.NumberOfProperties; i++)
                     {
                         var prop = propertyContainer.GetProperty(i);
                         if (prop != null)
                         {
-                            RaiseMessage("propertyContainer.GetProperty(" + i + ")=" + prop.Name, 3);
+                            RaiseVerbose("propertyContainer.GetProperty(" + i + ")=" + prop.Name, 3);
                             switch (prop.GetType_)
                             {
                                 case PropType.StringProp:
                                     string propertyString = "";
-                                    RaiseMessage("prop.GetPropertyValue(ref propertyString, 0)=" + prop.GetPropertyValue(ref propertyString, 0), 4);
-                                    RaiseMessage("propertyString=" + propertyString, 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyString, 0)=" + prop.GetPropertyValue(ref propertyString, 0), 4);
+                                    RaiseVerbose("propertyString=" + propertyString, 4);
                                     break;
                                 case PropType.IntProp:
                                     int propertyInt = 0;
-                                    RaiseMessage("prop.GetPropertyValue(ref propertyInt, 0)=" + prop.GetPropertyValue(ref propertyInt, 0), 4);
-                                    RaiseMessage("propertyInt=" + propertyInt, 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyInt, 0)=" + prop.GetPropertyValue(ref propertyInt, 0), 4);
+                                    RaiseVerbose("propertyInt=" + propertyInt, 4);
                                     break;
                                 case PropType.FloatProp:
                                     float propertyFloat = 0;
-                                    RaiseMessage("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
-                                    RaiseMessage("propertyFloat=" + propertyFloat, 4);
-                                    RaiseMessage("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
-                                    RaiseMessage("propertyFloat=" + propertyFloat, 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
+                                    RaiseVerbose("propertyFloat=" + propertyFloat, 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
+                                    RaiseVerbose("propertyFloat=" + propertyFloat, 4);
                                     break;
                                 case PropType.Point3Prop:
                                     IPoint3 propertyPoint3 = Loader.Global.Point3.Create(0, 0, 0); 
-                                    RaiseMessage("prop.GetPropertyValue(ref propertyPoint3, 0)=" + prop.GetPropertyValue(propertyPoint3, 0), 4);
-                                    RaiseMessage("propertyPoint3=" + Point3ToString(propertyPoint3), 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyPoint3, 0)=" + prop.GetPropertyValue(propertyPoint3, 0), 4);
+                                    RaiseVerbose("propertyPoint3=" + Point3ToString(propertyPoint3), 4);
                                     break;
                                 case PropType.Point4Prop:
                                     IPoint4 propertyPoint4 = Loader.Global.Point4.Create(0,0,0,0);
-                                    RaiseMessage("prop.GetPropertyValue(ref propertyPoint4, 0)=" + prop.GetPropertyValue(propertyPoint4, 0), 4);
-                                    RaiseMessage("propertyPoint4=" + Point4ToString(propertyPoint4), 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyPoint4, 0)=" + prop.GetPropertyValue(propertyPoint4, 0), 4);
+                                    RaiseVerbose("propertyPoint4=" + Point4ToString(propertyPoint4), 4);
                                     break;
                                 case PropType.UnknownProp:
                                 default:
-                                    RaiseMessage("Unknown property type", 4);
+                                    RaiseVerbose("Unknown property type", 4);
                                     break;
                             }
                         }
                         else
                         {
-                            RaiseMessage("propertyContainer.GetProperty(" + i + ") IS NULL", 3);
+                            RaiseVerbose("propertyContainer.GetProperty(" + i + ") IS NULL", 3);
                         }
                     }
                 }
             }
+            #endregion
 
             if (materialNode.SubMaterialCount > 0)
             {

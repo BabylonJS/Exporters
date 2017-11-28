@@ -59,8 +59,7 @@ namespace Max2Babylon
                 if (gltfMesh.idBabylonSkeleton.HasValue)
                 {
                     var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
-                    // Export a new skin and a new skeleton
-                    // TODO - Use the skeleton if already exported and only create a new skin
+                    // Export a new skeleton if necessary and a new skin
                     var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
                     gltfNode.skin = gltfSkin.index;
                 }

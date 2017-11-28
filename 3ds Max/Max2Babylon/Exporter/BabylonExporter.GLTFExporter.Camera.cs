@@ -59,12 +59,14 @@ namespace Max2Babylon
             ExportNodeAnimation(babylonCamera, gltf, gltfNode);
 
             // --- prints ---
+            #region prints
 
-            RaiseMessage("GLTFExporter.Camera | babylonCamera data", 2);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.type=" + babylonCamera.type, 3);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.fov=" + babylonCamera.fov, 3);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.maxZ=" + babylonCamera.maxZ, 3);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.minZ=" + babylonCamera.minZ, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera data", 2);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.type=" + babylonCamera.type, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.fov=" + babylonCamera.fov, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.maxZ=" + babylonCamera.maxZ, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.minZ=" + babylonCamera.minZ, 3);
+            #endregion
 
 
             // --------------------------
