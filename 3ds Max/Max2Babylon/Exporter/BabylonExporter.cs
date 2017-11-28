@@ -72,6 +72,12 @@ namespace Max2Babylon
             }
         }
 
+        // For debug purpose
+        void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
+        {
+            //RaiseMessage(message, Color.DarkGray, rank, emphasis);
+        }
+
         void CheckCancelled()
         {
             Application.DoEvents();
