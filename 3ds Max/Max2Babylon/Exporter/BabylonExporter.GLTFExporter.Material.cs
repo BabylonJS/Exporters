@@ -21,92 +21,94 @@ namespace Max2Babylon
 
 
                 // --- prints ---
+                #region prints
 
-                RaiseMessage("GLTFExporter.Material | babylonMaterial data", 2);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.alpha=" + babylonMaterial.alpha, 3);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.alphaMode=" + babylonMaterial.alphaMode, 3);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.backFaceCulling=" + babylonMaterial.backFaceCulling, 3);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.wireframe=" + babylonMaterial.wireframe, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial data", 2);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.alpha=" + babylonMaterial.alpha, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.alphaMode=" + babylonMaterial.alphaMode, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.backFaceCulling=" + babylonMaterial.backFaceCulling, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.wireframe=" + babylonMaterial.wireframe, 3);
 
                 // Ambient
                 for (int i = 0; i < babylonStandardMaterial.ambient.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.ambient[" + i + "]=" + babylonStandardMaterial.ambient[i], 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.ambient[" + i + "]=" + babylonStandardMaterial.ambient[i], 3);
                 }
 
                 // Diffuse
-                RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.diffuse.Length=" + babylonStandardMaterial.diffuse.Length, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.diffuse.Length=" + babylonStandardMaterial.diffuse.Length, 3);
                 for (int i = 0; i < babylonStandardMaterial.diffuse.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.diffuse[" + i + "]=" + babylonStandardMaterial.diffuse[i], 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.diffuse[" + i + "]=" + babylonStandardMaterial.diffuse[i], 3);
                 }
                 if (babylonStandardMaterial.diffuseTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.diffuseTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.diffuseTexture=null", 3);
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.diffuseTexture.name=" + babylonStandardMaterial.diffuseTexture.name, 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.diffuseTexture.name=" + babylonStandardMaterial.diffuseTexture.name, 3);
                 }
 
                 // Normal / bump
                 if (babylonStandardMaterial.bumpTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.bumpTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.bumpTexture=null", 3);
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.bumpTexture.name=" + babylonStandardMaterial.bumpTexture.name, 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.bumpTexture.name=" + babylonStandardMaterial.bumpTexture.name, 3);
                 }
 
                 // Opacity
                 if (babylonStandardMaterial.opacityTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.opacityTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.opacityTexture=null", 3);
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.opacityTexture.name=" + babylonStandardMaterial.opacityTexture.name, 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.opacityTexture.name=" + babylonStandardMaterial.opacityTexture.name, 3);
                 }
 
                 // Specular
                 for (int i = 0; i < babylonStandardMaterial.specular.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.specular[" + i + "]=" + babylonStandardMaterial.specular[i], 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.specular[" + i + "]=" + babylonStandardMaterial.specular[i], 3);
                 }
-                RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.specularPower=" + babylonStandardMaterial.specularPower, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.specularPower=" + babylonStandardMaterial.specularPower, 3);
                 if (babylonStandardMaterial.specularTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.specularTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.specularTexture=null", 3);
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.specularTexture.name=" + babylonStandardMaterial.specularTexture.name, 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.specularTexture.name=" + babylonStandardMaterial.specularTexture.name, 3);
                 }
 
                 // Occlusion
                 if (babylonStandardMaterial.ambientTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.ambientTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.ambientTexture=null", 3);
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.ambientTexture.name=" + babylonStandardMaterial.ambientTexture.name, 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.ambientTexture.name=" + babylonStandardMaterial.ambientTexture.name, 3);
                 }
 
                 // Emissive
                 for (int i = 0; i < babylonStandardMaterial.emissive.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.emissive[" + i + "]=" + babylonStandardMaterial.emissive[i], 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.emissive[" + i + "]=" + babylonStandardMaterial.emissive[i], 3);
                 }
                 if (babylonStandardMaterial.emissiveTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.emissiveTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.emissiveTexture=null", 3);
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonStandardMaterial.emissiveTexture.name=" + babylonStandardMaterial.emissiveTexture.name, 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonStandardMaterial.emissiveTexture.name=" + babylonStandardMaterial.emissiveTexture.name, 3);
                 }
+                #endregion
 
 
                 // --------------------------------
@@ -304,63 +306,65 @@ namespace Max2Babylon
 
 
                 // --- prints ---
+                #region prints
 
-                RaiseMessage("GLTFExporter.Material | babylonMaterial data", 2);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.alpha=" + babylonMaterial.alpha, 3);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.alphaMode=" + babylonMaterial.alphaMode, 3);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.backFaceCulling=" + babylonMaterial.backFaceCulling, 3);
-                RaiseMessage("GLTFExporter.Material | babylonMaterial.wireframe=" + babylonMaterial.wireframe, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial data", 2);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.alpha=" + babylonMaterial.alpha, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.alphaMode=" + babylonMaterial.alphaMode, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.backFaceCulling=" + babylonMaterial.backFaceCulling, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonMaterial.wireframe=" + babylonMaterial.wireframe, 3);
 
                 // Global
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.maxSimultaneousLights=" + babylonPBRMetallicRoughnessMaterial.maxSimultaneousLights, 3);
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.disableLighting=" + babylonPBRMetallicRoughnessMaterial.disableLighting, 3);
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.alphaCutOff=" + babylonPBRMetallicRoughnessMaterial.alphaCutOff, 3);
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.transparencyMode=" + babylonPBRMetallicRoughnessMaterial.transparencyMode, 3);
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.doubleSided=" + babylonPBRMetallicRoughnessMaterial.doubleSided, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.maxSimultaneousLights=" + babylonPBRMetallicRoughnessMaterial.maxSimultaneousLights, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.disableLighting=" + babylonPBRMetallicRoughnessMaterial.disableLighting, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.alphaCutOff=" + babylonPBRMetallicRoughnessMaterial.alphaCutOff, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.transparencyMode=" + babylonPBRMetallicRoughnessMaterial.transparencyMode, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.doubleSided=" + babylonPBRMetallicRoughnessMaterial.doubleSided, 3);
 
                 // Base color
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseColor.Length=" + babylonPBRMetallicRoughnessMaterial.baseColor.Length, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseColor.Length=" + babylonPBRMetallicRoughnessMaterial.baseColor.Length, 3);
                 for (int i = 0; i < babylonPBRMetallicRoughnessMaterial.baseColor.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.baseColor[i], 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.baseColor[i], 3);
                 }
                 if (babylonPBRMetallicRoughnessMaterial.baseTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseTexture=null", 3);
                 }
 
                 // Metallic+roughness
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallic=" + babylonPBRMetallicRoughnessMaterial.metallic, 3);
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.roughness=" + babylonPBRMetallicRoughnessMaterial.roughness, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallic=" + babylonPBRMetallicRoughnessMaterial.metallic, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.roughness=" + babylonPBRMetallicRoughnessMaterial.roughness, 3);
                 if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture=null", 3);
                 }
 
                 // Normal / bump
                 if (babylonPBRMetallicRoughnessMaterial.normalTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.normalTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.normalTexture=null", 3);
                 }
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapX=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapX, 3);
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapY=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapY, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapX=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapX, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapY=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapY, 3);
 
                 // Emissive
                 for (int i = 0; i < babylonPBRMetallicRoughnessMaterial.emissive.Length; i++)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.emissive[i], 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.emissive[i], 3);
                 }
                 if (babylonPBRMetallicRoughnessMaterial.emissiveTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveTexture=null", 3);
                 }
 
                 // Ambient occlusion
-                RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.occlusionStrength=" + babylonPBRMetallicRoughnessMaterial.occlusionStrength, 3);
+                RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.occlusionStrength=" + babylonPBRMetallicRoughnessMaterial.occlusionStrength, 3);
                 if (babylonPBRMetallicRoughnessMaterial.occlusionTexture == null)
                 {
-                    RaiseMessage("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.occlusionTexture=null", 3);
+                    RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.occlusionTexture=null", 3);
                 }
+                #endregion
 
 
                 // --------------------------------
@@ -496,20 +500,20 @@ namespace Max2Babylon
 
             if (displayPrints)
             {
-                RaiseMessage("-----------------------", 3);
-                RaiseMessage("diffuse=" + diffuse, 3);
-                RaiseMessage("opacity=" + opacity, 3);
-                RaiseMessage("specular=" + specular, 3);
-                RaiseMessage("glossiness=" + glossiness, 3);
+                RaiseVerbose("-----------------------", 3);
+                RaiseVerbose("diffuse=" + diffuse, 3);
+                RaiseVerbose("opacity=" + opacity, 3);
+                RaiseVerbose("specular=" + specular, 3);
+                RaiseVerbose("glossiness=" + glossiness, 3);
 
-                RaiseMessage("oneMinusSpecularStrength=" + oneMinusSpecularStrength, 3);
-                RaiseMessage("metallic=" + metallic, 3);
-                RaiseMessage("diffuseScaleFactor=" + diffuseScaleFactor, 3);
-                RaiseMessage("baseColorFromDiffuse=" + baseColorFromDiffuse, 3);
-                RaiseMessage("baseColorFromSpecular=" + baseColorFromSpecular, 3);
-                RaiseMessage("metallic * metallic=" + metallic * metallic, 3);
-                RaiseMessage("baseColor=" + baseColor, 3);
-                RaiseMessage("-----------------------", 3);
+                RaiseVerbose("oneMinusSpecularStrength=" + oneMinusSpecularStrength, 3);
+                RaiseVerbose("metallic=" + metallic, 3);
+                RaiseVerbose("diffuseScaleFactor=" + diffuseScaleFactor, 3);
+                RaiseVerbose("baseColorFromDiffuse=" + baseColorFromDiffuse, 3);
+                RaiseVerbose("baseColorFromSpecular=" + baseColorFromSpecular, 3);
+                RaiseVerbose("metallic * metallic=" + metallic * metallic, 3);
+                RaiseVerbose("baseColor=" + baseColor, 3);
+                RaiseVerbose("-----------------------", 3);
             }
 
             return new MetallicRoughness
