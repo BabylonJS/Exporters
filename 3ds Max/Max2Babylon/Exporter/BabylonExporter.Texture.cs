@@ -84,83 +84,86 @@ namespace Max2Babylon
 
             // --- Merge baseColor and alpha maps ---
 
-            // Load bitmaps
-            var baseColorBitmap = _loadTexture(baseColorTexMap);
-            var alphaBitmap = _loadTexture(alphaTexMap);
+            var hasBaseColor = isTextureOk(baseColorTexMap);
+            var hasAlpha = isTextureOk(alphaTexMap);
 
-            if (baseColorBitmap == null && alphaBitmap == null)
+            // Alpha
+            babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0);
+            babylonTexture.getAlphaFromRGB = false;
+
+            if (!hasBaseColor && !hasAlpha)
             {
                 return null;
             }
 
-            // Alpha
-            babylonTexture.hasAlpha = alphaBitmap != null || (baseColorBitmap != null && baseColorTexture.AlphaSource == 0) || alpha != 1.0f;
-            babylonTexture.getAlphaFromRGB = false;
-
-            // Retreive dimensions
-            int width = 0;
-            int height = 0;
-            var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, alphaBitmap);
-            if (!haveSameDimensions)
+            if (CopyTexturesToOutput)
             {
-                RaiseWarning("Base color and transparency color maps should have same dimensions", 2);
-            }
+                // Load bitmaps
+                var baseColorBitmap = _loadTexture(baseColorTexMap);
+                var alphaBitmap = _loadTexture(alphaTexMap);
 
-            var getAlphaFromRGB = false;
-            if (alphaTexture != null)
-            {
-                getAlphaFromRGB = (alphaTexture.AlphaSource == 2) || (alphaTexture.AlphaSource == 3); // 'RGB intensity' or 'None (Opaque)'
-            }
-
-            // Create baseColor+alpha map
-            var _baseColor = Color.FromArgb(
-                (int)(baseColor[0] * 255),
-                (int)(baseColor[1] * 255),
-                (int)(baseColor[2] * 255));
-            var _alpha = (int)(alpha * 255);
-            Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
+                // Retreive dimensions
+                int width = 0;
+                int height = 0;
+                var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, alphaBitmap);
+                if (!haveSameDimensions)
                 {
-                    var baseColorAtPixel = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : _baseColor;
-
-                    Color baseColorAlpha;
-                    if (alphaBitmap != null)
-                    {
-                        // Retreive alpha from alpha texture
-                        var alphaColor = alphaBitmap.GetPixel(x, y);
-                        var alphaAtPixel = 255 - (getAlphaFromRGB ? alphaColor.R : alphaColor.A);
-                        baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
-                    }
-                    else if (baseColorTexture != null && baseColorTexture.AlphaSource == 0) // Alpha source is 'Image Alpha'
-                    {
-                        // Use all channels from base color
-                        baseColorAlpha = baseColorAtPixel;
-                    } else
-                    {
-                        // Use RGB channels from base color and default alpha
-                        // Note that it's suboptimal to export a constant alpha.
-                        // But for glTF, if there is a baseColorTexture, the baseColor is ignored.
-                        // Thus the alpha within baseColor is ignored.
-                        // Adding constant alpha here avoid to do it later for glTF export, hence reducing export duration.
-                        baseColorAlpha = Color.FromArgb(_alpha, baseColorAtPixel.R, baseColorAtPixel.G, baseColorAtPixel.B);
-                    }
-                    baseColorAlphaBitmap.SetPixel(x, y, baseColorAlpha);
+                    RaiseWarning("Base color and transparency color maps should have same dimensions", 2);
                 }
-            }
 
-            // Write bitmap
-            if (isBabylonExported)
-            {
-                var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-                baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
-            }
-            else
-            {
-				// Store created bitmap for further use in gltf export
-                babylonTexture.bitmap = baseColorAlphaBitmap;
+                var getAlphaFromRGB = false;
+                if (alphaTexture != null)
+                {
+                    getAlphaFromRGB = (alphaTexture.AlphaSource == 2) || (alphaTexture.AlphaSource == 3); // 'RGB intensity' or 'None (Opaque)'
+                }
+
+                // Create baseColor+alpha map
+                var _baseColor = Color.FromArgb(
+                    (int)(baseColor[0] * 255),
+                    (int)(baseColor[1] * 255),
+                    (int)(baseColor[2] * 255));
+                var _alpha = (int)(alpha * 255);
+                Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        var baseColorAtPixel = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : _baseColor;
+
+                        Color baseColorAlpha;
+                        if (alphaBitmap != null)
+                        {
+                            // Retreive alpha from alpha texture
+                            var alphaColor = alphaBitmap.GetPixel(x, y);
+                            var alphaAtPixel = 255 - (getAlphaFromRGB ? alphaColor.R : alphaColor.A);
+                            baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
+                        }
+                        else if (baseColorTexture != null && baseColorTexture.AlphaSource == 0) // Alpha source is 'Image Alpha'
+                        {
+                            // Use all channels from base color
+                            baseColorAlpha = baseColorAtPixel;
+                        }
+                        else
+                        {
+                            // Use RGB channels from base color and default alpha
+                            baseColorAlpha = Color.FromArgb(_alpha, baseColorAtPixel.R, baseColorAtPixel.G, baseColorAtPixel.B);
+                        }
+                        baseColorAlphaBitmap.SetPixel(x, y, baseColorAlpha);
+                    }
+                }
+
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
+                    baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
+                }
+                else
+                {
+                    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = baseColorAlphaBitmap;
+                }
             }
 
             return babylonTexture;
@@ -204,58 +207,61 @@ namespace Max2Babylon
 
             // --- Merge metallic and roughness maps ---
 
-            // Load bitmaps
-            var metallicBitmap = _loadTexture(metallicTexMap);
-            var roughnessBitmap = _loadTexture(roughnessTexMap);
-
-            if (metallicBitmap == null && roughnessBitmap == null)
+            if (!isTextureOk(metallicTexMap) && !isTextureOk(roughnessTexMap))
             {
                 return null;
             }
 
-            // Retreive dimensions
-            int width = 0;
-            int height = 0;
-            var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, metallicBitmap, roughnessBitmap);
-            if (!haveSameDimensions)
+            if (CopyTexturesToOutput)
             {
-                RaiseWarning("Metallic and roughness maps should have same dimensions", 2);
-            }
+                // Load bitmaps
+                var metallicBitmap = _loadTexture(metallicTexMap);
+                var roughnessBitmap = _loadTexture(roughnessTexMap);
 
-            // Create metallic+roughness map
-            Bitmap metallicRoughnessBitmap = new Bitmap(width, height);
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
+                // Retreive dimensions
+                int width = 0;
+                int height = 0;
+                var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, metallicBitmap, roughnessBitmap);
+                if (!haveSameDimensions)
                 {
-                    var _metallic = metallicBitmap != null ? metallicBitmap.GetPixel(x, y).R :
+                    RaiseWarning("Metallic and roughness maps should have same dimensions", 2);
+                }
+
+                // Create metallic+roughness map
+                Bitmap metallicRoughnessBitmap = new Bitmap(width, height);
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        var _metallic = metallicBitmap != null ? metallicBitmap.GetPixel(x, y).B :
                                     metallic * 255.0f;
-                    var _roughness = roughnessBitmap != null ? (invertRoughness ? 255 - roughnessBitmap.GetPixel(x, y).R : roughnessBitmap.GetPixel(x, y).R) :
+                        var _roughness = roughnessBitmap != null ? (invertRoughness ? 255 - roughnessBitmap.GetPixel(x, y).G : roughnessBitmap.GetPixel(x, y).G) :
                                      roughness * 255.0f;
 
-                    // The metalness values are sampled from the B channel.
-                    // The roughness values are sampled from the G channel.
-                    // These values are linear. If other channels are present (R or A), they are ignored for metallic-roughness calculations.
-                    Color colorMetallicRoughness = Color.FromArgb(
-                        0,
-                        (int)_roughness,
-                        (int)_metallic
-                    );
-                    metallicRoughnessBitmap.SetPixel(x, y, colorMetallicRoughness);
+                        // The metalness values are sampled from the B channel.
+                        // The roughness values are sampled from the G channel.
+                        // These values are linear. If other channels are present (R or A), they are ignored for metallic-roughness calculations.
+                        Color colorMetallicRoughness = Color.FromArgb(
+                            0,
+                            (int)_roughness,
+                            (int)_metallic
+                        );
+                        metallicRoughnessBitmap.SetPixel(x, y, colorMetallicRoughness);
+                    }
                 }
-            }
 
-            // Write bitmap
-            if (isBabylonExported)
-            {
-                var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-                metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
-            }
-            else
-            {
-				// Store created bitmap for further use in gltf export
-                babylonTexture.bitmap = metallicRoughnessBitmap;
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
+                    metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+                else
+                {
+				    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = metallicRoughnessBitmap;
+                }
             }
 
             return babylonTexture;
@@ -673,6 +679,28 @@ namespace Max2Babylon
                 RaiseWarning(string.Format("Texture {0} not found.", Path.GetFileName(absolutePath)), 2);
                 return null;
             }
+        }
+
+        private bool isTextureOk(ITexmap texMap)
+        {
+            if (texMap == null || texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
+            {
+                return false;
+            }
+
+            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
+
+            if (texture == null)
+            {
+                return false;
+            }
+
+            if (!File.Exists(texture.Map.FullFilePath))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private Bitmap _loadTexture(ITexmap texMap)
