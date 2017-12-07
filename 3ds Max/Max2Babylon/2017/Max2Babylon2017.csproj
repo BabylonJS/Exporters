@@ -281,14 +281,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BabylonExport.Entities\BabylonExport.Entities.csproj">
-      <Project>{6150965a-658c-4263-89ad-4f980eb0675d}</Project>
-      <Name>BabylonExport.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BabylonFileConverter\BabylonFileConverter.csproj">
-      <Project>{a6b76356-1d1c-4c82-8199-a6406da85a95}</Project>
-      <Name>BabylonFileConverter</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\GltfExport.Entities\GLTFExport.Entities.csproj">
       <Project>{65686998-09ac-4a14-b23f-7fce6ba994cf}</Project>
       <Name>GLTFExport.Entities</Name>
@@ -300,6 +292,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
+  <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(OutDir)BabylonActionsBuilder"
