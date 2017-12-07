@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>2a678a75-f8c2-41ba-814a-53e611f5eb96</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>BabylonExport.Entities</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonAbstractMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonActions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimationKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonBone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonCamera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonColor3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonDirectionalLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonFresnelParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonHDRCubeTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonIAnimatable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonLensFlare.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonLensFlareSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonMatrix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTargetManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonMultiMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonParticleSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRMetallicRoughnessMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonProducer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonQuaternion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonShaderMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonShadowGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonSkeleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonSound.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonStandardMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonSubMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonUniversalCamera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonVector3.cs" />
+  </ItemGroup>
+</Project>
