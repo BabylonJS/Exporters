@@ -85,7 +85,17 @@ namespace Max2Babylon
 
             // Retreive indices from babylon mesh
             List<int> babylonIndices = babylonMesh.indices.ToList();
-
+            
+            // Flip faces
+            if (!hasBones)
+            {
+                for (int i = 0; i < babylonIndices.Count; i += 3)
+                {
+                    var tmp = babylonIndices[i + 1];
+                    babylonIndices[i + 1] = babylonIndices[i + 2];
+                    babylonIndices[i + 2] = tmp;
+                }
+            }
 
             // --------------------------
             // ------- Init glTF --------
