@@ -2494,7 +2494,7 @@
 		{
 			"bufferView": 3,
 			"componentType": 5126,
-			"count": 62,
+			"count": 56,
 			"max": [
 				3.33333325
 			],
@@ -2507,15 +2507,15 @@
 		{
 			"bufferView": 4,
 			"componentType": 5126,
-			"count": 62,
+			"count": 56,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 248,
+			"byteOffset": 224,
 			"componentType": 5126,
-			"count": 62,
+			"count": 56,
 			"max": [
 				3.33333325
 			],
@@ -2527,17 +2527,17 @@
 		},
 		{
 			"bufferView": 4,
-			"byteOffset": 744,
+			"byteOffset": 672,
 			"componentType": 5126,
-			"count": 62,
+			"count": 56,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 496,
+			"byteOffset": 448,
 			"componentType": 5126,
-			"count": 60,
+			"count": 19,
 			"max": [
 				3.33333325
 			],
@@ -2550,15 +2550,15 @@
 		{
 			"bufferView": 5,
 			"componentType": 5126,
-			"count": 60,
+			"count": 19,
 			"type": "VEC4",
 			"name": "accessorAnimationRotations"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 736,
+			"byteOffset": 524,
 			"componentType": 5126,
-			"count": 60,
+			"count": 19,
 			"max": [
 				3.33333325
 			],
@@ -2570,17 +2570,17 @@
 		},
 		{
 			"bufferView": 5,
-			"byteOffset": 960,
+			"byteOffset": 304,
 			"componentType": 5126,
-			"count": 60,
+			"count": 19,
 			"type": "VEC4",
 			"name": "accessorAnimationRotations"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 976,
+			"byteOffset": 600,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"max": [
 				3.33333325
 			],
@@ -2592,17 +2592,17 @@
 		},
 		{
 			"bufferView": 4,
-			"byteOffset": 1488,
+			"byteOffset": 1344,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 1224,
+			"byteOffset": 840,
 			"componentType": 5126,
-			"count": 62,
+			"count": 25,
 			"max": [
 				3.33333325
 			],
@@ -2614,17 +2614,17 @@
 		},
 		{
 			"bufferView": 5,
-			"byteOffset": 1920,
+			"byteOffset": 608,
 			"componentType": 5126,
-			"count": 62,
+			"count": 25,
 			"type": "VEC4",
 			"name": "accessorAnimationRotations"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 1472,
+			"byteOffset": 940,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"max": [
 				3.33333325
 			],
@@ -2636,17 +2636,237 @@
 		},
 		{
 			"bufferView": 4,
-			"byteOffset": 2232,
+			"byteOffset": 2064,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 1720,
+			"byteOffset": 1180,
+			"componentType": 5126,
+			"count": 28,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 1008,
+			"componentType": 5126,
+			"count": 28,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 1292,
+			"componentType": 5126,
+			"count": 56,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 4,
+			"byteOffset": 2784,
+			"componentType": 5126,
+			"count": 56,
+			"type": "VEC3",
+			"name": "accessorAnimationPositions"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 1516,
+			"componentType": 5126,
+			"count": 56,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 4,
+			"byteOffset": 3456,
+			"componentType": 5126,
+			"count": 56,
+			"type": "VEC3",
+			"name": "accessorAnimationPositions"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 1740,
 			"componentType": 5126,
 			"count": 60,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 4,
+			"byteOffset": 4128,
+			"componentType": 5126,
+			"count": 60,
+			"type": "VEC3",
+			"name": "accessorAnimationPositions"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 1980,
+			"componentType": 5126,
+			"count": 28,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 1456,
+			"componentType": 5126,
+			"count": 28,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2092,
+			"componentType": 5126,
+			"count": 19,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 1904,
+			"componentType": 5126,
+			"count": 19,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2168,
+			"componentType": 5126,
+			"count": 19,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 2208,
+			"componentType": 5126,
+			"count": 19,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2244,
+			"componentType": 5126,
+			"count": 60,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 4,
+			"byteOffset": 4848,
+			"componentType": 5126,
+			"count": 60,
+			"type": "VEC3",
+			"name": "accessorAnimationPositions"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2484,
+			"componentType": 5126,
+			"count": 25,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 2512,
+			"componentType": 5126,
+			"count": 25,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2584,
+			"componentType": 5126,
+			"count": 60,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 4,
+			"byteOffset": 5568,
+			"componentType": 5126,
+			"count": 60,
+			"type": "VEC3",
+			"name": "accessorAnimationPositions"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2824,
+			"componentType": 5126,
+			"count": 28,
 			"max": [
 				3.33333325
 			],
@@ -2660,15 +2880,15 @@
 			"bufferView": 5,
 			"byteOffset": 2912,
 			"componentType": 5126,
-			"count": 60,
+			"count": 28,
 			"type": "VEC4",
 			"name": "accessorAnimationRotations"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 1960,
+			"byteOffset": 2936,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"max": [
 				3.33333325
 			],
@@ -2680,17 +2900,39 @@
 		},
 		{
 			"bufferView": 4,
-			"byteOffset": 2976,
+			"byteOffset": 6288,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 2208,
+			"byteOffset": 3176,
 			"componentType": 5126,
-			"count": 62,
+			"count": 25,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 3360,
+			"componentType": 5126,
+			"count": 25,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 3276,
+			"componentType": 5126,
+			"count": 60,
 			"max": [
 				3.33333325
 			],
@@ -2702,17 +2944,39 @@
 		},
 		{
 			"bufferView": 4,
-			"byteOffset": 3720,
+			"byteOffset": 7008,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 2456,
+			"byteOffset": 3516,
 			"componentType": 5126,
-			"count": 62,
+			"count": 25,
+			"max": [
+				3.33333325
+			],
+			"min": [
+				0
+			],
+			"type": "SCALAR",
+			"name": "accessorAnimationInput"
+		},
+		{
+			"bufferView": 5,
+			"byteOffset": 3760,
+			"componentType": 5126,
+			"count": 25,
+			"type": "VEC4",
+			"name": "accessorAnimationRotations"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 3616,
+			"componentType": 5126,
+			"count": 60,
 			"max": [
 				3.33333325
 			],
@@ -2724,17 +2988,17 @@
 		},
 		{
 			"bufferView": 4,
-			"byteOffset": 4464,
+			"byteOffset": 7728,
 			"componentType": 5126,
-			"count": 62,
+			"count": 60,
 			"type": "VEC3",
 			"name": "accessorAnimationPositions"
 		},
 		{
 			"bufferView": 3,
-			"byteOffset": 2704,
+			"byteOffset": 3856,
 			"componentType": 5126,
-			"count": 60,
+			"count": 25,
 			"max": [
 				3.33333325
 			],
@@ -2746,273 +3010,9 @@
 		},
 		{
 			"bufferView": 5,
-			"byteOffset": 3872,
+			"byteOffset": 4160,
 			"componentType": 5126,
-			"count": 60,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 2944,
-			"componentType": 5126,
-			"count": 60,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 4832,
-			"componentType": 5126,
-			"count": 60,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 3184,
-			"componentType": 5126,
-			"count": 60,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 5792,
-			"componentType": 5126,
-			"count": 60,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 3424,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 4,
-			"byteOffset": 5208,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC3",
-			"name": "accessorAnimationPositions"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 3672,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 6752,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 3920,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 4,
-			"byteOffset": 5952,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC3",
-			"name": "accessorAnimationPositions"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 4168,
-			"componentType": 5126,
-			"count": 60,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 7744,
-			"componentType": 5126,
-			"count": 60,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 4408,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 4,
-			"byteOffset": 6696,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC3",
-			"name": "accessorAnimationPositions"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 4656,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 8704,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 4904,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 4,
-			"byteOffset": 7440,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC3",
-			"name": "accessorAnimationPositions"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 5152,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 9696,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC4",
-			"name": "accessorAnimationRotations"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 5400,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 4,
-			"byteOffset": 8184,
-			"componentType": 5126,
-			"count": 62,
-			"type": "VEC3",
-			"name": "accessorAnimationPositions"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 5648,
-			"componentType": 5126,
-			"count": 62,
-			"max": [
-				3.33333325
-			],
-			"min": [
-				0
-			],
-			"type": "SCALAR",
-			"name": "accessorAnimationInput"
-		},
-		{
-			"bufferView": 5,
-			"byteOffset": 10688,
-			"componentType": 5126,
-			"count": 62,
+			"count": 25,
 			"type": "VEC4",
 			"name": "accessorAnimationRotations"
 		}
@@ -3040,26 +3040,26 @@
 		{
 			"buffer": 0,
 			"byteOffset": 254184,
-			"byteLength": 5896,
+			"byteLength": 3956,
 			"name": "bufferViewAnimationFloatScalar"
 		},
 		{
 			"buffer": 0,
-			"byteOffset": 260080,
-			"byteLength": 8928,
+			"byteOffset": 258140,
+			"byteLength": 8448,
 			"name": "bufferViewAnimationFloatVec3"
 		},
 		{
 			"buffer": 0,
-			"byteOffset": 269008,
-			"byteLength": 11680,
+			"byteOffset": 266588,
+			"byteLength": 4560,
 			"name": "bufferViewAnimationFloatVec4"
 		}
 	],
 	"buffers": [
 		{
 			"uri": "AnimatedMeshCameraLight.bin",
-			"byteLength": 280688
+			"byteLength": 271148
 		}
 	],
 	"animations": [
