@@ -6,6 +6,8 @@ import bpy
 #===============================================================================
 class FCurveAnimatable:
     def define_animations(self, object, supportsRotation, supportsPosition, supportsScaling, xOffsetForRotation = 0):
+        currentActionOnly = bpy.context.scene.currentActionOnly
+        sceneLevelAutoAnimate = bpy.context.scene.autoAnimate
 
         # just because a sub-class can be animatable does not mean it is
         self.animationsPresent = object.animation_data and object.animation_data.action
@@ -35,6 +37,10 @@ class FCurveAnimatable:
             currentAction = object.animation_data.action
             currentFrame = bpy.context.scene.frame_current
             for action in bpy.data.actions:
+                
+                if currentActionOnly and currentAction.name != action.name:
+                    continue
+                
                 # get the range / assigning the action to the object
                 animationRange = AnimationRange.actionPrep(object, action, False, frameOffset)
                 if animationRange is None:
@@ -67,7 +73,7 @@ class FCurveAnimatable:
             if supportsScaling and len(scaleAnimation.frames) > 0:
                  self.animations.append(scaleAnimation)
 
-            if (hasattr(object.data, "autoAnimate") and object.data.autoAnimate):
+            if (sceneLevelAutoAnimate or hasattr(object.data, "autoAnimate") and object.data.autoAnimate):
                 self.autoAnimate = True
                 self.autoAnimateFrom = bpy.context.scene.frame_end
                 self.autoAnimateTo =  0
