@@ -81,6 +81,9 @@
     <Compile Include="..\BabylonActionCallback.cs">
       <Link>BabylonActionCallback.cs</Link>
     </Compile>
+    <Compile Include="..\BabylonAnimationActionItem.cs">
+      <Link>BabylonAnimationActionItem.cs</Link>
+    </Compile>
     <Compile Include="..\BabylonExportActionItem.cs">
       <Link>BabylonExportActionItem.cs</Link>
     </Compile>
@@ -157,6 +160,14 @@
     <Compile Include="..\Forms\ActionsBuilderForm.designer.cs">
       <Link>Forms\ActionsBuilderForm.designer.cs</Link>
       <DependentUpon>ActionsBuilderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\AnimationForm.cs">
+      <Link>Forms\AnimationForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\AnimationForm.designer.cs">
+      <Link>Forms\AnimationForm.designer.cs</Link>
+      <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="..\Forms\CameraPropertiesForm.cs">
       <Link>Forms\CameraPropertiesForm.cs</Link>
@@ -250,6 +261,10 @@
     <EmbeddedResource Include="..\Forms\ActionsBuilderForm.resx">
       <Link>Forms\ActionsBuilderForm.resx</Link>
       <DependentUpon>ActionsBuilderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\AnimationForm.resx">
+      <Link>Forms\AnimationForm.resx</Link>
+      <DependentUpon>AnimationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\CameraPropertiesForm.resx">
       <Link>Forms\CameraPropertiesForm.resx</Link>
