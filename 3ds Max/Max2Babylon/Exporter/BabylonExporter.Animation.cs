@@ -82,7 +82,7 @@ namespace Max2Babylon
             var keys = new List<BabylonAnimationKey>();
             for (int indexKey = 0; indexKey < gameKeyTab.Count; indexKey++)
             {
-#if MAX2017
+#if MAX2017 || MAX2018
                 var indexer = indexKey;
 #else
                     var indexer = new IntPtr(indexKey);

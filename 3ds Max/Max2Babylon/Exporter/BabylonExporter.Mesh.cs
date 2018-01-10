@@ -65,7 +65,7 @@ namespace Max2Babylon
                 while (babylonMasterMesh == null &&
                        index < tabs.Count)
                 {
-#if MAX2017
+#if MAX2017 || MAX2018
                     var indexer = index;
 #else
                     var indexer = new IntPtr(index);
@@ -162,7 +162,7 @@ namespace Max2Babylon
             }
 
             // Misc.
-#if MAX2017
+#if MAX2017 || MAX2018
             babylonMesh.isVisible = meshNode.MaxNode.Renderable;
             babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows;
             babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics;
@@ -175,10 +175,7 @@ namespace Max2Babylon
             babylonMesh.showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox");
             babylonMesh.showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox");
             babylonMesh.alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000);
-
-            // Actions
-            babylonMesh.actions = ExportNodeAction(meshNode);
-
+            
             // Collisions
             babylonMesh.checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions");
 
@@ -286,7 +283,7 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017
+#if MAX2017 || MAX2018
                     var indexer = i;
 #else
                     var indexer = new IntPtr(i);
@@ -499,14 +496,14 @@ namespace Max2Babylon
                     ITab<IFaceEx> materialFaces = unskinnedMesh.GetFacesFromMatID(materialId);
                     for (int j = 0; j < materialFaces.Count; ++j)
                     {
-#if MAX2017
+#if MAX2017 || MAX2018
                         var faceIndexer = j;
 #else
                             var faceIndexer = new IntPtr(j);
 #endif
                         var face = materialFaces[faceIndexer];
 
-#if !MAX2017
+#if !MAX2017 && !MAX2018
                             Marshal.FreeHGlobal(faceIndexer);
 #endif
                         ExtractFace(skin, unskinnedMesh, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
