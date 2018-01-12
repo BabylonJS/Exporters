@@ -424,7 +424,7 @@ namespace Max2Babylon
 
         public static bool HasParent(this IINode node)
         {
-            return node.ParentNode != null && node.ParentNode.ObjectRef != null;
+            return node.ParentNode != null && !node.ParentNode.IsRootNode;
         }
 
         public static bool IsInstance(this IAnimatable node)
