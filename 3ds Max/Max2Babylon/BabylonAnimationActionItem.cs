@@ -1,32 +1,59 @@
 ﻿using System.Windows.Forms;
+using System;
 using ActionItem = Autodesk.Max.Plugins.ActionItem;
 
 namespace Max2Babylon
 {
 	public class BabylonAnimationActionItem : ActionItem
 	{
-		private AnimationForm form;
+        NativeWindow parentWindow;
+        private AnimationForm form;
 
 		public override bool ExecuteAction()
 		{
 			if (form == null || form.IsDisposed)
 				form = new AnimationForm(this);
-			form.Show();
+
+            if (parentWindow == null)
+                parentWindow = new NativeWindow();
+
+            if (parentWindow.Handle == IntPtr.Zero)
+                parentWindow.AssignHandle(Loader.Core.MAXHWnd);
+
+            form.Show(parentWindow);
 			form.BringToFront();
 			form.WindowState = FormWindowState.Normal;
 
 			return true;
 		}
 
-		public void Close()
+        public override void Dispose()
+        {
+            Cleanup();
+            base.Dispose();
+        }
+
+        public void Close()
 		{
-			if (form == null)
-			{
-				return;
-			}
-			form.Dispose();
-			form = null;
-		}
+            Cleanup();
+        }
+
+        private void Cleanup()
+        {
+            if (form != null)
+            {
+                if (!form.IsDisposed)
+                {
+                    form.Dispose();
+                }
+                form = null;
+            }
+            if (parentWindow != null)
+            {
+                parentWindow.ReleaseHandle();
+                parentWindow = null;
+            }
+        }
 
 		public override int Id_
 		{
