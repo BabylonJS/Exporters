@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Autodesk.Max;
+using System;
 using System.Collections.Generic;
 
 namespace Max2Babylon
@@ -8,61 +8,76 @@ namespace Max2Babylon
 
     public partial class AnimationForm : Form
     {
+        const string s_AnimationListPropertyName = "babylonjs_AnimationList";
+
         private readonly BabylonAnimationActionItem babylonAnimationAction;
-        private List<AnimationGroupInfo> animationInfos;
 
-		public AnimationForm(BabylonAnimationActionItem babylonAnimationAction)
-		{
-			InitializeComponent();
+        #region Initialization
 
-			this.babylonAnimationAction = babylonAnimationAction;
+        public AnimationForm(BabylonAnimationActionItem babylonAnimationAction)
+        {
+            InitializeComponent();
+
+            this.babylonAnimationAction = babylonAnimationAction;
         }
 
-        private void AnimationForm_Load(object sender, System.EventArgs e)
+        private void AnimationForm_Load(object sender, EventArgs e)
         {
-            // populate animation list
-            // use some scene-wide properties?
-            //var rootNodes = Tools.GetSceneRootNodes(Loader.Global.IGameInterface);
-            //foreach(IIGameNode node in rootNodes)
-            //{
-            //    for(int i = 0; i < node.ChildCount; ++i)
-            //    {
-            //        IIGameNode child = node.GetNodeChild(i);
-            //    }
-            //}
-
-            // for now, dummy data
-            animationList.BeginUpdate();
-            animationList.Items.Add(new AnimationGroupInfo { Name = "Shoot", frameStart = 0, frameEnd = 10, NodeIDs = new List<int>() { 0, 1, 2 } });
-            animationList.Items.Add(new AnimationGroupInfo { Name = "Walk", frameStart = 0, frameEnd = 10, NodeIDs = new List<int>() { 3, 4, 5 } });
-            animationList.Items.Add(new AnimationGroupInfo { Name = "Run", frameStart = 5, frameEnd = 15, NodeIDs = new List<int>() { 0, 1, 2 } });
-            animationList.EndUpdate();
+            string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
             
+            animationList.BeginUpdate();
+            foreach (string propertyNameStr in animationPropertyNames)
+            {
+                AnimationGroupInfo info = new AnimationGroupInfo();
+                info.LoadFromData(propertyNameStr);
+                animationList.Items.Add(info);
+            }
+            animationList.EndUpdate();
+
+            animationGroupControl.InfoSaved += animationGroupControl_InfoSaved;
+            animationGroupControl.SetAnimationGroupInfo(null);
         }
-        
-        private void createAnimationButton_Click(object sender, System.EventArgs e)
+
+        #endregion
+
+        #region State change events
+
+        private void createAnimationButton_Click(object sender, EventArgs e)
         {
-            // get a unique name
             AnimationGroupInfo info = new AnimationGroupInfo();
+
+            // get a unique name and guid
             string baseName = info.Name;
             int i = 0;
-            while (true)
+            bool hasConflict = true;
+            while (hasConflict)
             {
-                bool found = false;
+                hasConflict = false;
                 foreach (AnimationGroupInfo animGroupinfo in animationList.Items)
                 {
-                    if (animGroupinfo.Name.Equals(info.Name))
+                    if (info.Name.Equals(animGroupinfo.Name))
                     {
                         info.Name = baseName + i.ToString();
                         ++i;
-                        found = true;
+                        hasConflict = true;
+                        break;
+                    }
+                    if (info.SerializedId.Equals(animGroupinfo.SerializedId))
+                    {
+                        info.SerializedId = Guid.NewGuid();
+                        hasConflict = true;
                         break;
                     }
                 }
-                if (!found)
-                    break;
             }
-            
+
+            // save info and animation list entry
+            info.SaveToData();
+            List<string> animationGuidList = new List<string>(Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName));
+            animationGuidList.Add(info.GetPropertyName());
+            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationGuidList);
+            Loader.Global.SetSaveRequiredFlag(true, false);
+
             animationList.BeginUpdate();
             int index = animationList.Items.Add(info);
             animationList.EndUpdate();
@@ -70,19 +85,62 @@ namespace Max2Babylon
             animationList.SetSelected(index, true);
         }
 
-        private void deleteAnimationButton_Click(object sender, System.EventArgs e)
+        private void deleteAnimationButton_Click(object sender, EventArgs e)
         {
             if (animationList.SelectedIndex < 0)
                 return;
 
+            AnimationGroupInfo selectedItem = animationList.SelectedItem as AnimationGroupInfo;
+            if (selectedItem != null)
+            {
+                // delete animation list entry
+                List<string> animationGuidList = new List<string>(Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName));
+                animationGuidList.Remove(selectedItem.GetPropertyName());
+                Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationGuidList);
+
+                // delete item
+                selectedItem.DeleteFromData();
+                
+                Loader.Global.SetSaveRequiredFlag(true, false);
+            }
             int selectedIndex = animationList.SelectedIndex;
             animationList.Items.RemoveAt(animationList.SelectedIndex);
-            animationList.SelectedIndex = System.Math.Min(selectedIndex, animationList.Items.Count-1);
+            animationList.SelectedIndex = Math.Min(selectedIndex, animationList.Items.Count - 1);
         }
 
-        private void animationList_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void animationList_SelectedIndexChanged(object sender, EventArgs e)
         {
             animationGroupControl.SetAnimationGroupInfo(animationList.SelectedItem as AnimationGroupInfo);
         }
+
+        private void animationGroupControl_InfoSaved(AnimationGroupInfo info)
+        {
+            info.SaveToData();
+            Loader.Global.SetSaveRequiredFlag(true, false);
+
+            // hacky but effective way to refresh the list item without requiring data bindings
+            animationList.Items[animationList.SelectedIndex] = animationList.Items[animationList.SelectedIndex];
+        }
+
+        #endregion
+
+        #region Windows.Form Events
+
+        private void AnimationForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            babylonAnimationAction.Close();
+        }
+
+        private void AnimationForm_Activated(object sender, EventArgs e)
+        {
+            Loader.Global.DisableAccelerators();
+        }
+
+        private void AnimationForm_Deactivate(object sender, EventArgs e)
+        {
+            Loader.Global.EnableAccelerators();
+        }
+
+        #endregion
     }
 }

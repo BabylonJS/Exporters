@@ -28,81 +28,159 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.deleteAnimationButton = new System.Windows.Forms.Button();
+            System.Windows.Forms.Panel panel1;
+            System.Windows.Forms.Panel panel2;
             this.createAnimationButton = new System.Windows.Forms.Button();
+            this.deleteAnimationButton = new System.Windows.Forms.Button();
             this.animationList = new System.Windows.Forms.ListBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.animationGroupControl = new Max2Babylon.AnimationGroupControl();
+            panel1 = new System.Windows.Forms.Panel();
+            panel2 = new System.Windows.Forms.Panel();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // panel1
             // 
-            this.groupBox1.Controls.Add(this.deleteAnimationButton);
-            this.groupBox1.Controls.Add(this.createAnimationButton);
-            this.groupBox1.Controls.Add(this.animationList);
-            this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(168, 537);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Animations";
-            // 
-            // deleteAnimationButton
-            // 
-            this.deleteAnimationButton.Location = new System.Drawing.Point(87, 19);
-            this.deleteAnimationButton.Name = "deleteAnimationButton";
-            this.deleteAnimationButton.Size = new System.Drawing.Size(75, 23);
-            this.deleteAnimationButton.TabIndex = 2;
-            this.deleteAnimationButton.Text = "Delete";
-            this.deleteAnimationButton.UseVisualStyleBackColor = true;
-            this.deleteAnimationButton.Click += new System.EventHandler(this.deleteAnimationButton_Click);
+            panel1.AutoSize = true;
+            panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            panel1.Controls.Add(this.createAnimationButton);
+            panel1.Controls.Add(this.deleteAnimationButton);
+            panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            panel1.Location = new System.Drawing.Point(3, 16);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(171, 29);
+            panel1.TabIndex = 4;
             // 
             // createAnimationButton
             // 
-            this.createAnimationButton.Location = new System.Drawing.Point(6, 19);
+            this.createAnimationButton.AutoSize = true;
+            this.createAnimationButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.createAnimationButton.Location = new System.Drawing.Point(3, 3);
             this.createAnimationButton.Name = "createAnimationButton";
-            this.createAnimationButton.Size = new System.Drawing.Size(75, 23);
+            this.createAnimationButton.Size = new System.Drawing.Size(48, 23);
             this.createAnimationButton.TabIndex = 1;
             this.createAnimationButton.Text = "Create";
             this.createAnimationButton.UseVisualStyleBackColor = true;
             this.createAnimationButton.Click += new System.EventHandler(this.createAnimationButton_Click);
             // 
+            // deleteAnimationButton
+            // 
+            this.deleteAnimationButton.AutoSize = true;
+            this.deleteAnimationButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.deleteAnimationButton.Location = new System.Drawing.Point(57, 3);
+            this.deleteAnimationButton.Name = "deleteAnimationButton";
+            this.deleteAnimationButton.Size = new System.Drawing.Size(48, 23);
+            this.deleteAnimationButton.TabIndex = 2;
+            this.deleteAnimationButton.Text = "Delete";
+            this.deleteAnimationButton.UseVisualStyleBackColor = true;
+            this.deleteAnimationButton.Click += new System.EventHandler(this.deleteAnimationButton_Click);
+            // 
+            // panel2
+            // 
+            panel2.AutoSize = true;
+            panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            panel2.Controls.Add(this.animationList);
+            panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel2.Location = new System.Drawing.Point(3, 45);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(171, 400);
+            panel2.TabIndex = 5;
+            // 
             // animationList
             // 
-            this.animationList.FormattingEnabled = true;
-            this.animationList.Location = new System.Drawing.Point(6, 48);
-            this.animationList.MultiColumn = true;
+            this.animationList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.animationList.Location = new System.Drawing.Point(0, 0);
             this.animationList.Name = "animationList";
-            this.animationList.Size = new System.Drawing.Size(156, 186);
+            this.animationList.ScrollAlwaysVisible = true;
+            this.animationList.Size = new System.Drawing.Size(171, 400);
             this.animationList.Sorted = true;
             this.animationList.TabIndex = 0;
             this.animationList.SelectedIndexChanged += new System.EventHandler(this.animationList_SelectedIndexChanged);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(panel2);
+            this.groupBox1.Controls.Add(panel1);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(177, 448);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Animations";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.Location = new System.Drawing.Point(12, 12);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.animationGroupControl);
+            this.splitContainer1.Size = new System.Drawing.Size(610, 448);
+            this.splitContainer1.SplitterDistance = 177;
+            this.splitContainer1.TabIndex = 5;
+            // 
             // animationGroupControl
             // 
-            this.animationGroupControl.Location = new System.Drawing.Point(186, 12);
+            this.animationGroupControl.AutoSize = true;
+            this.animationGroupControl.BackColor = System.Drawing.SystemColors.Control;
+            this.animationGroupControl.ChangedTextColor = System.Drawing.Color.Red;
+            this.animationGroupControl.DefaultTextColor = System.Drawing.Color.Black;
+            this.animationGroupControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.animationGroupControl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.animationGroupControl.Location = new System.Drawing.Point(0, 0);
             this.animationGroupControl.MinimumSize = new System.Drawing.Size(100, 100);
             this.animationGroupControl.Name = "animationGroupControl";
-            this.animationGroupControl.Size = new System.Drawing.Size(450, 403);
+            this.animationGroupControl.Size = new System.Drawing.Size(429, 448);
             this.animationGroupControl.TabIndex = 3;
             // 
             // AnimationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 561);
-            this.Controls.Add(this.animationGroupControl);
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(634, 472);
+            this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MinimumSize = new System.Drawing.Size(850, 400);
             this.Name = "AnimationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Babylon.js - Animation tool";
-            this.TopMost = true;
+            this.Text = "Babylon.js - Animation Groups";
+            this.Activated += new System.EventHandler(this.AnimationForm_Activated);
+            this.Deactivate += new System.EventHandler(this.AnimationForm_Deactivate);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AnimationForm_FormClosed);
             this.Load += new System.EventHandler(this.AnimationForm_Load);
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            panel2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -110,9 +188,10 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ListBox animationList;
         private System.Windows.Forms.Button createAnimationButton;
         private System.Windows.Forms.Button deleteAnimationButton;
         private Max2Babylon.AnimationGroupControl animationGroupControl;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ListBox animationList;
     }
 }
