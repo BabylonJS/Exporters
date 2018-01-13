@@ -151,10 +151,11 @@ namespace Max2Babylon
 
         void SetTreeView(AnimationGroupInfo info)
         {
+            nodeTreeView.Nodes.Clear();
+            nodeMap.Clear();
+
             if (info == null)
             {
-                nodeTreeView.Nodes.Clear();
-                nodeMap.Clear();
                 return;
             }
 
@@ -162,19 +163,22 @@ namespace Max2Babylon
             {
                 uint nodeHandle = info.NodeHandles[i];
                 TreeNode treeNode;
-                if (nodeMap.TryGetValue(nodeHandle, out treeNode))
-                {
-                    continue;
-                }
 
-                foreach(IINode node in Loader.Core.RootNode.Nodes())
+                // get visual node from tree or create it
+                if (!nodeMap.TryGetValue(nodeHandle, out treeNode))
                 {
-                    if(nodeHandle.Equals(node.Handle))
+                    foreach (IINode node in Loader.Core.RootNode.Nodes())
                     {
-                        AddNodeToTreeRecursive(node);
-                        break;
+                        if (nodeHandle.Equals(node.Handle))
+                        {
+                            treeNode = AddNodeToTreeRecursive(node);
+                            break;
+                        }
                     }
                 }
+
+                // set color for nodes that belong to this animation
+                treeNode.ForeColor = Color.DarkGreen;
             }
         }
 
@@ -280,12 +284,42 @@ namespace Max2Babylon
             SetFieldsFromInfo(currentInfo);
         }
 
+
         private void addSelectedButton_Click(object sender, EventArgs e)
         {
+            if (currentInfo == null)
+                return;
+
             for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
             {
-                AddNodeToTreeRecursive(Loader.Core.GetSelNode(i));
+                IINode node = Loader.Core.GetSelNode(i);
+                uint nodeHandle = node.Handle;
+                TreeNode treeNode = AddNodeToTreeRecursive(node);
+
+                if(!currentInfo.NodeHandles.Contains(nodeHandle))
+                    currentInfo.NodeHandles.Add(nodeHandle);
             }
+
+            // rebuilds entire tree..
+            // todo: update tree view properly?
+            SetTreeView(currentInfo);
+        }
+
+        private void removeNodeButton_Click(object sender, EventArgs e)
+        {
+            if (currentInfo == null)
+                return;
+
+            TreeNode visualNode = nodeTreeView.SelectedNode;
+            IINode maxNode = visualNode.Tag as IINode;
+            uint nodeHandle = maxNode.Handle;
+
+            currentInfo.NodeHandles.Remove(nodeHandle);
+            visualNode.ForeColor = ForeColor;
+
+            // rebuilds entire tree..
+            // todo: update tree view properly?
+            SetTreeView(currentInfo);
         }
     }
 }

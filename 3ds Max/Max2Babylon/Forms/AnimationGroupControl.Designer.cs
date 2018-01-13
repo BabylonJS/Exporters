@@ -45,6 +45,7 @@
             this.startLabel = new System.Windows.Forms.Label();
             this.nodesGroupBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.removeNodeButton = new System.Windows.Forms.Button();
             nameFieldPanel = new System.Windows.Forms.Panel();
             optionsButtonsPanel = new System.Windows.Forms.Panel();
             nodeButtonsPanel = new System.Windows.Forms.Panel();
@@ -126,29 +127,31 @@
             // 
             nodeButtonsPanel.AutoSize = true;
             nodeButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            nodeButtonsPanel.Controls.Add(this.removeNodeButton);
             nodeButtonsPanel.Controls.Add(this.addSelectedButton);
             nodeButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             nodeButtonsPanel.Location = new System.Drawing.Point(3, 16);
             nodeButtonsPanel.Name = "nodeButtonsPanel";
-            nodeButtonsPanel.Size = new System.Drawing.Size(483, 30);
+            nodeButtonsPanel.Size = new System.Drawing.Size(483, 27);
             nodeButtonsPanel.TabIndex = 6;
             // 
             // addSelectedButton
             // 
-            this.addSelectedButton.Location = new System.Drawing.Point(3, 4);
+            this.addSelectedButton.AutoSize = true;
+            this.addSelectedButton.Location = new System.Drawing.Point(3, 1);
             this.addSelectedButton.Name = "addSelectedButton";
-            this.addSelectedButton.Size = new System.Drawing.Size(86, 23);
+            this.addSelectedButton.Size = new System.Drawing.Size(104, 23);
             this.addSelectedButton.TabIndex = 7;
-            this.addSelectedButton.Text = "Add Selected";
+            this.addSelectedButton.Text = "Add Scene Nodes";
             this.addSelectedButton.UseVisualStyleBackColor = true;
             this.addSelectedButton.Click += new System.EventHandler(this.addSelectedButton_Click);
             // 
             // nodeTreeView
             // 
             this.nodeTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nodeTreeView.Location = new System.Drawing.Point(3, 46);
+            this.nodeTreeView.Location = new System.Drawing.Point(3, 43);
             this.nodeTreeView.Name = "nodeTreeView";
-            this.nodeTreeView.Size = new System.Drawing.Size(483, 433);
+            this.nodeTreeView.Size = new System.Drawing.Size(483, 436);
             this.nodeTreeView.TabIndex = 0;
             // 
             // optionsGroupBox
@@ -248,6 +251,17 @@
             this.splitContainer1.SplitterDistance = 182;
             this.splitContainer1.TabIndex = 7;
             // 
+            // removeNodeButton
+            // 
+            this.removeNodeButton.AutoSize = true;
+            this.removeNodeButton.Location = new System.Drawing.Point(113, 1);
+            this.removeNodeButton.Name = "removeNodeButton";
+            this.removeNodeButton.Size = new System.Drawing.Size(102, 23);
+            this.removeNodeButton.TabIndex = 8;
+            this.removeNodeButton.Text = "Remove Selected";
+            this.removeNodeButton.UseVisualStyleBackColor = true;
+            this.removeNodeButton.Click += new System.EventHandler(this.removeNodeButton_Click);
+            // 
             // AnimationGroupControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -260,6 +274,7 @@
             nameFieldPanel.PerformLayout();
             optionsButtonsPanel.ResumeLayout(false);
             nodeButtonsPanel.ResumeLayout(false);
+            nodeButtonsPanel.PerformLayout();
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -292,5 +307,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button removeNodeButton;
     }
 }
