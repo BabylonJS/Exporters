@@ -168,3 +168,6 @@ localDev/src/*
 /localDev/src/index.js
 obj
 *.cache
+/3ds Max/Max2Babylon/2017/obj/Debug/Max2Babylon2017.csproj.CoreCompileInputs.cache
+/3ds Max/Max2Babylon/2015/obj/Debug/Max2Babylon2015.csproj.CoreCompileInputs.cache
+/3ds Max/GltfExport.Entities/obj/Debug/GLTFExport.Entities.csproj.CoreCompileInputs.cache
