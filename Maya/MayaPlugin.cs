@@ -1,7 +1,9 @@
 ﻿using Autodesk.Maya.OpenMaya;
+using Maya2Babylon.Forms;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 [assembly: MPxCommandClass(typeof(Maya2Babylon.toBabylon), "toBabylon")]
 [assembly: ExtensionPlugin(typeof(Maya2Babylon.MayaPlugin), "Any")]
@@ -37,6 +39,10 @@ namespace Maya2Babylon
         public override void doIt(MArgList argl)
         {
             MGlobal.displayInfo("Start Maya Plugin\n");
+            ExporterForm BabylonExport = new ExporterForm();
+            BabylonExport.Show();
+            BabylonExport.BringToFront();
+            BabylonExport.WindowState = FormWindowState.Normal;
             DoExport();
         }
 
