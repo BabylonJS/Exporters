@@ -11,8 +11,19 @@ namespace Max2Babylon
 
         private GLTFAnimation ExportNodeAnimation(BabylonNode babylonNode, GLTF gltf, GLTFNode gltfNode, BabylonScene babylonScene = null)
         {
-            var channelList = new List<GLTFChannel>();
-            var samplerList = new List<GLTFAnimationSampler>();
+            GLTFAnimation gltfAnimation = null;
+            if (gltf.AnimationsList.Count > 0)
+            {
+                gltfAnimation = gltf.AnimationsList[0];
+            }
+            else
+            {
+                gltfAnimation = new GLTFAnimation();
+                gltf.AnimationsList.Add(gltfAnimation);
+            }
+
+            var channelList = gltfAnimation.ChannelList;
+            var samplerList = gltfAnimation.SamplerList;
 
             if ((babylonNode.animations != null && babylonNode.animations.Length > 0) ||
                 (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0))
@@ -93,28 +104,24 @@ namespace Max2Babylon
                 }
             }
 
-            // Do not export empty arrays
-            if (channelList.Count > 0)
-            {
-                // Animation
-                var gltfAnimation = new GLTFAnimation
-                {
-                    channels = channelList.ToArray(),
-                    samplers = samplerList.ToArray()
-                };
-                gltf.AnimationsList.Add(gltfAnimation);
-                return gltfAnimation;
-            }
-            else
-            {
-                return null;
-            }
+            return gltfAnimation;
         }
 
         private GLTFAnimation ExportBoneAnimation(BabylonBone babylonBone, GLTF gltf, GLTFNode gltfNode)
         {
-            var channelList = new List<GLTFChannel>();
-            var samplerList = new List<GLTFAnimationSampler>();
+            GLTFAnimation gltfAnimation = null;
+            if (gltf.AnimationsList.Count > 0)
+            {
+                gltfAnimation = gltf.AnimationsList[0];
+            }
+            else
+            {
+                gltfAnimation = new GLTFAnimation();
+                gltf.AnimationsList.Add(gltfAnimation);
+            }
+
+            var channelList = gltfAnimation.ChannelList;
+            var samplerList = gltfAnimation.SamplerList;
 
             if (babylonBone.animation != null && babylonBone.animation.property == "_matrix")
             {
@@ -194,22 +201,7 @@ namespace Max2Babylon
                 }
             }
 
-            // Do not export empty arrays
-            if (channelList.Count > 0)
-            {
-                // Animation
-                var gltfAnimation = new GLTFAnimation
-                {
-                    channels = channelList.ToArray(),
-                    samplers = samplerList.ToArray()
-                };
-                gltf.AnimationsList.Add(gltfAnimation);
-                return gltfAnimation;
-            }
-            else
-            {
-                return null;
-            }
+            return gltfAnimation;
         }
 
         private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation)
