@@ -99,6 +99,9 @@
     <Compile Include="..\Exporter\ActionBuilder\BabylonExporter.Action.cs">
       <Link>Exporter\ActionBuilder\BabylonExporter.Action.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\AnimationGroup.cs">
+      <Link>Exporter\AnimationGroup.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Animation.cs">
       <Link>Exporter\BabylonExporter.Animation.cs</Link>
     </Compile>
@@ -200,6 +203,14 @@
     <Compile Include="..\Forms\LightPropertiesForm.Designer.cs">
       <Link>Forms\LightPropertiesForm.Designer.cs</Link>
       <DependentUpon>LightPropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\MaxNodeTreeView.cs">
+      <Link>Forms\MaxNodeTreeView.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Forms\MaxNodeTreeView.designer.cs">
+      <Link>Forms\MaxNodeTreeView.designer.cs</Link>
+      <DependentUpon>MaxNodeTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="..\Forms\ObjectPropertiesForm.cs">
       <Link>Forms\ObjectPropertiesForm.cs</Link>

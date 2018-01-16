@@ -146,7 +146,6 @@
             this.animationGroupControl.AutoSize = true;
             this.animationGroupControl.BackColor = System.Drawing.SystemColors.Control;
             this.animationGroupControl.ChangedTextColor = System.Drawing.Color.Red;
-            this.animationGroupControl.DefaultTextColor = System.Drawing.Color.Black;
             this.animationGroupControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.animationGroupControl.ForeColor = System.Drawing.SystemColors.ControlText;
             this.animationGroupControl.Location = new System.Drawing.Point(0, 0);
