@@ -97,8 +97,8 @@ namespace Max2Babylon
         public AnimationGroup()
         {
             // use current timeline frame range by default
-            frameStart = Loader.core.AnimRange.Start;
-            frameEnd = Loader.core.AnimRange.End;
+            frameStart = Loader.core.AnimRange.Start / Loader.Global.TicksPerFrame;
+            frameEnd = Loader.core.AnimRange.End / Loader.Global.TicksPerFrame;
         }
         public AnimationGroup(AnimationGroup other)
         {
