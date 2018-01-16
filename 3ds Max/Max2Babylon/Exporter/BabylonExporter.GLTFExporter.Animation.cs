@@ -7,8 +7,6 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private static float FPS_FACTOR = 30.0f; // TODO - Which FPS factor ?
-
         private GLTFAnimation ExportNodeAnimation(BabylonNode babylonNode, GLTF gltf, GLTFNode gltfNode, BabylonScene babylonScene = null)
         {
             GLTFAnimation gltfAnimation = null;
@@ -219,7 +217,7 @@ namespace Max2Babylon
             accessorInput.max = new float[] { float.MinValue };
             foreach (var babylonAnimationKey in babylonAnimation.keys)
             {
-                var inputValue = babylonAnimationKey.frame / FPS_FACTOR;
+                var inputValue = babylonAnimationKey.frame / (float)Loader.Global.FrameRate;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values
@@ -303,7 +301,7 @@ namespace Max2Babylon
 
             foreach (var frame in frames)
             {
-                var inputValue = frame / FPS_FACTOR;
+                var inputValue = frame / (float)Loader.Global.FrameRate;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values

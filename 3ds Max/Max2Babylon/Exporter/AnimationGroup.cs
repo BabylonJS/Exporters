@@ -94,7 +94,12 @@ namespace Max2Babylon
         private int frameEnd = 100;
         private List<uint> nodeHandles = new List<uint>();
 
-        public AnimationGroup() { }
+        public AnimationGroup()
+        {
+            // use current timeline frame range by default
+            frameStart = Loader.core.AnimRange.Start;
+            frameEnd = Loader.core.AnimRange.End;
+        }
         public AnimationGroup(AnimationGroup other)
         {
             DeepCopyFrom(other);
