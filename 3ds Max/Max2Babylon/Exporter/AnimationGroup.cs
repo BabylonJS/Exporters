@@ -16,6 +16,8 @@ namespace Max2Babylon
             get { return serializedId; }
             set
             {
+                if (value.Equals(SerializedId))
+                    return;
                 IsDirty = true;
                 serializedId = value;
             }
@@ -25,6 +27,8 @@ namespace Max2Babylon
             get { return name; }
             set
             {
+                if (value.Equals(name))
+                    return;
                 IsDirty = true;
                 name = value;
             }
@@ -34,6 +38,8 @@ namespace Max2Babylon
             get { return frameStart; }
             set
             {
+                if (value.Equals(frameStart))
+                    return;
                 IsDirty = true;
                 frameStart = value;
             }
@@ -43,6 +49,8 @@ namespace Max2Babylon
             get { return frameEnd; }
             set
             {
+                if (value.Equals(frameEnd))
+                    return;
                 IsDirty = true;
                 frameEnd = value;
             }
@@ -52,8 +60,27 @@ namespace Max2Babylon
             get { return nodeHandles.AsReadOnly(); }
             set
             {
+                // if the lists are equal, return early so isdirty is not touched
+                if (nodeHandles.Count == value.Count)
+                {
+                    bool equal = true;
+                    int i = 0;
+                    foreach(uint newNodeHandle in value)
+                    {
+                        if(!newNodeHandle.Equals(nodeHandles[i]))
+                        {
+                            equal = false;
+                            break;
+                        }
+                        ++i;
+                    }
+                    if (equal)
+                        return;
+                }
+
                 IsDirty = true;
-                nodeHandles = value.ToList();
+                nodeHandles.Clear();
+                nodeHandles.AddRange(value);
             }
         }
 

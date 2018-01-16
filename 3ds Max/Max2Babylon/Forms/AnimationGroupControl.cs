@@ -12,7 +12,9 @@ namespace Max2Babylon
 
         AnimationGroup currentInfo = null;
 
-        public event Action<AnimationGroup> InfoConfirmed;
+        // Typically called when the user presses confirm, but can also happen when scene changes are detected.
+        public event Action<AnimationGroup> InfoChanged;
+        public event Action<AnimationGroup> ConfirmPressed;
 
         public AnimationGroupControl()
         {
@@ -44,6 +46,16 @@ namespace Max2Babylon
                 MaxNodeTree.QueueSetNodes(info.NodeHandles, false);
                 MaxNodeTree.ApplyQueuedChanges(out List<uint> handles, false);
                 MaxNodeTree.EndUpdate();
+
+                // if the nodes changed on max' side, even though the data has not changed, the list may be different (e.g. deleted nodes)
+                // since we haven't loaded the list before, we can't compare it to the node tree
+                // thus, we save it, and the property checks for actual differences (and set isdirty to true)
+                info.NodeHandles = handles;
+
+                if (info.IsDirty)
+                {
+                    InfoChanged?.Invoke(info);
+                }
             }
             else
             {
@@ -111,31 +123,34 @@ namespace Max2Babylon
             if (currentInfo == null)
                 return;
 
+            AnimationGroup confirmedInfo = currentInfo;
+
             string newName = nameTextBox.Text;
 
             if (!int.TryParse(startTextBox.Text, out int newFrameStart))
-                newFrameStart = currentInfo.FrameStart;
+                newFrameStart = confirmedInfo.FrameStart;
             if (!int.TryParse(endTextBox.Text, out int newFrameEnd))
-                newFrameEnd = currentInfo.FrameEnd;
+                newFrameEnd = confirmedInfo.FrameEnd;
 
             List<uint> newHandles;
             bool nodesChanged = MaxNodeTree.ApplyQueuedChanges(out newHandles);
 
-            bool changed = newName != currentInfo.Name || newFrameStart != currentInfo.FrameStart || newFrameEnd != currentInfo.FrameEnd || nodesChanged;
+            bool changed = newName != confirmedInfo.Name || newFrameStart != confirmedInfo.FrameStart || newFrameEnd != confirmedInfo.FrameEnd || nodesChanged;
             
             if (!changed)
                 return;
 
-            currentInfo.Name = newName;
-            currentInfo.FrameStart = newFrameStart;
-            currentInfo.FrameEnd = newFrameEnd;
+            confirmedInfo.Name = newName;
+            confirmedInfo.FrameStart = newFrameStart;
+            confirmedInfo.FrameEnd = newFrameEnd;
 
             if(nodesChanged)
-                currentInfo.NodeHandles = newHandles;
+                confirmedInfo.NodeHandles = newHandles;
 
             ResetChangedTextBoxColors();
 
-            InfoConfirmed?.Invoke(currentInfo);
+            InfoChanged?.Invoke(confirmedInfo);
+            ConfirmPressed?.Invoke(confirmedInfo);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
