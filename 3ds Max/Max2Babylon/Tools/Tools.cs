@@ -16,18 +16,16 @@ namespace Max2Babylon
     {
         public static Random Random = new Random();
 
-        // -------------------------
-        // --------- Math ----------
-        // -------------------------
+        #region Math
 
         public static float Lerp(float min, float max, float t)
         {
             return min + (max - min) * t;
         }
 
-        // -------------------------
-        // --------- Array ----------
-        // -------------------------
+        #endregion
+
+        #region Array
 
         public static T[] SubArray<T>(T[] array, int startIndex, int count)
         {
@@ -54,9 +52,9 @@ namespace Max2Babylon
             return res;
         }
 
-        // -------------------------
-        // -- IIPropertyContainer --
-        // -------------------------
+        #endregion
+
+        #region IIPropertyContainer
 
         public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {
@@ -98,7 +96,11 @@ namespace Max2Babylon
             return value;
         }
 
+        #endregion
+
         // -------------------------
+
+        #region Max Helpers
 
         public static IntPtr GetNativeHandle(this INativeObject obj)
         {
@@ -420,6 +422,15 @@ namespace Max2Babylon
             return from n in rootNode.NodeTree() where n.ObjectRef != null && sids.Any(sid => n.EvalWorldState(0, false).Obj.SuperClassID == sid) select n;
         }
 
+        public static IINode FindChildNode(this IINode node, uint nodeHandle)
+        {
+            foreach (IINode childNode in node.NodeTree())
+                if (childNode.Handle.Equals(nodeHandle))
+                    return childNode;
+
+            return null;
+        }
+
         public static float ConvertFov(float fov)
         {
             return (float)(2.0f * Math.Atan(Math.Tan(fov / 2.0f) / Loader.Core.ImageAspRatio));
@@ -619,6 +630,8 @@ namespace Max2Babylon
             return true;
         }
 
+        #endregion
+
         #region UserProperties
 
         public static void SetStringProperty(this IINode node, string propertyName, string defaultState)
@@ -751,6 +764,8 @@ namespace Max2Babylon
 
         #endregion
 
+        #region Windows.Forms.Control Serialization
+
         public static bool PrepareCheckBox(CheckBox checkBox, IINode node, string propertyName, int defaultState = 0)
         {
             var state = node.GetBoolProperty(propertyName, defaultState);
@@ -882,6 +897,8 @@ namespace Max2Babylon
             }
         }
 
+        #endregion
+
         public static IMatrix3 ExtractCoordinates(IINode meshNode, BabylonAbstractMesh babylonMesh, bool exportQuaternionsInsteadOfEulers)
         {
             var wm = meshNode.GetWorldMatrix(0, meshNode.HasParent());
@@ -919,5 +936,22 @@ namespace Max2Babylon
 
             return wm;
         }
+
+        #region Windows.Forms Helpers
+
+        /// <summary>
+        /// Enumerates the whole tree, excluding the given node.
+        /// </summary>
+        public static IEnumerable<TreeNode> NodeTree(this TreeNode node)
+        {
+            foreach (TreeNode x in node.Nodes)
+            {
+                yield return x;
+                foreach (TreeNode y in x.NodeTree())
+                    yield return y;
+            }
+        }
+
+        #endregion
     }
 }
