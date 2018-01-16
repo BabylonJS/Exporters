@@ -33,10 +33,10 @@
             System.Windows.Forms.Panel nodeButtonsPanel;
             this.nameTextBox = new System.Windows.Forms.TextBox();
             this.nameLabel = new System.Windows.Forms.Label();
-            this.saveButton = new System.Windows.Forms.Button();
+            this.ConfirmButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.removeNodeButton = new System.Windows.Forms.Button();
             this.addSelectedButton = new System.Windows.Forms.Button();
-            this.nodeTreeView = new System.Windows.Forms.TreeView();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.endTextBox = new System.Windows.Forms.TextBox();
@@ -45,7 +45,7 @@
             this.startLabel = new System.Windows.Forms.Label();
             this.nodesGroupBox = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.removeNodeButton = new System.Windows.Forms.Button();
+            this.MaxNodeTree = new Max2Babylon.MaxNodeTreeView();
             nameFieldPanel = new System.Windows.Forms.Panel();
             optionsButtonsPanel = new System.Windows.Forms.Panel();
             nodeButtonsPanel = new System.Windows.Forms.Panel();
@@ -95,7 +95,7 @@
             // 
             optionsButtonsPanel.AutoSize = true;
             optionsButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            optionsButtonsPanel.Controls.Add(this.saveButton);
+            optionsButtonsPanel.Controls.Add(this.ConfirmButton);
             optionsButtonsPanel.Controls.Add(this.cancelButton);
             optionsButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             optionsButtonsPanel.Location = new System.Drawing.Point(3, 68);
@@ -103,21 +103,21 @@
             optionsButtonsPanel.Size = new System.Drawing.Size(176, 29);
             optionsButtonsPanel.TabIndex = 5;
             // 
-            // saveButton
+            // ConfirmButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(3, 3);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(50, 23);
-            this.saveButton.TabIndex = 5;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            this.ConfirmButton.Location = new System.Drawing.Point(3, 3);
+            this.ConfirmButton.Name = "ConfirmButton";
+            this.ConfirmButton.Size = new System.Drawing.Size(60, 23);
+            this.ConfirmButton.TabIndex = 5;
+            this.ConfirmButton.Text = "Confirm";
+            this.ConfirmButton.UseVisualStyleBackColor = true;
+            this.ConfirmButton.Click += new System.EventHandler(this.confirmButton_Click);
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(59, 3);
+            this.cancelButton.Location = new System.Drawing.Point(69, 3);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(50, 23);
+            this.cancelButton.Size = new System.Drawing.Size(60, 23);
             this.cancelButton.TabIndex = 6;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -135,6 +135,17 @@
             nodeButtonsPanel.Size = new System.Drawing.Size(483, 27);
             nodeButtonsPanel.TabIndex = 6;
             // 
+            // removeNodeButton
+            // 
+            this.removeNodeButton.AutoSize = true;
+            this.removeNodeButton.Location = new System.Drawing.Point(113, 1);
+            this.removeNodeButton.Name = "removeNodeButton";
+            this.removeNodeButton.Size = new System.Drawing.Size(102, 23);
+            this.removeNodeButton.TabIndex = 8;
+            this.removeNodeButton.Text = "Remove Selected";
+            this.removeNodeButton.UseVisualStyleBackColor = true;
+            this.removeNodeButton.Click += new System.EventHandler(this.removeNodeButton_Click);
+            // 
             // addSelectedButton
             // 
             this.addSelectedButton.AutoSize = true;
@@ -145,14 +156,6 @@
             this.addSelectedButton.Text = "Add Scene Nodes";
             this.addSelectedButton.UseVisualStyleBackColor = true;
             this.addSelectedButton.Click += new System.EventHandler(this.addSelectedButton_Click);
-            // 
-            // nodeTreeView
-            // 
-            this.nodeTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nodeTreeView.Location = new System.Drawing.Point(3, 43);
-            this.nodeTreeView.Name = "nodeTreeView";
-            this.nodeTreeView.Size = new System.Drawing.Size(483, 436);
-            this.nodeTreeView.TabIndex = 0;
             // 
             // optionsGroupBox
             // 
@@ -221,7 +224,7 @@
             // 
             this.nodesGroupBox.AutoSize = true;
             this.nodesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.nodesGroupBox.Controls.Add(this.nodeTreeView);
+            this.nodesGroupBox.Controls.Add(this.MaxNodeTree);
             this.nodesGroupBox.Controls.Add(nodeButtonsPanel);
             this.nodesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.nodesGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -251,16 +254,29 @@
             this.splitContainer1.SplitterDistance = 182;
             this.splitContainer1.TabIndex = 7;
             // 
-            // removeNodeButton
+            // MaxNodeTree
             // 
-            this.removeNodeButton.AutoSize = true;
-            this.removeNodeButton.Location = new System.Drawing.Point(113, 1);
-            this.removeNodeButton.Name = "removeNodeButton";
-            this.removeNodeButton.Size = new System.Drawing.Size(102, 23);
-            this.removeNodeButton.TabIndex = 8;
-            this.removeNodeButton.Text = "Remove Selected";
-            this.removeNodeButton.UseVisualStyleBackColor = true;
-            this.removeNodeButton.Click += new System.EventHandler(this.removeNodeButton_Click);
+            this.MaxNodeTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MaxNodeTree.DummyAddedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.DummyAddedForeColor = System.Drawing.SystemColors.GrayText;
+            this.MaxNodeTree.DummyDefaultBackColor = System.Drawing.SystemColors.Control;
+            this.MaxNodeTree.DummyDefaultForeColor = System.Drawing.SystemColors.GrayText;
+            this.MaxNodeTree.DummyRemovedBackColor = System.Drawing.Color.IndianRed;
+            this.MaxNodeTree.DummyRemovedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.DummyUpgradedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.DummyUpgradedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.Location = new System.Drawing.Point(3, 43);
+            this.MaxNodeTree.Name = "MaxNodeTree";
+            this.MaxNodeTree.NodeAddedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.NodeAddedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.NodeDefaultBackColor = System.Drawing.SystemColors.Window;
+            this.MaxNodeTree.NodeDefaultForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.NodeDowngradedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.NodeDowngradedForeColor = System.Drawing.SystemColors.GrayText;
+            this.MaxNodeTree.NodeRemovedBackColor = System.Drawing.Color.IndianRed;
+            this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.Size = new System.Drawing.Size(483, 436);
+            this.MaxNodeTree.TabIndex = 0;
             // 
             // AnimationGroupControl
             // 
@@ -295,14 +311,14 @@
 
         private System.Windows.Forms.GroupBox optionsGroupBox;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button ConfirmButton;
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Label endLabel;
         private System.Windows.Forms.TextBox endTextBox;
         private System.Windows.Forms.Label startLabel;
         private System.Windows.Forms.TextBox startTextBox;
         private System.Windows.Forms.GroupBox nodesGroupBox;
-        private System.Windows.Forms.TreeView nodeTreeView;
+        private Max2Babylon.MaxNodeTreeView MaxNodeTree;
         private System.Windows.Forms.Button addSelectedButton;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox nameTextBox;

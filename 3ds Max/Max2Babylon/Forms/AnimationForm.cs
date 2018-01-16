@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 namespace Max2Babylon
 {
-    using AnimationGroupInfo = AnimationGroupControl.AnimationGroupInfo;
-
     public partial class AnimationForm : Form
     {
         const string s_AnimationListPropertyName = "babylonjs_AnimationList";
@@ -28,13 +26,13 @@ namespace Max2Babylon
             animationList.BeginUpdate();
             foreach (string propertyNameStr in animationPropertyNames)
             {
-                AnimationGroupInfo info = new AnimationGroupInfo();
+                AnimationGroup info = new AnimationGroup();
                 info.LoadFromData(propertyNameStr);
                 animationList.Items.Add(info);
             }
             animationList.EndUpdate();
 
-            animationGroupControl.InfoSaved += animationGroupControl_InfoSaved;
+            animationGroupControl.InfoConfirmed += animationGroupControl_InfoSaved;
             animationGroupControl.SetAnimationGroupInfo(null);
         }
 
@@ -44,7 +42,7 @@ namespace Max2Babylon
 
         private void createAnimationButton_Click(object sender, EventArgs e)
         {
-            AnimationGroupInfo info = new AnimationGroupInfo();
+            AnimationGroup info = new AnimationGroup();
 
             // get a unique name and guid
             string baseName = info.Name;
@@ -53,7 +51,7 @@ namespace Max2Babylon
             while (hasConflict)
             {
                 hasConflict = false;
-                foreach (AnimationGroupInfo animGroupinfo in animationList.Items)
+                foreach (AnimationGroup animGroupinfo in animationList.Items)
                 {
                     if (info.Name.Equals(animGroupinfo.Name))
                     {
@@ -90,7 +88,7 @@ namespace Max2Babylon
             if (animationList.SelectedIndex < 0)
                 return;
 
-            AnimationGroupInfo selectedItem = animationList.SelectedItem as AnimationGroupInfo;
+            AnimationGroup selectedItem = animationList.SelectedItem as AnimationGroup;
             if (selectedItem != null)
             {
                 // delete animation list entry
@@ -110,10 +108,10 @@ namespace Max2Babylon
 
         private void animationList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            animationGroupControl.SetAnimationGroupInfo(animationList.SelectedItem as AnimationGroupInfo);
+            animationGroupControl.SetAnimationGroupInfo(animationList.SelectedItem as AnimationGroup);
         }
 
-        private void animationGroupControl_InfoSaved(AnimationGroupInfo info)
+        private void animationGroupControl_InfoSaved(AnimationGroup info)
         {
             info.SaveToData();
             Loader.Global.SetSaveRequiredFlag(true, false);
