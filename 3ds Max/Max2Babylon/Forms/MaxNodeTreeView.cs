@@ -135,6 +135,12 @@ namespace Max2Babylon
                 {
                     IINode node = Loader.Core.RootNode.FindChildNode(nodeHandle);
 
+                    // node does not exist (anymore)
+                    if (node == null)
+                    {
+                        continue;
+                    }
+
                     visualNode = QueueAddNodeRecursively(node, true);
                 }
 

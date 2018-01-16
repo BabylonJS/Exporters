@@ -91,7 +91,7 @@
             panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             panel2.Location = new System.Drawing.Point(3, 45);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(171, 400);
+            panel2.Size = new System.Drawing.Size(171, 389);
             panel2.TabIndex = 5;
             // 
             // AnimationListBox
@@ -100,10 +100,10 @@
             this.AnimationListBox.HorizontalScrollbar = true;
             this.AnimationListBox.Location = new System.Drawing.Point(0, 0);
             this.AnimationListBox.Name = "AnimationListBox";
-            this.AnimationListBox.Size = new System.Drawing.Size(171, 400);
+            this.AnimationListBox.Size = new System.Drawing.Size(171, 389);
             this.AnimationListBox.Sorted = true;
             this.AnimationListBox.TabIndex = 0;
-            this.AnimationListBox.SelectedIndexChanged += new System.EventHandler(this.animationList_SelectedIndexChanged);
+            this.AnimationListBox.SelectedValueChanged += new System.EventHandler(this.animationList_SelectedValueChanged);
             // 
             // groupBox1
             // 
@@ -115,7 +115,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(177, 448);
+            this.groupBox1.Size = new System.Drawing.Size(177, 437);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Animations";
@@ -137,7 +137,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.animationGroupControl);
-            this.splitContainer1.Size = new System.Drawing.Size(610, 448);
+            this.splitContainer1.Size = new System.Drawing.Size(660, 437);
             this.splitContainer1.SplitterDistance = 177;
             this.splitContainer1.TabIndex = 5;
             // 
@@ -151,7 +151,7 @@
             this.animationGroupControl.Location = new System.Drawing.Point(0, 0);
             this.animationGroupControl.MinimumSize = new System.Drawing.Size(100, 100);
             this.animationGroupControl.Name = "animationGroupControl";
-            this.animationGroupControl.Size = new System.Drawing.Size(429, 448);
+            this.animationGroupControl.Size = new System.Drawing.Size(479, 437);
             this.animationGroupControl.TabIndex = 3;
             // 
             // AnimationForm
@@ -159,7 +159,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(634, 472);
+            this.ClientSize = new System.Drawing.Size(684, 461);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "AnimationForm";

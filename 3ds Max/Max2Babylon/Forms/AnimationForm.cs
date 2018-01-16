@@ -31,7 +31,8 @@ namespace Max2Babylon
             AnimationListBox.ClearSelected();
 
             animationGroupControl.SetAnimationGroupInfo(null);
-            animationGroupControl.InfoConfirmed += animationGroupControl_InfoConfirmed;
+            animationGroupControl.InfoChanged += animationGroupControl_InfoChanged;
+            animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
         }
 
         #endregion
@@ -93,21 +94,28 @@ namespace Max2Babylon
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
-            
-            AnimationListBox.SelectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
+
+            // get new selected item at the current index, if any
+            selectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
+            selectedItem = selectedIndex < 0 ? null : (AnimationGroup)AnimationListBox.Items[selectedIndex];
+            AnimationListBox.SelectedItem = selectedItem;
         }
 
-        private void animationList_SelectedIndexChanged(object sender, EventArgs e)
+        private void animationList_SelectedValueChanged(object sender, EventArgs e)
         {
             animationGroupControl.SetAnimationGroupInfo((AnimationGroup)AnimationListBox.SelectedItem);
         }
 
-        private void animationGroupControl_InfoConfirmed(AnimationGroup info)
+        // Typically called when the user presses confirm, but can also happen when scene changes are detected.
+        private void animationGroupControl_InfoChanged(AnimationGroup info)
         {
             info.SaveToData();
             animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
-            
+        }
+
+        private void animationGroupControl_ConfirmPressed(AnimationGroup info)
+        {
             AnimationListBox.SelectedItem = info;
         }
 
