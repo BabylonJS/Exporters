@@ -13,7 +13,7 @@ namespace Max2Babylon
     // an overview of what functions to use with this control
     public interface IMaxNodeTreeView
     {
-        void QueueSetNodes(IEnumerable<uint> nodeHandles);
+        void QueueSetNodes(IEnumerable<uint> nodeHandles, bool doBeginUpdate = true);
 
         void QueueAddNode(uint nodeHandle);
         void QueueAddNode(IINode node);
@@ -22,11 +22,34 @@ namespace Max2Babylon
         void QueueRemoveNode(IINode node);
         void QueueRemoveNode(VisualNode visualNode);
 
-        bool ApplyQueuedChanges(out List<uint> nodeHandles);
+        bool ApplyQueuedChanges(out List<uint> nodeHandles, bool doBeginUpdate = true);
     }
 
     public partial class MaxNodeTreeView : TreeView, IMaxNodeTreeView
     {
+        class VisualNodeInfo
+        {
+            public enum EState
+            {
+                Added,
+                Removed,
+                Downgraded,
+                Upgraded,
+                Saved
+            }
+
+            public IINode MaxNode { get; private set; }
+            public EState State { get; set; }
+            public bool IsDummy { get; set; }
+
+            public VisualNodeInfo(IINode maxNode, bool isDummy = true, EState state = EState.Added)
+            {
+                MaxNode = maxNode;
+                State = state;
+                IsDummy = isDummy;
+            }
+        }
+
         #region Public Properties
 
         [Category("Node State Colors")]
@@ -70,30 +93,7 @@ namespace Max2Babylon
         public Color DummyUpgradedBackColor { get; set; } = Color.PaleGreen;
 
         #endregion
-
-        class VisualNodeInfo
-        {
-            public enum EState
-            {
-                Added,
-                Removed,
-                Downgraded,
-                Upgraded,
-                Saved
-            }
-
-            public IINode MaxNode { get; private set; }
-            public EState State { get; set; }
-            public bool IsDummy { get; set; }
-
-            public VisualNodeInfo(IINode maxNode, bool isDummy = true, EState state = EState.Added)
-            {
-                MaxNode = maxNode;
-                State = state;
-                IsDummy = isDummy;
-            }
-        }
-
+        
         #region Fields & Constructor
 
         // Stores the handles that were in the previously saved tree view, together with if they were dummies or not.
@@ -113,7 +113,7 @@ namespace Max2Babylon
 
         #region Interface Implementation: IMaxNodeTreeView
 
-        public void QueueSetNodes(IEnumerable<uint> nodeHandles)
+        public void QueueSetNodes(IEnumerable<uint> nodeHandles, bool doBeginUpdate = true)
         {
             changed = true;
 
@@ -124,6 +124,9 @@ namespace Max2Babylon
             {
                 return;
             }
+
+            if (doBeginUpdate)
+                BeginUpdate();
 
             foreach (uint nodeHandle in nodeHandles)
             {
@@ -137,6 +140,9 @@ namespace Max2Babylon
 
                 visualNode.EnsureVisible();
             }
+
+            if (doBeginUpdate)
+                EndUpdate();
         }
 
         public void QueueAddNode(uint nodeHandle)
@@ -146,8 +152,9 @@ namespace Max2Babylon
         }
         public void QueueAddNode(IINode node)
         {
-            // verify/create tree hierarchy
+            BeginUpdate();
             QueueAddNodeRecursively(node, true);
+            EndUpdate();
         }
 
         public void QueueRemoveNode(IINode node)
@@ -159,14 +166,18 @@ namespace Max2Babylon
             if (!visualNodeMap.TryGetValue(nodeHandle, out VisualNode node))
                 return;
 
+            BeginUpdate();
             QueueRemoveNodeRecursively(node);
+            EndUpdate();
         }
         public void QueueRemoveNode(VisualNode visualNode)
         {
+            BeginUpdate();
             QueueRemoveNodeRecursively(visualNode);
+            EndUpdate();
         }
 
-        public bool ApplyQueuedChanges(out List<uint> nodeHandles)
+        public bool ApplyQueuedChanges(out List<uint> nodeHandles, bool doBeginUpdate = true)
         {
             nodeHandles = null;
 
@@ -175,7 +186,11 @@ namespace Max2Babylon
 
             changed = false;
 
+            if (doBeginUpdate)
+                BeginUpdate();
             ApplyQueuedChangesRecursively(Nodes);
+            if (doBeginUpdate)
+                EndUpdate();
 
             // - get all non-dummy handles to return
             // - save all handles from the 'applied changes'
@@ -192,6 +207,7 @@ namespace Max2Babylon
             
             return true;
         }
+
         #endregion
 
         #region Recursive Node Manipulation
@@ -335,10 +351,12 @@ namespace Max2Babylon
             {
                 case VisualNodeInfo.EState.Added:
                 return nodeInfo.IsDummy ? DummyAddedForeColor : NodeAddedForeColor;
-                case VisualNodeInfo.EState.Downgraded:
-                return NodeDowngradedForeColor;
                 case VisualNodeInfo.EState.Removed:
                 return nodeInfo.IsDummy ? DummyRemovedForeColor : NodeRemovedForeColor;
+                case VisualNodeInfo.EState.Downgraded:
+                return NodeDowngradedForeColor;
+                case VisualNodeInfo.EState.Upgraded:
+                return DummyUpgradedForeColor;
                 case VisualNodeInfo.EState.Saved:
                 return nodeInfo.IsDummy ? DummyDefaultForeColor : NodeDefaultForeColor;
             }
@@ -351,10 +369,12 @@ namespace Max2Babylon
             {
                 case VisualNodeInfo.EState.Added:
                 return nodeInfo.IsDummy ? DummyAddedBackColor : NodeAddedBackColor;
-                case VisualNodeInfo.EState.Downgraded:
-                return NodeDowngradedBackColor;
                 case VisualNodeInfo.EState.Removed:
                 return nodeInfo.IsDummy ? DummyRemovedBackColor : NodeRemovedBackColor;
+                case VisualNodeInfo.EState.Downgraded:
+                return NodeDowngradedBackColor;
+                case VisualNodeInfo.EState.Upgraded:
+                return DummyUpgradedBackColor;
                 case VisualNodeInfo.EState.Saved:
                 return nodeInfo.IsDummy ? DummyDefaultBackColor : NodeDefaultBackColor;
             }

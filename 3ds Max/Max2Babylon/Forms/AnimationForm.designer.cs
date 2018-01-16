@@ -32,7 +32,7 @@
             System.Windows.Forms.Panel panel2;
             this.createAnimationButton = new System.Windows.Forms.Button();
             this.deleteAnimationButton = new System.Windows.Forms.Button();
-            this.animationList = new System.Windows.Forms.ListBox();
+            this.AnimationListBox = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.animationGroupControl = new Max2Babylon.AnimationGroupControl();
@@ -87,23 +87,23 @@
             // 
             panel2.AutoSize = true;
             panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            panel2.Controls.Add(this.animationList);
+            panel2.Controls.Add(this.AnimationListBox);
             panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             panel2.Location = new System.Drawing.Point(3, 45);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(171, 400);
             panel2.TabIndex = 5;
             // 
-            // animationList
+            // AnimationListBox
             // 
-            this.animationList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.animationList.Location = new System.Drawing.Point(0, 0);
-            this.animationList.Name = "animationList";
-            this.animationList.ScrollAlwaysVisible = true;
-            this.animationList.Size = new System.Drawing.Size(171, 400);
-            this.animationList.Sorted = true;
-            this.animationList.TabIndex = 0;
-            this.animationList.SelectedIndexChanged += new System.EventHandler(this.animationList_SelectedIndexChanged);
+            this.AnimationListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AnimationListBox.HorizontalScrollbar = true;
+            this.AnimationListBox.Location = new System.Drawing.Point(0, 0);
+            this.AnimationListBox.Name = "AnimationListBox";
+            this.AnimationListBox.Size = new System.Drawing.Size(171, 400);
+            this.AnimationListBox.Sorted = true;
+            this.AnimationListBox.TabIndex = 0;
+            this.AnimationListBox.SelectedIndexChanged += new System.EventHandler(this.animationList_SelectedIndexChanged);
             // 
             // groupBox1
             // 
@@ -191,6 +191,6 @@
         private System.Windows.Forms.Button deleteAnimationButton;
         private Max2Babylon.AnimationGroupControl animationGroupControl;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox animationList;
+        private System.Windows.Forms.ListBox AnimationListBox;
     }
 }
