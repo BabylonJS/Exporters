@@ -55,7 +55,6 @@ namespace Max2Babylon
                 actionTable.AppendOperation(new BabylonExportActionItem());
                 actionTable.AppendOperation(new BabylonAnimationActionItem());
                 actionTable.AppendOperation(new BabylonPropertiesActionItem());
-                actionTable.AppendOperation(new BabylonActionsBuilderActionItem());
                 actionCallback = new BabylonActionCallback();
 
                 actionManager.RegisterActionTable(actionTable);

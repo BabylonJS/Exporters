@@ -148,6 +148,7 @@ namespace GLTFExport.Entities
             if (AnimationsList.Count > 0)
             {
                 animations = AnimationsList.ToArray();
+                AnimationsList.ForEach(animation => animation.Prepare());
             }
             if (SkinsList.Count > 0)
             {

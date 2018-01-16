@@ -3071,6 +3071,167 @@
 						"node": 6,
 						"path": "translation"
 					}
+				},
+				{
+					"sampler": 1,
+					"target": {
+						"node": 8,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 2,
+					"target": {
+						"node": 11,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 3,
+					"target": {
+						"node": 13,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 4,
+					"target": {
+						"node": 15,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 5,
+					"target": {
+						"node": 15,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 6,
+					"target": {
+						"node": 17,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 7,
+					"target": {
+						"node": 17,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 8,
+					"target": {
+						"node": 22,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 9,
+					"target": {
+						"node": 24,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 10,
+					"target": {
+						"node": 32,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 11,
+					"target": {
+						"node": 32,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 12,
+					"target": {
+						"node": 34,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 13,
+					"target": {
+						"node": 36,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 14,
+					"target": {
+						"node": 38,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 15,
+					"target": {
+						"node": 38,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 16,
+					"target": {
+						"node": 40,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 17,
+					"target": {
+						"node": 40,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 18,
+					"target": {
+						"node": 42,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 19,
+					"target": {
+						"node": 42,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 20,
+					"target": {
+						"node": 44,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 21,
+					"target": {
+						"node": 44,
+						"path": "rotation"
+					}
+				},
+				{
+					"sampler": 22,
+					"target": {
+						"node": 46,
+						"path": "translation"
+					}
+				},
+				{
+					"sampler": 23,
+					"target": {
+						"node": 46,
+						"path": "rotation"
+					}
 				}
 			],
 			"samplers": [
@@ -3078,81 +3239,22 @@
 					"input": 100,
 					"interpolation": "LINEAR",
 					"output": 101
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 8,
-						"path": "translation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 102,
 					"interpolation": "LINEAR",
 					"output": 103
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 11,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 104,
 					"interpolation": "LINEAR",
 					"output": 105
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 13,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 106,
 					"interpolation": "LINEAR",
 					"output": 107
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 15,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 15,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 108,
 					"interpolation": "LINEAR",
@@ -3162,27 +3264,7 @@
 					"input": 110,
 					"interpolation": "LINEAR",
 					"output": 111
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 17,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 17,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 112,
 					"interpolation": "LINEAR",
@@ -3192,63 +3274,17 @@
 					"input": 114,
 					"interpolation": "LINEAR",
 					"output": 115
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 22,
-						"path": "translation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 116,
 					"interpolation": "LINEAR",
 					"output": 117
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 24,
-						"path": "translation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 118,
 					"interpolation": "LINEAR",
 					"output": 119
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 32,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 32,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 120,
 					"interpolation": "LINEAR",
@@ -3258,63 +3294,17 @@
 					"input": 122,
 					"interpolation": "LINEAR",
 					"output": 123
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 34,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 124,
 					"interpolation": "LINEAR",
 					"output": 125
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 36,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
+				},
 				{
 					"input": 126,
 					"interpolation": "LINEAR",
 					"output": 127
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 38,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 38,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 128,
 					"interpolation": "LINEAR",
@@ -3324,27 +3314,7 @@
 					"input": 130,
 					"interpolation": "LINEAR",
 					"output": 131
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 40,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 40,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 132,
 					"interpolation": "LINEAR",
@@ -3354,27 +3324,7 @@
 					"input": 134,
 					"interpolation": "LINEAR",
 					"output": 135
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 42,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 42,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 136,
 					"interpolation": "LINEAR",
@@ -3384,27 +3334,7 @@
 					"input": 138,
 					"interpolation": "LINEAR",
 					"output": 139
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 44,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 44,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 140,
 					"interpolation": "LINEAR",
@@ -3414,27 +3344,7 @@
 					"input": 142,
 					"interpolation": "LINEAR",
 					"output": 143
-				}
-			]
-		},
-		{
-			"channels": [
-				{
-					"sampler": 0,
-					"target": {
-						"node": 46,
-						"path": "translation"
-					}
 				},
-				{
-					"sampler": 1,
-					"target": {
-						"node": 46,
-						"path": "rotation"
-					}
-				}
-			],
-			"samplers": [
 				{
 					"input": 144,
 					"interpolation": "LINEAR",
