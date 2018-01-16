@@ -1,4 +1,4 @@
 Babylon.js EditorToolkit for Unity3D
 ====================================
 
-Documentation: *We are working on it*
+Please visit our main documentation site: http://doc.babylonjs.com/resources/intro

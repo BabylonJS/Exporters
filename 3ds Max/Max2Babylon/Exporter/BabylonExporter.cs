@@ -138,7 +138,9 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2017
+#if MAX2018
+                version = "2018",
+#elif MAX2017
                 version = "2017",
 #else
                 version = Loader.Core.ProductVersion.ToString(),
@@ -295,9 +297,6 @@ namespace Max2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
-
-            // Actions
-            babylonScene.actions = ExportNodeAction(gameScene.GetIGameNode(rawScene));
 
             // Output
             babylonScene.Prepare(false, false);
@@ -497,7 +496,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017
+#if MAX2017 || MAX2018
                     var indexer = i;
 #else
                     var indexer = new IntPtr(i);
