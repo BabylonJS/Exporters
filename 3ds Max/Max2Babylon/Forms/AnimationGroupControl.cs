@@ -40,8 +40,10 @@ namespace Max2Babylon
                 startTextBox.Text = info.FrameStart.ToString();
                 endTextBox.Text = info.FrameEnd.ToString();
 
-                MaxNodeTree.QueueSetNodes(info.NodeHandles);
-                MaxNodeTree.ApplyQueuedChanges(out List<uint> handles);
+                MaxNodeTree.BeginUpdate();
+                MaxNodeTree.QueueSetNodes(info.NodeHandles, false);
+                MaxNodeTree.ApplyQueuedChanges(out List<uint> handles, false);
+                MaxNodeTree.EndUpdate();
             }
             else
             {
@@ -51,12 +53,15 @@ namespace Max2Babylon
                 nameTextBox.Text = "";
                 startTextBox.Text = "";
                 endTextBox.Text = "";
-                MaxNodeTree.QueueSetNodes(null);
-                MaxNodeTree.ApplyQueuedChanges(out List<uint> handles);
+
+                MaxNodeTree.BeginUpdate();
+                MaxNodeTree.QueueSetNodes(null, false);
+                MaxNodeTree.ApplyQueuedChanges(out List<uint> handles, false);
+                MaxNodeTree.EndUpdate();
             }
         }
         
-        void ResetChanged()
+        void ResetChangedTextBoxColors()
         {
             nameTextBox.ForeColor = DefaultForeColor;
             startTextBox.ForeColor = DefaultForeColor;
@@ -128,7 +133,7 @@ namespace Max2Babylon
             if(nodesChanged)
                 currentInfo.NodeHandles = newHandles;
 
-            ResetChanged();
+            ResetChangedTextBoxColors();
 
             InfoConfirmed?.Invoke(currentInfo);
         }

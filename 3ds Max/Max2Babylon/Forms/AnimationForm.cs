@@ -10,6 +10,9 @@ namespace Max2Babylon
 
         private readonly BabylonAnimationActionItem babylonAnimationAction;
 
+        AnimationGroupList animationGroups = new AnimationGroupList();
+        BindingSource animationListBinding = new BindingSource();
+
         #region Initialization
 
         public AnimationForm(BabylonAnimationActionItem babylonAnimationAction)
@@ -21,19 +24,14 @@ namespace Max2Babylon
 
         private void AnimationForm_Load(object sender, EventArgs e)
         {
-            string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
-            
-            animationList.BeginUpdate();
-            foreach (string propertyNameStr in animationPropertyNames)
-            {
-                AnimationGroup info = new AnimationGroup();
-                info.LoadFromData(propertyNameStr);
-                animationList.Items.Add(info);
-            }
-            animationList.EndUpdate();
+            animationGroups.LoadFromData();
 
-            animationGroupControl.InfoConfirmed += animationGroupControl_InfoSaved;
+            animationListBinding.DataSource = animationGroups;
+            AnimationListBox.DataSource = animationListBinding;
+            AnimationListBox.ClearSelected();
+
             animationGroupControl.SetAnimationGroupInfo(null);
+            animationGroupControl.InfoConfirmed += animationGroupControl_InfoConfirmed;
         }
 
         #endregion
@@ -43,7 +41,7 @@ namespace Max2Babylon
         private void createAnimationButton_Click(object sender, EventArgs e)
         {
             AnimationGroup info = new AnimationGroup();
-
+            
             // get a unique name and guid
             string baseName = info.Name;
             int i = 0;
@@ -51,16 +49,16 @@ namespace Max2Babylon
             while (hasConflict)
             {
                 hasConflict = false;
-                foreach (AnimationGroup animGroupinfo in animationList.Items)
+                foreach (AnimationGroup animationGroup in animationGroups)
                 {
-                    if (info.Name.Equals(animGroupinfo.Name))
+                    if (info.Name.Equals(animationGroup.Name))
                     {
                         info.Name = baseName + i.ToString();
                         ++i;
                         hasConflict = true;
                         break;
                     }
-                    if (info.SerializedId.Equals(animGroupinfo.SerializedId))
+                    if (info.SerializedId.Equals(animationGroup.SerializedId))
                     {
                         info.SerializedId = Guid.NewGuid();
                         hasConflict = true;
@@ -70,54 +68,47 @@ namespace Max2Babylon
             }
 
             // save info and animation list entry
-            info.SaveToData();
-            List<string> animationGuidList = new List<string>(Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName));
-            animationGuidList.Add(info.GetPropertyName());
-            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationGuidList);
+            animationGroups.Add(info);
+            animationGroups.SaveToData();
+            animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
 
-            animationList.BeginUpdate();
-            int index = animationList.Items.Add(info);
-            animationList.EndUpdate();
-
-            animationList.SetSelected(index, true);
+            AnimationListBox.SelectedItem = info;
         }
 
         private void deleteAnimationButton_Click(object sender, EventArgs e)
         {
-            if (animationList.SelectedIndex < 0)
+            int selectedIndex = AnimationListBox.SelectedIndex;
+
+            if (selectedIndex < 0)
                 return;
 
-            AnimationGroup selectedItem = animationList.SelectedItem as AnimationGroup;
-            if (selectedItem != null)
-            {
-                // delete animation list entry
-                List<string> animationGuidList = new List<string>(Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName));
-                animationGuidList.Remove(selectedItem.GetPropertyName());
-                Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationGuidList);
+            AnimationGroup selectedItem = (AnimationGroup)AnimationListBox.SelectedItem;
+            
+            // delete item
+            selectedItem.DeleteFromData();
 
-                // delete item
-                selectedItem.DeleteFromData();
-                
-                Loader.Global.SetSaveRequiredFlag(true, false);
-            }
-            int selectedIndex = animationList.SelectedIndex;
-            animationList.Items.RemoveAt(animationList.SelectedIndex);
-            animationList.SelectedIndex = Math.Min(selectedIndex, animationList.Items.Count - 1);
+            // update list
+            animationGroups.Remove(selectedItem);
+            animationGroups.SaveToData();
+            animationListBinding.ResetBindings(false);
+            Loader.Global.SetSaveRequiredFlag(true, false);
+            
+            AnimationListBox.SelectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
         }
 
         private void animationList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            animationGroupControl.SetAnimationGroupInfo(animationList.SelectedItem as AnimationGroup);
+            animationGroupControl.SetAnimationGroupInfo((AnimationGroup)AnimationListBox.SelectedItem);
         }
 
-        private void animationGroupControl_InfoSaved(AnimationGroup info)
+        private void animationGroupControl_InfoConfirmed(AnimationGroup info)
         {
             info.SaveToData();
+            animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
-
-            // hacky but effective way to refresh the list item without requiring data bindings
-            animationList.Items[animationList.SelectedIndex] = animationList.Items[animationList.SelectedIndex];
+            
+            AnimationListBox.SelectedItem = info;
         }
 
         #endregion
