@@ -44,7 +44,7 @@ namespace Max2Babylon
 
                 gameBones[sortedIndex] = (gameBone);
                 boneIds[sortedIndex] =(gameBone.NodeID);
-                bones[sortedIndex]=(new BabylonBone { index = sortedIndex, name = gameBone.Name });
+                bones[sortedIndex]=(new BabylonBone { index = sortedIndex, name = gameBone.Name, id = gameBone.MaxNode.GetGuid().ToString() });
 
                 var boneInitMatrix = gameBone.GetObjectTM(0);
                 bindPoseInfos[sortedIndex] = (new BonePoseInfo { AbsoluteTransform = boneInitMatrix });

@@ -19,6 +19,7 @@ namespace Max2Babylon
             gltfNode.name = babylonLight.name;
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
+            nodeToGltfNodeMap.Add(babylonLight, gltfNode);
 
             // Hierarchy
             if (gltfParentNode != null)
@@ -43,7 +44,7 @@ namespace Max2Babylon
             gltfNode.scale = new float[3] { 1, 1, 1 };
 
             // Animations
-            ExportNodeAnimation(babylonLight, gltf, gltfNode);
+            //ExportNodeAnimation(babylonLight, gltf, gltfNode);
 
             return gltfNode;
         }
