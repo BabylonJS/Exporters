@@ -54,7 +54,6 @@ namespace Max2Babylon
                 actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, ref actionTableName);
                 actionTable.AppendOperation(new BabylonExportActionItem());
                 actionTable.AppendOperation(new BabylonPropertiesActionItem());
-                actionTable.AppendOperation(new BabylonActionsBuilderActionItem());
                 actionCallback = new BabylonActionCallback();
 
                 actionManager.RegisterActionTable(actionTable);

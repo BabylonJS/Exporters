@@ -18,5 +18,27 @@ namespace GLTFExport.Entities
         /// </summary>
         [DataMember(IsRequired = true)]
         public GLTFAnimationSampler[] samplers { get; set; }
+
+        public List<GLTFChannel> ChannelList { get; private set; }
+        public List<GLTFAnimationSampler> SamplerList { get; private set; }
+
+        public GLTFAnimation()
+        {
+            ChannelList = new List<GLTFChannel>();
+            SamplerList = new List<GLTFAnimationSampler>();
+        }
+
+        public void Prepare()
+        {
+            // Do not export empty arrays
+            if (ChannelList.Count > 0)
+            {
+                channels = ChannelList.ToArray();
+            }
+            if (SamplerList.Count > 0)
+            {
+                samplers = SamplerList.ToArray();
+            }
+        }
     }
 }
