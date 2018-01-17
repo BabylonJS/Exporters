@@ -19,6 +19,7 @@ namespace Max2Babylon
             gltfNode.name = babylonCamera.name;
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
+            nodeToGltfNodeMap.Add(babylonCamera, gltfNode);
 
             // Hierarchy
             if (gltfParentNode != null)
@@ -56,7 +57,7 @@ namespace Max2Babylon
             gltfNode.scale = new float[3] { 1, 1, 1 };
 
             // Animations
-            ExportNodeAnimation(babylonCamera, gltf, gltfNode);
+            //ExportNodeAnimation(babylonCamera, gltf, gltfNode);
 
             // --- prints ---
             #region prints

@@ -2,24 +2,51 @@
 using GLTFExport.Entities;
 using System;
 using System.Collections.Generic;
+using Autodesk.Max;
 
 namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private GLTFAnimation ExportNodeAnimation(BabylonNode babylonNode, GLTF gltf, GLTFNode gltfNode, BabylonScene babylonScene = null)
+        private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
-            GLTFAnimation gltfAnimation = null;
-            if (gltf.AnimationsList.Count > 0)
+            AnimationGroupList animationList = new AnimationGroupList();
+            animationList.LoadFromData();
+
+            gltf.AnimationsList.Clear();
+            gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
+
+            foreach (AnimationGroup animGroup in animationList)
             {
-                gltfAnimation = gltf.AnimationsList[0];
-            }
-            else
-            {
-                gltfAnimation = new GLTFAnimation();
+                GLTFAnimation gltfAnimation = new GLTFAnimation();
+                gltfAnimation.name = animGroup.Name;
+                foreach (uint nodeHandle in animGroup.NodeHandles)
+                {
+                    // todo: make something a little more efficient..
+                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+                    string id = maxNode.GetGuid().ToString();
+                    BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
+                    
+                    if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out GLTFNode gltfNode))
+                    {
+                        ExportNodeAnimation(gltfAnimation, animGroup.FrameStart, animGroup.FrameEnd, gltf, babylonNode, gltfNode, babylonScene);
+                    }
+
+                    // export all bones that match this id
+                    foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
+                    {
+                        if (pair.Key.id.Equals(id))
+                        {
+                            ExportBoneAnimation(gltfAnimation, animGroup.FrameStart, animGroup.FrameEnd, gltf, pair.Key, pair.Value);
+                        }
+                    }
+                }
                 gltf.AnimationsList.Add(gltfAnimation);
             }
+        }
 
+        private void ExportNodeAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonNode babylonNode, GLTFNode gltfNode, BabylonScene babylonScene)
+        {
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
 
@@ -55,13 +82,24 @@ namespace Max2Babylon
                     }
 
                     // --- Input ---
-                    var accessorInput = _createAndPopulateInput(gltf, babylonAnimation);
+                    var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
+                    if (accessorInput == null)
+                        continue;
 
                     // --- Output ---
                     GLTFAccessor accessorOutput = _createAccessorOfPath(gltfTarget.path, gltf);
+
                     // Populate accessor
+                    int numKeys = 0;
                     foreach (var babylonAnimationKey in babylonAnimation.keys)
                     {
+                        if (babylonAnimationKey.frame < startFrame)
+                            continue;
+
+                        if (babylonAnimationKey.frame > endFrame)
+                            continue;
+
+                        numKeys++;
                         var outputValues = babylonAnimationKey.values;
                         // Store values as bytes
                         foreach (var outputValue in outputValues)
@@ -69,7 +107,12 @@ namespace Max2Babylon
                             accessorOutput.bytesList.AddRange(BitConverter.GetBytes(outputValue));
                         }
                     };
-                    accessorOutput.count = babylonAnimation.keys.Length;
+                    accessorOutput.count = numKeys;
+
+                    // bail out if no keyframes to export (?)
+                    // todo [KeyInterpolation]: bail out only when there are no keyframes at all (?) and otherwise add the appropriate (interpolated) keyframes
+                    if (numKeys == 0)
+                        continue;
 
                     // Animation sampler
                     var gltfAnimationSampler = new GLTFAnimationSampler
@@ -98,26 +141,13 @@ namespace Max2Babylon
                 var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
                 if (babylonMorphTargetManager != null)
                 {
-                    ExportMorphTargetWeightAnimation(babylonMorphTargetManager, gltf, gltfNode, channelList, samplerList);
+                    ExportMorphTargetWeightAnimation(babylonMorphTargetManager, gltf, gltfNode, channelList, samplerList, startFrame, endFrame);
                 }
             }
-
-            return gltfAnimation;
         }
 
-        private GLTFAnimation ExportBoneAnimation(BabylonBone babylonBone, GLTF gltf, GLTFNode gltfNode)
+        private void ExportBoneAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonBone babylonBone, GLTFNode gltfNode)
         {
-            GLTFAnimation gltfAnimation = null;
-            if (gltf.AnimationsList.Count > 0)
-            {
-                gltfAnimation = gltf.AnimationsList[0];
-            }
-            else
-            {
-                gltfAnimation = new GLTFAnimation();
-                gltf.AnimationsList.Add(gltfAnimation);
-            }
-
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
 
@@ -128,7 +158,9 @@ namespace Max2Babylon
                 var babylonAnimation = babylonBone.animation;
 
                 // --- Input ---
-                var accessorInput = _createAndPopulateInput(gltf, babylonAnimation);
+                var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
+                if (accessorInput == null)
+                    return;
 
                 // --- Output ---
                 var paths = new string[] { "translation", "rotation", "scale" };
@@ -143,6 +175,12 @@ namespace Max2Babylon
                 // Populate accessors
                 foreach (var babylonAnimationKey in babylonAnimation.keys)
                 {
+                    if (babylonAnimationKey.frame < startFrame)
+                        continue;
+
+                    if (babylonAnimationKey.frame > endFrame)
+                        continue;
+
                     var matrix = new BabylonMatrix();
                     matrix.m = babylonAnimationKey.values;
 
@@ -198,11 +236,9 @@ namespace Max2Babylon
                     channelList.Add(gltfChannel);
                 }
             }
-
-            return gltfAnimation;
         }
 
-        private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation)
+        private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation, int startFrame, int endFrame)
         {
             var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
             var accessorInput = GLTFBufferService.Instance.CreateAccessor(
@@ -215,15 +251,30 @@ namespace Max2Babylon
             // Populate accessor
             accessorInput.min = new float[] { float.MaxValue };
             accessorInput.max = new float[] { float.MinValue };
+
+            int numKeys = 0;
             foreach (var babylonAnimationKey in babylonAnimation.keys)
             {
+                if (babylonAnimationKey.frame < startFrame)
+                    continue;
+
+                if (babylonAnimationKey.frame > endFrame)
+                    continue;
+
+                numKeys++;
                 var inputValue = babylonAnimationKey.frame / (float)Loader.Global.FrameRate;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values
                 GLTFBufferService.UpdateMinMaxAccessor(accessorInput, inputValue);
             };
-            accessorInput.count = babylonAnimation.keys.Length;
+            accessorInput.count = numKeys;
+
+            // bail out if there are no keys
+            // todo [KeyInterpolation]: bail out only when there are no keyframes at all (?) and otherwise add the appropriate (interpolated) keyframes
+            if (numKeys == 0)
+                return null;
+
             return accessorInput;
         }
 
@@ -264,7 +315,7 @@ namespace Max2Babylon
             return accessorOutput;
         }
 
-        private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList)
+        private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList, int startFrame, int endFrame)
         {
             if (!_isBabylonMorphTargetManagerAnimationValid(babylonMorphTargetManager))
             {
@@ -272,11 +323,7 @@ namespace Max2Babylon
             }
 
             RaiseMessage("GLTFExporter.Animation | Export animation of morph target manager with id: " + babylonMorphTargetManager.id, 2);
-
-            var influencesPerFrame = _getTargetManagerAnimationsData(babylonMorphTargetManager);
-            var frames = new List<int>(influencesPerFrame.Keys);
-            frames.Sort(); // Mandatory otherwise gltf loader of babylon doesn't understand
-
+            
             // Target
             var gltfTarget = new GLTFChannelTarget
             {
@@ -299,15 +346,32 @@ namespace Max2Babylon
             accessorInput.min = new float[] { float.MaxValue };
             accessorInput.max = new float[] { float.MinValue };
 
+            var influencesPerFrame = _getTargetManagerAnimationsData(babylonMorphTargetManager);
+            var frames = new List<int>(influencesPerFrame.Keys);
+            frames.Sort(); // Mandatory otherwise gltf loader of babylon doesn't understand
+
+            int numKeys = 0;
             foreach (var frame in frames)
             {
+                if (frame < startFrame)
+                    continue;
+
+                if (frame > endFrame)
+                    continue;
+
+                numKeys++;
                 var inputValue = frame / (float)Loader.Global.FrameRate;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values
                 GLTFBufferService.UpdateMinMaxAccessor(accessorInput, inputValue);
             }
-            accessorInput.count = influencesPerFrame.Count;
+            accessorInput.count = numKeys;
+
+            // bail out if we have no keys to export (?)
+            // todo [KeyInterpolation]: bail out only when there are no keyframes at all (?) and otherwise add the appropriate (interpolated) keyframes
+            if (numKeys == 0)
+                return false;
 
             // --- Output ---
             GLTFAccessor accessorOutput = GLTFBufferService.Instance.CreateAccessor(
@@ -320,6 +384,12 @@ namespace Max2Babylon
             // Populate accessor
             foreach (var frame in frames)
             {
+                if (frame < startFrame)
+                    continue;
+
+                if (frame > endFrame)
+                    continue;
+
                 var outputValues = influencesPerFrame[frame];
                 // Store values as bytes
                 foreach (var outputValue in outputValues)

@@ -17,6 +17,10 @@ namespace Max2Babylon
 
         private List<BabylonNode> babylonNodes;
 
+        // from BabylonNode to GLTFNode
+        Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
+        Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
+
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
             RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
@@ -67,11 +71,14 @@ namespace Max2Babylon
                 CheckCancelled();
             }
 
+
             // Root nodes
             RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
+            boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
@@ -79,7 +86,7 @@ namespace Max2Babylon
                 ReportProgressChanged((int)progression);
                 CheckCancelled();
             });
-            
+
             // Switch from left to right handed coordinate system
             var tmpNodesList = new List<int>(scene.NodesList);
             var rootNode = new BabylonMesh
@@ -101,6 +108,11 @@ namespace Max2Babylon
                 CheckCancelled();
             };
             RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
+
+            // Animations
+            RaiseMessage("GLTFExporter | Exporting Animations");
+            gltf.AnimationsList.Clear();
+            ExportAnimationGroups(gltf, babylonScene);
 
             // Prepare buffers
             gltf.BuffersList.ForEach(buffer =>

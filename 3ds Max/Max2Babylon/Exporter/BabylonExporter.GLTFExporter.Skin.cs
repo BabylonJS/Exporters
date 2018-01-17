@@ -139,6 +139,7 @@ namespace Max2Babylon
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
             alreadyExportedBones.Add(babylonBone, gltfNode);
+            boneToGltfNodeMap.Add(babylonBone, gltfNode);
 
             // Hierarchy
             if (babylonBone.parentBoneIndex >= 0)
@@ -174,7 +175,7 @@ namespace Max2Babylon
             gltfNode.scale = scaleBabylon.ToArray();
 
             // Animations
-            ExportBoneAnimation(babylonBone, gltf, gltfNode);
+            //ExportBoneAnimation(babylonBone, gltf, gltfNode);
 
             return gltfNode;
         }
