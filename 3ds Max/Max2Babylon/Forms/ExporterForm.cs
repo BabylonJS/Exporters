@@ -134,8 +134,9 @@ namespace Max2Babylon
             catch (Exception ex)
             {
                 currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message, Color.Red);
-
+                currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
+
                 progressBar.Value = 0;
                 success = false;
             }
