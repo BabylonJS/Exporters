@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2F49C726-A1F8-40D4-859F-1355949608DC}</ProjectGuid>
+    <ProjectGuid>{2F49C726-A1F8-40D4-859F-135594960DDC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Max2Babylon</RootNamespace>
     <AssemblyName>Max2Babylon</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SccProjectName>SAK</SccProjectName>
@@ -23,8 +23,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>c:\Program Files\Autodesk\3ds Max 2017\bin\assemblies\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MAX2017</DefineConstants>
+    <OutputPath>c:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MAX2018</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -41,9 +41,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autodesk.Max, Version=17.0.630.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Autodesk.Max, Version=20.0.966.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Repos\Babylon.js\Exporters\3ds Max\Max2Babylon\2015\Refs\Autodesk.Max.dll</HintPath>
+      <HintPath>Refs\Autodesk.Max.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GDImageLibrary">
@@ -229,9 +229,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Refs\Autodesk.Max.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Forms\CameraPropertiesForm.resx">
       <Link>Forms\CameraPropertiesForm.resx</Link>
       <DependentUpon>CameraPropertiesForm.cs</DependentUpon>
@@ -273,13 +270,13 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Refs\Autodesk.Max.dll" />
+  </ItemGroup>
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
