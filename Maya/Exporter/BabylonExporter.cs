@@ -14,6 +14,10 @@ namespace Maya2Babylon
         private bool _onlySelected;
         private bool _exportHiddenObjects;
 
+        public event Action<int> OnImportProgressChanged;
+        public bool AutoSaveMayaFile { get; set; }
+        public bool ExportHiddenObjects { get; set; }
+        public bool CopyTexturesToOutput { get; set; }
         private bool isBabylonExported;
 
         // Custom properties
