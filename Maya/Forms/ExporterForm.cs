@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Maya2Babylon.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,21 +44,21 @@ namespace Maya2Babylon.Forms
             }
         }
 
-        /*private async void butExport_Click(object sender, EventArgs e)
+        private async void butExport_Click(object sender, EventArgs e)
         {
             await DoExport();
         }
 
         private async Task<bool> DoExport()
         {
-            Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
+            /*Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.UpdateCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures");
             Tools.UpdateCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
             Tools.UpdateCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave");
             Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
             Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
-            Loader.Core.RootNode.SetLocalData(txtFilename.Text);
+            Loader.Core.RootNode.SetLocalData(txtFilename.Text);*/
 
             exporter = new BabylonExporter();
 
@@ -117,7 +120,7 @@ namespace Maya2Babylon.Forms
             bool success = true;
             try
             {
-                exporter.AutoSave3dsMaxFile = chkAutoSave.Checked;
+                exporter.AutoSaveMayaFile = chkAutoSave.Checked;
                 exporter.ExportHiddenObjects = chkHidden.Checked;
                 exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
@@ -140,12 +143,12 @@ namespace Maya2Babylon.Forms
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
-            butExportAndRun.Enabled = WebServer.IsSupported;
+            butExportAndRun.Enabled = Maya2Babylon.Tools.WebServer.IsSupported;
 
             BringToFront();
             
             return success;
-        }*/
+        }
 
         private TreeNode CreateTreeNode(int rank, string text, Color color)
         {
@@ -209,18 +212,18 @@ namespace Maya2Babylon.Forms
             /*Loader.Global.EnableAccelerators();*/
         }
 
-        /*private async void butExportAndRun_Click(object sender, EventArgs e)
+       *private async void butExportAndRun_Click(object sender, EventArgs e)
         {
             if (await DoExport())
             {
-                WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
-                WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
+                Maya2Babylon.Tools.WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
+                Maya2Babylon.Tools.WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
 
-                Process.Start("http://localhost:" + WebServer.Port);
+                Process.Start("http://localhost:" + Maya2Babylon.Tools.WebServer.Port);
 
                 WindowState = FormWindowState.Minimized;
             }
-        }*/
+        }
 
         private void butClose_Click(object sender, EventArgs e)
         {
@@ -239,7 +242,7 @@ namespace Maya2Babylon.Forms
 
         private void comboOutputFormat_SelectedIndexChanged(object sender, EventArgs e)
         {
-            /*var outputFormat = comboOutputFormat.SelectedItem.ToString();
+            var outputFormat = comboOutputFormat.SelectedItem.ToString();
             switch (outputFormat)
             {
                 case "babylon":
@@ -256,7 +259,7 @@ namespace Maya2Babylon.Forms
                     this.saveFileDialog.Filter = "glb files|*.glb";
                     break;
             }
-            this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);*/
+            this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
         }
 
 
