@@ -82,6 +82,9 @@
     <Compile Include="..\BabylonActionCallback.cs">
       <Link>BabylonActionCallback.cs</Link>
     </Compile>
+    <Compile Include="..\BabylonExportActionItem.cs">
+      <Link>BabylonExportActionItem.cs</Link>
+    </Compile>
     <Compile Include="..\BabylonPropertiesActionItem.cs">
       <Link>BabylonPropertiesActionItem.cs</Link>
     </Compile>
@@ -220,7 +223,6 @@
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Skin.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.Skin.cs</Link>
     </Compile>
-    <Compile Include="BabylonExportActionItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
