@@ -82,6 +82,9 @@
     <Compile Include="..\BabylonActionCallback.cs">
       <Link>BabylonActionCallback.cs</Link>
     </Compile>
+    <Compile Include="..\BabylonAnimationActionItem.cs">
+      <Link>BabylonAnimationActionItem.cs</Link>
+    </Compile>
     <Compile Include="..\BabylonExportActionItem.cs">
       <Link>BabylonExportActionItem.cs</Link>
     </Compile>
@@ -90,6 +93,9 @@
     </Compile>
     <Compile Include="..\Descriptor.cs">
       <Link>Descriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\AnimationGroup.cs">
+      <Link>Exporter\AnimationGroup.cs</Link>
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Animation.cs">
       <Link>Exporter\BabylonExporter.Animation.cs</Link>
@@ -145,6 +151,22 @@
     <Compile Include="..\Exporter\GLTFGlobalVertex.cs">
       <Link>Exporter\GLTFGlobalVertex.cs</Link>
     </Compile>
+    <Compile Include="..\Forms\AnimationForm.cs">
+      <Link>Forms\AnimationForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\AnimationForm.designer.cs">
+      <Link>Forms\AnimationForm.designer.cs</Link>
+      <DependentUpon>AnimationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\AnimationGroupControl.cs">
+      <Link>Forms\AnimationGroupControl.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\Forms\AnimationGroupControl.designer.cs">
+      <Link>Forms\AnimationGroupControl.designer.cs</Link>
+      <DependentUpon>AnimationGroupControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\Forms\CameraPropertiesForm.cs">
       <Link>Forms\CameraPropertiesForm.cs</Link>
       <SubType>Form</SubType>
@@ -168,6 +190,14 @@
     <Compile Include="..\Forms\LightPropertiesForm.Designer.cs">
       <Link>Forms\LightPropertiesForm.Designer.cs</Link>
       <DependentUpon>LightPropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\MaxNodeTreeView.cs">
+      <Link>Forms\MaxNodeTreeView.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Forms\MaxNodeTreeView.designer.cs">
+      <Link>Forms\MaxNodeTreeView.designer.cs</Link>
+      <DependentUpon>MaxNodeTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="..\Forms\ObjectPropertiesForm.cs">
       <Link>Forms\ObjectPropertiesForm.cs</Link>
@@ -231,6 +261,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\Forms\AnimationForm.resx">
+      <Link>Forms\AnimationForm.resx</Link>
+      <DependentUpon>AnimationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\AnimationGroupControl.resx">
+      <Link>Forms\AnimationGroupControl.resx</Link>
+      <DependentUpon>AnimationGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\CameraPropertiesForm.resx">
       <Link>Forms\CameraPropertiesForm.resx</Link>
       <DependentUpon>CameraPropertiesForm.cs</DependentUpon>
