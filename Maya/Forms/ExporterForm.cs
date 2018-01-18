@@ -1,4 +1,4 @@
-﻿using Maya2Babylon.Tools;
+﻿using Maya2Babylon;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +15,7 @@ namespace Maya2Babylon.Forms
 {
     public partial class ExporterForm : Form
     {
+        private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
 
         TreeNode currentNode;
@@ -125,7 +126,7 @@ namespace Maya2Babylon.Forms
                 exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                await exporter.ExportAsync(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, this);
+                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -143,7 +144,7 @@ namespace Maya2Babylon.Forms
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
-            butExportAndRun.Enabled = Maya2Babylon.Tools.WebServer.IsSupported;
+            butExportAndRun.Enabled = WebServer.IsSupported;
 
             BringToFront();
             
@@ -153,7 +154,7 @@ namespace Maya2Babylon.Forms
         private TreeNode CreateTreeNode(int rank, string text, Color color)
         {
             TreeNode newNode = null;
-            /*
+            
             Invoke(new Action(() =>
             {
                 newNode = new TreeNode(text) { ForeColor = color };
@@ -177,29 +178,30 @@ namespace Maya2Babylon.Forms
                 }
 
                 currentRank = rank;
-            }));*/
+            }));
 
             return newNode;
         }
 
         private void ExporterForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            /*if (exporter != null)
+            if (exporter != null)
             {
                 exporter.IsCancelled = true;
             }
-            babylonExportAction.Close();*/
+            // babylonExportAction.Close();
+            Close();
         }
 
         private void txtFilename_TextChanged(object sender, EventArgs e)
         {
-            /*butExport.Enabled = !string.IsNullOrEmpty(txtFilename.Text.Trim());
-            butExportAndRun.Enabled = butExport.Enabled && WebServer.IsSupported;*/
+            butExport.Enabled = !string.IsNullOrEmpty(txtFilename.Text.Trim());
+            butExportAndRun.Enabled = butExport.Enabled && WebServer.IsSupported;
         }
 
         private void butCancel_Click(object sender, EventArgs e)
         {
-            /*exporter.IsCancelled = true;*/
+            exporter.IsCancelled = true;
         }
 
         private void ExporterForm_Activated(object sender, EventArgs e)
@@ -212,14 +214,14 @@ namespace Maya2Babylon.Forms
             /*Loader.Global.EnableAccelerators();*/
         }
 
-       *private async void butExportAndRun_Click(object sender, EventArgs e)
+       private async void butExportAndRun_Click(object sender, EventArgs e)
         {
             if (await DoExport())
             {
-                Maya2Babylon.Tools.WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
-                Maya2Babylon.Tools.WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
+                WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
+                WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
 
-                Process.Start("http://localhost:" + Maya2Babylon.Tools.WebServer.Port);
+                Process.Start("http://localhost:" + WebServer.Port);
 
                 WindowState = FormWindowState.Minimized;
             }

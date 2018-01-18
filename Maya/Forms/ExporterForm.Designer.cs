@@ -63,7 +63,7 @@
             this.butExport.TabIndex = 0;
             this.butExport.Text = "Export";
             this.butExport.UseVisualStyleBackColor = true;
-            // this.butExport.Click += new System.EventHandler(this.butExport_Click);
+            this.butExport.Click += new System.EventHandler(this.butExport_Click);
             // 
             // label1
             // 
@@ -137,7 +137,7 @@
             // pictureBox2
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox2.Image = global::Maya2Babylon.Properties.Resources.Logo_Exporter_v3;
+            this.pictureBox2.Image = global::Maya2Babylon.Properties.Resources.maya_exporter_logo;
             this.pictureBox2.Location = new System.Drawing.Point(468, 12);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(354, 157);
@@ -220,6 +220,7 @@
             this.comboOutputFormat.Name = "comboOutputFormat";
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 0;
+            this.comboOutputFormat.SelectedIndex = 0;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
             // 
             // chkOnlySelected
@@ -241,7 +242,7 @@
             this.chkAutoSave.Name = "chkAutoSave";
             this.chkAutoSave.Size = new System.Drawing.Size(130, 17);
             this.chkAutoSave.TabIndex = 14;
-            this.chkAutoSave.Text = "Auto save 3ds Max file";
+            this.chkAutoSave.Text = "Auto save Maya file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
             // 
             // chkHidden
@@ -266,7 +267,7 @@
             this.butExportAndRun.TabIndex = 14;
             this.butExportAndRun.Text = "Export && Run";
             this.butExportAndRun.UseVisualStyleBackColor = true;
-            // this.butExportAndRun.Click += new System.EventHandler(this.butExportAndRun_Click);
+            this.butExportAndRun.Click += new System.EventHandler(this.butExportAndRun_Click);
             // 
             // butClose
             // 

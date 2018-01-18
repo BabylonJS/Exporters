@@ -63,9 +63,9 @@ namespace Maya2Babylon.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Logo_Exporter_v3 {
+        internal static System.Drawing.Bitmap maya_exporter_logo {
             get {
-                object obj = ResourceManager.GetObject("Logo_Exporter_v3", resourceCulture);
+                object obj = ResourceManager.GetObject("maya_exporter_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
