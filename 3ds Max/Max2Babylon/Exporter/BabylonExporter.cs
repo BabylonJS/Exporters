@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -256,6 +257,14 @@ namespace Max2Babylon
 
             // Materials
             RaiseMessage("Exporting materials");
+            IEnumerable<Type> materialExporterTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(typeArray => typeArray.GetTypes())
+                .Where(type => typeof(IMaterialExporter).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
+            materialExporters = new Dictionary<IClass_ID, IMaterialExporter>();
+            foreach(Type exporterType in materialExporterTypes)
+            {
+                IMaterialExporter exporter = (IMaterialExporter)Activator.CreateInstance(exporterType);
+                materialExporters.Add(exporter.MaterialClassID, exporter);
+            }
             var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
             foreach (var mat in matsToExport)
             {
