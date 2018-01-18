@@ -44,8 +44,8 @@
             this.startTextBox = new System.Windows.Forms.TextBox();
             this.startLabel = new System.Windows.Forms.Label();
             this.nodesGroupBox = new System.Windows.Forms.GroupBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.MaxNodeTree = new Max2Babylon.MaxNodeTreeView();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             nameFieldPanel = new System.Windows.Forms.Panel();
             optionsButtonsPanel = new System.Windows.Forms.Panel();
             nodeButtonsPanel = new System.Windows.Forms.Panel();
@@ -98,7 +98,7 @@
             optionsButtonsPanel.Controls.Add(this.ConfirmButton);
             optionsButtonsPanel.Controls.Add(this.cancelButton);
             optionsButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            optionsButtonsPanel.Location = new System.Drawing.Point(3, 68);
+            optionsButtonsPanel.Location = new System.Drawing.Point(3, 114);
             optionsButtonsPanel.Name = "optionsButtonsPanel";
             optionsButtonsPanel.Size = new System.Drawing.Size(176, 29);
             optionsButtonsPanel.TabIndex = 5;
@@ -130,30 +130,34 @@
             nodeButtonsPanel.Controls.Add(this.removeNodeButton);
             nodeButtonsPanel.Controls.Add(this.addSelectedButton);
             nodeButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            nodeButtonsPanel.Location = new System.Drawing.Point(3, 16);
+            nodeButtonsPanel.Location = new System.Drawing.Point(3, 68);
             nodeButtonsPanel.Name = "nodeButtonsPanel";
-            nodeButtonsPanel.Size = new System.Drawing.Size(483, 27);
+            nodeButtonsPanel.Size = new System.Drawing.Size(176, 46);
             nodeButtonsPanel.TabIndex = 6;
             // 
             // removeNodeButton
             // 
             this.removeNodeButton.AutoSize = true;
-            this.removeNodeButton.Location = new System.Drawing.Point(113, 1);
+            this.removeNodeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.removeNodeButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.removeNodeButton.Location = new System.Drawing.Point(0, 23);
             this.removeNodeButton.Name = "removeNodeButton";
-            this.removeNodeButton.Size = new System.Drawing.Size(102, 23);
+            this.removeNodeButton.Size = new System.Drawing.Size(176, 23);
             this.removeNodeButton.TabIndex = 8;
-            this.removeNodeButton.Text = "Remove Selected";
+            this.removeNodeButton.Text = "Remove Selected Scene Nodes";
             this.removeNodeButton.UseVisualStyleBackColor = true;
             this.removeNodeButton.Click += new System.EventHandler(this.removeNodeButton_Click);
             // 
             // addSelectedButton
             // 
             this.addSelectedButton.AutoSize = true;
-            this.addSelectedButton.Location = new System.Drawing.Point(3, 1);
+            this.addSelectedButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.addSelectedButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.addSelectedButton.Location = new System.Drawing.Point(0, 0);
             this.addSelectedButton.Name = "addSelectedButton";
-            this.addSelectedButton.Size = new System.Drawing.Size(104, 23);
+            this.addSelectedButton.Size = new System.Drawing.Size(176, 23);
             this.addSelectedButton.TabIndex = 7;
-            this.addSelectedButton.Text = "Add Scene Nodes";
+            this.addSelectedButton.Text = "Add Selected Scene Nodes";
             this.addSelectedButton.UseVisualStyleBackColor = true;
             this.addSelectedButton.Click += new System.EventHandler(this.addSelectedButton_Click);
             // 
@@ -162,12 +166,13 @@
             this.optionsGroupBox.AutoSize = true;
             this.optionsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.optionsGroupBox.Controls.Add(optionsButtonsPanel);
+            this.optionsGroupBox.Controls.Add(nodeButtonsPanel);
             this.optionsGroupBox.Controls.Add(this.panel1);
             this.optionsGroupBox.Controls.Add(nameFieldPanel);
             this.optionsGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.optionsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(182, 100);
+            this.optionsGroupBox.Size = new System.Drawing.Size(182, 146);
             this.optionsGroupBox.TabIndex = 4;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Animation Options";
@@ -225,7 +230,6 @@
             this.nodesGroupBox.AutoSize = true;
             this.nodesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.nodesGroupBox.Controls.Add(this.MaxNodeTree);
-            this.nodesGroupBox.Controls.Add(nodeButtonsPanel);
             this.nodesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.nodesGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.nodesGroupBox.Location = new System.Drawing.Point(0, 0);
@@ -234,6 +238,30 @@
             this.nodesGroupBox.TabIndex = 5;
             this.nodesGroupBox.TabStop = false;
             this.nodesGroupBox.Text = "Animation Nodes";
+            // 
+            // MaxNodeTree
+            // 
+            this.MaxNodeTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MaxNodeTree.DummyAddedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.DummyAddedForeColor = System.Drawing.SystemColors.GrayText;
+            this.MaxNodeTree.DummyDefaultBackColor = System.Drawing.SystemColors.Control;
+            this.MaxNodeTree.DummyDefaultForeColor = System.Drawing.SystemColors.GrayText;
+            this.MaxNodeTree.DummyRemovedBackColor = System.Drawing.Color.IndianRed;
+            this.MaxNodeTree.DummyRemovedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.DummyUpgradedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.DummyUpgradedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.Location = new System.Drawing.Point(3, 16);
+            this.MaxNodeTree.Name = "MaxNodeTree";
+            this.MaxNodeTree.NodeAddedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.NodeAddedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.NodeDefaultBackColor = System.Drawing.SystemColors.Window;
+            this.MaxNodeTree.NodeDefaultForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.NodeDowngradedBackColor = System.Drawing.Color.PaleGreen;
+            this.MaxNodeTree.NodeDowngradedForeColor = System.Drawing.SystemColors.GrayText;
+            this.MaxNodeTree.NodeRemovedBackColor = System.Drawing.Color.IndianRed;
+            this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaxNodeTree.Size = new System.Drawing.Size(483, 463);
+            this.MaxNodeTree.TabIndex = 0;
             // 
             // splitContainer1
             // 
@@ -254,30 +282,6 @@
             this.splitContainer1.SplitterDistance = 182;
             this.splitContainer1.TabIndex = 7;
             // 
-            // MaxNodeTree
-            // 
-            this.MaxNodeTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MaxNodeTree.DummyAddedBackColor = System.Drawing.Color.PaleGreen;
-            this.MaxNodeTree.DummyAddedForeColor = System.Drawing.SystemColors.GrayText;
-            this.MaxNodeTree.DummyDefaultBackColor = System.Drawing.SystemColors.Control;
-            this.MaxNodeTree.DummyDefaultForeColor = System.Drawing.SystemColors.GrayText;
-            this.MaxNodeTree.DummyRemovedBackColor = System.Drawing.Color.IndianRed;
-            this.MaxNodeTree.DummyRemovedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.DummyUpgradedBackColor = System.Drawing.Color.PaleGreen;
-            this.MaxNodeTree.DummyUpgradedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.Location = new System.Drawing.Point(3, 43);
-            this.MaxNodeTree.Name = "MaxNodeTree";
-            this.MaxNodeTree.NodeAddedBackColor = System.Drawing.Color.PaleGreen;
-            this.MaxNodeTree.NodeAddedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.NodeDefaultBackColor = System.Drawing.SystemColors.Window;
-            this.MaxNodeTree.NodeDefaultForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.NodeDowngradedBackColor = System.Drawing.Color.PaleGreen;
-            this.MaxNodeTree.NodeDowngradedForeColor = System.Drawing.SystemColors.GrayText;
-            this.MaxNodeTree.NodeRemovedBackColor = System.Drawing.Color.IndianRed;
-            this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.Size = new System.Drawing.Size(483, 436);
-            this.MaxNodeTree.TabIndex = 0;
-            // 
             // AnimationGroupControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -296,7 +300,6 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.nodesGroupBox.ResumeLayout(false);
-            this.nodesGroupBox.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

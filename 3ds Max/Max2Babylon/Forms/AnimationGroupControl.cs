@@ -179,7 +179,11 @@ namespace Max2Babylon
             if (currentInfo == null)
                 return;
 
-            MaxNodeTree.QueueRemoveNode(MaxNodeTree.SelectedNode);
+            for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
+            {
+                IINode node = Loader.Core.GetSelNode(i);
+                MaxNodeTree.QueueRemoveNode(node);
+            }
         }
     }
 }
