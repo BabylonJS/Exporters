@@ -43,7 +43,7 @@ namespace Maya2Babylon
             BabylonExport.Show();
             BabylonExport.BringToFront();
             BabylonExport.WindowState = FormWindowState.Normal;
-            DoExport();
+            // DoExport();
         }
 
         private bool DoExport()

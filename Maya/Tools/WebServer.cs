@@ -7,11 +7,11 @@ using System.Text;
 using System.Web;
 using System.Threading.Tasks;
 
-namespace Maya2Babylon.Tools
+namespace Maya2Babylon
 {
     public static class WebServer
     {
-        {
+        
         private static readonly HttpListener listener;
         private static Task runningTask;
 
