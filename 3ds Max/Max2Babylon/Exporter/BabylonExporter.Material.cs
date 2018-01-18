@@ -8,6 +8,7 @@ namespace Max2Babylon
     partial class BabylonExporter
     {
         readonly List<IIGameMaterial> referencedMaterials = new List<IIGameMaterial>();
+        Dictionary<IClass_ID, IMaterialExporter> materialExporters;
 
         private void ExportMaterial(IIGameMaterial materialNode, BabylonScene babylonScene)
         {
@@ -280,6 +281,11 @@ namespace Max2Babylon
                     babylonMaterial.roughness = 1.0f;
                 }
 
+                babylonScene.MaterialsList.Add(babylonMaterial);
+            }
+            else if(materialExporters.TryGetValue(materialNode.MaxMaterial.ClassID, out IMaterialExporter materialExporter))
+            {
+                BabylonMaterial babylonMaterial = materialExporter.ExportBabylonMaterial(materialNode);
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
             else
