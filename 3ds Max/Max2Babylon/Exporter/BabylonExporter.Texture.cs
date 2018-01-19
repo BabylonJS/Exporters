@@ -282,10 +282,17 @@ namespace Max2Babylon
             }
 
             var sourcePath = texture.Map.FullFilePath;
+            var fileName = Path.GetFileName(sourcePath);
+
+            // Allow only dds file format
+            if (!fileName.EndsWith(".dds"))
+            {
+                return null;
+            }
 
             var babylonTexture = new BabylonTexture
             {
-                name = Path.GetFileName(sourcePath)
+                name = fileName
             };
 
             // Copy texture to output
