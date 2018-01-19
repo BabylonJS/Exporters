@@ -163,11 +163,14 @@ namespace Max2Babylon
                 var environmentMap = Loader.Core.EnvironmentMap;
                 // Copy image file to output if necessary
                 var babylonTexture = ExportEnvironmnentTexture(environmentMap, babylonScene);
-                babylonScene.environmentTexture = babylonTexture.name;
+                if (babylonTexture != null)
+                {
+                    babylonScene.environmentTexture = babylonTexture.name;
 
-                // Skybox
-                babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
-                babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+                    // Skybox
+                    babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
+                    babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+                }
             }
 
             // Sounds
