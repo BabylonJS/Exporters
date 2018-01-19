@@ -13,6 +13,30 @@ namespace Max2Babylon
 {
     public static class Tools
     {
+        public static IEnumerable<Type> GetAllLoadableTypes()
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly assembly in assemblies)
+            {
+                foreach (Type type in assembly.GetLoadableTypes())
+                {
+                    yield return type;
+                }
+            }
+        }
+        public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+        {
+            if (assembly == null) throw new ArgumentNullException("assembly");
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.Where(t => t != null);
+            }
+        }
+
         // -------------------------
         // --------- Math ----------
         // -------------------------

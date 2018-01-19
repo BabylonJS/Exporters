@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -257,14 +258,22 @@ namespace Max2Babylon
 
             // Materials
             RaiseMessage("Exporting materials");
-            IEnumerable<Type> materialExporterTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(typeArray => typeArray.GetTypes())
-                .Where(type => typeof(IMaterialExporter).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
-            materialExporters = new Dictionary<IClass_ID, IMaterialExporter>();
-            foreach(Type exporterType in materialExporterTypes)
+            
+            // get all material exporters
+            materialExporters = new Dictionary<ClassIDWrapper, IMaterialExporter>();
+            foreach (Type type in Tools.GetAllLoadableTypes())
             {
-                IMaterialExporter exporter = (IMaterialExporter)Activator.CreateInstance(exporterType);
+                if (type.IsAbstract || type.IsInterface || !typeof(IMaterialExporter).IsAssignableFrom(type))
+                    continue;
+
+                IMaterialExporter exporter = Activator.CreateInstance(type) as IMaterialExporter;
+
+                if (exporter == null)
+                    RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
                 materialExporters.Add(exporter.MaterialClassID, exporter);
             }
+
             var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
             foreach (var mat in matsToExport)
             {
