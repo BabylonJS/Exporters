@@ -108,7 +108,7 @@ namespace Max2Babylon
                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, alphaBitmap);
                 if (!haveSameDimensions)
                 {
-                    RaiseWarning("Base color and transparency color maps should have same dimensions", 2);
+                    RaiseError("Base color and transparency color maps should have same dimensions", 2);
                 }
 
                 var getAlphaFromRGB = false;
@@ -224,7 +224,7 @@ namespace Max2Babylon
                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, metallicBitmap, roughnessBitmap);
                 if (!haveSameDimensions)
                 {
-                    RaiseWarning("Metallic and roughness maps should have same dimensions", 2);
+                    RaiseError("Metallic and roughness maps should have same dimensions", 2);
                 }
 
                 // Create metallic+roughness map
