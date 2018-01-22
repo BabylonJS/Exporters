@@ -117,7 +117,6 @@ namespace Maya2Babylon
             {
                 name = "root",
                 id = mUuid.asString(),
-                rotation = new float[] { 0, (float) -Math.PI, 0 },
                 scaling = new float[] { 1, 1, -1 }
             };
             foreach(var babylonMesh in babylonScene.MeshesList)
