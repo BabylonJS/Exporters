@@ -147,8 +147,20 @@ namespace GLTFExport.Entities
             }
             if (AnimationsList.Count > 0)
             {
-                animations = AnimationsList.ToArray();
-                AnimationsList.ForEach(animation => animation.Prepare());
+                var animationsList = new List<GLTFAnimation>();
+                AnimationsList.ForEach(animation =>
+                {
+                    animation.Prepare();
+                    // Exclude empty animations
+                    if (animation.channels != null)
+                    {
+                        animationsList.Add(animation);
+                    }
+                });
+                if (animationsList.Count > 0)
+                {
+                    animations = animationsList.ToArray();
+                }
             }
             if (SkinsList.Count > 0)
             {
