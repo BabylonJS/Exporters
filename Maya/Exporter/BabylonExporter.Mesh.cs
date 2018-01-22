@@ -236,6 +236,11 @@ namespace Maya2Babylon
                     int[] triangleVertices = new int[3];
                     mFnMesh.getPolygonTriangleVertices(polygonId, triangleIndex, triangleVertices);
 
+                    // Inverse winding order
+                    var tmp = triangleVertices[1];
+                    triangleVertices[1] = triangleVertices[2];
+                    triangleVertices[2] = tmp;
+
                     // For each vertex of this triangle (3 vertices per triangle)
                     foreach (int vertexId in triangleVertices)
                     {
