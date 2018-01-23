@@ -531,15 +531,12 @@ namespace Max2Babylon
             return true;
         }
 
-        private IGMatrix GetLocalTM(IIGameNode gameNode, int key)
+        private IMatrix3 GetInvertWorldTM(IIGameNode gameNode, int key)
         {
-            var worldMatrix = gameNode.GetObjectTM(key);
-            if (gameNode.NodeParent != null)
-            {
-                var parentWorld = gameNode.NodeParent.GetObjectTM(key);
-                worldMatrix.MultiplyBy(parentWorld.Inverse);
-            }
-            return worldMatrix;
+            var worldMatrix = gameNode.GetWorldTM(key);
+            var invertedWorldMatrix = worldMatrix.ExtractMatrix3();
+            invertedWorldMatrix.Invert();
+            return invertedWorldMatrix;
         }
     }
 }
