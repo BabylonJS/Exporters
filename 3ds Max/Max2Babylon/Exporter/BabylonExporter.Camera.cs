@@ -62,10 +62,10 @@ namespace Max2Babylon
             babylonCamera.ellipsoid = cameraNode.MaxNode.GetVector3Property("babylonjs_ellipsoid");
 
             // Position / rotation
-            var localTM = GetLocalTM(cameraNode, 0);
+            var localMatrix = cameraNode.GetLocalTM(0);
 
-            var position = localTM.Translation;
-            var rotation = localTM.Rotation;
+            var position = localMatrix.Translation;
+            var rotation = localMatrix.Rotation;
 
             babylonCamera.position = new[] { position.X, position.Y, position.Z };
 
@@ -89,7 +89,7 @@ namespace Max2Babylon
             {
                 // TODO - Check if should be local or world
                 var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                vDir = localTM.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
                 vDir = vDir.Add(position);
                 babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
             }
@@ -106,10 +106,10 @@ namespace Max2Babylon
 
                 ExportVector3Animation("target", animations, key =>
                 {
-                    var wmCam = GetLocalTM(cameraNode, key);
-                    var positionCam = wmCam.Translation;
+                    var localMatrixAnimTarget = cameraNode.GetLocalTM( key);
+                    var positionCam = localMatrixAnimTarget.Translation;
                     var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                    vDir = wmCam.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                    vDir = localMatrixAnimTarget.ExtractMatrix3().VectorTransform(vDir).Normalize;
                     vDir = vDir.Add(positionCam);
                     return new[] { vDir.X, vDir.Y, vDir.Z };
 

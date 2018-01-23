@@ -404,7 +404,7 @@ namespace Max2Babylon
             {
                 ExportVector3Animation("position", animations, key =>
                 {
-                    var localMatrix = GetLocalTM(gameNode, key);
+                    var localMatrix = gameNode.GetLocalTM(key);
                     var trans = localMatrix.Translation;
                     return new[] { trans.X, trans.Y, trans.Z };
                 });
@@ -421,7 +421,7 @@ namespace Max2Babylon
             {
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
-                    var localMatrix = GetLocalTM(gameNode, key);
+                    var localMatrix = gameNode.GetLocalTM(key);
                     var rot = localMatrix.Rotation;
                     return new[] { rot.X, rot.Y, rot.Z, -rot.W };
                 });
@@ -434,7 +434,7 @@ namespace Max2Babylon
             {
                 ExportVector3Animation("scaling", animations, key =>
                 {
-                    var localMatrix = GetLocalTM(gameNode, key);
+                    var localMatrix = gameNode.GetLocalTM(key);
                     var scale = localMatrix.Scaling;
                     return new[] { scale.X, scale.Y, scale.Z };
                 });
