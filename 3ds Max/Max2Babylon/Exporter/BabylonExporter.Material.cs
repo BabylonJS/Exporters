@@ -275,11 +275,6 @@ namespace Max2Babylon
 
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
 
-                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
-                {
-                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
-                }
-
                 babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name, invertRoughness);
 
                 var normalMapAmount = propertyContainer.GetFloatProperty(91);
@@ -295,6 +290,11 @@ namespace Max2Babylon
                 {
                     babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
                     babylonMaterial.alpha = 1.0f;
+                }
+
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+                {
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
 
                 if (babylonMaterial.emissiveTexture != null)

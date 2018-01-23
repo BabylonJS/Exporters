@@ -89,9 +89,9 @@ namespace Max2Babylon
             }
 
             // Position
-            var wm = GetLocalTM(lightNode, 0);
+            var localMatrix = lightNode.GetLocalTM(0);
 
-            var position = wm.Translation;
+            var position = localMatrix.Translation;
             babylonLight.position = new[] { position.X, position.Y, position.Z };
 
             // Direction
@@ -107,7 +107,7 @@ namespace Max2Babylon
             else
             {
                 var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                vDir = wm.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
                 babylonLight.direction = new[] { vDir.X, vDir.Y, vDir.Z };
             }
 
@@ -171,9 +171,9 @@ namespace Max2Babylon
 
             ExportVector3Animation("direction", animations, key =>
             {
-                var wmLight = GetLocalTM(lightNode, key);
+                var localMatrixAnimDir = lightNode.GetLocalTM(key);
 
-                var positionLight = wmLight.Translation;
+                var positionLight = localMatrixAnimDir.Translation;
                 var lightTarget = gameLight.LightTarget;
                 if (lightTarget != null)
                 {
@@ -186,7 +186,7 @@ namespace Max2Babylon
                 else
                 {
                     var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                    vDir = wmLight.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                    vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
                     return new[] { vDir.X, vDir.Y, vDir.Z };
                 }
             });

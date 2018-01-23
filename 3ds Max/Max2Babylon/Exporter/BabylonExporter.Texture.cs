@@ -108,7 +108,7 @@ namespace Max2Babylon
                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, alphaBitmap);
                 if (!haveSameDimensions)
                 {
-                    RaiseWarning("Base color and transparency color maps should have same dimensions", 2);
+                    RaiseError("Base color and transparency color maps should have same dimensions", 2);
                 }
 
                 var getAlphaFromRGB = false;
@@ -224,7 +224,7 @@ namespace Max2Babylon
                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, metallicBitmap, roughnessBitmap);
                 if (!haveSameDimensions)
                 {
-                    RaiseWarning("Metallic and roughness maps should have same dimensions", 2);
+                    RaiseError("Metallic and roughness maps should have same dimensions", 2);
                 }
 
                 // Create metallic+roughness map
@@ -271,6 +271,7 @@ namespace Max2Babylon
         {
             if (texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
             {
+                RaiseWarning("Failed to export environment texture. Uncheck \"Use Map\" option to fix this warning.");
                 return null;
             }
 
@@ -278,14 +279,23 @@ namespace Max2Babylon
 
             if (texture == null)
             {
+                RaiseWarning("Failed to export environment texture. Uncheck \"Use Map\" option to fix this warning.");
                 return null;
             }
 
             var sourcePath = texture.Map.FullFilePath;
+            var fileName = Path.GetFileName(sourcePath);
+
+            // Allow only dds file format
+            if (!fileName.EndsWith(".dds"))
+            {
+                RaiseWarning("Failed to export environment texture: only .dds format is supported. Uncheck \"Use map\" to fix this warning.");
+                return null;
+            }
 
             var babylonTexture = new BabylonTexture
             {
-                name = Path.GetFileName(sourcePath)
+                name = fileName
             };
 
             // Copy texture to output
