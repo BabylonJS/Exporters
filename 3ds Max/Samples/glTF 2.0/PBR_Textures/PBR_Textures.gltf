@@ -349,9 +349,9 @@
 			"componentType": 5126,
 			"count": 2880,
 			"max": [
+				1.00000024,
 				1,
-				1,
-				1
+				1.00000024
 			],
 			"min": [
 				-1,
@@ -391,14 +391,14 @@
 			"componentType": 5126,
 			"count": 2880,
 			"max": [
-				1,
+				1.00000012,
 				1,
 				1
 			],
 			"min": [
 				-1,
 				-1,
-				-1
+				-0.9999999
 			],
 			"type": "VEC3",
 			"name": "accessorPositions"
