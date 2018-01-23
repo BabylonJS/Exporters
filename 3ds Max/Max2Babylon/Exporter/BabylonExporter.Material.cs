@@ -114,8 +114,9 @@ namespace Max2Babylon
 
             if (stdMat != null)
             {
-                var babylonMaterial = new BabylonStandardMaterial
+                var babylonMaterial = new BabylonStandardMaterial()
                 {
+                    maxGameMaterial = materialNode,
                     name = name,
                     id = id,
                     ambient = materialNode.MaxMaterial.GetAmbient(0, false).ToArray(),
@@ -214,6 +215,7 @@ namespace Max2Babylon
 
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
                 {
+                    maxGameMaterial = materialNode,
                     name = name,
                     id = id
                 };
@@ -283,12 +285,14 @@ namespace Max2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
-            else if(materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter))
+            else if(materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter) 
+                && materialExporter is IBabylonMaterialExporter)
             {
-                BabylonMaterial babylonMaterial = materialExporter.ExportBabylonMaterial(materialNode);
+                BabylonMaterial babylonMaterial = ((IBabylonMaterialExporter)materialExporter).ExportBabylonMaterial(materialNode);
                 if(babylonMaterial == null)
                 {
-                    string message = string.Format("Material failed to export. Name: '{0}' Class: '{1}'", materialNode.MaterialName, materialNode.MaterialClass);
+                    string message = string.Format("Material failed to export. Name: '{0}' Class: '{1}'", 
+                        materialNode.MaterialName, materialNode.MaterialClass);
                     RaiseWarning(message, 2);
                 }
                 else babylonScene.MaterialsList.Add(babylonMaterial);

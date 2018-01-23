@@ -1,17 +1,23 @@
 using System;
 using Autodesk.Max;
 using BabylonExport.Entities;
+using GLTFExport.Entities;
 
 namespace Max2Babylon
 {
     public interface IMaterialExporter
     {
         ClassIDWrapper MaterialClassID { get; }
+    }
 
-		bool IsBabylonExporter { get; }
-		bool IsGltfExporter { get; }
-
+    public interface IBabylonMaterialExporter : IMaterialExporter
+    {
         BabylonMaterial ExportBabylonMaterial(IIGameMaterial material);
+    }
+
+    public interface IGLTFMaterialExporter : IMaterialExporter
+    {
+        GLTFMaterial ExportGLTFMaterial(IIGameMaterial material);
     }
 
     // We require a separate struct, because the IClass_ID does not implement GetHashCode etc. to work with dictionaries

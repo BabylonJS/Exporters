@@ -1,4 +1,5 @@
-﻿using BabylonExport.Entities;
+﻿using Autodesk.Max;
+using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System;
 using System.Drawing;
@@ -15,7 +16,21 @@ namespace Max2Babylon
 
             RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
-            if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
+            IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
+            IMtl maxMtl = gameMtl.MaxMaterial;
+            
+            if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out IMaterialExporter materialExporter)
+                && materialExporter is IGLTFMaterialExporter)
+            {
+                GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(gameMtl);
+                if (gltfMaterial == null)
+                {
+                    string message = string.Format("Material failed to export. Name: '{0}' Class: '{1}'", gameMtl.MaterialName, gameMtl.ClassName);
+                    RaiseWarning(message, 2);
+                }
+                else gltf.MaterialsList.Add(gltfMaterial);
+            }
+            else if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
             {
                 var babylonStandardMaterial = babylonMaterial as BabylonStandardMaterial;
 
