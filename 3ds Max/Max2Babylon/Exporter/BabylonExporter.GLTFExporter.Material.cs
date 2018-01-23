@@ -245,7 +245,7 @@ namespace Max2Babylon
                             var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, diffuseBitmap, specularBitmap, opacityBitmap);
                             if (!haveSameDimensions)
                             {
-                                RaiseWarning("Diffuse, specular and opacity maps should have same dimensions", 2);
+                                RaiseError("Diffuse, specular and opacity maps should have same dimensions", 2);
                             }
 
                             // Create baseColor+alpha and metallic+roughness maps
