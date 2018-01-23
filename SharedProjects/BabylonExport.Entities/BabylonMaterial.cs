@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using Autodesk.Max;
+using System.Runtime.Serialization;
+
 namespace BabylonExport.Entities
 {
     [DataContract]
@@ -21,6 +23,8 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public int alphaMode { get; set; }
+
+        public IIGameMaterial maxGameMaterial { get; set; }
 
         public BabylonMaterial()
         {
