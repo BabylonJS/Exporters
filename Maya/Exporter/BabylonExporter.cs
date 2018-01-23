@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Maya2Babylon
 {
@@ -13,6 +15,14 @@ namespace Maya2Babylon
         // Export options
         private bool _onlySelected;
         private bool _exportHiddenObjects;
+
+        public event Action<int> OnImportProgressChanged;
+        public bool AutoSaveMayaFile { get; set; }
+        public bool ExportHiddenObjects { get; set; }
+        public bool IsCancelled { get; set; }
+
+        public bool CopyTexturesToOutput { get; set; }
+        public object ExportQuaternionsInsteadOfEulers { get; private set; }
 
         private bool isBabylonExported;
 
@@ -107,7 +117,6 @@ namespace Maya2Babylon
             {
                 name = "root",
                 id = mUuid.asString(),
-                rotation = new float[] { 0, (float) -Math.PI, 0 },
                 scaling = new float[] { 1, 1, -1 }
             };
             foreach(var babylonMesh in babylonScene.MeshesList)
@@ -138,6 +147,7 @@ namespace Maya2Babylon
             RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
         }
 
+
         private bool IsNodeExportable(MFnDagNode mFnDagNode)
         {
             // TODO - Add custom property
@@ -161,5 +171,6 @@ namespace Maya2Babylon
 
             return true;
         }
+        
     }
 }

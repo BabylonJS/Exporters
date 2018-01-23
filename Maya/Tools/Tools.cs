@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Autodesk.Maya.OpenMaya;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace Maya2Babylon
 {
@@ -43,6 +46,15 @@ namespace Maya2Babylon
                 result += array[index];
             }
             return result + "]";
+        }
+
+        public static void UpdateCheckBox(CheckBox checkBox, MPxNode node, string propertyName)
+        {
+            if (checkBox.CheckState != CheckState.Indeterminate)
+            {
+                // TODO find function
+                //node.setUserPropBool(propertyName, checkBox.CheckState == CheckState.Checked);
+            }
         }
     }
 }

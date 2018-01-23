@@ -8,33 +8,29 @@ namespace Max2Babylon
 {
     public class Loader
     {
-        static IGlobal global;
         public static IGlobal Global
         {
             get
             {
-                return global;
+                return GlobalInterface.Instance;
             }
         }
 
-        public static IInterface14 core;
         public static IInterface14 Core
         {
             get
             {
-                return core;
+                return Global.COREInterface14;
             }
         }
         public static IClass_ID Class_ID;
 
         static void Initialize()
         {
-            if (global == null)
+            if (Class_ID == null)
             {
-                global = GlobalInterface.Instance;
-                core = global.COREInterface14;
-                Class_ID = global.Class_ID.Create(0x8217f123, 0xef980456);
-                core.AddClass(new Descriptor());
+                Class_ID = Global.Class_ID.Create(0x8217f123, 0xef980456);
+                Core.AddClass(new Descriptor());
             }
         }
 

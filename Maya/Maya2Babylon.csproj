@@ -44,6 +44,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BabylonExportActionItem.cs" />
     <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Writer.cs" />
     <Compile Include="Exporter\BabylonExporter.Logger.cs" />
@@ -64,16 +67,42 @@
     <Compile Include="Extensions\MPointExtension.cs" />
     <Compile Include="Extensions\MVectorExtension.cs" />
     <Compile Include="Extensions\MTransformationMatrixExtension.cs" />
+    <Compile Include="Forms\ExporterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExporterForm.Designer.cs">
+      <DependentUpon>ExporterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Loader.cs" />
     <Compile Include="MayaPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Tools\JsonTextWriterOptimized.cs" />
     <Compile Include="Tools\Tools.cs" />
+    <Compile Include="Tools\WebServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Refs\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\ExporterForm.resx">
+      <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\maya_exporter_logo.jpg" />
   </ItemGroup>
   <Import Project="..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
