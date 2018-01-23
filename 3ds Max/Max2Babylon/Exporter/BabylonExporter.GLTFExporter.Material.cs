@@ -25,7 +25,8 @@ namespace Max2Babylon
                 GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(gameMtl);
                 if (gltfMaterial == null)
                 {
-                    string message = string.Format("Material failed to export. Name: '{0}' Class: '{1}'", gameMtl.MaterialName, gameMtl.ClassName);
+                    string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'", 
+                        materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
                     RaiseWarning(message, 2);
                 }
                 else gltf.MaterialsList.Add(gltfMaterial);
@@ -443,7 +444,7 @@ namespace Max2Babylon
             }
             else
             {
-                RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType(), 2);
+                RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType() + " | Max MaterialClass: " + babylonMaterial.maxGameMaterial.ClassName, 2);
             }
         }
 
