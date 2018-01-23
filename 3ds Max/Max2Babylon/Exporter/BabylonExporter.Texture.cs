@@ -271,6 +271,7 @@ namespace Max2Babylon
         {
             if (texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
             {
+                RaiseWarning("Failed to export environment texture. Uncheck \"Use Map\" option to fix this warning.");
                 return null;
             }
 
@@ -278,6 +279,7 @@ namespace Max2Babylon
 
             if (texture == null)
             {
+                RaiseWarning("Failed to export environment texture. Uncheck \"Use Map\" option to fix this warning.");
                 return null;
             }
 
@@ -287,6 +289,7 @@ namespace Max2Babylon
             // Allow only dds file format
             if (!fileName.EndsWith(".dds"))
             {
+                RaiseWarning("Failed to export environment texture: only .dds format is supported. Uncheck \"Use map\" to fix this warning.");
                 return null;
             }
 
