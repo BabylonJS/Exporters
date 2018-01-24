@@ -15,9 +15,20 @@ namespace Max2Babylon
         BabylonMaterial ExportBabylonMaterial(IIGameMaterial material);
     }
 
+    delegate string TryWriteImageCallback(string sourceTexturePath);
+    
     public interface IGLTFMaterialExporter : IMaterialExporter
     {
-        GLTFMaterial ExportGLTFMaterial(IIGameMaterial material);
+        /// <summary>
+        /// Creates a GLTF material using the given GameMaterial.
+        /// </summary>
+        /// <param name="gltf">The GLTF output structure, for adding instances of classes such as GLTFSampler, GLTFImage and GLTFTexture.</param>
+        /// <param name="material">The input material matching the MaterialClassID defined by the exporter. </param>
+        /// <param name="tryWriteImageFunc">Callback function to verify images and to write images to the output folder. 
+        /// Takes the source path and the output texture name.
+        /// Returns null if the file was not written because of an error, else the output file extension.</param>
+        /// <returns>The exported GLTF material.</returns>
+        GLTFMaterial ExportGLTFMaterial(GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc);
     }
 
     // We require a separate struct, because the IClass_ID does not implement GetHashCode etc. to work with dictionaries
