@@ -167,5 +167,31 @@ namespace GLTFExport.Entities
                 skins = SkinsList.ToArray();
             }
         }
+        
+        public GLTFSampler AddSampler()
+        {
+            GLTFSampler gltfSampler = new GLTFSampler();
+            gltfSampler.index = SamplersList.Count;
+            SamplersList.Add(gltfSampler);
+            return gltfSampler;
+        }
+
+        public GLTFImage AddImage()
+        {
+            GLTFImage gltfImage = new GLTFImage();
+            gltfImage.index = ImagesList.Count;
+            ImagesList.Add(gltfImage);
+            return gltfImage;
+        }
+
+        public GLTFTexture AddTexture(GLTFSampler sampler, GLTFImage image)
+        {
+            GLTFTexture gltfTexture = new GLTFTexture();
+            gltfTexture.index = TexturesList.Count;
+            gltfTexture.sampler = sampler?.index;
+            gltfTexture.source = image?.index;
+            TexturesList.Add(gltfTexture);
+            return gltfTexture;
+        }
     }
 }

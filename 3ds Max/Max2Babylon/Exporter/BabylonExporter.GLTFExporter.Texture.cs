@@ -54,32 +54,33 @@ namespace Max2Babylon
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf)
         {
-            return ExportTexture(babylonTexture, gltf, null, () =>
+            return ExportTexture(babylonTexture, gltf, null, 
+                () => { return TryWriteImage(gltf, babylonTexture.originalPath, babylonTexture.name); });
+        }
+
+        private string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
+        {
+            if (sourcePath == null || sourcePath == "")
             {
-                var sourcePath = babylonTexture.originalPath;
+                RaiseWarning("Texture path is missing.", 2);
+                return null;
+            }
 
-                if (sourcePath == null || sourcePath == "")
-                {
-                    RaiseWarning("Texture path is missing.", 2);
-                    return null;
-                }
+            var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
 
-                var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
+            if (validImageFormat == null)
+            {
+                // Image format is not supported by the exporter
+                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                return null;
+            }
 
-                if (validImageFormat == null)
-                {
-                    // Image format is not supported by the exporter
-                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
-                    return null;
-                }
+            // Copy texture to output
+            var destPath = Path.Combine(gltf.OutputFolder, textureName);
+            destPath = Path.ChangeExtension(destPath, validImageFormat);
+            CopyGltfTexture(sourcePath, destPath);
 
-                // Copy texture to output
-                var destPath = Path.Combine(gltf.OutputFolder, babylonTexture.name);
-                destPath = Path.ChangeExtension(destPath, validImageFormat);
-                CopyGltfTexture(sourcePath, destPath);
-
-                return validImageFormat;
-             });
+            return validImageFormat;
         }
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Func<string> writeImageFunc)
@@ -109,9 +110,7 @@ namespace Max2Babylon
             // --------------------------
 
             RaiseMessage("GLTFExporter.Texture | create sampler", 2);
-            GLTFSampler gltfSampler = new GLTFSampler();
-            gltfSampler.index = gltf.SamplersList.Count;
-            gltf.SamplersList.Add(gltfSampler);
+            GLTFSampler gltfSampler = gltf.AddSampler();
 
             // --- Retreive info from babylon texture ---
             // Mag and min filters
@@ -130,13 +129,9 @@ namespace Max2Babylon
             // --------------------------
 
             RaiseMessage("GLTFExporter.Texture | create image", 2);
-            GLTFImage gltfImage = new GLTFImage
-            {
-                uri = name
-            };
+            GLTFImage gltfImage = gltf.AddImage();
 
-            gltfImage.index = gltf.ImagesList.Count;
-            gltf.ImagesList.Add(gltfImage);
+            gltfImage.uri = name;
             switch (validImageFormat)
             {
                 case "jpg":
@@ -153,14 +148,8 @@ namespace Max2Babylon
             // --------------------------
 
             RaiseMessage("GLTFExporter.Texture | create texture", 2);
-            var gltfTexture = new GLTFTexture
-            {
-                name = name,
-                sampler = gltfSampler.index,
-                source = gltfImage.index
-            };
-            gltfTexture.index = gltf.TexturesList.Count;
-            gltf.TexturesList.Add(gltfTexture);
+            GLTFTexture gltfTexture = gltf.AddTexture(gltfSampler, gltfImage);
+            gltfTexture.name = name;
 
 
             // --------------------------

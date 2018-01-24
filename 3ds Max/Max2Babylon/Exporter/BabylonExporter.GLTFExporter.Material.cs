@@ -22,14 +22,20 @@ namespace Max2Babylon
             if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out IMaterialExporter materialExporter)
                 && materialExporter is IGLTFMaterialExporter)
             {
-                GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(gameMtl);
+                GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(gltf, gameMtl, 
+                    (string sourcePath, string textureName) => { return TryWriteImage(gltf, sourcePath, textureName); } );
+
                 if (gltfMaterial == null)
                 {
-                    string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'", 
+                    string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
                         materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
                     RaiseWarning(message, 2);
                 }
-                else gltf.MaterialsList.Add(gltfMaterial);
+                else
+                {
+                    gltfMaterial.index = gltf.MaterialsList.Count;
+                    gltf.MaterialsList.Add(gltfMaterial);
+                }
             }
             else if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
             {
