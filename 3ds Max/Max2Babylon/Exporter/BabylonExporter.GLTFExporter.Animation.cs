@@ -18,6 +18,8 @@ namespace Max2Babylon
 
             foreach (AnimationGroup animGroup in animationList)
             {
+                RaiseMessage("GLTFExporter.Animation | Exporting animation group named: " + animGroup.Name, 1);
+
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = animGroup.Name;
                 foreach (uint nodeHandle in animGroup.NodeHandles)
