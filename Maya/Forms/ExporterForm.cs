@@ -114,6 +114,23 @@ namespace Maya2Babylon.Forms
                 Application.DoEvents();
             };
 
+            exporter.OnVerbose += (message, color, rank, emphasis) =>
+            {
+                try
+                {
+                    currentNode = CreateTreeNode(rank, message, color);
+
+                    if (emphasis)
+                    {
+                        currentNode.EnsureVisible();
+                    }
+                }
+                catch
+                {
+                }
+                Application.DoEvents();
+            };
+
             butExport.Enabled = false;
             butExportAndRun.Enabled = false;
             butCancel.Enabled = true;
