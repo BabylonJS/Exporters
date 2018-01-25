@@ -132,15 +132,7 @@ namespace Max2Babylon
             GLTFImage gltfImage = gltf.AddImage();
 
             gltfImage.uri = name;
-            switch (validImageFormat)
-            {
-                case "jpg":
-                    gltfImage.FileExtension = "jpeg";
-                    break;
-                case "png":
-                    gltfImage.FileExtension = "png";
-                    break;
-            }
+            gltfImage.FileExtension = validImageFormat;
 
 
             // --------------------------
@@ -148,7 +140,7 @@ namespace Max2Babylon
             // --------------------------
 
             RaiseMessage("GLTFExporter.Texture | create texture", 2);
-            GLTFTexture gltfTexture = gltf.AddTexture(gltfSampler, gltfImage);
+            GLTFTexture gltfTexture = gltf.AddTexture(gltfImage, gltfSampler);
             gltfTexture.name = name;
 
 

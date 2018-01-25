@@ -356,7 +356,8 @@ namespace Max2Babylon
                 {
                     using (MemoryStream m = new MemoryStream())
                     {
-                        var imageFormat = gltfImage.FileExtension == "jpeg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
+                        var format = gltfImage.FileExtension == "jpg" ? "jpeg" : gltfImage.FileExtension;
+                        var imageFormat = format == "jpeg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
                         image.Save(m, imageFormat);
                         byte[] imageBytes = m.ToArray();
 
@@ -379,7 +380,7 @@ namespace Max2Babylon
 
                         gltfImage.uri = null;
                         gltfImage.bufferView = bufferViewImage.index;
-                        gltfImage.mimeType = "image/" + gltfImage.FileExtension;
+                        gltfImage.mimeType = "image/" + format;
 
                         bufferViewImage.bytesList.AddRange(imageBytes);
                         bufferViewImage.byteLength += imageBytes.Length;

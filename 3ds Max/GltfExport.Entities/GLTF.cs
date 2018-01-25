@@ -184,7 +184,7 @@ namespace GLTFExport.Entities
             return gltfImage;
         }
 
-        public GLTFTexture AddTexture(GLTFSampler sampler, GLTFImage image)
+        public GLTFTexture AddTexture(GLTFImage image, GLTFSampler sampler)
         {
             GLTFTexture gltfTexture = new GLTFTexture();
             gltfTexture.index = TexturesList.Count;
