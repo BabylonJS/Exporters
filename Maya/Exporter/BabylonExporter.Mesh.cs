@@ -283,10 +283,16 @@ namespace Maya2Babylon
                     int[] triangleVertices = new int[3];
                     mFnMesh.getPolygonTriangleVertices(polygonId, triangleIndex, triangleVertices);
 
-                    // Inverse winding order
-                    var tmp = triangleVertices[1];
-                    triangleVertices[1] = triangleVertices[2];
-                    triangleVertices[2] = tmp;
+                    /*
+                     * Switch coordinate system at global level
+                     * 
+                     * Piece of code kept just in case
+                     * See BabylonExporter for more information
+                     */
+                    //// Inverse winding order to flip faces
+                    //var tmp = triangleVertices[1];
+                    //triangleVertices[1] = triangleVertices[2];
+                    //triangleVertices[2] = tmp;
 
                     // For each vertex of this triangle (3 vertices per triangle)
                     foreach (int vertexId in triangleVertices)
@@ -296,6 +302,10 @@ namespace Maya2Babylon
 
                         MVector normal = new MVector();
                         mFnMesh.getFaceVertexNormal(polygonId, vertexId, normal);
+
+                        // Switch coordinate system at object level
+                        point.z *= -1;
+                        normal.z *= -1;
 
                         var vertex = new GlobalVertex
                         {
@@ -332,8 +342,12 @@ namespace Maya2Babylon
                 RaiseVerbose("BabylonExporter.Mesh | Hierarchy", 2);
 
                 MObject parentMObject = mFnTransform.parent(0);
-                MFnDagNode mFnTransformParent = new MFnDagNode(parentMObject);
-                babylonAbstractMesh.parentId = mFnTransformParent.uuid().asString();
+                // Children of World node don't have parent in Babylon
+                if (parentMObject.apiType != MFn.Type.kWorld)
+                {
+                    MFnDagNode mFnTransformParent = new MFnDagNode(parentMObject);
+                    babylonAbstractMesh.parentId = mFnTransformParent.uuid().asString();
+                }
             }
         }
 
@@ -345,7 +359,7 @@ namespace Maya2Babylon
             var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
             
             babylonAbstractMesh.position = transformationMatrix.getTranslation();
-            
+
             if (_exportQuaternionsInsteadOfEulers)
             {
                 babylonAbstractMesh.rotationQuaternion = transformationMatrix.getRotationQuaternion();
@@ -356,6 +370,19 @@ namespace Maya2Babylon
             }
 
             babylonAbstractMesh.scaling = transformationMatrix.getScale();
+
+            // Switch coordinate system at object level
+            babylonAbstractMesh.position[2] *= -1;
+            if (_exportQuaternionsInsteadOfEulers)
+            {
+                babylonAbstractMesh.rotationQuaternion[0] *= -1;
+                babylonAbstractMesh.rotationQuaternion[1] *= -1;
+            }
+            else
+            {
+                babylonAbstractMesh.rotation[0] *= -1;
+                babylonAbstractMesh.rotation[1] *= -1;
+            }
         }
 
         private bool IsMeshExportable(MFnDagNode mFnDagNode)
