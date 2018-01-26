@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3ds Max", "3ds Max", "{2139CC27-1C89-49C8-95AC-7715ACBADC1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Max2Babylon2017", "Max2Babylon\2017\Max2Babylon2017.csproj", "{2F49C726-A1F8-40D4-859F-1355949608DC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF} = {65686998-09AC-4A14-B23F-7FCE6BA994CF}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLTFExport.Entities", "GltfExport.Entities\GLTFExport.Entities.csproj", "{65686998-09AC-4A14-B23F-7FCE6BA994CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Max2Babylon2015", "Max2Babylon\2015\Max2Babylon2015.csproj", "{DD7C931A-8FAF-4318-BB74-71DC858CC400}"
 EndProject
@@ -20,15 +15,21 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BabylonFileConverter", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Max2Babylon2018", "Max2Babylon\2018\Max2Babylon2018.csproj", "{2F49C726-A1F8-40D4-859F-135594960DDC}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GltfExport.Entities", "..\SharedProjects\GltfExport.Entities\GltfExport.Entities.shproj", "{00356433-4277-48BB-AC33-92D3C47FE28B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{00356433-4277-48bb-ac33-92d3c47fe28b}*SharedItemsImports = 13
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2a678a75-f8c2-41ba-814a-53e611f5eb96}*SharedItemsImports = 13
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2f49c726-a1f8-40d4-859f-1355949608dc}*SharedItemsImports = 4
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{2f49c726-a1f8-40d4-859f-1355949608dc}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{2f49c726-a1f8-40d4-859f-1355949608dc}*SharedItemsImports = 4
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2f49c726-a1f8-40d4-859f-135594960ddc}*SharedItemsImports = 4
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{2f49c726-a1f8-40d4-859f-135594960ddc}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{2f49c726-a1f8-40d4-859f-135594960ddc}*SharedItemsImports = 4
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{dd7c931a-8faf-4318-bb74-71dc858cc400}*SharedItemsImports = 4
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{dd7c931a-8faf-4318-bb74-71dc858cc400}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{dd7c931a-8faf-4318-bb74-71dc858cc400}*SharedItemsImports = 4
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,42 +89,6 @@ Global
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Release|x64.Build.0 = Release|Any CPU
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Release|x86.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|ARM.Build.0 = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|Win32.Build.0 = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|x64.Build.0 = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Debug|x86.Build.0 = Debug|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|Any CPU.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|Any CPU.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|ARM.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|ARM.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|Mixed Platforms.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|Win32.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|Win32.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|x64.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|x64.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|x86.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Profile|x86.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|ARM.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|ARM.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|Win32.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|Win32.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|x64.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|x64.Build.0 = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|x86.ActiveCfg = Release|Any CPU
-		{65686998-09AC-4A14-B23F-7FCE6BA994CF}.Release|x86.Build.0 = Release|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|ARM.ActiveCfg = Debug|Any CPU
