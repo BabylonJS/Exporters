@@ -141,24 +141,33 @@ namespace Maya2Babylon
             }
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
 
-            // Switch from right to left handed coordinate system
-            MUuid mUuid = new MUuid();
-            mUuid.generate();
-            var rootNode = new BabylonMesh
-            {
-                name = "root",
-                id = mUuid.asString(),
-                scaling = new float[] { 1, 1, -1 }
-            };
-            foreach(var babylonMesh in babylonScene.MeshesList)
-            {
-                // Add root meshes as child to root node
-                if (babylonMesh.parentId == null)
-                {
-                    babylonMesh.parentId = rootNode.id;
-                }
-            }
-            babylonScene.MeshesList.Add(rootNode);
+            /*
+             * Switch coordinate system at global level
+             * 
+             * Add a root node with negative scaling
+             * Pros - It's safer to use a root node
+             * Cons - It's cleaner to switch at object level (as it is done now)
+             * Use root node method when you want to be 100% sure of the output
+             * Don't forget to also inverse winding order of mesh indices
+             */
+            //// Switch from right to left handed coordinate system
+            //MUuid mUuid = new MUuid();
+            //mUuid.generate();
+            //var rootNode = new BabylonMesh
+            //{
+            //    name = "root",
+            //    id = mUuid.asString(),
+            //    scaling = new float[] { 1, 1, -1 }
+            //};
+            //foreach(var babylonMesh in babylonScene.MeshesList)
+            //{
+            //    // Add root meshes as child to root node
+            //    if (babylonMesh.parentId == null)
+            //    {
+            //        babylonMesh.parentId = rootNode.id;
+            //    }
+            //}
+            //babylonScene.MeshesList.Add(rootNode);
 
             // --------------------
             // ----- Materials ----
