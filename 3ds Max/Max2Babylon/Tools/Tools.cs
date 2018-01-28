@@ -23,6 +23,11 @@ namespace Max2Babylon
             return min + (max - min) * t;
         }
 
+        public static int RoundToInt(float f)
+        {
+            return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
+        }
+
         #endregion
 
         #region Array
