@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
@@ -35,24 +33,24 @@ namespace Max2Babylon
         }
         public int FrameStart
         {
-            get { return frameStart; }
+            get { return Tools.RoundToInt(ticksStart / (float)Loader.Global.TicksPerFrame); }
             set
             {
-                if (value.Equals(frameStart))
+                if (value.Equals(FrameStart)) // property getter
                     return;
                 IsDirty = true;
-                frameStart = value;
+                ticksStart = value * Loader.Global.TicksPerFrame;
             }
         }
         public int FrameEnd
         {
-            get { return frameEnd; }
+            get { return Tools.RoundToInt(ticksEnd / (float)Loader.Global.TicksPerFrame); }
             set
             {
-                if (value.Equals(frameEnd))
+                if (value.Equals(FrameEnd)) // property getter
                     return;
                 IsDirty = true;
-                frameEnd = value;
+                ticksEnd = value * Loader.Global.TicksPerFrame;
             }
         }
         public IList<uint> NodeHandles
@@ -84,22 +82,21 @@ namespace Max2Babylon
             }
         }
 
+        public int TicksStart { get { return ticksStart; } }
+        public int TicksEnd { get { return ticksEnd; } }
+
         const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
         const char s_PropertySeparator = ';';
         const string s_PropertyFormat = "{0};{1};{2};{3}";
 
         private Guid serializedId = Guid.NewGuid();
         private string name = "Animation";
-        private int frameStart = 0;
-        private int frameEnd = 100;
+        // use current timeline frame range by default
+        private int ticksStart = Loader.Core.AnimRange.Start;
+        private int ticksEnd = Loader.Core.AnimRange.End;
         private List<uint> nodeHandles = new List<uint>();
 
-        public AnimationGroup()
-        {
-            // use current timeline frame range by default
-            frameStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
-            frameEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
-        }
+        public AnimationGroup() { }
         public AnimationGroup(AnimationGroup other)
         {
             DeepCopyFrom(other);
@@ -108,8 +105,8 @@ namespace Max2Babylon
         {
             serializedId = other.serializedId;
             name = other.name;
-            frameStart = other.frameStart;
-            frameEnd = other.frameEnd;
+            ticksStart = other.ticksStart;
+            ticksEnd = other.ticksEnd;
             nodeHandles.Clear();
             nodeHandles.AddRange(other.nodeHandles);
             IsDirty = true;
@@ -117,7 +114,7 @@ namespace Max2Babylon
 
         public override string ToString()
         {
-            return string.Format(s_DisplayNameFormat, name, frameStart, frameEnd);
+            return string.Format(s_DisplayNameFormat, name, FrameStart, FrameEnd);
         }
 
         #region Serialization
@@ -143,9 +140,9 @@ namespace Max2Babylon
             IsDirty = true;
 
             name = properties[0];
-            if (!int.TryParse(properties[1], out frameStart))
+            if (!int.TryParse(properties[1], out ticksStart))
                 throw new Exception("Failed to parse FrameStart property.");
-            if (!int.TryParse(properties[2], out frameEnd))
+            if (!int.TryParse(properties[2], out ticksEnd))
                 throw new Exception("Failed to parse FrameEnd property.");
 
             if (string.IsNullOrEmpty(properties[3]))
@@ -178,7 +175,7 @@ namespace Max2Babylon
 
             string nodes = string.Join(s_PropertySeparator.ToString(), nodeHandles);
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(s_PropertyFormat, name, frameStart, frameEnd, nodes);
+            stringBuilder.AppendFormat(s_PropertyFormat, name, ticksStart, ticksEnd, nodes);
 
             Loader.Core.RootNode.SetStringProperty(GetPropertyName(), stringBuilder.ToString());
 
