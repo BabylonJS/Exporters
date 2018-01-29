@@ -20,8 +20,6 @@ namespace Maya2Babylon
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
         private bool isBabylonExported;
 
-        public event Action<int> OnImportProgressChanged;
-
         public bool IsCancelled { get; set; }
 
         // Custom properties
