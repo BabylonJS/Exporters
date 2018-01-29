@@ -44,6 +44,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonSubMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonUniversalCamera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonVector2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVector3.cs" />
   </ItemGroup>
 </Project>
