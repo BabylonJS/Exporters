@@ -1,0 +1,145 @@
+{
+	"producer": {
+		"name": "Maya",
+		"version": "2018",
+		"exporter_version": "1.0",
+		"file": "SimpleTriangle.babylon"
+	},
+	"autoClear": true,
+	"clearColor": [
+		0.2,
+		0.2,
+		0.3
+	],
+	"ambientColor": [
+		0,
+		0,
+		0
+	],
+	"fogMode": 0,
+	"fogColor": null,
+	"fogStart": 0,
+	"fogEnd": 0,
+	"fogDensity": 0,
+	"gravity": [
+		0,
+		0,
+		-0.9
+	],
+	"physicsEngine": null,
+	"physicsEnabled": false,
+	"physicsGravity": null,
+	"lights": null,
+	"meshes": [
+		{
+			"materialId": null,
+			"isEnabled": true,
+			"isVisible": true,
+			"pickable": true,
+			"pivotMatrix": null,
+			"positions": [
+				-0.3333,
+				0,
+				0.3333,
+				0.6667,
+				0,
+				0.3333,
+				-0.3333,
+				0,
+				-0.6667
+			],
+			"normals": [
+				0,
+				-1,
+				0,
+				0,
+				-1,
+				0,
+				0,
+				-1,
+				0
+			],
+			"uvs": null,
+			"uvs2": null,
+			"colors": null,
+			"hasVertexAlpha": false,
+			"matricesIndices": null,
+			"matricesWeights": null,
+			"matricesIndicesExtra": null,
+			"matricesWeightsExtra": null,
+			"indices": [
+				0,
+				1,
+				2
+			],
+			"checkCollisions": false,
+			"receiveShadows": false,
+			"infiniteDistance": false,
+			"billboardMode": 0,
+			"visibility": 1,
+			"subMeshes": [
+				{
+					"materialIndex": 0,
+					"verticesStart": 0,
+					"verticesCount": 3,
+					"indexStart": 0,
+					"indexCount": 3
+				}
+			],
+			"instances": null,
+			"skeletonId": -1,
+			"numBoneInfluencers": 4,
+			"showBoundingBox": false,
+			"showSubMeshesBoundingBox": false,
+			"applyFog": false,
+			"alphaIndex": 0,
+			"physicsImpostor": 0,
+			"physicsMass": 0,
+			"physicsFriction": 0,
+			"physicsRestitution": 0,
+			"metadata": null,
+			"tags": null,
+			"position": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"scaling": [
+				100,
+				100,
+				100
+			],
+			"rotationQuaternion": [
+				0.7071,
+				0,
+				0,
+				0.7071
+			],
+			"actions": null,
+			"name": "Mesh",
+			"id": "B36F3C37-49CB-AC4E-DA05-59A0EA1CB534",
+			"parentId": null,
+			"animations": null,
+			"autoAnimate": false,
+			"autoAnimateFrom": 0,
+			"autoAnimateTo": 0,
+			"autoAnimateLoop": false
+		}
+	],
+	"sounds": [],
+	"materials": [],
+	"multiMaterials": [],
+	"particleSystems": null,
+	"lensFlareSystems": null,
+	"shadowGenerators": [],
+	"skeletons": [],
+	"actions": null,
+	"metadata": null,
+	"workerCollisions": false,
+	"morphTargetManagers": null
+}

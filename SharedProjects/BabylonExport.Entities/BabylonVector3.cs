@@ -84,10 +84,11 @@ namespace BabylonExport.Entities
         }
 
         /**
-         * Returns a new Vector3 set from the index "offset" of the passed array.
+         * Returns a new Vector3 set from the index "countOffset" x 3 of the passed array.
          */
-        public static BabylonVector3 FromArray(float[] array, int offset = 0)
+        public static BabylonVector3 FromArray(float[] array, int countOffset = 0)
         {
+            var offset = countOffset * 3;
             return new BabylonVector3(array[offset], array[offset + 1], array[offset + 2]);
         }
 
