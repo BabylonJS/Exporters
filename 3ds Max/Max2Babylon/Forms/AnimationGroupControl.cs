@@ -42,6 +42,10 @@ namespace Max2Babylon
                 startTextBox.Text = info.FrameStart.ToString();
                 endTextBox.Text = info.FrameEnd.ToString();
 
+                // a color can still be red after setting the string:
+                // possible if we change a name, don't confirm and switch to another item with the same name
+                ResetChangedTextBoxColors();
+
                 MaxNodeTree.BeginUpdate();
                 MaxNodeTree.QueueSetNodes(info.NodeHandles, false);
                 MaxNodeTree.ApplyQueuedChanges(out List<uint> handles, false);
@@ -148,6 +152,7 @@ namespace Max2Babylon
                 confirmedInfo.NodeHandles = newHandles;
 
             ResetChangedTextBoxColors();
+            MaxNodeTree.SelectedNode = null;
 
             InfoChanged?.Invoke(confirmedInfo);
             ConfirmPressed?.Invoke(confirmedInfo);

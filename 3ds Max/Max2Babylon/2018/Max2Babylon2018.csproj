@@ -293,6 +293,10 @@
       <Link>Forms\Vector3Control.resx</Link>
       <DependentUpon>Vector3Control.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\MaxNodeTreeView.resx">
+      <Link>Forms\MaxNodeTreeView.resx</Link>
+      <DependentUpon>MaxNodeTreeView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

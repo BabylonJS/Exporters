@@ -329,6 +329,10 @@ namespace Max2Babylon
 
             visualNode.ForeColor = GetNodeForeColor(nodeInfo);
             visualNode.BackColor = GetNodeBackColor(nodeInfo);
+
+            // deselect so the user sees something happened to the node
+            if (SelectedNode == visualNode)
+                SelectedNode = null;
         }
 
         void SetNodeState_ToRemove(VisualNode visualNode, bool keepAsDummy)
@@ -351,6 +355,10 @@ namespace Max2Babylon
             visualNode.EnsureVisible();
             visualNode.ForeColor = GetNodeForeColor(nodeInfo);
             visualNode.BackColor = GetNodeBackColor(nodeInfo);
+
+            // deselect so the user sees something happened to the node
+            if (SelectedNode == visualNode)
+                SelectedNode = null;
         }
 
         Color GetNodeForeColor(VisualNodeInfo nodeInfo)
@@ -390,5 +398,72 @@ namespace Max2Babylon
         }
 
         #endregion
+        
+        #region UserControl Events
+                
+        private void MaxNodeTreeView_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!Focused)
+                return;
+
+            if (SelectedNode == null)
+                return;
+
+            if (e.KeyCode == Keys.Delete)
+                QueueRemoveNode(SelectedNode);
+            if(e.KeyCode == Keys.Enter)
+                QueueAddNode(((VisualNodeInfo)SelectedNode.Tag).MaxNode);
+        }
+
+        private void MaxNodeTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            // by default only left-click selects a node
+            if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Left)
+                SelectedNode = e.Node;
+        }
+
+        private void MaxNodeTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            VisualNodeInfo nodeInfo = e.Node.Tag as VisualNodeInfo;
+            if (nodeInfo == null || nodeInfo.MaxNode == null)
+            {
+                // this can maybe happen if the node was deleted while the node viewer was open
+                // in this case, the node still exists in the viewer, but not in 3ds max
+                return;
+            }
+
+            Loader.Core.SelectNode(nodeInfo.MaxNode, true);
+        }
+
+        private void NodeContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (SelectedNode == null)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void NodeContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            // the targeted node should already exist in our tree and be selected
+            if (SelectedNode == null)
+                return;
+
+            VisualNode node = SelectedNode;
+
+            switch (e.ClickedItem.Tag.ToString().ToUpperInvariant())
+            {
+                case "INCLUDE":
+                    VisualNodeInfo info = (VisualNodeInfo)node.Tag;
+                    QueueAddNode(info.MaxNode);
+                    break;
+                case "EXCLUDE":
+                    QueueRemoveNode(node);
+                    break;
+            }
+        }
+
+        #endregion
+
     }
 }
