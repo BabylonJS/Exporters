@@ -1,6 +1,7 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
 using MayaBabylon;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,56 +9,104 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
-        private BabylonNode ExportMesh(MObject mObject, BabylonScene babylonScene)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mDagPath">DAG path to the transform</param>
+        /// <param name="babylonScene"></param>
+        /// <returns></returns>
+        private BabylonNode ExportDummy(MDagPath mDagPath, BabylonScene babylonScene)
         {
-            MFnMesh mFnMesh = new MFnMesh(mObject);
-            MFnDagNode mFnDagNode = new MFnDagNode(mObject);
+            RaiseMessage(mDagPath.partialPathName, 1);
 
-            var mObjectParent = mFnMesh.parent(0);
-            MFnDagNode mFnDagNodeParent = new MFnDagNode(mObjectParent);
+            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+
+            var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+            babylonMesh.isDummy = true;
+
+            // Position / rotation / scaling / hierarchy
+            ExportNode(babylonMesh, mFnTransform, babylonScene);
+
+            // TODO - Animations
+            //exportAnimation(babylonMesh, meshNode);
+
+            babylonScene.MeshesList.Add(babylonMesh);
+
+            return babylonMesh;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mDagPath">DAG path to the transform above mesh</param>
+        /// <param name="babylonScene"></param>
+        /// <returns></returns>
+        private BabylonNode ExportMesh(MDagPath mDagPath, BabylonScene babylonScene)
+        {
+            RaiseMessage(mDagPath.partialPathName, 1);
+
+            // Transform above mesh
+            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+            // Mesh direct child of the transform
+            mDagPath.extendToShape();
+            MFnMesh mFnMesh = new MFnMesh(mDagPath);
 
             // --- prints ---
             #region prints
 
+            Action<MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
+            {
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.name=" + mFnDagNode.name, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.absoluteName=" + mFnDagNode.absoluteName, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.fullPathName=" + mFnDagNode.fullPathName, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.partialPathName=" + mFnDagNode.partialPathName, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.activeColor=" + mFnDagNode.activeColor.toString(), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.attributeCount=" + mFnDagNode.attributeCount, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.childCount=" + mFnDagNode.childCount, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.dormantColor=" + mFnDagNode.dormantColor, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.hasUniqueName=" + mFnDagNode.hasUniqueName, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.inUnderWorld=" + mFnDagNode.inUnderWorld, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isDefaultNode=" + mFnDagNode.isDefaultNode, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanceable=" + mFnDagNode.isInstanceable, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(true)=" + mFnDagNode.isInstanced(true), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(false)=" + mFnDagNode.isInstanced(false), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced()=" + mFnDagNode.isInstanced(), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isIntermediateObject=" + mFnDagNode.isIntermediateObject, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isShared=" + mFnDagNode.isShared, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.objectColor=" + mFnDagNode.objectColor, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.parentCount=" + mFnDagNode.parentCount, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.parentNamespace=" + mFnDagNode.parentNamespace, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.uuid().asString()=" + mFnDagNode.uuid().asString(), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.dagRoot().apiType=" + mFnDagNode.dagRoot().apiType, 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.model.equalEqual(mFnDagNode.objectProperty)=" + mFnDagNode.model.equalEqual(mFnDagNode.objectProperty), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.transformationMatrix.toString()=" + mFnDagNode.transformationMatrix.toString(), 3);
+            };
+
+            Action<MFnMesh> printMFnMesh = (MFnMesh _mFnMesh) =>
+            {
+                printMFnDagNode(mFnMesh);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numVertices=" + _mFnMesh.numVertices, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numEdges=" + _mFnMesh.numEdges, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numPolygons=" + _mFnMesh.numPolygons, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numFaceVertices=" + _mFnMesh.numFaceVertices, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numNormals=" + _mFnMesh.numNormals, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numUVSets=" + _mFnMesh.numUVSets, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numUVsProperty=" + _mFnMesh.numUVsProperty, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.displayColors=" + _mFnMesh.displayColors, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numColorSets=" + _mFnMesh.numColorSets, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numColorsProperty=" + _mFnMesh.numColorsProperty, 3);
+            };
+
+            Action<MFnTransform> printMFnTransform = (MFnTransform _mFnMesh) =>
+            {
+                printMFnDagNode(mFnMesh);
+            };
+
             RaiseVerbose("BabylonExporter.Mesh | mFnMesh data", 2);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.name=" + mFnMesh.name, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.absoluteName=" + mFnMesh.absoluteName, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.fullPathName=" + mFnMesh.fullPathName, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.partialPathName=" + mFnMesh.partialPathName, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numVertices=" + mFnMesh.numVertices, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numEdges=" + mFnMesh.numEdges, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numPolygons=" + mFnMesh.numPolygons, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numFaceVertices=" + mFnMesh.numFaceVertices, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numNormals=" + mFnMesh.numNormals, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numUVSets=" + mFnMesh.numUVSets, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numUVsProperty=" + mFnMesh.numUVsProperty, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.activeColor=" + mFnMesh.activeColor.toString(), 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.attributeCount=" + mFnMesh.attributeCount, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.childCount=" + mFnMesh.childCount, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.displayColors=" + mFnMesh.displayColors, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.dormantColor=" + mFnMesh.dormantColor, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.hasUniqueName=" + mFnMesh.hasUniqueName, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.inUnderWorld=" + mFnMesh.inUnderWorld, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isDefaultNode=" + mFnMesh.isDefaultNode, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isInstanceable=" + mFnMesh.isInstanceable, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isInstanced(true)=" + mFnMesh.isInstanced(true), 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isInstanced(false)=" + mFnMesh.isInstanced(false), 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isInstanced()=" + mFnMesh.isInstanced(), 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isIntermediateObject=" + mFnMesh.isIntermediateObject, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.isShared=" + mFnMesh.isShared, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numColorSets=" + mFnMesh.numColorSets, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numColorsProperty=" + mFnMesh.numColorsProperty, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.objectColor=" + mFnMesh.objectColor, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.parentCount=" + mFnMesh.parentCount, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.parentNamespace=" + mFnMesh.parentNamespace, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.uuid().asString()=" + mFnMesh.uuid().asString(), 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.dagRoot().apiType=" + mFnMesh.dagRoot().apiType, 3);
-            RaiseVerbose("BabylonExporter.Mesh | mFnMesh.model.equalEqual(mFnMesh.objectProperty)=" + mFnMesh.model.equalEqual(mFnMesh.objectProperty), 3);
-            RaiseVerbose("BabylonExporter.Mesh | ToString(mFnMesh.transformationMatrix)=" + mFnMesh.transformationMatrix.toString(), 3);
-            var transformationMatrix = new MTransformationMatrix(mFnMesh.transformationMatrix);
-            RaiseVerbose("BabylonExporter.Mesh | transformationMatrix.getTranslation().toString()=" + transformationMatrix.getTranslation().toString(), 3);
-            var transformationMatrixParent = new MTransformationMatrix(mFnDagNodeParent.transformationMatrix);
-            RaiseVerbose("BabylonExporter.Mesh | transformationMatrixParent.getTranslation().toString()=" + transformationMatrixParent.getTranslation().toString(), 3);
+            printMFnMesh(mFnMesh);
+
+            RaiseVerbose("BabylonExporter.Mesh | mFnTransform data", 2);
+            printMFnTransform(mFnTransform);
 
             // Geometry
             MIntArray triangleCounts = new MIntArray();
@@ -117,12 +166,10 @@ namespace Maya2Babylon
                 return null;
             }
 
-            RaiseMessage(mFnMesh.name, 1);
-
-            var babylonMesh = new BabylonMesh { name = mFnMesh.name, id = mFnMesh.uuid().asString() };
+            var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
 
             // Position / rotation / scaling / hierarchy
-            ExportNode(babylonMesh, mFnDagNode, babylonScene);
+            ExportNode(babylonMesh, mFnTransform, babylonScene);
 
             // Misc.
             // TODO - Retreive from Maya
@@ -202,7 +249,7 @@ namespace Maya2Babylon
 
 
             babylonScene.MeshesList.Add(babylonMesh);
-            RaiseMessage("BabylonExporter.Mesh | done", 3);
+            RaiseMessage("BabylonExporter.Mesh | done", 2);
 
             return babylonMesh;
         }
@@ -236,10 +283,16 @@ namespace Maya2Babylon
                     int[] triangleVertices = new int[3];
                     mFnMesh.getPolygonTriangleVertices(polygonId, triangleIndex, triangleVertices);
 
-                    // Inverse winding order
-                    var tmp = triangleVertices[1];
-                    triangleVertices[1] = triangleVertices[2];
-                    triangleVertices[2] = tmp;
+                    /*
+                     * Switch coordinate system at global level
+                     * 
+                     * Piece of code kept just in case
+                     * See BabylonExporter for more information
+                     */
+                    //// Inverse winding order to flip faces
+                    //var tmp = triangleVertices[1];
+                    //triangleVertices[1] = triangleVertices[2];
+                    //triangleVertices[2] = tmp;
 
                     // For each vertex of this triangle (3 vertices per triangle)
                     foreach (int vertexId in triangleVertices)
@@ -249,6 +302,10 @@ namespace Maya2Babylon
 
                         MVector normal = new MVector();
                         mFnMesh.getFaceVertexNormal(polygonId, vertexId, normal);
+
+                        // Switch coordinate system at object level
+                        point.z *= -1;
+                        normal.z *= -1;
 
                         var vertex = new GlobalVertex
                         {
@@ -272,28 +329,37 @@ namespace Maya2Babylon
             subMesh.verticesCount = vertices.Count;
         }
         
-        private void ExportNode(BabylonAbstractMesh babylonAbstractMesh, MFnDagNode mFnDagNode, BabylonScene babylonScene)
+        private void ExportNode(BabylonAbstractMesh babylonAbstractMesh, MFnTransform mFnTransform, BabylonScene babylonScene)
         {
-            if (mFnDagNode.parentCount != 0)
+            RaiseVerbose("BabylonExporter.Mesh | ExportNode", 2);
+
+            // Position / rotation / scaling
+            ExportTransform(babylonAbstractMesh, mFnTransform);
+
+            // Hierarchy
+            if (mFnTransform.parentCount != 0)
             {
-                MObject parentMObject = mFnDagNode.parent(0);
-                MFnDagNode mFnDagNodeParent = new MFnDagNode(parentMObject);
+                RaiseVerbose("BabylonExporter.Mesh | Hierarchy", 2);
 
-                // Position / rotation / scaling
-                ExportTransform(babylonAbstractMesh, mFnDagNodeParent);
-
-                // TODO - Hierarchy
-                //babylonAbstractMesh.parentId = mFnDagNodeParent.uuid().asString();
+                MObject parentMObject = mFnTransform.parent(0);
+                // Children of World node don't have parent in Babylon
+                if (parentMObject.apiType != MFn.Type.kWorld)
+                {
+                    MFnDagNode mFnTransformParent = new MFnDagNode(parentMObject);
+                    babylonAbstractMesh.parentId = mFnTransformParent.uuid().asString();
+                }
             }
         }
 
-        private void ExportTransform(BabylonAbstractMesh babylonAbstractMesh, MFnDagNode mFnDagNode)
+        private void ExportTransform(BabylonAbstractMesh babylonAbstractMesh, MFnTransform mFnTransform)
         {
+            RaiseVerbose("BabylonExporter.Mesh | ExportTransform", 2);
+
             // Position / rotation / scaling
-            var transformationMatrix = new MTransformationMatrix(mFnDagNode.transformationMatrix);
+            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
             
             babylonAbstractMesh.position = transformationMatrix.getTranslation();
-            
+
             if (_exportQuaternionsInsteadOfEulers)
             {
                 babylonAbstractMesh.rotationQuaternion = transformationMatrix.getRotationQuaternion();
@@ -304,6 +370,19 @@ namespace Maya2Babylon
             }
 
             babylonAbstractMesh.scaling = transformationMatrix.getScale();
+
+            // Switch coordinate system at object level
+            babylonAbstractMesh.position[2] *= -1;
+            if (_exportQuaternionsInsteadOfEulers)
+            {
+                babylonAbstractMesh.rotationQuaternion[0] *= -1;
+                babylonAbstractMesh.rotationQuaternion[1] *= -1;
+            }
+            else
+            {
+                babylonAbstractMesh.rotation[0] *= -1;
+                babylonAbstractMesh.rotation[1] *= -1;
+            }
         }
 
         private bool IsMeshExportable(MFnDagNode mFnDagNode)
