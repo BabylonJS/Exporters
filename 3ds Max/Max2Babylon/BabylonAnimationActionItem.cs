@@ -67,12 +67,12 @@ namespace Max2Babylon
 
 		public override string MenuText
 		{
-			get { return "&Babylon Animation Groups..."; }
+			get { return "&Babylon Animation Groups"; }
 		}
 
 		public override string DescriptionText
 		{
-			get { return "Manage babylon animation groups"; }
+			get { return "UI to manage babylon animation groups for this scene"; }
 		}
 
 		public override string CategoryText
