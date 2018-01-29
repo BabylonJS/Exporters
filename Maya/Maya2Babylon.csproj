@@ -55,11 +55,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BabylonExportActionItem.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Writer.cs" />
     <Compile Include="Exporter\BabylonExporter.Logger.cs" />
     <Compile Include="Exporter\BabylonExporter.cs" />
     <Compile Include="Exporter\GlobalVertex.cs" />
+    <Compile Include="Exporter\GLTFGlobalVertex.cs" />
     <Compile Include="Extensions\MColorExtension.cs" />
     <Compile Include="Extensions\MFloatVectorExtension.cs" />
     <Compile Include="Extensions\MFloatPointExtension.cs" />
@@ -73,6 +77,7 @@
     <Compile Include="Forms\ExporterForm.Designer.cs">
       <DependentUpon>ExporterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Exporter\GLTFBufferService.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="MayaPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +86,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Tools\JsonTextWriterBounded.cs" />
     <Compile Include="Tools\JsonTextWriterOptimized.cs" />
     <Compile Include="Tools\Tools.cs" />
     <Compile Include="Tools\WebServer.cs" />
@@ -106,6 +112,7 @@
   </ItemGroup>
   <Import Project="..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
+  <Import Project="..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Max2Babylon
+namespace Maya2Babylon
 {
     partial class BabylonExporter
     {

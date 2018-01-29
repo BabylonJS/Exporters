@@ -15,16 +15,14 @@ namespace Maya2Babylon
         // Export options
         private bool _onlySelected;
         private bool _exportHiddenObjects;
+        private bool ExportHiddenObjects { get; set; }
+        private bool CopyTexturesToOutput { get; set; }
+        private bool ExportQuaternionsInsteadOfEulers { get; set; }
+        private bool isBabylonExported;
 
         public event Action<int> OnImportProgressChanged;
-        public bool AutoSaveMayaFile { get; set; }
-        public bool ExportHiddenObjects { get; set; }
+
         public bool IsCancelled { get; set; }
-
-        public bool CopyTexturesToOutput { get; set; }
-        public object ExportQuaternionsInsteadOfEulers { get; private set; }
-
-        private bool isBabylonExported;
 
         // Custom properties
         private bool _exportQuaternionsInsteadOfEulers;
@@ -38,6 +36,7 @@ namespace Maya2Babylon
             // Store export options
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
+            CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
             // Check directory exists
@@ -181,8 +180,15 @@ namespace Maya2Babylon
                 Write(babylonScene, outputBabylonDirectory, outputFileName, outputFormat, generateManifest);
             }
 
-            // TODO - Export glTF
-            
+            ReportProgressChanged(100);
+
+            // Export glTF
+            if (outputFormat == "gltf" || outputFormat == "glb")
+            {
+                bool generateBinary = outputFormat == "glb";
+                ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
+            }
+
             watch.Stop();
             RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
         }
