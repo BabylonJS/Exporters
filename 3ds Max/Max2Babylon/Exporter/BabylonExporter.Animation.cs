@@ -8,8 +8,6 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        const int Ticks = 160;
-
         private static bool ExportBabylonKeys(List<BabylonAnimationKey> keys, string property, List<BabylonAnimation> animations, BabylonAnimation.DataType dataType, BabylonAnimation.LoopBehavior loopBehavior)
         {
             if (keys.Count == 0)
@@ -18,11 +16,11 @@ namespace Max2Babylon
             }
 
             var end = Loader.Core.AnimRange.End;
-            if (keys[keys.Count - 1].frame != end / Ticks)
+            if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
             {
                 keys.Add(new BabylonAnimationKey()
                 {
-                    frame = end / Ticks,
+                    frame = end / Loader.Global.TicksPerFrame,
                     values = keys[keys.Count - 1].values
                 });
             }
@@ -92,7 +90,7 @@ namespace Max2Babylon
 
                 var key = new BabylonAnimationKey()
                 {
-                    frame = gameKey.T / Ticks,
+                    frame = gameKey.T / Loader.Global.TicksPerFrame,
                     values = extractValueFunc(gameKey)
                 };
                 keys.Add(key);
@@ -112,7 +110,7 @@ namespace Max2Babylon
 
             return new BabylonAnimationKey
             {
-                frame = key.Time / Ticks,
+                frame = key.Time / Loader.Global.TicksPerFrame,
                 values = new[] { key.Val }
             };
         }
@@ -142,7 +140,7 @@ namespace Max2Babylon
 
                     return new BabylonAnimationKey
                     {
-                        frame = key.Time / Ticks,
+                        frame = key.Time / Loader.Global.TicksPerFrame,
                         values = newQuat.ToArray()
                     };
                 });
@@ -174,7 +172,7 @@ namespace Max2Babylon
 
                     return new BabylonAnimationKey
                     {
-                        frame = key.Time / Ticks,
+                        frame = key.Time / Loader.Global.TicksPerFrame,
                         values = key.Val.ToArraySwitched()
                     };
                 }))
@@ -190,7 +188,7 @@ namespace Max2Babylon
 
                     return new BabylonAnimationKey
                     {
-                        frame = key.Time / Ticks,
+                        frame = key.Time / Loader.Global.TicksPerFrame,
                         values = key.Val.S.ToArraySwitched()
                     };
                 });
@@ -339,13 +337,13 @@ namespace Max2Babylon
 
             float[] previous = null;
             var keys = new List<BabylonAnimationKey>();
-            for (var key = start; key <= end; key += Ticks)
+            for (var key = start; key <= end; key += Loader.Global.TicksPerFrame)
             {
                 var current = extractValueFunc(key);
 
                 keys.Add(new BabylonAnimationKey()
                 {
-                    frame = key / Ticks,
+                    frame = key / Loader.Global.TicksPerFrame,
                     values = current
                 });
 
@@ -371,11 +369,11 @@ namespace Max2Babylon
 
                 if (animationPresent)
                 {
-                    if (keys[keys.Count - 1].frame != end / Ticks)
+                    if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
                     {
                         keys.Add(new BabylonAnimationKey()
                         {
-                            frame = end / Ticks,
+                            frame = end / Loader.Global.TicksPerFrame,
                             values = keys[keys.Count - 1].values
                         });
                     }
