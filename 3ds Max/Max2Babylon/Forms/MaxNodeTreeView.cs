@@ -130,7 +130,7 @@ namespace Max2Babylon
 
             foreach (uint nodeHandle in nodeHandles)
             {
-                // get visual node from tree or create it (with isDummy == false)
+                // get visual node from tree or create it (as non-dummies)
                 if (!visualNodeMap.TryGetValue(nodeHandle, out VisualNode visualNode))
                 {
                     IINode node = Loader.Core.RootNode.FindChildNode(nodeHandle);
@@ -143,8 +143,6 @@ namespace Max2Babylon
 
                     visualNode = QueueAddNodeRecursively(node, true);
                 }
-
-                visualNode.EnsureVisible();
             }
 
             if (doBeginUpdate)
@@ -326,6 +324,9 @@ namespace Max2Babylon
             else
                 nodeInfo.State = VisualNodeInfo.EState.Added;
 
+            if(!nodeInfo.IsDummy)
+                visualNode.EnsureVisible();
+
             visualNode.ForeColor = GetNodeForeColor(nodeInfo);
             visualNode.BackColor = GetNodeBackColor(nodeInfo);
         }
@@ -347,6 +348,7 @@ namespace Max2Babylon
                 nodeInfo.State = VisualNodeInfo.EState.Removed;
             }
 
+            visualNode.EnsureVisible();
             visualNode.ForeColor = GetNodeForeColor(nodeInfo);
             visualNode.BackColor = GetNodeBackColor(nodeInfo);
         }

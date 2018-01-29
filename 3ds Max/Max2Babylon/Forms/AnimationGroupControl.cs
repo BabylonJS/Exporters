@@ -167,11 +167,13 @@ namespace Max2Babylon
             if (currentInfo == null)
                 return;
 
+            MaxNodeTree.BeginUpdate();
             for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
             {
                 IINode node = Loader.Core.GetSelNode(i);
                 MaxNodeTree.QueueAddNode(node);
             }
+            MaxNodeTree.EndUpdate();
         }
 
         private void removeNodeButton_Click(object sender, EventArgs e)
@@ -179,11 +181,13 @@ namespace Max2Babylon
             if (currentInfo == null)
                 return;
 
+            MaxNodeTree.BeginUpdate();
             for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
             {
                 IINode node = Loader.Core.GetSelNode(i);
                 MaxNodeTree.QueueRemoveNode(node);
             }
+            MaxNodeTree.EndUpdate();
         }
     }
 }
