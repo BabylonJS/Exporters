@@ -65,7 +65,7 @@ namespace Maya2Babylon.Forms
 
             treeView.Nodes.Clear();
 
-            exporter.OnImportProgressChanged += progress =>
+            exporter.OnExportProgressChanged += progress =>
             {
                 progressBar.Value = progress;
                 Application.DoEvents();
@@ -138,9 +138,6 @@ namespace Maya2Babylon.Forms
             bool success = true;
             try
             {
-                exporter.AutoSaveMayaFile = chkAutoSave.Checked;
-                exporter.ExportHiddenObjects = chkHidden.Checked;
-                exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
                 exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked);
