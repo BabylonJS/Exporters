@@ -28,37 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Panel nameFieldPanel;
             System.Windows.Forms.Panel optionsButtonsPanel;
             System.Windows.Forms.Panel nodeButtonsPanel;
+            System.Windows.Forms.Label warningLabel;
+            System.Windows.Forms.Panel startEndPanel;
+            System.Windows.Forms.Panel warningLabelPanel;
             this.nameTextBox = new System.Windows.Forms.TextBox();
             this.nameLabel = new System.Windows.Forms.Label();
             this.ConfirmButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.removeNodeButton = new System.Windows.Forms.Button();
             this.addSelectedButton = new System.Windows.Forms.Button();
-            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.endTextBox = new System.Windows.Forms.TextBox();
             this.endLabel = new System.Windows.Forms.Label();
             this.startTextBox = new System.Windows.Forms.TextBox();
             this.startLabel = new System.Windows.Forms.Label();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.nodesGroupBox = new System.Windows.Forms.GroupBox();
             this.MaxNodeTree = new Max2Babylon.MaxNodeTreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             nameFieldPanel = new System.Windows.Forms.Panel();
             optionsButtonsPanel = new System.Windows.Forms.Panel();
             nodeButtonsPanel = new System.Windows.Forms.Panel();
+            warningLabel = new System.Windows.Forms.Label();
+            startEndPanel = new System.Windows.Forms.Panel();
+            warningLabelPanel = new System.Windows.Forms.Panel();
             nameFieldPanel.SuspendLayout();
             optionsButtonsPanel.SuspendLayout();
             nodeButtonsPanel.SuspendLayout();
+            startEndPanel.SuspendLayout();
             this.optionsGroupBox.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.nodesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            warningLabelPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // nameFieldPanel
@@ -76,9 +83,10 @@
             // nameTextBox
             // 
             this.nameTextBox.Location = new System.Drawing.Point(39, 3);
+            this.nameTextBox.MinimumSize = new System.Drawing.Size(20, 20);
             this.nameTextBox.Name = "nameTextBox";
             this.nameTextBox.Size = new System.Drawing.Size(134, 20);
-            this.nameTextBox.TabIndex = 4;
+            this.nameTextBox.TabIndex = 0;
             this.nameTextBox.WordWrap = false;
             this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
             // 
@@ -88,7 +96,7 @@
             this.nameLabel.Location = new System.Drawing.Point(4, 6);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(35, 13);
-            this.nameLabel.TabIndex = 3;
+            this.nameLabel.TabIndex = 0;
             this.nameLabel.Text = "Name";
             // 
             // optionsButtonsPanel
@@ -98,10 +106,10 @@
             optionsButtonsPanel.Controls.Add(this.ConfirmButton);
             optionsButtonsPanel.Controls.Add(this.cancelButton);
             optionsButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            optionsButtonsPanel.Location = new System.Drawing.Point(3, 114);
+            optionsButtonsPanel.Location = new System.Drawing.Point(3, 120);
             optionsButtonsPanel.Name = "optionsButtonsPanel";
             optionsButtonsPanel.Size = new System.Drawing.Size(176, 29);
-            optionsButtonsPanel.TabIndex = 5;
+            optionsButtonsPanel.TabIndex = 0;
             // 
             // ConfirmButton
             // 
@@ -132,18 +140,19 @@
             nodeButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             nodeButtonsPanel.Location = new System.Drawing.Point(3, 68);
             nodeButtonsPanel.Name = "nodeButtonsPanel";
-            nodeButtonsPanel.Size = new System.Drawing.Size(176, 46);
-            nodeButtonsPanel.TabIndex = 6;
+            nodeButtonsPanel.Padding = new System.Windows.Forms.Padding(3);
+            nodeButtonsPanel.Size = new System.Drawing.Size(176, 52);
+            nodeButtonsPanel.TabIndex = 0;
             // 
             // removeNodeButton
             // 
             this.removeNodeButton.AutoSize = true;
             this.removeNodeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.removeNodeButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.removeNodeButton.Location = new System.Drawing.Point(0, 23);
+            this.removeNodeButton.Location = new System.Drawing.Point(3, 26);
             this.removeNodeButton.Name = "removeNodeButton";
-            this.removeNodeButton.Size = new System.Drawing.Size(176, 23);
-            this.removeNodeButton.TabIndex = 8;
+            this.removeNodeButton.Size = new System.Drawing.Size(170, 23);
+            this.removeNodeButton.TabIndex = 4;
             this.removeNodeButton.Text = "Remove Selected Scene Nodes";
             this.removeNodeButton.UseVisualStyleBackColor = true;
             this.removeNodeButton.Click += new System.EventHandler(this.removeNodeButton_Click);
@@ -153,43 +162,39 @@
             this.addSelectedButton.AutoSize = true;
             this.addSelectedButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.addSelectedButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.addSelectedButton.Location = new System.Drawing.Point(0, 0);
+            this.addSelectedButton.Location = new System.Drawing.Point(3, 3);
             this.addSelectedButton.Name = "addSelectedButton";
-            this.addSelectedButton.Size = new System.Drawing.Size(176, 23);
-            this.addSelectedButton.TabIndex = 7;
+            this.addSelectedButton.Size = new System.Drawing.Size(170, 23);
+            this.addSelectedButton.TabIndex = 3;
             this.addSelectedButton.Text = "Add Selected Scene Nodes";
             this.addSelectedButton.UseVisualStyleBackColor = true;
             this.addSelectedButton.Click += new System.EventHandler(this.addSelectedButton_Click);
             // 
-            // optionsGroupBox
+            // warningLabel
             // 
-            this.optionsGroupBox.AutoSize = true;
-            this.optionsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.optionsGroupBox.Controls.Add(optionsButtonsPanel);
-            this.optionsGroupBox.Controls.Add(nodeButtonsPanel);
-            this.optionsGroupBox.Controls.Add(this.panel1);
-            this.optionsGroupBox.Controls.Add(nameFieldPanel);
-            this.optionsGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.optionsGroupBox.Location = new System.Drawing.Point(0, 0);
-            this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(182, 146);
-            this.optionsGroupBox.TabIndex = 4;
-            this.optionsGroupBox.TabStop = false;
-            this.optionsGroupBox.Text = "Animation Options";
+            warningLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            warningLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            warningLabel.Location = new System.Drawing.Point(3, 3);
+            warningLabel.Name = "warningLabel";
+            warningLabel.Size = new System.Drawing.Size(170, 106);
+            warningLabel.TabIndex = 0;
+            warningLabel.Text = "\r\n*NOTE*\r\n\r\nChanging the 3dsMax scene node hierarchy with this window open may le" +
+    "ad to undefined behavior.";
+            warningLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // panel1
+            // startEndPanel
             // 
-            this.panel1.AutoSize = true;
-            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel1.Controls.Add(this.endTextBox);
-            this.panel1.Controls.Add(this.endLabel);
-            this.panel1.Controls.Add(this.startTextBox);
-            this.panel1.Controls.Add(this.startLabel);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(3, 42);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(176, 26);
-            this.panel1.TabIndex = 6;
+            startEndPanel.AutoSize = true;
+            startEndPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            startEndPanel.Controls.Add(this.endTextBox);
+            startEndPanel.Controls.Add(this.endLabel);
+            startEndPanel.Controls.Add(this.startTextBox);
+            startEndPanel.Controls.Add(this.startLabel);
+            startEndPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            startEndPanel.Location = new System.Drawing.Point(3, 42);
+            startEndPanel.Name = "startEndPanel";
+            startEndPanel.Size = new System.Drawing.Size(176, 26);
+            startEndPanel.TabIndex = 0;
             // 
             // endTextBox
             // 
@@ -205,7 +210,7 @@
             this.endLabel.Location = new System.Drawing.Point(92, 6);
             this.endLabel.Name = "endLabel";
             this.endLabel.Size = new System.Drawing.Size(26, 13);
-            this.endLabel.TabIndex = 3;
+            this.endLabel.TabIndex = 0;
             this.endLabel.Text = "End";
             // 
             // startTextBox
@@ -213,7 +218,7 @@
             this.startTextBox.Location = new System.Drawing.Point(39, 3);
             this.startTextBox.Name = "startTextBox";
             this.startTextBox.Size = new System.Drawing.Size(40, 20);
-            this.startTextBox.TabIndex = 0;
+            this.startTextBox.TabIndex = 1;
             this.startTextBox.TextChanged += new System.EventHandler(this.startTextBox_TextChanged);
             // 
             // startLabel
@@ -222,8 +227,25 @@
             this.startLabel.Location = new System.Drawing.Point(4, 6);
             this.startLabel.Name = "startLabel";
             this.startLabel.Size = new System.Drawing.Size(29, 13);
-            this.startLabel.TabIndex = 1;
+            this.startLabel.TabIndex = 0;
             this.startLabel.Text = "Start";
+            // 
+            // optionsGroupBox
+            // 
+            this.optionsGroupBox.AutoSize = true;
+            this.optionsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.optionsGroupBox.Controls.Add(warningLabelPanel);
+            this.optionsGroupBox.Controls.Add(optionsButtonsPanel);
+            this.optionsGroupBox.Controls.Add(nodeButtonsPanel);
+            this.optionsGroupBox.Controls.Add(startEndPanel);
+            this.optionsGroupBox.Controls.Add(nameFieldPanel);
+            this.optionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.optionsGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.optionsGroupBox.Name = "optionsGroupBox";
+            this.optionsGroupBox.Size = new System.Drawing.Size(182, 482);
+            this.optionsGroupBox.TabIndex = 0;
+            this.optionsGroupBox.TabStop = false;
+            this.optionsGroupBox.Text = "Animation Options";
             // 
             // nodesGroupBox
             // 
@@ -235,12 +257,13 @@
             this.nodesGroupBox.Location = new System.Drawing.Point(0, 0);
             this.nodesGroupBox.Name = "nodesGroupBox";
             this.nodesGroupBox.Size = new System.Drawing.Size(489, 482);
-            this.nodesGroupBox.TabIndex = 5;
+            this.nodesGroupBox.TabIndex = 0;
             this.nodesGroupBox.TabStop = false;
             this.nodesGroupBox.Text = "Animation Nodes";
             // 
             // MaxNodeTree
             // 
+            this.MaxNodeTree.AllowDrop = true;
             this.MaxNodeTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MaxNodeTree.DummyAddedBackColor = System.Drawing.Color.PaleGreen;
             this.MaxNodeTree.DummyAddedForeColor = System.Drawing.SystemColors.GrayText;
@@ -261,7 +284,7 @@
             this.MaxNodeTree.NodeRemovedBackColor = System.Drawing.Color.IndianRed;
             this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
             this.MaxNodeTree.Size = new System.Drawing.Size(483, 463);
-            this.MaxNodeTree.TabIndex = 0;
+            this.MaxNodeTree.TabIndex = 7;
             // 
             // splitContainer1
             // 
@@ -280,7 +303,18 @@
             this.splitContainer1.Panel2.Controls.Add(this.nodesGroupBox);
             this.splitContainer1.Size = new System.Drawing.Size(675, 482);
             this.splitContainer1.SplitterDistance = 182;
-            this.splitContainer1.TabIndex = 7;
+            this.splitContainer1.TabIndex = 0;
+            this.splitContainer1.TabStop = false;
+            // 
+            // warningLabelPanel
+            // 
+            warningLabelPanel.Controls.Add(warningLabel);
+            warningLabelPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            warningLabelPanel.Location = new System.Drawing.Point(3, 367);
+            warningLabelPanel.Name = "warningLabelPanel";
+            warningLabelPanel.Padding = new System.Windows.Forms.Padding(3);
+            warningLabelPanel.Size = new System.Drawing.Size(176, 112);
+            warningLabelPanel.TabIndex = 0;
             // 
             // AnimationGroupControl
             // 
@@ -295,10 +329,10 @@
             optionsButtonsPanel.ResumeLayout(false);
             nodeButtonsPanel.ResumeLayout(false);
             nodeButtonsPanel.PerformLayout();
+            startEndPanel.ResumeLayout(false);
+            startEndPanel.PerformLayout();
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.nodesGroupBox.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -306,6 +340,7 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            warningLabelPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -325,7 +360,6 @@
         private System.Windows.Forms.Button addSelectedButton;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox nameTextBox;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button removeNodeButton;
     }
 }
