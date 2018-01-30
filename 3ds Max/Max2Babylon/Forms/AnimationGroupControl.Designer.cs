@@ -47,8 +47,8 @@
             this.startLabel = new System.Windows.Forms.Label();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.nodesGroupBox = new System.Windows.Forms.GroupBox();
-            this.MaxNodeTree = new Max2Babylon.MaxNodeTreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.MaxNodeTree = new Max2Babylon.MaxNodeTreeView();
             nameFieldPanel = new System.Windows.Forms.Panel();
             optionsButtonsPanel = new System.Windows.Forms.Panel();
             nodeButtonsPanel = new System.Windows.Forms.Panel();
@@ -77,7 +77,7 @@
             nameFieldPanel.Dock = System.Windows.Forms.DockStyle.Top;
             nameFieldPanel.Location = new System.Drawing.Point(3, 16);
             nameFieldPanel.Name = "nameFieldPanel";
-            nameFieldPanel.Size = new System.Drawing.Size(176, 26);
+            nameFieldPanel.Size = new System.Drawing.Size(184, 26);
             nameFieldPanel.TabIndex = 0;
             // 
             // nameTextBox
@@ -108,7 +108,7 @@
             optionsButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             optionsButtonsPanel.Location = new System.Drawing.Point(3, 120);
             optionsButtonsPanel.Name = "optionsButtonsPanel";
-            optionsButtonsPanel.Size = new System.Drawing.Size(176, 29);
+            optionsButtonsPanel.Size = new System.Drawing.Size(184, 29);
             optionsButtonsPanel.TabIndex = 0;
             // 
             // ConfirmButton
@@ -141,7 +141,7 @@
             nodeButtonsPanel.Location = new System.Drawing.Point(3, 68);
             nodeButtonsPanel.Name = "nodeButtonsPanel";
             nodeButtonsPanel.Padding = new System.Windows.Forms.Padding(3);
-            nodeButtonsPanel.Size = new System.Drawing.Size(176, 52);
+            nodeButtonsPanel.Size = new System.Drawing.Size(184, 52);
             nodeButtonsPanel.TabIndex = 0;
             // 
             // removeNodeButton
@@ -151,7 +151,7 @@
             this.removeNodeButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.removeNodeButton.Location = new System.Drawing.Point(3, 26);
             this.removeNodeButton.Name = "removeNodeButton";
-            this.removeNodeButton.Size = new System.Drawing.Size(170, 23);
+            this.removeNodeButton.Size = new System.Drawing.Size(178, 23);
             this.removeNodeButton.TabIndex = 4;
             this.removeNodeButton.Text = "Remove Selected Scene Nodes";
             this.removeNodeButton.UseVisualStyleBackColor = true;
@@ -164,7 +164,7 @@
             this.addSelectedButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.addSelectedButton.Location = new System.Drawing.Point(3, 3);
             this.addSelectedButton.Name = "addSelectedButton";
-            this.addSelectedButton.Size = new System.Drawing.Size(170, 23);
+            this.addSelectedButton.Size = new System.Drawing.Size(178, 23);
             this.addSelectedButton.TabIndex = 3;
             this.addSelectedButton.Text = "Add Selected Scene Nodes";
             this.addSelectedButton.UseVisualStyleBackColor = true;
@@ -177,7 +177,7 @@
             warningLabel.ForeColor = System.Drawing.SystemColors.GrayText;
             warningLabel.Location = new System.Drawing.Point(3, 3);
             warningLabel.Name = "warningLabel";
-            warningLabel.Size = new System.Drawing.Size(170, 106);
+            warningLabel.Size = new System.Drawing.Size(178, 97);
             warningLabel.TabIndex = 0;
             warningLabel.Text = "\r\n*NOTE*\r\n\r\nChanging the 3dsMax scene node hierarchy with this window open may le" +
     "ad to undefined behavior.";
@@ -194,7 +194,7 @@
             startEndPanel.Dock = System.Windows.Forms.DockStyle.Top;
             startEndPanel.Location = new System.Drawing.Point(3, 42);
             startEndPanel.Name = "startEndPanel";
-            startEndPanel.Size = new System.Drawing.Size(176, 26);
+            startEndPanel.Size = new System.Drawing.Size(184, 26);
             startEndPanel.TabIndex = 0;
             // 
             // endTextBox
@@ -235,10 +235,10 @@
             // 
             warningLabelPanel.Controls.Add(warningLabel);
             warningLabelPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            warningLabelPanel.Location = new System.Drawing.Point(3, 367);
+            warningLabelPanel.Location = new System.Drawing.Point(3, 376);
             warningLabelPanel.Name = "warningLabelPanel";
             warningLabelPanel.Padding = new System.Windows.Forms.Padding(3);
-            warningLabelPanel.Size = new System.Drawing.Size(176, 112);
+            warningLabelPanel.Size = new System.Drawing.Size(184, 103);
             warningLabelPanel.TabIndex = 0;
             // 
             // optionsGroupBox
@@ -253,7 +253,7 @@
             this.optionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.optionsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(182, 482);
+            this.optionsGroupBox.Size = new System.Drawing.Size(190, 482);
             this.optionsGroupBox.TabIndex = 0;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Animation Options";
@@ -267,10 +267,30 @@
             this.nodesGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.nodesGroupBox.Location = new System.Drawing.Point(0, 0);
             this.nodesGroupBox.Name = "nodesGroupBox";
-            this.nodesGroupBox.Size = new System.Drawing.Size(489, 482);
+            this.nodesGroupBox.Size = new System.Drawing.Size(481, 482);
             this.nodesGroupBox.TabIndex = 0;
             this.nodesGroupBox.TabStop = false;
             this.nodesGroupBox.Text = "Animation Nodes";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.IsSplitterFixed = true;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.optionsGroupBox);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.nodesGroupBox);
+            this.splitContainer1.Size = new System.Drawing.Size(675, 482);
+            this.splitContainer1.SplitterDistance = 190;
+            this.splitContainer1.TabIndex = 0;
+            this.splitContainer1.TabStop = false;
             // 
             // MaxNodeTree
             // 
@@ -294,28 +314,8 @@
             this.MaxNodeTree.NodeDowngradedForeColor = System.Drawing.SystemColors.GrayText;
             this.MaxNodeTree.NodeRemovedBackColor = System.Drawing.Color.IndianRed;
             this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.Size = new System.Drawing.Size(483, 463);
+            this.MaxNodeTree.Size = new System.Drawing.Size(475, 463);
             this.MaxNodeTree.TabIndex = 7;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.optionsGroupBox);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.nodesGroupBox);
-            this.splitContainer1.Size = new System.Drawing.Size(675, 482);
-            this.splitContainer1.SplitterDistance = 182;
-            this.splitContainer1.TabIndex = 0;
-            this.splitContainer1.TabStop = false;
             // 
             // AnimationGroupControl
             // 
