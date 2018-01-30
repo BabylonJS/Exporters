@@ -59,13 +59,13 @@
             optionsButtonsPanel.SuspendLayout();
             nodeButtonsPanel.SuspendLayout();
             startEndPanel.SuspendLayout();
+            warningLabelPanel.SuspendLayout();
             this.optionsGroupBox.SuspendLayout();
             this.nodesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            warningLabelPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // nameFieldPanel
@@ -174,6 +174,7 @@
             // 
             warningLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             warningLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            warningLabel.ForeColor = System.Drawing.SystemColors.GrayText;
             warningLabel.Location = new System.Drawing.Point(3, 3);
             warningLabel.Name = "warningLabel";
             warningLabel.Size = new System.Drawing.Size(170, 106);
@@ -229,6 +230,16 @@
             this.startLabel.Size = new System.Drawing.Size(29, 13);
             this.startLabel.TabIndex = 0;
             this.startLabel.Text = "Start";
+            // 
+            // warningLabelPanel
+            // 
+            warningLabelPanel.Controls.Add(warningLabel);
+            warningLabelPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            warningLabelPanel.Location = new System.Drawing.Point(3, 367);
+            warningLabelPanel.Name = "warningLabelPanel";
+            warningLabelPanel.Padding = new System.Windows.Forms.Padding(3);
+            warningLabelPanel.Size = new System.Drawing.Size(176, 112);
+            warningLabelPanel.TabIndex = 0;
             // 
             // optionsGroupBox
             // 
@@ -306,16 +317,6 @@
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.TabStop = false;
             // 
-            // warningLabelPanel
-            // 
-            warningLabelPanel.Controls.Add(warningLabel);
-            warningLabelPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            warningLabelPanel.Location = new System.Drawing.Point(3, 367);
-            warningLabelPanel.Name = "warningLabelPanel";
-            warningLabelPanel.Padding = new System.Windows.Forms.Padding(3);
-            warningLabelPanel.Size = new System.Drawing.Size(176, 112);
-            warningLabelPanel.TabIndex = 0;
-            // 
             // AnimationGroupControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,6 +332,7 @@
             nodeButtonsPanel.PerformLayout();
             startEndPanel.ResumeLayout(false);
             startEndPanel.PerformLayout();
+            warningLabelPanel.ResumeLayout(false);
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             this.nodesGroupBox.ResumeLayout(false);
@@ -340,7 +342,6 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            warningLabelPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
