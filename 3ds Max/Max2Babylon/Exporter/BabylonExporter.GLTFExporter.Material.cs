@@ -23,7 +23,8 @@ namespace Max2Babylon
                 && materialExporter is IGLTFMaterialExporter)
             {
                 GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(gltf, gameMtl, 
-                    (string sourcePath, string textureName) => { return TryWriteImage(gltf, sourcePath, textureName); } );
+                    (string sourcePath, string textureName) => { return TryWriteImage(gltf, sourcePath, textureName); }, 
+                    (string message, Color color) => { RaiseMessage(message, color, 2); });
 
                 if (gltfMaterial == null)
                 {
