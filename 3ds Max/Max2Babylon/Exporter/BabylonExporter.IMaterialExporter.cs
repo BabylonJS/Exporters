@@ -30,7 +30,8 @@ namespace Max2Babylon
         /// Returns null if the file was not written because of an error, else the output file extension.</param>
         /// <param name="raiseMessageAction">Callback function to raise messages. Takes a message and a color.</param>
         /// <returns>The exported GLTF material.</returns>
-        GLTFMaterial ExportGLTFMaterial(GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc, Action<string, Color> raiseMessageAction);
+        GLTFMaterial ExportGLTFMaterial(GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc,
+            Action<string, Color> raiseMessageAction, Action<string> raiseWarningAction, Action<string> raiseErrorAction);
     }
 
     // We require a separate struct, because the IClass_ID does not implement GetHashCode etc. to work with dictionaries
