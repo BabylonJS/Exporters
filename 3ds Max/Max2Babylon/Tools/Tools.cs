@@ -404,6 +404,11 @@ namespace Max2Babylon
             return from n in rootNode.NodeTree() where n.ObjectRef != null && sids.Any(sid => n.EvalWorldState(0, false).Obj.SuperClassID == sid) select n;
         }
 
+        /// <summary>
+        /// Convert horizontal FOV to vertical FOV using default aspect ratio
+        /// </summary>
+        /// <param name="fov">horizontal FOV</param>
+        /// <returns></returns>
         public static float ConvertFov(float fov)
         {
             return (float)(2.0f * Math.Atan(Math.Tan(fov / 2.0f) / Loader.Core.ImageAspRatio));

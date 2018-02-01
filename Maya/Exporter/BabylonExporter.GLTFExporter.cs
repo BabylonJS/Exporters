@@ -263,9 +263,8 @@ namespace Maya2Babylon
             }
             else if (type == typeof(BabylonCamera))
             {
-                // TODO - Camera
-                //GLTFCamera gltfCamera = ExportCamera(babylonNode as BabylonCamera, gltf, gltfParentNode);
-                //gltfNode = gltfCamera.gltfNode;
+                GLTFCamera gltfCamera = ExportCamera(babylonNode as BabylonCamera, gltf, gltfParentNode);
+                gltfNode = gltfCamera.gltfNode;
             }
             else if (type == typeof(BabylonLight))
             {
