@@ -62,12 +62,47 @@ namespace Maya2Babylon
             if (autoSaveMayaFile)
             {
                 RaiseMessage("Saving Maya file");
-                // TODO
-                //MFileIO.save();
+
+                // Query expand file name
+                string fileName = MGlobal.executeCommandStringResult($@"file -q -exn;");
+
+                // If scene has already been saved previously
+                if (fileName.EndsWith(".ma") || fileName.EndsWith(".mb"))
+                {
+                    // Name is already specified and this line will not fail
+                    MFileIO.save();
+                }
+                else
+                {
+                    // Open SaveAs dialog window
+                    MGlobal.executeCommand($@"fileDialog2;");
+                }
             }
 
             // Force output file extension to be babylon
             outputFileName = Path.ChangeExtension(outputFileName, "babylon");
+
+            // Store selected nodes
+            MSelectionList selectedNodes = new MSelectionList();
+            MGlobal.getActiveSelectionList(selectedNodes);
+            selectedNodeFullPaths = new List<string>();
+            MItSelectionList mItSelectionList = new MItSelectionList(selectedNodes);
+            while (!mItSelectionList.isDone)
+            {
+                MDagPath mDagPath = new MDagPath();
+                mItSelectionList.getDagPath(mDagPath);
+                selectedNodeFullPaths.Add(mDagPath.fullPathName);
+
+                mItSelectionList.next();
+            }
+            if (selectedNodeFullPaths.Count > 0)
+            {
+                RaiseMessage("Selected nodes full path");
+                foreach(string selectedNodeFullPath in selectedNodeFullPaths)
+                {
+                    RaiseMessage(selectedNodeFullPath, 1);
+                }
+            }
 
             // Producer
             babylonScene.producer = new BabylonProducer
@@ -256,29 +291,14 @@ namespace Maya2Babylon
             mIteratorType.setFilterList(listOfFilters);
             var dagIterator = new MItDag(mIteratorType, MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(mDagPathRoot);
+
             while (!dagIterator.isDone)
             {
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
 
-                bool isRelevantToExport;
-                switch (mDagPath.apiType)
-                {
-                    case MFn.Type.kMesh:
-                        MFnMesh mFnMesh = new MFnMesh(mDagPath);
-                        isRelevantToExport = IsMeshExportable(mFnMesh, mDagPath);
-                        break;
-                    case MFn.Type.kCamera:
-                        MFnCamera mFnCamera = new MFnCamera(mDagPath);
-                        isRelevantToExport = IsCameraExportable(mFnCamera, mDagPath);
-                        break;
-                    // TODO - Light
-                    default:
-                        isRelevantToExport = false;
-                        break;
-                }
-
-                if (isRelevantToExport)
+                // Check direct descendants
+                if (getApiTypeOfDirectDescendants(mDagPath) != MFn.Type.kUnknown)
                 {
                     return true;
                 }
@@ -322,7 +342,7 @@ namespace Maya2Babylon
 
             return MFn.Type.kUnknown;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -336,7 +356,8 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
 
-                if (isFull || isNodeRelevantToExportRec(mDagPath))
+                // TODO - Light
+                if (isFull || isNodeRelevantToExportRec(mDagPath) || mDagPath.apiType == MFn.Type.kMesh || mDagPath.apiType == MFn.Type.kCamera)
                 {
                     RaiseMessage("name=" + mDagPath.partialPathName + "\t type=" + mDagPath.apiType, (int)dagIterator.depth + 1);
                 }

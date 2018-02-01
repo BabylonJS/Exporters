@@ -1,10 +1,23 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
+using System.Collections.Generic;
 
 namespace Maya2Babylon
 {
     partial class BabylonExporter
     {
+        /// <summary>
+        /// List of full path names of selected nodes
+        /// Only kTransform are listed
+        /// </summary>
+        private List<string> selectedNodeFullPaths;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mFnDagNode">DAG function set of the node below the transform</param>
+        /// <param name="mDagPath">DAG path of the transform above the node</param>
+        /// <returns></returns>
         private bool IsNodeExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
             // TODO - Add custom property
@@ -12,14 +25,12 @@ namespace Maya2Babylon
             //{
             //    return false;
             //}
-
-            // TODO - Fix fatal error: Attempting to save in C:/Users/Fabrice/AppData/Local/Temp/Fabrice.20171205.1613.ma
-            //if (_onlySelected && !MGlobal.isSelected(mDagPath.node))
-            //{
-            //    return false;
-            //}
-
-            // TODO - Fix fatal error: Attempting to save in C:/ Users / Fabrice / AppData / Local / Temp / Fabrice.20171205.1613.ma
+            
+            if (_onlySelected && !selectedNodeFullPaths.Contains(mDagPath.fullPathName))
+            {
+                return false;
+            }
+            
             if (!_exportHiddenObjects && !mDagPath.isVisible)
             {
                 return false;
