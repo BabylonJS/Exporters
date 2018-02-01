@@ -47,14 +47,29 @@ namespace Maya2Babylon
 
             // Transform above mesh
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
+
             // Mesh direct child of the transform
-            mDagPath.extendToShape();
-            MFnMesh mFnMesh = new MFnMesh(mDagPath);
+            MFnMesh mFnMesh = null;
+            for (uint i = 0; i < mFnTransform.childCount; i++)
+            {
+                MObject childObject = mFnTransform.child(i);
+                if (childObject.apiType == MFn.Type.kMesh)
+                {
+                    mFnMesh = new MFnMesh(childObject);
+                }
+            }
+            if (mFnMesh == null)
+            {
+                RaiseError("No mesh found has child of " + mDagPath.fullPathName);
+                return null;
+            }
+
+            RaiseMessage("mFnMesh.fullPathName=" + mFnMesh.fullPathName, 2);
 
             // --- prints ---
             #region prints
 
-            Action<MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
+            Action <MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
             {
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.name=" + mFnDagNode.name, 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.absoluteName=" + mFnDagNode.absoluteName, 3);
@@ -161,7 +176,7 @@ namespace Maya2Babylon
             #endregion
 
 
-            if (IsMeshExportable(mFnMesh) == false)
+            if (IsMeshExportable(mFnMesh, mDagPath) == false)
             {
                 return null;
             }
@@ -337,57 +352,34 @@ namespace Maya2Babylon
             ExportTransform(babylonAbstractMesh, mFnTransform);
 
             // Hierarchy
-            if (mFnTransform.parentCount != 0)
-            {
-                RaiseVerbose("BabylonExporter.Mesh | Hierarchy", 2);
-
-                MObject parentMObject = mFnTransform.parent(0);
-                // Children of World node don't have parent in Babylon
-                if (parentMObject.apiType != MFn.Type.kWorld)
-                {
-                    MFnDagNode mFnTransformParent = new MFnDagNode(parentMObject);
-                    babylonAbstractMesh.parentId = mFnTransformParent.uuid().asString();
-                }
-            }
+            ExportHierarchy(babylonAbstractMesh, mFnTransform);
         }
 
         private void ExportTransform(BabylonAbstractMesh babylonAbstractMesh, MFnTransform mFnTransform)
         {
-            RaiseVerbose("BabylonExporter.Mesh | ExportTransform", 2);
-
             // Position / rotation / scaling
-            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
-            
-            babylonAbstractMesh.position = transformationMatrix.getTranslation();
+            RaiseVerbose("BabylonExporter.Mesh | ExportTransform", 2);
+            float[] position = null;
+            float[] rotationQuaternion = null;
+            float[] rotation = null;
+            float[] scaling = null;
+            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref scaling);
 
+            babylonAbstractMesh.position = position;
             if (_exportQuaternionsInsteadOfEulers)
             {
-                babylonAbstractMesh.rotationQuaternion = transformationMatrix.getRotationQuaternion();
+                babylonAbstractMesh.rotationQuaternion = rotationQuaternion;
             }
             else
             {
-                babylonAbstractMesh.rotation = transformationMatrix.getRotation();
+                babylonAbstractMesh.rotation = rotation;
             }
-
-            babylonAbstractMesh.scaling = transformationMatrix.getScale();
-
-            // Switch coordinate system at object level
-            babylonAbstractMesh.position[2] *= -1;
-            if (_exportQuaternionsInsteadOfEulers)
-            {
-                babylonAbstractMesh.rotationQuaternion[0] *= -1;
-                babylonAbstractMesh.rotationQuaternion[1] *= -1;
-            }
-            else
-            {
-                babylonAbstractMesh.rotation[0] *= -1;
-                babylonAbstractMesh.rotation[1] *= -1;
-            }
+            babylonAbstractMesh.scaling = scaling;
         }
 
-        private bool IsMeshExportable(MFnDagNode mFnDagNode)
+        private bool IsMeshExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
-            return IsNodeExportable(mFnDagNode);
+            return IsNodeExportable(mFnDagNode, mDagPath);
         }
     }
 }

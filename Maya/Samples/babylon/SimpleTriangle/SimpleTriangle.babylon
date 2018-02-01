@@ -29,7 +29,48 @@
 	"physicsEngine": null,
 	"physicsEnabled": false,
 	"physicsGravity": null,
-	"lights": null,
+	"lights": [
+		{
+			"position": null,
+			"direction": [
+				0,
+				1,
+				0
+			],
+			"type": 3,
+			"diffuse": [
+				1,
+				1,
+				1
+			],
+			"specular": [
+				1,
+				1,
+				1
+			],
+			"intensity": 1,
+			"range": 3.40282347e+38,
+			"exponent": 0,
+			"angle": 0,
+			"groundColor": [
+				0,
+				0,
+				0
+			],
+			"excludedMeshesIds": null,
+			"includedOnlyMeshesIds": null,
+			"metadata": null,
+			"tags": null,
+			"name": "Default light",
+			"id": "2b5eaf5e-cb21-4668-8510-0d17ef9444a0",
+			"parentId": null,
+			"animations": null,
+			"autoAnimate": false,
+			"autoAnimateFrom": 0,
+			"autoAnimateTo": 0,
+			"autoAnimateLoop": false
+		}
+	],
 	"meshes": [
 		{
 			"materialId": null,
