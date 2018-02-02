@@ -167,9 +167,11 @@ namespace Maya2Babylon
                     case MFn.Type.kCamera:
                         babylonNode = ExportCamera(mDagPath, babylonScene);
                         break;
-                        // TODO - Lights
+                    case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                        babylonNode = ExportLight(mDagPath, babylonScene);
+                        break;
                 }
-                
+
                 // If node is not exported successfully
                 if (babylonNode == null)
                 {
@@ -285,9 +287,9 @@ namespace Maya2Babylon
         {
             var mIteratorType = new MIteratorType();
             MIntArray listOfFilters = new MIntArray();
-            // TODO - Light
             listOfFilters.Add((int)MFn.Type.kMesh);
             listOfFilters.Add((int)MFn.Type.kCamera);
+            listOfFilters.Add((int)MFn.Type.kLight);
             mIteratorType.setFilterList(listOfFilters);
             var dagIterator = new MItDag(mIteratorType, MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(mDagPathRoot);
@@ -336,7 +338,13 @@ namespace Maya2Babylon
                             return MFn.Type.kCamera;
                         }
                         break;
-                        // TODO - Light
+                }
+                // Lights api type are kPointLight, kSpotLight...
+                // Easier to check if has generic light function set rather than check all cases
+                if (mDagPath.hasFn(MFn.Type.kLight) && IsLightExportable(nodeObject, mDagPath))
+                {
+                    // Return generic kLight api type
+                    return MFn.Type.kLight;
                 }
             }
 
@@ -356,8 +364,7 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
 
-                // TODO - Light
-                if (isFull || isNodeRelevantToExportRec(mDagPath) || mDagPath.apiType == MFn.Type.kMesh || mDagPath.apiType == MFn.Type.kCamera)
+                if (isFull || isNodeRelevantToExportRec(mDagPath) || mDagPath.apiType == MFn.Type.kMesh || mDagPath.apiType == MFn.Type.kCamera || mDagPath.hasFn(MFn.Type.kLight))
                 {
                     RaiseMessage("name=" + mDagPath.partialPathName + "\t type=" + mDagPath.apiType, (int)dagIterator.depth + 1);
                 }
