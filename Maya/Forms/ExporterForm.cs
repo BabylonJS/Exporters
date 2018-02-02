@@ -289,5 +289,10 @@ namespace Maya2Babylon.Forms
         {
 
         }
+
+        private void chkCopyTextures_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
