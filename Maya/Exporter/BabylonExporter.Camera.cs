@@ -138,6 +138,13 @@ namespace Maya2Babylon
             return babylonCamera;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mFnDagNode">DAG function set of the node (camera) below the transform</param>
+        /// <param name="mDagPath">DAG path of the transform above the node</param>
+        /// <returns></returns>
         private bool IsCameraExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
             return IsNodeExportable(mFnDagNode, mDagPath);

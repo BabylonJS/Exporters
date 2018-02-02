@@ -71,5 +71,15 @@ namespace Maya2Babylon
             rotation[0] *= -1;
             rotation[1] *= -1;
         }
+
+        private void GetTransform(MFnTransform mFnTransform, ref float[] position)
+        {
+            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
+
+            position = transformationMatrix.getTranslation();
+
+            // Switch coordinate system at object level
+            position[2] *= -1;
+        }
     }
 }

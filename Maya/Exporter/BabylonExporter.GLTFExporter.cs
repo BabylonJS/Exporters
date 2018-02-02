@@ -270,10 +270,9 @@ namespace Maya2Babylon
             {
                 if (isNodeRelevantToExport(babylonNode))
                 {
-                    // TODO - Light
-                    //// Export light nodes as empty nodes (no lights in glTF 2.0 core)
-                    //RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 1);
-                    //gltfNode = ExportLight(babylonNode as BabylonLight, gltf, gltfParentNode);
+                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
+                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 1);
+                    gltfNode = ExportLight(babylonNode as BabylonLight, gltf, gltfParentNode);
                 }
                 else
                 {
