@@ -168,6 +168,7 @@
             // chkCopyTextures
             // 
             this.chkCopyTextures.AutoSize = true;
+            this.chkCopyTextures.Enabled = false;
             this.chkCopyTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkCopyTextures.Location = new System.Drawing.Point(18, 117);
             this.chkCopyTextures.Name = "chkCopyTextures";
@@ -175,6 +176,7 @@
             this.chkCopyTextures.TabIndex = 12;
             this.chkCopyTextures.Text = "Copy textures to output";
             this.chkCopyTextures.UseVisualStyleBackColor = true;
+            this.chkCopyTextures.CheckedChanged += new System.EventHandler(this.chkCopyTextures_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -220,8 +222,8 @@
             this.comboOutputFormat.Name = "comboOutputFormat";
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 0;
-            this.comboOutputFormat.SelectedIndex = 0;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
+            this.comboOutputFormat.SelectedIndex = 0;
             // 
             // chkOnlySelected
             // 
@@ -240,7 +242,7 @@
             this.chkAutoSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkAutoSave.Location = new System.Drawing.Point(166, 140);
             this.chkAutoSave.Name = "chkAutoSave";
-            this.chkAutoSave.Size = new System.Drawing.Size(130, 17);
+            this.chkAutoSave.Size = new System.Drawing.Size(116, 17);
             this.chkAutoSave.TabIndex = 14;
             this.chkAutoSave.Text = "Auto save Maya file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
