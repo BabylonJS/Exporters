@@ -55,10 +55,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BabylonExportActionItem.cs" />
+    <Compile Include="Exporter\BabylonExporter.Camera.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Camera.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Mesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.Node.cs" />
     <Compile Include="Exporter\BabylonExporter.Writer.cs" />
     <Compile Include="Exporter\BabylonExporter.Logger.cs" />
     <Compile Include="Exporter\BabylonExporter.cs" />

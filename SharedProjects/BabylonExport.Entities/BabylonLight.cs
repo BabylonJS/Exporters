@@ -29,6 +29,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public float exponent { get; set; }
 
+        /// <summary>
+        /// In radians
+        /// </summary>
         [DataMember]
         public float angle { get; set; }
 

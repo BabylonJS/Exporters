@@ -25,6 +25,13 @@ namespace Maya2Babylon
         // Custom properties
         private bool _exportQuaternionsInsteadOfEulers;
 
+        // TODO - Check if it's ok for other languages
+        /// <summary>
+        /// Names of the default cameras used as viewports in Maya in English language
+        /// Those cameras are always ignored when exporting (ie even when exporting hidden objects)
+        /// </summary>
+        private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
+
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput)
         {
             RaiseMessage("Exportation started", Color.Blue);
@@ -55,12 +62,47 @@ namespace Maya2Babylon
             if (autoSaveMayaFile)
             {
                 RaiseMessage("Saving Maya file");
-                // TODO
-                //MFileIO.save();
+
+                // Query expand file name
+                string fileName = MGlobal.executeCommandStringResult($@"file -q -exn;");
+
+                // If scene has already been saved previously
+                if (fileName.EndsWith(".ma") || fileName.EndsWith(".mb"))
+                {
+                    // Name is already specified and this line will not fail
+                    MFileIO.save();
+                }
+                else
+                {
+                    // Open SaveAs dialog window
+                    MGlobal.executeCommand($@"fileDialog2;");
+                }
             }
 
             // Force output file extension to be babylon
             outputFileName = Path.ChangeExtension(outputFileName, "babylon");
+
+            // Store selected nodes
+            MSelectionList selectedNodes = new MSelectionList();
+            MGlobal.getActiveSelectionList(selectedNodes);
+            selectedNodeFullPaths = new List<string>();
+            MItSelectionList mItSelectionList = new MItSelectionList(selectedNodes);
+            while (!mItSelectionList.isDone)
+            {
+                MDagPath mDagPath = new MDagPath();
+                mItSelectionList.getDagPath(mDagPath);
+                selectedNodeFullPaths.Add(mDagPath.fullPathName);
+
+                mItSelectionList.next();
+            }
+            if (selectedNodeFullPaths.Count > 0)
+            {
+                RaiseMessage("Selected nodes full path");
+                foreach(string selectedNodeFullPath in selectedNodeFullPaths)
+                {
+                    RaiseMessage(selectedNodeFullPath, 1);
+                }
+            }
 
             // Producer
             babylonScene.producer = new BabylonProducer
@@ -97,7 +139,9 @@ namespace Maya2Babylon
                 dagIterator.getPath(mDagPath);
                 
                 // Check if one of its descendant (direct or not) is a mesh/camera/light
-                if (isNodeRelevantToExportRec(mDagPath))
+                if (isNodeRelevantToExportRec(mDagPath)
+                    // Ensure it's not one of the default cameras used as viewports in Maya
+                    && defaultCameraNames.Contains(mDagPath.partialPathName) == false)
                 {
                     nodes.Add(mDagPath);
                 }
@@ -120,9 +164,14 @@ namespace Maya2Babylon
                     case MFn.Type.kMesh:
                         babylonNode = ExportMesh(mDagPath, babylonScene);
                         break;
-                    // TODO - Cameras, Lights
+                    case MFn.Type.kCamera:
+                        babylonNode = ExportCamera(mDagPath, babylonScene);
+                        break;
+                    case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                        babylonNode = ExportLight(mDagPath, babylonScene);
+                        break;
                 }
-                
+
                 // If node is not exported successfully
                 if (babylonNode == null)
                 {
@@ -165,6 +214,37 @@ namespace Maya2Babylon
             //    }
             //}
             //babylonScene.MeshesList.Add(rootNode);
+            
+            // Main camera
+            BabylonCamera babylonMainCamera = null;
+            if (babylonScene.CamerasList.Count > 0)
+            {
+                // Set first camera as main one
+                babylonMainCamera = babylonScene.CamerasList[0];
+                babylonScene.activeCameraID = babylonMainCamera.id;
+                RaiseMessage("Active camera set to " + babylonMainCamera.name, Color.Green, 1, true);
+            }
+
+            if (babylonMainCamera == null)
+            {
+                RaiseWarning("No camera defined", 1);
+            }
+            else
+            {
+                RaiseMessage(string.Format("Total cameras: {0}", babylonScene.CamerasList.Count), Color.Gray, 1);
+            }
+
+            // Default light
+            if (babylonScene.LightsList.Count == 0)
+            {
+                RaiseWarning("No light defined", 1);
+                RaiseWarning("A default hemispheric light was added for your convenience", 1);
+                ExportDefaultLight(babylonScene);
+            }
+            else
+            {
+                RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
+            }
 
             // --------------------
             // ----- Materials ----
@@ -207,30 +287,20 @@ namespace Maya2Babylon
         {
             var mIteratorType = new MIteratorType();
             MIntArray listOfFilters = new MIntArray();
-            // TODO - Camera, Light
             listOfFilters.Add((int)MFn.Type.kMesh);
+            listOfFilters.Add((int)MFn.Type.kCamera);
+            listOfFilters.Add((int)MFn.Type.kLight);
             mIteratorType.setFilterList(listOfFilters);
             var dagIterator = new MItDag(mIteratorType, MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(mDagPathRoot);
+
             while (!dagIterator.isDone)
             {
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
 
-                bool isRelevantToExport;
-                switch (mDagPath.apiType)
-                {
-                    case MFn.Type.kMesh:
-                        MFnMesh mFnMesh = new MFnMesh(mDagPath);
-                        isRelevantToExport = IsMeshExportable(mFnMesh);
-                        break;
-                    // TODO - Camera, Light
-                    default:
-                        isRelevantToExport = false;
-                        break;
-                }
-
-                if (isRelevantToExport)
+                // Check direct descendants
+                if (getApiTypeOfDirectDescendants(mDagPath) != MFn.Type.kUnknown)
                 {
                     return true;
                 }
@@ -257,42 +327,30 @@ namespace Maya2Babylon
                 switch (childObject.apiType)
                 {
                     case MFn.Type.kMesh:
-                        if (IsMeshExportable(nodeObject))
+                        if (IsMeshExportable(nodeObject, mDagPath))
                         {
                             return MFn.Type.kMesh;
                         }
                         break;
-                    // TODO - Camera, Light
+                    case MFn.Type.kCamera:
+                        if (IsCameraExportable(nodeObject, mDagPath))
+                        {
+                            return MFn.Type.kCamera;
+                        }
+                        break;
+                }
+                // Lights api type are kPointLight, kSpotLight...
+                // Easier to check if has generic light function set rather than check all cases
+                if (mDagPath.hasFn(MFn.Type.kLight) && IsLightExportable(nodeObject, mDagPath))
+                {
+                    // Return generic kLight api type
+                    return MFn.Type.kLight;
                 }
             }
 
             return MFn.Type.kUnknown;
         }
 
-        private bool IsNodeExportable(MFnDagNode mFnDagNode)
-        {
-            // TODO - Add custom property
-            //if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
-            //{
-            //    return false;
-            //}
-
-            // TODO - Fix fatal error: Attempting to save in C:/Users/Fabrice/AppData/Local/Temp/Fabrice.20171205.1613.ma
-            //if (_onlySelected && !MGlobal.isSelected(mDagPath.node))
-            //{
-            //    return false;
-            //}
-
-            // TODO - Fix fatal error: Attempting to save in C:/Users/Fabrice/AppData/Local/Temp/Fabrice.20171205.1613.ma
-            //MDagPath mDagPath = mFnDagNode.dagPath;
-            //if (!_exportHiddenObjects && !mDagPath.isVisible)
-            //{
-            //    return false;
-            //}
-
-            return true;
-        }
-        
         /// <summary>
         /// 
         /// </summary>
@@ -306,7 +364,7 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
 
-                if (isFull || isNodeRelevantToExportRec(mDagPath))
+                if (isFull || isNodeRelevantToExportRec(mDagPath) || mDagPath.apiType == MFn.Type.kMesh || mDagPath.apiType == MFn.Type.kCamera || mDagPath.hasFn(MFn.Type.kLight))
                 {
                     RaiseMessage("name=" + mDagPath.partialPathName + "\t type=" + mDagPath.apiType, (int)dagIterator.depth + 1);
                 }
