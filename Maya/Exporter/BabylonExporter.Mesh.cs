@@ -47,14 +47,29 @@ namespace Maya2Babylon
 
             // Transform above mesh
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
+
             // Mesh direct child of the transform
-            mDagPath.extendToShape();
-            MFnMesh mFnMesh = new MFnMesh(mDagPath);
+            MFnMesh mFnMesh = null;
+            for (uint i = 0; i < mFnTransform.childCount; i++)
+            {
+                MObject childObject = mFnTransform.child(i);
+                if (childObject.apiType == MFn.Type.kMesh)
+                {
+                    mFnMesh = new MFnMesh(childObject);
+                }
+            }
+            if (mFnMesh == null)
+            {
+                RaiseError("No mesh found has child of " + mDagPath.fullPathName);
+                return null;
+            }
+
+            RaiseMessage("mFnMesh.fullPathName=" + mFnMesh.fullPathName, 2);
 
             // --- prints ---
             #region prints
 
-            Action<MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
+            Action <MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
             {
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.name=" + mFnDagNode.name, 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.absoluteName=" + mFnDagNode.absoluteName, 3);
@@ -108,60 +123,60 @@ namespace Maya2Babylon
             RaiseVerbose("BabylonExporter.Mesh | mFnTransform data", 2);
             printMFnTransform(mFnTransform);
 
-            // Geometry
-            MIntArray triangleCounts = new MIntArray();
-            MIntArray trianglesVertices = new MIntArray();
-            mFnMesh.getTriangles(triangleCounts, trianglesVertices);
-            RaiseVerbose("BabylonExporter.Mesh | triangleCounts.ToArray()=" + triangleCounts.ToArray().toString(), 3);
-            RaiseVerbose("BabylonExporter.Mesh | trianglesVertices.ToArray()=" + trianglesVertices.ToArray().toString(), 3);
-            int[] polygonsVertexCount = new int[mFnMesh.numPolygons];
-            for (int polygonId = 0; polygonId < mFnMesh.numPolygons; polygonId++)
-            {
-                polygonsVertexCount[polygonId] = mFnMesh.polygonVertexCount(polygonId);
-            }
-            RaiseVerbose("BabylonExporter.Mesh | polygonsVertexCount=" + polygonsVertexCount.toString(), 3);
+            //// Geometry
+            //MIntArray triangleCounts = new MIntArray();
+            //MIntArray trianglesVertices = new MIntArray();
+            //mFnMesh.getTriangles(triangleCounts, trianglesVertices);
+            //RaiseVerbose("BabylonExporter.Mesh | triangleCounts.ToArray()=" + triangleCounts.ToArray().toString(), 3);
+            //RaiseVerbose("BabylonExporter.Mesh | trianglesVertices.ToArray()=" + trianglesVertices.ToArray().toString(), 3);
+            //int[] polygonsVertexCount = new int[mFnMesh.numPolygons];
+            //for (int polygonId = 0; polygonId < mFnMesh.numPolygons; polygonId++)
+            //{
+            //    polygonsVertexCount[polygonId] = mFnMesh.polygonVertexCount(polygonId);
+            //}
+            //RaiseVerbose("BabylonExporter.Mesh | polygonsVertexCount=" + polygonsVertexCount.toString(), 3);
 
-            //MFloatPointArray points = new MFloatPointArray();
-            //mFnMesh.getPoints(points);
-            //RaiseVerbose("BabylonExporter.Mesh | points.ToArray()=" + points.ToArray().Select(mFloatPoint => mFloatPoint.toString()), 3);
+            ////MFloatPointArray points = new MFloatPointArray();
+            ////mFnMesh.getPoints(points);
+            ////RaiseVerbose("BabylonExporter.Mesh | points.ToArray()=" + points.ToArray().Select(mFloatPoint => mFloatPoint.toString()), 3);
 
-            //MFloatVectorArray normals = new MFloatVectorArray();
-            //mFnMesh.getNormals(normals);
-            //RaiseVerbose("BabylonExporter.Mesh | normals.ToArray()=" + normals.ToArray().Select(mFloatPoint => mFloatPoint.toString()), 3);
+            ////MFloatVectorArray normals = new MFloatVectorArray();
+            ////mFnMesh.getNormals(normals);
+            ////RaiseVerbose("BabylonExporter.Mesh | normals.ToArray()=" + normals.ToArray().Select(mFloatPoint => mFloatPoint.toString()), 3);
 
-            for (int polygonId = 0; polygonId < mFnMesh.numPolygons; polygonId++)
-            {
-                MIntArray verticesId = new MIntArray();
-                RaiseVerbose("BabylonExporter.Mesh | polygonId=" + polygonId, 3);
+            //for (int polygonId = 0; polygonId < mFnMesh.numPolygons; polygonId++)
+            //{
+            //    MIntArray verticesId = new MIntArray();
+            //    RaiseVerbose("BabylonExporter.Mesh | polygonId=" + polygonId, 3);
 
-                int nbTriangles = triangleCounts[polygonId];
-                RaiseVerbose("BabylonExporter.Mesh | nbTriangles=" + nbTriangles, 3);
+            //    int nbTriangles = triangleCounts[polygonId];
+            //    RaiseVerbose("BabylonExporter.Mesh | nbTriangles=" + nbTriangles, 3);
 
-                for (int triangleIndex = 0; triangleIndex < triangleCounts[polygonId]; triangleIndex++)
-                {
-                    RaiseVerbose("BabylonExporter.Mesh | triangleIndex=" + triangleIndex, 3);
-                    int[] triangleVertices = new int[3];
-                    mFnMesh.getPolygonTriangleVertices(polygonId, triangleIndex, triangleVertices);
-                    RaiseVerbose("BabylonExporter.Mesh | triangleVertices=" + triangleVertices.toString(), 3);
+            //    for (int triangleIndex = 0; triangleIndex < triangleCounts[polygonId]; triangleIndex++)
+            //    {
+            //        RaiseVerbose("BabylonExporter.Mesh | triangleIndex=" + triangleIndex, 3);
+            //        int[] triangleVertices = new int[3];
+            //        mFnMesh.getPolygonTriangleVertices(polygonId, triangleIndex, triangleVertices);
+            //        RaiseVerbose("BabylonExporter.Mesh | triangleVertices=" + triangleVertices.toString(), 3);
 
-                    foreach (int vertexId in triangleVertices)
-                    {
-                        RaiseVerbose("BabylonExporter.Mesh | vertexId=" + vertexId, 3);
-                        MPoint point = new MPoint();
-                        mFnMesh.getPoint(vertexId, point);
-                        RaiseVerbose("BabylonExporter.Mesh | point=" + point.toString(), 3);
+            //        foreach (int vertexId in triangleVertices)
+            //        {
+            //            RaiseVerbose("BabylonExporter.Mesh | vertexId=" + vertexId, 3);
+            //            MPoint point = new MPoint();
+            //            mFnMesh.getPoint(vertexId, point);
+            //            RaiseVerbose("BabylonExporter.Mesh | point=" + point.toString(), 3);
 
-                        MVector normal = new MVector();
-                        mFnMesh.getFaceVertexNormal(polygonId, vertexId, normal);
-                        RaiseVerbose("BabylonExporter.Mesh | normal=" + normal.toString(), 3);
-                    }
-                }
-            }
+            //            MVector normal = new MVector();
+            //            mFnMesh.getFaceVertexNormal(polygonId, vertexId, normal);
+            //            RaiseVerbose("BabylonExporter.Mesh | normal=" + normal.toString(), 3);
+            //        }
+            //    }
+            //}
 
             #endregion
 
 
-            if (IsMeshExportable(mFnMesh) == false)
+            if (IsMeshExportable(mFnMesh, mDagPath) == false)
             {
                 return null;
             }
@@ -337,57 +352,40 @@ namespace Maya2Babylon
             ExportTransform(babylonAbstractMesh, mFnTransform);
 
             // Hierarchy
-            if (mFnTransform.parentCount != 0)
-            {
-                RaiseVerbose("BabylonExporter.Mesh | Hierarchy", 2);
-
-                MObject parentMObject = mFnTransform.parent(0);
-                // Children of World node don't have parent in Babylon
-                if (parentMObject.apiType != MFn.Type.kWorld)
-                {
-                    MFnDagNode mFnTransformParent = new MFnDagNode(parentMObject);
-                    babylonAbstractMesh.parentId = mFnTransformParent.uuid().asString();
-                }
-            }
+            ExportHierarchy(babylonAbstractMesh, mFnTransform);
         }
 
         private void ExportTransform(BabylonAbstractMesh babylonAbstractMesh, MFnTransform mFnTransform)
         {
-            RaiseVerbose("BabylonExporter.Mesh | ExportTransform", 2);
-
             // Position / rotation / scaling
-            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
-            
-            babylonAbstractMesh.position = transformationMatrix.getTranslation();
+            RaiseVerbose("BabylonExporter.Mesh | ExportTransform", 2);
+            float[] position = null;
+            float[] rotationQuaternion = null;
+            float[] rotation = null;
+            float[] scaling = null;
+            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref scaling);
 
+            babylonAbstractMesh.position = position;
             if (_exportQuaternionsInsteadOfEulers)
             {
-                babylonAbstractMesh.rotationQuaternion = transformationMatrix.getRotationQuaternion();
+                babylonAbstractMesh.rotationQuaternion = rotationQuaternion;
             }
             else
             {
-                babylonAbstractMesh.rotation = transformationMatrix.getRotation();
+                babylonAbstractMesh.rotation = rotation;
             }
-
-            babylonAbstractMesh.scaling = transformationMatrix.getScale();
-
-            // Switch coordinate system at object level
-            babylonAbstractMesh.position[2] *= -1;
-            if (_exportQuaternionsInsteadOfEulers)
-            {
-                babylonAbstractMesh.rotationQuaternion[0] *= -1;
-                babylonAbstractMesh.rotationQuaternion[1] *= -1;
-            }
-            else
-            {
-                babylonAbstractMesh.rotation[0] *= -1;
-                babylonAbstractMesh.rotation[1] *= -1;
-            }
+            babylonAbstractMesh.scaling = scaling;
         }
 
-        private bool IsMeshExportable(MFnDagNode mFnDagNode)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mFnDagNode">DAG function set of the node (mesh) below the transform</param>
+        /// <param name="mDagPath">DAG path of the transform above the node</param>
+        /// <returns></returns>
+        private bool IsMeshExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
-            return IsNodeExportable(mFnDagNode);
+            return IsNodeExportable(mFnDagNode, mDagPath);
         }
     }
 }

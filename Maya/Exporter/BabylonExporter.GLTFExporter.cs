@@ -263,18 +263,16 @@ namespace Maya2Babylon
             }
             else if (type == typeof(BabylonCamera))
             {
-                // TODO - Camera
-                //GLTFCamera gltfCamera = ExportCamera(babylonNode as BabylonCamera, gltf, gltfParentNode);
-                //gltfNode = gltfCamera.gltfNode;
+                GLTFCamera gltfCamera = ExportCamera(babylonNode as BabylonCamera, gltf, gltfParentNode);
+                gltfNode = gltfCamera.gltfNode;
             }
             else if (type == typeof(BabylonLight))
             {
                 if (isNodeRelevantToExport(babylonNode))
                 {
-                    // TODO - Light
-                    //// Export light nodes as empty nodes (no lights in glTF 2.0 core)
-                    //RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 1);
-                    //gltfNode = ExportLight(babylonNode as BabylonLight, gltf, gltfParentNode);
+                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
+                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 1);
+                    gltfNode = ExportLight(babylonNode as BabylonLight, gltf, gltfParentNode);
                 }
                 else
                 {
