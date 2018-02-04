@@ -9,6 +9,26 @@ namespace Maya2Babylon
     {
         public const float Epsilon = 0.001f;
 
+
+        // -------------------------
+        // --------- Array ---------
+        // -------------------------
+
+        public static T[] SubArray<T>(T[] array, int startIndex, int count)
+        {
+            var result = new T[count];
+            for (int i = 0; i < count; i++)
+            {
+                result[i] = array[startIndex + i];
+            }
+            return result;
+        }
+
+        public static T[] SubArrayFromEntity<T>(T[] array, int startEntityIndex, int count)
+        {
+            return SubArray(array, startEntityIndex * count, count);
+        }
+
         public static bool IsAlmostEqualTo(this float[] current, float[] other, float epsilon)
         {
             if (current.Length != other.Length)
@@ -47,6 +67,10 @@ namespace Maya2Babylon
             }
             return result + "]";
         }
+
+        // -------------------------
+        // ----------- UI ----------
+        // -------------------------
 
         public static void UpdateCheckBox(CheckBox checkBox, MPxNode node, string propertyName)
         {

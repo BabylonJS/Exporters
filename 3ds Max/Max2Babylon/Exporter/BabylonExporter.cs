@@ -375,7 +375,6 @@ namespace Max2Babylon
         private void exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
         {
             BabylonNode babylonNode = null;
-            bool hasExporter = true;
             switch (maxGameNode.IGameObject.IGameType)
             {
                 case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
@@ -394,7 +393,6 @@ namespace Max2Babylon
                     break;
                 default:
                     // The type of node is not exportable (helper, spline, xref...)
-                    hasExporter = false;
                     break;
             }
             CheckCancelled();
@@ -403,10 +401,6 @@ namespace Max2Babylon
             if (babylonNode == null &&
                 isNodeRelevantToExport(maxGameNode))
             {
-                //if (!hasExporter)
-                //{
-                //    RaiseWarning($"Type '{maxGameNode.IGameObject.IGameType}' of node '{maxGameNode.Name}' has no exporter, an empty node is exported instead", 1);
-                //}
                 // Create a dummy (empty mesh)
                 babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
             };

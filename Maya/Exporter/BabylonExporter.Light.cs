@@ -1,0 +1,193 @@
+﻿using Autodesk.Maya.OpenMaya;
+using BabylonExport.Entities;
+using System;
+
+namespace Maya2Babylon
+{
+    partial class BabylonExporter
+    {
+        void ExportDefaultLight(BabylonScene babylonScene)
+        {
+            var babylonLight = new BabylonLight();
+            babylonLight.name = "Default light";
+            babylonLight.id = Guid.NewGuid().ToString();
+            babylonLight.type = 3;
+            babylonLight.groundColor = new float[] { 0, 0, 0 };
+            babylonLight.direction = new[] { 0, 1.0f, 0 };
+
+            babylonLight.intensity = 1;
+
+            babylonLight.diffuse = new[] { 1.0f, 1.0f, 1.0f };
+            babylonLight.specular = new[] { 1.0f, 1.0f, 1.0f };
+
+            babylonScene.LightsList.Add(babylonLight);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mDagPath">DAG path to the transform above light</param>
+        /// <param name="babylonScene"></param>
+        /// <returns></returns>
+        private BabylonNode ExportLight(MDagPath mDagPath, BabylonScene babylonScene)
+        {
+
+            RaiseMessage(mDagPath.partialPathName, 1);
+
+            // Transform above light
+            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+
+            // Light direct child of the transform
+            MFnLight mFnLight = null;
+            for (uint i = 0; i < mFnTransform.childCount; i++)
+            {
+                MObject childObject = mFnTransform.child(i);
+                if (childObject.hasFn(MFn.Type.kLight))
+                {
+                    mFnLight = new MFnLight(childObject);
+                }
+            }
+            if (mFnLight == null)
+            {
+                RaiseError("No light found has child of " + mDagPath.fullPathName);
+                return null;
+            }
+
+            RaiseMessage("mFnLight.fullPathName=" + mFnLight.fullPathName, 2);
+
+
+            // --- prints ---
+            #region prints
+
+            // MFnLight
+            RaiseVerbose("BabylonExporter.Light | mFnLight data", 2);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.color.toString()=" + mFnLight.color.toString(), 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.intensity=" + mFnLight.intensity, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.useRayTraceShadows=" + mFnLight.useRayTraceShadows, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.shadowColor.toString()=" + mFnLight.shadowColor.toString(), 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.centerOfIllumination=" + mFnLight.centerOfIllumination, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.numShadowSamples=" + mFnLight.numShadowSamples, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.rayDepthLimit=" + mFnLight.rayDepthLimit, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.opticalFXvisibility.toString()=" + mFnLight.opticalFXvisibility.toString(), 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.lightIntensity.toString()=" + mFnLight.lightIntensity.toString(), 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.instanceCount(true)=" + mFnLight.instanceCount(true), 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.lightDirection(0).toString()=" + mFnLight.lightDirection(0).toString(), 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.lightAmbient=" + mFnLight.lightAmbient, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.lightDiffuse=" + mFnLight.lightDiffuse, 3);
+            RaiseVerbose("BabylonExporter.Light | mFnLight.lightSpecular=" + mFnLight.lightSpecular, 3);
+
+            switch (mFnLight.objectProperty.apiType)
+            {
+                case MFn.Type.kSpotLight:
+                    MFnSpotLight mFnSpotLight = new MFnSpotLight(mFnLight.objectProperty);
+                    // MFnNonAmbientLight
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.decayRate=" + mFnSpotLight.decayRate, 3); // dropdown enum value
+                    // MFnNonExtendedLight
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.shadowRadius=" + mFnSpotLight.shadowRadius, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.castSoftShadows=" + mFnSpotLight.castSoftShadows, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.useDepthMapShadows=" + mFnSpotLight.useDepthMapShadows, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.depthMapFilterSize()=" + mFnSpotLight.depthMapFilterSize(), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.depthMapResolution()=" + mFnSpotLight.depthMapResolution(), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.depthMapBias()=" + mFnSpotLight.depthMapBias(), 3);
+                    // MFnSpotLight
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.coneAngle=" + mFnSpotLight.coneAngle, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.penumbraAngle=" + mFnSpotLight.penumbraAngle, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.dropOff=" + mFnSpotLight.dropOff, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.barnDoors=" + mFnSpotLight.barnDoors, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.useDecayRegions=" + mFnSpotLight.useDecayRegions, 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.startDistance(MFnSpotLight.MDecayRegion.kFirst)=" + mFnSpotLight.startDistance(MFnSpotLight.MDecayRegion.kFirst), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kFirst)=" + mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kFirst), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.startDistance(MFnSpotLight.MDecayRegion.kSecond)=" + mFnSpotLight.startDistance(MFnSpotLight.MDecayRegion.kSecond), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kSecond)=" + mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kSecond), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.startDistance(MFnSpotLight.MDecayRegion.kThird)=" + mFnSpotLight.startDistance(MFnSpotLight.MDecayRegion.kThird), 3);
+                    RaiseVerbose("BabylonExporter.Light | mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kThird)=" + mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kThird), 3);
+                    break;
+            }
+
+            #endregion
+
+            if (IsLightExportable(mFnLight, mDagPath) == false)
+            {
+                return null;
+            }
+
+            var babylonLight = new BabylonLight { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+
+            // Hierarchy
+            ExportHierarchy(babylonLight, mFnTransform);
+
+            // Position
+            RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
+            float[] position = null;
+            GetTransform(mFnTransform, ref position);
+            babylonLight.position = position;
+
+            // Direction
+            var vDir = new MVector(0, 0, -1);
+            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
+            vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
+            vDir.normalize();
+            babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
+            
+            // Common fields 
+            babylonLight.intensity = mFnLight.intensity;
+
+            babylonLight.diffuse = mFnLight.lightDiffuse ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
+            babylonLight.specular = mFnLight.lightSpecular ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
+
+            // Type
+            switch (mFnLight.objectProperty.apiType)
+            {
+                case MFn.Type.kPointLight:
+                    babylonLight.type = 0;
+                    break;
+                case MFn.Type.kSpotLight:
+                    MFnSpotLight mFnSpotLight = new MFnSpotLight(mFnLight.objectProperty);
+                    babylonLight.type = 2;
+                    babylonLight.angle = (float)mFnSpotLight.coneAngle;
+                    babylonLight.exponent = 1;
+
+                    if (mFnSpotLight.useDecayRegions)
+                    {
+                        babylonLight.range = mFnSpotLight.endDistance(MFnSpotLight.MDecayRegion.kThird); // Max distance
+                    }
+                    break;
+                case MFn.Type.kDirectionalLight:
+                    babylonLight.type = 1;
+                    break;
+                case MFn.Type.kAmbientLight:
+                    babylonLight.type = 3;
+                    babylonLight.groundColor = new float[] { 0, 0, 0 };
+                    break;
+                case MFn.Type.kAreaLight:
+                case MFn.Type.kVolumeLight:
+                    RaiseError("Unsupported light type '" + mFnLight.objectProperty.apiType + "' for DAG path '" + mFnLight.fullPathName + "'. Light is ignored. Supported light types are: ambient, directional, point and spot.");
+                    return null;
+                default:
+                    RaiseWarning("Unknown light type '" + mFnLight.objectProperty.apiType + "' for DAG path '" + mFnLight.fullPathName + "'. Light is ignored.");
+                    return null;
+            }
+
+            // TODO - Shadows
+
+            // TODO - Exclusion
+
+            // TODO - Animations
+
+            babylonScene.LightsList.Add(babylonLight);
+
+            return babylonLight;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mFnDagNode">DAG function set of the node (light) below the transform</param>
+        /// <param name="mDagPath">DAG path of the transform above the node</param>
+        /// <returns></returns>
+        private bool IsLightExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
+        {
+            return IsNodeExportable(mFnDagNode, mDagPath);
+        }
+    }
+}
