@@ -14,6 +14,16 @@ namespace Maya2Babylon
             return new float[] { mColor.r, mColor.g, mColor.b, mColor.a };
         }
 
+        /// <summary>
+        /// [r,g,b]
+        /// </summary>
+        /// <param name="mColor"></param>
+        /// <returns></returns>
+        public static float[] toArrayRGB(this MColor mColor)
+        {
+            return new float[] { mColor.r, mColor.g, mColor.b };
+        }
+
         public static string toString(this MColor mColor)
         {
             return mColor == null ? "" : mColor.toArray().toString();

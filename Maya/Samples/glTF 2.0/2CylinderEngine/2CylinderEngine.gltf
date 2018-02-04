@@ -1,1 +1,4857 @@
-{"asset":{"version":"2.0","generator":"Babylon2Gltf2017","copyright":"2017 (c) BabylonJS"},"scene":0,"scenes":[{"nodes":[81]}],"nodes":[{"children":[1,2,3,4,5,6,7,8,9,69,72,75,78],"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[100.0,100.0,100.0],"name":"a_2_Cylinder_Engine"},{"mesh":0,"translation":[-295.0,132.139526,3.983346],"rotation":[0.7071063,0.0008329992,0.7071063,0.000833219558],"scale":[1.0,1.0,1.0],"name":"Head_Stud_123FBXASC045006_0_Parts"},{"mesh":1,"translation":[-295.0,123.807793,100.1015],"rotation":[0.7071063,0.0008329992,0.7071063,0.000833219558],"scale":[1.0,1.0,1.0],"name":"Head_Stud_123FBXASC045006_0_Parts_1"},{"mesh":2,"translation":[100.0,-133.848831,-54.3721237],"rotation":[-0.707106769,4.3297803E-17,0.707106769,4.3297803E-17],"scale":[1.0,1.0,1.0],"name":"Lifter_123FBXASC045923_0_Parts"},{"mesh":3,"translation":[100.0,-133.848831,-34.3721275],"rotation":[-0.707106769,4.3297803E-17,0.707106769,4.3297803E-17],"scale":[1.0,1.0,1.0],"name":"Lifter_123FBXASC045923_0_Parts_2"},{"mesh":4,"translation":[-100.0,-66.15117,-14.3720989],"rotation":[0.0,0.707106769,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Lifter_123FBXASC045923_0_Parts_3"},{"mesh":5,"translation":[-100.0,-66.15118,5.627897],"rotation":[0.0,0.707106769,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Lifter_123FBXASC045923_0_Parts_4"},{"mesh":6,"translation":[71.01807,22.1930141,-22.0],"rotation":[0.0,0.0,-0.0833555,0.996519864],"scale":[1.0,1.0,1.0],"name":"rod_123FBXASC045699_0_Parts"},{"mesh":7,"translation":[-71.01807,-22.1930122,20.0],"rotation":[0.0,0.0,0.996519864,0.0833555],"scale":[1.0,1.0,1.0],"name":"rod_123FBXASC045699_0_Parts_2"},{"children":[10,11,12,13,14,15,16,17,18],"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Body_Sub_123FBXASC045002_0_Parts"},{"mesh":8,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Case_r_123FBXASC045200_0_Parts"},{"mesh":9,"translation":[126.935661,-5.3E-05,36.5588455],"rotation":[-0.707106769,0.0,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Cylinder_1_123FBXASC045100_0_Parts"},{"mesh":10,"translation":[-126.935661,3E-06,-36.55884],"rotation":[4.3633217E-09,-0.707106769,-0.707106769,4.3633217E-09],"scale":[1.0,1.0,1.0],"name":"Cylinder_2_123FBXASC045101_0_Parts"},{"mesh":11,"translation":[-295.0,21.605278,105.328674],"rotation":[0.7071063,0.0008329992,0.7071063,0.000833219558],"scale":[1.0,1.0,1.0],"name":"Head_Stud_123FBXASC045006_0_Parts_2"},{"mesh":12,"translation":[-295.0,21.4988766,-0.492557],"rotation":[-0.7071067,0.000326999871,-0.7071067,0.000327196758],"scale":[1.0,1.0,1.0],"name":"Head_Stud_123FBXASC045006_0_Parts_3"},{"mesh":13,"translation":[223.999985,30.4879246,-25.0087318],"rotation":[0.0,-0.707106769,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Head_1_123FBXASC045150_0_Parts"},{"mesh":14,"translation":[223.999985,31.9879284,-23.5087337],"rotation":[0.0,-0.707106769,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Valve_Cover_123FBXASC045701_0_Parts"},{"mesh":15,"translation":[65.0,128.717026,3.270524],"rotation":[0.6532814,0.2705985,0.6532814,0.270598143],"scale":[1.0,1.0,1.0],"name":"cylinder_bolt_pattern__0_Parts"},{"children":[19,20,21,22,23,24,25,26,27,28,41,55],"translation":[-48.26182,-59.110424,-34.59598],"rotation":[0.5000004,-0.499999553,0.4999997,0.5000003],"scale":[1.0,1.0,1.0],"name":"Head2_Sub__0_Parts"},{"mesh":16,"translation":[-23.1249428,247.738174,-220.354584],"rotation":[0.707105,-0.00159028708,0.0015902872,0.707105],"scale":[1.0,1.0,1.0],"name":"Head_Nut_123FBXASC045005_0_Parts"},{"mesh":17,"translation":[81.19498,247.738174,-220.146088],"rotation":[0.7071057,0.00129188586,-0.0012918862,0.7071055],"scale":[1.0,1.0,1.0],"name":"Head_Nut_123FBXASC045005_0_Parts_1"},{"mesh":18,"translation":[49.5873337,175.73819,-89.59836],"rotation":[-0.707106769,0.0,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Head_2_123FBXASC045151_0_Parts"},{"mesh":19,"translation":[277.7611,580.0806,5.389854],"rotation":[0.0,0.0,0.2206471,0.9753537],"scale":[1.0,1.0,1.0],"name":"Rocker_Arm_123FBXASC045600_0_Parts"},{"mesh":20,"translation":[353.97934,330.904022,5.389931],"rotation":[0.0,0.0,-0.220647,0.9753537],"scale":[1.0,1.0,1.0],"name":"Rocker_Arm_copy_123FBXASC045602_0_Parts"},{"mesh":21,"translation":[24.5262985,213.738174,-283.073578],"rotation":[0.707106769,0.0,0.0,0.707106769],"scale":[1.0,1.0,1.0],"name":"Spark_Plug__0_Parts"},{"mesh":22,"translation":[51.08793,325.7384,-91.09836],"rotation":[-0.707106769,2.12132036E-05,-2.192031E-05,0.707106769],"scale":[1.0,1.0,1.0],"name":"Valve_Cover_copy__0_Main"},{"mesh":23,"translation":[-270.794067,145.434,-122.044113],"rotation":[0.298877031,-0.6408371,-0.707107067,-4.51429441E-05],"scale":[1.0,1.0,1.0],"name":"Valve_Spring_123FBXASC045702_0_Parts"},{"mesh":24,"translation":[-141.640854,388.67276,-122.0078],"rotation":[-3.05311332E-16,0.707106769,0.640856147,0.298836827],"scale":[1.0,1.0,1.0],"name":"Valve_Spring_123FBXASC045702_0_Parts_1"},{"children":[29,30,31,36],"translation":[-0.13409,-12.9999886,-0.123657],"rotation":[0.0,-0.00113553717,0.0,0.999999344],"scale":[1.0,1.0,1.0],"name":"Rocker_Sub__0_Parts"},{"mesh":25,"translation":[48.79471,768.6772,20.402504],"rotation":[-0.00113499688,2.99999169E-06,-0.999996245,0.00248655141],"scale":[1.0,1.0,1.0],"name":"Rocker_Arm_Shaft_123FBXASC045601_0_Parts"},{"mesh":26,"translation":[-29.9802284,768.6992,20.58133],"rotation":[-0.00113499758,2.99999351E-06,-0.999996841,0.002243698],"scale":[1.0,1.0,1.0],"name":"Rocker_Arm_Shaft_123FBXASC045601_0_Parts_1"},{"children":[32,33,34,35],"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Rocker_Mount_Sub__0_Parts"},{"mesh":27,"translation":[18.20176,326.738159,-297.677032],"rotation":[0.7068319,-0.01971543,0.0197154321,0.7068319],"scale":[1.0,1.0,1.0],"name":"Rocker_Bolt_123FBXASC045603_0_Parts"},{"mesh":28,"translation":[68.16711,326.738159,-297.788666],"rotation":[0.7068333,-0.01965739,0.01965738,0.706833661],"scale":[1.0,1.0,1.0],"name":"Rocker_Bolt_123FBXASC045603_0_Parts_1"},{"mesh":29,"translation":[49.4711037,257.122955,-94.59931],"rotation":[0.999999344,9.90477E-12,-0.00113500038,8.72666E-09],"scale":[1.0,1.0,1.0],"name":"Rocker_Mount_Cap_123FBXASC045608_0_Parts"},{"mesh":30,"translation":[49.5051537,344.353363,-79.59935],"rotation":[0.0,0.00113502226,0.0,0.999999344],"scale":[1.0,1.0,1.0],"name":"Rocker_Mount_123FBXASC045604_0_Parts"},{"children":[37,38,39,40],"translation":[-8E-06,-1.1E-05,99.9995346],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Rocker_Mount_Sub__0_Parts_1"},{"mesh":31,"translation":[17.57496,326.738159,-297.629181],"rotation":[0.7068705,-0.018282691,0.0182826966,0.7068703],"scale":[1.0,1.0,1.0],"name":"Rocker_Bolt_123FBXASC045603_0_Parts_2"},{"mesh":32,"translation":[67.53964,326.738159,-297.740662],"rotation":[0.7068719,-0.018223241,0.018223241,0.7068719],"scale":[1.0,1.0,1.0],"name":"Rocker_Bolt_123FBXASC045603_0_Parts_3"},{"mesh":33,"translation":[49.6981125,257.123,-94.59911],"rotation":[0.999999344,9.90477E-12,-0.00113500038,8.72666E-09],"scale":[1.0,1.0,1.0],"name":"Rocker_Mount_Cap_123FBXASC045608_0_Parts_1"},{"mesh":34,"translation":[49.73217,344.353363,-79.59915],"rotation":[0.0,0.00113502226,0.0,0.999999344],"scale":[1.0,1.0,1.0],"name":"Rocker_Mount_123FBXASC045604_0_Parts_1"},{"children":[42,43,44],"translation":[91.8705139,80.63255,-166.2609],"rotation":[-0.222643346,0.241949186,0.462730646,0.8232684],"scale":[1.0,1.0,1.0],"name":"Valve_Sub__0_Parts"},{"mesh":35,"translation":[45.59694,243.513123,-69.38879],"rotation":[0.8729776,-0.0949807,0.313787431,0.361145645],"scale":[1.0,1.0,1.0],"name":"Valve_Spring_Cap_123FBXASC045704_0_Parts"},{"mesh":36,"translation":[-1.24852,-250.06192,90.2271347],"rotation":[0.0577759556,-0.323684365,0.0520787239,0.942962468],"scale":[1.0,1.0,1.0],"name":"Valve_123FBXASC045700_0_Parts"},{"children":[45,46,47,48,49,50,51,52,53,54],"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Spring__0_Parts"},{"mesh":37,"translation":[141.075165,91.42302,331.463226],"rotation":[0.252321839,-0.8036205,-0.445921063,-0.302790582],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts"},{"mesh":38,"translation":[-52.2781754,76.44442,179.628754],"rotation":[0.4871953,-0.23058264,0.125684291,0.832872033],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_2"},{"mesh":39,"translation":[134.794891,90.9365,326.5316],"rotation":[0.252321839,-0.8036205,-0.445921063,-0.302790582],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_3"},{"mesh":40,"translation":[-58.55844,75.95791,174.697067],"rotation":[0.4871953,-0.23058264,0.125684291,0.832872033],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_4"},{"mesh":41,"translation":[128.514618,90.44999,321.5999],"rotation":[0.252321839,-0.8036205,-0.445921063,-0.302790582],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_5"},{"mesh":42,"translation":[-64.83871,75.4714,169.765366],"rotation":[0.4871953,-0.23058264,0.125684291,0.832872033],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_6"},{"mesh":43,"translation":[122.234375,89.96346,316.6682],"rotation":[0.252321839,-0.8036205,-0.445921063,-0.302790582],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_7"},{"mesh":44,"translation":[-71.11895,74.98487,164.833679],"rotation":[0.4871953,-0.23058264,0.125684291,0.832872033],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_8"},{"mesh":45,"translation":[115.9541,89.47694,311.73645],"rotation":[0.252321839,-0.8036205,-0.445921063,-0.302790582],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_9"},{"mesh":46,"translation":[-77.3992157,74.49835,159.902],"rotation":[0.4871953,-0.23058264,0.125684291,0.832872033],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_10"},{"children":[56,57,58],"translation":[14.8981934,85.82951,48.0346451],"rotation":[0.4627306,0.8232685,0.222643375,-0.241949081],"scale":[1.0,1.0,1.0],"name":"Valve_Sub__0_Parts_1"},{"mesh":47,"translation":[34.1871338,252.666016,-65.06369],"rotation":[0.8816905,-0.08714654,0.316052139,0.339320481],"scale":[1.0,1.0,1.0],"name":"Valve_Spring_Cap_123FBXASC045704_0_Parts_1"},{"mesh":48,"translation":[-5.746735,-250.409912,86.6879044],"rotation":[0.05777596,-0.3236844,0.0520787239,0.942962468],"scale":[1.0,1.0,1.0],"name":"Valve_123FBXASC045700_0_Parts_1"},{"children":[59,60,61,62,63,64,65,66,67,68],"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Spring__0_Parts_1"},{"mesh":49,"translation":[141.371887,88.10767,327.1085],"rotation":[0.238515064,-0.804634333,-0.458078921,-0.292981029],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_11"},{"mesh":50,"translation":[-55.2486954,72.8760147,172.708328],"rotation":[0.4888247,-0.238169178,0.144079775,0.826781034],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_12"},{"mesh":51,"translation":[136.661652,87.7428055,323.40976],"rotation":[0.238515064,-0.804634333,-0.458078921,-0.292981029],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_13"},{"mesh":52,"translation":[-59.9588852,72.51113,169.009552],"rotation":[0.4888247,-0.238169178,0.144079775,0.826781034],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_14"},{"mesh":53,"translation":[131.951538,87.37792,319.710968],"rotation":[0.238515064,-0.804634333,-0.458078921,-0.292981029],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_15"},{"mesh":54,"translation":[-64.669075,72.14625,165.310791],"rotation":[0.4888247,-0.238169178,0.144079775,0.826781034],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_16"},{"mesh":55,"translation":[127.241272,87.01302,316.012177],"rotation":[0.238515064,-0.804634333,-0.458078921,-0.292981029],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_17"},{"mesh":56,"translation":[-69.3792953,71.7813339,161.61203],"rotation":[0.4888247,-0.238169178,0.144079775,0.826781034],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_18"},{"mesh":57,"translation":[122.5311,86.64814,312.3134],"rotation":[0.238515064,-0.804634333,-0.458078921,-0.292981029],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_19"},{"mesh":58,"translation":[-74.08948,71.4164658,157.913239],"rotation":[0.4888247,-0.238169178,0.144079775,0.826781034],"scale":[1.0,1.0,1.0],"name":"Spring_Link__0_Parts_20"},{"children":[70,71],"translation":[47.1786766,-52.8213272,88.94477],"rotation":[0.0,0.0,-0.382683426,0.9238795],"scale":[1.0,1.0,1.0],"name":"CamShaft_Sub_123FBXASC045990_0_Parts"},{"mesh":59,"translation":[-30.2958984,-52.56131,-25.05523],"rotation":[-0.3796678,0.5965336,0.37966764,0.5965338],"scale":[1.0,1.0,1.0],"name":"Cam_shaft_123FBXASC045457_0_Parts"},{"mesh":60,"translation":[-90.5938644,-24.379818,40.05523],"rotation":[0.5369318,-0.843625665,3.287759E-17,5.16571745E-17],"scale":[1.0,1.0,1.0],"name":"cam_gear_123FBXASC045456_0_Parts"},{"children":[73,74],"translation":[18.0981846,-69.69784,105.559814],"rotation":[0.0,0.0,-0.8660254,0.5],"scale":[1.0,1.0,1.0],"name":"Crank_Sub_123FBXASC045555_0_Parts"},{"mesh":61,"translation":[-51.3110123,-50.5224075,-107.559814],"rotation":[0.0,0.0,0.984655857,0.174507558],"scale":[1.0,1.0,1.0],"name":"crank_123FBXASC045782_0_Parts"},{"mesh":62,"translation":[-51.3110123,-50.5224075,18.4401855],"rotation":[0.0,0.0,0.984655857,0.174507558],"scale":[1.0,1.0,1.0],"name":"crank_gear_123FBXASC045783_0_Parts"},{"children":[76,77],"translation":[-136.8601,64.45372,-3.820367],"rotation":[0.0,0.0,1.0,6.123234E-17],"scale":[1.0,1.0,1.0],"name":"Piston_Sub__0_Parts"},{"mesh":63,"translation":[-45.31546,-24.6172638,26.3203678],"rotation":[0.0,0.0,0.0147481952,0.9998912],"scale":[1.0,1.0,1.0],"name":"Piston_pin_123FBXASC045845_0_Parts"},{"mesh":64,"translation":[-294.6772,73.97987,-16.1796322],"rotation":[0.0,0.0,1.0,6.123234E-17],"scale":[1.0,1.0,1.0],"name":"Piston_123FBXASC045844_0_Parts"},{"children":[79,80],"translation":[136.8601,-64.45372,36.17963],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"name":"Piston_Sub__0_Parts_1"},{"mesh":65,"translation":[-45.31546,-24.6172638,26.32037],"rotation":[0.0,0.0,0.0147481952,0.9998912],"scale":[1.0,1.0,1.0],"name":"Piston_pin_123FBXASC045845_0_Parts_1"},{"mesh":66,"translation":[-294.6772,73.97987,-16.1796322],"rotation":[0.0,0.0,1.0,6.123234E-17],"scale":[1.0,1.0,1.0],"name":"Piston_123FBXASC045844_0_Parts_2"},{"children":[0],"translation":[0.0,0.0,0.0],"rotation":[0.0,1.0,0.0,-4.371139E-08],"scale":[1.0,1.0,-1.0],"name":"root"}],"meshes":[{"primitives":[{"attributes":{"POSITION":1,"NORMAL":2},"indices":0}],"name":"Head_Stud_123FBXASC045006_0_Parts"},{"primitives":[{"attributes":{"POSITION":4,"NORMAL":5},"indices":3}],"name":"Head_Stud_123FBXASC045006_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":7,"NORMAL":8},"indices":6}],"name":"Lifter_123FBXASC045923_0_Parts"},{"primitives":[{"attributes":{"POSITION":10,"NORMAL":11},"indices":9}],"name":"Lifter_123FBXASC045923_0_Parts_2"},{"primitives":[{"attributes":{"POSITION":13,"NORMAL":14},"indices":12}],"name":"Lifter_123FBXASC045923_0_Parts_3"},{"primitives":[{"attributes":{"POSITION":16,"NORMAL":17},"indices":15}],"name":"Lifter_123FBXASC045923_0_Parts_4"},{"primitives":[{"attributes":{"POSITION":19,"NORMAL":20},"indices":18}],"name":"rod_123FBXASC045699_0_Parts"},{"primitives":[{"attributes":{"POSITION":22,"NORMAL":23},"indices":21}],"name":"rod_123FBXASC045699_0_Parts_2"},{"primitives":[{"attributes":{"POSITION":25,"NORMAL":26},"indices":24}],"name":"Case_r_123FBXASC045200_0_Parts"},{"primitives":[{"attributes":{"POSITION":28,"NORMAL":29},"indices":27}],"name":"Cylinder_1_123FBXASC045100_0_Parts"},{"primitives":[{"attributes":{"POSITION":31,"NORMAL":32},"indices":30}],"name":"Cylinder_2_123FBXASC045101_0_Parts"},{"primitives":[{"attributes":{"POSITION":34,"NORMAL":35},"indices":33}],"name":"Head_Stud_123FBXASC045006_0_Parts_2"},{"primitives":[{"attributes":{"POSITION":37,"NORMAL":38},"indices":36}],"name":"Head_Stud_123FBXASC045006_0_Parts_3"},{"primitives":[{"attributes":{"POSITION":40,"NORMAL":41},"indices":39}],"name":"Head_1_123FBXASC045150_0_Parts"},{"primitives":[{"attributes":{"POSITION":43,"NORMAL":44},"indices":42}],"name":"Valve_Cover_123FBXASC045701_0_Parts"},{"primitives":[{"attributes":{"POSITION":46,"NORMAL":47},"indices":45}],"name":"cylinder_bolt_pattern__0_Parts"},{"primitives":[{"attributes":{"POSITION":49,"NORMAL":50},"indices":48}],"name":"Head_Nut_123FBXASC045005_0_Parts"},{"primitives":[{"attributes":{"POSITION":52,"NORMAL":53},"indices":51}],"name":"Head_Nut_123FBXASC045005_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":55,"NORMAL":56},"indices":54}],"name":"Head_2_123FBXASC045151_0_Parts"},{"primitives":[{"attributes":{"POSITION":58,"NORMAL":59},"indices":57}],"name":"Rocker_Arm_123FBXASC045600_0_Parts"},{"primitives":[{"attributes":{"POSITION":61,"NORMAL":62},"indices":60}],"name":"Rocker_Arm_copy_123FBXASC045602_0_Parts"},{"primitives":[{"attributes":{"POSITION":64,"NORMAL":65},"indices":63}],"name":"Spark_Plug__0_Parts"},{"primitives":[{"attributes":{"POSITION":67,"NORMAL":68},"indices":66}],"name":"Valve_Cover_copy__0_Main"},{"primitives":[{"attributes":{"POSITION":70,"NORMAL":71},"indices":69}],"name":"Valve_Spring_123FBXASC045702_0_Parts"},{"primitives":[{"attributes":{"POSITION":73,"NORMAL":74},"indices":72}],"name":"Valve_Spring_123FBXASC045702_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":76,"NORMAL":77},"indices":75}],"name":"Rocker_Arm_Shaft_123FBXASC045601_0_Parts"},{"primitives":[{"attributes":{"POSITION":79,"NORMAL":80},"indices":78}],"name":"Rocker_Arm_Shaft_123FBXASC045601_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":82,"NORMAL":83},"indices":81}],"name":"Rocker_Bolt_123FBXASC045603_0_Parts"},{"primitives":[{"attributes":{"POSITION":85,"NORMAL":86},"indices":84}],"name":"Rocker_Bolt_123FBXASC045603_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":88,"NORMAL":89},"indices":87}],"name":"Rocker_Mount_Cap_123FBXASC045608_0_Parts"},{"primitives":[{"attributes":{"POSITION":91,"NORMAL":92},"indices":90}],"name":"Rocker_Mount_123FBXASC045604_0_Parts"},{"primitives":[{"attributes":{"POSITION":94,"NORMAL":95},"indices":93}],"name":"Rocker_Bolt_123FBXASC045603_0_Parts_2"},{"primitives":[{"attributes":{"POSITION":97,"NORMAL":98},"indices":96}],"name":"Rocker_Bolt_123FBXASC045603_0_Parts_3"},{"primitives":[{"attributes":{"POSITION":100,"NORMAL":101},"indices":99}],"name":"Rocker_Mount_Cap_123FBXASC045608_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":103,"NORMAL":104},"indices":102}],"name":"Rocker_Mount_123FBXASC045604_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":106,"NORMAL":107},"indices":105}],"name":"Valve_Spring_Cap_123FBXASC045704_0_Parts"},{"primitives":[{"attributes":{"POSITION":109,"NORMAL":110},"indices":108}],"name":"Valve_123FBXASC045700_0_Parts"},{"primitives":[{"attributes":{"POSITION":112,"NORMAL":113},"indices":111}],"name":"Spring_Link__0_Parts"},{"primitives":[{"attributes":{"POSITION":115,"NORMAL":116},"indices":114}],"name":"Spring_Link__0_Parts_2"},{"primitives":[{"attributes":{"POSITION":118,"NORMAL":119},"indices":117}],"name":"Spring_Link__0_Parts_3"},{"primitives":[{"attributes":{"POSITION":121,"NORMAL":122},"indices":120}],"name":"Spring_Link__0_Parts_4"},{"primitives":[{"attributes":{"POSITION":124,"NORMAL":125},"indices":123}],"name":"Spring_Link__0_Parts_5"},{"primitives":[{"attributes":{"POSITION":127,"NORMAL":128},"indices":126}],"name":"Spring_Link__0_Parts_6"},{"primitives":[{"attributes":{"POSITION":130,"NORMAL":131},"indices":129}],"name":"Spring_Link__0_Parts_7"},{"primitives":[{"attributes":{"POSITION":133,"NORMAL":134},"indices":132}],"name":"Spring_Link__0_Parts_8"},{"primitives":[{"attributes":{"POSITION":136,"NORMAL":137},"indices":135}],"name":"Spring_Link__0_Parts_9"},{"primitives":[{"attributes":{"POSITION":139,"NORMAL":140},"indices":138}],"name":"Spring_Link__0_Parts_10"},{"primitives":[{"attributes":{"POSITION":142,"NORMAL":143},"indices":141}],"name":"Valve_Spring_Cap_123FBXASC045704_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":145,"NORMAL":146},"indices":144}],"name":"Valve_123FBXASC045700_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":148,"NORMAL":149},"indices":147}],"name":"Spring_Link__0_Parts_11"},{"primitives":[{"attributes":{"POSITION":151,"NORMAL":152},"indices":150}],"name":"Spring_Link__0_Parts_12"},{"primitives":[{"attributes":{"POSITION":154,"NORMAL":155},"indices":153}],"name":"Spring_Link__0_Parts_13"},{"primitives":[{"attributes":{"POSITION":157,"NORMAL":158},"indices":156}],"name":"Spring_Link__0_Parts_14"},{"primitives":[{"attributes":{"POSITION":160,"NORMAL":161},"indices":159}],"name":"Spring_Link__0_Parts_15"},{"primitives":[{"attributes":{"POSITION":163,"NORMAL":164},"indices":162}],"name":"Spring_Link__0_Parts_16"},{"primitives":[{"attributes":{"POSITION":166,"NORMAL":167},"indices":165}],"name":"Spring_Link__0_Parts_17"},{"primitives":[{"attributes":{"POSITION":169,"NORMAL":170},"indices":168}],"name":"Spring_Link__0_Parts_18"},{"primitives":[{"attributes":{"POSITION":172,"NORMAL":173},"indices":171}],"name":"Spring_Link__0_Parts_19"},{"primitives":[{"attributes":{"POSITION":175,"NORMAL":176},"indices":174}],"name":"Spring_Link__0_Parts_20"},{"primitives":[{"attributes":{"POSITION":178,"NORMAL":179},"indices":177}],"name":"Cam_shaft_123FBXASC045457_0_Parts"},{"primitives":[{"attributes":{"POSITION":181,"NORMAL":182},"indices":180}],"name":"cam_gear_123FBXASC045456_0_Parts"},{"primitives":[{"attributes":{"POSITION":184,"NORMAL":185},"indices":183}],"name":"crank_123FBXASC045782_0_Parts"},{"primitives":[{"attributes":{"POSITION":187,"NORMAL":188},"indices":186}],"name":"crank_gear_123FBXASC045783_0_Parts"},{"primitives":[{"attributes":{"POSITION":190,"NORMAL":191},"indices":189}],"name":"Piston_pin_123FBXASC045845_0_Parts"},{"primitives":[{"attributes":{"POSITION":193,"NORMAL":194},"indices":192}],"name":"Piston_123FBXASC045844_0_Parts"},{"primitives":[{"attributes":{"POSITION":196,"NORMAL":197},"indices":195}],"name":"Piston_pin_123FBXASC045845_0_Parts_1"},{"primitives":[{"attributes":{"POSITION":199,"NORMAL":200},"indices":198}],"name":"Piston_123FBXASC045844_0_Parts_2"}],"accessors":[{"bufferView":0,"componentType":5123,"count":564,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"componentType":5126,"count":564,"max":[-25.9714622,81.05716,230.000015],"min":[-38.9714661,68.06677,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6768,"componentType":5126,"count":564,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":1128,"componentType":5123,"count":564,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":13536,"componentType":5126,"count":564,"max":[-25.9714622,81.05716,230.000015],"min":[-38.9714661,68.06677,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":20304,"componentType":5126,"count":564,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":2256,"componentType":5123,"count":2586,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":27072,"componentType":5126,"count":2586,"max":[-16.6221027,-26.0988255,85.0],"min":[-32.1221046,-41.59875,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":58104,"componentType":5126,"count":2586,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":7428,"componentType":5123,"count":2586,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":89136,"componentType":5126,"count":2586,"max":[-16.6221027,-26.0988255,85.0],"min":[-32.1221046,-41.59875,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":120168,"componentType":5126,"count":2586,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":12600,"componentType":5123,"count":2586,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":151200,"componentType":5126,"count":2586,"max":[-16.6221027,-26.0988255,85.0],"min":[-32.1221046,-41.59875,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":182232,"componentType":5126,"count":2586,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":17772,"componentType":5123,"count":2586,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":213264,"componentType":5126,"count":2586,"max":[-16.6221027,-26.0988255,85.0],"min":[-32.1221046,-41.59875,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":244296,"componentType":5126,"count":2586,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":22944,"componentType":5123,"count":4863,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":275328,"componentType":5126,"count":4863,"max":[111.053604,30.67658,10.0],"min":[-70.9464,-43.32342,-10.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":333684,"componentType":5126,"count":4863,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":32672,"componentType":5123,"count":4863,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":392040,"componentType":5126,"count":4863,"max":[111.053604,30.67658,10.0],"min":[-70.9464,-43.32342,-10.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":450396,"componentType":5126,"count":4863,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":42400,"componentType":5123,"count":14874,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":508752,"componentType":5126,"count":14874,"max":[95.0,90.0,120.0],"min":[-95.0,-180.971558,-112.999992],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":687240,"componentType":5126,"count":14874,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":72148,"componentType":5123,"count":27684,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":865728,"componentType":5126,"count":27684,"max":[99.06434,151.558838,80.0],"min":[-61.9356651,-38.4411545,-80.0005646],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":1197936,"componentType":5126,"count":27684,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":127516,"componentType":5123,"count":27684,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":1530144,"componentType":5126,"count":27684,"max":[99.06434,151.558838,80.0],"min":[-61.9356651,-38.4411545,-80.0005646],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":1862352,"componentType":5126,"count":27684,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":182884,"componentType":5123,"count":564,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2194560,"componentType":5126,"count":564,"max":[-25.9714622,81.05716,230.000015],"min":[-38.9714661,68.06677,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2201328,"componentType":5126,"count":564,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":184012,"componentType":5123,"count":564,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2208096,"componentType":5126,"count":564,"max":[-25.9714622,81.05716,230.000015],"min":[-38.9714661,68.06677,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2214864,"componentType":5126,"count":564,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":185140,"componentType":5123,"count":17094,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2221632,"componentType":5126,"count":17094,"max":[113.008736,59.71368,0.00275],"min":[-102.991264,-120.689644,-82.39035],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2426760,"componentType":5126,"count":17094,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":219328,"componentType":5123,"count":4974,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2631888,"componentType":5126,"count":4974,"max":[105.008743,60.0535278,-75.0],"min":[-97.9912643,-124.029587,-147.6922],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2691576,"componentType":5126,"count":4974,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":229276,"componentType":5123,"count":672,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2751264,"componentType":5126,"count":672,"max":[-25.9714622,156.061966,230.000015],"min":[-188.971466,-6.93803,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2759328,"componentType":5126,"count":672,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":230620,"componentType":5123,"count":1080,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2767392,"componentType":5126,"count":1080,"max":[37.65166,226.15506,17.0],"min":[13.651659,202.1728,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2780352,"componentType":5126,"count":1080,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":232780,"componentType":5123,"count":1080,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2793312,"componentType":5126,"count":1080,"max":[37.65166,226.15506,17.0],"min":[13.651659,202.1728,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":2806272,"componentType":5126,"count":1080,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":234940,"componentType":5123,"count":17556,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":2819232,"componentType":5126,"count":17556,"max":[113.008736,59.71368,82.39035],"min":[-102.991264,-120.689644,-0.002671],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":3029904,"componentType":5126,"count":17556,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":270052,"componentType":5123,"count":9036,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":3240576,"componentType":5126,"count":9036,"max":[-248.4732,-164.078033,0.0],"min":[-326.364441,-199.178375,-85.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":3349008,"componentType":5126,"count":9036,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":288124,"componentType":5123,"count":9060,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":3457440,"componentType":5126,"count":9060,"max":[-252.553436,-164.078033,0.0],"min":[-330.444733,-199.178375,-85.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":3566160,"componentType":5126,"count":9060,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":306244,"componentType":5123,"count":8016,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":3674880,"componentType":5126,"count":8016,"max":[40.8514748,233.128677,28.7859],"min":[19.2884521,214.797668,-70.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":3771072,"componentType":5126,"count":8016,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":322276,"componentType":5123,"count":4956,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":3867264,"componentType":5126,"count":4956,"max":[105.008743,60.05363,-2.3078],"min":[-97.9912643,-124.029587,-75.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":3926736,"componentType":5126,"count":4956,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":332188,"componentType":5123,"count":1044,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":3986208,"componentType":5126,"count":1044,"max":[-278.398621,-55.62376,0.0],"min":[-296.3986,-73.61044,-65.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":3998736,"componentType":5126,"count":1044,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":334276,"componentType":5123,"count":1044,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4011264,"componentType":5126,"count":1044,"max":[-278.398621,-55.62376,0.0],"min":[-296.3986,-73.61044,-65.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4023792,"componentType":5126,"count":1044,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":336364,"componentType":5123,"count":276,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4036320,"componentType":5126,"count":276,"max":[-36.6790047,469.654633,0.0],"min":[-49.6790047,456.664276,-115.000008],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4039632,"componentType":5126,"count":276,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":336916,"componentType":5123,"count":276,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4042944,"componentType":5126,"count":276,"max":[-36.6790047,469.654633,0.0],"min":[-49.6790047,456.664276,-115.000008],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4046256,"componentType":5126,"count":276,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":337468,"componentType":5123,"count":924,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4049568,"componentType":5126,"count":924,"max":[30.5535831,217.158371,81.0],"min":[15.5535841,202.169479,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4060656,"componentType":5126,"count":924,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":339316,"componentType":5123,"count":924,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4071744,"componentType":5126,"count":924,"max":[30.5535831,217.158371,81.0],"min":[15.5535841,202.169479,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4082832,"componentType":5126,"count":924,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":341164,"componentType":5123,"count":972,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4093920,"componentType":5126,"count":972,"max":[54.54435,-48.6151848,0.0],"min":[-44.4556465,-61.6151848,-15.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4105584,"componentType":5126,"count":972,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":343108,"componentType":5123,"count":1140,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4117248,"componentType":5126,"count":1140,"max":[54.54435,-38.6151848,0.0],"min":[-44.4556465,-80.61519,-15.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4130928,"componentType":5126,"count":1140,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":345388,"componentType":5123,"count":924,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4144608,"componentType":5126,"count":924,"max":[30.5535831,217.158371,81.0],"min":[15.5535841,202.169479,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4155696,"componentType":5126,"count":924,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":347236,"componentType":5123,"count":924,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4166784,"componentType":5126,"count":924,"max":[30.5535831,217.158371,81.0],"min":[15.5535841,202.169479,0.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4177872,"componentType":5126,"count":924,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":349084,"componentType":5123,"count":972,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4188960,"componentType":5126,"count":972,"max":[54.54435,-48.6151848,0.0],"min":[-44.4556465,-61.6151848,-15.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4200624,"componentType":5126,"count":972,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":351028,"componentType":5123,"count":1140,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4212288,"componentType":5126,"count":1140,"max":[54.54435,-38.6151848,0.0],"min":[-44.4556465,-80.61519,-15.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4225968,"componentType":5126,"count":1140,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":353308,"componentType":5123,"count":1860,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4239648,"componentType":5126,"count":1860,"max":[211.164444,300.205536,15.9881611],"min":[202.164444,268.205536,-15.9881611],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4261968,"componentType":5126,"count":1860,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":357028,"componentType":5123,"count":870,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4284288,"componentType":5126,"count":870,"max":[181.559,312.114075,17.9866829],"min":[71.559,276.114075,-17.9866829],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4294728,"componentType":5126,"count":870,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":358768,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4305168,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4366224,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":368944,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4427280,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4488336,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":379120,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4549392,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4610448,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":389296,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4671504,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4732560,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":399472,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4793616,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4854672,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":409648,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":4915728,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":4976784,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":419824,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5037840,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5098896,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":430000,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5159952,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5221008,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":440176,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5282064,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5343120,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":450352,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5404176,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5465232,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":460528,"componentType":5123,"count":1860,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5526288,"componentType":5126,"count":1860,"max":[211.164444,300.205536,15.9881611],"min":[202.164444,268.205536,-15.9881611],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5548608,"componentType":5126,"count":1860,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":464248,"componentType":5123,"count":870,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5570928,"componentType":5126,"count":870,"max":[181.559,312.114075,17.9866829],"min":[71.559,276.114075,-17.9866829],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5581368,"componentType":5126,"count":870,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":465988,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5591808,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5652864,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":476164,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5713920,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5774976,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":486340,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5836032,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":5897088,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":496516,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":5958144,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6019200,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":506692,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6080256,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6141312,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":516868,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6202368,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6263424,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":527044,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6324480,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6385536,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":537220,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6446592,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6507648,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":547396,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6568704,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6629760,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":557572,"componentType":5123,"count":5088,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6690816,"componentType":5126,"count":5088,"max":[132.301117,-34.4012947,0.0],"min":[128.301117,-64.39833,-14.99852],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6751872,"componentType":5126,"count":5088,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":567748,"componentType":5123,"count":4098,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6812928,"componentType":5126,"count":4098,"max":[177.389542,-14.30574,19.0730782],"min":[-76.11045,-55.567955,-18.98594],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":6862104,"componentType":5126,"count":4098,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":575944,"componentType":5123,"count":7716,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":6911280,"componentType":5126,"count":7716,"max":[68.98061,-31.1199265,15.0],"min":[-68.98061,-168.880081,-10.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7003872,"componentType":5126,"count":7716,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":591376,"componentType":5123,"count":5640,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":7096464,"componentType":5126,"count":5640,"max":[63.0,35.0,140.0],"min":[-62.990303,-35.0,-113.5],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7164144,"componentType":5126,"count":5640,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":602656,"componentType":5123,"count":1530,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":7231824,"componentType":5126,"count":1530,"max":[35.97993,35.75779,15.0],"min":[-35.97993,-35.9733658,-10.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7250184,"componentType":5126,"count":1530,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":605716,"componentType":5123,"count":792,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":7268544,"componentType":5126,"count":792,"max":[-242.492569,107.581161,0.0],"min":[-264.492554,85.59744,-85.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7278048,"componentType":5126,"count":792,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":607300,"componentType":5123,"count":13284,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":7287552,"componentType":5126,"count":13284,"max":[63.3524666,56.0261536,46.5],"min":[-43.1307144,-36.97385,-46.5],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7446960,"componentType":5126,"count":13284,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":633868,"componentType":5123,"count":792,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":7606368,"componentType":5126,"count":792,"max":[-242.492569,107.581161,0.0],"min":[-264.492554,85.59744,-85.0],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7615872,"componentType":5126,"count":792,"type":"VEC3","name":"accessorNormals"},{"bufferView":0,"byteOffset":635452,"componentType":5123,"count":13284,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"byteOffset":7625376,"componentType":5126,"count":13284,"max":[63.3524666,56.0261536,46.5],"min":[-43.1307144,-36.97385,-46.5],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":7784784,"componentType":5126,"count":13284,"type":"VEC3","name":"accessorNormals"}],"bufferViews":[{"buffer":0,"byteLength":662020,"name":"bufferViewScalar"},{"buffer":0,"byteOffset":662020,"byteLength":7944192,"byteStride":12,"name":"bufferViewFloatVec3"}],"buffers":[{"uri":"2CylinderEngine.bin","byteLength":8606212}]}
+{
+	"asset": {
+		"version": "2.0",
+		"generator": "Babylon2Gltf2017",
+		"copyright": "2017 (c) BabylonJS"
+	},
+	"scene": 0,
+	"scenes": [
+		{
+			"nodes": [
+				81
+			]
+		}
+	],
+	"nodes": [
+		{
+			"children": [
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				69,
+				72,
+				75,
+				78
+			],
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				100,
+				100,
+				100
+			],
+			"name": "a_2_Cylinder_Engine"
+		},
+		{
+			"mesh": 0,
+			"translation": [
+				-295,
+				132.139526,
+				3.983346
+			],
+			"rotation": [
+				0.7071063,
+				0.0008329992,
+				0.7071063,
+				0.000833219558
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts"
+		},
+		{
+			"mesh": 1,
+			"translation": [
+				-295,
+				123.807793,
+				100.1015
+			],
+			"rotation": [
+				0.7071063,
+				0.0008329992,
+				0.7071063,
+				0.000833219558
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts_1"
+		},
+		{
+			"mesh": 2,
+			"translation": [
+				100,
+				-133.848831,
+				-54.3721237
+			],
+			"rotation": [
+				-0.707106769,
+				4.3297803e-17,
+				0.707106769,
+				4.3297803e-17
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts"
+		},
+		{
+			"mesh": 3,
+			"translation": [
+				100,
+				-133.848831,
+				-34.3721275
+			],
+			"rotation": [
+				-0.707106769,
+				4.3297803e-17,
+				0.707106769,
+				4.3297803e-17
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts_2"
+		},
+		{
+			"mesh": 4,
+			"translation": [
+				-100,
+				-66.15117,
+				-14.3720989
+			],
+			"rotation": [
+				0,
+				0.707106769,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts_3"
+		},
+		{
+			"mesh": 5,
+			"translation": [
+				-100,
+				-66.15118,
+				5.627897
+			],
+			"rotation": [
+				0,
+				0.707106769,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts_4"
+		},
+		{
+			"mesh": 6,
+			"translation": [
+				71.01807,
+				22.1930141,
+				-22
+			],
+			"rotation": [
+				0,
+				0,
+				-0.0833555,
+				0.996519864
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "rod_123FBXASC045699_0_Parts"
+		},
+		{
+			"mesh": 7,
+			"translation": [
+				-71.01807,
+				-22.1930122,
+				20
+			],
+			"rotation": [
+				0,
+				0,
+				0.996519864,
+				0.0833555
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "rod_123FBXASC045699_0_Parts_2"
+		},
+		{
+			"children": [
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18
+			],
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Body_Sub_123FBXASC045002_0_Parts"
+		},
+		{
+			"mesh": 8,
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Case_r_123FBXASC045200_0_Parts"
+		},
+		{
+			"mesh": 9,
+			"translation": [
+				126.935661,
+				-0.000053,
+				36.5588455
+			],
+			"rotation": [
+				-0.707106769,
+				0,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Cylinder_1_123FBXASC045100_0_Parts"
+		},
+		{
+			"mesh": 10,
+			"translation": [
+				-126.935661,
+				0.000003,
+				-36.55884
+			],
+			"rotation": [
+				4.3633217e-9,
+				-0.707106769,
+				-0.707106769,
+				4.3633217e-9
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Cylinder_2_123FBXASC045101_0_Parts"
+		},
+		{
+			"mesh": 11,
+			"translation": [
+				-295,
+				21.605278,
+				105.328674
+			],
+			"rotation": [
+				0.7071063,
+				0.0008329992,
+				0.7071063,
+				0.000833219558
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts_2"
+		},
+		{
+			"mesh": 12,
+			"translation": [
+				-295,
+				21.4988766,
+				-0.492557
+			],
+			"rotation": [
+				-0.7071067,
+				0.000326999871,
+				-0.7071067,
+				0.000327196758
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts_3"
+		},
+		{
+			"mesh": 13,
+			"translation": [
+				223.999985,
+				30.4879246,
+				-25.0087318
+			],
+			"rotation": [
+				0,
+				-0.707106769,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_1_123FBXASC045150_0_Parts"
+		},
+		{
+			"mesh": 14,
+			"translation": [
+				223.999985,
+				31.9879284,
+				-23.5087337
+			],
+			"rotation": [
+				0,
+				-0.707106769,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Cover_123FBXASC045701_0_Parts"
+		},
+		{
+			"mesh": 15,
+			"translation": [
+				65,
+				128.717026,
+				3.270524
+			],
+			"rotation": [
+				0.6532814,
+				0.2705985,
+				0.6532814,
+				0.270598143
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "cylinder_bolt_pattern__0_Parts"
+		},
+		{
+			"children": [
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				41,
+				55
+			],
+			"translation": [
+				-48.26182,
+				-59.110424,
+				-34.59598
+			],
+			"rotation": [
+				0.5000004,
+				-0.499999553,
+				0.4999997,
+				0.5000003
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head2_Sub__0_Parts"
+		},
+		{
+			"mesh": 16,
+			"translation": [
+				-23.1249428,
+				247.738174,
+				-220.354584
+			],
+			"rotation": [
+				0.707105,
+				-0.00159028708,
+				0.0015902872,
+				0.707105
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_Nut_123FBXASC045005_0_Parts"
+		},
+		{
+			"mesh": 17,
+			"translation": [
+				81.19498,
+				247.738174,
+				-220.146088
+			],
+			"rotation": [
+				0.7071057,
+				0.00129188586,
+				-0.0012918862,
+				0.7071055
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_Nut_123FBXASC045005_0_Parts_1"
+		},
+		{
+			"mesh": 18,
+			"translation": [
+				49.5873337,
+				175.73819,
+				-89.59836
+			],
+			"rotation": [
+				-0.707106769,
+				0,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Head_2_123FBXASC045151_0_Parts"
+		},
+		{
+			"mesh": 19,
+			"translation": [
+				277.7611,
+				580.0806,
+				5.389854
+			],
+			"rotation": [
+				0,
+				0,
+				0.2206471,
+				0.9753537
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Arm_123FBXASC045600_0_Parts"
+		},
+		{
+			"mesh": 20,
+			"translation": [
+				353.97934,
+				330.904022,
+				5.389931
+			],
+			"rotation": [
+				0,
+				0,
+				-0.220647,
+				0.9753537
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Arm_copy_123FBXASC045602_0_Parts"
+		},
+		{
+			"mesh": 21,
+			"translation": [
+				24.5262985,
+				213.738174,
+				-283.073578
+			],
+			"rotation": [
+				0.707106769,
+				0,
+				0,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spark_Plug__0_Parts"
+		},
+		{
+			"mesh": 22,
+			"translation": [
+				51.08793,
+				325.7384,
+				-91.09836
+			],
+			"rotation": [
+				-0.707106769,
+				0.0000212132036,
+				-0.00002192031,
+				0.707106769
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Cover_copy__0_Main"
+		},
+		{
+			"mesh": 23,
+			"translation": [
+				-270.794067,
+				145.434,
+				-122.044113
+			],
+			"rotation": [
+				0.298877031,
+				-0.6408371,
+				-0.707107067,
+				-0.0000451429441
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Spring_123FBXASC045702_0_Parts"
+		},
+		{
+			"mesh": 24,
+			"translation": [
+				-141.640854,
+				388.67276,
+				-122.0078
+			],
+			"rotation": [
+				-3.05311332e-16,
+				0.707106769,
+				0.640856147,
+				0.298836827
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Spring_123FBXASC045702_0_Parts_1"
+		},
+		{
+			"children": [
+				29,
+				30,
+				31,
+				36
+			],
+			"translation": [
+				-0.13409,
+				-12.9999886,
+				-0.123657
+			],
+			"rotation": [
+				0,
+				-0.00113553717,
+				0,
+				0.999999344
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Sub__0_Parts"
+		},
+		{
+			"mesh": 25,
+			"translation": [
+				48.79471,
+				768.6772,
+				20.402504
+			],
+			"rotation": [
+				-0.00113499688,
+				0.00000299999169,
+				-0.999996245,
+				0.00248655141
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Arm_Shaft_123FBXASC045601_0_Parts"
+		},
+		{
+			"mesh": 26,
+			"translation": [
+				-29.9802284,
+				768.6992,
+				20.58133
+			],
+			"rotation": [
+				-0.00113499758,
+				0.00000299999351,
+				-0.999996841,
+				0.002243698
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Arm_Shaft_123FBXASC045601_0_Parts_1"
+		},
+		{
+			"children": [
+				32,
+				33,
+				34,
+				35
+			],
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Mount_Sub__0_Parts"
+		},
+		{
+			"mesh": 27,
+			"translation": [
+				18.20176,
+				326.738159,
+				-297.677032
+			],
+			"rotation": [
+				0.7068319,
+				-0.01971543,
+				0.0197154321,
+				0.7068319
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts"
+		},
+		{
+			"mesh": 28,
+			"translation": [
+				68.16711,
+				326.738159,
+				-297.788666
+			],
+			"rotation": [
+				0.7068333,
+				-0.01965739,
+				0.01965738,
+				0.706833661
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts_1"
+		},
+		{
+			"mesh": 29,
+			"translation": [
+				49.4711037,
+				257.122955,
+				-94.59931
+			],
+			"rotation": [
+				0.999999344,
+				9.90477e-12,
+				-0.00113500038,
+				8.72666e-9
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Mount_Cap_123FBXASC045608_0_Parts"
+		},
+		{
+			"mesh": 30,
+			"translation": [
+				49.5051537,
+				344.353363,
+				-79.59935
+			],
+			"rotation": [
+				0,
+				0.00113502226,
+				0,
+				0.999999344
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Mount_123FBXASC045604_0_Parts"
+		},
+		{
+			"children": [
+				37,
+				38,
+				39,
+				40
+			],
+			"translation": [
+				-0.000008,
+				-0.000011,
+				99.9995346
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Mount_Sub__0_Parts_1"
+		},
+		{
+			"mesh": 31,
+			"translation": [
+				17.57496,
+				326.738159,
+				-297.629181
+			],
+			"rotation": [
+				0.7068705,
+				-0.018282691,
+				0.0182826966,
+				0.7068703
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts_2"
+		},
+		{
+			"mesh": 32,
+			"translation": [
+				67.53964,
+				326.738159,
+				-297.740662
+			],
+			"rotation": [
+				0.7068719,
+				-0.018223241,
+				0.018223241,
+				0.7068719
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts_3"
+		},
+		{
+			"mesh": 33,
+			"translation": [
+				49.6981125,
+				257.123,
+				-94.59911
+			],
+			"rotation": [
+				0.999999344,
+				9.90477e-12,
+				-0.00113500038,
+				8.72666e-9
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Mount_Cap_123FBXASC045608_0_Parts_1"
+		},
+		{
+			"mesh": 34,
+			"translation": [
+				49.73217,
+				344.353363,
+				-79.59915
+			],
+			"rotation": [
+				0,
+				0.00113502226,
+				0,
+				0.999999344
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Rocker_Mount_123FBXASC045604_0_Parts_1"
+		},
+		{
+			"children": [
+				42,
+				43,
+				44
+			],
+			"translation": [
+				91.8705139,
+				80.63255,
+				-166.2609
+			],
+			"rotation": [
+				-0.222643346,
+				0.241949186,
+				0.462730646,
+				0.8232684
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Sub__0_Parts"
+		},
+		{
+			"mesh": 35,
+			"translation": [
+				45.59694,
+				243.513123,
+				-69.38879
+			],
+			"rotation": [
+				0.8729776,
+				-0.0949807,
+				0.313787431,
+				0.361145645
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Spring_Cap_123FBXASC045704_0_Parts"
+		},
+		{
+			"mesh": 36,
+			"translation": [
+				-1.24852,
+				-250.06192,
+				90.2271347
+			],
+			"rotation": [
+				0.0577759556,
+				-0.323684365,
+				0.0520787239,
+				0.942962468
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_123FBXASC045700_0_Parts"
+		},
+		{
+			"children": [
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54
+			],
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring__0_Parts"
+		},
+		{
+			"mesh": 37,
+			"translation": [
+				141.075165,
+				91.42302,
+				331.463226
+			],
+			"rotation": [
+				0.252321839,
+				-0.8036205,
+				-0.445921063,
+				-0.302790582
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts"
+		},
+		{
+			"mesh": 38,
+			"translation": [
+				-52.2781754,
+				76.44442,
+				179.628754
+			],
+			"rotation": [
+				0.4871953,
+				-0.23058264,
+				0.125684291,
+				0.832872033
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_2"
+		},
+		{
+			"mesh": 39,
+			"translation": [
+				134.794891,
+				90.9365,
+				326.5316
+			],
+			"rotation": [
+				0.252321839,
+				-0.8036205,
+				-0.445921063,
+				-0.302790582
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_3"
+		},
+		{
+			"mesh": 40,
+			"translation": [
+				-58.55844,
+				75.95791,
+				174.697067
+			],
+			"rotation": [
+				0.4871953,
+				-0.23058264,
+				0.125684291,
+				0.832872033
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_4"
+		},
+		{
+			"mesh": 41,
+			"translation": [
+				128.514618,
+				90.44999,
+				321.5999
+			],
+			"rotation": [
+				0.252321839,
+				-0.8036205,
+				-0.445921063,
+				-0.302790582
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_5"
+		},
+		{
+			"mesh": 42,
+			"translation": [
+				-64.83871,
+				75.4714,
+				169.765366
+			],
+			"rotation": [
+				0.4871953,
+				-0.23058264,
+				0.125684291,
+				0.832872033
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_6"
+		},
+		{
+			"mesh": 43,
+			"translation": [
+				122.234375,
+				89.96346,
+				316.6682
+			],
+			"rotation": [
+				0.252321839,
+				-0.8036205,
+				-0.445921063,
+				-0.302790582
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_7"
+		},
+		{
+			"mesh": 44,
+			"translation": [
+				-71.11895,
+				74.98487,
+				164.833679
+			],
+			"rotation": [
+				0.4871953,
+				-0.23058264,
+				0.125684291,
+				0.832872033
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_8"
+		},
+		{
+			"mesh": 45,
+			"translation": [
+				115.9541,
+				89.47694,
+				311.73645
+			],
+			"rotation": [
+				0.252321839,
+				-0.8036205,
+				-0.445921063,
+				-0.302790582
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_9"
+		},
+		{
+			"mesh": 46,
+			"translation": [
+				-77.3992157,
+				74.49835,
+				159.902
+			],
+			"rotation": [
+				0.4871953,
+				-0.23058264,
+				0.125684291,
+				0.832872033
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_10"
+		},
+		{
+			"children": [
+				56,
+				57,
+				58
+			],
+			"translation": [
+				14.8981934,
+				85.82951,
+				48.0346451
+			],
+			"rotation": [
+				0.4627306,
+				0.8232685,
+				0.222643375,
+				-0.241949081
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Sub__0_Parts_1"
+		},
+		{
+			"mesh": 47,
+			"translation": [
+				34.1871338,
+				252.666016,
+				-65.06369
+			],
+			"rotation": [
+				0.8816905,
+				-0.08714654,
+				0.316052139,
+				0.339320481
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_Spring_Cap_123FBXASC045704_0_Parts_1"
+		},
+		{
+			"mesh": 48,
+			"translation": [
+				-5.746735,
+				-250.409912,
+				86.6879044
+			],
+			"rotation": [
+				0.05777596,
+				-0.3236844,
+				0.0520787239,
+				0.942962468
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Valve_123FBXASC045700_0_Parts_1"
+		},
+		{
+			"children": [
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68
+			],
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring__0_Parts_1"
+		},
+		{
+			"mesh": 49,
+			"translation": [
+				141.371887,
+				88.10767,
+				327.1085
+			],
+			"rotation": [
+				0.238515064,
+				-0.804634333,
+				-0.458078921,
+				-0.292981029
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_11"
+		},
+		{
+			"mesh": 50,
+			"translation": [
+				-55.2486954,
+				72.8760147,
+				172.708328
+			],
+			"rotation": [
+				0.4888247,
+				-0.238169178,
+				0.144079775,
+				0.826781034
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_12"
+		},
+		{
+			"mesh": 51,
+			"translation": [
+				136.661652,
+				87.7428055,
+				323.40976
+			],
+			"rotation": [
+				0.238515064,
+				-0.804634333,
+				-0.458078921,
+				-0.292981029
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_13"
+		},
+		{
+			"mesh": 52,
+			"translation": [
+				-59.9588852,
+				72.51113,
+				169.009552
+			],
+			"rotation": [
+				0.4888247,
+				-0.238169178,
+				0.144079775,
+				0.826781034
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_14"
+		},
+		{
+			"mesh": 53,
+			"translation": [
+				131.951538,
+				87.37792,
+				319.710968
+			],
+			"rotation": [
+				0.238515064,
+				-0.804634333,
+				-0.458078921,
+				-0.292981029
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_15"
+		},
+		{
+			"mesh": 54,
+			"translation": [
+				-64.669075,
+				72.14625,
+				165.310791
+			],
+			"rotation": [
+				0.4888247,
+				-0.238169178,
+				0.144079775,
+				0.826781034
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_16"
+		},
+		{
+			"mesh": 55,
+			"translation": [
+				127.241272,
+				87.01302,
+				316.012177
+			],
+			"rotation": [
+				0.238515064,
+				-0.804634333,
+				-0.458078921,
+				-0.292981029
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_17"
+		},
+		{
+			"mesh": 56,
+			"translation": [
+				-69.3792953,
+				71.7813339,
+				161.61203
+			],
+			"rotation": [
+				0.4888247,
+				-0.238169178,
+				0.144079775,
+				0.826781034
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_18"
+		},
+		{
+			"mesh": 57,
+			"translation": [
+				122.5311,
+				86.64814,
+				312.3134
+			],
+			"rotation": [
+				0.238515064,
+				-0.804634333,
+				-0.458078921,
+				-0.292981029
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_19"
+		},
+		{
+			"mesh": 58,
+			"translation": [
+				-74.08948,
+				71.4164658,
+				157.913239
+			],
+			"rotation": [
+				0.4888247,
+				-0.238169178,
+				0.144079775,
+				0.826781034
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Spring_Link__0_Parts_20"
+		},
+		{
+			"children": [
+				70,
+				71
+			],
+			"translation": [
+				47.1786766,
+				-52.8213272,
+				88.94477
+			],
+			"rotation": [
+				0,
+				0,
+				-0.382683426,
+				0.9238795
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "CamShaft_Sub_123FBXASC045990_0_Parts"
+		},
+		{
+			"mesh": 59,
+			"translation": [
+				-30.2958984,
+				-52.56131,
+				-25.05523
+			],
+			"rotation": [
+				-0.3796678,
+				0.5965336,
+				0.37966764,
+				0.5965338
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Cam_shaft_123FBXASC045457_0_Parts"
+		},
+		{
+			"mesh": 60,
+			"translation": [
+				-90.5938644,
+				-24.379818,
+				40.05523
+			],
+			"rotation": [
+				0.5369318,
+				-0.843625665,
+				3.287759e-17,
+				5.16571745e-17
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "cam_gear_123FBXASC045456_0_Parts"
+		},
+		{
+			"children": [
+				73,
+				74
+			],
+			"translation": [
+				18.0981846,
+				-69.69784,
+				105.559814
+			],
+			"rotation": [
+				0,
+				0,
+				-0.8660254,
+				0.5
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Crank_Sub_123FBXASC045555_0_Parts"
+		},
+		{
+			"mesh": 61,
+			"translation": [
+				-51.3110123,
+				-50.5224075,
+				-107.559814
+			],
+			"rotation": [
+				0,
+				0,
+				0.984655857,
+				0.174507558
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "crank_123FBXASC045782_0_Parts"
+		},
+		{
+			"mesh": 62,
+			"translation": [
+				-51.3110123,
+				-50.5224075,
+				18.4401855
+			],
+			"rotation": [
+				0,
+				0,
+				0.984655857,
+				0.174507558
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "crank_gear_123FBXASC045783_0_Parts"
+		},
+		{
+			"children": [
+				76,
+				77
+			],
+			"translation": [
+				-136.8601,
+				64.45372,
+				-3.820367
+			],
+			"rotation": [
+				0,
+				0,
+				1,
+				6.123234e-17
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Piston_Sub__0_Parts"
+		},
+		{
+			"mesh": 63,
+			"translation": [
+				-45.31546,
+				-24.6172638,
+				26.3203678
+			],
+			"rotation": [
+				0,
+				0,
+				0.0147481952,
+				0.9998912
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Piston_pin_123FBXASC045845_0_Parts"
+		},
+		{
+			"mesh": 64,
+			"translation": [
+				-294.6772,
+				73.97987,
+				-16.1796322
+			],
+			"rotation": [
+				0,
+				0,
+				1,
+				6.123234e-17
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Piston_123FBXASC045844_0_Parts"
+		},
+		{
+			"children": [
+				79,
+				80
+			],
+			"translation": [
+				136.8601,
+				-64.45372,
+				36.17963
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Piston_Sub__0_Parts_1"
+		},
+		{
+			"mesh": 65,
+			"translation": [
+				-45.31546,
+				-24.6172638,
+				26.32037
+			],
+			"rotation": [
+				0,
+				0,
+				0.0147481952,
+				0.9998912
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Piston_pin_123FBXASC045845_0_Parts_1"
+		},
+		{
+			"mesh": 66,
+			"translation": [
+				-294.6772,
+				73.97987,
+				-16.1796322
+			],
+			"rotation": [
+				0,
+				0,
+				1,
+				6.123234e-17
+			],
+			"scale": [
+				1,
+				1,
+				1
+			],
+			"name": "Piston_123FBXASC045844_0_Parts_2"
+		},
+		{
+			"children": [
+				0
+			],
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				1,
+				0,
+				-4.371139e-8
+			],
+			"scale": [
+				1,
+				1,
+				-1
+			],
+			"name": "root"
+		}
+	],
+	"meshes": [
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 1,
+						"NORMAL": 2
+					},
+					"indices": 0
+				}
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 4,
+						"NORMAL": 5
+					},
+					"indices": 3
+				}
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 7,
+						"NORMAL": 8
+					},
+					"indices": 6
+				}
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 10,
+						"NORMAL": 11
+					},
+					"indices": 9
+				}
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts_2"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 13,
+						"NORMAL": 14
+					},
+					"indices": 12
+				}
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts_3"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 16,
+						"NORMAL": 17
+					},
+					"indices": 15
+				}
+			],
+			"name": "Lifter_123FBXASC045923_0_Parts_4"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 19,
+						"NORMAL": 20
+					},
+					"indices": 18
+				}
+			],
+			"name": "rod_123FBXASC045699_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 22,
+						"NORMAL": 23
+					},
+					"indices": 21
+				}
+			],
+			"name": "rod_123FBXASC045699_0_Parts_2"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 25,
+						"NORMAL": 26
+					},
+					"indices": 24
+				}
+			],
+			"name": "Case_r_123FBXASC045200_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 28,
+						"NORMAL": 29
+					},
+					"indices": 27
+				}
+			],
+			"name": "Cylinder_1_123FBXASC045100_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 31,
+						"NORMAL": 32
+					},
+					"indices": 30
+				}
+			],
+			"name": "Cylinder_2_123FBXASC045101_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 34,
+						"NORMAL": 35
+					},
+					"indices": 33
+				}
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts_2"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 37,
+						"NORMAL": 38
+					},
+					"indices": 36
+				}
+			],
+			"name": "Head_Stud_123FBXASC045006_0_Parts_3"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 40,
+						"NORMAL": 41
+					},
+					"indices": 39
+				}
+			],
+			"name": "Head_1_123FBXASC045150_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 43,
+						"NORMAL": 44
+					},
+					"indices": 42
+				}
+			],
+			"name": "Valve_Cover_123FBXASC045701_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 46,
+						"NORMAL": 47
+					},
+					"indices": 45
+				}
+			],
+			"name": "cylinder_bolt_pattern__0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 49,
+						"NORMAL": 50
+					},
+					"indices": 48
+				}
+			],
+			"name": "Head_Nut_123FBXASC045005_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 52,
+						"NORMAL": 53
+					},
+					"indices": 51
+				}
+			],
+			"name": "Head_Nut_123FBXASC045005_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 55,
+						"NORMAL": 56
+					},
+					"indices": 54
+				}
+			],
+			"name": "Head_2_123FBXASC045151_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 58,
+						"NORMAL": 59
+					},
+					"indices": 57
+				}
+			],
+			"name": "Rocker_Arm_123FBXASC045600_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 61,
+						"NORMAL": 62
+					},
+					"indices": 60
+				}
+			],
+			"name": "Rocker_Arm_copy_123FBXASC045602_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 64,
+						"NORMAL": 65
+					},
+					"indices": 63
+				}
+			],
+			"name": "Spark_Plug__0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 67,
+						"NORMAL": 68
+					},
+					"indices": 66
+				}
+			],
+			"name": "Valve_Cover_copy__0_Main"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 70,
+						"NORMAL": 71
+					},
+					"indices": 69
+				}
+			],
+			"name": "Valve_Spring_123FBXASC045702_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 73,
+						"NORMAL": 74
+					},
+					"indices": 72
+				}
+			],
+			"name": "Valve_Spring_123FBXASC045702_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 76,
+						"NORMAL": 77
+					},
+					"indices": 75
+				}
+			],
+			"name": "Rocker_Arm_Shaft_123FBXASC045601_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 79,
+						"NORMAL": 80
+					},
+					"indices": 78
+				}
+			],
+			"name": "Rocker_Arm_Shaft_123FBXASC045601_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 82,
+						"NORMAL": 83
+					},
+					"indices": 81
+				}
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 85,
+						"NORMAL": 86
+					},
+					"indices": 84
+				}
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 88,
+						"NORMAL": 89
+					},
+					"indices": 87
+				}
+			],
+			"name": "Rocker_Mount_Cap_123FBXASC045608_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 91,
+						"NORMAL": 92
+					},
+					"indices": 90
+				}
+			],
+			"name": "Rocker_Mount_123FBXASC045604_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 94,
+						"NORMAL": 95
+					},
+					"indices": 93
+				}
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts_2"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 97,
+						"NORMAL": 98
+					},
+					"indices": 96
+				}
+			],
+			"name": "Rocker_Bolt_123FBXASC045603_0_Parts_3"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 100,
+						"NORMAL": 101
+					},
+					"indices": 99
+				}
+			],
+			"name": "Rocker_Mount_Cap_123FBXASC045608_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 103,
+						"NORMAL": 104
+					},
+					"indices": 102
+				}
+			],
+			"name": "Rocker_Mount_123FBXASC045604_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 106,
+						"NORMAL": 107
+					},
+					"indices": 105
+				}
+			],
+			"name": "Valve_Spring_Cap_123FBXASC045704_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 109,
+						"NORMAL": 110
+					},
+					"indices": 108
+				}
+			],
+			"name": "Valve_123FBXASC045700_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 112,
+						"NORMAL": 113
+					},
+					"indices": 111
+				}
+			],
+			"name": "Spring_Link__0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 115,
+						"NORMAL": 116
+					},
+					"indices": 114
+				}
+			],
+			"name": "Spring_Link__0_Parts_2"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 118,
+						"NORMAL": 119
+					},
+					"indices": 117
+				}
+			],
+			"name": "Spring_Link__0_Parts_3"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 121,
+						"NORMAL": 122
+					},
+					"indices": 120
+				}
+			],
+			"name": "Spring_Link__0_Parts_4"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 124,
+						"NORMAL": 125
+					},
+					"indices": 123
+				}
+			],
+			"name": "Spring_Link__0_Parts_5"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 127,
+						"NORMAL": 128
+					},
+					"indices": 126
+				}
+			],
+			"name": "Spring_Link__0_Parts_6"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 130,
+						"NORMAL": 131
+					},
+					"indices": 129
+				}
+			],
+			"name": "Spring_Link__0_Parts_7"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 133,
+						"NORMAL": 134
+					},
+					"indices": 132
+				}
+			],
+			"name": "Spring_Link__0_Parts_8"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 136,
+						"NORMAL": 137
+					},
+					"indices": 135
+				}
+			],
+			"name": "Spring_Link__0_Parts_9"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 139,
+						"NORMAL": 140
+					},
+					"indices": 138
+				}
+			],
+			"name": "Spring_Link__0_Parts_10"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 142,
+						"NORMAL": 143
+					},
+					"indices": 141
+				}
+			],
+			"name": "Valve_Spring_Cap_123FBXASC045704_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 145,
+						"NORMAL": 146
+					},
+					"indices": 144
+				}
+			],
+			"name": "Valve_123FBXASC045700_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 148,
+						"NORMAL": 149
+					},
+					"indices": 147
+				}
+			],
+			"name": "Spring_Link__0_Parts_11"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 151,
+						"NORMAL": 152
+					},
+					"indices": 150
+				}
+			],
+			"name": "Spring_Link__0_Parts_12"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 154,
+						"NORMAL": 155
+					},
+					"indices": 153
+				}
+			],
+			"name": "Spring_Link__0_Parts_13"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 157,
+						"NORMAL": 158
+					},
+					"indices": 156
+				}
+			],
+			"name": "Spring_Link__0_Parts_14"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 160,
+						"NORMAL": 161
+					},
+					"indices": 159
+				}
+			],
+			"name": "Spring_Link__0_Parts_15"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 163,
+						"NORMAL": 164
+					},
+					"indices": 162
+				}
+			],
+			"name": "Spring_Link__0_Parts_16"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 166,
+						"NORMAL": 167
+					},
+					"indices": 165
+				}
+			],
+			"name": "Spring_Link__0_Parts_17"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 169,
+						"NORMAL": 170
+					},
+					"indices": 168
+				}
+			],
+			"name": "Spring_Link__0_Parts_18"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 172,
+						"NORMAL": 173
+					},
+					"indices": 171
+				}
+			],
+			"name": "Spring_Link__0_Parts_19"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 175,
+						"NORMAL": 176
+					},
+					"indices": 174
+				}
+			],
+			"name": "Spring_Link__0_Parts_20"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 178,
+						"NORMAL": 179
+					},
+					"indices": 177
+				}
+			],
+			"name": "Cam_shaft_123FBXASC045457_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 181,
+						"NORMAL": 182
+					},
+					"indices": 180
+				}
+			],
+			"name": "cam_gear_123FBXASC045456_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 184,
+						"NORMAL": 185
+					},
+					"indices": 183
+				}
+			],
+			"name": "crank_123FBXASC045782_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 187,
+						"NORMAL": 188
+					},
+					"indices": 186
+				}
+			],
+			"name": "crank_gear_123FBXASC045783_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 190,
+						"NORMAL": 191
+					},
+					"indices": 189
+				}
+			],
+			"name": "Piston_pin_123FBXASC045845_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 193,
+						"NORMAL": 194
+					},
+					"indices": 192
+				}
+			],
+			"name": "Piston_123FBXASC045844_0_Parts"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 196,
+						"NORMAL": 197
+					},
+					"indices": 195
+				}
+			],
+			"name": "Piston_pin_123FBXASC045845_0_Parts_1"
+		},
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 199,
+						"NORMAL": 200
+					},
+					"indices": 198
+				}
+			],
+			"name": "Piston_123FBXASC045844_0_Parts_2"
+		}
+	],
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5123,
+			"count": 564,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 564,
+			"max": [
+				-25.9714622,
+				81.05716,
+				230.000015
+			],
+			"min": [
+				-38.9714661,
+				68.06677,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6768,
+			"componentType": 5126,
+			"count": 564,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 1128,
+			"componentType": 5123,
+			"count": 564,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 13536,
+			"componentType": 5126,
+			"count": 564,
+			"max": [
+				-25.9714622,
+				81.05716,
+				230.000015
+			],
+			"min": [
+				-38.9714661,
+				68.06677,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 20304,
+			"componentType": 5126,
+			"count": 564,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 2256,
+			"componentType": 5123,
+			"count": 2586,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 27072,
+			"componentType": 5126,
+			"count": 2586,
+			"max": [
+				-16.6221027,
+				-26.0988255,
+				85
+			],
+			"min": [
+				-32.1221046,
+				-41.59875,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 58104,
+			"componentType": 5126,
+			"count": 2586,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 7428,
+			"componentType": 5123,
+			"count": 2586,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 89136,
+			"componentType": 5126,
+			"count": 2586,
+			"max": [
+				-16.6221027,
+				-26.0988255,
+				85
+			],
+			"min": [
+				-32.1221046,
+				-41.59875,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 120168,
+			"componentType": 5126,
+			"count": 2586,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 12600,
+			"componentType": 5123,
+			"count": 2586,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 151200,
+			"componentType": 5126,
+			"count": 2586,
+			"max": [
+				-16.6221027,
+				-26.0988255,
+				85
+			],
+			"min": [
+				-32.1221046,
+				-41.59875,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 182232,
+			"componentType": 5126,
+			"count": 2586,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 17772,
+			"componentType": 5123,
+			"count": 2586,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 213264,
+			"componentType": 5126,
+			"count": 2586,
+			"max": [
+				-16.6221027,
+				-26.0988255,
+				85
+			],
+			"min": [
+				-32.1221046,
+				-41.59875,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 244296,
+			"componentType": 5126,
+			"count": 2586,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 22944,
+			"componentType": 5123,
+			"count": 4863,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 275328,
+			"componentType": 5126,
+			"count": 4863,
+			"max": [
+				111.053604,
+				30.67658,
+				10
+			],
+			"min": [
+				-70.9464,
+				-43.32342,
+				-10
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 333684,
+			"componentType": 5126,
+			"count": 4863,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 32672,
+			"componentType": 5123,
+			"count": 4863,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 392040,
+			"componentType": 5126,
+			"count": 4863,
+			"max": [
+				111.053604,
+				30.67658,
+				10
+			],
+			"min": [
+				-70.9464,
+				-43.32342,
+				-10
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 450396,
+			"componentType": 5126,
+			"count": 4863,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 42400,
+			"componentType": 5123,
+			"count": 14874,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 508752,
+			"componentType": 5126,
+			"count": 14874,
+			"max": [
+				95,
+				90,
+				120
+			],
+			"min": [
+				-95,
+				-180.971558,
+				-112.999992
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 687240,
+			"componentType": 5126,
+			"count": 14874,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 72148,
+			"componentType": 5123,
+			"count": 27684,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 865728,
+			"componentType": 5126,
+			"count": 27684,
+			"max": [
+				99.06434,
+				151.558838,
+				80
+			],
+			"min": [
+				-61.9356651,
+				-38.4411545,
+				-80.0005646
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 1197936,
+			"componentType": 5126,
+			"count": 27684,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 127516,
+			"componentType": 5123,
+			"count": 27684,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 1530144,
+			"componentType": 5126,
+			"count": 27684,
+			"max": [
+				99.06434,
+				151.558838,
+				80
+			],
+			"min": [
+				-61.9356651,
+				-38.4411545,
+				-80.0005646
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 1862352,
+			"componentType": 5126,
+			"count": 27684,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 182884,
+			"componentType": 5123,
+			"count": 564,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2194560,
+			"componentType": 5126,
+			"count": 564,
+			"max": [
+				-25.9714622,
+				81.05716,
+				230.000015
+			],
+			"min": [
+				-38.9714661,
+				68.06677,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2201328,
+			"componentType": 5126,
+			"count": 564,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 184012,
+			"componentType": 5123,
+			"count": 564,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2208096,
+			"componentType": 5126,
+			"count": 564,
+			"max": [
+				-25.9714622,
+				81.05716,
+				230.000015
+			],
+			"min": [
+				-38.9714661,
+				68.06677,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2214864,
+			"componentType": 5126,
+			"count": 564,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 185140,
+			"componentType": 5123,
+			"count": 17094,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2221632,
+			"componentType": 5126,
+			"count": 17094,
+			"max": [
+				113.008736,
+				59.71368,
+				0.00275
+			],
+			"min": [
+				-102.991264,
+				-120.689644,
+				-82.39035
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2426760,
+			"componentType": 5126,
+			"count": 17094,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 219328,
+			"componentType": 5123,
+			"count": 4974,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2631888,
+			"componentType": 5126,
+			"count": 4974,
+			"max": [
+				105.008743,
+				60.0535278,
+				-75
+			],
+			"min": [
+				-97.9912643,
+				-124.029587,
+				-147.6922
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2691576,
+			"componentType": 5126,
+			"count": 4974,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 229276,
+			"componentType": 5123,
+			"count": 672,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2751264,
+			"componentType": 5126,
+			"count": 672,
+			"max": [
+				-25.9714622,
+				156.061966,
+				230.000015
+			],
+			"min": [
+				-188.971466,
+				-6.93803,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2759328,
+			"componentType": 5126,
+			"count": 672,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 230620,
+			"componentType": 5123,
+			"count": 1080,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2767392,
+			"componentType": 5126,
+			"count": 1080,
+			"max": [
+				37.65166,
+				226.15506,
+				17
+			],
+			"min": [
+				13.651659,
+				202.1728,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2780352,
+			"componentType": 5126,
+			"count": 1080,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 232780,
+			"componentType": 5123,
+			"count": 1080,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2793312,
+			"componentType": 5126,
+			"count": 1080,
+			"max": [
+				37.65166,
+				226.15506,
+				17
+			],
+			"min": [
+				13.651659,
+				202.1728,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2806272,
+			"componentType": 5126,
+			"count": 1080,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 234940,
+			"componentType": 5123,
+			"count": 17556,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 2819232,
+			"componentType": 5126,
+			"count": 17556,
+			"max": [
+				113.008736,
+				59.71368,
+				82.39035
+			],
+			"min": [
+				-102.991264,
+				-120.689644,
+				-0.002671
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3029904,
+			"componentType": 5126,
+			"count": 17556,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 270052,
+			"componentType": 5123,
+			"count": 9036,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3240576,
+			"componentType": 5126,
+			"count": 9036,
+			"max": [
+				-248.4732,
+				-164.078033,
+				0
+			],
+			"min": [
+				-326.364441,
+				-199.178375,
+				-85
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3349008,
+			"componentType": 5126,
+			"count": 9036,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 288124,
+			"componentType": 5123,
+			"count": 9060,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3457440,
+			"componentType": 5126,
+			"count": 9060,
+			"max": [
+				-252.553436,
+				-164.078033,
+				0
+			],
+			"min": [
+				-330.444733,
+				-199.178375,
+				-85
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3566160,
+			"componentType": 5126,
+			"count": 9060,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 306244,
+			"componentType": 5123,
+			"count": 8016,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3674880,
+			"componentType": 5126,
+			"count": 8016,
+			"max": [
+				40.8514748,
+				233.128677,
+				28.7859
+			],
+			"min": [
+				19.2884521,
+				214.797668,
+				-70
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3771072,
+			"componentType": 5126,
+			"count": 8016,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 322276,
+			"componentType": 5123,
+			"count": 4956,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3867264,
+			"componentType": 5126,
+			"count": 4956,
+			"max": [
+				105.008743,
+				60.05363,
+				-2.3078
+			],
+			"min": [
+				-97.9912643,
+				-124.029587,
+				-75
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3926736,
+			"componentType": 5126,
+			"count": 4956,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 332188,
+			"componentType": 5123,
+			"count": 1044,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3986208,
+			"componentType": 5126,
+			"count": 1044,
+			"max": [
+				-278.398621,
+				-55.62376,
+				0
+			],
+			"min": [
+				-296.3986,
+				-73.61044,
+				-65
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 3998736,
+			"componentType": 5126,
+			"count": 1044,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 334276,
+			"componentType": 5123,
+			"count": 1044,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4011264,
+			"componentType": 5126,
+			"count": 1044,
+			"max": [
+				-278.398621,
+				-55.62376,
+				0
+			],
+			"min": [
+				-296.3986,
+				-73.61044,
+				-65
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4023792,
+			"componentType": 5126,
+			"count": 1044,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 336364,
+			"componentType": 5123,
+			"count": 276,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4036320,
+			"componentType": 5126,
+			"count": 276,
+			"max": [
+				-36.6790047,
+				469.654633,
+				0
+			],
+			"min": [
+				-49.6790047,
+				456.664276,
+				-115.000008
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4039632,
+			"componentType": 5126,
+			"count": 276,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 336916,
+			"componentType": 5123,
+			"count": 276,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4042944,
+			"componentType": 5126,
+			"count": 276,
+			"max": [
+				-36.6790047,
+				469.654633,
+				0
+			],
+			"min": [
+				-49.6790047,
+				456.664276,
+				-115.000008
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4046256,
+			"componentType": 5126,
+			"count": 276,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 337468,
+			"componentType": 5123,
+			"count": 924,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4049568,
+			"componentType": 5126,
+			"count": 924,
+			"max": [
+				30.5535831,
+				217.158371,
+				81
+			],
+			"min": [
+				15.5535841,
+				202.169479,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4060656,
+			"componentType": 5126,
+			"count": 924,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 339316,
+			"componentType": 5123,
+			"count": 924,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4071744,
+			"componentType": 5126,
+			"count": 924,
+			"max": [
+				30.5535831,
+				217.158371,
+				81
+			],
+			"min": [
+				15.5535841,
+				202.169479,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4082832,
+			"componentType": 5126,
+			"count": 924,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 341164,
+			"componentType": 5123,
+			"count": 972,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4093920,
+			"componentType": 5126,
+			"count": 972,
+			"max": [
+				54.54435,
+				-48.6151848,
+				0
+			],
+			"min": [
+				-44.4556465,
+				-61.6151848,
+				-15
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4105584,
+			"componentType": 5126,
+			"count": 972,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 343108,
+			"componentType": 5123,
+			"count": 1140,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4117248,
+			"componentType": 5126,
+			"count": 1140,
+			"max": [
+				54.54435,
+				-38.6151848,
+				0
+			],
+			"min": [
+				-44.4556465,
+				-80.61519,
+				-15
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4130928,
+			"componentType": 5126,
+			"count": 1140,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 345388,
+			"componentType": 5123,
+			"count": 924,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4144608,
+			"componentType": 5126,
+			"count": 924,
+			"max": [
+				30.5535831,
+				217.158371,
+				81
+			],
+			"min": [
+				15.5535841,
+				202.169479,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4155696,
+			"componentType": 5126,
+			"count": 924,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 347236,
+			"componentType": 5123,
+			"count": 924,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4166784,
+			"componentType": 5126,
+			"count": 924,
+			"max": [
+				30.5535831,
+				217.158371,
+				81
+			],
+			"min": [
+				15.5535841,
+				202.169479,
+				0
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4177872,
+			"componentType": 5126,
+			"count": 924,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 349084,
+			"componentType": 5123,
+			"count": 972,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4188960,
+			"componentType": 5126,
+			"count": 972,
+			"max": [
+				54.54435,
+				-48.6151848,
+				0
+			],
+			"min": [
+				-44.4556465,
+				-61.6151848,
+				-15
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4200624,
+			"componentType": 5126,
+			"count": 972,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 351028,
+			"componentType": 5123,
+			"count": 1140,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4212288,
+			"componentType": 5126,
+			"count": 1140,
+			"max": [
+				54.54435,
+				-38.6151848,
+				0
+			],
+			"min": [
+				-44.4556465,
+				-80.61519,
+				-15
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4225968,
+			"componentType": 5126,
+			"count": 1140,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 353308,
+			"componentType": 5123,
+			"count": 1860,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4239648,
+			"componentType": 5126,
+			"count": 1860,
+			"max": [
+				211.164444,
+				300.205536,
+				15.9881611
+			],
+			"min": [
+				202.164444,
+				268.205536,
+				-15.9881611
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4261968,
+			"componentType": 5126,
+			"count": 1860,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 357028,
+			"componentType": 5123,
+			"count": 870,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4284288,
+			"componentType": 5126,
+			"count": 870,
+			"max": [
+				181.559,
+				312.114075,
+				17.9866829
+			],
+			"min": [
+				71.559,
+				276.114075,
+				-17.9866829
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4294728,
+			"componentType": 5126,
+			"count": 870,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 358768,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4305168,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4366224,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 368944,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4427280,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4488336,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 379120,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4549392,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4610448,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 389296,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4671504,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4732560,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 399472,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4793616,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4854672,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 409648,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4915728,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 4976784,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 419824,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5037840,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5098896,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 430000,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5159952,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5221008,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 440176,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5282064,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5343120,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 450352,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5404176,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5465232,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 460528,
+			"componentType": 5123,
+			"count": 1860,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5526288,
+			"componentType": 5126,
+			"count": 1860,
+			"max": [
+				211.164444,
+				300.205536,
+				15.9881611
+			],
+			"min": [
+				202.164444,
+				268.205536,
+				-15.9881611
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5548608,
+			"componentType": 5126,
+			"count": 1860,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 464248,
+			"componentType": 5123,
+			"count": 870,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5570928,
+			"componentType": 5126,
+			"count": 870,
+			"max": [
+				181.559,
+				312.114075,
+				17.9866829
+			],
+			"min": [
+				71.559,
+				276.114075,
+				-17.9866829
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5581368,
+			"componentType": 5126,
+			"count": 870,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 465988,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5591808,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5652864,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 476164,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5713920,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5774976,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 486340,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5836032,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5897088,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 496516,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 5958144,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6019200,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 506692,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6080256,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6141312,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 516868,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6202368,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6263424,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 527044,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6324480,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6385536,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 537220,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6446592,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6507648,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 547396,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6568704,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6629760,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 557572,
+			"componentType": 5123,
+			"count": 5088,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6690816,
+			"componentType": 5126,
+			"count": 5088,
+			"max": [
+				132.301117,
+				-34.4012947,
+				0
+			],
+			"min": [
+				128.301117,
+				-64.39833,
+				-14.99852
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6751872,
+			"componentType": 5126,
+			"count": 5088,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 567748,
+			"componentType": 5123,
+			"count": 4098,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6812928,
+			"componentType": 5126,
+			"count": 4098,
+			"max": [
+				177.389542,
+				-14.30574,
+				19.0730782
+			],
+			"min": [
+				-76.11045,
+				-55.567955,
+				-18.98594
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6862104,
+			"componentType": 5126,
+			"count": 4098,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 575944,
+			"componentType": 5123,
+			"count": 7716,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 6911280,
+			"componentType": 5126,
+			"count": 7716,
+			"max": [
+				68.98061,
+				-31.1199265,
+				15
+			],
+			"min": [
+				-68.98061,
+				-168.880081,
+				-10
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7003872,
+			"componentType": 5126,
+			"count": 7716,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 591376,
+			"componentType": 5123,
+			"count": 5640,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7096464,
+			"componentType": 5126,
+			"count": 5640,
+			"max": [
+				63,
+				35,
+				140
+			],
+			"min": [
+				-62.990303,
+				-35,
+				-113.5
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7164144,
+			"componentType": 5126,
+			"count": 5640,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 602656,
+			"componentType": 5123,
+			"count": 1530,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7231824,
+			"componentType": 5126,
+			"count": 1530,
+			"max": [
+				35.97993,
+				35.75779,
+				15
+			],
+			"min": [
+				-35.97993,
+				-35.9733658,
+				-10
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7250184,
+			"componentType": 5126,
+			"count": 1530,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 605716,
+			"componentType": 5123,
+			"count": 792,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7268544,
+			"componentType": 5126,
+			"count": 792,
+			"max": [
+				-242.492569,
+				107.581161,
+				0
+			],
+			"min": [
+				-264.492554,
+				85.59744,
+				-85
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7278048,
+			"componentType": 5126,
+			"count": 792,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 607300,
+			"componentType": 5123,
+			"count": 13284,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7287552,
+			"componentType": 5126,
+			"count": 13284,
+			"max": [
+				63.3524666,
+				56.0261536,
+				46.5
+			],
+			"min": [
+				-43.1307144,
+				-36.97385,
+				-46.5
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7446960,
+			"componentType": 5126,
+			"count": 13284,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 633868,
+			"componentType": 5123,
+			"count": 792,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7606368,
+			"componentType": 5126,
+			"count": 792,
+			"max": [
+				-242.492569,
+				107.581161,
+				0
+			],
+			"min": [
+				-264.492554,
+				85.59744,
+				-85
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7615872,
+			"componentType": 5126,
+			"count": 792,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 635452,
+			"componentType": 5123,
+			"count": 13284,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7625376,
+			"componentType": 5126,
+			"count": 13284,
+			"max": [
+				63.3524666,
+				56.0261536,
+				46.5
+			],
+			"min": [
+				-43.1307144,
+				-36.97385,
+				-46.5
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 7784784,
+			"componentType": 5126,
+			"count": 13284,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 662020,
+			"name": "bufferViewScalar"
+		},
+		{
+			"buffer": 0,
+			"byteOffset": 662020,
+			"byteLength": 7944192,
+			"byteStride": 12,
+			"name": "bufferViewFloatVec3"
+		}
+	],
+	"buffers": [
+		{
+			"uri": "2CylinderEngine.bin",
+			"byteLength": 8606212
+		}
+	]
+}
