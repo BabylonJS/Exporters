@@ -43,6 +43,11 @@ namespace Max2Babylon
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
                 globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                // Switch coordinate system at object level
+                globalVertex.Position.Z *= -1;
+                globalVertex.Normal.Z *= -1;
+
                 if (hasUV)
                 {
                     globalVertex.UV = BabylonVector2.FromArray(babylonMesh.uvs, indexVertex);
@@ -84,17 +89,6 @@ namespace Max2Babylon
 
             // Retreive indices from babylon mesh
             List<int> babylonIndices = babylonMesh.indices.ToList();
-
-            // Flip faces
-            if (!hasBones)
-            {
-                for (int i = 0; i < babylonIndices.Count; i += 3)
-                {
-                    var tmp = babylonIndices[i + 1];
-                    babylonIndices[i + 1] = babylonIndices[i + 2];
-                    babylonIndices[i + 2] = tmp;
-                }
-            }
 
             // --------------------------
             // ------- Init glTF --------
