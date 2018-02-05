@@ -8,7 +8,9 @@
 	"scenes": [
 		{
 			"nodes": [
-				3
+				0,
+				1,
+				2
 			]
 		}
 	],
@@ -72,30 +74,6 @@
 				1
 			],
 			"name": "InstanceBox2"
-		},
-		{
-			"children": [
-				0,
-				1,
-				2
-			],
-			"translation": [
-				0,
-				0,
-				0
-			],
-			"rotation": [
-				0,
-				1,
-				0,
-				-4.371139e-8
-			],
-			"scale": [
-				1,
-				1,
-				-1
-			],
-			"name": "root"
 		}
 	],
 	"meshes": [
