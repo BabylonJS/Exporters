@@ -717,6 +717,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Default"
 		}
 	],
