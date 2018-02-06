@@ -148,6 +148,7 @@
 				1,
 				1
 			],
+			"alphaMode": "OPAQUE",
 			"name": "WaterBottleMat"
 		}
 	],
