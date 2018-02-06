@@ -1429,6 +1429,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "01 - Default"
 		}
 	],

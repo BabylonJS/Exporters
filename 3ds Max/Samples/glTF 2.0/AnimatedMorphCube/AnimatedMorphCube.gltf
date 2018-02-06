@@ -621,6 +621,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Red"
 		},
 		{
@@ -639,6 +640,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Green"
 		},
 		{
@@ -657,6 +659,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Blue"
 		}
 	],
