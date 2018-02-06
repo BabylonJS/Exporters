@@ -607,6 +607,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "B"
 		},
 		{
@@ -628,6 +629,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "A"
 		},
 		{
@@ -649,6 +651,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "B_2"
 		},
 		{
@@ -670,6 +673,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Y"
 		},
 		{
@@ -691,6 +695,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "L"
 		},
 		{
@@ -712,6 +717,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "O"
 		},
 		{
@@ -733,6 +739,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "N"
 		}
 	],
