@@ -47,14 +47,12 @@ namespace BabylonExport.Entities
         {
             customType = "BABYLON.FurMaterial";
             furAngle = 0;
-            furColor = new[] { 1f, 1f, 1f };
             furOffset = 0f;
-            furSpacing = 12;
             furGravity = new[] { 0, -1, 0 };
             furSpeed = 100;
-            furDensity = 20;
             furTime = 0;
             quality = 30;
+            furLength = 0;
         }
     }
 }
