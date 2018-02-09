@@ -51,6 +51,11 @@ namespace Max2Babylon
             }
             gltfNode.scale = babylonAbstractMesh.scaling;
 
+            // Switch coordinate system at object level
+            gltfNode.translation[2] *= -1;
+            gltfNode.rotation[0] *= -1;
+            gltfNode.rotation[1] *= -1;
+
             // Mesh
             var gltfMesh = gltf.MeshesList.Find(_gltfMesh => _gltfMesh.idGroupInstance == babylonAbstractMesh.idGroupInstance);
             if (gltfMesh != null)

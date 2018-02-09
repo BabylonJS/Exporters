@@ -103,6 +103,18 @@ namespace Max2Babylon
 
                         numKeys++;
                         var outputValues = babylonAnimationKey.values;
+
+                        // Switch coordinate system at object level
+                        if (babylonAnimation.property == "position")
+                        {
+                            outputValues[2] *= -1;
+                        }
+                        else if (babylonAnimation.property == "rotationQuaternion")
+                        {
+                            outputValues[0] *= -1;
+                            outputValues[1] *= -1;
+                        }
+
                         // Store values as bytes
                         foreach (var outputValue in outputValues)
                         {
@@ -191,6 +203,12 @@ namespace Max2Babylon
                     var scaleBabylon = new BabylonVector3();
                     matrix.decompose(scaleBabylon, rotationQuatBabylon, translationBabylon);
 
+                    translationBabylon.Z *= -1;
+                    BabylonVector3 rotationVector3 = rotationQuatBabylon.toEulerAngles();
+                    rotationVector3.X *= -1;
+                    rotationVector3.Y *= -1;
+                    rotationQuatBabylon = rotationVector3.toQuaternion();
+
                     var outputValuesByPath = new Dictionary<string, float[]>();
                     outputValuesByPath.Add("translation", translationBabylon.ToArray());
                     outputValuesByPath.Add("rotation", rotationQuatBabylon.ToArray());
@@ -201,6 +219,7 @@ namespace Max2Babylon
                     {
                         var accessorOutput = accessorOutputByPath[path];
                         var outputValues = outputValuesByPath[path];
+
                         foreach (var outputValue in outputValues)
                         {
                             accessorOutput.bytesList.AddRange(BitConverter.GetBytes(outputValue));
