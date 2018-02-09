@@ -8,7 +8,12 @@
 	"scenes": [
 		{
 			"nodes": [
-				6
+				0,
+				1,
+				2,
+				3,
+				4,
+				5
 			]
 		}
 	],
@@ -18,7 +23,7 @@
 			"translation": [
 				-2.6,
 				0,
-				1.5
+				-1.5
 			],
 			"rotation": [
 				0,
@@ -38,7 +43,7 @@
 			"translation": [
 				0,
 				0,
-				-3
+				3
 			],
 			"rotation": [
 				0,
@@ -58,11 +63,11 @@
 			"translation": [
 				2.6,
 				0,
-				-1.5
+				1.5
 			],
 			"rotation": [
 				0,
-				-0.953717,
+				0.953717,
 				0,
 				-0.3007058
 			],
@@ -78,11 +83,11 @@
 			"translation": [
 				2.6,
 				0,
-				1.5
+				-1.5
 			],
 			"rotation": [
 				0,
-				-0.953717,
+				0.953717,
 				0,
 				-0.3007058
 			],
@@ -98,7 +103,7 @@
 			"translation": [
 				0,
 				0,
-				3
+				-3
 			],
 			"rotation": [
 				0,
@@ -118,7 +123,7 @@
 			"translation": [
 				-2.6,
 				0,
-				-1.5
+				1.5
 			],
 			"rotation": [
 				0,
@@ -132,33 +137,6 @@
 				1
 			],
 			"name": "SphereBaseColorAO"
-		},
-		{
-			"children": [
-				0,
-				1,
-				2,
-				3,
-				4,
-				5
-			],
-			"translation": [
-				0,
-				0,
-				0
-			],
-			"rotation": [
-				0,
-				1,
-				0,
-				-4.371139e-8
-			],
-			"scale": [
-				1,
-				1,
-				-1
-			],
-			"name": "root"
 		}
 	],
 	"meshes": [
@@ -351,12 +329,12 @@
 			"max": [
 				1.00000024,
 				1,
-				1.00000024
+				1
 			],
 			"min": [
 				-1,
 				-1,
-				-1
+				-1.00000024
 			],
 			"type": "VEC3",
 			"name": "accessorPositions"
@@ -393,12 +371,12 @@
 			"max": [
 				1.00000012,
 				1,
-				1
+				0.9999999
 			],
 			"min": [
 				-1,
 				-1,
-				-0.9999999
+				-1
 			],
 			"type": "VEC3",
 			"name": "accessorPositions"
@@ -551,6 +529,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "BumpMat"
 		},
 		{
@@ -572,6 +551,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "BaseColorMat"
 		},
 		{
@@ -615,6 +595,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "MetallicRoughnessMat"
 		},
 		{
@@ -639,6 +620,7 @@
 				1,
 				1
 			],
+			"alphaMode": "OPAQUE",
 			"name": "EmissiveMat"
 		},
 		{
@@ -663,6 +645,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "BaseColorAOMat"
 		}
 	],

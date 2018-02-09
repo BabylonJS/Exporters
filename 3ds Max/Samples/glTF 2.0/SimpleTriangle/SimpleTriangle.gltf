@@ -8,7 +8,7 @@
 	"scenes": [
 		{
 			"nodes": [
-				1
+				0
 			]
 		}
 	],
@@ -18,7 +18,7 @@
 			"translation": [
 				-8.111549,
 				0,
-				37.16867
+				-37.16867
 			],
 			"rotation": [
 				0,
@@ -32,28 +32,6 @@
 				100
 			],
 			"name": "Mesh"
-		},
-		{
-			"children": [
-				0
-			],
-			"translation": [
-				0,
-				0,
-				0
-			],
-			"rotation": [
-				0,
-				1,
-				0,
-				-4.371139e-8
-			],
-			"scale": [
-				1,
-				1,
-				-1
-			],
-			"name": "root"
 		}
 	],
 	"meshes": [
@@ -158,6 +136,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "02 - Default"
 		}
 	]

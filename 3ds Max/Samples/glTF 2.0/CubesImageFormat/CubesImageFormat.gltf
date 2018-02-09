@@ -8,7 +8,13 @@
 	"scenes": [
 		{
 			"nodes": [
-				7
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6
 			]
 		}
 	],
@@ -152,34 +158,6 @@
 				1
 			],
 			"name": "N"
-		},
-		{
-			"children": [
-				0,
-				1,
-				2,
-				3,
-				4,
-				5,
-				6
-			],
-			"translation": [
-				0,
-				0,
-				0
-			],
-			"rotation": [
-				0,
-				1,
-				0,
-				-4.371139e-8
-			],
-			"scale": [
-				1,
-				1,
-				-1
-			],
-			"name": "root"
 		}
 	],
 	"meshes": [
@@ -629,6 +607,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "B"
 		},
 		{
@@ -650,6 +629,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "A"
 		},
 		{
@@ -671,6 +651,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "B_2"
 		},
 		{
@@ -692,6 +673,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Y"
 		},
 		{
@@ -713,6 +695,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "L"
 		},
 		{
@@ -734,6 +717,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "O"
 		},
 		{
@@ -755,6 +739,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "N"
 		}
 	],

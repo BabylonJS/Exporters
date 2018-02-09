@@ -468,7 +468,7 @@ namespace Max2Babylon
             }
             else
             {
-                alphaMode = null;  // glTF alpha mode default value is "OPAQUE"
+                alphaMode = GLTFMaterial.AlphaMode.OPAQUE.ToString();
             }
             alphaCutoff = null;
         }
@@ -480,7 +480,7 @@ namespace Max2Babylon
             switch (babylonMaterial.transparencyMode)
             {
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE:
-                    alphaMode = null; // glTF alpha mode default value is "OPAQUE"
+                    alphaMode = GLTFMaterial.AlphaMode.OPAQUE.ToString();
                     break;
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND:
                     alphaMode = GLTFMaterial.AlphaMode.BLEND.ToString();
