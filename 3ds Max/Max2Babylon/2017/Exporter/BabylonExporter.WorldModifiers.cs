@@ -35,10 +35,10 @@ namespace Max2Babylon
 
         private BabylonFurMaterial ExportFurModifier(IModifier modifier, String sourceMeshName, BabylonScene babylonScene)
         {
-            // Default:
-            int furLength = 1;
+            // Defaults:
             int density = 20;
             int spacing = 12;
+            float[] furColor = new[] { 1f, 1f, 1f };
             BabylonTexture diffuseTexture = null;
 
             for (int i = 0; i < modifier.NumParamBlocks; i++)
@@ -48,32 +48,48 @@ namespace Max2Babylon
                 for (short paramId = 0; paramId < paramBlock.NumParams; paramId++)
                 {
                     var name = paramBlock.GetLocalName(paramId, 0);
-
+                    
                     // TODO - check translation
                     switch (name)
                     {
                         case "Cut Length":
-                            // 3dsMax Cut Length is in percentages -
-                            // "100" Cut length (longest hair) will be translated to "10" babylon furLength
-                            furLength = (int)(paramBlock.GetFloat(paramId, 0, 0) / 10);
+                            // 3dsMax "Cut Length" is in percentages -
+                            // "100%" will be "33" babylon spacing 
+                            spacing = (int)Math.Round(paramBlock.GetFloat(paramId, 0, 0) / 3);
                             break;
                         case "Density":
                             // 3dsMax Density is in percentages -
-                            // "100" density in 3dsmax will be translated to "20" babylon density 
+                            // "100%" will be "20" babylon density 
                             density = (int)(paramBlock.GetFloat(paramId, 0, 0) / 5);
                             break;
-                        case "Hair Segments":
-                            spacing = paramBlock.GetInt(paramId, 0, 0);
+                        case "Root Color":
+                            var rootColor = paramBlock.GetColor(paramId, 0, 0);
+                            furColor = new float[] {
+                                rootColor.R,
+                                rootColor.G,
+                                rootColor.B
+                            };
                             break;
+                        case "Tip Color":
+                            if (paramBlock.GetColor(paramId, 0, 0) != null)
+                            {
+                                RaiseWarning("tip color is not supported - use root color instead");
+                            }
+                            break;
+                        case "Hair Segments":
+                        // TODO - need to affect "quality"?
                         case "Maps":
                             if (paramBlock.GetTexmap(paramId, 0, 11) != null)
                             {
-                                RaiseWarning("tip color is not supported in exporter - babylon Hair And Fur support only one color, use root color instead");
+                                RaiseWarning("tip texture is not supported - use root texture instead");
                             }
 
                             ITexmap rootColorTexmap = paramBlock.GetTexmap(paramId, 0, 14);
-                            diffuseTexture = ExportTexture(rootColorTexmap, 0f, babylonScene);
-                            diffuseTexture.level = 1;
+                            if (rootColorTexmap != null)
+                            {
+                                diffuseTexture = ExportTexture(rootColorTexmap, 0f, babylonScene);
+                                diffuseTexture.level = 1;
+                            }
                             break;
                     }
                 }
@@ -84,10 +100,10 @@ namespace Max2Babylon
                 id = modifier.GetGuid().ToString(),
                 name = modifier.GetGuid().ToString(),
                 sourceMeshName = sourceMeshName,
-                furLength = furLength,
                 furDensity = density,
                 furSpacing = spacing,
                 diffuseTexture = diffuseTexture,
+                furColor = furColor,
             };   
         }
     }
