@@ -87,19 +87,6 @@ namespace Max2Babylon
                 CheckCancelled();
             });
 
-            // Switch from left to right handed coordinate system
-            var tmpNodesList = new List<int>(scene.NodesList);
-            var rootNode = new BabylonMesh
-            {
-                name = "root",
-                rotation = new float[] { 0, (float)Math.PI, 0 },
-                scaling = new float[] { 1, 1, -1 },
-                idGroupInstance = -1
-            };
-            scene.NodesList.Clear(); // Only root node is listed in node list
-            GLTFNode gltfRootNode = ExportAbstractMesh(rootNode, gltf, null, null);
-            gltfRootNode.ChildrenList.AddRange(tmpNodesList);
-
             // Materials
             RaiseMessage("GLTFExporter | Exporting materials");
             foreach (var babylonMaterial in babylonMaterialsToExport)

@@ -43,6 +43,11 @@ namespace Max2Babylon
             // No scaling defined for babylon light. Use identity instead.
             gltfNode.scale = new float[3] { 1, 1, 1 };
 
+            // Switch coordinate system at object level
+            gltfNode.translation[2] *= -1;
+            gltfNode.rotation[0] *= -1;
+            gltfNode.rotation[1] *= -1;
+
             // Animations
             //ExportNodeAnimation(babylonLight, gltf, gltfNode);
 

@@ -26,6 +26,24 @@ namespace Max2Babylon
             if (!alreadyExportedSkeletons.ContainsKey(babylonSkeleton))
             {
                 alreadyExportedSkeletons.Add(babylonSkeleton, new BabylonSkeletonExportData());
+                
+                // Switch coordinate system at object level
+                foreach (var babylonBone in babylonSkeleton.bones)
+                {
+                    var boneLocalMatrix = new BabylonMatrix();
+                    boneLocalMatrix.m = babylonBone.matrix;
+
+                    var translationBabylon = new BabylonVector3();
+                    var rotationQuatBabylon = new BabylonQuaternion();
+                    var scale = new BabylonVector3();
+                    boneLocalMatrix.decompose(scale, rotationQuatBabylon, translationBabylon);
+                    translationBabylon.Z *= -1;
+                    rotationQuatBabylon.X *= -1;
+                    rotationQuatBabylon.Y *= -1;
+                    boneLocalMatrix = BabylonMatrix.Compose(scale, rotationQuatBabylon, translationBabylon);
+
+                    babylonBone.matrix = boneLocalMatrix.m;
+                }
             }
             var babylonSkeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
 
