@@ -807,10 +807,11 @@ namespace Max2Babylon
                             RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
                         }
                     }
+                    else RaiseWarning(string.Format("Texture not found: {0}", sourcePath));
                 }
-                catch
+                catch(Exception c)
                 {
-                    // silently fails
+                    RaiseError(string.Format("Exporting texture {0} failed: {1}", sourcePath, c.ToString()), 2);
                 }
             }
         }
