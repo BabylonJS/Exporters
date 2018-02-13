@@ -7,6 +7,12 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        const int CUT_LENGTH_PARAM_ID = 3;
+        const int ROOT_THICKNESS_PARAM_ID = 7;
+        const int TIP_COLOR_PARAM_ID = 16;
+        const int ROOT_COLOR_PARAM_ID = 19;
+        const int MAPS_PARAM_ID = 51;
+
         private void ExportWorldModifiers(IIGameNode meshNode, BabylonScene babylonScene, BabylonMesh babylonMesh)
         {
             var derivedObject = meshNode.MaxNode.WSMDerivedObject;
@@ -35,64 +41,37 @@ namespace Max2Babylon
 
         private BabylonFurMaterial ExportFurModifier(IModifier modifier, String sourceMeshName, BabylonScene babylonScene)
         {
-            // Defaults:
-            int density = 20;
-            int spacing = 12;
-            float[] furColor = new[] { 1f, 1f, 1f };
-            BabylonTexture diffuseTexture = null;
+            var paramBlock = modifier.GetParamBlock(0);
+            
+            // 3dsMax "Cut Length" is in percentages - "100%" will be "20" babylon spacing 
+            // (babylon Fur length means the distance from the obj, while the length of the hair is the spacing)
+            var cutLength = paramBlock.GetFloat(CUT_LENGTH_PARAM_ID, 0, 0);
+            var spacing = (int)Math.Round(cutLength / 5);
 
-            for (int i = 0; i < modifier.NumParamBlocks; i++)
+            // 3dsMax "Root Thick" is in percentages - "100%" will be "1" babylon density 
+            // (lower density in babylon is thicker hair - lower root thick in 3dsMax is thinner)
+            var rootThickness = paramBlock.GetFloat(ROOT_THICKNESS_PARAM_ID, 0, 0);
+            var density = (int)Math.Ceiling((100.1f - rootThickness) / 5);
+
+            var rootColor = paramBlock.GetColor(ROOT_COLOR_PARAM_ID, 0, 0);
+            var furColor = new float[] { rootColor.R, rootColor.G, rootColor.B };
+
+            if (paramBlock.GetColor(TIP_COLOR_PARAM_ID, 0, 0) != null)
             {
-                var paramBlock = modifier.GetParamBlock(i);
+                RaiseWarning("tip color is not supported - use root color instead");
+            }
 
-                for (short paramId = 0; paramId < paramBlock.NumParams; paramId++)
-                {
-                    var name = paramBlock.GetLocalName(paramId, 0);
-                    
-                    // TODO - check translation
-                    switch (name)
-                    {
-                        case "Cut Length":
-                            // 3dsMax "Cut Length" is in percentages -
-                            // "100%" will be "33" babylon spacing 
-                            spacing = (int)Math.Round(paramBlock.GetFloat(paramId, 0, 0) / 3);
-                            break;
-                        case "Density":
-                            // 3dsMax Density is in percentages -
-                            // "100%" will be "20" babylon density 
-                            density = (int)(paramBlock.GetFloat(paramId, 0, 0) / 5);
-                            break;
-                        case "Root Color":
-                            var rootColor = paramBlock.GetColor(paramId, 0, 0);
-                            furColor = new float[] {
-                                rootColor.R,
-                                rootColor.G,
-                                rootColor.B
-                            };
-                            break;
-                        case "Tip Color":
-                            if (paramBlock.GetColor(paramId, 0, 0) != null)
-                            {
-                                RaiseWarning("tip color is not supported - use root color instead");
-                            }
-                            break;
-                        case "Hair Segments":
-                        // TODO - need to affect "quality"?
-                        case "Maps":
-                            if (paramBlock.GetTexmap(paramId, 0, 11) != null)
-                            {
-                                RaiseWarning("tip texture is not supported - use root texture instead");
-                            }
+            if (paramBlock.GetTexmap(MAPS_PARAM_ID, 0, 11) != null)
+            {
+                RaiseWarning("tip texture is not supported - use root texture instead");
+            }
 
-                            ITexmap rootColorTexmap = paramBlock.GetTexmap(paramId, 0, 14);
-                            if (rootColorTexmap != null)
-                            {
-                                diffuseTexture = ExportTexture(rootColorTexmap, 0f, babylonScene);
-                                diffuseTexture.level = 1;
-                            }
-                            break;
-                    }
-                }
+            BabylonTexture diffuseTexture = null;
+            ITexmap rootColorTexmap = paramBlock.GetTexmap(MAPS_PARAM_ID, 0, 14);
+            if (rootColorTexmap != null)
+            {
+                diffuseTexture = ExportTexture(rootColorTexmap, 0f, babylonScene);
+                diffuseTexture.level = 1;
             }
 
             return new BabylonFurMaterial
@@ -104,7 +83,7 @@ namespace Max2Babylon
                 furSpacing = spacing,
                 diffuseTexture = diffuseTexture,
                 furColor = furColor,
-            };   
+            };
         }
     }
 }
