@@ -9,7 +9,6 @@ namespace Max2Babylon
     {
         const int CUT_LENGTH_PARAM_ID = 3;
         const int ROOT_THICKNESS_PARAM_ID = 7;
-        const int TIP_COLOR_PARAM_ID = 16;
         const int ROOT_COLOR_PARAM_ID = 19;
         const int MAPS_PARAM_ID = 51;
 
@@ -24,8 +23,7 @@ namespace Max2Babylon
             {
                 foreach (var modifier in derivedObject.Modifiers)
                 {
-                    // TODO - check translations
-                    if (modifier.Name == "Hair and Fur")
+                    if (modifier.Name == "Hair and Fur" || modifier.Name == "Chevelure et Pelage")
                     {
                         var babylonFurMaterial = ExportFurModifier(modifier, babylonMesh.name, babylonScene);
                         babylonScene.MaterialsList.Add(babylonFurMaterial);
@@ -55,11 +53,6 @@ namespace Max2Babylon
 
             var rootColor = paramBlock.GetColor(ROOT_COLOR_PARAM_ID, 0, 0);
             var furColor = new float[] { rootColor.R, rootColor.G, rootColor.B };
-
-            if (paramBlock.GetColor(TIP_COLOR_PARAM_ID, 0, 0) != null)
-            {
-                RaiseWarning("tip color is not supported - use root color instead");
-            }
 
             if (paramBlock.GetTexmap(MAPS_PARAM_ID, 0, 11) != null)
             {
