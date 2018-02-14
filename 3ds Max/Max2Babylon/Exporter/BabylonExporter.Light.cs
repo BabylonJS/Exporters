@@ -27,12 +27,7 @@ namespace Max2Babylon
 
         private bool IsLightExportable(IIGameNode lightNode)
         {
-            if (lightNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
-            {
-                return false;
-            }
-
-            return true;
+            return IsNodeExportable(lightNode);
         }
 
         private BabylonLight ExportLight(IIGameScene scene, IIGameNode lightNode, BabylonScene babylonScene)
@@ -94,13 +89,9 @@ namespace Max2Babylon
             }
 
             // Position
-            var wm = lightNode.GetObjectTM(0);
-            if (lightNode.NodeParent != null)
-            {
-                var parentWorld = lightNode.NodeParent.GetObjectTM(0);
-                wm.MultiplyBy(parentWorld.Inverse);
-            }
-            var position = wm.Translation;
+            var localMatrix = lightNode.GetLocalTM(0);
+
+            var position = localMatrix.Translation;
             babylonLight.position = new[] { position.X, position.Y, position.Z };
 
             // Direction
@@ -116,7 +107,7 @@ namespace Max2Babylon
             else
             {
                 var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                vDir = wm.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
                 babylonLight.direction = new[] { vDir.X, vDir.Y, vDir.Z };
             }
 
@@ -133,7 +124,7 @@ namespace Max2Babylon
 
                 foreach (var meshNode in maxScene.NodesListBySuperClass(SClass_ID.Geomobject))
                 {
-#if MAX2017
+#if MAX2017 || MAX2018
                     if (meshNode.CastShadows)
 #else
                     if (meshNode.CastShadows == 1)
@@ -176,27 +167,13 @@ namespace Max2Babylon
             // Animations
             var animations = new List<BabylonAnimation>();
 
-            ExportVector3Animation("position", animations, key =>
-            {
-                var mat = lightNode.GetObjectTM(key);
-                if (lightNode.NodeParent != null)
-                {
-                    var parentWorld = lightNode.NodeParent.GetObjectTM(key);
-                    mat.MultiplyBy(parentWorld.Inverse);
-                }
-                var pos = mat.Translation;
-                return new[] { pos.X, pos.Y, pos.Z };
-            });
+            GeneratePositionAnimation(lightNode, animations);
 
             ExportVector3Animation("direction", animations, key =>
             {
-                var wmLight = lightNode.GetObjectTM(key);
-                if (lightNode.NodeParent != null)
-                {
-                    var parentWorld = lightNode.NodeParent.GetObjectTM(key);
-                    wmLight.MultiplyBy(parentWorld.Inverse);
-                }
-                var positionLight = wmLight.Translation;
+                var localMatrixAnimDir = lightNode.GetLocalTM(key);
+
+                var positionLight = localMatrixAnimDir.Translation;
                 var lightTarget = gameLight.LightTarget;
                 if (lightTarget != null)
                 {
@@ -209,10 +186,17 @@ namespace Max2Babylon
                 else
                 {
                     var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                    vDir = wmLight.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                    vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
                     return new[] { vDir.X, vDir.Y, vDir.Z };
                 }
             });
+
+            // Animation temporary stored for gltf but not exported for babylon
+            // TODO - Will cause an issue when externalizing the glTF export process
+            var extraAnimations = new List<BabylonAnimation>();
+            // Do not check if node rotation properties are animated
+            GenerateRotationAnimation(lightNode, extraAnimations, true);
+            babylonLight.extraAnimations = extraAnimations;
 
             ExportFloatAnimation("intensity", animations, key => new[] { maxLight.GetIntensity(key, Tools.Forever) });
 

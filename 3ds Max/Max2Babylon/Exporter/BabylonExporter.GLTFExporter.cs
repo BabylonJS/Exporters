@@ -17,10 +17,15 @@ namespace Max2Babylon
 
         private List<BabylonNode> babylonNodes;
 
-        public void ExportGltf(BabylonScene babylonScene, string outputFile, bool generateBinary)
+        public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
-            RaiseMessage("GLTFExporter | Export outputFile=" + outputFile + " generateBinary=" + generateBinary);
             RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
+
+            // Force output file extension to be gltf
+            outputFileName = Path.ChangeExtension(outputFileName, "gltf");
+
+            // Update path of output .gltf file to include subdirectory
+            var outputFile = Path.Combine(outputDirectory, outputFileName);
 
             float progressionStep;
             var progression = 0.0f;
@@ -66,6 +71,7 @@ namespace Max2Babylon
             RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
+            alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
@@ -73,19 +79,6 @@ namespace Max2Babylon
                 ReportProgressChanged((int)progression);
                 CheckCancelled();
             });
-            
-            // Switch from left to right handed coordinate system
-            var tmpNodesList = new List<int>(scene.NodesList);
-            var rootNode = new BabylonMesh
-            {
-                name = "root",
-                rotation = new float[] { 0, (float)Math.PI, 0 },
-                scaling = new float[] { 1, 1, -1 },
-                idGroupInstance = -1
-            };
-            scene.NodesList.Clear(); // Only root node is listed in node list
-            GLTFNode gltfRootNode = ExportAbstractMesh(rootNode, gltf, null, null);
-            gltfRootNode.ChildrenList.AddRange(tmpNodesList);
 
             // Materials
             RaiseMessage("GLTFExporter | Exporting materials");

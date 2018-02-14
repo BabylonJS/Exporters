@@ -70,6 +70,10 @@ class AnimationRange:
                     frames[frame] = True
 
             frames = sorted(frames)
+            
+        if len(frames) == 0:
+            Logger.warn('action ' + action.name + ' has no frames, ignored.', 3)
+            return None
 
         return AnimationRange(actionName, frames, frameOffset)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

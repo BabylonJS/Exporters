@@ -31,6 +31,10 @@ namespace Max2Babylon
 
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
+        private bool isBabylonExported;
+
+        private bool _onlySelected;
+
         void ReportProgressChanged(int progress)
         {
             if (OnImportProgressChanged != null)
@@ -68,6 +72,12 @@ namespace Max2Babylon
             }
         }
 
+        // For debug purpose
+        void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
+        {
+            //RaiseMessage(message, Color.DarkGray, rank, emphasis);
+        }
+
         void CheckCancelled()
         {
             Application.DoEvents();
@@ -77,35 +87,43 @@ namespace Max2Babylon
             }
         }
 
-        public async Task ExportAsync(string outputFile, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
+        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
         {
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            gameScene.InitialiseIGame(onlySelected);
+            gameScene.InitialiseIGame(false);
+            this._onlySelected = onlySelected;
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
 
-            // Force output file extension to be babylon
-            outputFile = Path.ChangeExtension(outputFile, "babylon");
-
             IsCancelled = false;
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
-            var babylonScene = new BabylonScene(Path.GetDirectoryName(outputFile));
-            var rawScene = Loader.Core.RootNode;
 
-            if (!Directory.Exists(babylonScene.OutputPath))
+            // Check directory exists
+            if (!Directory.Exists(outputDirectory))
             {
                 RaiseError("Exportation stopped: Output folder does not exist");
                 ReportProgressChanged(100);
                 return;
             }
 
+            var outputBabylonDirectory = outputDirectory;
+
+            // Force output file extension to be babylon
+            outputFileName = Path.ChangeExtension(outputFileName, "babylon");
+
+            var babylonScene = new BabylonScene(outputBabylonDirectory);
+
+            var rawScene = Loader.Core.RootNode;
+
             var watch = new Stopwatch();
             watch.Start();
+
+            isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
             // Save scene
             if (AutoSave3dsMaxFile)
@@ -120,13 +138,15 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2017
+#if MAX2018
+                version = "2018",
+#elif MAX2017
                 version = "2017",
 #else
                 version = Loader.Core.ProductVersion.ToString(),
 #endif
                 exporter_version = "0.4.5",
-                file = Path.GetFileName(outputFile)
+                file = outputFileName
             };
 
             // Global
@@ -142,12 +162,15 @@ namespace Max2Babylon
                 // Environment texture
                 var environmentMap = Loader.Core.EnvironmentMap;
                 // Copy image file to output if necessary
-                var babylonTexture = ExportTexture(environmentMap, 1.0f, babylonScene, true);
-                babylonScene.environmentTexture = babylonTexture.name;
+                var babylonTexture = ExportEnvironmnentTexture(environmentMap, babylonScene);
+                if (babylonTexture != null)
+                {
+                    babylonScene.environmentTexture = babylonTexture.name;
 
-                // Skybox
-                babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
-                babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+                    // Skybox
+                    babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
+                    babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
+                }
             }
 
             // Sounds
@@ -166,12 +189,15 @@ namespace Max2Babylon
 
                 babylonScene.SoundsList.Add(globalSound);
 
-                try
+                if (isBabylonExported)
                 {
-                    File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
-                }
-                catch
-                {
+                    try
+                    {
+                        File.Copy(soundName, Path.Combine(babylonScene.OutputPath, filename), true);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 
@@ -275,14 +301,14 @@ namespace Max2Babylon
                 }
             }
 
-            // Actions
-            babylonScene.actions = ExportNodeAction(gameScene.GetIGameNode(rawScene));
-
             // Output
             babylonScene.Prepare(false, false);
-            if (outputFormat == "babylon" || outputFormat == "binary babylon")
+            if (isBabylonExported)
             {
                 RaiseMessage("Saving to output file");
+                
+                var outputFile = Path.Combine(outputBabylonDirectory, outputFileName);
+
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
@@ -307,7 +333,7 @@ namespace Max2Babylon
                 if (outputFormat == "binary babylon")
                 {
                     RaiseMessage("Generating binary files");
-                    BabylonFileConverter.BinaryConverter.Convert(outputFile, Path.GetDirectoryName(outputFile) + "\\Binary",
+                    BabylonFileConverter.BinaryConverter.Convert(outputFile, outputBabylonDirectory + "\\Binary",
                         message => RaiseMessage(message, 1),
                         error => RaiseError(error, 1));
                 }
@@ -319,7 +345,7 @@ namespace Max2Babylon
             if (outputFormat == "gltf" || outputFormat == "glb")
             {
                 bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, outputFile, generateBinary);
+                ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
             }
 
             watch.Stop();
@@ -329,7 +355,6 @@ namespace Max2Babylon
         private void exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
         {
             BabylonNode babylonNode = null;
-            bool hasExporter = true;
             switch (maxGameNode.IGameObject.IGameType)
             {
                 case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
@@ -348,7 +373,6 @@ namespace Max2Babylon
                     break;
                 default:
                     // The type of node is not exportable (helper, spline, xref...)
-                    hasExporter = false;
                     break;
             }
             CheckCancelled();
@@ -357,10 +381,6 @@ namespace Max2Babylon
             if (babylonNode == null &&
                 isNodeRelevantToExport(maxGameNode))
             {
-                //if (!hasExporter)
-                //{
-                //    RaiseWarning($"Type '{maxGameNode.IGameObject.IGameType}' of node '{maxGameNode.Name}' has no exporter, an empty node is exported instead", 1);
-                //}
                 // Create a dummy (empty mesh)
                 babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
             };
@@ -473,7 +493,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017
+#if MAX2017 || MAX2018
                     var indexer = i;
 #else
                     var indexer = new IntPtr(i);
@@ -483,6 +503,34 @@ namespace Max2Babylon
                 }
                 return list;
             }
+        }
+
+        private bool IsNodeExportable(IIGameNode gameNode)
+        {
+            if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
+            {
+                return false;
+            }
+
+            if (_onlySelected && !gameNode.MaxNode.Selected)
+            {
+                return false;
+            }
+
+            if (!ExportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private IMatrix3 GetInvertWorldTM(IIGameNode gameNode, int key)
+        {
+            var worldMatrix = gameNode.GetWorldTM(key);
+            var invertedWorldMatrix = worldMatrix.ExtractMatrix3();
+            invertedWorldMatrix.Invert();
+            return invertedWorldMatrix;
         }
     }
 }

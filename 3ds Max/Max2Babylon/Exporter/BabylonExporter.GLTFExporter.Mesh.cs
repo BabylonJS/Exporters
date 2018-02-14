@@ -1,5 +1,4 @@
-﻿using Autodesk.Max;
-using BabylonExport.Entities;
+﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System;
 using System.Collections.Generic;
@@ -42,30 +41,35 @@ namespace Max2Babylon
             for (int indexVertex = 0; indexVertex < nbVertices; indexVertex++)
             {
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
-                globalVertex.Position = Tools.CreateIPoint3FromArray(babylonMesh.positions, indexVertex);
-                globalVertex.Normal = Tools.CreateIPoint3FromArray(babylonMesh.normals, indexVertex);
+                globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
+                globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                // Switch coordinate system at object level
+                globalVertex.Position.Z *= -1;
+                globalVertex.Normal.Z *= -1;
+
                 if (hasUV)
                 {
-                    globalVertex.UV = Tools.CreateIPoint2FromArray(babylonMesh.uvs, indexVertex);
+                    globalVertex.UV = BabylonVector2.FromArray(babylonMesh.uvs, indexVertex);
                     // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
                     // While for Babylon, it corresponds to the lower left corner of a texture image
                     globalVertex.UV.Y = 1 - globalVertex.UV.Y;
                 }
                 if (hasUV2)
                 {
-                    globalVertex.UV2 = Tools.CreateIPoint2FromArray(babylonMesh.uvs2, indexVertex);
+                    globalVertex.UV2 = BabylonVector2.FromArray(babylonMesh.uvs2, indexVertex);
                     // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
                     // While for Babylon, it corresponds to the lower left corner of a texture image
                     globalVertex.UV2.Y = 1 - globalVertex.UV2.Y;
                 }
                 if (hasColor)
                 {
-                    globalVertex.Color = Tools.CreateIPoint4FromArray(babylonMesh.colors, indexVertex).ToArray();
+                    globalVertex.Color = Tools.SubArrayFromEntity(babylonMesh.colors, indexVertex, 4);
                 }
                 if (hasBones)
                 {
-					// In babylon, the 4 bones indices are stored in a single int
-					// Each bone index is 8-bit offset from the next
+                    // In babylon, the 4 bones indices are stored in a single int
+                    // Each bone index is 8-bit offset from the next
                     int bonesIndicesMerged = babylonMesh.matricesIndices[indexVertex];
                     int bone3 = bonesIndicesMerged >> 24;
                     bonesIndicesMerged -= bone3 << 24;
@@ -77,16 +81,16 @@ namespace Max2Babylon
                     bonesIndicesMerged -= bone0 << 0;
                     var bonesIndicesArray = new ushort[] { (ushort)bone0, (ushort)bone1, (ushort)bone2, (ushort)bone3 };
                     globalVertex.BonesIndices = bonesIndicesArray;
-                    globalVertex.BonesWeights = Tools.CreateIPoint4FromArray(babylonMesh.matricesWeights, indexVertex).ToArray();
+                    globalVertex.BonesWeights = Tools.SubArrayFromEntity(babylonMesh.matricesWeights, indexVertex, 4);
                 }
 
                 globalVertices.Add(globalVertex);
             }
 
-            // Retreive indices from babylon mesh
-            List<ushort> babylonIndices = new List<ushort>();
-            babylonIndices = babylonMesh.indices.ToList().ConvertAll(new Converter<int, ushort>(n => (ushort)n));
+            var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
 
+            // Retreive indices from babylon mesh
+            List<int> babylonIndices = babylonMesh.indices.ToList();
 
             // --------------------------
             // ------- Init glTF --------
@@ -109,7 +113,6 @@ namespace Max2Babylon
 
             RaiseMessage("GLTFExporter.Mesh | glTF primitives", 2);
             var meshPrimitives = new List<GLTFMeshPrimitive>();
-            var weights = new List<float>();
             foreach (BabylonSubMesh babylonSubMesh in babylonMesh.subMeshes)
             {
                 // --------------------------
@@ -118,7 +121,7 @@ namespace Max2Babylon
 
                 List<GLTFGlobalVertex> globalVerticesSubMesh = globalVertices.GetRange(babylonSubMesh.verticesStart, babylonSubMesh.verticesCount);
 
-                List<ushort> gltfIndices = babylonIndices.GetRange(babylonSubMesh.indexStart, babylonSubMesh.indexCount);
+                var gltfIndices = babylonIndices.GetRange(babylonSubMesh.indexStart, babylonSubMesh.indexCount);
                 // In gltf, indices of each mesh primitive are 0-based (ie: min value is 0)
                 // Thus, the gltf indices list is a concatenation of sub lists all 0-based
                 // Example for 2 triangles, each being a submesh:
@@ -143,28 +146,40 @@ namespace Max2Babylon
                 // Material
                 if (babylonMesh.materialId != null)
                 {
+                    RaiseMessage("GLTFExporter.Mesh | Material", 3);
                     // Retreive the babylon material
+                    BabylonMaterial babylonMaterial;
                     var babylonMaterialId = babylonMesh.materialId;
+                    // From multi materials first, if any
+                    // Loop recursively even though it shouldn't be a real use case
+                    var babylonMultiMaterials = new List<BabylonMultiMaterial>(babylonScene.multiMaterials);
+                    BabylonMultiMaterial babylonMultiMaterial;
+                    do
+                    {
+                        babylonMultiMaterial = babylonMultiMaterials.Find(_babylonMultiMaterial => _babylonMultiMaterial.id == babylonMaterialId);
+                        if (babylonMultiMaterial != null)
+                        {
+                            babylonMaterialId = babylonMultiMaterial.materials[babylonSubMesh.materialIndex];
+                        }
+                    }
+                    while (babylonMultiMaterial != null);
+                    // Then from materials
                     var babylonMaterials = new List<BabylonMaterial>(babylonScene.materials);
-                    var babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
-                    if (babylonMaterial == null)
-                    {
-                        // It's a multi material
-                        var babylonMultiMaterials = new List<BabylonMultiMaterial>(babylonScene.multiMaterials);
-                        var babylonMultiMaterial = babylonMultiMaterials.Find(_babylonMultiMaterial => _babylonMultiMaterial.id == babylonMesh.materialId);
-                        babylonMaterialId = babylonMultiMaterial.materials[babylonSubMesh.materialIndex];
-                        babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
-                    }
+                    babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
 
-                    // Update primitive material index
-                    var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
-                    if (indexMaterial == -1)
+                    // If babylon material was exported successfully
+                    if (babylonMaterial != null)
                     {
-                        // Store material for exportation
-                        indexMaterial = babylonMaterialsToExport.Count;
-                        babylonMaterialsToExport.Add(babylonMaterial);
+                        // Update primitive material index
+                        var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
+                        if (indexMaterial == -1)
+                        {
+                            // Store material for exportation
+                            indexMaterial = babylonMaterialsToExport.Count;
+                            babylonMaterialsToExport.Add(babylonMaterial);
+                        }
+                        meshPrimitive.material = indexMaterial;
                     }
-                    meshPrimitive.material = indexMaterial;
 
                     // TODO - Add and retreive info from babylon material
                     meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
@@ -174,22 +189,37 @@ namespace Max2Babylon
                 // ------- Accessors --------
                 // --------------------------
 
+                RaiseMessage("GLTFExporter.Mesh | Geometry", 3);
+
                 // Buffer
                 var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
 
                 // --- Indices ---
+                var componentType = GLTFAccessor.ComponentType.UNSIGNED_SHORT;
+                if (nbVertices >= 65536)
+                {
+                    componentType = GLTFAccessor.ComponentType.UNSIGNED_INT;
+                }
                 var accessorIndices = GLTFBufferService.Instance.CreateAccessor(
                     gltf,
                     GLTFBufferService.Instance.GetBufferViewScalar(gltf, buffer),
                     "accessorIndices",
-                    GLTFAccessor.ComponentType.UNSIGNED_SHORT,
+                    componentType,
                     GLTFAccessor.TypeEnum.SCALAR
                 );
                 meshPrimitive.indices = accessorIndices.index;
                 // Populate accessor
-                gltfIndices.ForEach(n => accessorIndices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                if (componentType == GLTFAccessor.ComponentType.UNSIGNED_INT)
+                {
+                    gltfIndices.ForEach(n => accessorIndices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                }
+                else
+                {
+                    var gltfIndicesShort = gltfIndices.ConvertAll(new Converter<int, ushort>(n => (ushort)n));
+                    gltfIndicesShort.ForEach(n => accessorIndices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                }
                 accessorIndices.count = gltfIndices.Count;
-                
+
                 // --- Positions ---
                 var accessorPositions = GLTFBufferService.Instance.CreateAccessor(
                     gltf,
@@ -204,7 +234,7 @@ namespace Max2Babylon
                 accessorPositions.max = new float[] { float.MinValue, float.MinValue, float.MinValue };
                 globalVerticesSubMesh.ForEach((globalVertex) =>
                 {
-                    var positions = new float[] { globalVertex.Position.X, globalVertex.Position.Y, globalVertex.Position.Z };
+                    var positions = globalVertex.Position.ToArray();
                     // Store values as bytes
                     foreach (var position in positions)
                     {
@@ -214,7 +244,7 @@ namespace Max2Babylon
                     GLTFBufferService.UpdateMinMaxAccessor(accessorPositions, positions);
                 });
                 accessorPositions.count = globalVerticesSubMesh.Count;
-                
+
                 // --- Normals ---
                 var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
                     gltf,
@@ -225,10 +255,10 @@ namespace Max2Babylon
                 );
                 meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.NORMAL.ToString(), accessorNormals.index);
                 // Populate accessor
-                List<float> normals = globalVerticesSubMesh.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToList();
+                List<float> normals = globalVerticesSubMesh.SelectMany(v => v.Normal.ToArray()).ToList();
                 normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
                 accessorNormals.count = globalVerticesSubMesh.Count;
-                
+
                 // --- Colors ---
                 if (hasColor)
                 {
@@ -245,7 +275,7 @@ namespace Max2Babylon
                     colors.ForEach(n => accessorColors.bytesList.AddRange(BitConverter.GetBytes(n)));
                     accessorColors.count = globalVerticesSubMesh.Count;
                 }
-                
+
                 // --- UV ---
                 if (hasUV)
                 {
@@ -258,11 +288,11 @@ namespace Max2Babylon
                     );
                     meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_0.ToString(), accessorUVs.index);
                     // Populate accessor
-                    List<float> uvs = globalVerticesSubMesh.SelectMany(v => new[] { v.UV.X, v.UV.Y }).ToList();
+                    List<float> uvs = globalVerticesSubMesh.SelectMany(v => v.UV.ToArray()).ToList();
                     uvs.ForEach(n => accessorUVs.bytesList.AddRange(BitConverter.GetBytes(n)));
                     accessorUVs.count = globalVerticesSubMesh.Count;
                 }
-                
+
                 // --- UV2 ---
                 if (hasUV2)
                 {
@@ -275,7 +305,7 @@ namespace Max2Babylon
                     );
                     meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_1.ToString(), accessorUV2s.index);
                     // Populate accessor
-                    List<float> uvs2 = globalVerticesSubMesh.SelectMany(v => new[] { v.UV2.X, v.UV2.Y }).ToList();
+                    List<float> uvs2 = globalVerticesSubMesh.SelectMany(v => v.UV2.ToArray()).ToList();
                     uvs2.ForEach(n => accessorUV2s.bytesList.AddRange(BitConverter.GetBytes(n)));
                     accessorUV2s.count = globalVerticesSubMesh.Count;
                 }
@@ -283,6 +313,7 @@ namespace Max2Babylon
                 // --- Bones ---
                 if (hasBones)
                 {
+                    RaiseMessage("GLTFExporter.Mesh | Bones", 3);
                     // --- Joints ---
                     var accessorJoints = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -312,16 +343,23 @@ namespace Max2Babylon
                     accessorWeights.count = globalVerticesSubMesh.Count;
                 }
 
-                // Morph targets
-                var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
+                // Morph targets positions and normals
                 if (babylonMorphTargetManager != null)
                 {
-                    _exportMorphTargets(babylonMesh, babylonMorphTargetManager, gltf, buffer, meshPrimitive, weights);
+                    RaiseMessage("GLTFExporter.Mesh | Morph targets", 3);
+                    _exportMorphTargets(babylonMesh, babylonSubMesh, babylonMorphTargetManager, gltf, buffer, meshPrimitive);
                 }
             }
             gltfMesh.primitives = meshPrimitives.ToArray();
-            if (weights.Count > 0)
+
+            // Morph targets weights
+            if (babylonMorphTargetManager != null)
             {
+                var weights = new List<float>();
+                foreach (BabylonMorphTarget babylonMorphTarget in babylonMorphTargetManager.targets)
+                {
+                    weights.Add(babylonMorphTarget.influence);
+                }
                 gltfMesh.weights = weights.ToArray();
             }
 
@@ -350,7 +388,7 @@ namespace Max2Babylon
             return null;
         }
 
-        private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive, List<float> weights)
+        private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonSubMesh babylonSubMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive)
         {
             var gltfMorphTargets = new List<GLTFMorphTarget>();
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
@@ -369,9 +407,12 @@ namespace Max2Babylon
                     );
                     gltfMorphTarget.Add(GLTFMorphTarget.Attribute.POSITION.ToString(), accessorTargetPositions.index);
                     // Populate accessor
+                    int nbComponents = 3; // Vector3
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
                     accessorTargetPositions.min = new float[] { float.MaxValue, float.MaxValue, float.MaxValue };
                     accessorTargetPositions.max = new float[] { float.MinValue, float.MinValue, float.MinValue };
-                    for (int indexPosition = 0; indexPosition < babylonMorphTarget.positions.Length; indexPosition += 3)
+                    for (int indexPosition = startIndex; indexPosition < endIndex; indexPosition += 3)
                     {
                         var positionTarget = Tools.SubArray(babylonMorphTarget.positions, indexPosition, 3);
 
@@ -390,7 +431,7 @@ namespace Max2Babylon
                         // Update min and max values
                         GLTFBufferService.UpdateMinMaxAccessor(accessorTargetPositions, positionTarget);
                     }
-                    accessorTargetPositions.count = babylonMorphTarget.positions.Length / 3;
+                    accessorTargetPositions.count = babylonSubMesh.verticesCount;
                 }
 
                 // Normals
@@ -405,7 +446,10 @@ namespace Max2Babylon
                     );
                     gltfMorphTarget.Add(GLTFMorphTarget.Attribute.NORMAL.ToString(), accessorTargetNormals.index);
                     // Populate accessor
-                    for (int indexNormal = 0; indexNormal < babylonMorphTarget.positions.Length; indexNormal += 3)
+                    int nbComponents = 3; // Vector3
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
+                    for (int indexNormal = startIndex; indexNormal < endIndex; indexNormal += 3)
                     {
                         var normalTarget = Tools.SubArray(babylonMorphTarget.normals, indexNormal, 3);
 
@@ -422,14 +466,10 @@ namespace Max2Babylon
                             accessorTargetNormals.bytesList.AddRange(BitConverter.GetBytes(coordinate));
                         }
                     }
-                    accessorTargetNormals.count = babylonMorphTarget.normals.Length / 3;
+                    accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
 
-                if (gltfMorphTarget.Count > 0)
-                {
-                    gltfMorphTargets.Add(gltfMorphTarget);
-                    weights.Add(babylonMorphTarget.influence);
-                }
+                gltfMorphTargets.Add(gltfMorphTarget);
             }
             if (gltfMorphTargets.Count > 0)
             {

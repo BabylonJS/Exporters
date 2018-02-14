@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Autodesk.Max;
+﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Max2Babylon
@@ -82,7 +82,7 @@ namespace Max2Babylon
             var keys = new List<BabylonAnimationKey>();
             for (int indexKey = 0; indexKey < gameKeyTab.Count; indexKey++)
             {
-#if MAX2017
+#if MAX2017 || MAX2018
                 var indexer = indexKey;
 #else
                     var indexer = new IntPtr(indexKey);
@@ -268,13 +268,13 @@ namespace Max2Babylon
             return ExportAnimation(property, extractValueFunc, BabylonAnimation.DataType.Matrix, removeLinearAnimationKeys);
         }
 
-        static void RemoveLinearAnimationKeys(List<BabylonAnimationKey> keys)
+        static void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
             for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
             {
                 while (keys.Count - ixFirst >= 3)
                 {
-                    if (!RemoveAnimationKey(keys, ixFirst))
+                    if (!RemoveAnimationKey(keys, ixFirst, removeLinearAnimationKeys))
                     {
                         break;
                     }
@@ -294,7 +294,7 @@ namespace Max2Babylon
             return result;
         }
 
-        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst)
+        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
         {
             var first = keys[ixFirst];
             var middle = keys[ixFirst + 1];
@@ -308,11 +308,14 @@ namespace Max2Babylon
             }
 
             // second pass : linear interpolation detection
-            var computedMiddleValue = weightedLerp(first.frame, middle.frame, last.frame, first.values, last.values);
-            if (computedMiddleValue.IsEqualTo(middle.values))
+            if (removeLinearAnimationKeys)
             {
-                keys.RemoveAt(ixFirst + 1);
-                return true;
+                var computedMiddleValue = weightedLerp(first.frame, middle.frame, last.frame, first.values, last.values);
+                if (computedMiddleValue.IsEqualTo(middle.values))
+                {
+                    keys.RemoveAt(ixFirst + 1);
+                    return true;
+                }
             }
             return false;
 
@@ -340,13 +343,6 @@ namespace Max2Babylon
             {
                 var current = extractValueFunc(key);
 
-                // if animations are not optimized, all keys from start to end are created
-                // otherwise, keys are added only for non constant values
-                if (optimizeAnimations && previous != null && previous.IsEqualTo(current))
-                {
-                    continue; // Do not add key
-                }
-
                 keys.Add(new BabylonAnimationKey()
                 {
                     frame = key / Ticks,
@@ -355,11 +351,10 @@ namespace Max2Babylon
 
                 previous = current;
             }
-
-            // if animations are not optimized, do the following as minimal optimization
-            if (removeLinearAnimationKeys && !optimizeAnimations)
+            
+            if (optimizeAnimations)
             {
-                RemoveLinearAnimationKeys(keys);
+                OptimizeAnimations(keys, removeLinearAnimationKeys);
             }
 
             if (keys.Count > 1)
@@ -398,6 +393,52 @@ namespace Max2Babylon
                 }
             }
             return null;
+        }
+
+        public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
+        {
+            if (gameNode.IGameControl.IsAnimated(IGameControlType.Pos) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosX) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosY) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosZ))
+            {
+                ExportVector3Animation("position", animations, key =>
+                {
+                    var localMatrix = gameNode.GetLocalTM(key);
+                    var trans = localMatrix.Translation;
+                    return new[] { trans.X, trans.Y, trans.Z };
+                });
+            }
+        }
+
+        public void GenerateRotationAnimation(IIGameNode gameNode, List<BabylonAnimation> animations, bool force = false)
+        {
+            if (gameNode.IGameControl.IsAnimated(IGameControlType.Rot) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerZ) ||
+                force)
+            {
+                ExportQuaternionAnimation("rotationQuaternion", animations, key =>
+                {
+                    var localMatrix = gameNode.GetLocalTM(key);
+                    var rot = localMatrix.Rotation;
+                    return new[] { rot.X, rot.Y, rot.Z, -rot.W };
+                });
+            }
+        }
+
+        public void GenerateScalingAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
+        {
+            if (gameNode.IGameControl.IsAnimated(IGameControlType.Scale))
+            {
+                ExportVector3Animation("scaling", animations, key =>
+                {
+                    var localMatrix = gameNode.GetLocalTM(key);
+                    var scale = localMatrix.Scaling;
+                    return new[] { scale.X, scale.Y, scale.Z };
+                });
+            }
         }
     }
 }
