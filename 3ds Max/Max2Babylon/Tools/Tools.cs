@@ -36,6 +36,11 @@ namespace Max2Babylon
             return result;
         }
 
+        public static T[] SubArrayFromEntity<T>(T[] array, int startEntityIndex, int count)
+        {
+            return SubArray(array, startEntityIndex * count, count);
+        }
+
         public static string ToString<T>(this T[] array)
         {
             var res = "[";
@@ -111,48 +116,32 @@ namespace Max2Babylon
         {
             var type = GetWrappersAssembly().GetType("Autodesk.Max.Wrappers.IGameCamera");
             var constructor = type.GetConstructors()[0];
-            // var pointerType = GetWrappersAssembly().GetType("IGameCamera");
-            unsafe
-            {
-                var voidPtr = obj.GetNativeHandle().ToPointer();
-                return (IIGameCamera)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
-            }
+
+            return (IIGameCamera)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
         }
 
         public static IIGameMesh AsGameMesh(this IIGameObject obj)
         {
             var type = GetWrappersAssembly().GetType("Autodesk.Max.Wrappers.IGameMesh");
             var constructor = type.GetConstructors()[0];
-            // var pointerType = GetWrappersAssembly().GetType("IGameCamera");
-            unsafe
-            {
-                var voidPtr = obj.GetNativeHandle().ToPointer();
-                return (IIGameMesh)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
-            }
+
+            return (IIGameMesh)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
         }
 
         public static IIGameLight AsGameLight(this IIGameObject obj)
         {
             var type = GetWrappersAssembly().GetType("Autodesk.Max.Wrappers.IGameLight");
             var constructor = type.GetConstructors()[0];
-            // var pointerType = GetWrappersAssembly().GetType("IGameCamera");
-            unsafe
-            {
-                var voidPtr = obj.GetNativeHandle().ToPointer();
-                return (IIGameLight)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
-            }
+
+            return (IIGameLight)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
         }
 
         public static IIGameMorpher AsGameMorpher(this IIGameModifier obj)
         {
             var type = GetWrappersAssembly().GetType("Autodesk.Max.Wrappers.IGameMorpher");
             var constructor = type.GetConstructors()[0];
-            // var pointerType = GetWrappersAssembly().GetType("IGameCamera");
-            unsafe
-            {
-                var voidPtr = obj.GetNativeHandle().ToPointer();
-                return (IIGameMorpher)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
-            }
+
+            return (IIGameMorpher)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
         }
 
         public const float Epsilon = 0.001f;
@@ -301,24 +290,6 @@ namespace Max2Babylon
             return !value.Where((t, i) => Math.Abs(t - other[i]) > Epsilon).Any();
         }
 
-        public static IPoint2 CreateIPoint2FromArray(float[] array, int index)
-        {
-            var startIndex = index * 2;
-            return Loader.Global.Point2.Create(array[startIndex], array[startIndex + 1]);
-        }
-
-        public static IPoint3 CreateIPoint3FromArray(float[] array, int index)
-        {
-            var startIndex = index * 3;
-            return Loader.Global.Point3.Create(array[startIndex], array[startIndex + 1], array[startIndex + 2]);
-        }
-
-        public static IPoint4 CreateIPoint4FromArray(float[] array, int index)
-        {
-            var startIndex = index * 4;
-            return Loader.Global.Point4.Create(array[startIndex], array[startIndex + 1], array[startIndex + 2], array[startIndex + 3]);
-        }
-
         public static float[] ToArray(this IMatrix3 value)
         {
 
@@ -417,6 +388,11 @@ namespace Max2Babylon
             return from n in rootNode.NodeTree() where n.ObjectRef != null && sids.Any(sid => n.EvalWorldState(0, false).Obj.SuperClassID == sid) select n;
         }
 
+        /// <summary>
+        /// Convert horizontal FOV to vertical FOV using default aspect ratio
+        /// </summary>
+        /// <param name="fov">horizontal FOV</param>
+        /// <returns></returns>
         public static float ConvertFov(float fov)
         {
             return (float)(2.0f * Math.Atan(Math.Tan(fov / 2.0f) / Loader.Core.ImageAspRatio));

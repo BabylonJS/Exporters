@@ -55,16 +55,23 @@ namespace Max2Babylon
             // No scaling defined for babylon camera. Use identity instead.
             gltfNode.scale = new float[3] { 1, 1, 1 };
 
+            // Switch coordinate system at object level
+            gltfNode.translation[2] *= -1;
+            gltfNode.rotation[0] *= -1;
+            gltfNode.rotation[1] *= -1;
+
             // Animations
             ExportNodeAnimation(babylonCamera, gltf, gltfNode);
 
             // --- prints ---
+            #region prints
 
-            RaiseMessage("GLTFExporter.Camera | babylonCamera data", 2);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.type=" + babylonCamera.type, 3);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.fov=" + babylonCamera.fov, 3);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.maxZ=" + babylonCamera.maxZ, 3);
-            RaiseMessage("GLTFExporter.Camera | babylonCamera.minZ=" + babylonCamera.minZ, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera data", 2);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.type=" + babylonCamera.type, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.fov=" + babylonCamera.fov, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.maxZ=" + babylonCamera.maxZ, 3);
+            RaiseVerbose("GLTFExporter.Camera | babylonCamera.minZ=" + babylonCamera.minZ, 3);
+            #endregion
 
 
             // --------------------------

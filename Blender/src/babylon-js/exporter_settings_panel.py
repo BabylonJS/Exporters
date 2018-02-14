@@ -53,7 +53,18 @@ class ExporterSettingsPanel(bpy.types.Panel):
         description="Do not export bones with either '.ik' or 'ik.'(not case sensitive) in the name",
         default = False,
         )
+    bpy.types.Scene.currentActionOnly = bpy.props.BoolProperty(
+        name='Only Currently Assigned Actions',
+        description="When true, only the currently assigned action is exported",
+        default = False,
+        )
 
+    bpy.types.Scene.autoAnimate = bpy.props.BoolProperty(
+        name='Auto launch non-skeleton animations',
+        description='Start all animations, except for bones.',
+        default = False
+    )   
+     
     def draw(self, context):
         layout = self.layout
 
@@ -74,3 +85,8 @@ class ExporterSettingsPanel(bpy.types.Panel):
         box.prop(scene, 'attachedSound')
         box.prop(scene, 'autoPlaySound')
         box.prop(scene, 'loopSound')
+        
+        box = layout.box()
+        box.label(text='Animation:')
+        box.prop(scene, 'currentActionOnly')
+        box.prop(scene, 'autoAnimate')

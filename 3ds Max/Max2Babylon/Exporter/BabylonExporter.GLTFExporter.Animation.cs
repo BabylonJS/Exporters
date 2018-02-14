@@ -11,14 +11,36 @@ namespace Max2Babylon
 
         private GLTFAnimation ExportNodeAnimation(BabylonNode babylonNode, GLTF gltf, GLTFNode gltfNode, BabylonScene babylonScene = null)
         {
-            var channelList = new List<GLTFChannel>();
-            var samplerList = new List<GLTFAnimationSampler>();
+            GLTFAnimation gltfAnimation = null;
+            if (gltf.AnimationsList.Count > 0)
+            {
+                gltfAnimation = gltf.AnimationsList[0];
+            }
+            else
+            {
+                gltfAnimation = new GLTFAnimation();
+                gltf.AnimationsList.Add(gltfAnimation);
+            }
 
-            if (babylonNode.animations != null && babylonNode.animations.Length > 0)
+            var channelList = gltfAnimation.ChannelList;
+            var samplerList = gltfAnimation.SamplerList;
+
+            if ((babylonNode.animations != null && babylonNode.animations.Length > 0) ||
+                (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0))
             {
                 RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
 
-                foreach (BabylonAnimation babylonAnimation in babylonNode.animations)
+                // Combine babylon animations from .babylon file and cached ones
+                var babylonAnimations = new List<BabylonAnimation>();
+                if (babylonNode.animations != null)
+                {
+                    babylonAnimations.AddRange(babylonNode.animations);
+                }
+                if (babylonNode.extraAnimations != null)
+                {
+                    babylonAnimations.AddRange(babylonNode.extraAnimations);
+                }
+                foreach (BabylonAnimation babylonAnimation in babylonAnimations)
                 {
                     // Target
                     var gltfTarget = new GLTFChannelTarget
@@ -29,7 +51,7 @@ namespace Max2Babylon
                     if (gltfTarget.path == null)
                     {
                         // Unkown babylon animation property
-                        RaiseWarning("GLTFExporter.Animation | Unkown animation property '" + babylonAnimation.property + "'", 3);
+                        //RaiseWarning("GLTFExporter.Animation | Unkown animation property '" + babylonAnimation.property + "'", 3);
                         // Ignore this babylon animation
                         continue;
                     }
@@ -43,6 +65,18 @@ namespace Max2Babylon
                     foreach (var babylonAnimationKey in babylonAnimation.keys)
                     {
                         var outputValues = babylonAnimationKey.values;
+
+                        // Switch coordinate system at object level
+                        if (babylonAnimation.property == "position")
+                        {
+                            outputValues[2] *= -1;
+                        }
+                        else if (babylonAnimation.property == "rotationQuaternion")
+                        {
+                            outputValues[0] *= -1;
+                            outputValues[1] *= -1;
+                        }
+
                         // Store values as bytes
                         foreach (var outputValue in outputValues)
                         {
@@ -82,28 +116,24 @@ namespace Max2Babylon
                 }
             }
 
-            // Do not export empty arrays
-            if (channelList.Count > 0)
-            {
-                // Animation
-                var gltfAnimation = new GLTFAnimation
-                {
-                    channels = channelList.ToArray(),
-                    samplers = samplerList.ToArray()
-                };
-                gltf.AnimationsList.Add(gltfAnimation);
-                return gltfAnimation;
-            }
-            else
-            {
-                return null;
-            }
+            return gltfAnimation;
         }
 
         private GLTFAnimation ExportBoneAnimation(BabylonBone babylonBone, GLTF gltf, GLTFNode gltfNode)
         {
-            var channelList = new List<GLTFChannel>();
-            var samplerList = new List<GLTFAnimationSampler>();
+            GLTFAnimation gltfAnimation = null;
+            if (gltf.AnimationsList.Count > 0)
+            {
+                gltfAnimation = gltf.AnimationsList[0];
+            }
+            else
+            {
+                gltfAnimation = new GLTFAnimation();
+                gltf.AnimationsList.Add(gltfAnimation);
+            }
+
+            var channelList = gltfAnimation.ChannelList;
+            var samplerList = gltfAnimation.SamplerList;
 
             if (babylonBone.animation != null && babylonBone.animation.property == "_matrix")
             {
@@ -135,6 +165,12 @@ namespace Max2Babylon
                     var scaleBabylon = new BabylonVector3();
                     matrix.decompose(scaleBabylon, rotationQuatBabylon, translationBabylon);
 
+                    translationBabylon.Z *= -1;
+                    BabylonVector3 rotationVector3 = rotationQuatBabylon.toEulerAngles();
+                    rotationVector3.X *= -1;
+                    rotationVector3.Y *= -1;
+                    rotationQuatBabylon = rotationVector3.toQuaternion();
+
                     var outputValuesByPath = new Dictionary<string, float[]>();
                     outputValuesByPath.Add("translation", translationBabylon.ToArray());
                     outputValuesByPath.Add("rotation", rotationQuatBabylon.ToArray());
@@ -145,6 +181,7 @@ namespace Max2Babylon
                     {
                         var accessorOutput = accessorOutputByPath[path];
                         var outputValues = outputValuesByPath[path];
+
                         foreach (var outputValue in outputValues)
                         {
                             accessorOutput.bytesList.AddRange(BitConverter.GetBytes(outputValue));
@@ -183,22 +220,7 @@ namespace Max2Babylon
                 }
             }
 
-            // Do not export empty arrays
-            if (channelList.Count > 0)
-            {
-                // Animation
-                var gltfAnimation = new GLTFAnimation
-                {
-                    channels = channelList.ToArray(),
-                    samplers = samplerList.ToArray()
-                };
-                gltf.AnimationsList.Add(gltfAnimation);
-                return gltfAnimation;
-            }
-            else
-            {
-                return null;
-            }
+            return gltfAnimation;
         }
 
         private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation)

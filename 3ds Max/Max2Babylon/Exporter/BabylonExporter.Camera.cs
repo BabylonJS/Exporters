@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Autodesk.Max;
+﻿using Autodesk.Max;
 using BabylonExport.Entities;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Max2Babylon
 {
@@ -9,15 +8,10 @@ namespace Max2Babylon
     {
         private bool IsCameraExportable(IIGameNode cameraNode)
         {
-            if (cameraNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
-            {
-                return false;
-            }
-
-            return true;
+            return IsNodeExportable(cameraNode);
         }
 
-        private BabylonCamera ExportCamera(IIGameScene scene,  IIGameNode cameraNode, BabylonScene babylonScene)
+        private BabylonCamera ExportCamera(IIGameScene scene, IIGameNode cameraNode, BabylonScene babylonScene)
         {
             if (IsCameraExportable(cameraNode) == false)
             {
@@ -68,15 +62,10 @@ namespace Max2Babylon
             babylonCamera.ellipsoid = cameraNode.MaxNode.GetVector3Property("babylonjs_ellipsoid");
 
             // Position / rotation
-            var localTM = cameraNode.GetObjectTM(0);
-            if (cameraNode.NodeParent != null)
-            {
-                var parentWorld = cameraNode.NodeParent.GetObjectTM(0);
-                localTM.MultiplyBy(parentWorld.Inverse);
-            }
+            var localMatrix = cameraNode.GetLocalTM(0);
 
-            var position = localTM.Translation;
-            var rotation = localTM.Rotation;
+            var position = localMatrix.Translation;
+            var rotation = localMatrix.Rotation;
 
             babylonCamera.position = new[] { position.X, position.Y, position.Z };
 
@@ -98,40 +87,41 @@ namespace Max2Babylon
             }
             else
             {
-                var dir = localTM.GetRow(3);
-                babylonCamera.target = new [] { position.X - dir.X, position.Y - dir.Y, position.Z - dir.Z };
+                // TODO - Check if should be local or world
+                var vDir = Loader.Global.Point3.Create(0, -1, 0);
+                vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                vDir = vDir.Add(position);
+                babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
             }
 
             // Animations
             var animations = new List<BabylonAnimation>();
 
-            ExportVector3Animation("position", animations, key =>
-            {
-                var tm = cameraNode.GetLocalTM(key);
-                if (cameraNode.NodeParent != null)
-                {
-                    var parentWorld = cameraNode.NodeParent.GetObjectTM(key);
-                    tm.MultiplyBy(parentWorld.Inverse);
-                }
-                var translation = tm.Translation;
-                return new [] { translation.X, translation.Y, translation.Z };
-            });
+            GeneratePositionAnimation(cameraNode, animations);
 
-            if (gameCamera.CameraTarget == null)
+            if (target == null)
             {
+                // Export rotation animation
+                //GenerateRotationAnimation(cameraNode, animations);
+
                 ExportVector3Animation("target", animations, key =>
                 {
-                    var tm = cameraNode.GetLocalTM(key);
-                    if (cameraNode.NodeParent != null)
-                    {
-                        var parentWorld = cameraNode.NodeParent.GetObjectTM(key);
-                        tm.MultiplyBy(parentWorld.Inverse);
-                    }
-                    var translation = tm.Translation;
-                    var dir = tm.GetRow(3);
-                    return new float[] { translation.X - dir.X, translation.Y - dir.Y, translation.Z - dir.Z };
+                    var localMatrixAnimTarget = cameraNode.GetLocalTM( key);
+                    var positionCam = localMatrixAnimTarget.Translation;
+                    var vDir = Loader.Global.Point3.Create(0, -1, 0);
+                    vDir = localMatrixAnimTarget.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                    vDir = vDir.Add(positionCam);
+                    return new[] { vDir.X, vDir.Y, vDir.Z };
+
                 });
             }
+
+            // Animation temporary stored for gltf but not exported for babylon
+            // TODO - Will cause an issue when externalizing the glTF export process
+            var extraAnimations = new List<BabylonAnimation>();
+            // Do not check if node rotation properties are animated
+            GenerateRotationAnimation(cameraNode, extraAnimations, true);
+            babylonCamera.extraAnimations = extraAnimations;
 
             ExportFloatAnimation("fov", animations, key => new[] { Tools.ConvertFov((gameCamera.MaxObject as ICameraObject).GetFOV(key, Tools.Forever)) });
 

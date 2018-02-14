@@ -102,5 +102,37 @@ namespace Max2Babylon
 
             babylonScene.SkeletonsList.Add(babylonSkeleton);
         }
+
+        private bool IsSkinEqualTo(IIGameSkin skin1, IIGameSkin skin2)
+        {
+            // Check nb of bones
+            if (skin1.TotalSkinBoneCount != skin2.TotalSkinBoneCount)
+            {
+                return false;
+            }
+
+            // Check all bones are identical
+            var bones1 = GetBones(skin1);
+            var bones2 = GetBones(skin2);
+            foreach (var bone1 in bones1)
+            {
+                if (!bones2.Contains(bone1))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private List<IIGameNode> GetBones(IIGameSkin skin)
+        {
+            var bones = new List<IIGameNode>();
+            for (int i = 0; i < skin.TotalSkinBoneCount; i++)
+            {
+                var bone = skin.GetIGameBone(i, false);
+                bones.Add(bone);
+            }
+            return bones;
+        }
     }
 }

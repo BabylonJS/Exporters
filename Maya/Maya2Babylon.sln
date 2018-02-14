@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon", "Maya2Babylon.csproj", "{50780553-6248-463B-A0F3-F82C6CCEC703}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BabylonExport.Entities", "..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.shproj", "{2A678A75-F8C2-41BA-814A-53E611F5EB96}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "BabylonFileConverter", "..\SharedProjects\BabylonFileConverter\BabylonFileConverter.shproj", "{FC25673F-B984-4261-B266-9BC8B874079F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GltfExport.Entities", "..\SharedProjects\GltfExport.Entities\GltfExport.Entities.shproj", "{00356433-4277-48BB-AC33-92D3C47FE28B}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{00356433-4277-48bb-ac33-92d3c47fe28b}*SharedItemsImports = 13
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2a678a75-f8c2-41ba-814a-53e611f5eb96}*SharedItemsImports = 13
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50780553-6248-463B-A0F3-F82C6CCEC703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50780553-6248-463B-A0F3-F82C6CCEC703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50780553-6248-463B-A0F3-F82C6CCEC703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50780553-6248-463B-A0F3-F82C6CCEC703}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5F45A55-6CB6-4317-92EF-686443DBFFE0}
+	EndGlobalSection
+EndGlobal
