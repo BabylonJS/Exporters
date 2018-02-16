@@ -62,6 +62,7 @@
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Light.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.cs" />
     <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Node.cs" />
     <Compile Include="Exporter\BabylonExporter.Writer.cs" />

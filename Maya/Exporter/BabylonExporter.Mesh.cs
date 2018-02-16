@@ -210,7 +210,51 @@ namespace Maya2Babylon
                 RaiseWarning($"Mesh {babylonMesh.name} has more than 65536 vertices which means that it will require specific WebGL extension to be rendered. This may impact portability of your scene on low end devices.", 2);
             }
 
-            // TODO - Material
+            // Material
+            MObjectArray shaders = new MObjectArray();
+            mFnMesh.getConnectedShaders(0, shaders, new MIntArray());
+            if (shaders.Count > 0)
+            {
+                List<MFnDependencyNode> materials = new List<MFnDependencyNode>();
+                foreach (MObject shader in shaders)
+                {
+                    // Retreive material
+                    MFnDependencyNode shadingEngine = new MFnDependencyNode(shader);
+                    MPlug mPlugSurfaceShader = shadingEngine.findPlug("surfaceShader");
+                    MObject materialObject = mPlugSurfaceShader.source.node;
+                    MFnDependencyNode material = new MFnDependencyNode(materialObject);
+
+                    materials.Add(material);
+                }
+
+                if (shaders.Count == 1)
+                {
+                    MFnDependencyNode material = materials[0];
+
+                    // Material is referenced by id
+                    babylonMesh.materialId = material.uuid().asString();
+
+                    // Register material for export if not already done
+                    if (!referencedMaterials.Contains(material, new MFnDependencyNodeEqualityComparer()))
+                    {
+                        referencedMaterials.Add(material);
+                    }
+                }
+                else
+                {
+                    // Create a new id for the group of sub materials
+                    string uuidMultiMaterial = GetMultimaterialUUID(materials);
+
+                    // Multi material is referenced by id
+                    babylonMesh.materialId = uuidMultiMaterial;
+
+                    // Register multi material for export if not already done
+                    if (!multiMaterials.ContainsKey(uuidMultiMaterial))
+                    {
+                        multiMaterials.Add(uuidMultiMaterial, materials);
+                    }
+                }
+            }
 
             var vertices = new List<GlobalVertex>();
             var indices = new List<int>();
@@ -280,68 +324,95 @@ namespace Maya2Babylon
         /// <param name="optimizeVertices"></param>
         private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, bool optimizeVertices)
         {
-            // TODO - Multimaterials: create a BabylonSubMesh per submaterial
             // TODO - optimizeVertices
             MIntArray triangleCounts = new MIntArray();
             MIntArray trianglesVertices = new MIntArray();
             mFnMesh.getTriangles(triangleCounts, trianglesVertices);
             
-            // For each polygon of this mesh
-            for (int polygonId = 0; polygonId < mFnMesh.numPolygons; polygonId++)
+            MObjectArray shaders = new MObjectArray();
+            MIntArray faceMatIndices = new MIntArray(); // face index => shader index
+            mFnMesh.getConnectedShaders(0, shaders, faceMatIndices);
+
+            // For each material of this mesh
+            for (int indexShader = 0; indexShader < shaders.Count; indexShader++)
             {
-                MIntArray verticesId = new MIntArray();
-                int nbTriangles = triangleCounts[polygonId];
+                var nbIndicesSubMesh = 0;
+                var minVertexIndexSubMesh = int.MaxValue;
+                var maxVertexIndexSubMesh = int.MinValue;
+                var subMesh = new BabylonSubMesh { indexStart = indices.Count, materialIndex = indexShader };
 
-                // For each triangle of this polygon
-                for (int triangleIndex = 0; triangleIndex < triangleCounts[polygonId]; triangleIndex++)
+                // For each polygon of this mesh
+                for (int indexFace = 0; indexFace < faceMatIndices.Count; indexFace++)
                 {
-                    int[] triangleVertices = new int[3];
-                    mFnMesh.getPolygonTriangleVertices(polygonId, triangleIndex, triangleVertices);
-
-                    /*
-                     * Switch coordinate system at global level
-                     * 
-                     * Piece of code kept just in case
-                     * See BabylonExporter for more information
-                     */
-                    //// Inverse winding order to flip faces
-                    //var tmp = triangleVertices[1];
-                    //triangleVertices[1] = triangleVertices[2];
-                    //triangleVertices[2] = tmp;
-
-                    // For each vertex of this triangle (3 vertices per triangle)
-                    foreach (int vertexId in triangleVertices)
+                    if (faceMatIndices[indexFace] != indexShader)
                     {
-                        MPoint point = new MPoint();
-                        mFnMesh.getPoint(vertexId, point);
+                        continue;
+                    }
 
-                        MVector normal = new MVector();
-                        mFnMesh.getFaceVertexNormal(polygonId, vertexId, normal);
+                    // For each triangle of this polygon
+                    for (int triangleIndex = 0; triangleIndex < triangleCounts[indexFace]; triangleIndex++)
+                    {
+                        int[] triangleVertices = new int[3];
+                        mFnMesh.getPolygonTriangleVertices(indexFace, triangleIndex, triangleVertices);
 
-                        // Switch coordinate system at object level
-                        point.z *= -1;
-                        normal.z *= -1;
+                        /*
+                         * Switch coordinate system at global level
+                         * 
+                         * Piece of code kept just in case
+                         * See BabylonExporter for more information
+                         */
+                        //// Inverse winding order to flip faces
+                        //var tmp = triangleVertices[1];
+                        //triangleVertices[1] = triangleVertices[2];
+                        //triangleVertices[2] = tmp;
 
-                        var vertex = new GlobalVertex
+                        // For each vertex of this triangle (3 vertices per triangle)
+                        foreach (int vertexId in triangleVertices)
                         {
-                            BaseIndex = vertexId,
-                            Position = point.toArray(),
-                            Normal = normal.toArray()
-                        };
+                            GlobalVertex vertex = ExtractVertex(mFnMesh, indexFace, vertexId);
+                            vertex.CurrentIndex = vertices.Count;
 
-                        indices.Add(vertices.Count);
-                        vertices.Add(vertex);
+                            indices.Add(vertex.CurrentIndex);
+                            vertices.Add(vertex);
+
+                            minVertexIndexSubMesh = Math.Min(minVertexIndexSubMesh, vertex.CurrentIndex);
+                            maxVertexIndexSubMesh = Math.Max(maxVertexIndexSubMesh, vertex.CurrentIndex);
+                            nbIndicesSubMesh++;
+                        }
                     }
                 }
+
+                if (nbIndicesSubMesh != 0)
+                {
+                    subMesh.indexCount = nbIndicesSubMesh;
+                    subMesh.verticesStart = minVertexIndexSubMesh;
+                    subMesh.verticesCount = maxVertexIndexSubMesh - minVertexIndexSubMesh + 1;
+
+                    subMeshes.Add(subMesh);
+                }
             }
+        }
 
-            // BabylonSubMesh
-            var subMesh = new BabylonSubMesh { indexStart = 0, materialIndex = 0 };
-            subMeshes.Add(subMesh);
+        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int indexFace, int vertexId)
+        {
+            MPoint point = new MPoint();
+            mFnMesh.getPoint(vertexId, point);
 
-            subMesh.indexCount = indices.Count;
-            subMesh.verticesStart = 0;
-            subMesh.verticesCount = vertices.Count;
+            MVector normal = new MVector();
+            mFnMesh.getFaceVertexNormal(indexFace, vertexId, normal);
+
+            // Switch coordinate system at object level
+            point.z *= -1;
+            normal.z *= -1;
+
+            var vertex = new GlobalVertex
+            {
+                BaseIndex = vertexId,
+                Position = point.toArray(),
+                Normal = normal.toArray()
+            };
+
+            return vertex;
         }
         
         private void ExportNode(BabylonAbstractMesh babylonAbstractMesh, MFnTransform mFnTransform, BabylonScene babylonScene)
