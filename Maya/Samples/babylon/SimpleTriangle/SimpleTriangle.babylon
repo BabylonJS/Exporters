@@ -62,7 +62,7 @@
 			"metadata": null,
 			"tags": null,
 			"name": "Default light",
-			"id": "2b5eaf5e-cb21-4668-8510-0d17ef9444a0",
+			"id": "ad7055f4-a949-4ca9-bc08-2f82b1d9a292",
 			"parentId": null,
 			"animations": null,
 			"autoAnimate": false,
@@ -73,7 +73,7 @@
 	],
 	"meshes": [
 		{
-			"materialId": null,
+			"materialId": "1C19C059-45B7-0F01-64F3-D9B723F3A593",
 			"isEnabled": true,
 			"isVisible": true,
 			"pickable": true,
@@ -173,7 +173,58 @@
 		}
 	],
 	"sounds": [],
-	"materials": [],
+	"materials": [
+		{
+			"customType": "BABYLON.StandardMaterial",
+			"ambient": [
+				0.5882,
+				0.5882,
+				0.5882
+			],
+			"diffuse": [
+				0.5882,
+				0.5882,
+				0.5882
+			],
+			"specular": [
+				0,
+				0,
+				0
+			],
+			"emissive": [
+				0,
+				0,
+				0
+			],
+			"specularPower": 2,
+			"diffuseTexture": null,
+			"diffuseFresnelParameters": null,
+			"ambientTexture": null,
+			"opacityTexture": null,
+			"opacityFresnelParameters": null,
+			"reflectionTexture": null,
+			"reflectionFresnelParameters": null,
+			"emissiveTexture": null,
+			"lightmapTexture": null,
+			"useLightmapAsShadowmap": false,
+			"emissiveFresnelParameters": null,
+			"specularTexture": null,
+			"bumpTexture": null,
+			"useSpecularOverAlpha": true,
+			"disableLighting": false,
+			"useEmissiveAsIllumination": false,
+			"linkEmissiveWithDiffuse": false,
+			"twoSidedLighting": false,
+			"maxSimultaneousLights": 4,
+			"useGlossinessFromSpecularMapAlpha": false,
+			"name": "FBXASC0482FBXASC032FBXASC045FBXASC032Default",
+			"id": "1C19C059-45B7-0F01-64F3-D9B723F3A593",
+			"backFaceCulling": true,
+			"wireframe": false,
+			"alpha": 1,
+			"alphaMode": 2
+		}
+	],
 	"multiMaterials": [],
 	"particleSystems": null,
 	"lensFlareSystems": null,
