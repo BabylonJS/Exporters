@@ -26,6 +26,11 @@ namespace Max2Babylon
                 {
                     // todo: make something a little more efficient..
                     IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+
+                    // node could have been deleted, silently ignore it
+                    if (maxNode == null)
+                        continue;
+
                     string id = maxNode.GetGuid().ToString();
                     BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
                     
