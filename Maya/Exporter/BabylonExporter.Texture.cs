@@ -294,6 +294,69 @@ namespace Maya2Babylon
         // --------- Utils ---------
         // -------------------------
 
+        private bool _getMinimalBitmapDimensions(out int width, out int height, params Bitmap[] bitmaps)
+        {
+            var haveSameDimensions = true;
+
+            var bitmapsNoNull = ((new List<Bitmap>(bitmaps)).FindAll(bitmap => bitmap != null)).ToArray();
+            if (bitmapsNoNull.Length > 0)
+            {
+                // Init with first element
+                width = bitmapsNoNull[0].Width;
+                height = bitmapsNoNull[0].Height;
+
+                // Update with others
+                for (int i = 1; i < bitmapsNoNull.Length; i++)
+                {
+                    var bitmap = bitmapsNoNull[i];
+                    if (width != bitmap.Width || height != bitmap.Height)
+                    {
+                        haveSameDimensions = false;
+                    }
+                    width = Math.Min(width, bitmap.Width);
+                    height = Math.Min(height, bitmap.Height);
+                }
+            }
+            else
+            {
+                width = 0;
+                height = 0;
+            }
+
+            return haveSameDimensions;
+        }
+
+        private Bitmap LoadTexture(string absolutePath)
+        {
+            if (File.Exists(absolutePath))
+            {
+                switch (Path.GetExtension(absolutePath))
+                {
+                    case ".dds":
+                        // External library GDImageLibrary.dll + TQ.Texture.dll
+                        //return GDImageLibrary._DDS.LoadImage(absolutePath);
+                    case ".tga":
+                        // External library TargaImage.dll
+                        //return Paloma.TargaImage.LoadTargaImage(absolutePath);
+                    case ".bmp":
+                    case ".gif":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".png":
+                    case ".tif":
+                    case ".tiff":
+                        return new Bitmap(absolutePath);
+                    default:
+                        RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), 2);
+                        return null;
+                }
+            }
+            else
+            {
+                RaiseWarning(string.Format("Texture {0} not found.", Path.GetFileName(absolutePath)), 2);
+                return null;
+            }
+        }
 
         private void CopyTexture(string sourcePath, string destPath)
         {
