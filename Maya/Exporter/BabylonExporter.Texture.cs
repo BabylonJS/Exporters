@@ -47,6 +47,14 @@ namespace Maya2Babylon
                 return _ExportTexture(textureDependencyNode, "bumpValue", babylonScene, allowCube, forceAlpha, forceSpherical);
             }
 
+            // If a reverse node is used as an intermediate node
+            if (sourceObject.hasFn(MFn.Type.kReverse))
+            {
+                // TODO - reverse?
+                logRankTexture++;
+                return _ExportTexture(textureDependencyNode, "input", babylonScene, allowCube, forceAlpha, forceSpherical);
+            }
+
             // prints
             RaiseVerbose("Attributes", logRankTexture + 1);
             for (uint i = 0; i < textureDependencyNode.attributeCount; i++)
