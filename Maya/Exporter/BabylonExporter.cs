@@ -90,8 +90,15 @@ namespace Maya2Babylon
             while (!mItSelectionList.isDone)
             {
                 MDagPath mDagPath = new MDagPath();
-                mItSelectionList.getDagPath(mDagPath);
-                selectedNodeFullPaths.Add(mDagPath.fullPathName);
+                try
+                {
+                    mItSelectionList.getDagPath(mDagPath);
+                    selectedNodeFullPaths.Add(mDagPath.fullPathName);
+                } catch
+                {
+                    // selected object is not a DAG object
+                    // fail silently
+                }
 
                 mItSelectionList.next();
             }
@@ -121,7 +128,7 @@ namespace Maya2Babylon
 
             // TODO - Add custom properties
             _exportQuaternionsInsteadOfEulers = true;
-
+            
             PrintDAG(true);
             PrintDAG(false);
 

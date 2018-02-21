@@ -98,6 +98,8 @@ namespace Maya2Babylon
                 {
                     RaiseWarning("Transparency color is not a shade of grey. Only it's R channel is used.", 2);
                 }
+                // Convert transparency to opacity
+                babylonMaterial.alpha = 1.0f - lambertShader.transparency[0];
 
                 // Specular power
                 if (materialObject.hasFn(MFn.Type.kReflect))
@@ -128,7 +130,7 @@ namespace Maya2Babylon
                     }
                     else
                     {
-                        RaiseMessage("Unknown reflect shader type: " + reflectShader.typeName + ". Specular power is default 64. Consider using a Blinn or Phong shader instead.", 2);
+                        RaiseWarning("Unknown reflect shader type: " + reflectShader.typeName + ". Specular power is default 64. Consider using a Blinn or Phong shader instead.", 2);
                     }
                 }
 
@@ -136,76 +138,41 @@ namespace Maya2Babylon
                 //babylonMaterial.backFaceCulling = !stdMat.TwoSided;
                 //babylonMaterial.wireframe = stdMat.Wire;
 
-                // TODO - Textures
-                //BabylonFresnelParameters fresnelParameters;
+                RaiseVerbose("Attributes", 2);
+                for (uint i = 0; i < lambertShader.attributeCount; i++)
+                {
+                    MObject attribute = lambertShader.attribute(i);
 
-                //babylonMaterial.ambientTexture = ExportTexture(stdMat, 0, out fresnelParameters, babylonScene);                // Ambient
-                //babylonMaterial.diffuseTexture = ExportTexture(stdMat, 1, out fresnelParameters, babylonScene);                // Diffuse
-                //if (fresnelParameters != null)
-                //{
-                //    babylonMaterial.diffuseFresnelParameters = fresnelParameters;
-                //}
+                    if (attribute.hasFn(MFn.Type.kAttribute))
+                    {
+                        MFnAttribute mFnAttribute = new MFnAttribute(attribute);
+                        RaiseVerbose("name=" + mFnAttribute.name, 3);
+                    }
+                }
 
-                //babylonMaterial.specularTexture = ExportTexture(stdMat, 2, out fresnelParameters, babylonScene);               // Specular
-                //babylonMaterial.emissiveTexture = ExportTexture(stdMat, 5, out fresnelParameters, babylonScene);               // Emissive
-                //if (fresnelParameters != null)
-                //{
-                //    babylonMaterial.emissiveFresnelParameters = fresnelParameters;
-                //    if (babylonMaterial.emissive[0] == 0 &&
-                //        babylonMaterial.emissive[1] == 0 &&
-                //        babylonMaterial.emissive[2] == 0 &&
-                //        babylonMaterial.emissiveTexture == null)
-                //    {
-                //        babylonMaterial.emissive = new float[] { 1, 1, 1 };
-                //    }
-                //}
+                // Textures
+                babylonMaterial.diffuseTexture = ExportTexture(materialDependencyNode, "color", babylonScene);
+                babylonMaterial.ambientTexture = ExportTexture(materialDependencyNode, "ambientColor", babylonScene);
+                babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "incandescence", babylonScene);
+                babylonMaterial.bumpTexture = ExportTexture(materialDependencyNode, "normalCamera", babylonScene);
+                // TODO - Convert transparency to opacity?
+                babylonMaterial.opacityTexture = ExportTexture(materialDependencyNode, "transparency", babylonScene, false, true);
+                if (materialObject.hasFn(MFn.Type.kReflect))
+                {
+                    babylonMaterial.specularTexture = ExportTexture(materialDependencyNode, "specularColor", babylonScene);
+                    babylonMaterial.reflectionTexture = ExportTexture(materialDependencyNode, "reflectedColor", babylonScene, true, false, true);
+                }
 
-                //babylonMaterial.opacityTexture = ExportTexture(stdMat, 6, out fresnelParameters, babylonScene, false, true);   // Opacity
-                //if (fresnelParameters != null)
-                //{
-                //    babylonMaterial.opacityFresnelParameters = fresnelParameters;
-                //    if (babylonMaterial.alpha == 1 &&
-                //         babylonMaterial.opacityTexture == null)
-                //    {
-                //        babylonMaterial.alpha = 0;
-                //    }
-                //}
+                // Constraints
+                if (babylonMaterial.diffuseTexture != null)
+                {
+                    babylonMaterial.diffuse = new[] { 1.0f, 1.0f, 1.0f };
+                }
 
-                //babylonMaterial.bumpTexture = ExportTexture(stdMat, 8, out fresnelParameters, babylonScene);                   // Bump
-                //babylonMaterial.reflectionTexture = ExportTexture(stdMat, 9, out fresnelParameters, babylonScene, true);       // Reflection
-                //if (fresnelParameters != null)
-                //{
-                //    if (babylonMaterial.reflectionTexture == null)
-                //    {
-                //        RaiseWarning("Fallout cannot be used with reflection channel without a texture", 2);
-                //    }
-                //    else
-                //    {
-                //        babylonMaterial.reflectionFresnelParameters = fresnelParameters;
-                //    }
-                //}
-
-                //// Constraints
-                //if (babylonMaterial.diffuseTexture != null)
-                //{
-                //    babylonMaterial.diffuse = new[] { 1.0f, 1.0f, 1.0f };
-                //}
-
-                //if (babylonMaterial.emissiveTexture != null)
-                //{
-                //    babylonMaterial.emissive = new float[] { 0, 0, 0 };
-                //}
-
-                //if (babylonMaterial.opacityTexture != null && babylonMaterial.diffuseTexture != null &&
-                //    babylonMaterial.diffuseTexture.name == babylonMaterial.opacityTexture.name &&
-                //    babylonMaterial.diffuseTexture.hasAlpha && !babylonMaterial.opacityTexture.getAlphaFromRGB)
-                //{
-                //    // This is a alpha testing purpose
-                //    babylonMaterial.opacityTexture = null;
-                //    babylonMaterial.diffuseTexture.hasAlpha = true;
-                //    RaiseWarning("Opacity texture was removed because alpha from diffuse texture can be use instead", 2);
-                //    RaiseWarning("If you do not want this behavior, just set Alpha Source = None on your diffuse texture", 2);
-                //}
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    babylonMaterial.emissive = new float[] { 0, 0, 0 };
+                }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
