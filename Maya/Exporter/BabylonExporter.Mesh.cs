@@ -300,6 +300,7 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
+            babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
 
             babylonMesh.subMeshes = subMeshes.ToArray();
 
@@ -330,7 +331,7 @@ namespace Maya2Babylon
             mFnMesh.getTriangles(triangleCounts, trianglesVertices);
             
             MObjectArray shaders = new MObjectArray();
-            MIntArray faceMatIndices = new MIntArray(); // face index => shader index
+            MIntArray faceMatIndices = new MIntArray(); // given a face index => get a shader index
             mFnMesh.getConnectedShaders(0, shaders, faceMatIndices);
 
             // For each material of this mesh
@@ -342,18 +343,22 @@ namespace Maya2Babylon
                 var subMesh = new BabylonSubMesh { indexStart = indices.Count, materialIndex = indexShader };
 
                 // For each polygon of this mesh
-                for (int indexFace = 0; indexFace < faceMatIndices.Count; indexFace++)
+                for (int polygonId = 0; polygonId < faceMatIndices.Count; polygonId++)
                 {
-                    if (faceMatIndices[indexFace] != indexShader)
+                    if (faceMatIndices[polygonId] != indexShader)
                     {
                         continue;
                     }
 
+                    // The object-relative (mesh-relative/global) vertex indices for this face
+                    MIntArray polygonVertices = new MIntArray();
+                    mFnMesh.getPolygonVertices(polygonId, polygonVertices);
+
                     // For each triangle of this polygon
-                    for (int triangleIndex = 0; triangleIndex < triangleCounts[indexFace]; triangleIndex++)
+                    for (int triangleId = 0; triangleId < triangleCounts[polygonId]; triangleId++)
                     {
-                        int[] triangleVertices = new int[3];
-                        mFnMesh.getPolygonTriangleVertices(indexFace, triangleIndex, triangleVertices);
+                        int[] polygonTriangleVertices = new int[3];
+                        mFnMesh.getPolygonTriangleVertices(polygonId, triangleId, polygonTriangleVertices);
 
                         /*
                          * Switch coordinate system at global level
@@ -367,9 +372,19 @@ namespace Maya2Babylon
                         //triangleVertices[2] = tmp;
 
                         // For each vertex of this triangle (3 vertices per triangle)
-                        foreach (int vertexId in triangleVertices)
+                        foreach (int vertexIndexGlobal in polygonTriangleVertices)
                         {
-                            GlobalVertex vertex = ExtractVertex(mFnMesh, indexFace, vertexId);
+                            // Get the face-relative (local) vertex id
+                            int vertexIndexLocal = 0;
+                            for (vertexIndexLocal = 0; vertexIndexLocal < polygonVertices.Count; vertexIndexLocal++)
+                            {
+                                if (polygonVertices[vertexIndexLocal] == vertexIndexGlobal)
+                                {
+                                    break;
+                                }
+                            }
+
+                            GlobalVertex vertex = ExtractVertex(mFnMesh, polygonId, vertexIndexGlobal, vertexIndexLocal);
                             vertex.CurrentIndex = vertices.Count;
 
                             indices.Add(vertex.CurrentIndex);
@@ -393,13 +408,21 @@ namespace Maya2Babylon
             }
         }
 
-        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int indexFace, int vertexId)
+        /// <summary>
+        /// Extract geometry (position, normal, UVs...) for a specific vertex
+        /// </summary>
+        /// <param name="mFnMesh"></param>
+        /// <param name="polygonId">The polygon (face) to examine</param>
+        /// <param name="vertexIndexGlobal">The object-relative (mesh-relative/global) vertex index</param>
+        /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
+        /// <returns></returns>
+        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal)
         {
             MPoint point = new MPoint();
-            mFnMesh.getPoint(vertexId, point);
+            mFnMesh.getPoint(vertexIndexGlobal, point);
 
             MVector normal = new MVector();
-            mFnMesh.getFaceVertexNormal(indexFace, vertexId, normal);
+            mFnMesh.getFaceVertexNormal(polygonId, vertexIndexGlobal, normal);
 
             // Switch coordinate system at object level
             point.z *= -1;
@@ -407,10 +430,15 @@ namespace Maya2Babylon
 
             var vertex = new GlobalVertex
             {
-                BaseIndex = vertexId,
+                BaseIndex = vertexIndexGlobal,
                 Position = point.toArray(),
                 Normal = normal.toArray()
             };
+
+            // UV
+            float u = 0, v = 0;
+            mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v);
+            vertex.UV = new float[] { u, v };
 
             return vertex;
         }
