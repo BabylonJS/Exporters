@@ -334,10 +334,10 @@ namespace Maya2Babylon
                 {
                     case ".dds":
                         // External library GDImageLibrary.dll + TQ.Texture.dll
-                        //return GDImageLibrary._DDS.LoadImage(absolutePath);
+                        return GDImageLibrary._DDS.LoadImage(absolutePath);
                     case ".tga":
                         // External library TargaImage.dll
-                        //return Paloma.TargaImage.LoadTargaImage(absolutePath);
+                        return Paloma.TargaImage.LoadTargaImage(absolutePath);
                     case ".bmp":
                     case ".gif":
                     case ".jpg":
@@ -458,17 +458,16 @@ namespace Maya2Babylon
             Bitmap bitmap;
             switch (imageFormat)
             {
-                // TODO
-                //case "dds":
-                //    // External libraries GDImageLibrary.dll + TQ.Texture.dll
-                //    bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
-                //    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
-                //    break;
-                //case "tga":
-                //    // External library TargaImage.dll
-                //    bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
-                //    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
-                //    break;
+                case "dds":
+                    // External libraries GDImageLibrary.dll + TQ.Texture.dll
+                    bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
+                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    break;
+                case "tga":
+                    // External library TargaImage.dll
+                    bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
+                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    break;
                 case "bmp":
                     bitmap = new Bitmap(sourcePath);
                     bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Jpeg); // no alpha
