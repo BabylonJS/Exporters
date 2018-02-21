@@ -97,7 +97,7 @@ namespace Maya2Babylon
             RaiseMessage("GLTFExporter | Exporting materials");
             foreach (var babylonMaterial in babylonMaterialsToExport)
             {
-                //ExportMaterial(babylonMaterial, gltf); // TODO - Material
+                ExportMaterial(babylonMaterial, gltf);
                 CheckCancelled();
             };
             RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
