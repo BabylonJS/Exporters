@@ -264,23 +264,10 @@ namespace Maya2Babylon
 
             var vertices = new List<GlobalVertex>();
             var indices = new List<int>();
-            // TODO - UV, color, alpha
-            //var mappingChannels = unskinnedMesh.ActiveMapChannelNum;
-            //bool hasUV = false;
-            //bool hasUV2 = false;
-            //for (int i = 0; i < mappingChannels.Count; ++i)
-            //{
-            //    var indexer = i;
-            //    var channelNum = mappingChannels[indexer];
-            //    if (channelNum == 1)
-            //    {
-            //        hasUV = true;
-            //    }
-            //    else if (channelNum == 2)
-            //    {
-            //        hasUV2 = true;
-            //    }
-            //}
+
+            bool hasUV = mFnMesh.numUVSets > 0 && mFnMesh.numUVsProperty > 0;
+
+            // TODO - color, alpha
             //var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
             //var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
@@ -289,7 +276,7 @@ namespace Maya2Babylon
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
-            ExtractGeometry(mFnMesh, vertices, indices, subMeshes, optimizeVertices);
+            ExtractGeometry(mFnMesh, vertices, indices, subMeshes, hasUV, optimizeVertices);
 
             if (vertices.Count >= 65536)
             {
@@ -306,7 +293,10 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
-            babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
+            if (hasUV)
+            {
+                babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
+            }
 
             babylonMesh.subMeshes = subMeshes.ToArray();
 
@@ -328,8 +318,9 @@ namespace Maya2Babylon
         /// <param name="vertices"></param>
         /// <param name="indices"></param>
         /// <param name="subMeshes"></param>
+        /// <param name="hasUV"></param>
         /// <param name="optimizeVertices"></param>
-        private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, bool optimizeVertices)
+        private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, bool hasUV, bool optimizeVertices)
         {
             // TODO - optimizeVertices
             MIntArray triangleCounts = new MIntArray();
@@ -397,7 +388,7 @@ namespace Maya2Babylon
                                 }
                             }
 
-                            GlobalVertex vertex = ExtractVertex(mFnMesh, polygonId, vertexIndexGlobal, vertexIndexLocal);
+                            GlobalVertex vertex = ExtractVertex(mFnMesh, polygonId, vertexIndexGlobal, vertexIndexLocal, hasUV);
                             vertex.CurrentIndex = vertices.Count;
 
                             indices.Add(vertex.CurrentIndex);
@@ -428,8 +419,9 @@ namespace Maya2Babylon
         /// <param name="polygonId">The polygon (face) to examine</param>
         /// <param name="vertexIndexGlobal">The object-relative (mesh-relative/global) vertex index</param>
         /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
+        /// <param name="hasUV"></param>
         /// <returns></returns>
-        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal)
+        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal, bool hasUV)
         {
             MPoint point = new MPoint();
             mFnMesh.getPoint(vertexIndexGlobal, point);
@@ -449,9 +441,12 @@ namespace Maya2Babylon
             };
 
             // UV
-            float u = 0, v = 0;
-            mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v);
-            vertex.UV = new float[] { u, v };
+            if (hasUV)
+            {
+                float u = 0, v = 0;
+                mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v);
+                vertex.UV = new float[] { u, v };
+            }
 
             return vertex;
         }
