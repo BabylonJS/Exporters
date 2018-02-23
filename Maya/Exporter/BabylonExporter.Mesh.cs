@@ -86,6 +86,8 @@ namespace Maya2Babylon
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(true)=" + mFnDagNode.isInstanced(true), 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(false)=" + mFnDagNode.isInstanced(false), 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced()=" + mFnDagNode.isInstanced(), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.instanceCount(true)=" + mFnDagNode.instanceCount(true), 3);
+                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.instanceCount(false)=" + mFnDagNode.instanceCount(false), 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isIntermediateObject=" + mFnDagNode.isIntermediateObject, 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isShared=" + mFnDagNode.isShared, 3);
                 RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.objectColor=" + mFnDagNode.objectColor, 3);
@@ -338,18 +340,25 @@ namespace Maya2Babylon
             MIntArray faceMatIndices = new MIntArray(); // given a face index => get a shader index
             mFnMesh.getConnectedShaders(0, shaders, faceMatIndices);
 
+            // Export geometry even if an error occured with shaders
+            // This is a fix for Maya test files
+            // TODO - Find the reason why shaders.count = 0
+            int nbShaders = Math.Max(1, shaders.Count);
+            bool checkShader = nbShaders == shaders.Count;
+            RaiseVerbose("shaders.Count=" + shaders.Count, 2);
+
             // For each material of this mesh
-            for (int indexShader = 0; indexShader < shaders.Count; indexShader++)
+            for (int indexShader = 0; indexShader < nbShaders; indexShader++)
             {
                 var nbIndicesSubMesh = 0;
                 var minVertexIndexSubMesh = int.MaxValue;
                 var maxVertexIndexSubMesh = int.MinValue;
                 var subMesh = new BabylonSubMesh { indexStart = indices.Count, materialIndex = indexShader };
-
+                
                 // For each polygon of this mesh
                 for (int polygonId = 0; polygonId < faceMatIndices.Count; polygonId++)
                 {
-                    if (faceMatIndices[polygonId] != indexShader)
+                    if (checkShader && faceMatIndices[polygonId] != indexShader)
                     {
                         continue;
                     }
