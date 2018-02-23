@@ -13,6 +13,13 @@ namespace BabylonExport.Entities
             MIRROR_ADDRESSMODE = 2
         }
 
+        public enum CoordinatesMode
+        {
+            EXPLICIT_MODE = 0,
+            SPHERICAL_MODE = 1,
+            PLANAR_MODE = 2
+        }
+
         public enum SamplingMode
         {
             // Constants
@@ -43,7 +50,7 @@ namespace BabylonExport.Entities
         public bool getAlphaFromRGB { get; set; }
 
         [DataMember]
-        public int coordinatesMode { get; set; }
+        public CoordinatesMode coordinatesMode { get; set; }
         
         [DataMember]
         public bool isCube { get; set; }

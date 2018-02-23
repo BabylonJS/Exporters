@@ -168,7 +168,8 @@
             // chkCopyTextures
             // 
             this.chkCopyTextures.AutoSize = true;
-            this.chkCopyTextures.Enabled = false;
+            this.chkCopyTextures.Checked = true;
+            this.chkCopyTextures.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkCopyTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkCopyTextures.Location = new System.Drawing.Point(18, 117);
             this.chkCopyTextures.Name = "chkCopyTextures";
