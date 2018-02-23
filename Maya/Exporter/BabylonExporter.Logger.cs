@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autodesk.Maya.OpenMaya;
+using System;
 using System.Drawing;
 
 namespace Maya2Babylon
@@ -74,6 +75,46 @@ namespace Maya2Babylon
             if (OnVerbose != null && logLevel >= LogLevel.VERBOSE)
             {
                 OnVerbose(message, color, rank, emphasis);
+            }
+        }
+
+        void Print(MFnDependencyNode dependencyNode, int logRank, string title)
+        {
+            // prints
+            RaiseMessage(title, logRank);
+            RaiseMessage("Attributes", logRank + 1);
+            for (uint i = 0; i < dependencyNode.attributeCount; i++)
+            {
+                MObject attribute = dependencyNode.attribute(i);
+
+                if (attribute.hasFn(MFn.Type.kAttribute))
+                {
+                    MFnAttribute mFnAttribute = new MFnAttribute(attribute);
+                    RaiseMessage("name=" + mFnAttribute.name, logRank + 2);
+                }
+            }
+            RaiseMessage("Connections", logRank + 1);
+            MPlugArray connections = new MPlugArray();
+            try {
+                dependencyNode.getConnections(connections);
+                RaiseMessage("connections.Count=" + connections.Count, logRank + 2);
+                foreach (MPlug connection in connections)
+                {
+                    MObject source = connection.source.node;
+                    if (source != null && source.hasFn(MFn.Type.kDependencyNode))
+                    {
+                        MFnDependencyNode node = new MFnDependencyNode(source);
+                        RaiseMessage("name=" + connection.name + "    source=" + node.name, logRank + 2);
+                    }
+                    else
+                    {
+                        RaiseMessage("name=" + connection.name, logRank + 2);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+
             }
         }
     }

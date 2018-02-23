@@ -122,6 +122,10 @@ namespace Maya2Babylon
 
             RaiseVerbose("BabylonExporter.Mesh | mFnTransform data", 2);
             printMFnTransform(mFnTransform);
+            
+            Print(mFnTransform, 2, "Print ExportMesh mFnTransform");
+            
+            Print(mFnMesh, 2, "Print ExportMesh mFnMesh");
 
             //// Geometry
             //MIntArray triangleCounts = new MIntArray();
