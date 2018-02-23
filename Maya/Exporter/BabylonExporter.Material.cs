@@ -1,5 +1,6 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -125,7 +126,9 @@ namespace Maya2Babylon
                     else if (materialObject.hasFn(MFn.Type.kPhong))
                     {
                         MFnPhongShader phongShader = new MFnPhongShader(materialObject);
-                        babylonMaterial.specularPower = phongShader.cosPower;
+
+                        float glossiness = (float) Math.Log(phongShader.cosPower, 2) * 10;
+                        babylonMaterial.specularPower = glossiness / 100 * 256;
                     }
                     else if (materialObject.hasFn(MFn.Type.kPhongExplorer))
                     {
