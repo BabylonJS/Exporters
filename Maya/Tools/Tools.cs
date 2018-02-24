@@ -80,5 +80,14 @@ namespace Maya2Babylon
                 //node.setUserPropBool(propertyName, checkBox.CheckState == CheckState.Checked);
             }
         }
+
+        // -------------------------
+        // ----------- Math ----------
+        // -------------------------
+
+        public static float Clamp(float value, float min, float max)
+        {
+            return (value < min) ? min : (value > max) ? max : value;
+        }
     }
 }
