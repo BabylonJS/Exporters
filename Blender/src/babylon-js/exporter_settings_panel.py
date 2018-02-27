@@ -53,6 +53,11 @@ class ExporterSettingsPanel(bpy.types.Panel):
         description="Do not export bones with either '.ik' or 'ik.'(not case sensitive) in the name",
         default = False,
         )
+    bpy.types.Scene.writeManifestFile = bpy.props.BoolProperty(
+        name='Write .manifest file',
+        description="Automatically create or update [filename].babylon.manifest for this file",
+        default = False,
+        )
     bpy.types.Scene.currentActionOnly = bpy.props.BoolProperty(
         name='Only Currently Assigned Actions',
         description="When true, only the currently assigned action is exported",
@@ -73,6 +78,7 @@ class ExporterSettingsPanel(bpy.types.Panel):
         layout.prop(scene, 'export_flatshadeScene')
         layout.prop(scene, 'force64Kmeshes')
         layout.prop(scene, 'ignoreIKBones')
+        layout.prop(scene, 'writeManifestFile')
 
         box = layout.box()
         box.label(text='Texture Location:')
