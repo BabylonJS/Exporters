@@ -71,7 +71,6 @@ namespace Maya2Babylon
             RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
-            //alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>(); // TODO - Skin
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
@@ -79,25 +78,12 @@ namespace Maya2Babylon
                 ReportProgressChanged((int)progression);
                 CheckCancelled();
             });
-            
-            // Switch from left to right handed coordinate system
-            var tmpNodesList = new List<int>(scene.NodesList);
-            var rootNode = new BabylonMesh
-            {
-                name = "root",
-                rotation = new float[] { 0, (float)Math.PI, 0 },
-                scaling = new float[] { 1, 1, -1 },
-                idGroupInstance = -1
-            };
-            scene.NodesList.Clear(); // Only root node is listed in node list
-            GLTFNode gltfRootNode = ExportAbstractMesh(rootNode, gltf, null, null);
-            gltfRootNode.ChildrenList.AddRange(tmpNodesList);
 
             // Materials
             RaiseMessage("GLTFExporter | Exporting materials");
             foreach (var babylonMaterial in babylonMaterialsToExport)
             {
-                //ExportMaterial(babylonMaterial, gltf); // TODO - Material
+                ExportMaterial(babylonMaterial, gltf);
                 CheckCancelled();
             };
             RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
@@ -131,7 +117,8 @@ namespace Maya2Babylon
 
             // Output
             RaiseMessage("GLTFExporter | Saving to output file");
-            if (!generateBinary) {
+            if (!generateBinary)
+            {
 
                 // Write .gltf file
                 string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
@@ -176,7 +163,7 @@ namespace Maya2Babylon
                 chunkDataJson = padChunk(chunkDataJson, 4, 0x20);
                 UInt32 chunkLengthJson = (UInt32)chunkDataJson.Length;
                 length += chunkLengthJson + 8; // 8 = JSON chunk header length
-                
+
                 // bin chunk
                 UInt32 chunkTypeBin = 0x004E4942; // ASCII code for BIN
                 UInt32 chunkLengthBin = 0;
@@ -188,7 +175,7 @@ namespace Maya2Babylon
                     }
                     length += chunkLengthBin + 8; // 8 = bin chunk header length
                 }
-                
+
 
                 // Write binary file
                 string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
@@ -198,7 +185,7 @@ namespace Maya2Babylon
                     writer.Write(magic);
                     writer.Write(version);
                     writer.Write(length);
-                    
+
                     // JSON chunk
                     writer.Write(chunkLengthJson);
                     writer.Write(chunkTypeJson);
