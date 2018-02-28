@@ -41,7 +41,7 @@ namespace Unity3D2Babylon
         bool showPreview = false;
         bool showCompiler = false;
         int buildResult = 0;
-        string defaultProjectFolder = String.Empty;
+        public string defaultProjectFolder = String.Empty;
         string guiProjectFolder = String.Empty;
         public bool previewThread = false;
 

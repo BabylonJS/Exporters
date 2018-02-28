@@ -14,6 +14,17 @@ namespace Unity3D2Babylon
 {
     partial class SceneBuilder
     {
+        public enum IMAGETYPE
+        {
+            RGB,
+            RGBA,
+            R,
+            G,
+            B,
+            A,
+            G_INVERT
+        }
+
         public static string DefaultPredefinedPropertyNames = "_Cutoff, _Color, _MainTex, _Shininess, _SpecColor, _SpecGlossMap, _GlossMapScale, _AmbientColor, _Emission, _EmissionMap, _Illum, _LightMap, _Cube, _BumpMap, _BumpScale, _GlossyReflections, _ReflectionScale, _LightmapScale, _EnvironmentScale, _Wireframe, _AlphaMode, _DisableLighting, _UseEmissiveAsIllumination, _BackFaceCulling, _TwoSidedLighting, _SmoothnessTextureChannel, _SpecularHighlights, _RefractionTexture, _IndexOfRefraction, _LinkRefractionWithTransparency, _UVSec, _TextureLevel, _MaxSimultaneousLights";
         public static string SystemPredefinedPropertyNames = "_Mode, _Cutoff, _Color, _MainTex, _Glossiness, _SpecColor, _SpecGlossMap, _GlossMapScale, _Metallic, _MetallicGlossMap, _EmissionColor, _EmissionMap, _OcclusionMap, _OcclusionStrength, _BumpMap, _BumpScale, _GlossyReflections, _ReflectionScale, _LightmapScale, _EnvironmentScale, _Wireframe, _AlphaMode, _DisableLighting, _UseEmissiveAsIllumination, _BackFaceCulling, _TwoSidedLighting, _DirectIntensity, _EmissiveIntensity, _SpecularIntensity, _RefractionTexture, _IndexOfRefraction, _LinkRefractionWithTransparency, _CameraContrast, _CameraExposure, _UseSpecularOverAlpha, _UseRadianceOverAlpha, _UsePhysicalLightFalloff, _SmoothnessTextureChannel, _SpecularHighlights, _Parallax, _ParallaxMap, _DetailMask, _DetailAlbedoMap, _DetailNormalMapScale, _DetailNormalMap, _UVSec, _TextureLevel, _MaxSimultaneousLights";
         	        
@@ -199,7 +210,7 @@ namespace Unity3D2Babylon
 
         private BabylonMaterial DumpMaterial(Material material, int lightmapIndex = -1, Vector4 lightmapScaleOffset = default(Vector4), int lightmapCoordIndex = -1)
         {
-            if (material.shader.name == "Standard" || material.shader.name == "BabylonJS/System/Metallic Setup")
+            if (material.shader.name == "Standard Plus/Standard Plus" || material.shader.name == "Standard" || material.shader.name == "BabylonJS/System/Metallic Setup")
             {
                 return DumpPBRMaterial(material, lightmapIndex, lightmapScaleOffset, lightmapCoordIndex, true, false);
             }
@@ -435,14 +446,15 @@ namespace Unity3D2Babylon
                 microSurface = 0.5f,
                 cameraContrast = 1.0f,
                 cameraExposure = 1.0f,
-                reflection = new[] { 0.5f, 0.5f, 0.5f },
-                reflectivity = new[] { 0.2f, 0.2f, 0.2f },
+                reflection = new[] { 1.0f, 1.0f, 1.0f },
+                reflectivity = new[] { 1.0f, 1.0f, 1.0f },
                 useSpecularOverAlpha = false,
                 useRadianceOverAlpha = false,
                 usePhysicalLightFalloff = false,
                 useAlphaFromAlbedoTexture = false,
                 maxSimultaneousLights = 4,
-                useEmissiveAsIllumination = false
+                useEmissiveAsIllumination = false,
+                sideOrientation = 1
             };
 
             float albedoTextureLevel = 1.0f;
@@ -582,7 +594,6 @@ namespace Unity3D2Babylon
             {
                 if (babylonPbrMaterial.albedoTexture != null) {
                     babylonPbrMaterial.albedoTexture.hasAlpha = true;
-                    babylonPbrMaterial.backFaceCulling = false;
                 }
             }
             
@@ -765,6 +776,140 @@ namespace Unity3D2Babylon
             return DumpStandardMaterial(material, lightmapIndex, lightmapScaleOffset, lightmapCoordIndex, babylonShaderMaterial);
         }
 
+        private void addTexturePixels(ref Texture2D texture, ref Color[] outputColors, IMAGETYPE inputChannel, IMAGETYPE outputChannel)
+        {
+            int textureHeight = texture.height;
+            int textureWidth = texture.width;
+
+            Color[] inputColors = new Color[textureWidth * textureHeight];
+            if (!texture || !getPixelsFromTexture(ref texture, out inputColors))
+            {
+                return;
+            }
+
+            if (textureHeight* textureWidth != outputColors.Length)
+            {
+                Debug.Log("Issue with texture dimensions");
+                return;
+            }
+
+            for (int i = 0; i<textureHeight; ++i)
+            {
+                for (int j = 0; j<textureWidth; ++j)
+                {
+                    int index = i * textureWidth + j;
+                    Color outputColor = outputColors[index];
+                    Color inputColor = inputColors[index];
+                    
+                    switch (inputChannel)
+                    {
+                        case IMAGETYPE.R:
+                            inputColor = new Color(inputColor.r, inputColor.r, inputColor.r, inputColor.r);
+                            break;
+                        case IMAGETYPE.G:
+                            inputColor = new Color(inputColor.g, inputColor.g, inputColor.g, inputColor.g);
+                            break;
+                        case IMAGETYPE.B:
+                            inputColor = new Color(inputColor.r, inputColor.r, inputColor.r, inputColor.r);
+                            break;
+                        case IMAGETYPE.A:
+                            inputColor = new Color(inputColor.a, inputColor.a, inputColor.a, inputColor.a);
+                            break;
+                        case IMAGETYPE.G_INVERT:
+                            inputColor = new Color(1.0f - inputColor.g, 1.0f - inputColor.g, 1.0f - inputColor.g, 1.0f - inputColor.g);
+                            break;
+                        case IMAGETYPE.RGB:
+                        case IMAGETYPE.RGBA:
+                            // inputColor = inputColor;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    switch (outputChannel)
+                    {
+                        case IMAGETYPE.R:
+                            outputColor.r = inputColor.r;
+                            break;
+                        case IMAGETYPE.G:
+                            outputColor.g = inputColor.r;
+                            break;
+                        case IMAGETYPE.B:
+                            outputColor.b = inputColor.r;
+                            break;
+                        case IMAGETYPE.A:
+                            outputColor.a = inputColor.r;
+                            break;
+                        case IMAGETYPE.G_INVERT:
+                            outputColor.g = 1.0f - inputColor.r;
+                            break;
+                        case IMAGETYPE.RGB:
+                            outputColor.r = inputColor.r;
+                            outputColor.g = inputColor.g;
+                            outputColor.b = inputColor.b;
+                            break;
+                        case IMAGETYPE.RGBA:
+                            outputColor = inputColor;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    outputColors[index] = outputColor;
+                }
+            }
+        }
+
+        private bool getPixelsFromTexture(ref Texture2D texture, out Color[] pixels)
+        {
+            TextureImporter im = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture)) as TextureImporter;
+            if (!im)
+            {
+                pixels = new Color[1];
+                return false;
+            }
+            bool readable = im.isReadable;
+            TextureImporterCompression format = im.textureCompression;
+            TextureImporterType type = im.textureType;
+
+            im.isReadable = true;
+            im.textureType = TextureImporterType.Default;
+            im.textureCompression = TextureImporterCompression.Uncompressed;
+            im.SaveAndReimport();
+
+            pixels = texture.GetPixels();
+
+            im.isReadable = readable;
+            im.textureType = type;
+            im.textureCompression = format;
+            im.SaveAndReimport();
+
+            return true;
+        }
+
+        private void exportMetallicGlossTexture(Texture2D texture, string outputPath, BabylonImageFormat babylonImageFormat)
+        {
+            var textureWidth = texture.width;
+            var textureHeight = texture.height;
+            Color[] outputColors = new Color[textureWidth * textureHeight];
+            for (int i = 0; i<outputColors.Length; ++i)
+            {
+                outputColors[i] = new Color(1.0f, 1.0f, 1.0f);
+            }
+            addTexturePixels(ref texture, ref outputColors, IMAGETYPE.R, IMAGETYPE.B);
+            addTexturePixels(ref texture, ref outputColors, IMAGETYPE.A, IMAGETYPE.G_INVERT);
+            Texture2D newtex = new Texture2D(textureWidth, textureHeight);
+            newtex.SetPixels(outputColors);
+            newtex.Apply();
+            if (babylonImageFormat == BabylonImageFormat.PNG)
+            {
+                File.WriteAllBytes(Path.Combine(outputPath, texture.name + ".png"), newtex.EncodeToPNG());
+            } else
+            {
+                File.WriteAllBytes(Path.Combine(outputPath, texture.name + ".jpg"), newtex.EncodeToJPG());
+            }
+        }
+
         private void DumpGlossinessReflectivity(Material material, bool metallic, bool roughness, BabylonSystemMaterial babylonPbrMaterial)
         {
             float glossiness = 0.5f;
@@ -780,59 +925,47 @@ namespace Unity3D2Babylon
                 if (material.HasProperty("_Metallic"))
                 {
                     metalness = material.GetFloat("_Metallic");
-                    babylonPbrMaterial.metallic = metalness;
-                    babylonPbrMaterial.roughness = roughvalue;
+                    babylonPbrMaterial.metallic = 1.0f;
+                    babylonPbrMaterial.roughness = 1.0f;
                     babylonPbrMaterial.microSurface = glossiness;
-                    babylonPbrMaterial.reflectivity = new float[] { metalness * babylonPbrMaterial.albedo[0], metalness * babylonPbrMaterial.albedo[1], metalness * babylonPbrMaterial.albedo[2] };
-                    babylonPbrMaterial.reflectivityTexture = DumpTextureFromMaterial(material, "_MetallicGlossMap");
 
-                    /* Note: Append Metalness To Albedo Texture
-                    if (babylonPbrMaterial.albedoTexture != null)
+                    babylonPbrMaterial.metallicTexture = null;
+                    var metallicGlossMapName = "_MetallicGlossMap";
+                    if (material.HasProperty(metallicGlossMapName))
                     {
-                        var albedoTexture = material.GetTexture("_MainTex") as Texture2D;
-                        var metallicTexture = material.GetTexture("_MetallicGlossMap") as Texture2D;
-                        if (albedoTexture != null && metallicTexture != null)
+                        var metallicGlossMapTexture = material.GetTexture(metallicGlossMapName) as Texture2D;
+                        if (metallicGlossMapTexture)
                         {
-                            var albedoPixels = GetPixels(albedoTexture);
-                            var reflectivityTexture = new Texture2D(albedoTexture.width, albedoTexture.height, TextureFormat.RGBA32, false);
-                            reflectivityTexture.alphaIsTransparency = true;
-                            babylonPbrMaterial.useMicroSurfaceFromReflectivityMapAlpha = true;
-                            var metallicPixels = GetPixels(metallicTexture);
-                            for (var i = 0; i < albedoTexture.width; i++)
-                            {
-                                for (var j = 0; j < albedoTexture.height; j++)
-                                {
-                                    var metallicPixel = metallicPixels[j * albedoTexture.width + i];
-                                    albedoPixels[j * albedoTexture.width + i].r *= metallicPixel.r;
-                                    albedoPixels[j * albedoTexture.width + i].g *= metallicPixel.r;
-                                    albedoPixels[j * albedoTexture.width + i].b *= metallicPixel.r;
-                                    albedoPixels[j * albedoTexture.width + i].a = metallicPixel.a;
-                                }
-                            }
-                            reflectivityTexture.SetPixels(albedoPixels);
-                            reflectivityTexture.Apply();
+                            var texturePath = AssetDatabase.GetAssetPath(metallicGlossMapTexture);
+                            var textureName = Path.GetFileName(texturePath);
+                            var textureExt = Path.GetExtension(texturePath);
 
-                            var textureName = albedoTexture.name + "_MetallicGlossMap.png";
-                            var babylonTexture = new BabylonTexture { name = textureName };
-                            var textureScale = material.GetTextureScale("_MainTex");
-                            babylonTexture.uScale = Tools.GetTextureScale(textureScale.x);
-                            babylonTexture.vScale = Tools.GetTextureScale(textureScale.y);
-                            var textureOffset = material.GetTextureOffset("_MainTex");
-                            babylonTexture.uOffset = textureOffset.x;
-                            babylonTexture.vOffset = textureOffset.y;
-                            //Tools.SetTextureWrapMode(babylonTexture, mainTexture2D);
-
-                            var reflectivityTexturePath = Path.Combine(Path.GetTempPath(), textureName);
-                            reflectivityTexture.WriteImage(reflectivityTexturePath, BabylonImageFormat.PNG);
-                            babylonScene.AddTexture(reflectivityTexturePath);
-                            if (File.Exists(reflectivityTexturePath))
+                            BabylonImageFormat babylonImageFormat = BabylonImageFormat.JPEG;
+                            var extension = ".jpg";
+                            if (exportationOptions.ImageEncodingOptions == (int)BabylonImageFormat.PNG)
                             {
-                                File.Delete(reflectivityTexturePath);
+                                extension = ".png";
+                                babylonImageFormat = BabylonImageFormat.PNG;
                             }
-                            babylonPbrMaterial.reflectivityTexture = babylonTexture;
+                            var newTextureName = textureName.Replace(textureExt, extension);
+                            var babylonTexture = new BabylonTexture { name = newTextureName };
+
+                            exportMetallicGlossTexture(metallicGlossMapTexture, babylonScene.OutputPath, babylonImageFormat);
+
+                            if (material != null)
+                            {
+                                var textureScale = material.GetTextureScale(metallicGlossMapName);
+                                babylonTexture.uScale = Tools.GetTextureScale(textureScale.x);
+                                babylonTexture.vScale = Tools.GetTextureScale(textureScale.y);
+
+                                var textureOffset = material.GetTextureOffset(metallicGlossMapName);
+                                babylonTexture.uOffset = textureOffset.x;
+                                babylonTexture.vOffset = textureOffset.y;
+                            }
+
+                            babylonPbrMaterial.metallicTexture = babylonTexture;
                         }
                     }
-                    */
                 }
                 else
                 {
@@ -1000,7 +1133,7 @@ namespace Unity3D2Babylon
                         var dds = new BabylonCubeTexture();
                         sceneReflectionTexture = dds;
                         sceneReflectionTexture.isCube = true;
-                        sceneReflectionTexture.coordinatesMode = 5;
+                        sceneReflectionTexture.coordinatesMode = 3;
                         sceneReflectionTexture.name = String.Format("{0}_Reflection{1}", SceneName, srcTextureExt);
                         CopyCubemapTexture(sceneReflectionTexture.name, cubeMap, sceneReflectionTexture);
                         sceneReflectionTexture.level = Tools.GetReflectIntensity(SceneController);

@@ -49,22 +49,19 @@ namespace Unity3D2Babylon
                 {
                     if (gameObject.layer != ExporterWindow.PrefabIndex)
                     {
-                        if (!gameObject.IsLightapStatic()) {
-                            var shadowmap = gameObject.GetComponent<ShadowMap>();
-                            if (shadowmap != null && shadowmap.runtimeShadows == BabylonEnabled.Enabled)
+                        if (!gameObject.IsLightapStatic())
+                        {
+                            var renderer = gameObject.GetComponent<Renderer>();
+                            var meshFilter = gameObject.GetComponent<MeshFilter>();
+                            if (meshFilter != null && renderer != null && renderer.shadowCastingMode != ShadowCastingMode.Off)
                             {
-                                var renderer = gameObject.GetComponent<Renderer>();
-                                var meshFilter = gameObject.GetComponent<MeshFilter>();
-                                if (meshFilter != null && renderer != null && renderer.shadowCastingMode != ShadowCastingMode.Off)
-                                {
-                                    renderList.Add(GetID(gameObject));
-                                    continue;
-                                }
-                                var skinnedMesh = gameObject.GetComponent<SkinnedMeshRenderer>();
-                                if (skinnedMesh != null && renderer != null && renderer.shadowCastingMode != ShadowCastingMode.Off)
-                                {
-                                    renderList.Add(GetID(gameObject));
-                                }
+                                renderList.Add(GetID(gameObject));
+                                continue;
+                            }
+                            var skinnedMesh = gameObject.GetComponent<SkinnedMeshRenderer>();
+                            if (skinnedMesh != null && renderer != null && renderer.shadowCastingMode != ShadowCastingMode.Off)
+                            {
+                                renderList.Add(GetID(gameObject));
                             }
                         }
                     }
@@ -80,7 +77,7 @@ namespace Unity3D2Babylon
         private void ConvertUnityLightToBabylon(Light light, GameObject gameObject, float progress, ref UnityMetaData metaData, ref List<UnityFlareSystem> lensFlares, ref string componentTags)
         {
             // Note: No Inactive Or Full Baking Lights Exported
-			if (light.isActiveAndEnabled == false || light.type == LightType.Area || light.lightmapBakeType == LightmapBakeType.Baked) return;
+            if (light.isActiveAndEnabled == false || light.type == LightType.Area || light.lightmapBakeType == LightmapBakeType.Baked) return;
 
             ExporterWindow.ReportProgress(progress, "Exporting light: " + light.name);
             BabylonLight babylonLight = (light.type == LightType.Directional) ? new BabylonDirectionalLight() : new BabylonLight();
@@ -114,11 +111,11 @@ namespace Unity3D2Babylon
             transformedDirection[1] += defaultRotationOffset.y;
             transformedDirection[2] += defaultRotationOffset.z;
             babylonLight.direction = transformedDirection.ToFloat();
-            
+
             babylonLight.diffuse = light.color.ToFloat();
 
             float defaultIntenistyFactor = (SceneController != null) ? SceneController.lightingOptions.intensityScale : ExporterWindow.DefaultIntensityScale;
-            babylonLight.intensity = light.intensity *  defaultIntenistyFactor;
+            babylonLight.intensity = light.intensity * defaultIntenistyFactor;
 
             babylonLight.angle = light.spotAngle * (float)Math.PI / 180;
             babylonLight.exponent = 1.0f;

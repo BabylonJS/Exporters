@@ -95,6 +95,9 @@ namespace BabylonExport.Entities
         public bool useRoughnessFromMetallicTextureGreen { get; set; }
 
         [DataMember]
+        public bool useMetallnessFromMetallicTextureBlue { get; set; }
+
+        [DataMember]
         public bool useAlphaFromAlbedoTexture { get; set; }
 
         [DataMember]
@@ -133,6 +136,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public int maxSimultaneousLights { get; set; }
 
+        [DataMember]
+        public int sideOrientation { get; set; }
+
         public BabylonPBRMaterial() : base()
         {
             SetCustomType("BABYLON.PBRMaterial");
@@ -153,8 +159,12 @@ namespace BabylonExport.Entities
             // Default Null Metallic Workflow
             metallic = null;
             roughness = null;
-            useRoughnessFromMetallicTextureAlpha = true;
-            useRoughnessFromMetallicTextureGreen = false;
+            useRoughnessFromMetallicTextureAlpha = false;
+            useRoughnessFromMetallicTextureGreen = true;
+
+            useMetallnessFromMetallicTextureBlue = true;
+
+            sideOrientation = 1;
 
             microSurface = 0.9f;
             useMicroSurfaceFromReflectivityMapAplha = false;
