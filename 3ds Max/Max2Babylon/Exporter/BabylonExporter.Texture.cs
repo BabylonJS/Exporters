@@ -469,13 +469,13 @@ namespace Max2Babylon
             switch (uvGen.GetCoordMapping(0))
             {
                 case 1: //MAP_SPHERICAL
-                    babylonTexture.coordinatesMode = 1;
+                    babylonTexture.coordinatesMode = BabylonTexture.CoordinatesMode.SPHERICAL_MODE;
                     break;
                 case 2: //MAP_PLANAR
-                    babylonTexture.coordinatesMode = 2;
+                    babylonTexture.coordinatesMode = BabylonTexture.CoordinatesMode.PLANAR_MODE;
                     break;
                 default:
-                    babylonTexture.coordinatesMode = 0;
+                    babylonTexture.coordinatesMode = BabylonTexture.CoordinatesMode.EXPLICIT_MODE;
                     break;
             }
 
@@ -807,10 +807,11 @@ namespace Max2Babylon
                             RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
                         }
                     }
+                    else RaiseWarning(string.Format("Texture not found: {0}", sourcePath), 2);
                 }
-                catch
+                catch(Exception c)
                 {
-                    // silently fails
+                    RaiseError(string.Format("Exporting texture {0} failed: {1}", sourcePath, c.ToString()), 2);
                 }
             }
         }
