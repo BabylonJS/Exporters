@@ -662,11 +662,12 @@ namespace Max2Babylon
             {
                 BaseIndex = vertexIndex,
                 Position = mesh.GetVertex(vertexIndex, false), // world space
-                Normal = mesh.GetNormal((int)face.Norm[facePart], true) // object space
+                Normal = mesh.GetNormal((int)face.Norm[facePart], false) // world space
             };
 
-            // Convert position to local space
+            // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
+            vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal);
 
             if (hasUV)
             {
