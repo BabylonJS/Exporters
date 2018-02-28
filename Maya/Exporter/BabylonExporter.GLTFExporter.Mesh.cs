@@ -43,6 +43,11 @@ namespace Maya2Babylon
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
                 globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                // Switch coordinate system at object level
+                globalVertex.Position.Z *= -1;
+                globalVertex.Normal.Z *= -1;
+
                 if (hasUV)
                 {
                     globalVertex.UV = BabylonVector2.FromArray(babylonMesh.uvs, indexVertex);
@@ -82,19 +87,10 @@ namespace Maya2Babylon
                 globalVertices.Add(globalVertex);
             }
 
+            var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
+
             // Retreive indices from babylon mesh
             List<int> babylonIndices = babylonMesh.indices.ToList();
-
-            // Flip faces
-            if (!hasBones)
-            {
-                for (int i = 0; i < babylonIndices.Count; i += 3)
-                {
-                    var tmp = babylonIndices[i + 1];
-                    babylonIndices[i + 1] = babylonIndices[i + 2];
-                    babylonIndices[i + 2] = tmp;
-                }
-            }
 
             // --------------------------
             // ------- Init glTF --------
@@ -117,7 +113,6 @@ namespace Maya2Babylon
 
             RaiseMessage("GLTFExporter.Mesh | glTF primitives", 2);
             var meshPrimitives = new List<GLTFMeshPrimitive>();
-            var weights = new List<float>();
             foreach (BabylonSubMesh babylonSubMesh in babylonMesh.subMeshes)
             {
                 // --------------------------
@@ -151,6 +146,7 @@ namespace Maya2Babylon
                 // Material
                 if (babylonMesh.materialId != null)
                 {
+                    RaiseMessage("GLTFExporter.Mesh | Material", 3);
                     // Retreive the babylon material
                     BabylonMaterial babylonMaterial;
                     var babylonMaterialId = babylonMesh.materialId;
@@ -192,6 +188,8 @@ namespace Maya2Babylon
                 // --------------------------
                 // ------- Accessors --------
                 // --------------------------
+
+                RaiseMessage("GLTFExporter.Mesh | Geometry", 3);
 
                 // Buffer
                 var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
@@ -315,6 +313,7 @@ namespace Maya2Babylon
                 // --- Bones ---
                 if (hasBones)
                 {
+                    RaiseMessage("GLTFExporter.Mesh | Bones", 3);
                     // --- Joints ---
                     var accessorJoints = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -344,16 +343,23 @@ namespace Maya2Babylon
                     accessorWeights.count = globalVerticesSubMesh.Count;
                 }
 
-                // Morph targets
-                var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
+                // Morph targets positions and normals
                 if (babylonMorphTargetManager != null)
                 {
-                    _exportMorphTargets(babylonMesh, babylonMorphTargetManager, gltf, buffer, meshPrimitive, weights);
+                    RaiseMessage("GLTFExporter.Mesh | Morph targets", 3);
+                    _exportMorphTargets(babylonMesh, babylonSubMesh, babylonMorphTargetManager, gltf, buffer, meshPrimitive);
                 }
             }
             gltfMesh.primitives = meshPrimitives.ToArray();
-            if (weights.Count > 0)
+
+            // Morph targets weights
+            if (babylonMorphTargetManager != null)
             {
+                var weights = new List<float>();
+                foreach (BabylonMorphTarget babylonMorphTarget in babylonMorphTargetManager.targets)
+                {
+                    weights.Add(babylonMorphTarget.influence);
+                }
                 gltfMesh.weights = weights.ToArray();
             }
 
@@ -382,7 +388,7 @@ namespace Maya2Babylon
             return null;
         }
 
-        private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive, List<float> weights)
+        private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonSubMesh babylonSubMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive)
         {
             var gltfMorphTargets = new List<GLTFMorphTarget>();
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
@@ -401,9 +407,12 @@ namespace Maya2Babylon
                     );
                     gltfMorphTarget.Add(GLTFMorphTarget.Attribute.POSITION.ToString(), accessorTargetPositions.index);
                     // Populate accessor
+                    int nbComponents = 3; // Vector3
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
                     accessorTargetPositions.min = new float[] { float.MaxValue, float.MaxValue, float.MaxValue };
                     accessorTargetPositions.max = new float[] { float.MinValue, float.MinValue, float.MinValue };
-                    for (int indexPosition = 0; indexPosition < babylonMorphTarget.positions.Length; indexPosition += 3)
+                    for (int indexPosition = startIndex; indexPosition < endIndex; indexPosition += 3)
                     {
                         var positionTarget = Tools.SubArray(babylonMorphTarget.positions, indexPosition, 3);
 
@@ -422,7 +431,7 @@ namespace Maya2Babylon
                         // Update min and max values
                         GLTFBufferService.UpdateMinMaxAccessor(accessorTargetPositions, positionTarget);
                     }
-                    accessorTargetPositions.count = babylonMorphTarget.positions.Length / 3;
+                    accessorTargetPositions.count = babylonSubMesh.verticesCount;
                 }
 
                 // Normals
@@ -437,7 +446,10 @@ namespace Maya2Babylon
                     );
                     gltfMorphTarget.Add(GLTFMorphTarget.Attribute.NORMAL.ToString(), accessorTargetNormals.index);
                     // Populate accessor
-                    for (int indexNormal = 0; indexNormal < babylonMorphTarget.positions.Length; indexNormal += 3)
+                    int nbComponents = 3; // Vector3
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
+                    for (int indexNormal = startIndex; indexNormal < endIndex; indexNormal += 3)
                     {
                         var normalTarget = Tools.SubArray(babylonMorphTarget.normals, indexNormal, 3);
 
@@ -454,14 +466,10 @@ namespace Maya2Babylon
                             accessorTargetNormals.bytesList.AddRange(BitConverter.GetBytes(coordinate));
                         }
                     }
-                    accessorTargetNormals.count = babylonMorphTarget.normals.Length / 3;
+                    accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
 
-                if (gltfMorphTarget.Count > 0)
-                {
-                    gltfMorphTargets.Add(gltfMorphTarget);
-                    weights.Add(babylonMorphTarget.influence);
-                }
+                gltfMorphTargets.Add(gltfMorphTarget);
             }
             if (gltfMorphTargets.Count > 0)
             {

@@ -90,8 +90,15 @@ namespace Maya2Babylon
             while (!mItSelectionList.isDone)
             {
                 MDagPath mDagPath = new MDagPath();
-                mItSelectionList.getDagPath(mDagPath);
-                selectedNodeFullPaths.Add(mDagPath.fullPathName);
+                try
+                {
+                    mItSelectionList.getDagPath(mDagPath);
+                    selectedNodeFullPaths.Add(mDagPath.fullPathName);
+                } catch
+                {
+                    // selected object is not a DAG object
+                    // fail silently
+                }
 
                 mItSelectionList.next();
             }
@@ -121,7 +128,7 @@ namespace Maya2Babylon
 
             // TODO - Add custom properties
             _exportQuaternionsInsteadOfEulers = true;
-
+            
             PrintDAG(true);
             PrintDAG(false);
 
@@ -129,6 +136,10 @@ namespace Maya2Babylon
             // ------ Nodes -------
             // --------------------
             RaiseMessage("Exporting nodes");
+
+            // Clear materials
+            referencedMaterials.Clear();
+            multiMaterials.Clear();
 
             // Get all nodes
             var dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst, MFn.Type.kTransform);
@@ -249,7 +260,18 @@ namespace Maya2Babylon
             // --------------------
             // ----- Materials ----
             // --------------------
-            // TODO - Materials
+            RaiseMessage("Exporting materials");
+            foreach (var mat in referencedMaterials)
+            {
+                ExportMaterial(mat, babylonScene);
+                CheckCancelled();
+            }
+            foreach (var mat in multiMaterials)
+            {
+                ExportMultiMaterial(mat.Key, mat.Value, babylonScene);
+                CheckCancelled();
+            }
+            RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
             // Output
             babylonScene.Prepare(false, false);
