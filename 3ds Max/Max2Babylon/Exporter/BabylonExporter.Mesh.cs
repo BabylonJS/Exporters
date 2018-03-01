@@ -667,7 +667,7 @@ namespace Max2Babylon
 
             // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
-            vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal);
+            vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal).Normalize;
 
             if (hasUV)
             {
