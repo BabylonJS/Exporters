@@ -572,30 +572,38 @@ namespace Maya2Babylon
         {
             if (File.Exists(absolutePath))
             {
-                switch (Path.GetExtension(absolutePath))
+                try
                 {
-                    case ".dds":
-                        // External library GDImageLibrary.dll + TQ.Texture.dll
-                        return GDImageLibrary._DDS.LoadImage(absolutePath);
-                    case ".tga":
-                        // External library TargaImage.dll
-                        return Paloma.TargaImage.LoadTargaImage(absolutePath);
-                    case ".bmp":
-                    case ".gif":
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                    case ".tif":
-                    case ".tiff":
-                        return new Bitmap(absolutePath);
-                    default:
-                        RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), 2);
-                        return null;
+                    switch (Path.GetExtension(absolutePath))
+                    {
+                        case ".dds":
+                            // External library GDImageLibrary.dll + TQ.Texture.dll
+                            return GDImageLibrary._DDS.LoadImage(absolutePath);
+                        case ".tga":
+                            // External library TargaImage.dll
+                            return Paloma.TargaImage.LoadTargaImage(absolutePath);
+                        case ".bmp":
+                        case ".gif":
+                        case ".jpg":
+                        case ".jpeg":
+                        case ".png":
+                        case ".tif":
+                        case ".tiff":
+                            return new Bitmap(absolutePath);
+                        default:
+                            RaiseError(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), logRankTexture + 1);
+                            return null;
+                    }
+                }
+                catch (Exception e)
+                {
+                    RaiseError(string.Format("Failed to load texture {0}: {1}", Path.GetFileName(absolutePath), e.Message), logRankTexture + 1);
+                    return null;
                 }
             }
             else
             {
-                RaiseWarning(string.Format("Texture {0} not found.", Path.GetFileName(absolutePath)), 2);
+                RaiseError(string.Format("Texture {0} not found.", Path.GetFileName(absolutePath)), logRankTexture + 1);
                 return null;
             }
         }
@@ -674,13 +682,13 @@ namespace Maya2Babylon
                         }
                         else
                         {
-                            RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
+                            RaiseError(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
                         }
                     }
                 }
-                catch
+                catch (Exception c)
                 {
-                    // silently fails
+                    RaiseError(string.Format("Exporting texture {0} failed: {1}", sourcePath, c.ToString()), 2);
                 }
             }
         }
@@ -702,13 +710,27 @@ namespace Maya2Babylon
             {
                 case "dds":
                     // External libraries GDImageLibrary.dll + TQ.Texture.dll
-                    bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
-                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    try
+                    {
+                        bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
+                        bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    catch (Exception e)
+                    {
+                        RaiseError(string.Format("Failed to convert texture {0} to png: {1}", Path.GetFileName(sourcePath), e.Message), logRankTexture + 1);
+                    }
                     break;
                 case "tga":
                     // External library TargaImage.dll
-                    bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
-                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    try
+                    {
+                        bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
+                        bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    catch (Exception e)
+                    {
+                        RaiseError(string.Format("Failed to convert texture {0} to png: {1}", Path.GetFileName(sourcePath), e.Message), logRankTexture + 1);
+                    }
                     break;
                 case "bmp":
                     bitmap = new Bitmap(sourcePath);
