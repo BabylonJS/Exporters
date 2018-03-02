@@ -69,10 +69,11 @@ namespace Maya2Babylon
             babylonTexture.level = amount;
 
             // Alpha
-            // TODO - Get alpha from both RGB and A
-            // or assume texture is premultiplied and get alpha from RGB or A only
             babylonTexture.hasAlpha = forceAlpha;
-            babylonTexture.getAlphaFromRGB = false;
+            // When fileHasAlpha = true:
+            // - texture's format has alpha (png, tif, tga...)
+            // - and at least one pixel has an alpha value < 255
+            babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBoolProperty;
 
             // UVs
             _exportUV(textureDependencyNode, babylonTexture, forceSpherical);
