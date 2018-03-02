@@ -44,7 +44,11 @@ namespace Maya2Babylon
                 MObject childObject = mFnTransform.child(i);
                 if (childObject.hasFn(MFn.Type.kLight))
                 {
-                    mFnLight = new MFnLight(childObject);
+                    var _mFnLight = new MFnLight(childObject);
+                    if (!_mFnLight.isIntermediateObject)
+                    {
+                        mFnLight = _mFnLight;
+                    }
                 }
             }
             if (mFnLight == null)
