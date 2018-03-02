@@ -55,7 +55,11 @@ namespace Maya2Babylon
                 MObject childObject = mFnTransform.child(i);
                 if (childObject.apiType == MFn.Type.kMesh)
                 {
-                    mFnMesh = new MFnMesh(childObject);
+                    var _mFnMesh = new MFnMesh(childObject);
+                    if (!_mFnMesh.isIntermediateObject)
+                    {
+                        mFnMesh = _mFnMesh;
+                    }
                 }
             }
             if (mFnMesh == null)

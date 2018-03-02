@@ -66,11 +66,13 @@ namespace Max2Babylon
                        index < tabs.Count)
                 {
 #if MAX2017 || MAX2018
-                    var indexer = index;
+                    var tab = tabs[index];
 #else
-                    var indexer = new IntPtr(index);
-#endif
+                    var indexer = Marshal.AllocHGlobal(sizeof(int));
+                    Marshal.WriteInt32(indexer, index);
                     var tab = tabs[indexer];
+                    Marshal.FreeHGlobal(indexer);
+#endif
 
                     babylonMasterMesh = babylonScene.MeshesList.Find(_babylonMesh => {
                                // Same id
@@ -284,11 +286,13 @@ namespace Max2Babylon
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
 #if MAX2017 || MAX2018
-                    var indexer = i;
+                    var channelNum = mappingChannels[i];
 #else
-                    var indexer = new IntPtr(i);
-#endif
+                    var indexer = Marshal.AllocHGlobal(sizeof(int));
+                    Marshal.WriteInt32(indexer, i);
                     var channelNum = mappingChannels[indexer];
+                    Marshal.FreeHGlobal(indexer);
+#endif
                     if (channelNum == 1)
                     {
                         hasUV = true;
@@ -524,14 +528,14 @@ namespace Max2Babylon
                         {
                             // Retreive face
 #if MAX2017 || MAX2018
-                            var faceIndexer = j;
+                            face = materialFaces[j];
 #else
-                            var faceIndexer = new IntPtr(j);
-#endif
+                            var faceIndexer = Marshal.AllocHGlobal(sizeof(int));
+                            Marshal.WriteInt32(faceIndexer, j);
                             face = materialFaces[faceIndexer];
-#if !MAX2017 && !MAX2018
                             Marshal.FreeHGlobal(faceIndexer);
 #endif
+
                             // Store face index
                             faceIndexes.Add(face.MeshFaceIndex);
                         }
