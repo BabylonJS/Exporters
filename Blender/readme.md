@@ -3,7 +3,7 @@
 ## Installation ##
 <img src="./preferences.jpg">
 
-- Download the [latest version](https://github.com/BabylonJS/Exporters/blob/master/Blender/Blender2Babylon-5.5.zip?raw=true).
+- Download the [latest version](https://github.com/BabylonJS/Exporters/blob/master/Blender/Blender2Babylon-5.6.zip?raw=true).
 - Goto Blender `User Preferences` from the `File` menu.
 - Switch to the `Add-ons` tab.
 - Click the `Install from File...` button at the bottom.

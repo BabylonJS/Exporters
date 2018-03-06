@@ -1,7 +1,7 @@
 bl_info = {
     'name': 'Babylon.js',
     'author': 'David Catuhe, Jeff Palmer',
-    'version': (5, 5, 0),
+    'version': (5, 6, 0),
     'blender': (2, 76, 0),
     'location': 'File > Export > Babylon.js (.babylon)',
     'description': 'Export Babylon.js scenes (.babylon)',
@@ -49,7 +49,7 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
-    
+
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menu_func)
@@ -67,26 +67,27 @@ if __name__ == '__main__':
 class JsonMain(bpy.types.Operator, ExportHelper):
     bl_idname = 'bjs.main'
     bl_label = 'Export Babylon.js scene' # used on the label of the actual 'save' button
+    bl_options = {'REGISTER', 'UNDO'}
     filename_ext = '.babylon'            # used as the extension on file selector
 
     filepath = bpy.props.StringProperty(subtype = 'FILE_PATH') # assigned once the file selector returns
     filter_glob = bpy.props.StringProperty(name='.babylon',default='*.babylon', options={'HIDDEN'})
-    
+
     def execute(self, context):
         from .json_exporter import JsonExporter
         from .package_level import get_title, verify_min_blender_version
-        
+
         if not verify_min_blender_version():
             self.report({'ERROR'}, 'version of Blender too old.')
             return {'FINISHED'}
-            
+
         exporter = JsonExporter()
         exporter.execute(context, self.filepath)
-        
+
         if (exporter.fatalError):
             self.report({'ERROR'}, exporter.fatalError)
 
         elif (exporter.nWarnings > 0):
             self.report({'WARNING'}, 'Processing completed, but ' + str(exporter.nWarnings) + ' WARNINGS were raised,  see log file.')
-            
+
         return {'FINISHED'}
