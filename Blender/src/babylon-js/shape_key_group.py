@@ -4,11 +4,12 @@ from .package_level import *
 import bpy
 #===============================================================================
 # extract data in Mesh order, no optimization from group analysis yet; mapped into a copy of position
-# 
+#
 class RawShapeKey:
-    def __init__(self, keyBlock, group, state, keyOrderMap, basis):
+    def __init__(self, keyBlock, group, state, keyOrderMap, basis, precision):
         self.group = group
         self.state = state
+        self.precision = precision
         self.vertices = []
 
         retSz = len(keyOrderMap)
@@ -20,7 +21,7 @@ class RawShapeKey:
             pair = keyOrderMap[i]
             value = keyBlock.data[pair[0]].co
             self.vertices[pair[1]] = value
-            if not similar_vertex(value, basis.data[pair[0]].co):
+            if not same_vertex(value, basis.data[pair[0]].co, precision):
                 nDifferent += 1
 
         # only log when groups / allowVertReduction
@@ -30,19 +31,19 @@ class RawShapeKey:
     def to_scene_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.state, True)
-        write_vector_array(file_handler, 'positions', self.vertices)
+        write_vector_array(file_handler, 'positions', self.vertices, self.precision)
         write_int(file_handler, 'influence', 0)
         file_handler.write('}')
 #===============================================================================
 class ShapeKeyGroup:
-    def __init__(self, group, rawShapeKeys, basisVerts):
+    def __init__(self, group, rawShapeKeys, basisVerts, precision):
         self.group = group
         self.basisVerts = basisVerts
+        self.precision = precision
         self.stateNames = []
         self.stateVertices = []
         self.affectedIndices = []
 
-        nRawKeys = len(rawShapeKeys)
         nSize = len(self.basisVerts)
 
         sameForAll = []
@@ -61,7 +62,7 @@ class ShapeKeyGroup:
                     continue;
 
                 # check vertex not different from Basis
-                if not similar_vertex(key.vertices[i],  self.basisVerts[i]):
+                if not same_vertex(key.vertices[i],  self.basisVerts[i], self.precision):
                     sameForAll[i] = False
                     break;
 
@@ -96,9 +97,9 @@ class ShapeKeyGroup:
             self.stateVertices.append(affectedVertices)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def to_script_file(self, file_handler, var, indent):
-        writeInt32Array(file_handler, '_i', indent, self.affectedIndices, True)
+        writeIndexArray(file_handler, '_i', indent, self.affectedIndices, True)
         file_handler.write(indent  + 'shapeKeyGroup = new QI.ShapeKeyGroup(' + var + ', "' + self.group + '", _i);\n')
 
         for state_idx in range(len(self.stateVertices)):
-            writeFloat32Array(file_handler, '_i', indent, self.stateVertices[state_idx], True)
+            writeRepeatableFloatArray(file_handler, '_i', indent, self.stateVertices[state_idx], True, self.precision)
             file_handler.write(indent  + 'shapeKeyGroup._addShapeKey("' + self.stateNames[state_idx] + '", true, _i);\n')

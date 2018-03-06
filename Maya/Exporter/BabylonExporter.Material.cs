@@ -92,9 +92,8 @@ namespace Maya2Babylon
                 {
                     name = name,
                     id = id,
-                    ambient = lambertShader.ambientColor.toArrayRGB(),
                     diffuse = lambertShader.color.toArrayRGB(),
-                    emissive = lambertShader.incandescence.toArrayRGB(),
+                    emissive = lambertShader.ambientColor.toArrayRGB(), // Maya ambient <=> babylon emissive
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
                 
@@ -146,12 +145,11 @@ namespace Maya2Babylon
                 //babylonMaterial.backFaceCulling = !stdMat.TwoSided;
                 //babylonMaterial.wireframe = stdMat.Wire;
 
-                // Textures
+                // --- Textures ---
+
                 babylonMaterial.diffuseTexture = ExportTexture(materialDependencyNode, "color", babylonScene);
-                babylonMaterial.ambientTexture = ExportTexture(materialDependencyNode, "ambientColor", babylonScene);
-                babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "incandescence", babylonScene);
+                babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "ambientColor", babylonScene); // Maya ambient <=> babylon emissive
                 babylonMaterial.bumpTexture = ExportTexture(materialDependencyNode, "normalCamera", babylonScene);
-                // TODO - Convert transparency to opacity?
                 babylonMaterial.opacityTexture = ExportTexture(materialDependencyNode, "transparency", babylonScene, false, true);
                 if (materialObject.hasFn(MFn.Type.kReflect))
                 {

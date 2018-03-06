@@ -25,7 +25,11 @@ namespace Maya2Babylon
                 MObject childObject = mFnTransform.child(i);
                 if (childObject.apiType == MFn.Type.kCamera)
                 {
-                    mFnCamera = new MFnCamera(childObject);
+                    var _mFnCamera = new MFnCamera(childObject);
+                    if (!_mFnCamera.isIntermediateObject)
+                    {
+                        mFnCamera = _mFnCamera;
+                    }
                 }
             }
             if (mFnCamera == null)

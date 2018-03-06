@@ -5,7 +5,6 @@ from mathutils import Euler, Matrix
 from bpy import app
 from time import strftime
 FLOAT_PRECISION_DEFAULT = 4
-#MAX_FLOAT_PRECISION = '%.' + str(MAX_FLOAT_PRECISION_DEFAULT) + 'f'
 VERTEX_OUTPUT_PER_LINE = 50
 STRIP_LEADING_ZEROS_DEFAULT = False # false for .babylon
 #===============================================================================
@@ -26,30 +25,30 @@ def format_exporter_version(bl_info = None):
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def blenderMajorMinorVersion():
     # in form of '2.77 (sub 0)'
-    split1 = app.version_string.partition('.') 
+    split1 = app.version_string.partition('.')
     major = split1[0]
-    
+
     split2 = split1[2].partition(' ')
     minor = split2[0]
-    
+
     return float(major + '.' + minor)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def verify_min_blender_version():
     reqd = get_bl_info()['blender']
-    
+
     # in form of '2.77 (sub 0)'
-    split1 = app.version_string.partition('.') 
+    split1 = app.version_string.partition('.')
     major = int(split1[0])
     if reqd[0] > major: return False
-    
+
     split2 = split1[2].partition(' ')
     minor = int(split2[0])
     if reqd[1] > minor: return False
-    
+
     split3 = split2[2].partition(' ')
     revision = int(split3[2][:1])
     if reqd[2] > revision: return False
-    
+
     return True
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def getNameSpace(filepathMinusExtension):
@@ -92,13 +91,15 @@ def legal_js_identifier(input):
         out += '_' + prefix
     return out
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_f(num, stripLeadingZero = STRIP_LEADING_ZEROS_DEFAULT, precision = FLOAT_PRECISION_DEFAULT):
-    fmt = '%.' + str(precision) + 'f'
+def format_f(num, precision = FLOAT_PRECISION_DEFAULT, stripLeadingZero = STRIP_LEADING_ZEROS_DEFAULT):
+    return format_float(num, '%.' + str(precision) + 'f', stripLeadingZero)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def format_float(num, fmt, stripLeadingZero = STRIP_LEADING_ZEROS_DEFAULT):
     s = fmt % num  # rounds to N decimal places
     s = s.rstrip('0') # strip trailing zeroes
     s = s.rstrip('.') # strip trailing .
     s = '0' if s == '-0' else s # nuke -0
-    
+
     if stripLeadingZero:
         asNum = float(s)
         if asNum != 0 and asNum > -1 and asNum < 1:
@@ -106,39 +107,42 @@ def format_f(num, stripLeadingZero = STRIP_LEADING_ZEROS_DEFAULT, precision = FL
                 s = '-' + s[2:]
             else:
                 s = s[1:]
-        
+
     return s
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_matrix4(matrix):
+def format_matrix4(matrix, precision = FLOAT_PRECISION_DEFAULT):
     tempMatrix = matrix.copy()
     tempMatrix.transpose()
 
     ret = ''
     first = True
+    fmt = '%.' + str(precision) + 'f'
     for vect in tempMatrix:
         if (first != True):
             ret +=','
         first = False;
 
-        ret += format_f(vect[0]) + ',' + format_f(vect[1]) + ',' + format_f(vect[2]) + ',' + format_f(vect[3])
+        ret += format_float(vect[0], fmt) + ',' + format_float(vect[1], fmt) + ',' + format_float(vect[2], fmt) + ',' + format_float(vect[3], fmt)
 
     return ret
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_array3(array):
-    return format_f(array[0]) + ',' + format_f(array[1]) + ',' + format_f(array[2])
+def format_array3(array, precision = FLOAT_PRECISION_DEFAULT):
+    fmt = '%.' + str(precision) + 'f'
+    return format_float(array[0], fmt) + ',' + format_float(array[1], fmt) + ',' + format_float(array[2], fmt)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_array(array, indent = '', beginIdx = 0, firstNotIncludedIdx = -1):
+def format_array(array, precision, indent = '', beginIdx = 0, firstNotIncludedIdx = -1):
     ret = ''
     first = True
     nOnLine = 0
-    
+
+    fmt = '%.' + str(precision) + 'f'
     endIdx = len(array) if firstNotIncludedIdx == -1 else firstNotIncludedIdx
     for idx in range(beginIdx, endIdx):
         if (first != True):
             ret +=','
         first = False;
 
-        ret += format_f(array[idx])
+        ret += format_float(array[idx], fmt)
         nOnLine += 1
 
         if nOnLine >= VERTEX_OUTPUT_PER_LINE:
@@ -147,13 +151,15 @@ def format_array(array, indent = '', beginIdx = 0, firstNotIncludedIdx = -1):
 
     return ret
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_color(color):
-    return format_f(color.r) + ',' + format_f(color.g) + ',' + format_f(color.b)
+def format_color(color, precision = FLOAT_PRECISION_DEFAULT):
+    fmt = '%.' + str(precision) + 'f'
+    return format_float(color.r, fmt) + ',' + format_float(color.g, fmt) + ',' + format_float(color.b, fmt)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_vector(vector, switchYZ = True):
-    return format_f(vector.x) + ',' + format_f(vector.z) + ',' + format_f(vector.y) if switchYZ else format_f(vector.x) + ',' + format_f(vector.y) + ',' + format_f(vector.z)
+def format_vector(vector, precision = FLOAT_PRECISION_DEFAULT):
+    fmt = '%.' + str(precision) + 'f'
+    return format_float(vector.x, fmt) + ',' + format_float(vector.z, fmt) + ',' + format_float(vector.y, fmt)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_vector_array(vectorArray, indent = '', switchYZ = True):
+def format_vector_array(vectorArray, precision = FLOAT_PRECISION_DEFAULT, indent = ''):
     ret = ''
     first = True
     nOnLine = 0
@@ -162,7 +168,7 @@ def format_vector_array(vectorArray, indent = '', switchYZ = True):
             ret +=','
         first = False;
 
-        ret += format_vector(vector, switchYZ)
+        ret += format_vector(vector, precision)
         nOnLine += 3
 
         if nOnLine >= VERTEX_OUTPUT_PER_LINE:
@@ -171,8 +177,9 @@ def format_vector_array(vectorArray, indent = '', switchYZ = True):
 
     return ret
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def format_quaternion(quaternion):
-    return format_f(quaternion.x) + ',' + format_f(quaternion.z) + ',' + format_f(quaternion.y) + ',' + format_f(-quaternion.w)
+def format_quaternion(quaternion, precision = FLOAT_PRECISION_DEFAULT):
+    fmt = '%.' + str(precision) + 'f'
+    return format_float(quaternion.x, fmt) + ',' + format_float(quaternion.z, fmt) + ',' + format_float(quaternion.y, fmt) + ',' + format_float(-quaternion.w, fmt)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def format_int(int):
     candidate = str(int) # when int string of an int
@@ -201,67 +208,81 @@ def scale_vector(vector, mult, xOffset = 0):
     ret.y *= mult
     return ret
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def same_matrix4(matA, matB):
+def same_matrix4(matA, matB, precision = FLOAT_PRECISION_DEFAULT):
     if(matA is None or matB is None): return False
     if (len(matA) != len(matB)): return False
+    fmt = '%.' + str(precision) + 'f'
     for i in range(len(matA)):
-        if (format_f(matA[i][0]) != format_f(matB[i][0]) or
-            format_f(matA[i][1]) != format_f(matB[i][1]) or
-            format_f(matA[i][2]) != format_f(matB[i][2]) or
-            format_f(matA[i][3]) != format_f(matB[i][3]) ):
+        if (format_float(matA[i][0], fmt) != format_float(matB[i][0], fmt) or
+            format_float(matA[i][1], fmt) != format_float(matB[i][1], fmt) or
+            format_float(matA[i][2], fmt) != format_float(matB[i][2], fmt) or
+            format_float(matA[i][3], fmt) != format_float(matB[i][3], fmt) ):
             return False
     return True
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def same_vertex(vertA, vertB):
+def same_vertex(vertA, vertB, precision = FLOAT_PRECISION_DEFAULT):
     if vertA is None or vertB is None: return False
-    
-    if (format_f(vertA.x) != format_f(vertB.x) or
-        format_f(vertA.y) != format_f(vertB.y) or
-        format_f(vertA.z) != format_f(vertB.z) ):
+
+    fmt = '%.' + str(precision) + 'f'
+    if (format_float(vertA.x, fmt) != format_float(vertB.x, fmt) or
+        format_float(vertA.y, fmt) != format_float(vertB.y, fmt) or
+        format_float(vertA.z, fmt) != format_float(vertB.z, fmt) ):
+        return False
+    return True
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def same_quaternion(quatA, quatB, precision = FLOAT_PRECISION_DEFAULT):
+    if quatA is None or quatB is None: return False
+
+    fmt = '%.' + str(precision) + 'f'
+    if (format_float(quatA.x, fmt) != format_float(quatB.x, fmt) or
+        format_float(quatA.y, fmt) != format_float(quatB.y, fmt) or
+        format_float(quatA.z, fmt) != format_float(quatB.z, fmt) or
+        format_float(quatA.w, fmt) != format_float(quatB.w, fmt) ):
+        return False
+    return True
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def same_color(colorA, colorB, precision = FLOAT_PRECISION_DEFAULT):
+    if colorA is None or colorB is None: return False
+
+    fmt = '%.' + str(precision) + 'f'
+    if (format_float(colorA.r, fmt) != format_float(colorB.r, fmt) or
+        format_float(colorA.g, fmt) != format_float(colorB.g, fmt) or
+        format_float(colorA.b, fmt) != format_float(colorB.b, fmt) ):
         return False
 
     return True
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def similar_vertex(vertA, vertB, tolerance = 0.00015):
-    if vertA is None or vertB is None: return False
-
-    if (abs(vertA.x - vertB.x) > tolerance or
-        abs(vertA.y - vertB.y) > tolerance or
-        abs(vertA.z - vertB.z) > tolerance ):
-        return False
-
-    return True
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-def same_array(arrayA, arrayB):
+def same_array(arrayA, arrayB, precision = FLOAT_PRECISION_DEFAULT):
     if(arrayA is None or arrayB is None): return False
     if len(arrayA) != len(arrayB): return False
+    fmt = '%.' + str(precision) + 'f'
     for i in range(len(arrayA)):
-        if format_f(arrayA[i]) != format_f(arrayB[i]) : return False
+        if format_float(arrayA[i], fmt) != format_float(arrayB[i], fmt) : return False
 
     return True
 #===============================================================================
 # module level methods for writing JSON (.babylon) files
 #===============================================================================
-def write_matrix4(file_handler, name, matrix):
-    file_handler.write(',"' + name + '":[' + format_matrix4(matrix) + ']')
+def write_matrix4(file_handler, name, matrix, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write(',"' + name + '":[' + format_matrix4(matrix, precision) + ']')
 
-def write_array(file_handler, name, array):
-    file_handler.write('\n,"' + name + '":[' + format_array(array) + ']')
+def write_array(file_handler, name, array, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write('\n,"' + name + '":[' + format_array(array, precision) + ']')
 
-def write_array3(file_handler, name, array):
-    file_handler.write(',"' + name + '":[' + format_array3(array) + ']')
+def write_array3(file_handler, name, array, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write(',"' + name + '":[' + format_array3(array, precision) + ']')
 
-def write_color(file_handler, name, color):
-    file_handler.write(',"' + name + '":[' + format_color(color) + ']')
+def write_color(file_handler, name, color, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write(',"' + name + '":[' + format_color(color, precision) + ']')
 
-def write_vector(file_handler, name, vector, switchYZ = True):
-    file_handler.write(',"' + name + '":[' + format_vector(vector, switchYZ) + ']')
+def write_vector(file_handler, name, vector, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write(',"' + name + '":[' + format_vector(vector, precision) + ']')
 
-def write_vector_array(file_handler, name, vectorArray, switchYZ = True):
-    file_handler.write('\n,"' + name + '":[' + format_vector_array(vectorArray, '', switchYZ) + ']')
+def write_vector_array(file_handler, name, vectorArray, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write('\n,"' + name + '":[' + format_vector_array(vectorArray, precision, '') + ']')
 
-def write_quaternion(file_handler, name, quaternion):
-    file_handler.write(',"' + name  +'":[' + format_quaternion(quaternion) + ']')
+def write_quaternion(file_handler, name, quaternion, precision = FLOAT_PRECISION_DEFAULT):
+    file_handler.write(',"' + name  +'":[' + format_quaternion(quaternion, precision) + ']')
 
 def write_string(file_handler, name, string, noComma = False):
     if noComma == False:
