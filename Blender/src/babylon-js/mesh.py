@@ -8,14 +8,8 @@ from .shape_key_group import *
 
 import bpy
 import math
-from mathutils import Vector
+from mathutils import Vector, Quaternion
 from random import randint
-import shutil
-
-# output related constants
-MAX_VERTEX_ELEMENTS = 65535
-MAX_VERTEX_ELEMENTS_32Bit = 16777216
-COMPRESS_MATRIX_INDICES = True
 
 # used in Mesh & Node constructors, defined in BABYLON.AbstractMesh
 BILLBOARDMODE_NONE = 0
@@ -35,16 +29,31 @@ CYLINDER_IMPOSTER = 7
 PARTICLE_IMPOSTER = 8
 
 SHAPE_KEY_GROUPS_ALLOWED = False
+
+ZERO_V = Vector((0, 0, 0))
+ZERO_Q = Quaternion((1, 0, 0, 0))
 #===============================================================================
 class Mesh(FCurveAnimatable):
-    def __init__(self, object, scene, startFace, forcedParent, nameID, exporter):
-        self.name = object.name + str(nameID)
+    def __init__(self, object, scene, exporter):
+        self.scene = scene
+        self.name = object.name
         Logger.log('processing begun of mesh:  ' + self.name)
         self.define_animations(object, True, True, True)  #Should animations be done when forcedParent
 
         self.isVisible = not object.hide_render
+        self.isPickable = object.data.isPickable
         self.isEnabled = not object.data.loadDisabled
-        useFlatShading = scene.export_flatshadeScene or object.data.useFlatShading
+        if hasattr(object.data, 'useFlatShading') and object.data.useFlatShading:
+            hasModifier = False
+            # extra checking not really working; all checking going to be pulled in future
+            for con in object.constraints:
+                if con.name == 'EDGE_SPLIT':
+                    hasModifier = True
+                    break
+            
+            if not hasModifier:
+                Logger.warn('Found Obsolete "Use Flat Shading" property set True.  Replaced by "Edge Split" modifier instead', 2)
+                
         self.checkCollisions = object.data.checkCollisions
         self.receiveShadows = object.data.receiveShadows
         self.castShadows = object.data.castShadows
@@ -63,7 +72,7 @@ class Mesh(FCurveAnimatable):
                 self.hasSkeleton = skeleton is not None
                 
                 if not self.hasSkeleton:
-                    Logger.warn('No skeleton with name "' + objArmature.name + '" found skeleton ignored.')
+                    Logger.warn('No skeleton with name "' + objArmature.name + '" found skeleton ignored.', 2)
                 else:
                     i = 0
                     for obj in scene.objects:
@@ -75,41 +84,31 @@ class Mesh(FCurveAnimatable):
                                 i += 1
 
         # determine Position, rotation, & scaling
-        if forcedParent is None:
-            # Use local matrix
-            locMatrix = object.matrix_local
-            if objArmature != None:
-                # unless the armature is the parent
-                if object.parent and object.parent == objArmature:
-                    locMatrix = object.matrix_world * object.parent.matrix_world.inverted()
+        # Use local matrix
+        locMatrix = object.matrix_local
+        if objArmature != None:
+            # unless the armature is the parent
+            if object.parent and object.parent == objArmature:
+                locMatrix = object.matrix_world * object.parent.matrix_world.inverted()
 
-            loc, rot, scale = locMatrix.decompose()
-            self.position = loc
-            if object.rotation_mode == 'QUATERNION':
-                self.rotationQuaternion = rot
-            else:
-                self.rotation = scale_vector(rot.to_euler('XYZ'), -1)
-            self.scaling  = scale
+        loc, rot, scale = locMatrix.decompose()
+        self.position = loc
+        if object.rotation_mode == 'QUATERNION':
+            self.rotationQuaternion = rot
         else:
-            # use defaults when not None
-            self.position = Vector((0, 0, 0))
-            self.rotation = scale_vector(Vector((0, 0, 0)), 1) # isn't scaling 0's by 1 same as 0?
-            self.scaling  = Vector((1, 1, 1))
-            
+            self.rotation = scale_vector(rot.to_euler('XYZ'), -1)
+        self.scaling = scale
+
         # ensure no unapplied rotation or scale, when there is an armature
         self.hasUnappliedTransforms = (self.scaling.x != 1 or self.scaling.y != 1 or self.scaling.z != 1 or
-                (hasattr(self, 'rotation'          ) and (self.rotation          .x != 0 or self.rotation          .y != 0 or self.rotation          .z != 0)) or 
-                (hasattr(self, 'rotationQuaternion') and (self.rotationQuaternion.x != 0 or self.rotationQuaternion.y != 0 or self.rotationQuaternion.z != 0 or self.rotationQuaternion.w != 1))
-                )
+            (hasattr(self, 'rotation'          ) and not same_vertex    (self.rotation          , ZERO_V, FLOAT_PRECISION_DEFAULT)) or 
+            (hasattr(self, 'rotationQuaternion') and not same_quaternion(self.rotationQuaternion, ZERO_Q, FLOAT_PRECISION_DEFAULT))
+            )
 
         # determine parent & dataName
-        if forcedParent is None:
-            self.dataName = object.data.name # used to support shared vertex instances in later passed
-            if object.parent and object.parent.type != 'ARMATURE':
-                self.parentId = object.parent.name
-        else:
-            self.dataName = self.name
-            self.parentId = forcedParent.name
+        self.dataName = object.data.name # used to support shared vertex instances in later passed
+        if object.parent and object.parent.type != 'ARMATURE':
+            self.parentId = object.parent.name
 
         # Physics
         if object.rigid_body != None:
@@ -150,7 +149,6 @@ class Mesh(FCurveAnimatable):
             self.instances = []
 
         # process all of the materials required
-        maxVerts = MAX_VERTEX_ELEMENTS if scene.force64Kmeshes else MAX_VERTEX_ELEMENTS_32Bit # change for multi-materials or shapekeys
         recipe = BakingRecipe(object)
         self.billboardMode = BILLBOARDMODE_ALL if recipe.isBillboard else BILLBOARDMODE_NONE
 
@@ -182,7 +180,6 @@ class Mesh(FCurveAnimatable):
                 multimat = MultiMaterial(bjs_material_slots, len(exporter.multiMaterials), exporter.nameSpace)
                 self.materialId = multimat.name
                 exporter.multiMaterials.append(multimat)
-                maxVerts = MAX_VERTEX_ELEMENTS_32Bit
             else:
                 Logger.warn('No materials have been assigned: ', 2)
 
@@ -228,7 +225,6 @@ class Mesh(FCurveAnimatable):
                     hasShapeKeys = True
                     keyOrderMap = []
                     basis = block
-                    maxVerts = MAX_VERTEX_ELEMENTS_32Bit
                     break
 
             if not hasShapeKeys:
@@ -244,9 +240,7 @@ class Mesh(FCurveAnimatable):
         vertices_sk_weights = []
         vertices_sk_indices = []
 
-        self.offsetFace = 0
-
-        for v in range(0, len(mesh.vertices)):
+        for v in range(len(mesh.vertices)):
             alreadySavedVertices.append(False)
             vertices_Normals.append([])
             vertices_UVs.append([])
@@ -261,28 +255,22 @@ class Mesh(FCurveAnimatable):
         indicesCount = 0
 
         for materialIndex in range(materialsCount):
-            if self.offsetFace != 0:
-                break
-
             subMeshVerticesStart = verticesCount
             subMeshIndexStart = indicesCount
 
-            for faceIndex in range(startFace, len(mesh.tessfaces)):  # For each face
+            for faceIndex in range(len(mesh.tessfaces)):  # For each face
                 face = mesh.tessfaces[faceIndex]
 
                 if face.material_index != materialIndex and not recipe.needsBaking:
                     continue
-
-                if verticesCount + 3 > maxVerts:
-                    self.offsetFace = faceIndex
-                    break
 
                 for v in range(3): # For each vertex in face
                     vertex_index = face.vertices[v]
 
                     vertex = mesh.vertices[vertex_index]
                     position = vertex.co
-                    normal = face.normal if useFlatShading else vertex.normal
+
+                    normal = vertex.normal
 
                     #skeletons
                     if self.hasSkeleton:
@@ -316,7 +304,7 @@ class Mesh(FCurveAnimatable):
                             vertex_Color = Colormap[face.index].color3
 
                     # Check if the current vertex is already saved
-                    alreadySaved = alreadySavedVertices[vertex_index] and not useFlatShading
+                    alreadySaved = alreadySavedVertices[vertex_index]
                     if alreadySaved:
                         alreadySaved = False
 
@@ -324,28 +312,28 @@ class Mesh(FCurveAnimatable):
                         index_UV = 0
                         for savedIndex in vertices_indices[vertex_index]:
                             vNormal = vertices_Normals[vertex_index][index_UV]
-                            if not same_vertex(normal, vNormal):
+                            if not same_vertex(normal, vNormal, scene.normalsPrecision):
                                 continue;
 
                             if hasUV:
                                 vUV = vertices_UVs[vertex_index][index_UV]
-                                if not same_array(vertex_UV, vUV):
+                                if not same_array(vertex_UV, vUV, scene.UVsPrecision):
                                     continue
 
                             if hasUV2:
                                 vUV2 = vertices_UV2s[vertex_index][index_UV]
-                                if not same_array(vertex_UV2, vUV2):
+                                if not same_array(vertex_UV2, vUV2, scene.UVsPrecision):
                                     continue
 
                             if hasVertexColor:
                                 vColor = vertices_Colors[vertex_index][index_UV]
-                                if vColor.r != vertex_Color.r or vColor.g != vertex_Color.g or vColor.b != vertex_Color.b:
+                                if not same_color(vertex_Color, vColor, scene.vColorsPrecision):
                                     continue
 
                             if self.hasSkeleton:
                                 vSkWeight = vertices_sk_weights[vertex_index]
                                 vSkIndices = vertices_sk_indices[vertex_index]
-                                if not same_array(vSkWeight[index_UV], matricesWeights) or not same_array(vSkIndices[index_UV], matricesIndices):
+                                if not same_array(vSkWeight[index_UV], matricesWeights, scene.mWeightsPrecision) or not same_array(vSkIndices[index_UV], matricesIndices, 1):
                                     continue
 
                             if vertices_indices[vertex_index][index_UV] >= subMeshVerticesStart:
@@ -402,11 +390,7 @@ class Mesh(FCurveAnimatable):
                         verticesCount += 1
                     self.indices.append(index)
                     indicesCount += 1
-
             self.subMeshes.append(SubMesh(materialIndex, subMeshVerticesStart, subMeshIndexStart, verticesCount - subMeshVerticesStart, indicesCount - subMeshIndexStart))
-
-        if verticesCount > MAX_VERTEX_ELEMENTS:
-            Logger.warn('Due to multi-materials, Shapekeys, or exporter settings & this meshes size, 32bit indices must be used.  This may not run on all hardware.', 2)
 
         BakedMaterial.meshBakingClean(object)
 
@@ -416,15 +400,14 @@ class Mesh(FCurveAnimatable):
         Logger.log('num uvs2           :  ' + str(len(self.uvs2     )), 2)
         Logger.log('num colors         :  ' + str(len(self.colors   )), 2)
         Logger.log('num indices        :  ' + str(len(self.indices  )), 2)
-        
+
         if self.hasSkeleton:
             Logger.log('Skeleton stats:  ', 2)
             self.toFixedInfluencers(weightsPerVertex, indicesPerVertex, object.data.maxInfluencers, highestInfluenceObserved)
 
-            if (COMPRESS_MATRIX_INDICES):
-                self.skeletonIndices = Mesh.packSkeletonIndices(self.skeletonIndices)
-                if (self.numBoneInfluencers > 4):
-                    self.skeletonIndicesExtra = Mesh.packSkeletonIndices(self.skeletonIndicesExtra)
+            self.skeletonIndices = Mesh.packSkeletonIndices(self.skeletonIndices)
+            if (self.numBoneInfluencers > 4):
+                self.skeletonIndicesExtra = Mesh.packSkeletonIndices(self.skeletonIndicesExtra)
 
             Logger.log('Total Influencers:  ' + format_f(totalInfluencers), 3)
             Logger.log('Avg # of influencers per vertex:  ' + format_f(totalInfluencers / len(self.positions)), 3)
@@ -457,14 +440,14 @@ class Mesh(FCurveAnimatable):
                     if object.data.defaultShapeKeyGroup != DEFAULT_SHAPE_KEY_GROUP:
                         keyName = object.data.defaultShapeKeyGroup + '-' + keyName
                     else: continue
-                
+
                 group = None
                 state = keyName
                 if SHAPE_KEY_GROUPS_ALLOWED:
                     temp = keyName.upper().partition('-')
                     group = temp[0]
                     state = temp[2]
-                self.rawShapeKeys.append(RawShapeKey(block, group, state, keyOrderMap, basis))
+                self.rawShapeKeys.append(RawShapeKey(block, group, state, keyOrderMap, basis, self.scene.positionsPrecision))
 
                 if SHAPE_KEY_GROUPS_ALLOWED:
                     # check for a new group, add to groupNames if so
@@ -479,9 +462,9 @@ class Mesh(FCurveAnimatable):
             # process into ShapeKeyGroups, when rawShapeKeys found and groups allowed (implied)
             if len(groupNames) > 0:
                 self.shapeKeyGroups = []
-                basis = RawShapeKey(basis, None, 'BASIS', keyOrderMap, basis)
+                basis = RawShapeKey(basis, None, 'BASIS', keyOrderMap, basis, self.scene.positionsPrecision)
                 for group in groupNames:
-                    self.shapeKeyGroups.append(ShapeKeyGroup(group,self.rawShapeKeys, basis.vertices))
+                    self.shapeKeyGroups.append(ShapeKeyGroup(group,self.rawShapeKeys, basis.vertices, self.scene.positionsPrecision))
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def find_zero_area_faces(self):
         nFaces = int(len(self.indices) / 3)
@@ -622,6 +605,7 @@ class Mesh(FCurveAnimatable):
         write_bool(file_handler, 'isEnabled', self.isEnabled)
         write_bool(file_handler, 'checkCollisions', self.checkCollisions)
         write_bool(file_handler, 'receiveShadows', self.receiveShadows)
+        write_bool(file_handler, 'pickable', self.isPickable)
         write_string(file_handler, 'tags', self.tags)
 
         if hasattr(self, 'physicsImpostor'):
@@ -635,24 +619,24 @@ class Mesh(FCurveAnimatable):
             write_int(file_handler, 'skeletonId', self.skeletonId)
             write_int(file_handler, 'numBoneInfluencers', self.numBoneInfluencers)
 
-        write_vector_array(file_handler, 'positions', self.positions)
-        write_vector_array(file_handler, 'normals'  , self.normals  )
+        write_vector_array(file_handler, 'positions', self.positions, self.scene.positionsPrecision)
+        write_vector_array(file_handler, 'normals'  , self.normals, self.scene.normalsPrecision)
 
         if len(self.uvs) > 0:
-            write_array(file_handler, 'uvs', self.uvs)
+            write_array(file_handler, 'uvs', self.uvs, self.scene.UVsPrecision)
 
         if len(self.uvs2) > 0:
-            write_array(file_handler, 'uvs2', self.uvs2)
+            write_array(file_handler, 'uvs2', self.uvs2, self.scene.UVsPrecision)
 
         if len(self.colors) > 0:
-            write_array(file_handler, 'colors', self.colors)
+            write_array(file_handler, 'colors', self.colors, self.scene.vColorsPrecision)
 
         if hasattr(self, 'skeletonWeights'):
-            write_array(file_handler, 'matricesWeights', self.skeletonWeights)
+            write_array(file_handler, 'matricesWeights', self.skeletonWeights, self.scene.mWeightsPrecision)
             write_array(file_handler, 'matricesIndices', self.skeletonIndices)
 
         if hasattr(self, 'skeletonWeightsExtra'):
-            write_array(file_handler, 'matricesWeightsExtra', self.skeletonWeightsExtra)
+            write_array(file_handler, 'matricesWeightsExtra', self.skeletonWeightsExtra, self.scene.mWeightsPrecision)
             write_array(file_handler, 'matricesIndicesExtra', self.skeletonIndicesExtra)
 
         write_array(file_handler, 'indices', self.indices)
@@ -815,8 +799,13 @@ bpy.types.Mesh.autoAnimate = bpy.props.BoolProperty(
 )
 bpy.types.Mesh.useFlatShading = bpy.props.BoolProperty(
     name='Use Flat Shading',
-    description='Use face normals.  Increases vertices.',
+    description='Obsolete feature.  Only being kept for generating warning message',
     default = False
+)
+bpy.types.Mesh.isPickable = bpy.props.BoolProperty(
+    name='Pickable',
+    description='Disable picking for a mesh.',
+    default = True
 )
 bpy.types.Mesh.checkCollisions = bpy.props.BoolProperty(
     name='Check Collisions',
@@ -927,12 +916,12 @@ class MeshPanel(bpy.types.Panel):
     def poll(cls, context):
         ob = context.object
         return ob is not None and isinstance(ob.data, bpy.types.Mesh)
-    
+
     def draw(self, context):
         ob = context.object
         layout = self.layout  
         row = layout.row()
-        row.prop(ob.data, 'useFlatShading')
+        row.prop(ob.data, 'isPickable')
         row.prop(ob.data, 'checkCollisions')
         
         row = layout.row()
@@ -966,7 +955,7 @@ class MeshPanel(bpy.types.Panel):
 #        box.prop(ob.data, 'usePNG')
         box.prop(ob.data, 'bakeSize')
         box.prop(ob.data, 'bakeQuality')
-        
+        # - - - - - - - - - - - - - - - - - - - - - - - - -
         box = layout.box()
         box.prop(ob.data, 'attachedSound')
         row = box.row()
