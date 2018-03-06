@@ -335,12 +335,47 @@ namespace Maya2Babylon
             // TODO - coordinatesMode
             babylonTexture.coordinatesMode = forceSpherical ? BabylonTexture.CoordinatesMode.SPHERICAL_MODE : BabylonTexture.CoordinatesMode.EXPLICIT_MODE;
 
-            // TODO - get UV set from uvChooser
-            //babylonTexture.coordinatesIndex = uvGen.MapChannel - 1;
-            //if (uvGen.MapChannel > 2)
-            //{
-            //    RaiseWarning(string.Format("Unsupported map channel, Only channel 1 and 2 are supported."), logRank + 1);
-            //}
+            // UV set
+            MStringArray uvLinks = new MStringArray();
+            MGlobal.executeCommand($@"uvLink -query -texture {textureDependencyNode.name};", uvLinks);
+            if (uvLinks.Count == 0)
+            {
+                babylonTexture.coordinatesIndex = 0;
+            }
+            else
+            {
+                // Retreive UV set indices
+                HashSet<int> uvSetIndices = new HashSet<int>();
+                foreach (string uvLink in uvLinks)
+                {
+                    int indexOpenBracket = uvLink.LastIndexOf("[");
+                    int indexCloseBracket = uvLink.LastIndexOf("]");
+                    string uvSetIndexAsString = uvLink.Substring(indexOpenBracket + 1, indexCloseBracket - indexOpenBracket - 1);
+                    int uvSetIndex = int.Parse(uvSetIndexAsString);
+                    uvSetIndices.Add(uvSetIndex);
+                }
+                if (uvSetIndices.Count > 1)
+                {
+                    // Check that all uvSet indices are all 0 or all not 0
+                    int nbZero = 0;
+                    foreach (int uvSetIndex in uvSetIndices) {
+                        if (uvSetIndex == 0)
+                        {
+                            nbZero++;
+                        }
+                    }
+                    if (nbZero != 0 && nbZero != uvSetIndices.Count)
+                    {
+                        RaiseWarning("Texture is linked to UV1 and UV2. Only one UV set per texture is supported.", logRankTexture + 1);
+                    }
+                }
+                // The first UV set of a mesh is special because it can never be deleted
+                // Thus if the UV set index is 0 then the binded mesh UV set is always UV1
+                // Other UV sets of a mesh can be created / deleted at will
+                // Thus the UV set index can have any value (> 0)
+                // In this case, the exported UV set is always UV2 even though it would be UV3 or UV4 in Maya
+                babylonTexture.coordinatesIndex = (new List<int>(uvSetIndices))[0] == 0 ? 0 : 1;
+            }
 
             // For more information about UV
             // see http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-94070C7E-C550-42FD-AFC9-FBE82B173B1D
