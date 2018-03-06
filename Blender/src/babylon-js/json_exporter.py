@@ -13,6 +13,9 @@ from .world import *
 import bpy
 from io import open
 from os import path, makedirs
+import time
+import calendar
+
 #===============================================================================
 class JsonExporter:
     nameSpace   = None  # assigned in execute
@@ -265,6 +268,17 @@ class JsonExporter:
         # Closing
         file_handler.write('\n}')
         file_handler.close()
+
+        # Create or update .manifest file
+        if self.scene.writeManifestFile:
+            file_handler = open(self.filepathMinusExtension + '.babylon.manifest', 'w', encoding='utf8')
+            file_handler.write('{\n')
+            file_handler.write('\t"version" : ' + str(calendar.timegm(time.localtime())) + ',\n')
+            file_handler.write('\t"enableSceneOffline" : true,\n')
+            file_handler.write('\t"enableTextureOffline" : true\n')
+            file_handler.write('}')
+            file_handler.close()
+
         Logger.log('========= Writing of scene file completed =========', 0)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def getMaterial(self, baseMaterialId):
