@@ -297,6 +297,7 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
+            babylonMesh.colors = vertices.SelectMany(v => v.Color).ToArray();
             if (hasUV)
             {
                 babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
@@ -433,6 +434,13 @@ namespace Maya2Babylon
             MVector normal = new MVector();
             mFnMesh.getFaceVertexNormal(polygonId, vertexIndexGlobal, normal);
 
+            int colorIndex;
+            float[] defaultColor = new float[] {0.5f,0.5f,0.5f,1};
+            MColor color = new MColor();
+
+            //Get the color index
+            mFnMesh.getColorIndex(polygonId, vertexIndexLocal, out colorIndex);
+            
             // Switch coordinate system at object level
             point.z *= -1;
             normal.z *= -1;
@@ -441,8 +449,21 @@ namespace Maya2Babylon
             {
                 BaseIndex = vertexIndexGlobal,
                 Position = point.toArray(),
-                Normal = normal.toArray()
+                Normal = normal.toArray(),
             };
+
+            //if a color is set
+            if(colorIndex != -1)
+            {
+                mFnMesh.getColor(colorIndex, color);
+                vertex.Color = color.toArray();
+            }
+            //else set the color to the default one of Maya
+            else
+            {
+                vertex.Color = defaultColor;
+            }
+
 
             // UV
             if (hasUV)
@@ -451,6 +472,7 @@ namespace Maya2Babylon
                 mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v);
                 vertex.UV = new float[] { u, v };
             }
+
 
             return vertex;
         }
