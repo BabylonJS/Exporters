@@ -8,6 +8,7 @@ namespace MayaBabylon
         public int CurrentIndex { get; set; }
         public float[] Position { get; set; } // Vec3
         public float[] Normal { get; set; } // Vec3
+        public float[] Tangent { get; set; } // Vec3
         public float[] UV { get; set; } // Vec2
         public float[] UV2 { get; set; } // Vec2
         public int BonesIndices { get; set; }
