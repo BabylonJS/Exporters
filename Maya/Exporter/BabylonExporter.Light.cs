@@ -1,6 +1,7 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace Maya2Babylon
 {
@@ -109,6 +110,10 @@ namespace Maya2Babylon
                     break;
             }
 
+            Print(mFnTransform, 2, "Print ExportLight mFnTransform");
+
+            Print(mFnLight, 2, "Print ExportLight mFnLight");
+
             #endregion
 
             if (IsLightExportable(mFnLight, mDagPath) == false)
@@ -122,7 +127,7 @@ namespace Maya2Babylon
             ExportHierarchy(babylonLight, mFnTransform);
 
             // Position
-            RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
+            //RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
             float[] position = null;
             GetTransform(mFnTransform, ref position);
             babylonLight.position = position;
@@ -186,6 +191,36 @@ namespace Maya2Babylon
             // TODO - Shadows
 
             // TODO - Exclusion
+
+            //Variable declaration
+            MStringArray enlightedMeshesNames = new MStringArray();
+            List<string> includeMeshesIds = new List<string>();
+            String typeMesh = null;
+            MStringArray kTransMesh = new MStringArray();
+            MStringArray UUIDMesh = new MStringArray();
+
+            //MEL Command that get the enlighted mesh for a given light
+            MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.name};", enlightedMeshesNames);
+
+            //For each enlighted mesh
+            foreach (String Mesh in enlightedMeshesNames)
+            {
+                
+                //MEL Command use to get the type of each mesh
+                typeMesh = MGlobal.executeCommandStringResult($@"nodeType -api {Mesh};");
+
+                //We are targeting the type kMesh and not kTransform (for parenting)
+                if (typeMesh == "kMesh")
+                {
+                    MGlobal.executeCommand($@"listRelatives -allParents {Mesh};", kTransMesh);
+
+                    //And finally the MEL Command for the uuid of each mesh
+                    MGlobal.executeCommand($@"ls -uuid {kTransMesh[0]};", UUIDMesh);
+                    includeMeshesIds.Add(UUIDMesh[0]);
+                }
+            }
+
+            babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
 
             // TODO - Animations
 
