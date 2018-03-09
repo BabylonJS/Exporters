@@ -14,6 +14,7 @@ namespace Maya2Babylon
             babylonLight.id = Guid.NewGuid().ToString();
             babylonLight.type = 3;
             babylonLight.groundColor = new float[] { 0, 0, 0 };
+            babylonLight.position = new float[] { 0, 0, 0 };
             babylonLight.direction = new[] { 0, 1.0f, 0 };
 
             babylonLight.intensity = 1;
@@ -140,7 +141,6 @@ namespace Maya2Babylon
             
             // Common fields 
             babylonLight.intensity = mFnLight.intensity;
-
             babylonLight.diffuse = mFnLight.lightDiffuse ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
             babylonLight.specular = mFnLight.lightSpecular ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
 
@@ -167,6 +167,17 @@ namespace Maya2Babylon
                 case MFn.Type.kAmbientLight:
                     babylonLight.type = 3;
                     babylonLight.groundColor = new float[] { 0, 0, 0 };
+
+                    // No emit diffuse /specular checkbox for ambient light
+                    babylonLight.diffuse = mFnLight.color.toArrayRGB();
+                    babylonLight.specular = babylonLight.diffuse;
+
+                    // Direction
+                    vDir = new MVector(0, 1, 0);
+                    transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
+                    vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
+                    vDir.normalize();
+                    babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
                     break;
                 case MFn.Type.kAreaLight:
                 case MFn.Type.kVolumeLight:
