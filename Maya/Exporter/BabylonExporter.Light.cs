@@ -192,35 +192,35 @@ namespace Maya2Babylon
 
             // TODO - Exclusion
 
-            //Variable declaration
-            MStringArray enlightedMeshesNames = new MStringArray();
-            List<string> includeMeshesIds = new List<string>();
-            String typeMesh = null;
-            MStringArray kTransMesh = new MStringArray();
-            MStringArray UUIDMesh = new MStringArray();
+            // TODO - Fix inclusion not detected
+            ////Variable declaration
+            //MStringArray enlightedMeshesNames = new MStringArray();
+            //List<string> includeMeshesIds = new List<string>();
+            //String typeMesh = null;
+            //MStringArray kTransMesh = new MStringArray();
+            //MStringArray UUIDMesh = new MStringArray();
 
-            //MEL Command that get the enlighted mesh for a given light
-            MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.name};", enlightedMeshesNames);
+            ////MEL Command that get the enlighted mesh for a given light
+            //MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.name};", enlightedMeshesNames);
 
-            //For each enlighted mesh
-            foreach (String Mesh in enlightedMeshesNames)
-            {
-                
-                //MEL Command use to get the type of each mesh
-                typeMesh = MGlobal.executeCommandStringResult($@"nodeType -api {Mesh};");
+            ////For each enlighted mesh
+            //foreach (String Mesh in enlightedMeshesNames)
+            //{
+            //    //MEL Command use to get the type of each mesh
+            //    typeMesh = MGlobal.executeCommandStringResult($@"nodeType -api {Mesh};");
 
-                //We are targeting the type kMesh and not kTransform (for parenting)
-                if (typeMesh == "kMesh")
-                {
-                    MGlobal.executeCommand($@"listRelatives -allParents {Mesh};", kTransMesh);
+            //    //We are targeting the type kMesh and not kTransform (for parenting)
+            //    if (typeMesh == "kMesh")
+            //    {
+            //        MGlobal.executeCommand($@"listRelatives -allParents {Mesh};", kTransMesh);
 
-                    //And finally the MEL Command for the uuid of each mesh
-                    MGlobal.executeCommand($@"ls -uuid {kTransMesh[0]};", UUIDMesh);
-                    includeMeshesIds.Add(UUIDMesh[0]);
-                }
-            }
+            //        //And finally the MEL Command for the uuid of each mesh
+            //        MGlobal.executeCommand($@"ls -uuid {kTransMesh[0]};", UUIDMesh);
+            //        includeMeshesIds.Add(UUIDMesh[0]);
+            //    }
+            //}
 
-            babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
+            //babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
 
             // TODO - Animations
 
