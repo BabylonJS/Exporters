@@ -406,18 +406,8 @@ namespace Max2Babylon
                 ExportVector3Animation("position", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-
-                    var local_tm_R0 = localMatrix.GetRow(0);
-                    var local_tm_R1 = localMatrix.GetRow(1);
-                    var local_tm_R2 = localMatrix.GetRow(2);
-                    var local_tm_R3 = localMatrix.GetRow(3);
-
                     var tm_babylon = new BabylonMatrix();
-                    BabylonMatrix.FromValuesToRef(local_tm_R0.X, local_tm_R0.Y, local_tm_R0.Z, local_tm_R0.W,
-                                                  local_tm_R1.X, local_tm_R1.Y, local_tm_R1.Z, local_tm_R1.W,
-                                                  local_tm_R2.X, local_tm_R2.Y, local_tm_R2.Z, local_tm_R2.W,
-                                                  local_tm_R3.X, local_tm_R3.Y, local_tm_R3.Z, local_tm_R3.W,
-                                                  tm_babylon);
+                    tm_babylon.m = localMatrix.ToArray();
 
                     var s_babylon = new BabylonVector3();
                     var q_babylon = new BabylonQuaternion();
@@ -441,18 +431,8 @@ namespace Max2Babylon
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-
-                    var local_tm_R0 = localMatrix.GetRow(0);
-                    var local_tm_R1 = localMatrix.GetRow(1);
-                    var local_tm_R2 = localMatrix.GetRow(2);
-                    var local_tm_R3 = localMatrix.GetRow(3);
-
                     var tm_babylon = new BabylonMatrix();
-                    BabylonMatrix.FromValuesToRef(local_tm_R0.X, local_tm_R0.Y, local_tm_R0.Z, local_tm_R0.W,
-                                                  local_tm_R1.X, local_tm_R1.Y, local_tm_R1.Z, local_tm_R1.W,
-                                                  local_tm_R2.X, local_tm_R2.Y, local_tm_R2.Z, local_tm_R2.W,
-                                                  local_tm_R3.X, local_tm_R3.Y, local_tm_R3.Z, local_tm_R3.W,
-                                                  tm_babylon);
+                    tm_babylon.m = localMatrix.ToArray();
 
                     var s_babylon = new BabylonVector3();
                     var q_babylon = new BabylonQuaternion();
@@ -460,7 +440,11 @@ namespace Max2Babylon
 
                     tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
 
-                    return new[] { q_babylon.X, q_babylon.Y, q_babylon.Z, q_babylon.W };
+                    // normalize
+                    var q = q_babylon;
+                    float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+
+                    return new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
                 });
             }
         }
@@ -472,18 +456,8 @@ namespace Max2Babylon
                 ExportVector3Animation("scaling", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-
-                    var local_tm_R0 = localMatrix.GetRow(0);
-                    var local_tm_R1 = localMatrix.GetRow(1);
-                    var local_tm_R2 = localMatrix.GetRow(2);
-                    var local_tm_R3 = localMatrix.GetRow(3);
-
                     var tm_babylon = new BabylonMatrix();
-                    BabylonMatrix.FromValuesToRef(local_tm_R0.X, local_tm_R0.Y, local_tm_R0.Z, local_tm_R0.W,
-                                                  local_tm_R1.X, local_tm_R1.Y, local_tm_R1.Z, local_tm_R1.W,
-                                                  local_tm_R2.X, local_tm_R2.Y, local_tm_R2.Z, local_tm_R2.W,
-                                                  local_tm_R3.X, local_tm_R3.Y, local_tm_R3.Z, local_tm_R3.W,
-                                                  tm_babylon);
+                    tm_babylon.m = localMatrix.ToArray();
 
                     var s_babylon = new BabylonVector3();
                     var q_babylon = new BabylonQuaternion();
