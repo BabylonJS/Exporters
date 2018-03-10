@@ -331,9 +331,6 @@ namespace Max2Babylon
 
                 // flip normals depending on parity
                 var parityObject = meshNode.GetObjectTM(0).ExtractMatrix3().Parity;
-                var parityLocal = meshNode.GetLocalTM(0).ExtractMatrix3().Parity;
-                var parityWorld = meshNode.GetLocalTM(0).ExtractMatrix3().Parity;
-                //System.Diagnostics.Debug.WriteLine("loc, obj, wor: {0}, {1}, {2}        ({3})", Convert.ToInt32(parityLocal), Convert.ToInt32(parityObject), Convert.ToInt32(parityWorld), meshNode.Name);
 
                 // for cesium, threejs and babylonjs (all the same)
                 if (parityObject)
@@ -885,49 +882,16 @@ namespace Max2Babylon
         {
             // Position / rotation / scaling
             var localTM = maxGameNode.GetLocalTM(0);
-
-            // original: has wrong values for matrices with negative scales (wrong decomposition somewhere...)
-            /*
-            var meshTrans = localTM.Translation;
-            var meshRotation = localTM.Rotation;
-            var meshScale = localTM.Scaling;
             
-            babylonAbstractMesh.position = new[] { meshTrans.X, meshTrans.Y, meshTrans.Z };
-
-            var rotationQuaternion = new BabylonQuaternion { X = meshRotation.X, Y = meshRotation.Y, Z = meshRotation.Z, W = -meshRotation.W };
-            if (ExportQuaternionsInsteadOfEulers)
-            {
-                babylonAbstractMesh.rotationQuaternion = rotationQuaternion.ToArray();
-            }
-            else
-            {
-                babylonAbstractMesh.rotation = rotationQuaternion.toEulerAngles().ToArray();
-            }
-
-            babylonAbstractMesh.scaling = new[] { meshScale.X, meshScale.Y, meshScale.Z };
-            */
-
-            var local_tm_R0 = localTM.GetRow(0);
-            var local_tm_R1 = localTM.GetRow(1);
-            var local_tm_R2 = localTM.GetRow(2);
-            var local_tm_R3 = localTM.GetRow(3);
-
-
+            // use babylon decomposition, as 3ds max built-in values are no correct
             var tm_babylon = new BabylonMatrix();
-            BabylonMatrix.FromValuesToRef(local_tm_R0.X, local_tm_R0.Y, local_tm_R0.Z, local_tm_R0.W,
-                                          local_tm_R1.X, local_tm_R1.Y, local_tm_R1.Z, local_tm_R1.W,
-                                          local_tm_R2.X, local_tm_R2.Y, local_tm_R2.Z, local_tm_R2.W,
-                                          local_tm_R3.X, local_tm_R3.Y, local_tm_R3.Z, local_tm_R3.W,
-                                          tm_babylon);
+            tm_babylon.m = localTM.ToArray();
 
             var s_babylon = new BabylonVector3();
             var q_babylon = new BabylonQuaternion();
             var t_babylon = new BabylonVector3();
+
             tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
-
-            // test to see whether it is correct:
-            var tm_babylon_test = BabylonMatrix.Compose(s_babylon, q_babylon, t_babylon);
-
 
             if (ExportQuaternionsInsteadOfEulers)
             {
@@ -938,9 +902,11 @@ namespace Max2Babylon
                 babylonAbstractMesh.rotation = q_babylon.toEulerAngles().ToArray();
             }
 
-            // new decomposition based on babylon decomposition:
+            // normalize quaternion
+            var q = q_babylon;
+            float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+            babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             babylonAbstractMesh.scaling = new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
-            babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X, q_babylon.Y, q_babylon.Z, q_babylon.W };
             babylonAbstractMesh.position = new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
 
         }

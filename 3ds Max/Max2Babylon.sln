@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3ds Max", "3ds Max", "{2139CC27-1C89-49C8-95AC-7715ACBADC1F}"
 EndProject
@@ -62,7 +62,6 @@ Global
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Debug|Win32.Build.0 = Debug|Any CPU
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Debug|x64.ActiveCfg = Debug|x64
-		{2F49C726-A1F8-40D4-859F-1355949608DC}.Debug|x64.Build.0 = Debug|x64
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Debug|x86.Build.0 = Debug|Any CPU
 		{2F49C726-A1F8-40D4-859F-1355949608DC}.Profile|Any CPU.ActiveCfg = Release|Any CPU
@@ -98,7 +97,6 @@ Global
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|Win32.Build.0 = Debug|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|x64.ActiveCfg = Debug|x64
-		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|x64.Build.0 = Debug|x64
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Debug|x86.Build.0 = Debug|Any CPU
 		{DD7C931A-8FAF-4318-BB74-71DC858CC400}.Profile|Any CPU.ActiveCfg = Release|Any CPU
