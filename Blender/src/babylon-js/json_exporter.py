@@ -41,8 +41,12 @@ class JsonExporter:
             Logger.log('========= Conversion from Blender to Babylon.js =========', 0)
             Logger.log('Scene settings used:', 1)
             Logger.log('selected layers only:  ' + format_bool(scene.export_onlySelectedLayer), 2)
-            Logger.log('flat shading entire scene:  ' + format_bool(scene.export_flatshadeScene), 2)
             Logger.log('inline textures:  ' + format_bool(scene.inlineTextures), 2)
+            Logger.log('Positions Precision :  ' + format_int(scene.positionsPrecision), 2)
+            Logger.log('Normals Precision   :  ' + format_int(scene.normalsPrecision), 2)
+            Logger.log('UVs Precision       :  ' + format_int(scene.UVsPrecision), 2)
+            Logger.log('Vert Color Precision:  ' + format_int(scene.vColorsPrecision), 2)
+            Logger.log('Mat Weight Precision:  ' + format_int(scene.mWeightsPrecision), 2)
             if not scene.inlineTextures:
                 Logger.log('texture directory:  ' + self.textureDir, 2)
             self.world = World(scene)
@@ -92,39 +96,22 @@ class JsonExporter:
                         Logger.warn('The following camera not visible in scene thus ignored: ' + object.name)
 
                 elif object.type == 'MESH':
-                    forcedParent = None
-                    nameID = ''
-                    nextStartFace = 0
+                    if not self.isInSelectedLayer(object, scene): continue
+                    mesh = Mesh(object, scene, self)
+                    if mesh.hasUnappliedTransforms and hasattr(mesh, 'skeletonWeights'):
+                        self.fatalError = 'Mesh: ' + mesh.name + ' has un-applied transformations.  This will never work for a mesh with an armature.  Export cancelled'
+                        Logger.log(self.fatalError)
+                        return
 
-                    while True and self.isInSelectedLayer(object, scene):
-                        mesh = Mesh(object, scene, nextStartFace, forcedParent, nameID, self)
-                        if mesh.hasUnappliedTransforms and hasattr(mesh, 'skeletonWeights'):
-                            self.fatalError = 'Mesh: ' + mesh.name + ' has un-applied transformations.  This will never work for a mesh with an armature.  Export cancelled'
-                            Logger.log(self.fatalError)
-                            return
+                    if hasattr(mesh, 'physicsImpostor'): self.needPhysics = True
 
-                        if hasattr(mesh, 'physicsImpostor'): self.needPhysics = True
-                        
-                        if hasattr(mesh, 'instances'):
-                            self.meshesAndNodes.append(mesh)
-                            if hasattr(mesh, 'morphTargetManagerId'):
-                                self.morphTargetMngrs.append(mesh)
-                        else:
-                            break
+                    if hasattr(mesh, 'instances'):
+                        self.meshesAndNodes.append(mesh)
+                        if hasattr(mesh, 'morphTargetManagerId'):
+                            self.morphTargetMngrs.append(mesh)
 
-                        if object.data.attachedSound != '':
-                            self.sounds.append(Sound(object.data.attachedSound, object.data.autoPlaySound, object.data.loopSound, object))
-
-                        nextStartFace = mesh.offsetFace
-                        if nextStartFace == 0:
-                            break
-
-                        if forcedParent is None:
-                            nameID = 0
-                            forcedParent = object
-                            Logger.warn('The following mesh has exceeded the maximum # of vertex elements & will be broken into multiple Babylon meshes: ' + object.name)
-
-                        nameID = nameID + 1
+                    if object.data.attachedSound != '':
+                        self.sounds.append(Sound(object.data.attachedSound, object.data.autoPlaySound, object.data.loopSound, object))
 
                 elif object.type == 'EMPTY':
                     self.meshesAndNodes.append(Node(object))

@@ -44,7 +44,7 @@ namespace Maya2Babylon
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 2);
+                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
                     bitmap.Save(absolutePath, imageFormat);
                 }
 
@@ -60,7 +60,7 @@ namespace Maya2Babylon
 
                 if (sourcePath == null || sourcePath == "")
                 {
-                    RaiseWarning("Texture path is missing.", 2);
+                    RaiseWarning("Texture path is missing.", 3);
                     return null;
                 }
 
@@ -69,7 +69,7 @@ namespace Maya2Babylon
                 if (validImageFormat == null)
                 {
                     // Image format is not supported by the exporter
-                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
                     return null;
                 }
 
@@ -94,7 +94,7 @@ namespace Maya2Babylon
                 name = babylonTexture.name;
             }
 
-            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 1);
+            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             string validImageFormat = writeImageFunc.Invoke();
             if (validImageFormat == null)
@@ -108,7 +108,7 @@ namespace Maya2Babylon
             // -------- Sampler ---------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create sampler", 2);
+            RaiseMessage("GLTFExporter.Texture | create sampler", 3);
             GLTFSampler gltfSampler = new GLTFSampler();
             gltfSampler.index = gltf.SamplersList.Count;
             gltf.SamplersList.Add(gltfSampler);
@@ -129,7 +129,7 @@ namespace Maya2Babylon
             // --------- Image ----------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create image", 2);
+            RaiseMessage("GLTFExporter.Texture | create image", 3);
             GLTFImage gltfImage = new GLTFImage
             {
                 uri = name
@@ -152,7 +152,7 @@ namespace Maya2Babylon
             // -------- Texture ---------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create texture", 2);
+            RaiseMessage("GLTFExporter.Texture | create texture", 3);
             var gltfTexture = new GLTFTexture
             {
                 name = name,
@@ -227,7 +227,7 @@ namespace Maya2Babylon
                     minFilter = GLTFSampler.TextureMinFilter.NEAREST;
                     break;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture sampling mode not found");
+                    RaiseError("GLTFExporter.Texture | texture sampling mode not found", 3);
                     magFilter = null;
                     minFilter = null;
                     break;
@@ -245,7 +245,7 @@ namespace Maya2Babylon
                 case BabylonTexture.AddressMode.MIRROR_ADDRESSMODE:
                     return GLTFSampler.TextureWrapMode.MIRRORED_REPEAT;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture wrap mode not found");
+                    RaiseError("GLTFExporter.Texture | texture wrap mode not found", 3);
                     return null;
             }
         }
@@ -257,7 +257,7 @@ namespace Maya2Babylon
 
         private void CopyGltfTexture(string sourcePath, string destPath)
         {
-            _copyTexture(sourcePath, destPath, validFormats, invalidFormats);
+            _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
         }
     }
 }
