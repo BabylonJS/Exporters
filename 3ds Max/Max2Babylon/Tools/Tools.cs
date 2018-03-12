@@ -904,6 +904,10 @@ namespace Max2Babylon
                 Marshal.Copy(xPtr, rotate, 0, 1);
                 Marshal.Copy(yPtr, rotate, 1, 1);
                 Marshal.Copy(zPtr, rotate, 2, 1);
+                
+                Marshal.FreeHGlobal(xPtr);
+                Marshal.FreeHGlobal(yPtr);
+                Marshal.FreeHGlobal(zPtr);
 
                 var temp = rotate[1];
                 rotate[0] = -rotate[0] * parts.F;

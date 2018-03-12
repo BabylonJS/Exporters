@@ -124,6 +124,7 @@ class Animation:
         return self.frames[len(self.frames) - 1] if len(self.frames) > 0 else -1
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def to_scene_file(self, file_handler):
+        precision = bpy.context.scene.positionsPrecision if self.propertyInBabylon == 'position' else FLOAT_PRECISION_DEFAULT
         file_handler.write('{')
         write_int(file_handler, 'dataType', self.dataType, True)
         write_int(file_handler, 'framePerSecond', self.framePerSecond)
@@ -142,7 +143,7 @@ class Animation:
             elif self.dataType == ANIMATIONTYPE_QUATERNION:
                 write_quaternion(file_handler, 'values', value_idx)
             else:
-                write_vector(file_handler, 'values', value_idx)
+                write_vector(file_handler, 'values', value_idx, precision)
             file_handler.write('}')
 
         file_handler.write(']')   # close keys

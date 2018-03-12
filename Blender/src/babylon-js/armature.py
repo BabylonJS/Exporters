@@ -70,8 +70,7 @@ class Bone:
         file_handler.write('}')
 #===============================================================================
 class Skeleton:
-    # skipAnimations argument only used when exporting QI.SkeletonPoseLibrary
-    def __init__(self, bpySkeleton, scene, id, ignoreIKBones, skipAnimations = False):
+    def __init__(self, bpySkeleton, scene, id, ignoreIKBones):
         Logger.log('processing begun of skeleton:  ' + bpySkeleton.name + ', id:  '+ str(id))
         self.name = bpySkeleton.name
         self.id = id
@@ -84,7 +83,7 @@ class Skeleton:
 
             self.bones.append(Bone(bone, bpySkeleton, self.bones))
 
-        if (bpySkeleton.animation_data and not skipAnimations):
+        if (bpySkeleton.animation_data):
             self.ranges = []
             frameOffset = 0
             for action in bpy.data.actions:

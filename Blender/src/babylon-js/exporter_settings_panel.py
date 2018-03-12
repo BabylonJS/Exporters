@@ -13,16 +13,31 @@ class ExporterSettingsPanel(bpy.types.Panel):
         description='Export only selected layers',
         default = False,
         )
-    bpy.types.Scene.export_flatshadeScene = bpy.props.BoolProperty(
-        name='Flat shade entire scene',
-        description='Use face normals on all meshes.  Increases vertices.',
-        default = False,
-        )
-    bpy.types.Scene.force64Kmeshes = bpy.props.BoolProperty(
-        name='Force 64k per Mesh Vertex Limit',
-        description='When true, break up meshes with > 64k vertices for older\nhardware.  No effect when no qualifying meshes.',
-        default = True,
-        )
+    bpy.types.Scene.positionsPrecision = bpy.props.IntProperty(
+        name='Positions / Shape Keys:',
+        description='Max number of digits for positions / shape keys.  Reducing useful to reduce\nfile size when units of meshes already small, .e.g inches',
+        default = 4, min = 0, max = 5
+    )
+    bpy.types.Scene.normalsPrecision = bpy.props.IntProperty(
+        name='Normals:',
+        description='Max number of digits for normals',
+        default = 3, min = 1, max = 5
+    )
+    bpy.types.Scene.UVsPrecision = bpy.props.IntProperty(
+        name='UVs:',
+        description='Max number of digits for UVs',
+        default = 3, min = 1, max = 5
+    )
+    bpy.types.Scene.vColorsPrecision = bpy.props.IntProperty(
+        name='Vertex Colors:',
+        description='Number of digits for colors',
+        default = 3, min = 1, max = 5
+    )
+    bpy.types.Scene.mWeightsPrecision = bpy.props.IntProperty(
+        name='Matrix Weights:',
+        description='Max number of digits for armature weights',
+        default = 2, min = 1, max = 5
+    )
     bpy.types.Scene.attachedSound = bpy.props.StringProperty(
         name='Sound',
         description='',
@@ -63,16 +78,23 @@ class ExporterSettingsPanel(bpy.types.Panel):
         name='Auto launch non-skeleton animations',
         description='Start all animations, except for bones.',
         default = False
-    )   
-     
+    )
+
     def draw(self, context):
         layout = self.layout
 
         scene = context.scene
         layout.prop(scene, 'export_onlySelectedLayer')
         layout.prop(scene, 'export_flatshadeScene')
-        layout.prop(scene, 'force64Kmeshes')
         layout.prop(scene, 'ignoreIKBones')
+
+        box = layout.box()
+        box.label(text='Max Decimal Precision:')
+        box.prop(scene, 'positionsPrecision')
+        box.prop(scene, 'normalsPrecision')
+        box.prop(scene, 'UVsPrecision')
+        box.prop(scene, 'vColorsPrecision')
+        box.prop(scene, 'mWeightsPrecision')
 
         box = layout.box()
         box.label(text='Texture Location:')
@@ -85,7 +107,7 @@ class ExporterSettingsPanel(bpy.types.Panel):
         box.prop(scene, 'attachedSound')
         box.prop(scene, 'autoPlaySound')
         box.prop(scene, 'loopSound')
-        
+
         box = layout.box()
         box.label(text='Animation:')
         box.prop(scene, 'currentActionOnly')
