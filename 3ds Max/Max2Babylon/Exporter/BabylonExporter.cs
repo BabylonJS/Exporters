@@ -514,12 +514,14 @@ namespace Max2Babylon
                 for (int i = 0; i < tab.Count; i++)
                 {
 #if MAX2017 || MAX2018
-                    var indexer = i;
+                    var item = tab[i];
 #else
-                    var indexer = new IntPtr(i);
+                    var indexer = Marshal.AllocHGlobal(sizeof(int));
+                    Marshal.WriteInt32(indexer, i);
+                    var item = tab[indexer];
                     Marshal.FreeHGlobal(indexer);
 #endif
-                    list.Add(tab[indexer]);
+                    list.Add(item);
                 }
                 return list;
             }

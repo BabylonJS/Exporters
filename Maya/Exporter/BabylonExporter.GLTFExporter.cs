@@ -81,6 +81,7 @@ namespace Maya2Babylon
 
             // Materials
             RaiseMessage("GLTFExporter | Exporting materials");
+            logRankTexture = 2;
             foreach (var babylonMaterial in babylonMaterialsToExport)
             {
                 ExportMaterial(babylonMaterial, gltf);

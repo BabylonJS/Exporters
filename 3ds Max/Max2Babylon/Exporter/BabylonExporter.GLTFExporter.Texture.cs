@@ -44,7 +44,7 @@ namespace Max2Babylon
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 2);
+                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
                     bitmap.Save(absolutePath, imageFormat);
                 }
 
@@ -62,7 +62,7 @@ namespace Max2Babylon
         {
             if (sourcePath == null || sourcePath == "")
             {
-                RaiseWarning("Texture path is missing.", 2);
+                RaiseWarning("Texture path is missing.", 3);
                 return null;
             }
 
@@ -71,7 +71,7 @@ namespace Max2Babylon
             if (validImageFormat == null)
             {
                 // Image format is not supported by the exporter
-                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
                 return null;
             }
 
@@ -95,7 +95,7 @@ namespace Max2Babylon
                 name = babylonTexture.name;
             }
 
-            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 1);
+            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             string validImageFormat = writeImageFunc.Invoke();
             if (validImageFormat == null)
@@ -109,7 +109,7 @@ namespace Max2Babylon
             // -------- Sampler ---------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create sampler", 2);
+            RaiseMessage("GLTFExporter.Texture | create sampler", 3);
             GLTFSampler gltfSampler = gltf.AddSampler();
 
             // --- Retreive info from babylon texture ---
@@ -128,7 +128,7 @@ namespace Max2Babylon
             // --------- Image ----------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create image", 2);
+            RaiseMessage("GLTFExporter.Texture | create image", 3);
             GLTFImage gltfImage = gltf.AddImage();
 
             gltfImage.uri = name;
@@ -139,7 +139,7 @@ namespace Max2Babylon
             // -------- Texture ---------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create texture", 2);
+            RaiseMessage("GLTFExporter.Texture | create texture", 3);
             GLTFTexture gltfTexture = gltf.AddTexture(gltfImage, gltfSampler);
             gltfTexture.name = name;
 
@@ -208,7 +208,7 @@ namespace Max2Babylon
                     minFilter = GLTFSampler.TextureMinFilter.NEAREST;
                     break;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture sampling mode not found");
+                    RaiseError("GLTFExporter.Texture | texture sampling mode not found", 3);
                     magFilter = null;
                     minFilter = null;
                     break;
@@ -226,7 +226,7 @@ namespace Max2Babylon
                 case BabylonTexture.AddressMode.MIRROR_ADDRESSMODE:
                     return GLTFSampler.TextureWrapMode.MIRRORED_REPEAT;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture wrap mode not found");
+                    RaiseError("GLTFExporter.Texture | texture wrap mode not found", 3);
                     return null;
             }
         }
@@ -238,7 +238,7 @@ namespace Max2Babylon
 
         private void CopyGltfTexture(string sourcePath, string destPath)
         {
-            _copyTexture(sourcePath, destPath, validFormats, invalidFormats);
+            _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
         }
     }
 }
