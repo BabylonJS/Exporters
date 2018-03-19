@@ -47,8 +47,8 @@
             this.startLabel = new System.Windows.Forms.Label();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.nodesGroupBox = new System.Windows.Forms.GroupBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.MaxNodeTree = new Max2Babylon.MaxNodeTreeView();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             nameFieldPanel = new System.Windows.Forms.Panel();
             optionsButtonsPanel = new System.Windows.Forms.Panel();
             nodeButtonsPanel = new System.Windows.Forms.Panel();
@@ -153,7 +153,7 @@
             this.removeNodeButton.Name = "removeNodeButton";
             this.removeNodeButton.Size = new System.Drawing.Size(178, 23);
             this.removeNodeButton.TabIndex = 4;
-            this.removeNodeButton.Text = "Remove Selected Scene Nodes";
+            this.removeNodeButton.Text = "Remove Viewport Selection";
             this.removeNodeButton.UseVisualStyleBackColor = true;
             this.removeNodeButton.Click += new System.EventHandler(this.removeNodeButton_Click);
             // 
@@ -166,7 +166,7 @@
             this.addSelectedButton.Name = "addSelectedButton";
             this.addSelectedButton.Size = new System.Drawing.Size(178, 23);
             this.addSelectedButton.TabIndex = 3;
-            this.addSelectedButton.Text = "Add Selected Scene Nodes";
+            this.addSelectedButton.Text = "Add Viewport Selection";
             this.addSelectedButton.UseVisualStyleBackColor = true;
             this.addSelectedButton.Click += new System.EventHandler(this.addSelectedButton_Click);
             // 
@@ -272,26 +272,6 @@
             this.nodesGroupBox.TabStop = false;
             this.nodesGroupBox.Text = "Animation Nodes";
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.optionsGroupBox);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.nodesGroupBox);
-            this.splitContainer1.Size = new System.Drawing.Size(675, 482);
-            this.splitContainer1.SplitterDistance = 190;
-            this.splitContainer1.TabIndex = 0;
-            this.splitContainer1.TabStop = false;
-            // 
             // MaxNodeTree
             // 
             this.MaxNodeTree.AllowDrop = true;
@@ -316,6 +296,26 @@
             this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
             this.MaxNodeTree.Size = new System.Drawing.Size(475, 463);
             this.MaxNodeTree.TabIndex = 7;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.IsSplitterFixed = true;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.optionsGroupBox);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.nodesGroupBox);
+            this.splitContainer1.Size = new System.Drawing.Size(675, 482);
+            this.splitContainer1.SplitterDistance = 190;
+            this.splitContainer1.TabIndex = 0;
+            this.splitContainer1.TabStop = false;
             // 
             // AnimationGroupControl
             // 
