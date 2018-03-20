@@ -484,34 +484,36 @@ namespace Maya2Babylon
             };
 
             // TODO - Export colors ?
-            //// Color
-            //int colorIndex;
-            //string colorSetName;
-            //float[] defaultColor = new float[] { 0.5f, 0.5f, 0.5f, 1 };
-            //MColor color = new MColor();
-            //mFnMesh.getCurrentColorSetName(out colorSetName);
+            // Color
+            /*int colorIndex;
+            string colorSetName;
+            float[] defaultColor = new float[] { 0.5f, 0.5f, 0.5f, 1 };
+            MColor color = new MColor();
+            mFnMesh.getCurrentColorSetName(out colorSetName);
 
-            //if (mFnMesh.numColors(colorSetName) > 0)
-            //{
-            //    //Get the color index
-            //    mFnMesh.getColorIndex(polygonId, vertexIndexLocal, out colorIndex);
+            if (mFnMesh.numColors(colorSetName) >= 0)
+            {
+                //RaiseWarning("plop");
+                //Get the color index
+                mFnMesh.getColorIndex(polygonId, vertexIndexLocal, out colorIndex);
 
-            //    //if a color is set
-            //    if (colorIndex != -1)
-            //    {
-            //        mFnMesh.getColor(colorIndex, color);
-            //        vertex.Color = color.toArray();
-            //    }
-            //    //else set the color to the default one of Maya
-            //    else
-            //    {
-            //        vertex.Color = defaultColor;
-            //    }
-            //}
-            //else
-            //{
-            //    vertex.Color = defaultColor;
-            //}
+                //if a color is set
+                if (colorIndex != -1)
+                {
+                    mFnMesh.getColor(colorIndex, color);
+                    vertex.Color = color.toArray();
+                }
+                //else set the color to the default one of Maya
+                else
+                {
+                    vertex.Color = defaultColor;
+                }
+            }
+            else
+            {
+                //RaiseWarning("plap");
+                vertex.Color = defaultColor; 
+            }*/
 
             // UV
             int indexUVSet = 0;
