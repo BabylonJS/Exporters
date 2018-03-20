@@ -326,8 +326,7 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
-
-            // if vertexColor => export
+            
             string colorSetName;
             mFnMesh.getCurrentColorSetName(out colorSetName);
             if (mFnMesh.numColors(colorSetName) > 0) {
@@ -379,8 +378,6 @@ namespace Maya2Babylon
             mFnMesh.getConnectedShaders(0, shaders, faceMatIndices);
 
             // Export geometry even if an error occured with shaders
-            // This is a fix for Maya test files
-            // TODO - Find the reason why shaders.count = 0
             int nbShaders = Math.Max(1, shaders.Count);
             bool checkShader = nbShaders == shaders.Count;
             RaiseVerbose("shaders.Count=" + shaders.Count, 2);
@@ -487,20 +484,16 @@ namespace Maya2Babylon
                 Position = point.toArray(),
                 Normal = normal.toArray(),
             };
-
-            // TODO - Export colors ?
+            
             // Color
             int colorIndex;
             string colorSetName;
             float[] defaultColor = new float[] { 1, 1, 1, 0 };
             MColor color = new MColor();
-            
             mFnMesh.getCurrentColorSetName(out colorSetName);
-            
 
             if (mFnMesh.numColors(colorSetName) > 0)
             {
-                
                 //Get the color index
                 mFnMesh.getColorIndex(polygonId, vertexIndexLocal, out colorIndex);
                 
@@ -509,13 +502,11 @@ namespace Maya2Babylon
                 {
                     mFnMesh.getColor(colorIndex, color);
                     vertex.Color = color.toArray();
-                    
                 }
-                //else set the color to the default one of Maya
+                //else set the default color
                 else
                 {
                     vertex.Color = defaultColor;
-                    
                 }
             }
 

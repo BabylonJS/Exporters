@@ -188,23 +188,21 @@ namespace Maya2Babylon
             }
 
             // TODO - Shadows
-
-            // TODO - Fix inclusion not detected
-            ////Variable declaration
+            
+            //Variable declaration
             MStringArray enlightedMeshesNames = new MStringArray();
             List<string> includeMeshesIds = new List<string>();
             MStringArray kTransMesh = new MStringArray();
             String typeMesh = null;
             MStringArray UUIDMesh = new MStringArray();
 
-            ////MEL Command that get the enlighted mesh for a given light
-
+            //MEL Command that get the enlighted mesh for a given light
             MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.name};", enlightedMeshesNames);
 
-            ////For each enlighted mesh
+            //For each enlighted mesh
             foreach (String Mesh in enlightedMeshesNames)
             {
-               //MEL Command use to get the type of each mesh
+                //MEL Command use to get the type of each mesh
                 typeMesh = MGlobal.executeCommandStringResult($@"nodeType -api {Mesh};");
 
                 //We are targeting the type kMesh and not kTransform (for parenting)
