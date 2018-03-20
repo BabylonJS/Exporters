@@ -226,6 +226,9 @@
     <Compile Include="..\Loader.cs">
       <Link>Loader.cs</Link>
     </Compile>
+    <Compile Include="..\Extensions\ColorExtension.cs">
+      <Link>Extensions\ColorExtension.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\Tools.cs">
       <Link>Tools\Tools.cs</Link>
     </Compile>
