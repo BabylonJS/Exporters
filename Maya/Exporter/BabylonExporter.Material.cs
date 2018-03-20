@@ -93,10 +93,13 @@ namespace Maya2Babylon
                     name = name,
                     id = id,
                     diffuse = lambertShader.color.toArrayRGB(),
-                    emissive = lambertShader.ambientColor.toArrayRGB(), // Maya ambient <=> babylon emissive
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
-                
+
+                // Maya ambient <=> babylon emissive
+                babylonMaterial.emissive = lambertShader.ambientColor.toArrayRGB();
+                babylonMaterial.linkEmissiveWithDiffuse = true; // Incandescence (or Illumination) is not exported
+
                 // If transparency is not a shade of grey (shade of grey <=> R=G=B)
                 if (lambertShader.transparency[0] != lambertShader.transparency[1] ||
                     lambertShader.transparency[0] != lambertShader.transparency[2])

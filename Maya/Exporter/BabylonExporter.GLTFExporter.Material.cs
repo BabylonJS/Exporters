@@ -141,12 +141,8 @@ namespace Maya2Babylon
                 gltfMaterial.occlusionTexture = ExportTexture(babylonStandardMaterial.ambientTexture, gltf);
 
                 // Emissive
-                // TODO - Fix it
-                if (babylonStandardMaterial.useEmissiveAsIllumination)
-                {
-                    gltfMaterial.emissiveFactor = babylonStandardMaterial.emissive;
-                    gltfMaterial.emissiveTexture = ExportTexture(babylonStandardMaterial.emissiveTexture, gltf);
-                }
+                gltfMaterial.emissiveFactor = babylonStandardMaterial.emissive.Multiply(babylonStandardMaterial.diffuse);
+                gltfMaterial.emissiveTexture = ExportEmissiveTexture(babylonStandardMaterial, gltf, babylonStandardMaterial.emissive, babylonStandardMaterial.diffuse);
 
                 // Constraints
                 if (gltfMaterial.emissiveTexture != null)

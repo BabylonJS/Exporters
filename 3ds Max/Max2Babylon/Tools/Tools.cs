@@ -56,6 +56,26 @@ namespace Max2Babylon
             return res;
         }
 
+        public static float[] Multiply(this float[] array, float[] array2)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * array2[index];
+            }
+            return res;
+        }
+
+        public static float[] Multiply(this float[] array, float value)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * value;
+            }
+            return res;
+        }
+
         // -------------------------
         // -- IIPropertyContainer --
         // -------------------------
