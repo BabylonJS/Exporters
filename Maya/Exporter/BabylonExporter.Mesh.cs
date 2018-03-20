@@ -326,8 +326,13 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
-            // TODO - Export colors ?
-            //babylonMesh.colors = vertices.SelectMany(v => v.Color).ToArray();
+
+            // if vertexColor => export
+            string colorSetName;
+            mFnMesh.getCurrentColorSetName(out colorSetName);
+            if (mFnMesh.numColors(colorSetName) > 0) {
+                babylonMesh.colors = vertices.SelectMany(v => v.Color).ToArray();
+            }
 
             if (uvSetNames.Count > 0 && isUVExportSuccess[0])
             {
@@ -485,35 +490,34 @@ namespace Maya2Babylon
 
             // TODO - Export colors ?
             // Color
-            /*int colorIndex;
+            int colorIndex;
             string colorSetName;
-            float[] defaultColor = new float[] { 0.5f, 0.5f, 0.5f, 1 };
+            float[] defaultColor = new float[] { 1, 1, 1, 0 };
             MColor color = new MColor();
+            
             mFnMesh.getCurrentColorSetName(out colorSetName);
+            
 
-            if (mFnMesh.numColors(colorSetName) >= 0)
+            if (mFnMesh.numColors(colorSetName) > 0)
             {
-                //RaiseWarning("plop");
+                
                 //Get the color index
                 mFnMesh.getColorIndex(polygonId, vertexIndexLocal, out colorIndex);
-
+                
                 //if a color is set
                 if (colorIndex != -1)
                 {
                     mFnMesh.getColor(colorIndex, color);
                     vertex.Color = color.toArray();
+                    
                 }
                 //else set the color to the default one of Maya
                 else
                 {
                     vertex.Color = defaultColor;
+                    
                 }
             }
-            else
-            {
-                //RaiseWarning("plap");
-                vertex.Color = defaultColor; 
-            }*/
 
             // UV
             int indexUVSet = 0;
