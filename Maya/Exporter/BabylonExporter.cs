@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -200,6 +201,16 @@ namespace Maya2Babylon
                 CheckCancelled();
             }
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
+
+
+            // if nothing is enlightened, exclude all meshes
+            foreach (BabylonLight light in babylonScene.LightsList)
+            {
+                if(light.includedOnlyMeshesIds.Length == 0)
+                {
+                    light.excludedMeshesIds = babylonScene.MeshesList.Select(m => m.id).ToArray();
+                }
+            }
 
             /*
              * Switch coordinate system at global level
