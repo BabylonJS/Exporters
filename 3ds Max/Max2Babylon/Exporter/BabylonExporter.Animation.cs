@@ -85,10 +85,7 @@ namespace Max2Babylon
 #if MAX2017 || MAX2018
                 var gameKey = gameKeyTab[indexKey];
 #else
-                var indexer = Marshal.AllocHGlobal(sizeof(int));
-                Marshal.WriteInt32(indexer, indexKey);
-                var gameKey = gameKeyTab[indexer];
-                Marshal.FreeHGlobal(indexer);
+                var gameKey = gameKeyTab[new IntPtr(indexKey)];
 #endif
 
                 var key = new BabylonAnimationKey()
