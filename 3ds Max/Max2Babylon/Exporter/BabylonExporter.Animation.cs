@@ -349,7 +349,7 @@ namespace Max2Babylon
 
                 previous = current;
             }
-            
+
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);
@@ -403,8 +403,16 @@ namespace Max2Babylon
                 ExportVector3Animation("position", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-                    var trans = localMatrix.Translation;
-                    return new[] { trans.X, trans.Y, trans.Z };
+                    var tm_babylon = new BabylonMatrix();
+                    tm_babylon.m = localMatrix.ToArray();
+
+                    var s_babylon = new BabylonVector3();
+                    var q_babylon = new BabylonQuaternion();
+                    var t_babylon = new BabylonVector3();
+
+                    tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+
+                    return new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
                 });
             }
         }
@@ -420,8 +428,20 @@ namespace Max2Babylon
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-                    var rot = localMatrix.Rotation;
-                    return new[] { rot.X, rot.Y, rot.Z, -rot.W };
+                    var tm_babylon = new BabylonMatrix();
+                    tm_babylon.m = localMatrix.ToArray();
+
+                    var s_babylon = new BabylonVector3();
+                    var q_babylon = new BabylonQuaternion();
+                    var t_babylon = new BabylonVector3();
+
+                    tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+
+                    // normalize
+                    var q = q_babylon;
+                    float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+
+                    return new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
                 });
             }
         }
@@ -433,8 +453,16 @@ namespace Max2Babylon
                 ExportVector3Animation("scaling", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-                    var scale = localMatrix.Scaling;
-                    return new[] { scale.X, scale.Y, scale.Z };
+                    var tm_babylon = new BabylonMatrix();
+                    tm_babylon.m = localMatrix.ToArray();
+
+                    var s_babylon = new BabylonVector3();
+                    var q_babylon = new BabylonQuaternion();
+                    var t_babylon = new BabylonVector3();
+
+                    tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+
+                    return new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
                 });
             }
         }
