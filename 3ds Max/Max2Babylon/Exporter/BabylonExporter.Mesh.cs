@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Max2Babylon
 {
@@ -68,10 +67,7 @@ namespace Max2Babylon
 #if MAX2017 || MAX2018
                     var tab = tabs[index];
 #else
-                    var indexer = Marshal.AllocHGlobal(sizeof(int));
-                    Marshal.WriteInt32(indexer, index);
-                    var tab = tabs[indexer];
-                    Marshal.FreeHGlobal(indexer);
+                    var tab = tabs[new IntPtr(index)];
 #endif
 
                     babylonMasterMesh = babylonScene.MeshesList.Find(_babylonMesh => {
@@ -288,10 +284,7 @@ namespace Max2Babylon
 #if MAX2017 || MAX2018
                     var channelNum = mappingChannels[i];
 #else
-                    var indexer = Marshal.AllocHGlobal(sizeof(int));
-                    Marshal.WriteInt32(indexer, i);
-                    var channelNum = mappingChannels[indexer];
-                    Marshal.FreeHGlobal(indexer);
+                    var channelNum = mappingChannels[new IntPtr(i)];
 #endif
                     if (channelNum == 1)
                     {
@@ -530,10 +523,7 @@ namespace Max2Babylon
 #if MAX2017 || MAX2018
                             face = materialFaces[j];
 #else
-                            var faceIndexer = Marshal.AllocHGlobal(sizeof(int));
-                            Marshal.WriteInt32(faceIndexer, j);
-                            face = materialFaces[faceIndexer];
-                            Marshal.FreeHGlobal(faceIndexer);
+                            face = materialFaces[new IntPtr(j)];
 #endif
 
                             // Store face index

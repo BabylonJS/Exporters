@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Autodesk.Max;
-using BabylonExport.Entities;
+﻿using Autodesk.Max;
 using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace Max2Babylon
 {
@@ -786,48 +783,6 @@ namespace Max2Babylon
             {
                 UpdateComboBox(comboBox, node, propertyName);
             }
-        }
-
-        public static IMatrix3 ExtractCoordinates(IINode meshNode, BabylonAbstractMesh babylonMesh, bool exportQuaternionsInsteadOfEulers)
-        {
-            var wm = meshNode.GetWorldMatrix(0, meshNode.HasParent());
-            babylonMesh.position = wm.Trans.ToArraySwitched();
-
-            var parts = Loader.Global.AffineParts.Create();
-            Loader.Global.DecompAffine(wm, parts);
-
-            if (exportQuaternionsInsteadOfEulers)
-            {
-                babylonMesh.rotationQuaternion = parts.Q.ToArray();
-            }
-            else
-            {
-                var rotate = new float[3];
-
-                IntPtr xPtr = Marshal.AllocHGlobal(sizeof(float));
-                IntPtr yPtr = Marshal.AllocHGlobal(sizeof(float));
-                IntPtr zPtr = Marshal.AllocHGlobal(sizeof(float));
-                parts.Q.GetEuler(xPtr, yPtr, zPtr);
-
-                Marshal.Copy(xPtr, rotate, 0, 1);
-                Marshal.Copy(yPtr, rotate, 1, 1);
-                Marshal.Copy(zPtr, rotate, 2, 1);
-                
-                Marshal.FreeHGlobal(xPtr);
-                Marshal.FreeHGlobal(yPtr);
-                Marshal.FreeHGlobal(zPtr);
-
-                var temp = rotate[1];
-                rotate[0] = -rotate[0] * parts.F;
-                rotate[1] = -rotate[2] * parts.F;
-                rotate[2] = -temp * parts.F;
-
-                babylonMesh.rotation = rotate;
-            }
-
-            babylonMesh.scaling = parts.K.ToArraySwitched();
-
-            return wm;
         }
     }
 }
