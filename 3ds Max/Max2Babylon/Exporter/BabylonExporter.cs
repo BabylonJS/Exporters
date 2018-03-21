@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -496,10 +495,7 @@ namespace Max2Babylon
 #if MAX2017 || MAX2018
                     var item = tab[i];
 #else
-                    var indexer = Marshal.AllocHGlobal(sizeof(int));
-                    Marshal.WriteInt32(indexer, i);
-                    var item = tab[indexer];
-                    Marshal.FreeHGlobal(indexer);
+                    var item = tab[new IntPtr(i)];
 #endif
                     list.Add(item);
                 }
