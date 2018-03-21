@@ -298,8 +298,10 @@
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+if not exist "$(SolutionDir)assemblies\2015 - 2016" mkdir "$(SolutionDir)assemblies\2015 - 2016"
+del "$(SolutionDir)assemblies\2015 - 2016\*.dll"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2015 - 2016\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
