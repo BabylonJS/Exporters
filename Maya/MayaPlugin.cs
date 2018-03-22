@@ -33,7 +33,7 @@ namespace Maya2Babylon
 
             MGlobal.displayInfo("Babylon plug-in uninitialized");
 
-            toBabylon.disposeForm()
+            toBabylon.disposeForm();
             
             return true;
         }
