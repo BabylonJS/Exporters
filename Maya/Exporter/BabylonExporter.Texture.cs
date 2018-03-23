@@ -20,6 +20,12 @@ namespace Maya2Babylon
             return _ExportTexture(materialDependencyNode, plugName, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
         }
 
+        public BabylonTexture ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        {
+            logRankTexture = 2;
+            return _ExportTexture(textureDependencyNode, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+        }
+
         private BabylonTexture _ExportTexture(MFnDependencyNode materialDependencyNode, string plugName, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
         {
             if (!materialDependencyNode.hasAttribute(plugName))
@@ -30,6 +36,11 @@ namespace Maya2Babylon
 
             MFnDependencyNode textureDependencyNode = getTextureDependencyNode(materialDependencyNode, plugName);
 
+            return _ExportTexture(textureDependencyNode, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+        }
+
+        private BabylonTexture _ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        {
             if (textureDependencyNode == null)
             {
                 return null;
@@ -58,7 +69,7 @@ namespace Maya2Babylon
                 RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
                 return null;
             }
-            RaiseVerbose("validImageFormat="+ validImageFormat, logRankTexture + 1);
+            RaiseVerbose("validImageFormat=" + validImageFormat, logRankTexture + 1);
 
             var babylonTexture = new BabylonTexture
             {
@@ -229,6 +240,11 @@ namespace Maya2Babylon
             MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
             MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
 
+            return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
+        }
+
+        private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName)
+        {
             // Prints
             if (metallicTextureDependencyNode != null)
             {
