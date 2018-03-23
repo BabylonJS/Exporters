@@ -84,9 +84,9 @@ class Texture:
             # when coming from either a packed image or a baked image, then save_render
             if internalImage:
                 if exporter.scene.inlineTextures:
-                    textureFile = path.join(exporter.textureDir, self.fileNoPath + 'temp')
+                    textureFile = path.join(exporter.textureFullPath, self.fileNoPath + 'temp')
                 else:
-                    textureFile = path.join(exporter.textureDir, self.fileNoPath)
+                    textureFile = path.join(exporter.textureFullPath, self.fileNoPath)
 
                 image.save_render(textureFile)
 
@@ -94,7 +94,7 @@ class Texture:
             else:
                 textureFile = bpy.path.abspath(image.filepath)
                 if not exporter.scene.inlineTextures:
-                    copy(textureFile, exporter.textureDir)
+                    copy(textureFile, exporter.textureFullPath)
         except:
             ex = exc_info()
             Logger.warn('Error encountered processing image file:  ' + ', Error:  '+ str(ex[1]))
@@ -107,6 +107,13 @@ class Texture:
 
             if internalImage:
                 remove(textureFile)
+
+        else:
+            # adjust name to reflect path
+            relPath = exporter.scene.textureDir
+            if len(relPath) > 0:
+                if not relPath.endswith('/'): relPath += '/'
+                self.fileNoPath = relPath + self.fileNoPath
 
         # capture texture attributes
         self.slot = slot
