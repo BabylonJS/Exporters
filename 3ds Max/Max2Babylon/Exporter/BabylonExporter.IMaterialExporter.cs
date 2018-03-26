@@ -23,12 +23,15 @@ namespace Max2Babylon
         /// <summary>
         /// Creates a GLTF material using the given GameMaterial.
         /// </summary>
+        /// <param name="exporter">The current exporter, for export parameters like CopyTexturesToOuput.</param>
         /// <param name="gltf">The GLTF output structure, for adding instances of classes such as GLTFSampler, GLTFImage and GLTFTexture.</param>
         /// <param name="material">The input material matching the MaterialClassID defined by the exporter. </param>
         /// <param name="tryWriteImageFunc">Callback function to verify images and to write images to the output folder. 
         /// Takes the source path and the output texture name.
         /// Returns null if the file was not written because of an error, else the output file extension.</param>
         /// <param name="raiseMessageAction">Callback function to raise messages. Takes a message and a color.</param>
+        /// <param name="raiseWarningAction">Callback function to raise warnings.</param>
+        /// <param name="raiseErrorAction">Callback function to raise errors.</param>
         /// <returns>The exported GLTF material.</returns>
         GLTFMaterial ExportGLTFMaterial(BabylonExporter exporter, GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc,
             Action<string, Color> raiseMessageAction, Action<string> raiseWarningAction, Action<string> raiseErrorAction);
