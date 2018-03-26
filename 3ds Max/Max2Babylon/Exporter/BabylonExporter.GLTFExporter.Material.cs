@@ -13,7 +13,6 @@ namespace Max2Babylon
         {
             var name = babylonMaterial.name;
             var id = babylonMaterial.id;
-
             RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
             IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
@@ -22,7 +21,7 @@ namespace Max2Babylon
             if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out IMaterialExporter materialExporter)
                 && materialExporter is IGLTFMaterialExporter)
             {
-                GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(gltf, gameMtl, 
+                GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this, gltf, gameMtl, 
                     (string sourcePath, string textureName) => { return TryWriteImage(gltf, sourcePath, textureName); }, 
                     (string message, Color color) => { RaiseMessage(message, color, 2); },
                     (string message) => { RaiseWarning(message, 2); },
