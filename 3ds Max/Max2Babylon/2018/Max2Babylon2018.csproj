@@ -256,6 +256,9 @@
     <Compile Include="..\Loader.cs">
       <Link>Loader.cs</Link>
     </Compile>
+    <Compile Include="..\Extensions\ColorExtension.cs">
+      <Link>Extensions\ColorExtension.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\Tools.cs">
       <Link>Tools\Tools.cs</Link>
     </Compile>
@@ -337,6 +340,12 @@
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+if not exist "$(SolutionDir)assemblies\2018" mkdir "$(SolutionDir)assemblies\2018"
+del "$(SolutionDir)assemblies\2018\*.dll"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2018\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -141,8 +141,8 @@ namespace Maya2Babylon
                 gltfMaterial.occlusionTexture = ExportTexture(babylonStandardMaterial.ambientTexture, gltf);
 
                 // Emissive
-                gltfMaterial.emissiveFactor = babylonStandardMaterial.emissive;
-                gltfMaterial.emissiveTexture = ExportTexture(babylonStandardMaterial.emissiveTexture, gltf);
+                gltfMaterial.emissiveFactor = babylonStandardMaterial.emissive.Multiply(babylonStandardMaterial.diffuse);
+                gltfMaterial.emissiveTexture = ExportEmissiveTexture(babylonStandardMaterial, gltf, babylonStandardMaterial.emissive, babylonStandardMaterial.diffuse);
 
                 // Constraints
                 if (gltfMaterial.emissiveTexture != null)
@@ -424,7 +424,18 @@ namespace Maya2Babylon
                 // Metallic roughness
                 gltfPbrMetallicRoughness.metallicFactor = babylonPBRMetallicRoughnessMaterial.metallic;
                 gltfPbrMetallicRoughness.roughnessFactor = babylonPBRMetallicRoughnessMaterial.roughness;
-                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture);
+                if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture.bitmap != null)
+                {
+                    // Metallic & roughness texture has been merged manually by the exporter
+                    // Write bitmap file
+                    gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture);
+                }
+                else
+                {
+                    // Metallic & roughness texture was already merged
+                    // Copy file
+                    gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                }
             }
             else
             {
