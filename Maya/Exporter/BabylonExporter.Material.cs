@@ -75,7 +75,22 @@ namespace Maya2Babylon
             // Standard material
             if (materialObject.hasFn(MFn.Type.kLambert))
             {
-                RaiseMessage("Lambert shader", 2);
+                if (materialObject.hasFn(MFn.Type.kBlinn))
+                {
+                    RaiseMessage("Blinn shader", 2);
+                }
+                else if (materialObject.hasFn(MFn.Type.kPhong))
+                {
+                    RaiseMessage("Phong shader", 2);
+                }
+                else if (materialObject.hasFn(MFn.Type.kPhongExplorer))
+                {
+                    RaiseMessage("Phong E shader", 2);
+                }
+                else
+                {
+                    RaiseMessage("Lambert shader", 2);
+                }
 
                 var lambertShader = new MFnLambertShader(materialObject);
 
@@ -93,10 +108,13 @@ namespace Maya2Babylon
                     name = name,
                     id = id,
                     diffuse = lambertShader.color.toArrayRGB(),
-                    emissive = lambertShader.ambientColor.toArrayRGB(), // Maya ambient <=> babylon emissive
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
-                
+
+                // Maya ambient <=> babylon emissive
+                babylonMaterial.emissive = lambertShader.ambientColor.toArrayRGB();
+                babylonMaterial.linkEmissiveWithDiffuse = true; // Incandescence (or Illumination) is not exported
+
                 // If transparency is not a shade of grey (shade of grey <=> R=G=B)
                 if (lambertShader.transparency[0] != lambertShader.transparency[1] ||
                     lambertShader.transparency[0] != lambertShader.transparency[2])
@@ -170,8 +188,8 @@ namespace Maya2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
-            // PBR material
-            else if (isPBRMaterial(materialDependencyNode))
+            // Stingray PBS material
+            else if (isStingrayPBSMaterial(materialDependencyNode))
             {
                 RaiseMessage("Stingray shader", 2);
 
@@ -202,11 +220,7 @@ namespace Maya2Babylon
                 float emissiveIntensity = materialDependencyNode.findPlug("emissive_intensity").asFloatProperty;
                 // Factor emissive color with emissive intensity
                 emissiveIntensity = Tools.Clamp(emissiveIntensity, 0f, 1f);
-                babylonMaterial.emissive = materialDependencyNode.findPlug("emissive").asFloatArray();
-                for (int i = 0; i < babylonMaterial.emissive.Length; i++)
-                {
-                    babylonMaterial.emissive[i] *= emissiveIntensity;
-                }
+                babylonMaterial.emissive = materialDependencyNode.findPlug("emissive").asFloatArray().Multiply(emissiveIntensity);
 
                 // --- Textures ---
 
@@ -278,14 +292,98 @@ namespace Maya2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
+            // Arnold Ai Standard Surface
+            else if (isAiStandardSurface(materialDependencyNode))
+            {
+                RaiseMessage("Ai Standard Surface shader", 2);
+
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                {
+                    name = name,
+                    id = id
+                };
+
+                // --- Global ---
+
+                // Color3
+                babylonMaterial.baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
+
+                // Alpha
+                float opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatProperty;
+                babylonMaterial.alpha = 1.0f - opacityAttributeValue;
+
+                // Metallic & roughness
+                babylonMaterial.metallic = materialDependencyNode.findPlug("metalness").asFloatProperty;
+                babylonMaterial.roughness = materialDependencyNode.findPlug("specularRoughness").asFloatProperty;
+
+                // Emissive
+                babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray();
+
+                // --- Textures ---
+
+                // Base color & alpha
+                // Base color and alpha are already merged into a single file
+                babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "baseColor", babylonScene);
+
+                // Metallic & roughness
+                MFnDependencyNode metallicTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "metalness");
+                MFnDependencyNode roughnessTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "specularRoughness");
+                if (metallicTextureDependencyNode != null && roughnessTextureDependencyNode != null &&
+                    getSourcePathFromFileTexture(metallicTextureDependencyNode) == getSourcePathFromFileTexture(roughnessTextureDependencyNode))
+                {
+                    // If the same file is used for metallic and roughness
+                    // Then we assume it's an ORM file (Red=Occlusion, Green=Roughness, Blue=Metallic)
+
+                    // Metallic and roughness are already merged into a single file
+                    babylonMaterial.metallicRoughnessTexture = ExportTexture(metallicTextureDependencyNode, babylonScene);
+
+                    // Use same file for Ambient occlusion
+                    babylonMaterial.occlusionTexture = babylonMaterial.metallicRoughnessTexture;
+                }
+                else
+                {
+                    // Metallic and roughness files need to be merged into a single file
+                    // Occlusion texture is not exported since aiStandardSurface material doesn't provide input for it
+                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name);
+                }
+
+                // Normal
+                babylonMaterial.normalTexture = ExportTexture(materialDependencyNode, "normalCamera", babylonScene);
+
+                // Emissive
+                babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "emissionColor", babylonScene);
+
+                // Constraints
+                if (babylonMaterial.baseTexture != null)
+                {
+                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.alpha = 1.0f;
+                }
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+                {
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                }
+                if (babylonMaterial.metallicRoughnessTexture != null)
+                {
+                    babylonMaterial.metallic = 1.0f;
+                    babylonMaterial.roughness = 1.0f;
+                }
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                }
+
+                babylonScene.MaterialsList.Add(babylonMaterial);
+            }
             else
             {
                 RaiseWarning("Unsupported material type '" + materialObject.apiType + "' for material named '" + materialDependencyNode.name + "'", 2);
             }
         }
 
-        private bool isPBRMaterial(MFnDependencyNode materialDependencyNode)
+        private bool isStingrayPBSMaterial(MFnDependencyNode materialDependencyNode)
         {
+            // TODO - Find a better way to identify material type
             string graphAttribute = "graph";
             if (materialDependencyNode.hasAttribute(graphAttribute))
             {
@@ -296,6 +394,16 @@ namespace Maya2Babylon
             {
                 return false;
             }
+        }
+
+        private bool isAiStandardSurface(MFnDependencyNode materialDependencyNode)
+        {
+            // TODO - Find a better way to identify material type
+            return materialDependencyNode.hasAttribute("baseColor") &&
+                materialDependencyNode.hasAttribute("metalness") &&
+                materialDependencyNode.hasAttribute("normalCamera") &&
+                materialDependencyNode.hasAttribute("specularRoughness") &&
+                materialDependencyNode.hasAttribute("emissionColor");
         }
 
         public string GetMultimaterialUUID(List<MFnDependencyNode> materials)

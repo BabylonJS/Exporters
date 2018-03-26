@@ -73,35 +73,35 @@ namespace Maya2Babylon
             // --- prints ---
             #region prints
 
-            Action <MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
-            {
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.name=" + mFnDagNode.name, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.absoluteName=" + mFnDagNode.absoluteName, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.fullPathName=" + mFnDagNode.fullPathName, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.partialPathName=" + mFnDagNode.partialPathName, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.activeColor=" + mFnDagNode.activeColor.toString(), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.attributeCount=" + mFnDagNode.attributeCount, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.childCount=" + mFnDagNode.childCount, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.dormantColor=" + mFnDagNode.dormantColor, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.hasUniqueName=" + mFnDagNode.hasUniqueName, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.inUnderWorld=" + mFnDagNode.inUnderWorld, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isDefaultNode=" + mFnDagNode.isDefaultNode, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanceable=" + mFnDagNode.isInstanceable, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(true)=" + mFnDagNode.isInstanced(true), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(false)=" + mFnDagNode.isInstanced(false), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced()=" + mFnDagNode.isInstanced(), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.instanceCount(true)=" + mFnDagNode.instanceCount(true), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.instanceCount(false)=" + mFnDagNode.instanceCount(false), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isIntermediateObject=" + mFnDagNode.isIntermediateObject, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isShared=" + mFnDagNode.isShared, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.objectColor=" + mFnDagNode.objectColor, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.parentCount=" + mFnDagNode.parentCount, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.parentNamespace=" + mFnDagNode.parentNamespace, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.uuid().asString()=" + mFnDagNode.uuid().asString(), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.dagRoot().apiType=" + mFnDagNode.dagRoot().apiType, 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.model.equalEqual(mFnDagNode.objectProperty)=" + mFnDagNode.model.equalEqual(mFnDagNode.objectProperty), 3);
-                RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.transformationMatrix.toString()=" + mFnDagNode.transformationMatrix.toString(), 3);
-            };
+            Action<MFnDagNode> printMFnDagNode = (MFnDagNode mFnDagNode) =>
+           {
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.name=" + mFnDagNode.name, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.absoluteName=" + mFnDagNode.absoluteName, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.fullPathName=" + mFnDagNode.fullPathName, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.partialPathName=" + mFnDagNode.partialPathName, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.activeColor=" + mFnDagNode.activeColor.toString(), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.attributeCount=" + mFnDagNode.attributeCount, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.childCount=" + mFnDagNode.childCount, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.dormantColor=" + mFnDagNode.dormantColor, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.hasUniqueName=" + mFnDagNode.hasUniqueName, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.inUnderWorld=" + mFnDagNode.inUnderWorld, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isDefaultNode=" + mFnDagNode.isDefaultNode, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanceable=" + mFnDagNode.isInstanceable, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(true)=" + mFnDagNode.isInstanced(true), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced(false)=" + mFnDagNode.isInstanced(false), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isInstanced()=" + mFnDagNode.isInstanced(), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.instanceCount(true)=" + mFnDagNode.instanceCount(true), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.instanceCount(false)=" + mFnDagNode.instanceCount(false), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isIntermediateObject=" + mFnDagNode.isIntermediateObject, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.isShared=" + mFnDagNode.isShared, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.objectColor=" + mFnDagNode.objectColor, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.parentCount=" + mFnDagNode.parentCount, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.parentNamespace=" + mFnDagNode.parentNamespace, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.uuid().asString()=" + mFnDagNode.uuid().asString(), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.dagRoot().apiType=" + mFnDagNode.dagRoot().apiType, 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.model.equalEqual(mFnDagNode.objectProperty)=" + mFnDagNode.model.equalEqual(mFnDagNode.objectProperty), 3);
+               RaiseVerbose("BabylonExporter.Mesh | mFnDagNode.transformationMatrix.toString()=" + mFnDagNode.transformationMatrix.toString(), 3);
+           };
 
             Action<MFnMesh> printMFnMesh = (MFnMesh _mFnMesh) =>
             {
@@ -116,6 +116,19 @@ namespace Maya2Babylon
                 RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.displayColors=" + _mFnMesh.displayColors, 3);
                 RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numColorSets=" + _mFnMesh.numColorSets, 3);
                 RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.numColorsProperty=" + _mFnMesh.numColorsProperty, 3);
+                RaiseVerbose("BabylonExporter.Mesh | _mFnMesh.currentUVSetName()=" + _mFnMesh.currentUVSetName(), 3);
+
+                var _uvSetNames = new MStringArray();
+                mFnMesh.getUVSetNames(_uvSetNames);
+                foreach (var uvSetName in _uvSetNames)
+                {
+                    RaiseVerbose("BabylonExporter.Mesh | uvSetName=" + uvSetName, 3);
+                    RaiseVerbose("BabylonExporter.Mesh | mFnMesh.numUVs(uvSetName)=" + mFnMesh.numUVs(uvSetName), 4);
+                    MFloatArray us = new MFloatArray();
+                    MFloatArray vs = new MFloatArray();
+                    mFnMesh.getUVs(us, vs, uvSetName);
+                    RaiseVerbose("BabylonExporter.Mesh | us.Count=" + us.Count, 4);
+                }
             };
 
             Action<MFnTransform> printMFnTransform = (MFnTransform _mFnMesh) =>
@@ -128,9 +141,9 @@ namespace Maya2Babylon
 
             RaiseVerbose("BabylonExporter.Mesh | mFnTransform data", 2);
             printMFnTransform(mFnTransform);
-            
+
             Print(mFnTransform, 2, "Print ExportMesh mFnTransform");
-            
+
             Print(mFnMesh, 2, "Print ExportMesh mFnMesh");
 
             //// Geometry
@@ -269,7 +282,13 @@ namespace Maya2Babylon
             var vertices = new List<GlobalVertex>();
             var indices = new List<int>();
 
-            bool hasUV = mFnMesh.numUVSets > 0 && mFnMesh.numUVsProperty > 0;
+            var uvSetNames = new MStringArray();
+            mFnMesh.getUVSetNames(uvSetNames);
+            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, 2)];
+            for (int indexUVSet = 0; indexUVSet < isUVExportSuccess.Length; indexUVSet++)
+            {
+                isUVExportSuccess[indexUVSet] = true;
+            }
 
             // TODO - color, alpha
             //var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
@@ -280,7 +299,7 @@ namespace Maya2Babylon
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
-            ExtractGeometry(mFnMesh, vertices, indices, subMeshes, hasUV, optimizeVertices);
+            ExtractGeometry(mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, optimizeVertices);
 
             if (vertices.Count >= 65536)
             {
@@ -292,14 +311,36 @@ namespace Maya2Babylon
                 }
             }
 
+            for (int indexUVSet = 0; indexUVSet < isUVExportSuccess.Length; indexUVSet++)
+            {
+                string uvSetName = uvSetNames[indexUVSet];
+                // If at least one vertex is mapped to an UV coordinate but some have failed to be exported
+                if (isUVExportSuccess[indexUVSet] == false && mFnMesh.numUVs(uvSetName) > 0)
+                {
+                    RaiseWarning($"Failed to export UV set named {uvSetName}. Ensure all vertices are mapped to a UV coordinate.", 2);
+                }
+            }
+
             RaiseMessage($"{vertices.Count} vertices, {indices.Count / 3} faces", 2);
 
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
-            if (hasUV)
+            
+            string colorSetName;
+            mFnMesh.getCurrentColorSetName(out colorSetName);
+            if (mFnMesh.numColors(colorSetName) > 0) {
+                babylonMesh.colors = vertices.SelectMany(v => v.Color).ToArray();
+            }
+
+            if (uvSetNames.Count > 0 && isUVExportSuccess[0])
             {
+                
                 babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
+            }
+            if (uvSetNames.Count > 1 && isUVExportSuccess[1])
+            {
+                babylonMesh.uvs2 = vertices.SelectMany(v => v.UV2).ToArray();
             }
 
             babylonMesh.subMeshes = subMeshes.ToArray();
@@ -322,9 +363,10 @@ namespace Maya2Babylon
         /// <param name="vertices"></param>
         /// <param name="indices"></param>
         /// <param name="subMeshes"></param>
-        /// <param name="hasUV"></param>
+        /// <param name="uvSetNames"></param>
+        /// <param name="isUVExportSuccess"></param>
         /// <param name="optimizeVertices"></param>
-        private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, bool hasUV, bool optimizeVertices)
+        private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, bool optimizeVertices)
         {
             // TODO - optimizeVertices
             MIntArray triangleCounts = new MIntArray();
@@ -336,8 +378,6 @@ namespace Maya2Babylon
             mFnMesh.getConnectedShaders(0, shaders, faceMatIndices);
 
             // Export geometry even if an error occured with shaders
-            // This is a fix for Maya test files
-            // TODO - Find the reason why shaders.count = 0
             int nbShaders = Math.Max(1, shaders.Count);
             bool checkShader = nbShaders == shaders.Count;
             RaiseVerbose("shaders.Count=" + shaders.Count, 2);
@@ -392,7 +432,7 @@ namespace Maya2Babylon
                                 }
                             }
 
-                            GlobalVertex vertex = ExtractVertex(mFnMesh, polygonId, vertexIndexGlobal, vertexIndexLocal, hasUV);
+                            GlobalVertex vertex = ExtractVertex(mFnMesh, polygonId, vertexIndexGlobal, vertexIndexLocal, uvSetNames, ref isUVExportSuccess);
                             vertex.CurrentIndex = vertices.Count;
 
                             indices.Add(vertex.CurrentIndex);
@@ -423,16 +463,17 @@ namespace Maya2Babylon
         /// <param name="polygonId">The polygon (face) to examine</param>
         /// <param name="vertexIndexGlobal">The object-relative (mesh-relative/global) vertex index</param>
         /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
-        /// <param name="hasUV"></param>
+        /// <param name="uvSetNames"></param>
+        /// <param name="isUVExportSuccess"></param>
         /// <returns></returns>
-        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal, bool hasUV)
+        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal, MStringArray uvSetNames, ref bool[] isUVExportSuccess)
         {
             MPoint point = new MPoint();
             mFnMesh.getPoint(vertexIndexGlobal, point);
 
             MVector normal = new MVector();
             mFnMesh.getFaceVertexNormal(polygonId, vertexIndexGlobal, normal);
-
+            
             // Switch coordinate system at object level
             point.z *= -1;
             normal.z *= -1;
@@ -441,16 +482,66 @@ namespace Maya2Babylon
             {
                 BaseIndex = vertexIndexGlobal,
                 Position = point.toArray(),
-                Normal = normal.toArray()
+                Normal = normal.toArray(),
             };
+            
+            // Color
+            int colorIndex;
+            string colorSetName;
+            float[] defaultColor = new float[] { 1, 1, 1, 0 };
+            MColor color = new MColor();
+            mFnMesh.getCurrentColorSetName(out colorSetName);
+
+            if (mFnMesh.numColors(colorSetName) > 0)
+            {
+                //Get the color index
+                mFnMesh.getColorIndex(polygonId, vertexIndexLocal, out colorIndex);
+                
+                //if a color is set
+                if (colorIndex != -1)
+                {
+                    mFnMesh.getColor(colorIndex, color);
+                    vertex.Color = color.toArray();
+                }
+                //else set the default color
+                else
+                {
+                    vertex.Color = defaultColor;
+                }
+            }
 
             // UV
-            if (hasUV)
+            int indexUVSet = 0;
+            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
             {
-                float u = 0, v = 0;
-                mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v);
-                vertex.UV = new float[] { u, v };
+                try
+                {
+                    float u = 0, v = 0;
+                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
+                    vertex.UV = new float[] { u, v };
+                }
+                catch (Exception e)
+                {
+                    // An exception is raised when a vertex isn't mapped to an UV coordinate
+                    isUVExportSuccess[indexUVSet] = false;
+                }
             }
+            indexUVSet = 1;
+            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
+            {
+                try
+                {
+                    float u = 0, v = 0;
+                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
+                    vertex.UV2 = new float[] { u, v };
+                }
+                catch (Exception e)
+                {
+                    // An exception is raised when a vertex isn't mapped to an UV coordinate
+                    isUVExportSuccess[indexUVSet] = false;
+                }
+            }
+
 
             return vertex;
         }

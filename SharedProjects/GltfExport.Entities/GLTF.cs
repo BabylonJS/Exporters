@@ -11,6 +11,12 @@ namespace GLTFExport.Entities
         public GLTFAsset asset { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
+        public List<string> extensionsUsed { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public List<string> extensionsRequired { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public int? scene { get; set; }
 
         [DataMember(EmitDefaultValue = false)]

@@ -45,7 +45,10 @@ namespace Max2Babylon
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
                     RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
-                    bitmap.Save(absolutePath, imageFormat);
+                    using (FileStream fs = File.Open(absolutePath, FileMode.Create))
+                    {
+                        bitmap.Save(fs, imageFormat);
+                    }
                 }
 
                 return extension.Substring(1); // remove the dot
@@ -122,7 +125,7 @@ namespace Max2Babylon
             // WrapS and wrapT
             gltfSampler.wrapS = getWrapMode(babylonTexture.wrapU);
             gltfSampler.wrapT = getWrapMode(babylonTexture.wrapV);
-            
+
 
             // --------------------------
             // --------- Image ----------
@@ -153,6 +156,71 @@ namespace Max2Babylon
             };
 
             return gltfTextureInfo;
+        }
+
+        private GLTFTextureInfo ExportEmissiveTexture(BabylonStandardMaterial babylonMaterial, GLTF gltf, float[] defaultEmissive, float[] defaultDiffuse)
+        {
+            // Use one as a reference for UVs parameters
+            var babylonTexture = babylonMaterial.emissiveTexture != null ? babylonMaterial.emissiveTexture : babylonMaterial.diffuseTexture;
+            if (babylonTexture == null)
+            {
+                return null;
+            }
+
+            Bitmap emissivePremultipliedBitmap = null;
+
+            if (CopyTexturesToOutput)
+            {
+                // Emissive
+                Bitmap emissiveBitmap = null;
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    emissiveBitmap = LoadTexture(babylonMaterial.emissiveTexture.originalPath);
+                }
+
+                // Diffuse
+                Bitmap diffuseBitmap = null;
+                if (babylonMaterial.diffuseTexture != null)
+                {
+                    diffuseBitmap = LoadTexture(babylonMaterial.diffuseTexture.originalPath);
+                }
+
+                if (emissiveBitmap != null || diffuseBitmap != null)
+                {
+                    // Retreive dimensions
+                    int width = 0;
+                    int height = 0;
+                    var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, emissiveBitmap, diffuseBitmap);
+                    if (!haveSameDimensions)
+                    {
+                        RaiseError("Emissive and diffuse maps should have same dimensions", 2);
+                    }
+
+                    // Create pre-multiplied emissive map
+                    emissivePremultipliedBitmap = new Bitmap(width, height);
+                    for (int x = 0; x < width; x++)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            var _emissive = emissiveBitmap != null ? emissiveBitmap.GetPixel(x, y).toArrayRGB().Multiply(1f / 255.0f) : defaultEmissive;
+                            var _diffuse = diffuseBitmap != null ? diffuseBitmap.GetPixel(x, y).toArrayRGB().Multiply(1f / 255.0f) : defaultDiffuse;
+
+                            var emissivePremultiplied = _emissive.Multiply(_diffuse);
+
+                            Color colorEmissivePremultiplied = Color.FromArgb(
+                                (int)(emissivePremultiplied[0] * 255),
+                                (int)(emissivePremultiplied[1] * 255),
+                                (int)(emissivePremultiplied[2] * 255)
+                            );
+                            emissivePremultipliedBitmap.SetPixel(x, y, colorEmissivePremultiplied);
+                        }
+                    }
+                }
+            }
+
+            var name = babylonMaterial.name + "_emissive.jpg";
+
+            return ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
         }
 
         private void getSamplingParameters(BabylonTexture.SamplingMode samplingMode, out GLTFSampler.TextureMagFilter? magFilter, out GLTFSampler.TextureMinFilter? minFilter)

@@ -159,7 +159,10 @@ namespace Max2Babylon
                 {
                     var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
                     RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
-                    baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
+                    using (FileStream fs = File.Open(absolutePath, FileMode.Create))
+                    {
+                        baseColorAlphaBitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png); // Explicit image format even though png is default
+                    }
                 }
                 else
                 {
@@ -259,7 +262,10 @@ namespace Max2Babylon
                 {
                     var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
                     RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
-                    metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    using (FileStream fs = File.Open(absolutePath, FileMode.Create))
+                    {
+                        metallicRoughnessBitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    }
                 }
                 else
                 {
@@ -850,7 +856,10 @@ namespace Max2Babylon
                     try
                     {
                         bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
-                        bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                        using (FileStream fs = File.Open(destPath, FileMode.Create))
+                        {
+                            bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -862,7 +871,10 @@ namespace Max2Babylon
                     try
                     {
                         bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
-                        bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                        using (FileStream fs = File.Open(destPath, FileMode.Create))
+                        {
+                            bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -871,13 +883,19 @@ namespace Max2Babylon
                     break;
                 case "bmp":
                     bitmap = new Bitmap(sourcePath);
-                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Jpeg); // no alpha
+                    using (FileStream fs = File.Open(destPath, FileMode.Create))
+                    {
+                        bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg); // no alpha
+                    }
                     break;
                 case "tif":
                 case "tiff":
                 case "gif":
                     bitmap = new Bitmap(sourcePath);
-                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    using (FileStream fs = File.Open(destPath, FileMode.Create))
+                    {
+                        bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    }
                     break;
                 case "jpeg":
                 case "png":
