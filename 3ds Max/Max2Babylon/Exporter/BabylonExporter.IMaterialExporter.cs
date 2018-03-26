@@ -18,7 +18,7 @@ namespace Max2Babylon
 
     delegate string TryWriteImageCallback(string sourceTexturePath);
     
-    public interface IGLTFMaterialExporter : IMaterialExporter
+    internal interface IGLTFMaterialExporter : IMaterialExporter
     {
         /// <summary>
         /// Creates a GLTF material using the given GameMaterial.
@@ -30,7 +30,7 @@ namespace Max2Babylon
         /// Returns null if the file was not written because of an error, else the output file extension.</param>
         /// <param name="raiseMessageAction">Callback function to raise messages. Takes a message and a color.</param>
         /// <returns>The exported GLTF material.</returns>
-        GLTFMaterial ExportGLTFMaterial(GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc,
+        GLTFMaterial ExportGLTFMaterial(BabylonExporter exporter, GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc,
             Action<string, Color> raiseMessageAction, Action<string> raiseWarningAction, Action<string> raiseErrorAction);
     }
 
