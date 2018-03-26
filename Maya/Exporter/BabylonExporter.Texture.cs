@@ -20,6 +20,12 @@ namespace Maya2Babylon
             return _ExportTexture(materialDependencyNode, plugName, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
         }
 
+        public BabylonTexture ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        {
+            logRankTexture = 2;
+            return _ExportTexture(textureDependencyNode, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+        }
+
         private BabylonTexture _ExportTexture(MFnDependencyNode materialDependencyNode, string plugName, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
         {
             if (!materialDependencyNode.hasAttribute(plugName))
@@ -30,6 +36,11 @@ namespace Maya2Babylon
 
             MFnDependencyNode textureDependencyNode = getTextureDependencyNode(materialDependencyNode, plugName);
 
+            return _ExportTexture(textureDependencyNode, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+        }
+
+        private BabylonTexture _ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        {
             if (textureDependencyNode == null)
             {
                 return null;
@@ -58,7 +69,7 @@ namespace Maya2Babylon
                 RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
                 return null;
             }
-            RaiseVerbose("validImageFormat="+ validImageFormat, logRankTexture + 1);
+            RaiseVerbose("validImageFormat=" + validImageFormat, logRankTexture + 1);
 
             var babylonTexture = new BabylonTexture
             {
@@ -69,10 +80,11 @@ namespace Maya2Babylon
             babylonTexture.level = amount;
 
             // Alpha
-            // TODO - Get alpha from both RGB and A
-            // or assume texture is premultiplied and get alpha from RGB or A only
             babylonTexture.hasAlpha = forceAlpha;
-            babylonTexture.getAlphaFromRGB = false;
+            // When fileHasAlpha = true:
+            // - texture's format has alpha (png, tif, tga...)
+            // - and at least one pixel has an alpha value < 255
+            babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBoolProperty;
 
             // UVs
             _exportUV(textureDependencyNode, babylonTexture, forceSpherical);
@@ -228,6 +240,11 @@ namespace Maya2Babylon
             MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
             MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
 
+            return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
+        }
+
+        private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName)
+        {
             // Prints
             if (metallicTextureDependencyNode != null)
             {
@@ -334,12 +351,47 @@ namespace Maya2Babylon
             // TODO - coordinatesMode
             babylonTexture.coordinatesMode = forceSpherical ? BabylonTexture.CoordinatesMode.SPHERICAL_MODE : BabylonTexture.CoordinatesMode.EXPLICIT_MODE;
 
-            // TODO - get UV set from uvChooser
-            //babylonTexture.coordinatesIndex = uvGen.MapChannel - 1;
-            //if (uvGen.MapChannel > 2)
-            //{
-            //    RaiseWarning(string.Format("Unsupported map channel, Only channel 1 and 2 are supported."), logRank + 1);
-            //}
+            // UV set
+            MStringArray uvLinks = new MStringArray();
+            MGlobal.executeCommand($@"uvLink -query -texture {textureDependencyNode.name};", uvLinks);
+            if (uvLinks.Count == 0)
+            {
+                babylonTexture.coordinatesIndex = 0;
+            }
+            else
+            {
+                // Retreive UV set indices
+                HashSet<int> uvSetIndices = new HashSet<int>();
+                foreach (string uvLink in uvLinks)
+                {
+                    int indexOpenBracket = uvLink.LastIndexOf("[");
+                    int indexCloseBracket = uvLink.LastIndexOf("]");
+                    string uvSetIndexAsString = uvLink.Substring(indexOpenBracket + 1, indexCloseBracket - indexOpenBracket - 1);
+                    int uvSetIndex = int.Parse(uvSetIndexAsString);
+                    uvSetIndices.Add(uvSetIndex);
+                }
+                if (uvSetIndices.Count > 1)
+                {
+                    // Check that all uvSet indices are all 0 or all not 0
+                    int nbZero = 0;
+                    foreach (int uvSetIndex in uvSetIndices) {
+                        if (uvSetIndex == 0)
+                        {
+                            nbZero++;
+                        }
+                    }
+                    if (nbZero != 0 && nbZero != uvSetIndices.Count)
+                    {
+                        RaiseWarning("Texture is linked to UV1 and UV2. Only one UV set per texture is supported.", logRankTexture + 1);
+                    }
+                }
+                // The first UV set of a mesh is special because it can never be deleted
+                // Thus if the UV set index is 0 then the binded mesh UV set is always UV1
+                // Other UV sets of a mesh can be created / deleted at will
+                // Thus the UV set index can have any value (> 0)
+                // In this case, the exported UV set is always UV2 even though it would be UV3 or UV4 in Maya
+                babylonTexture.coordinatesIndex = (new List<int>(uvSetIndices))[0] == 0 ? 0 : 1;
+            }
 
             // For more information about UV
             // see http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-94070C7E-C550-42FD-AFC9-FBE82B173B1D

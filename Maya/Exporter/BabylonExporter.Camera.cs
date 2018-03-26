@@ -69,6 +69,10 @@ namespace Maya2Babylon
             RaiseVerbose("BabylonExporter.Camera | mFnCamera.isDepthOfField=" + mFnCamera.isDepthOfField, 3);
             RaiseVerbose("BabylonExporter.Camera | mFnCamera.renderPanZoom=" + mFnCamera.renderPanZoom, 3);
 
+            Print(mFnTransform, 2, "Print ExportCamera mFnTransform");
+
+            Print(mFnCamera, 2, "Print ExportCamera mFnCamera");
+
             #endregion
 
             if (IsCameraExportable(mFnCamera, mDagPath) == false)
@@ -120,12 +124,30 @@ namespace Maya2Babylon
             //babylonCamera.applyGravity = cameraNode.MaxNode.GetBoolProperty("babylonjs_applygravity");
             //babylonCamera.ellipsoid = cameraNode.MaxNode.GetVector3Property("babylonjs_ellipsoid");
 
-            // TODO - Target
-            //var target = mFnCamera.target;
-            //if (target != null)
-            //{
-            //    babylonCamera.lockedTargetId = target.MaxNode.GetGuid().ToString();
-            //}
+            // Target
+            MFnTransform target = null;
+            MObject cameraGroupObject = mFnCamera.findPlug("centerOfInterest").source.node;
+            if (cameraGroupObject.apiType == MFn.Type.kLookAt)
+            {
+                MFnDependencyNode cameraGroup = new MFnDependencyNode(cameraGroupObject);
+
+                // Retreive the camera aim transform
+                MPlugArray connections = new MPlugArray();
+                cameraGroup.getConnections(connections);
+                foreach (MPlug connection in connections)
+                {
+                    if (connection.name.EndsWith("targetParentMatrix")) // ugly
+                    {
+                        MObject connectionSourceObject = connection.source.node;
+                        target = new MFnTransform(connectionSourceObject);
+                        break;
+                    }
+                }
+            }
+            if (target != null)
+            {
+                babylonCamera.lockedTargetId = target.uuid().asString();
+            }
 
             //// TODO - Check if should be local or world
             //var vDir = new MVector(0, 0, -1);

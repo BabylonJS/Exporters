@@ -13,6 +13,9 @@ from .world import *
 import bpy
 from io import open
 from os import path, makedirs
+import time
+import calendar
+
 #===============================================================================
 class JsonExporter:
     nameSpace   = None  # assigned in execute
@@ -31,12 +34,12 @@ class JsonExporter:
                 bpy.ops.object.mode_set(mode = 'OBJECT')
 
             # assign texture location, purely temporary if in-lining
-            self.textureDir = path.dirname(filepath)
+            self.textureFullPath = path.dirname(filepath)
             if not scene.inlineTextures:
-                self.textureDir = path.join(self.textureDir, scene.textureDir)
-                if not path.isdir(self.textureDir):
-                    makedirs(self.textureDir)
-                    Logger.warn('Texture sub-directory did not already exist, created: ' + self.textureDir)
+                self.textureFullPath = path.join(self.textureFullPath, scene.textureDir)
+                if not path.isdir(self.textureFullPath):
+                    makedirs(self.textureFullPath)
+                    Logger.warn('Texture sub-directory did not already exist, created: ' + self.textureFullPath)
 
             Logger.log('========= Conversion from Blender to Babylon.js =========', 0)
             Logger.log('Scene settings used:', 1)
@@ -48,7 +51,7 @@ class JsonExporter:
             Logger.log('Vert Color Precision:  ' + format_int(scene.vColorsPrecision), 2)
             Logger.log('Mat Weight Precision:  ' + format_int(scene.mWeightsPrecision), 2)
             if not scene.inlineTextures:
-                Logger.log('texture directory:  ' + self.textureDir, 2)
+                Logger.log('texture directory:  ' + self.textureFullPath, 2)
             self.world = World(scene)
 
             bpy.ops.screen.animation_cancel()
@@ -265,6 +268,17 @@ class JsonExporter:
         # Closing
         file_handler.write('\n}')
         file_handler.close()
+
+        # Create or update .manifest file
+        if self.scene.writeManifestFile:
+            file_handler = open(self.filepathMinusExtension + '.babylon.manifest', 'w', encoding='utf8')
+            file_handler.write('{\n')
+            file_handler.write('\t"version" : ' + str(calendar.timegm(time.localtime())) + ',\n')
+            file_handler.write('\t"enableSceneOffline" : true,\n')
+            file_handler.write('\t"enableTextureOffline" : true\n')
+            file_handler.write('}')
+            file_handler.close()
+
         Logger.log('========= Writing of scene file completed =========', 0)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def getMaterial(self, baseMaterialId):
