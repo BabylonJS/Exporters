@@ -6,7 +6,7 @@ namespace GLTFExport.Entities
     public class GLTFProperty
     {
         [DataMember(EmitDefaultValue = false)]
-        public object extensions { get; set; }
+        public GLTFExtensions extensions { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public object extras { get; set; }

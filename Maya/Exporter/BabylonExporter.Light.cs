@@ -1,6 +1,7 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace Maya2Babylon
 {
@@ -13,8 +14,9 @@ namespace Maya2Babylon
             babylonLight.id = Guid.NewGuid().ToString();
             babylonLight.type = 3;
             babylonLight.groundColor = new float[] { 0, 0, 0 };
+            babylonLight.position = new float[] { 0, 0, 0 };
             babylonLight.direction = new[] { 0, 1.0f, 0 };
-
+ 
             babylonLight.intensity = 1;
 
             babylonLight.diffuse = new[] { 1.0f, 1.0f, 1.0f };
@@ -58,7 +60,6 @@ namespace Maya2Babylon
             }
 
             RaiseMessage("mFnLight.fullPathName=" + mFnLight.fullPathName, 2);
-
 
             // --- prints ---
             #region prints
@@ -108,6 +109,10 @@ namespace Maya2Babylon
                     break;
             }
 
+            Print(mFnTransform, 2, "Print ExportLight mFnTransform");
+
+            Print(mFnLight, 2, "Print ExportLight mFnLight");
+
             #endregion
 
             if (IsLightExportable(mFnLight, mDagPath) == false)
@@ -121,7 +126,7 @@ namespace Maya2Babylon
             ExportHierarchy(babylonLight, mFnTransform);
 
             // Position
-            RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
+            //RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
             float[] position = null;
             GetTransform(mFnTransform, ref position);
             babylonLight.position = position;
@@ -135,7 +140,6 @@ namespace Maya2Babylon
             
             // Common fields 
             babylonLight.intensity = mFnLight.intensity;
-
             babylonLight.diffuse = mFnLight.lightDiffuse ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
             babylonLight.specular = mFnLight.lightSpecular ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
 
@@ -162,6 +166,17 @@ namespace Maya2Babylon
                 case MFn.Type.kAmbientLight:
                     babylonLight.type = 3;
                     babylonLight.groundColor = new float[] { 0, 0, 0 };
+
+                    // No emit diffuse /specular checkbox for ambient light
+                    babylonLight.diffuse = mFnLight.color.toArrayRGB();
+                    babylonLight.specular = babylonLight.diffuse;
+
+                    // Direction
+                    vDir = new MVector(0, 1, 0);
+                    transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
+                    vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
+                    vDir.normalize();
+                    babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
                     break;
                 case MFn.Type.kAreaLight:
                 case MFn.Type.kVolumeLight:
@@ -173,10 +188,37 @@ namespace Maya2Babylon
             }
 
             // TODO - Shadows
+            
+            //Variable declaration
+            MStringArray enlightedMeshesNames = new MStringArray();
+            List<string> includeMeshesIds = new List<string>();
+            MStringArray kTransMesh = new MStringArray();
+            String typeMesh = null;
+            MStringArray UUIDMesh = new MStringArray();
 
-            // TODO - Exclusion
+            //MEL Command that get the enlighted mesh for a given light
+            MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.name};", enlightedMeshesNames);
 
-            // TODO - Animations
+            //For each enlighted mesh
+            foreach (String Mesh in enlightedMeshesNames)
+            {
+                //MEL Command use to get the type of each mesh
+                typeMesh = MGlobal.executeCommandStringResult($@"nodeType -api {Mesh};");
+
+                //We are targeting the type kMesh and not kTransform (for parenting)
+                if (typeMesh == "kMesh")
+                {
+                    MGlobal.executeCommand($@"listRelatives -parent {Mesh};", kTransMesh);
+
+                    //And finally the MEL Command for the uuid of each mesh
+                    MGlobal.executeCommand($@"ls -uuid {kTransMesh[0]};", UUIDMesh);
+                    includeMeshesIds.Add(UUIDMesh[0]);
+                }
+            }
+
+            babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
+
+                // TODO - Animations
 
             babylonScene.LightsList.Add(babylonLight);
 

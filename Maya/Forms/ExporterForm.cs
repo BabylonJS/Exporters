@@ -197,6 +197,23 @@ namespace Maya2Babylon.Forms
             return newNode;
         }
 
+        internal Func<bool> closingByUser;
+        internal Func<bool> closingByShutDown;
+        //internal Func<bool> closingByCrash;
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // closing the form with (x)
+            e.Cancel = true;
+
+            // if windows is shutting down
+            if (e.CloseReason == CloseReason.WindowsShutDown) this.closingByShutDown();
+
+            // if user is closing
+            if (e.CloseReason == CloseReason.UserClosing) this.closingByUser();
+        }
+
         private void ExporterForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (exporter != null)

@@ -274,6 +274,9 @@
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Skin.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.Skin.cs</Link>
     </Compile>
+    <Compile Include="..\Extensions\ColorExtension.cs">
+      <Link>Extensions\ColorExtension.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -337,8 +340,10 @@
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+if not exist "$(SolutionDir)assemblies\2017" mkdir "$(SolutionDir)assemblies\2017"
+del "$(SolutionDir)assemblies\2017\*.dll"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2017\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

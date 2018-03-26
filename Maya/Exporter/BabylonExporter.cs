@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -181,6 +182,9 @@ namespace Maya2Babylon
                     case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
                         babylonNode = ExportLight(mDagPath, babylonScene);
                         break;
+                    case MFn.Type.kLocator: // Camera target
+                        babylonNode = ExportDummy(mDagPath, babylonScene);
+                        break;
                 }
 
                 // If node is not exported successfully
@@ -197,6 +201,16 @@ namespace Maya2Babylon
                 CheckCancelled();
             }
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
+
+
+            // if nothing is enlightened, exclude all meshes
+            foreach (BabylonLight light in babylonScene.LightsList)
+            {
+                if(light.includedOnlyMeshesIds.Length == 0)
+                {
+                    light.excludedMeshesIds = babylonScene.MeshesList.Select(m => m.id).ToArray();
+                }
+            }
 
             /*
              * Switch coordinate system at global level
@@ -249,7 +263,7 @@ namespace Maya2Babylon
             if (babylonScene.LightsList.Count == 0)
             {
                 RaiseWarning("No light defined", 1);
-                RaiseWarning("A default hemispheric light was added for your convenience", 1);
+                RaiseWarning("A default ambient light was added for your convenience", 1);
                 ExportDefaultLight(babylonScene);
             }
             else
@@ -312,6 +326,7 @@ namespace Maya2Babylon
             listOfFilters.Add((int)MFn.Type.kMesh);
             listOfFilters.Add((int)MFn.Type.kCamera);
             listOfFilters.Add((int)MFn.Type.kLight);
+            listOfFilters.Add((int)MFn.Type.kLocator);
             mIteratorType.setFilterList(listOfFilters);
             var dagIterator = new MItDag(mIteratorType, MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(mDagPathRoot);
@@ -360,6 +375,12 @@ namespace Maya2Babylon
                             return MFn.Type.kCamera;
                         }
                         break;
+                    case MFn.Type.kLocator:
+                        if (IsNodeExportable(nodeObject, mDagPath))
+                        {
+                            return MFn.Type.kLocator;
+                        }
+                        break;
                 }
                 // Lights api type are kPointLight, kSpotLight...
                 // Easier to check if has generic light function set rather than check all cases
@@ -386,7 +407,7 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
 
-                if (isFull || isNodeRelevantToExportRec(mDagPath) || mDagPath.apiType == MFn.Type.kMesh || mDagPath.apiType == MFn.Type.kCamera || mDagPath.hasFn(MFn.Type.kLight))
+                if (isFull || isNodeRelevantToExportRec(mDagPath) || mDagPath.apiType == MFn.Type.kMesh || mDagPath.apiType == MFn.Type.kCamera || mDagPath.hasFn(MFn.Type.kLight) || mDagPath.apiType == MFn.Type.kLocator)
                 {
                     RaiseMessage("name=" + mDagPath.partialPathName + "\t type=" + mDagPath.apiType, (int)dagIterator.depth + 1);
                 }

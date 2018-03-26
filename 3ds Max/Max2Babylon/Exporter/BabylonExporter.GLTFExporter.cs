@@ -50,6 +50,10 @@ namespace Max2Babylon
                 // no minVersion
             };
 
+            // Extensions
+            gltf.extensionsUsed = new List<string>();
+            gltf.extensionsRequired = new List<string>();
+
             // Scene
             gltf.scene = 0;
 
