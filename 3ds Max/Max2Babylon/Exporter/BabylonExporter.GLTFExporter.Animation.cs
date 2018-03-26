@@ -57,8 +57,12 @@ namespace Max2Babylon
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
 
-            if ((babylonNode.animations != null && babylonNode.animations.Length > 0) ||
-                (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0))
+            bool exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
+
+            bool hasAnimations = (babylonNode.animations != null && babylonNode.animations.Length > 0) ||
+                (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0);
+
+            if(hasAnimations || exportNonAnimated)
             {
                 RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
 
@@ -72,6 +76,13 @@ namespace Max2Babylon
                 {
                     babylonAnimations.AddRange(babylonNode.extraAnimations);
                 }
+
+                // [Selmar] I don't like this, but we need a way to find nodes that are selected as part of an animation group but aren't actually animated
+                if(babylonAnimations.Count == 0 && exportNonAnimated)
+                {
+                    babylonAnimations.Add(GetDummyAnimation(gltfNode, startFrame));
+                }
+
                 foreach (BabylonAnimation babylonAnimation in babylonAnimations)
                 {
                     // Target
@@ -262,6 +273,23 @@ namespace Max2Babylon
                     channelList.Add(gltfChannel);
                 }
             }
+        }
+
+        private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame)
+        {
+            BabylonAnimation dummyAnimation = new BabylonAnimation();
+            dummyAnimation.name = "Dummy";
+            dummyAnimation.property = "scaling";
+            dummyAnimation.framePerSecond = Loader.Global.FrameRate;
+            dummyAnimation.dataType = (int)BabylonAnimation.DataType.Vector3;
+
+            BabylonAnimationKey dummyKey = new BabylonAnimationKey();
+            dummyKey.frame = startFrame;
+            dummyKey.values = gltfNode.scale;
+
+            dummyAnimation.keys = new BabylonAnimationKey[] { dummyKey };
+
+            return dummyAnimation;
         }
 
         private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation, int startFrame, int endFrame)
