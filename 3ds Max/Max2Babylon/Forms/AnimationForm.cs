@@ -33,6 +33,8 @@ namespace Max2Babylon
             animationGroupControl.SetAnimationGroupInfo(null);
             animationGroupControl.InfoChanged += animationGroupControl_InfoChanged;
             animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
+
+            Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
         }
 
         #endregion
@@ -139,5 +141,11 @@ namespace Max2Babylon
         }
 
         #endregion
+
+        private void exportNonAnimatedNodesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Tools.UpdateCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
+            Loader.Global.SetSaveRequiredFlag(true, false);
+        }
     }
 }
