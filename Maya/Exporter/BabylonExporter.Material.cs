@@ -2,6 +2,7 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Maya2Babylon
@@ -11,13 +12,13 @@ namespace Maya2Babylon
         /// <summary>
         /// List of simple materials
         /// </summary>
-         List<MFnDependencyNode> referencedMaterials = new List<MFnDependencyNode>();
+        List<MFnDependencyNode> referencedMaterials = new List<MFnDependencyNode>();
 
         /// <summary>
         /// List of sub materials binded to each multimaterial
         /// </summary>
         readonly Dictionary<string, List<MFnDependencyNode>> multiMaterials = new Dictionary<string, List<MFnDependencyNode>>();
-        
+
         private void ExportMultiMaterial(string uuidMultiMaterial, List<MFnDependencyNode> materials, BabylonScene babylonScene)
         {
             var babylonMultimaterial = new BabylonMultiMaterial { id = uuidMultiMaterial };
@@ -69,7 +70,7 @@ namespace Maya2Babylon
             RaiseVerbose("materialObject.hasFn(MFn.Type.kBlinn)=" + materialObject.hasFn(MFn.Type.kBlinn), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhong)=" + materialObject.hasFn(MFn.Type.kPhong), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhongExplorer)=" + materialObject.hasFn(MFn.Type.kPhongExplorer), 2);
-            
+
             Print(materialDependencyNode, 2, "Print ExportMaterial materialDependencyNode");
 
             // Standard material
@@ -144,7 +145,7 @@ namespace Maya2Babylon
                     {
                         MFnPhongShader phongShader = new MFnPhongShader(materialObject);
 
-                        float glossiness = (float) Math.Log(phongShader.cosPower, 2) * 10;
+                        float glossiness = (float)Math.Log(phongShader.cosPower, 2) * 10;
                         babylonMaterial.specularPower = glossiness / 100 * 256;
                     }
                     else if (materialObject.hasFn(MFn.Type.kPhongExplorer))
@@ -200,10 +201,10 @@ namespace Maya2Babylon
                 };
 
                 // --- Global ---
-                
+
                 // Color3
                 babylonMaterial.baseColor = materialDependencyNode.findPlug("base_color").asFloatArray();
-                
+
                 // Alpha
                 string opacityAttributeName = "opacity";
                 if (materialDependencyNode.hasAttribute(opacityAttributeName))
@@ -244,7 +245,7 @@ namespace Maya2Babylon
                 bool useMetallicMap = materialDependencyNode.findPlug("use_metallic_map").asBoolProperty;
                 bool useRoughnessMap = materialDependencyNode.findPlug("use_roughness_map").asBoolProperty;
                 babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialDependencyNode, useMetallicMap, useRoughnessMap, babylonScene, name);
-                
+
                 if (materialDependencyNode.findPlug("use_normal_map").asBoolProperty)
                 {
                     babylonMaterial.normalTexture = ExportTexture(materialDependencyNode, "TEX_normal_map", babylonScene);
@@ -306,24 +307,84 @@ namespace Maya2Babylon
                 // --- Global ---
 
                 // Color3
-                babylonMaterial.baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
+                float baseWeight = materialDependencyNode.findPlug("base").asFloatProperty;
+                float[] baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
+                babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
 
                 // Alpha
-                float opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatProperty;
-                babylonMaterial.alpha = 1.0f - opacityAttributeValue;
+                // Retreive meshes using this material directly
+                // Meshes are split into 2 categories: Opaque or Transparent
+                List<BabylonMesh> meshesOpaque = new List<BabylonMesh>();
+                List<BabylonMesh> meshesTransparent = new List<BabylonMesh>();
+                getMeshesOpacity(babylonScene, babylonMaterial.id, meshesOpaque, meshesTransparent);
+                // meshHasAlpha is true when at least one mesh is set as Transparent (non Opaque)
+                bool meshHasAlpha = meshesTransparent.Count > 0;
+                // Material has to be duplicated when assigned to both Opaque and Transparent meshes
+                bool duplicationRequired = meshesOpaque.Count > 0 && meshesTransparent.Count > 0;
+
+                // Retreive meshes using this material as a sub material of a multi material
+                // Meshes are split into 2 categories: Opaque or Transparent
+                List<BabylonMesh> meshesOpaqueMulti = new List<BabylonMesh>();
+                List<BabylonMesh> meshesTransparentMulti = new List<BabylonMesh>();
+                foreach (KeyValuePair<string, List<MFnDependencyNode>> multiMaterial in multiMaterials)
+                {
+                    // If the material is part of the sub materials list
+                    if (multiMaterial.Value.Find(node => node.uuid().asString() == babylonMaterial.id) != null)
+                    {
+                        // Then add meshes using this multi material
+                        getMeshesOpacity(babylonScene, multiMaterial.Key, meshesOpaqueMulti, meshesTransparentMulti);
+                    }
+                }
+                bool meshHasAlphaMulti = meshesTransparentMulti.Count > 0;
+                bool duplicationRequiredMulti = meshesOpaqueMulti.Count > 0 && meshesTransparentMulti.Count > 0;
+
+                // If at least one mesh is Transparent and is using this material either directly or as a sub material
+                if (meshHasAlpha || meshHasAlphaMulti)
+                {
+                    float[] opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatArray();
+                    babylonMaterial.alpha = opacityAttributeValue[0];
+                }
+                else
+                {
+                    // Do not bother about alpha
+                    babylonMaterial.alpha = 1.0f;
+                }
 
                 // Metallic & roughness
                 babylonMaterial.metallic = materialDependencyNode.findPlug("metalness").asFloatProperty;
                 babylonMaterial.roughness = materialDependencyNode.findPlug("specularRoughness").asFloatProperty;
 
                 // Emissive
-                babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray();
+                float emissionWeight = materialDependencyNode.findPlug("emission").asFloatProperty;
+                babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray().Multiply(emissionWeight);
 
                 // --- Textures ---
 
                 // Base color & alpha
-                // Base color and alpha are already merged into a single file
-                babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "baseColor", babylonScene);
+                if (meshHasAlpha || meshHasAlphaMulti)
+                {
+                    MFnDependencyNode baseColorTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "baseColor");
+                    MFnDependencyNode opacityTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "opacity");
+                    if (baseColorTextureDependencyNode != null && opacityTextureDependencyNode != null &&
+                        getSourcePathFromFileTexture(baseColorTextureDependencyNode) == getSourcePathFromFileTexture(opacityTextureDependencyNode))
+                    {
+                        // If the same file is used for base color and opacity
+                        // Base color and alpha are already merged into a single file
+                        babylonMaterial.baseTexture = ExportTexture(baseColorTextureDependencyNode, babylonScene, false, true);
+                    }
+                    else
+                    {
+                        // Base color and alpha files need to be merged into a single file
+                        Color _baseColor = Color.FromArgb((int)baseColor[0] * 255, (int)baseColor[1] * 255, (int)baseColor[2] * 255);
+                        babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTextureDependencyNode, opacityTextureDependencyNode, babylonScene, name, _baseColor, babylonMaterial.alpha);
+                    }
+                }
+                else
+                {
+                    // Base color only
+                    // Do not bother about alpha
+                    babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "baseColor", babylonScene);
+                }
 
                 // Metallic & roughness
                 MFnDependencyNode metallicTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "metalness");
@@ -344,7 +405,7 @@ namespace Maya2Babylon
                 {
                     // Metallic and roughness files need to be merged into a single file
                     // Occlusion texture is not exported since aiStandardSurface material doesn't provide input for it
-                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name);
+                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name, babylonMaterial.metallic, babylonMaterial.roughness);
                 }
 
                 // Normal
@@ -356,12 +417,8 @@ namespace Maya2Babylon
                 // Constraints
                 if (babylonMaterial.baseTexture != null)
                 {
-                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.baseColor = new[] { baseWeight, baseWeight, baseWeight };
                     babylonMaterial.alpha = 1.0f;
-                }
-                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
-                {
-                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
                 if (babylonMaterial.metallicRoughnessTexture != null)
                 {
@@ -370,7 +427,66 @@ namespace Maya2Babylon
                 }
                 if (babylonMaterial.emissiveTexture != null)
                 {
-                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.emissive = new[] { emissionWeight, emissionWeight, emissionWeight };
+                }
+
+                // If at least one mesh is Transparent and is using this material (either directly or as a sub material)
+                if ((meshHasAlpha || meshHasAlphaMulti) &&
+                    // And material has alpha (either as value or in its texture)
+                    (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha)))
+                {
+                    // Since Babylon.Mesh doesn't have an equivalent to Maya.Mesh.aiOpaque
+                    // Material has to be duplicated when assigned to both Opaque and Transparent meshes
+                    if (duplicationRequired || meshHasAlpha != meshHasAlphaMulti)
+                    {
+                        // Duplicate material
+                        BabylonPBRMetallicRoughnessMaterial babylonMaterialCloned = new BabylonPBRMetallicRoughnessMaterial(babylonMaterial);
+
+                        // Give it a new UUID
+                        MUuid mUuid = new MUuid();
+                        mUuid.generate();
+                        babylonMaterialCloned.id = mUuid.asString();
+
+                        // The duplicated material is used either as Transparent or Opaque
+                        // The choice is made so that no modification are made on multimaterials
+                        BabylonPBRMetallicRoughnessMaterial materialOpaque = babylonMaterial;
+                        BabylonPBRMetallicRoughnessMaterial materialTransparent = babylonMaterialCloned;
+                        List<BabylonMesh> meshesToUpdate = meshesTransparent;
+                        if (meshHasAlphaMulti)
+                        {
+                            materialOpaque = babylonMaterialCloned;
+                            materialTransparent = babylonMaterial;
+                            meshesToUpdate = meshesOpaque;
+                        }
+
+                        // Reset alpha for opaque material
+                        materialOpaque.alpha = 1;
+                        if (materialOpaque.baseTexture != null)
+                        {
+                            materialOpaque.baseTexture.hasAlpha = false;
+                        }
+
+                        // Set transparency for transparent material
+                        materialTransparent.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+
+                        // Update meshes material id
+                        meshesToUpdate.ForEach(mesh =>
+                        {
+                            mesh.materialId = babylonMaterialCloned.id;
+                        });
+
+                        // Store duplicated material too
+                        babylonScene.MaterialsList.Add(babylonMaterialCloned);
+                        
+                        if (duplicationRequiredMulti)
+                        {
+                            RaiseError("Material duplication failed: material is part of a multi material assigned to both opaque and non opaque meshes (Arnold attribute). See documentation for more information.", 2);
+                        }
+                    }
+                    else
+                    {
+                        babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    }
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
@@ -406,6 +522,26 @@ namespace Maya2Babylon
                 materialDependencyNode.hasAttribute("emissionColor");
         }
 
+        private void getMeshesOpacity(BabylonScene babylonScene, string materialId, List<BabylonMesh> meshesOpaque, List<BabylonMesh> meshesTransparent)
+        {
+            babylonScene.MeshesList.ForEach(mesh =>
+            {
+                if (mesh.materialId == materialId)
+                {
+                    int meshOpaqueInt;
+                    MGlobal.executeCommand($@"getAttr {mesh.name}.aiOpaque;", out meshOpaqueInt);
+                    if (meshOpaqueInt == 1)
+                    {
+                        meshesOpaque.Add(mesh);
+                    }
+                    else
+                    {
+                        meshesTransparent.Add(mesh);
+                    }
+                }
+            });
+        }
+
         public string GetMultimaterialUUID(List<MFnDependencyNode> materials)
         {
             List<MFnDependencyNode> materialsSorted = new List<MFnDependencyNode>(materials);
@@ -413,7 +549,7 @@ namespace Maya2Babylon
 
             string uuidConcatenated = "";
             bool isFirstTime = true;
-            foreach(MFnDependencyNode material in materialsSorted)
+            foreach (MFnDependencyNode material in materialsSorted)
             {
                 if (!isFirstTime)
                 {
@@ -423,7 +559,7 @@ namespace Maya2Babylon
 
                 uuidConcatenated += material.uuid().asString();
             }
-            
+
             return uuidConcatenated;
         }
 

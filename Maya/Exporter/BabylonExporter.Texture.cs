@@ -243,7 +243,7 @@ namespace Maya2Babylon
             return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
         }
 
-        private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName)
+        private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName, float defaultMetallic = 1.0f, float defaultRoughness = 1.0f)
         {
             // Prints
             if (metallicTextureDependencyNode != null)
@@ -308,14 +308,17 @@ namespace Maya2Babylon
                     RaiseError("Metallic and roughness maps should have same dimensions", 2);
                 }
 
+                float _defaultMetallic = defaultMetallic * 255.0f;
+                float _defaultRoughness = defaultRoughness * 255.0f;
+
                 // Create metallic+roughness map
                 Bitmap metallicRoughnessBitmap = new Bitmap(width, height);
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        var _metallic = metallicBitmap != null ? metallicBitmap.GetPixel(x, y).B : 255.0f;
-                        var _roughness = roughnessBitmap != null ? roughnessBitmap.GetPixel(x, y).G : 255.0f;
+                        var _metallic = metallicBitmap != null ? metallicBitmap.GetPixel(x, y).B : _defaultMetallic;
+                        var _roughness = roughnessBitmap != null ? roughnessBitmap.GetPixel(x, y).G : _defaultRoughness;
 
                         // The metalness values are sampled from the B channel.
                         // The roughness values are sampled from the G channel.
@@ -340,6 +343,104 @@ namespace Maya2Babylon
                 {
                     // Store created bitmap for further use in gltf export
                     babylonTexture.bitmap = metallicRoughnessBitmap;
+                }
+            }
+
+            return babylonTexture;
+        }
+
+        private BabylonTexture ExportBaseColorAlphaTexture(MFnDependencyNode baseColorTextureDependencyNode, MFnDependencyNode opacityTextureDependencyNode, BabylonScene babylonScene, string materialName, Color defaultBaseColor, float defaultOpacity = 1.0f)
+        {
+            // Prints
+            if (baseColorTextureDependencyNode != null)
+            {
+                Print(baseColorTextureDependencyNode, logRankTexture, "Print ExportBaseColorAlphaTexture baseColorTextureDependencyNode");
+            }
+            if (opacityTextureDependencyNode != null)
+            {
+                Print(opacityTextureDependencyNode, logRankTexture, "Print ExportBaseColorAlphaTexture opacityTextureDependencyNode");
+            }
+
+            // Use one as a reference for UVs parameters
+            var textureDependencyNode = baseColorTextureDependencyNode != null ? baseColorTextureDependencyNode : opacityTextureDependencyNode;
+            if (textureDependencyNode == null)
+            {
+                return null;
+            }
+
+            var babylonTexture = new BabylonTexture
+            {
+                name = materialName + "_baseColor" + ".png" // TODO - unsafe name, may conflict with another texture name
+            };
+
+            // Level
+            babylonTexture.level = 1.0f;
+
+            // Alpha
+            babylonTexture.hasAlpha = opacityTextureDependencyNode != null || defaultOpacity != 1.0f;
+            babylonTexture.getAlphaFromRGB = false;
+
+            // UVs
+            _exportUV(textureDependencyNode, babylonTexture);
+
+            // Is cube
+            string sourcePath = getSourcePathFromFileTexture(textureDependencyNode);
+            if (sourcePath == null)
+            {
+                return null;
+            }
+            if (sourcePath == "")
+            {
+                RaiseError("Texture path is missing.", logRankTexture + 1);
+                return null;
+            }
+            _exportIsCube(sourcePath, babylonTexture, false);
+
+
+            // --- Merge base color and opacity maps ---
+
+            if (CopyTexturesToOutput)
+            {
+                // Load bitmaps
+                var baseColorBitmap = LoadTexture(baseColorTextureDependencyNode);
+                var opacityBitmap = LoadTexture(opacityTextureDependencyNode);
+
+                // Retreive dimensions
+                int width = 0;
+                int height = 0;
+                var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, opacityBitmap);
+                if (!haveSameDimensions)
+                {
+                    RaiseError("Base color and opacity maps should have same dimensions", 2);
+                }
+
+                int _defaultOpacity = (int) (defaultOpacity * 255.0f);
+
+                // Create baseColor+alpha map
+                Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        var _baseColor = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : defaultBaseColor;
+                        int _opacity = opacityBitmap != null ? opacityBitmap.GetPixel(x, y).G : _defaultOpacity;
+
+                        Color colorBaseColorAlpha = Color.FromArgb(_opacity, _baseColor);
+                        baseColorAlphaBitmap.SetPixel(x, y, colorBaseColorAlpha);
+                    }
+                }
+
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
+                    baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png);
+                }
+                else
+                {
+                    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = baseColorAlphaBitmap;
                 }
             }
 
