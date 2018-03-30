@@ -132,7 +132,10 @@
 					"index": 2
 				},
 				"metallicFactor": 1,
-				"roughnessFactor": 0
+				"roughnessFactor": 1,
+				"metallicRoughnessTexture": {
+					"index": 3
+				}
 			},
 			"normalTexture": {
 				"index": 0
