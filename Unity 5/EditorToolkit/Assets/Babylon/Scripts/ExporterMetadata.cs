@@ -1124,8 +1124,9 @@ namespace UnityEditor
 
             this.metallic = null;
             this.roughness = null;
-            this.useRoughnessFromMetallicTextureAlpha = true;
-            this.useRoughnessFromMetallicTextureGreen = false;
+            this.useRoughnessFromMetallicTextureAlpha = false;
+            this.useRoughnessFromMetallicTextureGreen = true;
+            this.useMetallnessFromMetallicTextureBlue = true;
 
             this.microSurface = 0.9f;
             this.useMicroSurfaceFromReflectivityMapAplha = false;
