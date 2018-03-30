@@ -4406,11 +4406,7 @@ namespace Unity3D2Babylon
             }
             else if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                string home = Environment.GetFolderPath(Environment.SpecialFolder.Personal).Replace("\\My Documents", "\\").Replace("\\Documents", "\\");
-                string tscWIN = Path.Combine(home, "AppData\\Roaming\\npm\\node_modules\\typescript\\bin\\tsc");
-                if (File.Exists(tscWIN)) {
-                    result = tscWIN;
-                }
+	    	result = "%AppData%\\npm\\node_modules\\typescript\\bin\\tsc";
             }
             return result;
         }
@@ -4695,6 +4691,7 @@ namespace Unity3D2Babylon
         public static int BuildProjectTypeScript(string nodePath, string tscPath, string buildFolder, string javascriptFile, string tsconfigJson = null)
         {
             int result = -1;
+            tscPath = Environment.ExpandEnvironmentVariables(tscPath);
             bool tscExists = (!String.IsNullOrEmpty(tscPath) && File.Exists(tscPath));
             bool nodeExists = (!String.IsNullOrEmpty(nodePath) && File.Exists(nodePath));
             if (nodeExists && tscExists)
