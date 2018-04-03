@@ -16,6 +16,7 @@ namespace Maya2Babylon
         // Export options
         private bool _onlySelected;
         private bool _exportHiddenObjects;
+        private bool _optimizeVertices;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
@@ -33,7 +34,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput)
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices)
         {
             RaiseMessage("Exportation started", Color.Blue);
             var progression = 0.0f;
@@ -42,6 +43,7 @@ namespace Maya2Babylon
             // Store export options
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
+            _optimizeVertices = optimizeVertices;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
