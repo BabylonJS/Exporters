@@ -140,7 +140,7 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked);
+                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked, chkOptimizeVertices.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -308,6 +308,11 @@ namespace Maya2Babylon.Forms
         }
 
         private void chkCopyTextures_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkOptimizeVertices_CheckedChanged(object sender, EventArgs e)
         {
 
         }

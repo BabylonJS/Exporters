@@ -41,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkOptimizeVertices = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.comboOutputFormat = new System.Windows.Forms.ComboBox();
             this.chkOnlySelected = new System.Windows.Forms.CheckBox();
@@ -183,6 +184,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkOptimizeVertices);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.comboOutputFormat);
             this.groupBox1.Controls.Add(this.chkOnlySelected);
@@ -200,6 +202,20 @@
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // chkOptimizeVertices
+            // 
+            this.chkOptimizeVertices.AutoSize = true;
+            this.chkOptimizeVertices.Checked = true;
+            this.chkOptimizeVertices.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkOptimizeVertices.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkOptimizeVertices.Location = new System.Drawing.Point(322, 140);
+            this.chkOptimizeVertices.Name = "chkOptimizeVertices";
+            this.chkOptimizeVertices.Size = new System.Drawing.Size(103, 17);
+            this.chkOptimizeVertices.TabIndex = 17;
+            this.chkOptimizeVertices.Text = "Optimize vertices";
+            this.chkOptimizeVertices.UseVisualStyleBackColor = true;
+            this.chkOptimizeVertices.CheckedChanged += new System.EventHandler(this.checkOptimizeVertices_CheckedChanged);
             // 
             // label3
             // 
@@ -224,7 +240,7 @@
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 0;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
-            this.comboOutputFormat.SelectedIndex = 0;
+			this.comboOutputFormat.SelectedIndex = 0;
             // 
             // chkOnlySelected
             // 
@@ -335,5 +351,6 @@
         private System.Windows.Forms.Button butClose;
         private System.Windows.Forms.ComboBox comboOutputFormat;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox chkOptimizeVertices;
     }
 }
