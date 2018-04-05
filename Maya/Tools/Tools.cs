@@ -102,12 +102,24 @@ namespace Maya2Babylon
         }
 
         // -------------------------
-        // ----------- Math ----------
+        // --------- Math ----------
         // -------------------------
 
         public static float Clamp(float value, float min, float max)
         {
             return (value < min) ? min : (value > max) ? max : value;
+        }
+
+
+        // -------------------------
+        // --------- UUID ----------
+        // -------------------------
+
+        public static string GenerateUUID()
+        {
+            MUuid mUuid = new MUuid();
+            mUuid.generate();
+            return mUuid.asString();
         }
     }
 }

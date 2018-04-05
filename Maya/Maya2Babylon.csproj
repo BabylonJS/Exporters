@@ -82,6 +82,8 @@
     <Compile Include="Exporter\BabylonExporter.cs" />
     <Compile Include="Exporter\GlobalVertex.cs" />
     <Compile Include="Exporter\GLTFGlobalVertex.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.Duplication.cs" />
+    <Compile Include="Exporter\MaterialDuplicationData.cs" />
     <Compile Include="Extensions\ColorExtension.cs" />
     <Compile Include="Extensions\MColorExtension.cs" />
     <Compile Include="Extensions\MFloatVectorExtension.cs" />
