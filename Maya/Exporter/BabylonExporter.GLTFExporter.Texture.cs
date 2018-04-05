@@ -45,7 +45,7 @@ namespace Maya2Babylon
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
                     RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
-                    bitmap.Save(absolutePath, imageFormat);
+                    SaveBitmap(bitmap, gltf.OutputFolder, name, imageFormat);
                 }
 
                 return extension.Substring(1); // remove the dot
