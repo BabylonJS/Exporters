@@ -277,6 +277,7 @@ namespace Maya2Babylon
             // ----- Materials ----
             // --------------------
             RaiseMessage("Exporting materials");
+            GenerateMaterialDuplicationDatas(babylonScene);
             foreach (var mat in referencedMaterials)
             {
                 ExportMaterial(mat, babylonScene);
@@ -287,6 +288,7 @@ namespace Maya2Babylon
                 ExportMultiMaterial(mat.Key, mat.Value, babylonScene);
                 CheckCancelled();
             }
+            UpdateMeshesMaterialId(babylonScene);
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
             // Output

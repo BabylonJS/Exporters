@@ -127,5 +127,34 @@ namespace BabylonExport.Entities
             coordinatesIndex = 0;
             samplingMode = SamplingMode.LINEAR_LINEAR_MIPLINEAR;
         }
+
+        public BabylonTexture(BabylonTexture original)
+        {
+            name = original.name;
+            level = original.level;
+            hasAlpha = original.hasAlpha;
+            getAlphaFromRGB = original.getAlphaFromRGB;
+            coordinatesMode = original.coordinatesMode;
+            isCube = original.isCube;
+            uOffset = original.uOffset;
+            vOffset = original.vOffset;
+            uScale = original.uScale;
+            vScale = original.vScale;
+            uAng = original.uAng;
+            vAng = original.vAng;
+            wAng = original.wAng;
+            wrapU = original.wrapU;
+            wrapV = original.wrapV;
+            coordinatesIndex = original.coordinatesIndex;
+            isRenderTarget = original.isRenderTarget;
+            renderTargetSize = original.renderTargetSize;
+            mirrorPlane = original.mirrorPlane;
+            renderList = original.renderList;
+            animations = original.animations;
+            extensions = original.extensions;
+            samplingMode = original.samplingMode;
+            originalPath = original.originalPath;
+            bitmap = original.bitmap;
+        }
     }
 }
