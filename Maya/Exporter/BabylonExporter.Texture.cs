@@ -220,10 +220,9 @@ namespace Maya2Babylon
                 // Write bitmap
                 if (isBabylonExported)
                 {
-                    var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
                     var imageFormat = useOpacityMap ? System.Drawing.Imaging.ImageFormat.Png : System.Drawing.Imaging.ImageFormat.Jpeg;
-                    baseColorAlphaBitmap.Save(absolutePath, imageFormat);
+                    SaveBitmap(baseColorAlphaBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat);
                 }
                 else
                 {
@@ -305,7 +304,7 @@ namespace Maya2Babylon
                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, metallicBitmap, roughnessBitmap);
                 if (!haveSameDimensions)
                 {
-                    RaiseError("Metallic and roughness maps should have same dimensions", 2);
+                    RaiseError("Metallic and roughness maps should have same dimensions", logRankTexture + 1);
                 }
 
                 float _defaultMetallic = defaultMetallic * 255.0f;
@@ -335,9 +334,8 @@ namespace Maya2Babylon
                 // Write bitmap
                 if (isBabylonExported)
                 {
-                    var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-                    metallicRoughnessBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
+                    SaveBitmap(metallicRoughnessBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
                 else
                 {
@@ -411,11 +409,11 @@ namespace Maya2Babylon
                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, opacityBitmap);
                 if (!haveSameDimensions)
                 {
-                    RaiseError("Base color and opacity maps should have same dimensions", 2);
+                    RaiseError("Base color and opacity maps should have same dimensions", logRankTexture + 1);
                 }
 
                 int _defaultOpacity = (int) (defaultOpacity * 255.0f);
-
+                
                 // Create baseColor+alpha map
                 Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
                 for (int x = 0; x < width; x++)
@@ -433,9 +431,8 @@ namespace Maya2Babylon
                 // Write bitmap
                 if (isBabylonExported)
                 {
-                    var absolutePath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 2);
-                    baseColorAlphaBitmap.Save(absolutePath, System.Drawing.Imaging.ImageFormat.Png);
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
+                    SaveBitmap(baseColorAlphaBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Png);
                 }
                 else
                 {
@@ -708,6 +705,11 @@ namespace Maya2Babylon
 
         private Bitmap LoadTexture(MFnDependencyNode textureDependencyNode)
         {
+            if (textureDependencyNode == null)
+            {
+                return null;
+            }
+
             string sourcePath = getSourcePathFromFileTexture(textureDependencyNode);
             if (sourcePath == null)
             {
@@ -841,7 +843,7 @@ namespace Maya2Babylon
                 }
                 catch (Exception c)
                 {
-                    RaiseError(string.Format("Exporting texture {0} failed: {1}", sourcePath, c.ToString()), 2);
+                    RaiseError(string.Format("Exporting texture {0} failed: {1}", sourcePath, c.ToString()), logRankTexture + 1);
                 }
             }
         }
@@ -866,7 +868,7 @@ namespace Maya2Babylon
                     try
                     {
                         bitmap = GDImageLibrary._DDS.LoadImage(sourcePath);
-                        bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                        SaveBitmap(bitmap, destPath, System.Drawing.Imaging.ImageFormat.Png);
                     }
                     catch (Exception e)
                     {
@@ -878,7 +880,7 @@ namespace Maya2Babylon
                     try
                     {
                         bitmap = Paloma.TargaImage.LoadTargaImage(sourcePath);
-                        bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                        SaveBitmap(bitmap, destPath, System.Drawing.Imaging.ImageFormat.Png);
                     }
                     catch (Exception e)
                     {
@@ -887,13 +889,13 @@ namespace Maya2Babylon
                     break;
                 case "bmp":
                     bitmap = new Bitmap(sourcePath);
-                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Jpeg); // no alpha
+                    SaveBitmap(bitmap, destPath, System.Drawing.Imaging.ImageFormat.Jpeg); // no alpha
                     break;
                 case "tif":
                 case "tiff":
                 case "gif":
                     bitmap = new Bitmap(sourcePath);
-                    bitmap.Save(destPath, System.Drawing.Imaging.ImageFormat.Png);
+                    SaveBitmap(bitmap, destPath, System.Drawing.Imaging.ImageFormat.Png);
                     break;
                 case "jpeg":
                 case "png":
@@ -903,6 +905,44 @@ namespace Maya2Babylon
                     RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
                     break;
             }
+        }
+
+        private void SaveBitmap(Bitmap bitmap, string path, System.Drawing.Imaging.ImageFormat imageFormat)
+        {
+            SaveBitmap(bitmap, Path.GetDirectoryName(path), Path.GetFileName(path), imageFormat);
+        }
+
+        private void SaveBitmap(Bitmap bitmap, string directoryName, string fileName, System.Drawing.Imaging.ImageFormat imageFormat)
+        {
+            List<char> invalidCharsInString = GetInvalidChars(directoryName, Path.GetInvalidPathChars());
+            if (invalidCharsInString.Count > 0)
+            {
+                RaiseError($"Failed to save bitmap: directory name '{directoryName}' contains invalid character{(invalidCharsInString.Count > 1 ? "s" : "")} {invalidCharsInString.ToArray().toString(false)}", logRankTexture + 1);
+                return;
+            }
+            invalidCharsInString = GetInvalidChars(fileName, Path.GetInvalidFileNameChars());
+            if (invalidCharsInString.Count > 0)
+            {
+                RaiseError($"Failed to save bitmap: file name '{fileName}' contains invalid character{(invalidCharsInString.Count > 1 ? "s" : "")} {invalidCharsInString.ToArray().toString(false)}", logRankTexture + 1);
+                return;
+            }
+
+            string path = Path.Combine(directoryName, fileName);
+            bitmap.Save(path, imageFormat);
+        }
+
+        private List<char> GetInvalidChars(string s, char[] invalidChars)
+        {
+            List<char> invalidCharsInString = new List<char>();
+            foreach (char ch in invalidChars)
+            {
+                int indexInvalidChar = s.IndexOf(ch);
+                if (indexInvalidChar != -1)
+                {
+                    invalidCharsInString.Add(s[indexInvalidChar]);
+                }
+            }
+            return invalidCharsInString;
         }
     }
 }
