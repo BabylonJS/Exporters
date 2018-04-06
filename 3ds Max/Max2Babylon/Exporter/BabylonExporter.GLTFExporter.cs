@@ -41,10 +41,21 @@ namespace Max2Babylon
             gltf.asset = new GLTFAsset
             {
                 version = "2.0",
-                generator = "Babylon2Gltf2017",
                 copyright = "2017 (c) BabylonJS"
                 // no minVersion
             };
+
+            string maxVersion = null;
+#if MAX2015
+            maxVersion = "2015";
+#endif
+#if MAX2017
+            maxVersion = "2017";
+#endif
+#if MAX2018
+            maxVersion = "2018";
+#endif
+            gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v1.0.0";
 
             // Extensions
             gltf.extensionsUsed = new List<string>();
@@ -76,6 +87,7 @@ namespace Max2Babylon
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            NbNodesByName = new Dictionary<string, int>();
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
