@@ -48,11 +48,9 @@ namespace Max2Babylon
             string maxVersion = null;
 #if MAX2015
             maxVersion = "2015";
-#endif
-#if MAX2017
+#elif MAX2017
             maxVersion = "2017";
-#endif
-#if MAX2018
+#elif MAX2018
             maxVersion = "2018";
 #endif
             gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v1.0.0";
