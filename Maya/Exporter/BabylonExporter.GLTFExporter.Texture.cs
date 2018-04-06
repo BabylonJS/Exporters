@@ -182,6 +182,10 @@ namespace Maya2Babylon
             {
                 return null;
             }
+            if (babylonMaterial.emissiveTexture == null && defaultEmissive.IsAlmostEqualTo(new float[] { 0, 0, 0 }, 0))
+            {
+                return null;
+            }
 
             Bitmap emissivePremultipliedBitmap = null;
 

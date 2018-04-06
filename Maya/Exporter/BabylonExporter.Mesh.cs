@@ -21,6 +21,8 @@ namespace Maya2Babylon
 
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
 
+            Print(mFnTransform, 2, "Print ExportDummy mFnTransform");
+
             var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
             babylonMesh.isDummy = true;
 

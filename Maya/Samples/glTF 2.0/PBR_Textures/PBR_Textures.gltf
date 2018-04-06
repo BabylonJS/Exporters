@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for maya 2018 v1.0.0",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,
@@ -242,7 +242,7 @@
 		{
 			"bufferView": 1,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"max": [
 				1,
 				1,
@@ -258,16 +258,16 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27360,
+			"byteOffset": 5268,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -281,9 +281,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 54720,
+			"byteOffset": 10536,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"max": [
 				1,
 				1,
@@ -299,17 +299,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 82080,
+			"byteOffset": 15804,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 18240,
+			"byteOffset": 3512,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -323,9 +323,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 109440,
+			"byteOffset": 21072,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"max": [
 				1,
 				1,
@@ -341,17 +341,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 136800,
+			"byteOffset": 26340,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 36480,
+			"byteOffset": 7024,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -365,9 +365,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 164160,
+			"byteOffset": 31608,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"max": [
 				1,
 				1,
@@ -383,17 +383,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 191520,
+			"byteOffset": 36876,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 54720,
+			"byteOffset": 10536,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -407,9 +407,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 218880,
+			"byteOffset": 42144,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"max": [
 				1,
 				1,
@@ -425,17 +425,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 246240,
+			"byteOffset": 47412,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 72960,
+			"byteOffset": 14048,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -449,9 +449,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 273600,
+			"byteOffset": 52680,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"max": [
 				1,
 				1,
@@ -467,17 +467,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 300960,
+			"byteOffset": 57948,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 91200,
+			"byteOffset": 17560,
 			"componentType": 5126,
-			"count": 2280,
+			"count": 439,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		}
@@ -491,14 +491,14 @@
 		{
 			"buffer": 0,
 			"byteOffset": 27360,
-			"byteLength": 328320,
+			"byteLength": 63216,
 			"byteStride": 12,
 			"name": "bufferViewFloatVec3"
 		},
 		{
 			"buffer": 0,
-			"byteOffset": 355680,
-			"byteLength": 109440,
+			"byteOffset": 90576,
+			"byteLength": 21072,
 			"byteStride": 8,
 			"name": "bufferViewFloatVec2"
 		}
@@ -506,7 +506,7 @@
 	"buffers": [
 		{
 			"uri": "PBR_Textures.bin",
-			"byteLength": 465120
+			"byteLength": 111648
 		}
 	],
 	"materials": [
