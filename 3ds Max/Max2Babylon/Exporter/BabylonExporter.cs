@@ -144,7 +144,7 @@ namespace Max2Babylon
 #else
                 version = Loader.Core.ProductVersion.ToString(),
 #endif
-                exporter_version = "0.4.5",
+                exporter_version = "1.0.0",
                 file = outputFileName
             };
 

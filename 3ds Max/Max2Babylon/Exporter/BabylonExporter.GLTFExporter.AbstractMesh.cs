@@ -1,17 +1,23 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using System.Collections.Generic;
 
 namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        /// <summary>
+        /// Store the number of nodes with a specific name
+        /// </summary>
+        Dictionary<string, int> NbNodesByName;
+
         private GLTFNode ExportAbstractMesh(BabylonAbstractMesh babylonAbstractMesh, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
             RaiseMessage("GLTFExporter.AbstractMesh | Export abstract mesh named: " + babylonAbstractMesh.name, 1);
 
             // Node
             var gltfNode = new GLTFNode();
-            gltfNode.name = babylonAbstractMesh.name;
+            gltfNode.name = GetUniqueNodeName(babylonAbstractMesh.name);
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
 
@@ -74,6 +80,28 @@ namespace Max2Babylon
             ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
 
             return gltfNode;
+        }
+
+        /// <summary>
+        /// Append a suffix to the specified name if a node already has same name
+        /// 
+        /// This is used for ThreeJS engine because animations are referenced by names.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string GetUniqueNodeName(string name)
+        {
+            if (NbNodesByName.ContainsKey(name))
+            {
+                string nameSuffix = " (" + NbNodesByName[name] + ")";
+                NbNodesByName[name]++;
+                name += nameSuffix;
+            }
+            else
+            {
+                NbNodesByName.Add(name, 1);
+            }
+            return name;
         }
     }
 }
