@@ -1,1 +1,158 @@
-{"asset":{"version":"2.0","generator":"Babylon2Gltf2017","copyright":"2017 (c) BabylonJS"},"scene":0,"scenes":[{"nodes":[0]}],"nodes":[{"mesh":0,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[8.276114,8.276114,8.276114],"name":"pCube1"}],"meshes":[{"primitives":[{"attributes":{"POSITION":1,"NORMAL":2,"COLOR_0":3,"TEXCOORD_0":4},"indices":0,"mode":4,"material":0}],"name":"pCube1"}],"accessors":[{"bufferView":0,"componentType":5123,"count":36,"type":"SCALAR","name":"accessorIndices"},{"bufferView":1,"componentType":5126,"count":36,"max":[0.5,0.5,0.5],"min":[-0.5,-0.5,-0.5],"type":"VEC3","name":"accessorPositions"},{"bufferView":1,"byteOffset":432,"componentType":5126,"count":36,"type":"VEC3","name":"accessorNormals"},{"bufferView":2,"componentType":5126,"count":36,"type":"VEC4","name":"accessorColors"},{"bufferView":3,"componentType":5126,"count":36,"type":"VEC2","name":"accessorUVs"}],"bufferViews":[{"buffer":0,"byteLength":72,"name":"bufferViewScalar"},{"buffer":0,"byteOffset":72,"byteLength":864,"byteStride":12,"name":"bufferViewFloatVec3"},{"buffer":0,"byteOffset":936,"byteLength":576,"byteStride":16,"name":"bufferViewFloatVec4"},{"buffer":0,"byteOffset":1512,"byteLength":288,"byteStride":8,"name":"bufferViewFloatVec2"}],"buffers":[{"uri":"ColorVertexGLTF.bin","byteLength":1800}],"materials":[{"pbrMetallicRoughness":{"baseColorFactor":[0.9999999,0.9999999,0.9999999,1.0],"metallicFactor":0.9999998,"roughnessFactor":0.75},"emissiveFactor":[0.0,0.0,0.0],"alphaMode":"OPAQUE","name":"lambert1"}]}
+{
+	"asset": {
+		"version": "2.0",
+		"generator": "babylon.js glTF exporter for maya 2018 v1.0.0",
+		"copyright": "2017 (c) BabylonJS"
+	},
+	"scene": 0,
+	"scenes": [
+		{
+			"nodes": [
+				0
+			]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"translation": [
+				0,
+				0,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				0,
+				1
+			],
+			"scale": [
+				8.276114,
+				8.276114,
+				8.276114
+			],
+			"name": "pCube1"
+		}
+	],
+	"meshes": [
+		{
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 1,
+						"NORMAL": 2,
+						"COLOR_0": 3,
+						"TEXCOORD_0": 4
+					},
+					"indices": 0,
+					"mode": 4,
+					"material": 0
+				}
+			],
+			"name": "pCube1"
+		}
+	],
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5123,
+			"count": 36,
+			"type": "SCALAR",
+			"name": "accessorIndices"
+		},
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 24,
+			"max": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"min": [
+				-0.5,
+				-0.5,
+				-0.5
+			],
+			"type": "VEC3",
+			"name": "accessorPositions"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 288,
+			"componentType": 5126,
+			"count": 24,
+			"type": "VEC3",
+			"name": "accessorNormals"
+		},
+		{
+			"bufferView": 2,
+			"componentType": 5126,
+			"count": 24,
+			"type": "VEC4",
+			"name": "accessorColors"
+		},
+		{
+			"bufferView": 3,
+			"componentType": 5126,
+			"count": 24,
+			"type": "VEC2",
+			"name": "accessorUVs"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 72,
+			"name": "bufferViewScalar"
+		},
+		{
+			"buffer": 0,
+			"byteOffset": 72,
+			"byteLength": 576,
+			"byteStride": 12,
+			"name": "bufferViewFloatVec3"
+		},
+		{
+			"buffer": 0,
+			"byteOffset": 648,
+			"byteLength": 384,
+			"byteStride": 16,
+			"name": "bufferViewFloatVec4"
+		},
+		{
+			"buffer": 0,
+			"byteOffset": 1032,
+			"byteLength": 192,
+			"byteStride": 8,
+			"name": "bufferViewFloatVec2"
+		}
+	],
+	"buffers": [
+		{
+			"uri": "ColorVertexGLTF.bin",
+			"byteLength": 1224
+		}
+	],
+	"materials": [
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [
+					0.9999999,
+					0.9999999,
+					0.9999999,
+					1
+				],
+				"metallicFactor": 0.9999998,
+				"roughnessFactor": 0.75
+			},
+			"emissiveFactor": [
+				0,
+				0,
+				0
+			],
+			"alphaMode": "OPAQUE",
+			"name": "lambert1"
+		}
+	]
+}

@@ -379,19 +379,20 @@ namespace Maya2Babylon
                             return MFn.Type.kCamera;
                         }
                         break;
-                    case MFn.Type.kLocator:
-                        if (IsNodeExportable(nodeObject, mDagPath))
-                        {
-                            return MFn.Type.kLocator;
-                        }
-                        break;
                 }
+
                 // Lights api type are kPointLight, kSpotLight...
                 // Easier to check if has generic light function set rather than check all cases
                 if (mDagPath.hasFn(MFn.Type.kLight) && IsLightExportable(nodeObject, mDagPath))
                 {
                     // Return generic kLight api type
                     return MFn.Type.kLight;
+                }
+
+                // Target of target camera is both a locator and a lookAt
+                if (mDagPath.hasFn(MFn.Type.kLocator) && mDagPath.hasFn(MFn.Type.kLookAt) && IsNodeExportable(nodeObject, mDagPath))
+                {
+                    return MFn.Type.kLocator;
                 }
             }
 
