@@ -21,6 +21,8 @@ namespace Maya2Babylon
 
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
 
+            Print(mFnTransform, 2, "Print ExportDummy mFnTransform");
+
             var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
             babylonMesh.isDummy = true;
 
@@ -295,7 +297,8 @@ namespace Maya2Babylon
             //var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
             // TODO - Add custom properties
-            var optimizeVertices = false; // meshNode.MaxNode.GetBoolProperty("babylonjs_optimizevertices");
+            //var optimizeVertices = false; // meshNode.MaxNode.GetBoolProperty("babylonjs_optimizevertices");
+            var optimizeVertices = _optimizeVertices; // global option
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
@@ -368,7 +371,13 @@ namespace Maya2Babylon
         /// <param name="optimizeVertices"></param>
         private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, bool optimizeVertices)
         {
-            // TODO - optimizeVertices
+            List<GlobalVertex>[] verticesAlreadyExported = null;
+
+            if (optimizeVertices)
+            {
+                verticesAlreadyExported = new List<GlobalVertex>[mFnMesh.numVertices];
+            }
+
             MIntArray triangleCounts = new MIntArray();
             MIntArray trianglesVertices = new MIntArray();
             mFnMesh.getTriangles(triangleCounts, trianglesVertices);
@@ -424,7 +433,7 @@ namespace Maya2Babylon
                         {
                             // Get the face-relative (local) vertex id
                             int vertexIndexLocal = 0;
-                            for (vertexIndexLocal = 0; vertexIndexLocal < polygonVertices.Count; vertexIndexLocal++)
+                            for (vertexIndexLocal = 0; vertexIndexLocal < polygonVertices.Count - 1; vertexIndexLocal++) // -1 to stop at vertexIndexLocal=2
                             {
                                 if (polygonVertices[vertexIndexLocal] == vertexIndexGlobal)
                                 {
@@ -433,10 +442,43 @@ namespace Maya2Babylon
                             }
 
                             GlobalVertex vertex = ExtractVertex(mFnMesh, polygonId, vertexIndexGlobal, vertexIndexLocal, uvSetNames, ref isUVExportSuccess);
-                            vertex.CurrentIndex = vertices.Count;
+
+                            // Optimize vertices
+                            if (verticesAlreadyExported != null)
+                            {
+                                if (verticesAlreadyExported[vertexIndexGlobal] != null)
+                                {
+                                    var index = verticesAlreadyExported[vertexIndexGlobal].IndexOf(vertex);
+
+                                    // If a stored vertex is similar to current vertex
+                                    if (index > -1)
+                                    {
+                                        // Use stored vertex instead of current one
+                                        vertex = verticesAlreadyExported[vertexIndexGlobal][index];
+                                    }
+                                    else
+                                    {
+                                        vertex.CurrentIndex = vertices.Count;
+                                        verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
+                                        vertices.Add(vertex);
+                                    }
+                                }
+                                else
+                                {
+                                    verticesAlreadyExported[vertexIndexGlobal] = new List<GlobalVertex>();
+
+                                    vertex.CurrentIndex = vertices.Count;
+                                    verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
+                                    vertices.Add(vertex);
+                                }
+                            }
+                            else
+                            {
+                                vertex.CurrentIndex = vertices.Count;
+                                vertices.Add(vertex);
+                            }
 
                             indices.Add(vertex.CurrentIndex);
-                            vertices.Add(vertex);
 
                             minVertexIndexSubMesh = Math.Min(minVertexIndexSubMesh, vertex.CurrentIndex);
                             maxVertexIndexSubMesh = Math.Max(maxVertexIndexSubMesh, vertex.CurrentIndex);
@@ -541,7 +583,6 @@ namespace Maya2Babylon
                     isUVExportSuccess[indexUVSet] = false;
                 }
             }
-
 
             return vertex;
         }

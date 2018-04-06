@@ -16,6 +16,7 @@ namespace Maya2Babylon
         // Export options
         private bool _onlySelected;
         private bool _exportHiddenObjects;
+        private bool _optimizeVertices;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
@@ -33,7 +34,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput)
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices)
         {
             RaiseMessage("Exportation started", Color.Blue);
             var progression = 0.0f;
@@ -42,6 +43,7 @@ namespace Maya2Babylon
             // Store export options
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
+            _optimizeVertices = optimizeVertices;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
@@ -275,6 +277,7 @@ namespace Maya2Babylon
             // ----- Materials ----
             // --------------------
             RaiseMessage("Exporting materials");
+            GenerateMaterialDuplicationDatas(babylonScene);
             foreach (var mat in referencedMaterials)
             {
                 ExportMaterial(mat, babylonScene);
@@ -285,6 +288,7 @@ namespace Maya2Babylon
                 ExportMultiMaterial(mat.Key, mat.Value, babylonScene);
                 CheckCancelled();
             }
+            UpdateMeshesMaterialId(babylonScene);
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
             // Output
@@ -375,19 +379,20 @@ namespace Maya2Babylon
                             return MFn.Type.kCamera;
                         }
                         break;
-                    case MFn.Type.kLocator:
-                        if (IsNodeExportable(nodeObject, mDagPath))
-                        {
-                            return MFn.Type.kLocator;
-                        }
-                        break;
                 }
+
                 // Lights api type are kPointLight, kSpotLight...
                 // Easier to check if has generic light function set rather than check all cases
                 if (mDagPath.hasFn(MFn.Type.kLight) && IsLightExportable(nodeObject, mDagPath))
                 {
                     // Return generic kLight api type
                     return MFn.Type.kLight;
+                }
+
+                // Target of target camera is both a locator and a lookAt
+                if (mDagPath.hasFn(MFn.Type.kLocator) && mDagPath.hasFn(MFn.Type.kLookAt) && IsNodeExportable(nodeObject, mDagPath))
+                {
+                    return MFn.Type.kLocator;
                 }
             }
 

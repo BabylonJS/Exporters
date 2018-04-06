@@ -312,34 +312,9 @@ namespace Maya2Babylon
                 babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
 
                 // Alpha
-                // Retreive meshes using this material directly
-                // Meshes are split into 2 categories: Opaque or Transparent
-                List<BabylonMesh> meshesOpaque = new List<BabylonMesh>();
-                List<BabylonMesh> meshesTransparent = new List<BabylonMesh>();
-                getMeshesOpacity(babylonScene, babylonMaterial.id, meshesOpaque, meshesTransparent);
-                // meshHasAlpha is true when at least one mesh is set as Transparent (non Opaque)
-                bool meshHasAlpha = meshesTransparent.Count > 0;
-                // Material has to be duplicated when assigned to both Opaque and Transparent meshes
-                bool duplicationRequired = meshesOpaque.Count > 0 && meshesTransparent.Count > 0;
-
-                // Retreive meshes using this material as a sub material of a multi material
-                // Meshes are split into 2 categories: Opaque or Transparent
-                List<BabylonMesh> meshesOpaqueMulti = new List<BabylonMesh>();
-                List<BabylonMesh> meshesTransparentMulti = new List<BabylonMesh>();
-                foreach (KeyValuePair<string, List<MFnDependencyNode>> multiMaterial in multiMaterials)
-                {
-                    // If the material is part of the sub materials list
-                    if (multiMaterial.Value.Find(node => node.uuid().asString() == babylonMaterial.id) != null)
-                    {
-                        // Then add meshes using this multi material
-                        getMeshesOpacity(babylonScene, multiMaterial.Key, meshesOpaqueMulti, meshesTransparentMulti);
-                    }
-                }
-                bool meshHasAlphaMulti = meshesTransparentMulti.Count > 0;
-                bool duplicationRequiredMulti = meshesOpaqueMulti.Count > 0 && meshesTransparentMulti.Count > 0;
-
+                MaterialDuplicationData materialDuplicationData = materialDuplicationDatas[id];
                 // If at least one mesh is Transparent and is using this material either directly or as a sub material
-                if (meshHasAlpha || meshHasAlphaMulti)
+                if (materialDuplicationData.isArnoldTransparent())
                 {
                     float[] opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatArray();
                     babylonMaterial.alpha = opacityAttributeValue[0];
@@ -361,7 +336,7 @@ namespace Maya2Babylon
                 // --- Textures ---
 
                 // Base color & alpha
-                if (meshHasAlpha || meshHasAlphaMulti)
+                if (materialDuplicationData.isArnoldTransparent())
                 {
                     MFnDependencyNode baseColorTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "baseColor");
                     MFnDependencyNode opacityTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "opacity");
@@ -430,62 +405,19 @@ namespace Maya2Babylon
                     babylonMaterial.emissive = new[] { emissionWeight, emissionWeight, emissionWeight };
                 }
 
-                // If at least one mesh is Transparent and is using this material (either directly or as a sub material)
-                if ((meshHasAlpha || meshHasAlphaMulti) &&
-                    // And material has alpha (either as value or in its texture)
-                    (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha)))
+                // If this material is containing alpha data
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
-                    // Since Babylon.Mesh doesn't have an equivalent to Maya.Mesh.aiOpaque
-                    // Material has to be duplicated when assigned to both Opaque and Transparent meshes
-                    if (duplicationRequired || meshHasAlpha != meshHasAlphaMulti)
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+
+                    // If this material is assigned to both Transparent and Opaque meshes (either directly or as a sub material)
+                    if (materialDuplicationData.isDuplicationRequired())
                     {
                         // Duplicate material
-                        BabylonPBRMetallicRoughnessMaterial babylonMaterialCloned = new BabylonPBRMetallicRoughnessMaterial(babylonMaterial);
-
-                        // Give it a new UUID
-                        MUuid mUuid = new MUuid();
-                        mUuid.generate();
-                        babylonMaterialCloned.id = mUuid.asString();
-
-                        // The duplicated material is used either as Transparent or Opaque
-                        // The choice is made so that no modification are made on multimaterials
-                        BabylonPBRMetallicRoughnessMaterial materialOpaque = babylonMaterial;
-                        BabylonPBRMetallicRoughnessMaterial materialTransparent = babylonMaterialCloned;
-                        List<BabylonMesh> meshesToUpdate = meshesTransparent;
-                        if (meshHasAlphaMulti)
-                        {
-                            materialOpaque = babylonMaterialCloned;
-                            materialTransparent = babylonMaterial;
-                            meshesToUpdate = meshesOpaque;
-                        }
-
-                        // Reset alpha for opaque material
-                        materialOpaque.alpha = 1;
-                        if (materialOpaque.baseTexture != null)
-                        {
-                            materialOpaque.baseTexture.hasAlpha = false;
-                        }
-
-                        // Set transparency for transparent material
-                        materialTransparent.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
-
-                        // Update meshes material id
-                        meshesToUpdate.ForEach(mesh =>
-                        {
-                            mesh.materialId = babylonMaterialCloned.id;
-                        });
+                        BabylonPBRMetallicRoughnessMaterial babylonMaterialCloned = DuplicateMaterial(babylonMaterial, materialDuplicationData);
 
                         // Store duplicated material too
                         babylonScene.MaterialsList.Add(babylonMaterialCloned);
-                        
-                        if (duplicationRequiredMulti)
-                        {
-                            RaiseError("Material duplication failed: material is part of a multi material assigned to both opaque and non opaque meshes (Arnold attribute). See documentation for more information.", 2);
-                        }
-                    }
-                    else
-                    {
-                        babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                     }
                 }
 
@@ -520,26 +452,6 @@ namespace Maya2Babylon
                 materialDependencyNode.hasAttribute("normalCamera") &&
                 materialDependencyNode.hasAttribute("specularRoughness") &&
                 materialDependencyNode.hasAttribute("emissionColor");
-        }
-
-        private void getMeshesOpacity(BabylonScene babylonScene, string materialId, List<BabylonMesh> meshesOpaque, List<BabylonMesh> meshesTransparent)
-        {
-            babylonScene.MeshesList.ForEach(mesh =>
-            {
-                if (mesh.materialId == materialId)
-                {
-                    int meshOpaqueInt;
-                    MGlobal.executeCommand($@"getAttr {mesh.name}.aiOpaque;", out meshOpaqueInt);
-                    if (meshOpaqueInt == 1)
-                    {
-                        meshesOpaque.Add(mesh);
-                    }
-                    else
-                    {
-                        meshesTransparent.Add(mesh);
-                    }
-                }
-            });
         }
 
         public string GetMultimaterialUUID(List<MFnDependencyNode> materials)
