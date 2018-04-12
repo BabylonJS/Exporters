@@ -19,12 +19,12 @@ namespace Max2Babylon
         private BabylonTexture ExportTexture(IStdMat2 stdMat, int index, out BabylonFresnelParameters fresnelParameters, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false)
         {
             fresnelParameters = null;
-
+            
             if (!stdMat.MapEnabled(index))
             {
                 return null;
             }
-
+            
             var texMap = stdMat.GetSubTexmap(index);
 
             if (texMap == null)
@@ -32,9 +32,9 @@ namespace Max2Babylon
                 RaiseWarning("Texture channel " + index + " activated but no texture found.", 2);
                 return null;
             }
-
+            
             texMap = _exportFresnelParameters(texMap, out fresnelParameters);
-
+            
             var amount = stdMat.GetTexmapAmt(index, 0);
 
             return ExportTexture(texMap, amount, babylonScene, allowCube, forceAlpha);
@@ -92,6 +92,12 @@ namespace Max2Babylon
             // Alpha
             babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0);
             babylonTexture.getAlphaFromRGB = false;
+            if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0)) &&
+                (baseColorTexture.Map.FullFilePath.EndsWith(".tif") || baseColorTexture.Map.FullFilePath.EndsWith(".tiff")))
+            {
+                RaiseWarning($"Diffuse texture named {baseColorTexture.Map.FullFilePath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 3);
+                RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
+            }
 
             if (!hasBaseColor && !hasAlpha)
             {
@@ -338,18 +344,12 @@ namespace Max2Babylon
 
         private BabylonTexture ExportTexture(ITexmap texMap, float amount, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false)
         {
-            if (texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
-            {
-                return null;
-            }
-
-            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
-
+            IBitmapTex texture = _getBitmapTex(texMap);
             if (texture == null)
             {
                 return null;
             }
-
+            
             var sourcePath = texture.Map.FullFilePath;
 
             if (sourcePath == null || sourcePath == "")
@@ -413,9 +413,9 @@ namespace Max2Babylon
             }
             else
             {
-                babylonTexture.originalPath = sourcePath;
                 babylonTexture.isCube = false;
             }
+            babylonTexture.originalPath = sourcePath;
 
             return babylonTexture;
         }
@@ -618,7 +618,14 @@ namespace Max2Babylon
                 return null;
             }
 
-            return texMap.GetParamBlock(0).Owner as IBitmapTex;
+            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
+
+            if (texture == null)
+            {
+                RaiseError($"Texture type is not supported. Use a Bitmap instead.", 2);
+            }
+
+            return texture;
         }
 
         private ITexmap _getTexMap(IIGameMaterial materialNode, int index)
@@ -713,13 +720,7 @@ namespace Max2Babylon
 
         private bool isTextureOk(ITexmap texMap)
         {
-            if (texMap == null || texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
-            {
-                return false;
-            }
-
-            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
-
+            var texture = _getBitmapTex(texMap);
             if (texture == null)
             {
                 return false;
@@ -735,13 +736,7 @@ namespace Max2Babylon
 
         private Bitmap _loadTexture(ITexmap texMap)
         {
-            if (texMap == null || texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
-            {
-                return null;
-            }
-
-            var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
-
+            IBitmapTex texture = _getBitmapTex(texMap);
             if (texture == null)
             {
                 return null;
