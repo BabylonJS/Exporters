@@ -53,7 +53,7 @@ namespace Max2Babylon
 #elif MAX2018
             maxVersion = "2018";
 #endif
-            gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v1.0.0";
+            gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
 
             // Extensions
             gltf.extensionsUsed = new List<string>();

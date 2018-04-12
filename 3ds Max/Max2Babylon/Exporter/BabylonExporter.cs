@@ -34,6 +34,8 @@ namespace Max2Babylon
 
         private bool _onlySelected;
 
+        private string exporterVersion = "1.0.1";
+
         void ReportProgressChanged(int progress)
         {
             if (OnImportProgressChanged != null)
@@ -144,7 +146,7 @@ namespace Max2Babylon
 #else
                 version = Loader.Core.ProductVersion.ToString(),
 #endif
-                exporter_version = "1.0.0",
+                exporter_version = exporterVersion,
                 file = outputFileName
             };
 
