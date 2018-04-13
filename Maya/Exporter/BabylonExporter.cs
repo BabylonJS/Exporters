@@ -34,7 +34,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
         
-        private string exporterVersion = "1.0.2";
+        private string exporterVersion = "1.0.3";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, string scaleFactor)
         {
@@ -289,27 +289,32 @@ namespace Maya2Babylon
                 RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
             }
 
-            // Create root node for scaling
-            BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };
-            rootNode.isDummy = true;
-            float rootNodeScale = 1.0f / scaleFactorFloat;
-            rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
-
-            // Update all top nodes
-            var babylonNodes = new List<BabylonNode>();
-            babylonNodes.AddRange(babylonScene.MeshesList);
-            babylonNodes.AddRange(babylonScene.CamerasList);
-            babylonNodes.AddRange(babylonScene.LightsList);
-            foreach (BabylonNode babylonNode in babylonNodes)
+            if (scaleFactorFloat != 1.0f)
             {
-                if (babylonNode.parentId == null)
-                {
-                    babylonNode.parentId = rootNode.id;
-                }
-            }
+                RaiseMessage("A root node is added for scaling", 1);
 
-            // Store root node
-            babylonScene.MeshesList.Add(rootNode);
+                // Create root node for scaling
+                BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };
+                rootNode.isDummy = true;
+                float rootNodeScale = 1.0f / scaleFactorFloat;
+                rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                // Update all top nodes
+                var babylonNodes = new List<BabylonNode>();
+                babylonNodes.AddRange(babylonScene.MeshesList);
+                babylonNodes.AddRange(babylonScene.CamerasList);
+                babylonNodes.AddRange(babylonScene.LightsList);
+                foreach (BabylonNode babylonNode in babylonNodes)
+                {
+                    if (babylonNode.parentId == null)
+                    {
+                        babylonNode.parentId = rootNode.id;
+                    }
+                }
+
+                // Store root node
+                babylonScene.MeshesList.Add(rootNode);
+            }
 
             // --------------------
             // ----- Materials ----
