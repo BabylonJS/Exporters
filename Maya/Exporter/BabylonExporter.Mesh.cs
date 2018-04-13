@@ -329,7 +329,8 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
-            
+            babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
+
             string colorSetName;
             mFnMesh.getCurrentColorSetName(out colorSetName);
             if (mFnMesh.numColors(colorSetName) > 0) {
@@ -515,16 +516,24 @@ namespace Maya2Babylon
 
             MVector normal = new MVector();
             mFnMesh.getFaceVertexNormal(polygonId, vertexIndexGlobal, normal);
-            
+
+            MVector tangent = new MVector();
+            mFnMesh.getFaceVertexTangent(polygonId, vertexIndexGlobal, tangent);
+
             // Switch coordinate system at object level
             point.z *= -1;
             normal.z *= -1;
+            tangent.z *= -1;
+
+            float[] tangentVec4 = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, -1 };
 
             var vertex = new GlobalVertex
             {
                 BaseIndex = vertexIndexGlobal,
                 Position = point.toArray(),
                 Normal = normal.toArray(),
+                Tangent = tangentVec4,
+
             };
             
             // Color
