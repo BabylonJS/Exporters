@@ -14,32 +14,32 @@ namespace Maya2Babylon
 
         private int logRankTexture = 2;
 
-        public BabylonTexture ExportTexture(MFnDependencyNode materialDependencyNode, string plugName, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        public BabylonTexture ExportTexture(MFnDependencyNode materialDependencyNode, string plugName, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
         {
             logRankTexture = 2;
-            return _ExportTexture(materialDependencyNode, plugName, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+            return _ExportTexture(materialDependencyNode, plugName, babylonScene, allowCube, forceAlpha, updateCoordinatesMode, amount);
         }
 
         public BabylonTexture ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
         {
             logRankTexture = 2;
-            return _ExportTexture(textureDependencyNode, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+            return _ExportTexture(textureDependencyNode, babylonScene, null, allowCube, forceAlpha, forceSpherical, amount);
         }
 
-        private BabylonTexture _ExportTexture(MFnDependencyNode materialDependencyNode, string plugName, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        private BabylonTexture _ExportTexture(MFnDependencyNode materialDependencyNode, string plugName, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
         {
             if (!materialDependencyNode.hasAttribute(plugName))
             {
                 RaiseError("Unknown attribute " + materialDependencyNode.name + "." + plugName, logRankTexture);
                 return null;
             }
+            List<MFnDependencyNode> textureModifiers = new List<MFnDependencyNode>();
+            MFnDependencyNode textureDependencyNode = getTextureDependencyNode(materialDependencyNode, plugName, textureModifiers);
 
-            MFnDependencyNode textureDependencyNode = getTextureDependencyNode(materialDependencyNode, plugName);
-
-            return _ExportTexture(textureDependencyNode, babylonScene, allowCube, forceAlpha, forceSpherical, amount);
+            return _ExportTexture(textureDependencyNode, babylonScene, textureModifiers, allowCube, forceAlpha, updateCoordinatesMode, amount);
         }
 
-        private BabylonTexture _ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false, bool forceSpherical = false, float amount = 1.0f)
+        private BabylonTexture _ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, List<MFnDependencyNode>  textureModifiers = null, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
         {
             if (textureDependencyNode == null)
             {
@@ -87,7 +87,7 @@ namespace Maya2Babylon
             babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBoolProperty;
 
             // UVs
-            _exportUV(textureDependencyNode, babylonTexture, forceSpherical);
+            _exportUV(textureDependencyNode, babylonTexture, textureModifiers, updateCoordinatesMode);
 
             // TODO - Animations
 
@@ -95,7 +95,16 @@ namespace Maya2Babylon
             if (isBabylonExported)
             {
                 var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                CopyTexture(sourcePath, destPath);
+
+                if (textureModifiers.FindAll(textureModifier => textureModifier.objectProperty.hasFn(MFn.Type.kReverse)).Count % 2 == 0)
+                {
+                    CopyTexture(sourcePath, destPath);
+                }
+                else
+                {
+                    // TODO - Reverse texture
+                    CopyTexture(sourcePath, destPath);
+                }
 
                 // Is cube
                 _exportIsCube(Path.Combine(babylonScene.OutputPath, babylonTexture.name), babylonTexture, allowCube);
@@ -444,10 +453,32 @@ namespace Maya2Babylon
             return babylonTexture;
         }
 
-        private void _exportUV(MFnDependencyNode textureDependencyNode, BabylonTexture babylonTexture, bool forceSpherical = false)
+        private void _exportUV(MFnDependencyNode textureDependencyNode, BabylonTexture babylonTexture, List<MFnDependencyNode> textureModifiers = null, bool updateCoordinatesMode = false)
         {
-            // TODO - coordinatesMode
-            babylonTexture.coordinatesMode = forceSpherical ? BabylonTexture.CoordinatesMode.SPHERICAL_MODE : BabylonTexture.CoordinatesMode.EXPLICIT_MODE;
+            // Coordinates mode
+            if (updateCoordinatesMode)
+            {
+                // Default is spherical
+                babylonTexture.coordinatesMode = BabylonTexture.CoordinatesMode.SPHERICAL_MODE;
+
+                if (textureModifiers != null)
+                {
+                    MFnDependencyNode lastProjectionTextureModifier = textureModifiers.FindLast(textureModifier => textureModifier.objectProperty.hasFn(MFn.Type.kProjection));
+                    if (lastProjectionTextureModifier != null)
+                    {
+                        var projType = lastProjectionTextureModifier.findPlug("projType").asIntProperty;
+                        switch (projType)
+                        {
+                            case 1: // Planar
+                                babylonTexture.coordinatesMode = BabylonTexture.CoordinatesMode.PLANAR_MODE;
+                                break;
+                            case 2: // Spherical
+                                babylonTexture.coordinatesMode = BabylonTexture.CoordinatesMode.SPHERICAL_MODE;
+                                break;
+                        }
+                    }
+                }
+            }
 
             // UV set
             MStringArray uvLinks = new MStringArray();
@@ -638,7 +669,7 @@ namespace Maya2Babylon
             return sourcePath;
         }
 
-        private MFnDependencyNode getTextureDependencyNode(MFnDependencyNode materialDependencyNode, string plugName)
+        private MFnDependencyNode getTextureDependencyNode(MFnDependencyNode materialDependencyNode, string plugName, List<MFnDependencyNode> textureModifiers = null)
         {
             MPlug mPlug = materialDependencyNode.findPlug(plugName);
 
@@ -657,15 +688,36 @@ namespace Maya2Babylon
             {
                 Print(textureDependencyNode, logRankTexture, "Print bump node");
                 logRankTexture++;
-                return getTextureDependencyNode(textureDependencyNode, "bumpValue");
+                if (textureModifiers != null)
+                {
+                    textureModifiers.Add(textureDependencyNode);
+                }
+                return getTextureDependencyNode(textureDependencyNode, "bumpValue", textureModifiers);
             }
 
             // If a reverse node is used as an intermediate node
             if (sourceObject.hasFn(MFn.Type.kReverse))
             {
+                Print(textureDependencyNode, logRankTexture, "Print reverse node");
                 // TODO - reverse?
                 logRankTexture++;
-                return getTextureDependencyNode(textureDependencyNode, "input");
+                if (textureModifiers != null)
+                {
+                    textureModifiers.Add(textureDependencyNode);
+                }
+                return getTextureDependencyNode(textureDependencyNode, "input", textureModifiers);
+            }
+
+            // If a projection node is used as an intermediate node
+            if (sourceObject.hasFn(MFn.Type.kProjection))
+            {
+                Print(textureDependencyNode, logRankTexture, "Print projection node");
+                logRankTexture++;
+                if (textureModifiers != null)
+                {
+                    textureModifiers.Add(textureDependencyNode);
+                }
+                return getTextureDependencyNode(textureDependencyNode, "image", textureModifiers);
             }
 
             return textureDependencyNode;
