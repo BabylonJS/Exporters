@@ -96,7 +96,7 @@ namespace Maya2Babylon
             {
                 var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
 
-                if (textureModifiers.FindAll(textureModifier => textureModifier.objectProperty.hasFn(MFn.Type.kReverse)).Count % 2 == 0)
+                if (textureModifiers == null || textureModifiers.FindAll(textureModifier => textureModifier.objectProperty.hasFn(MFn.Type.kReverse)).Count % 2 == 0)
                 {
                     CopyTexture(sourcePath, destPath);
                 }
