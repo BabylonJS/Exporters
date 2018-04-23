@@ -17,6 +17,7 @@ namespace Maya2Babylon
         private bool _onlySelected;
         private bool _exportHiddenObjects;
         private bool _optimizeVertices;
+        private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
@@ -36,7 +37,7 @@ namespace Maya2Babylon
         
         private string exporterVersion = "1.0.6";
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, string scaleFactor)
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, bool exportTangents, string scaleFactor)
         {
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
@@ -60,6 +61,7 @@ namespace Maya2Babylon
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
             _optimizeVertices = optimizeVertices;
+            _exportTangents = exportTangents;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
