@@ -292,7 +292,8 @@ namespace Maya2Babylon
                 isUVExportSuccess[indexUVSet] = true;
             }
 
-            bool isTangentExportSuccess = true;
+            // Export tangents if option is checked and mesh have tangents
+            bool isTangentExportSuccess = _exportTangents;
 
             // TODO - color, alpha
             //var hasColor = unskinnedMesh.NumberOfColorVerts > 0;

@@ -17,6 +17,7 @@ namespace Maya2Babylon
         private bool _onlySelected;
         private bool _exportHiddenObjects;
         private bool _optimizeVertices;
+        private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
@@ -34,9 +35,9 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
         
-        private string exporterVersion = "1.0.6";
+        private string exporterVersion = "1.0.7";
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, string scaleFactor)
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, bool exportTangents, string scaleFactor)
         {
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
@@ -60,6 +61,7 @@ namespace Maya2Babylon
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
             _optimizeVertices = optimizeVertices;
+            _exportTangents = exportTangents;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
@@ -168,7 +170,7 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
                 
-                // Check if one of its descendant (direct or not) is a mesh/camera/light
+                // Check if one of its descendant (direct or not) is a mesh/camera/light/locator
                 if (isNodeRelevantToExportRec(mDagPath)
                     // Ensure it's not one of the default cameras used as viewports in Maya
                     && defaultCameraNames.Contains(mDagPath.partialPathName) == false)
@@ -364,7 +366,7 @@ namespace Maya2Babylon
         }
 
         /// <summary>
-        /// Return true if node descendant hierarchy has any exportable Mesh, Camera or Light
+        /// Return true if node descendant hierarchy has any exportable Mesh, Camera, Light or Locator
         /// </summary>
         private bool isNodeRelevantToExportRec(MDagPath mDagPathRoot)
         {
@@ -432,8 +434,8 @@ namespace Maya2Babylon
                     return MFn.Type.kLight;
                 }
 
-                // Target of target camera is both a locator and a lookAt
-                if (mDagPath.hasFn(MFn.Type.kLocator) && mDagPath.hasFn(MFn.Type.kLookAt) && IsNodeExportable(nodeObject, mDagPath))
+                // Locators
+                if (mDagPath.hasFn(MFn.Type.kLocator) && IsNodeExportable(nodeObject, mDagPath))
                 {
                     return MFn.Type.kLocator;
                 }

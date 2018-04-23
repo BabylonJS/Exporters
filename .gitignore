@@ -174,3 +174,4 @@ obj
 *.swatch
 *.swatches
 assemblies
+/Maya/Assemblies/*.dll
