@@ -334,6 +334,9 @@ namespace Maya2Babylon
             UpdateMeshesMaterialId(babylonScene);
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
+
+            // Todo Export skeletons
+
             // Output
             babylonScene.Prepare(false, false);
             if (isBabylonExported)

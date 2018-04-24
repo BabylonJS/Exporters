@@ -1,4 +1,5 @@
 ﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMayaAnim;
 using BabylonExport.Entities;
 using MayaBabylon;
 using System;
@@ -18,7 +19,7 @@ namespace Maya2Babylon
         private BabylonNode ExportDummy(MDagPath mDagPath, BabylonScene babylonScene)
         {
             RaiseMessage(mDagPath.partialPathName, 1);
-
+            
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
 
             Print(mFnTransform, 2, "Print ExportDummy mFnTransform");
@@ -200,12 +201,6 @@ namespace Maya2Babylon
 
             #endregion
 
-
-            if (IsMeshExportable(mFnMesh, mDagPath) == false)
-            {
-                return null;
-            }
-
             var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
 
             // Position / rotation / scaling / hierarchy
@@ -290,6 +285,42 @@ namespace Maya2Babylon
             for (int indexUVSet = 0; indexUVSet < isUVExportSuccess.Length; indexUVSet++)
             {
                 isUVExportSuccess[indexUVSet] = true;
+            }
+
+
+            // skin
+            MFnSkinCluster mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            if (mFnSkinCluster != null)
+            {
+                RaiseMessage("There is a SkinCluster named " + mFnSkinCluster.name, 2);
+
+                // get the max number of joints acting on a vertex
+                int numVertices = mFnMesh.numVertices;
+                int maxInfluences = 0;
+
+                for (int index = 0; index < numVertices; index++)
+                {
+                    MDoubleArray result = new MDoubleArray();
+                    String command = $"skinPercent -query -value {mFnSkinCluster.name} dragon_wings2.vtx[{index}]";
+                    // Get the weight values of all the influences for this vertex
+                    MGlobal.executeCommand(command, result);
+
+                    int currentInfluences = 0;
+                    foreach (double weight in result)
+                    {
+                        if(weight > 0)
+                        {
+                            currentInfluences++;
+                        }
+                    }
+                    maxInfluences = Math.Max(maxInfluences,currentInfluences);
+                }
+                RaiseMessage($"Max influences : {maxInfluences}",2);
+                if (maxInfluences > 8)
+                {
+                    RaiseError($"Too many bones influences per vertex: {maxInfluences}. Babylon.js only support 8 bones influences per vertex.", 2);
+                }
+                babylonMesh.numBoneInfluencers = Math.Min(maxInfluences, 8);
             }
 
             // TODO - color, alpha
@@ -593,6 +624,40 @@ namespace Maya2Babylon
                 }
             }
 
+            // skin
+            MFnSkinCluster mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            if (mFnSkinCluster != null)
+            {
+                // Export Weights and BonesIndices for the vertex
+                MDoubleArray result = new MDoubleArray();
+                String command = $"skinPercent -query -value {mFnSkinCluster.name} dragon_wings2.vtx[{vertexIndexGlobal}]";
+                // Get the weight values of all the influences for this vertex
+                MGlobal.executeCommand(command, result);
+                result.get(out double[] results);
+
+                //IDictionary<int, double> influences = ;
+                List<int> influenceIndeces = new List<int>();
+                List<double> influenceWeights = new List<double>();
+                for (int influenceIndex = 0; influenceIndex < results.Length; influenceIndex++)
+                {
+                    double weight = results[influenceIndex];
+                    if (weight > 0)
+                    {
+                        // add indice and weight
+                        influenceIndeces.Add(influenceIndex);
+                        influenceWeights.Add(weight);
+                    }
+                }
+                RaiseMessage($"Vertex index: {vertexIndexGlobal} - influences indeces: {String.Join(", ", influenceIndeces)} - weights : {String.Join(", ", influenceWeights)}", 2);
+
+                // TODO if there are more than 8 bones. Truncate the lowers.
+                if(influenceIndeces.Count() > 8)
+                {
+                    RaiseError("Too many indeces!!!", 2);
+                    //min influenceWeights.
+                }
+            }
+
             return vertex;
         }
         
@@ -638,6 +703,30 @@ namespace Maya2Babylon
         private bool IsMeshExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
             return IsNodeExportable(mFnDagNode, mDagPath);
+        }
+
+        private MFnSkinCluster getMFnSkinCluster(MFnMesh mFnMesh)
+        {
+            MFnSkinCluster mFnSkinCluster = null;
+
+            MPlugArray connections = new MPlugArray();
+            try
+            {
+                mFnMesh.getConnections(connections);
+                foreach (MPlug connection in connections)
+                {
+                    MObject source = connection.source.node;
+                    if (source != null && source.hasFn(MFn.Type.kSkinClusterFilter))
+                    {
+                        mFnSkinCluster = new MFnSkinCluster(source);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+
+            return mFnSkinCluster;
         }
     }
 }

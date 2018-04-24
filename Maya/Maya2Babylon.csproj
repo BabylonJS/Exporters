@@ -141,6 +141,7 @@
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\"
 del "$(SolutionDir)assemblies\$(TargetName).dll"
 copy "$(TargetPath)" "$(SolutionDir)assemblies\$(TargetName).nll.dll"
-copy "$(SolutionDir)assemblies\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
+if exist "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"
+if exist "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\*.dll" "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

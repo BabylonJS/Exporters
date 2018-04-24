@@ -15,7 +15,7 @@ namespace Maya2Babylon
         }
 
         // TODO - Update log level for release
-        public LogLevel logLevel = LogLevel.MESSAGE;
+        public LogLevel logLevel = LogLevel.VERBOSE;
 
         public event Action<int> OnExportProgressChanged;
         public event Action<string, int> OnError;
@@ -104,7 +104,7 @@ namespace Maya2Babylon
                     if (source != null && source.hasFn(MFn.Type.kDependencyNode))
                     {
                         MFnDependencyNode node = new MFnDependencyNode(source);
-                        RaiseVerbose("name=" + connection.name + "    source=" + node.name, logRank + 2);
+                        RaiseVerbose("name=" + connection.name + "    source=" + node.name + "    source.apiType=" + source.apiType, logRank + 2);
                     }
                     else
                     {
