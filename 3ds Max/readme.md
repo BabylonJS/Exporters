@@ -1,7 +1,7 @@
 3DS Max to Babylon.js exporter
 ==============================
 
-Documentation: http://doc.babylonjs.com/exporters/3dsmax
+Documentation: https://doc.babylonjs.com/resources/3dsmax
 
 
 

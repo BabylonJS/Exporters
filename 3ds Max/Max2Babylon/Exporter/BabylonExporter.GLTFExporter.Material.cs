@@ -142,7 +142,24 @@ namespace Max2Babylon
 
                 // Emissive
                 gltfMaterial.emissiveFactor = babylonStandardMaterial.emissive;
-                gltfMaterial.emissiveTexture = ExportTexture(babylonStandardMaterial.emissiveTexture, gltf);
+                // linkEmissiveWithDiffuse attribute doesn't have an equivalent in gltf format
+                // When true, the emissive texture needs to be manually multiplied with diffuse texture
+                // Otherwise, the emissive texture is assumed to be already pre-multiplied
+                if (babylonStandardMaterial.linkEmissiveWithDiffuse)
+                {
+                    // Even when no emissive texture is provided, the self illumination value needs to be multiplied to the diffuse texture in order to get the pre-multiplied emissive (texture)
+                    if (babylonStandardMaterial.emissiveTexture != null || babylonStandardMaterial.selfIllum > 0)
+                    {
+                        // Default emissive is the raw value of the self illumination
+                        // It is not the babylon emissive value which is already pre-multiplied with diffuse color
+                        float[] defaultEmissive = new float[] { 1, 1, 1 }.Multiply(babylonStandardMaterial.selfIllum);
+                        gltfMaterial.emissiveTexture = ExportEmissiveTexture(babylonStandardMaterial, gltf, defaultEmissive, babylonStandardMaterial.diffuse);
+                    }
+                }
+                else
+                {
+                    gltfMaterial.emissiveTexture = ExportTexture(babylonStandardMaterial.emissiveTexture, gltf);
+                }
 
                 // Constraints
                 if (gltfMaterial.emissiveTexture != null)
@@ -169,7 +186,7 @@ namespace Max2Babylon
                 };
 
                 MetallicRoughness _metallicRoughness = ConvertToMetallicRoughness(_specularGlossiness, true);
-                
+
                 // Base color
                 gltfPbrMetallicRoughness.baseColorFactor = new float[4]
                 {
@@ -192,7 +209,7 @@ namespace Max2Babylon
 
                 if (babylonTexture != null)
                 {
-                    bool isAlphaInTexture = ( isTextureOk(babylonStandardMaterial.diffuseTexture) && babylonStandardMaterial.diffuseTexture.hasAlpha ) ||
+                    bool isAlphaInTexture = (isTextureOk(babylonStandardMaterial.diffuseTexture) && babylonStandardMaterial.diffuseTexture.hasAlpha) ||
                                               isTextureOk(babylonStandardMaterial.opacityTexture);
 
                     Bitmap baseColorBitmap = null;

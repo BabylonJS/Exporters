@@ -56,7 +56,7 @@ namespace BabylonExport.Entities
         public float occlusionStrength { get; set; }
 
         [DataMember]
-        public BabylonTexture occlusionTexture { get; set; } // ignored
+        public BabylonTexture occlusionTexture { get; set; }
 
         [DataMember]
         public float alphaCutOff { get; set; }
@@ -65,7 +65,7 @@ namespace BabylonExport.Entities
         public int transparencyMode { get; set; }
 
         [DataMember]
-        public bool doubleSided { get; set; } // ignored
+        public bool doubleSided { get; set; }
 
         public BabylonPBRMetallicRoughnessMaterial() : base()
         {
@@ -76,6 +76,28 @@ namespace BabylonExport.Entities
             occlusionStrength = 1.0f;
             alphaCutOff = 0.4f;
             transparencyMode = (int)TransparencyMode.OPAQUE;
+        }
+
+        public BabylonPBRMetallicRoughnessMaterial(BabylonPBRMetallicRoughnessMaterial original) : base(original)
+        {
+            customType = original.customType;
+            baseColor = original.baseColor;
+            baseTexture = original.baseTexture;
+            metallic = original.metallic;
+            roughness = original.roughness;
+            metallicRoughnessTexture = original.metallicRoughnessTexture;
+            maxSimultaneousLights = original.maxSimultaneousLights;
+            disableLighting = original.disableLighting;
+            invertNormalMapX = original.invertNormalMapX;
+            invertNormalMapY = original.invertNormalMapY;
+            normalTexture = original.normalTexture;
+            emissive = original.emissive;
+            emissiveTexture = original.emissiveTexture;
+            occlusionStrength = original.occlusionStrength;
+            occlusionTexture = original.occlusionTexture;
+            alphaCutOff = original.alphaCutOff;
+            transparencyMode = original.transparencyMode;
+            doubleSided = original.doubleSided;
         }
     }
 }

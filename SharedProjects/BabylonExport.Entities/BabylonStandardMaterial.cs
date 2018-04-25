@@ -80,6 +80,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool useGlossinessFromSpecularMapAlpha { get; set; }
 
+        // Used for gltf
+        public float selfIllum;
+
         public BabylonStandardMaterial() : base()
         {
             SetCustomType("BABYLON.StandardMaterial");

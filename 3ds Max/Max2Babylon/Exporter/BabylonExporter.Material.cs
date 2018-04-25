@@ -113,6 +113,8 @@ namespace Max2Babylon
 
             if (stdMat != null)
             {
+                var isSelfIllumColor = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false);
+
                 var babylonMaterial = new BabylonStandardMaterial
                 {
                     name = name,
@@ -122,11 +124,22 @@ namespace Max2Babylon
                     specular = materialNode.MaxMaterial.GetSpecular(0, false).Scale(materialNode.MaxMaterial.GetShinStr(0, false)),
                     specularPower = materialNode.MaxMaterial.GetShininess(0, false) * 256,
                     emissive =
-                        materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
+                        isSelfIllumColor
                             ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
-                            : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false)),
+                            : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false)), // compute the pre-multiplied emissive color
                     alpha = 1.0f - materialNode.MaxMaterial.GetXParency(0, false)
                 };
+
+                // If Self-Illumination color checkbox is checked
+                // Then self-illumination is assumed to be pre-multiplied
+                // Otherwise self-illumination needs to be multiplied with diffuse
+                // linkEmissiveWithDiffuse attribute tells the Babylon engine to perform such multiplication
+                babylonMaterial.linkEmissiveWithDiffuse = !isSelfIllumColor;
+                // useEmissiveAsIllumination attribute tells the Babylon engine to use pre-multiplied emissive as illumination
+                babylonMaterial.useEmissiveAsIllumination = isSelfIllumColor;
+
+                // Store the emissive value (before multiplication) for gltf
+                babylonMaterial.selfIllum = materialNode.MaxMaterial.GetSelfIllum(0, false);
 
                 babylonMaterial.backFaceCulling = !stdMat.TwoSided;
                 babylonMaterial.wireframe = stdMat.Wire;
@@ -135,11 +148,6 @@ namespace Max2Babylon
                 BabylonFresnelParameters fresnelParameters;
 
                 babylonMaterial.ambientTexture = ExportTexture(stdMat, 0, out fresnelParameters, babylonScene);                // Ambient
-                babylonMaterial.diffuseTexture = ExportTexture(stdMat, 1, out fresnelParameters, babylonScene);                // Diffuse
-                if (fresnelParameters != null)
-                {
-                    babylonMaterial.diffuseFresnelParameters = fresnelParameters;
-                }
 
                 babylonMaterial.specularTexture = ExportTexture(stdMat, 2, out fresnelParameters, babylonScene);               // Specular
                 babylonMaterial.emissiveTexture = ExportTexture(stdMat, 5, out fresnelParameters, babylonScene);               // Emissive
@@ -164,6 +172,19 @@ namespace Max2Babylon
                     {
                         babylonMaterial.alpha = 0;
                     }
+                }
+                babylonMaterial.diffuseTexture = ExportTexture(stdMat, 1, out fresnelParameters, babylonScene);                // Diffuse
+                if (fresnelParameters != null)
+                {
+                    babylonMaterial.diffuseFresnelParameters = fresnelParameters;
+                }
+                if ((babylonMaterial.alpha == 1.0f && babylonMaterial.opacityTexture == null) &&
+                    babylonMaterial.diffuseTexture != null &&
+                    (babylonMaterial.diffuseTexture.originalPath.EndsWith(".tif") || babylonMaterial.diffuseTexture.originalPath.EndsWith(".tiff")) &&
+                    babylonMaterial.diffuseTexture.hasAlpha)
+                {
+                    RaiseWarning($"Diffuse texture named {babylonMaterial.diffuseTexture.originalPath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 2);
+                    RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 2);
                 }
 
                 babylonMaterial.bumpTexture = ExportTexture(stdMat, 8, out fresnelParameters, babylonScene);                   // Bump

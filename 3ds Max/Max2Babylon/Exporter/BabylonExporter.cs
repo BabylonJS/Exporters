@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -34,6 +33,8 @@ namespace Max2Babylon
         private bool isBabylonExported;
 
         private bool _onlySelected;
+
+        private string exporterVersion = "1.0.3";
 
         void ReportProgressChanged(int progress)
         {
@@ -87,8 +88,22 @@ namespace Max2Babylon
             }
         }
 
-        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
+        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm, string scaleFactor)
         {
+            // Check input text is valid
+            var scaleFactorFloat = 1.0f;
+            try
+            {
+                scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                scaleFactorFloat = float.Parse(scaleFactor);
+            }
+            catch (Exception e)
+            {
+                RaiseError("Scale factor is not a valid number.");
+                return;
+            }
+
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
@@ -145,7 +160,7 @@ namespace Max2Babylon
 #else
                 version = Loader.Core.ProductVersion.ToString(),
 #endif
-                exporter_version = "0.4.5",
+                exporter_version = exporterVersion,
                 file = outputFileName
             };
 
@@ -255,6 +270,33 @@ namespace Max2Babylon
             else
             {
                 RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
+            }
+
+            if (scaleFactorFloat != 1.0f)
+            {
+                RaiseMessage("A root node is added for scaling", 1);
+
+                // Create root node for scaling
+                BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
+                rootNode.isDummy = true;
+                float rootNodeScale = 1.0f / scaleFactorFloat;
+                rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                // Update all top nodes
+                var babylonNodes = new List<BabylonNode>();
+                babylonNodes.AddRange(babylonScene.MeshesList);
+                babylonNodes.AddRange(babylonScene.CamerasList);
+                babylonNodes.AddRange(babylonScene.LightsList);
+                foreach (BabylonNode babylonNode in babylonNodes)
+                {
+                    if (babylonNode.parentId == null)
+                    {
+                        babylonNode.parentId = rootNode.id;
+                    }
+                }
+
+                // Store root node
+                babylonScene.MeshesList.Add(rootNode);
             }
 
             // Materials
@@ -494,12 +536,11 @@ namespace Max2Babylon
                 for (int i = 0; i < tab.Count; i++)
                 {
 #if MAX2017 || MAX2018
-                    var indexer = i;
+                    var item = tab[i];
 #else
-                    var indexer = new IntPtr(i);
-                    Marshal.FreeHGlobal(indexer);
+                    var item = tab[new IntPtr(i)];
 #endif
-                    list.Add(tab[indexer]);
+                    list.Add(item);
                 }
                 return list;
             }

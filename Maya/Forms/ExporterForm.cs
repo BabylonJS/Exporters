@@ -140,7 +140,7 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked);
+                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked, chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text);
             }
             catch (OperationCanceledException)
             {
@@ -195,6 +195,23 @@ namespace Maya2Babylon.Forms
             }));
 
             return newNode;
+        }
+
+        internal Func<bool> closingByUser;
+        internal Func<bool> closingByShutDown;
+        //internal Func<bool> closingByCrash;
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // closing the form with (x)
+            e.Cancel = true;
+
+            // if windows is shutting down
+            if (e.CloseReason == CloseReason.WindowsShutDown) this.closingByShutDown();
+
+            // if user is closing
+            if (e.CloseReason == CloseReason.UserClosing) this.closingByUser();
         }
 
         private void ExporterForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -291,6 +308,20 @@ namespace Maya2Babylon.Forms
         }
 
         private void chkCopyTextures_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkOptimizeVertices_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtScalingFactor_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void label4_Click(object sender, EventArgs e)
         {
 
         }
