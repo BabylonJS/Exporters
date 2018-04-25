@@ -173,3 +173,5 @@ obj
 /3ds Max/GltfExport.Entities/obj/Debug/GLTFExport.Entities.csproj.CoreCompileInputs.cache
 *.swatch
 *.swatches
+assemblies
+/Maya/Assemblies/*.dll

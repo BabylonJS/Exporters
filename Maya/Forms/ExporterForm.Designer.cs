@@ -41,6 +41,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkExportTangents = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtScaleFactor = new System.Windows.Forms.TextBox();
+            this.chkOptimizeVertices = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.comboOutputFormat = new System.Windows.Forms.ComboBox();
             this.chkOnlySelected = new System.Windows.Forms.CheckBox();
@@ -57,7 +61,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(211, 175);
+            this.butExport.Location = new System.Drawing.Point(211, 205);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 0;
@@ -116,9 +120,9 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(12, 208);
+            this.treeView.Location = new System.Drawing.Point(12, 238);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 312);
+            this.treeView.Size = new System.Drawing.Size(810, 282);
             this.treeView.TabIndex = 6;
             // 
             // butCancel
@@ -140,7 +144,7 @@
             this.pictureBox2.Image = global::Maya2Babylon.Properties.Resources.maya_exporter_logo;
             this.pictureBox2.Location = new System.Drawing.Point(468, 12);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(354, 157);
+            this.pictureBox2.Size = new System.Drawing.Size(354, 187);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
@@ -183,6 +187,10 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkExportTangents);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.txtScaleFactor);
+            this.groupBox1.Controls.Add(this.chkOptimizeVertices);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.comboOutputFormat);
             this.groupBox1.Controls.Add(this.chkOnlySelected);
@@ -196,10 +204,57 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(450, 163);
+            this.groupBox1.Size = new System.Drawing.Size(450, 193);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // chkExportTangents
+            // 
+            this.chkExportTangents.AutoSize = true;
+            this.chkExportTangents.Checked = true;
+            this.chkExportTangents.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportTangents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportTangents.Location = new System.Drawing.Point(18, 163);
+            this.chkExportTangents.Name = "chkExportTangents";
+            this.chkExportTangents.Size = new System.Drawing.Size(97, 17);
+            this.chkExportTangents.TabIndex = 20;
+            this.chkExportTangents.Text = "Export tangents";
+            this.chkExportTangents.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(329, 69);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "Scale factor:";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // txtScaleFactor
+            // 
+            this.txtScaleFactor.Location = new System.Drawing.Point(402, 66);
+            this.txtScaleFactor.Name = "txtScaleFactor";
+            this.txtScaleFactor.Size = new System.Drawing.Size(42, 20);
+            this.txtScaleFactor.TabIndex = 18;
+            this.txtScaleFactor.Text = "1";
+            this.txtScaleFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtScaleFactor.TextChanged += new System.EventHandler(this.txtScalingFactor_TextChanged);
+            // 
+            // chkOptimizeVertices
+            // 
+            this.chkOptimizeVertices.AutoSize = true;
+            this.chkOptimizeVertices.Checked = true;
+            this.chkOptimizeVertices.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkOptimizeVertices.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkOptimizeVertices.Location = new System.Drawing.Point(322, 140);
+            this.chkOptimizeVertices.Name = "chkOptimizeVertices";
+            this.chkOptimizeVertices.Size = new System.Drawing.Size(103, 17);
+            this.chkOptimizeVertices.TabIndex = 17;
+            this.chkOptimizeVertices.Text = "Optimize vertices";
+            this.chkOptimizeVertices.UseVisualStyleBackColor = true;
+            this.chkOptimizeVertices.CheckedChanged += new System.EventHandler(this.checkOptimizeVertices_CheckedChanged);
             // 
             // label3
             // 
@@ -224,7 +279,7 @@
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 0;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
-            this.comboOutputFormat.SelectedIndex = 0;
+			this.comboOutputFormat.SelectedIndex = 0;
             // 
             // chkOnlySelected
             // 
@@ -264,7 +319,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(414, 175);
+            this.butExportAndRun.Location = new System.Drawing.Point(414, 205);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 14;
@@ -335,5 +390,9 @@
         private System.Windows.Forms.Button butClose;
         private System.Windows.Forms.ComboBox comboOutputFormat;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox chkOptimizeVertices;
+        private System.Windows.Forms.TextBox txtScaleFactor;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkExportTangents;
     }
 }

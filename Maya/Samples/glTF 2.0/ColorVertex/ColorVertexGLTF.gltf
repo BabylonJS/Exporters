@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for maya 2018 v1.0.0",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,
@@ -27,9 +27,9 @@
 				1
 			],
 			"scale": [
-				1,
-				1,
-				1
+				8.276114,
+				8.276114,
+				8.276114
 			],
 			"name": "pCube1"
 		}
@@ -41,7 +41,8 @@
 					"attributes": {
 						"POSITION": 1,
 						"NORMAL": 2,
-						"TEXCOORD_0": 3
+						"COLOR_0": 3,
+						"TEXCOORD_0": 4
 					},
 					"indices": 0,
 					"mode": 4,
@@ -62,7 +63,7 @@
 		{
 			"bufferView": 1,
 			"componentType": 5126,
-			"count": 36,
+			"count": 24,
 			"max": [
 				0.5,
 				0.5,
@@ -78,16 +79,23 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 432,
+			"byteOffset": 288,
 			"componentType": 5126,
-			"count": 36,
+			"count": 24,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
 			"componentType": 5126,
-			"count": 36,
+			"count": 24,
+			"type": "VEC4",
+			"name": "accessorColors"
+		},
+		{
+			"bufferView": 3,
+			"componentType": 5126,
+			"count": 24,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		}
@@ -101,21 +109,28 @@
 		{
 			"buffer": 0,
 			"byteOffset": 72,
-			"byteLength": 864,
+			"byteLength": 576,
 			"byteStride": 12,
 			"name": "bufferViewFloatVec3"
 		},
 		{
 			"buffer": 0,
-			"byteOffset": 936,
-			"byteLength": 288,
+			"byteOffset": 648,
+			"byteLength": 384,
+			"byteStride": 16,
+			"name": "bufferViewFloatVec4"
+		},
+		{
+			"buffer": 0,
+			"byteOffset": 1032,
+			"byteLength": 192,
 			"byteStride": 8,
 			"name": "bufferViewFloatVec2"
 		}
 	],
 	"buffers": [
 		{
-			"uri": "Lights.bin",
+			"uri": "ColorVertexGLTF.bin",
 			"byteLength": 1224
 		}
 	],

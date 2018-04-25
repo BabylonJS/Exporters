@@ -11,6 +11,12 @@ namespace GLTFExport.Entities
         public GLTFAsset asset { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
+        public List<string> extensionsUsed { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public List<string> extensionsRequired { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public int? scene { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
@@ -165,6 +171,14 @@ namespace GLTFExport.Entities
             if (SkinsList.Count > 0)
             {
                 skins = SkinsList.ToArray();
+            }
+            if (extensionsUsed != null && extensionsUsed.Count == 0)
+            {
+                extensionsUsed = null;
+            }
+            if (extensionsRequired != null && extensionsRequired.Count == 0)
+            {
+                extensionsRequired = null;
             }
         }
     }

@@ -200,8 +200,8 @@ bpy.types.Lamp.shadowBlurBoxOffset = bpy.props.IntProperty(
 bpy.types.Lamp.shadowDarkness = bpy.props.FloatProperty(
     name='Shadow Darkness',
     description='Shadow Darkness',
-    default = 1,
-    min = 0, 
+    default = 0,
+    min = 0,
     max = 1
 )
 #===============================================================================
@@ -225,11 +225,11 @@ class LightPanel(bpy.types.Panel):
         row = layout.row()
         row.enabled = usingShadows
         row.prop(ob.data, 'shadowMapSize')
-        
+
         row = layout.row()
         row.enabled = usingShadows
         row.prop(ob.data, 'shadowBias')
-        
+
         row = layout.row()
         row.enabled = usingShadows
         row.prop(ob.data, 'shadowDarkness')

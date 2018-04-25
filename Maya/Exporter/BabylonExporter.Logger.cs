@@ -67,7 +67,7 @@ namespace Maya2Babylon
 
         void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
         {
-            RaiseVerbose(message, Color.DarkGray, rank, emphasis);
+            RaiseVerbose(message, Color.FromArgb(100, 100, 100), rank, emphasis);
         }
 
         void RaiseVerbose(string message, Color color, int rank = 0, bool emphasis = false)

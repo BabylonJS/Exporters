@@ -134,6 +134,7 @@
       <DependentUpon>ScenePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\Tools.cs" />
+    <Compile Include="Extensions\ColorExtension.cs" />
     <Compile Include="Forms\Vector3Control.cs">
       <SubType>UserControl</SubType>
     </Compile>

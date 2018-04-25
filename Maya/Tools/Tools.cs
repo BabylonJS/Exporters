@@ -47,14 +47,14 @@ namespace Maya2Babylon
             return true;
         }
 
-        public static string toString<T>(this T[] array)
+        public static string toString<T>(this T[] array, bool withBrackets = true)
         {
             if (array == null)
             {
                 return "";
             }
 
-            var result = "[";
+            var result = "";
             bool isFirst = true;
             for (uint index = 0; index < array.Length; index++)
             {
@@ -65,7 +65,32 @@ namespace Maya2Babylon
                 isFirst = false;
                 result += array[index];
             }
-            return result + "]";
+
+            if (withBrackets)
+            {
+                result = "[" + result + "]";
+            }
+            return result;
+        }
+
+        public static float[] Multiply(this float[] array, float[] array2)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * array2[index];
+            }
+            return res;
+        }
+
+        public static float[] Multiply(this float[] array, float value)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * value;
+            }
+            return res;
         }
 
         // -------------------------
@@ -82,12 +107,24 @@ namespace Maya2Babylon
         }
 
         // -------------------------
-        // ----------- Math ----------
+        // --------- Math ----------
         // -------------------------
 
         public static float Clamp(float value, float min, float max)
         {
             return (value < min) ? min : (value > max) ? max : value;
+        }
+
+
+        // -------------------------
+        // --------- UUID ----------
+        // -------------------------
+
+        public static string GenerateUUID()
+        {
+            MUuid mUuid = new MUuid();
+            mUuid.generate();
+            return mUuid.asString();
         }
     }
 }
