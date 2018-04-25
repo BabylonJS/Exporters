@@ -41,7 +41,7 @@ namespace Maya2Babylon
             gltf.asset = new GLTFAsset
             {
                 version = "2.0",
-                generator = "Babylon2Gltf2017",
+                generator = $"babylon.js glTF exporter for maya 2018 v{exporterVersion}",
                 copyright = "2017 (c) BabylonJS"
                 // no minVersion
             };

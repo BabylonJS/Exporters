@@ -171,7 +171,8 @@ namespace Max2Babylon
             // --------------------------
             var gltfTextureInfo = new GLTFTextureInfo
             {
-                index = gltfTexture.index
+                index = gltfTexture.index,
+                texCoord = babylonTexture.coordinatesIndex
             };
 
             return gltfTextureInfo;

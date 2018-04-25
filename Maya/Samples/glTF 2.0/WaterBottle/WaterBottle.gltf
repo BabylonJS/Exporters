@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for maya 2018 v1.0.0",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,
@@ -62,7 +62,7 @@
 		{
 			"bufferView": 1,
 			"componentType": 5126,
-			"count": 13530,
+			"count": 2508,
 			"max": [
 				5.445001,
 				13.0220337,
@@ -78,16 +78,16 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 162360,
+			"byteOffset": 30096,
 			"componentType": 5126,
-			"count": 13530,
+			"count": 2508,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
 			"componentType": 5126,
-			"count": 13530,
+			"count": 2508,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		}
@@ -101,14 +101,14 @@
 		{
 			"buffer": 0,
 			"byteOffset": 27060,
-			"byteLength": 324720,
+			"byteLength": 60192,
 			"byteStride": 12,
 			"name": "bufferViewFloatVec3"
 		},
 		{
 			"buffer": 0,
-			"byteOffset": 351780,
-			"byteLength": 108240,
+			"byteOffset": 87252,
+			"byteLength": 20064,
 			"byteStride": 8,
 			"name": "bufferViewFloatVec2"
 		}
@@ -116,7 +116,7 @@
 	"buffers": [
 		{
 			"uri": "WaterBottle.bin",
-			"byteLength": 460020
+			"byteLength": 107316
 		}
 	],
 	"materials": [
@@ -132,7 +132,10 @@
 					"index": 2
 				},
 				"metallicFactor": 1,
-				"roughnessFactor": 0
+				"roughnessFactor": 1,
+				"metallicRoughnessTexture": {
+					"index": 3
+				}
 			},
 			"normalTexture": {
 				"index": 0

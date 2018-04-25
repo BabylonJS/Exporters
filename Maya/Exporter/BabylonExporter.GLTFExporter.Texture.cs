@@ -45,7 +45,7 @@ namespace Maya2Babylon
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
                     RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
-                    bitmap.Save(absolutePath, imageFormat);
+                    SaveBitmap(bitmap, gltf.OutputFolder, name, imageFormat);
                 }
 
                 return extension.Substring(1); // remove the dot
@@ -168,7 +168,8 @@ namespace Maya2Babylon
             // --------------------------
             var gltfTextureInfo = new GLTFTextureInfo
             {
-                index = gltfTexture.index
+                index = gltfTexture.index,
+                texCoord = babylonTexture.coordinatesIndex
             };
 
             return gltfTextureInfo;
@@ -179,6 +180,10 @@ namespace Maya2Babylon
             // Use one as a reference for UVs parameters
             var babylonTexture = babylonMaterial.emissiveTexture != null ? babylonMaterial.emissiveTexture : babylonMaterial.diffuseTexture;
             if (babylonTexture == null)
+            {
+                return null;
+            }
+            if (babylonMaterial.emissiveTexture == null && defaultEmissive.IsAlmostEqualTo(new float[] { 0, 0, 0 }, 0))
             {
                 return null;
             }
