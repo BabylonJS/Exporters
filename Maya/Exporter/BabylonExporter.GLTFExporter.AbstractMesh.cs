@@ -70,10 +70,9 @@ namespace Maya2Babylon
                     //gltfNode.skin = gltfSkin.index;
                 }
             }
-
-            // TODO - Animations
-            //// Animations
-            //ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
+            
+            // Animations
+            ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
 
             return gltfNode;
         }
