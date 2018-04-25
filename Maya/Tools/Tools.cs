@@ -9,6 +9,14 @@ namespace Maya2Babylon
     {
         public const float Epsilon = 0.001f;
 
+        // -------------------------
+        // --------- Math ----------
+        // -------------------------
+
+        public static float Lerp(float min, float max, float t)
+        {
+            return min + (max - min) * t;
+        }
 
         // -------------------------
         // --------- Array ---------

@@ -29,8 +29,8 @@ namespace Maya2Babylon
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
-            // TODO - Animations
-            //exportAnimation(babylonMesh, meshNode);
+            // Animations
+            ExportNodeAnimation(babylonMesh, mFnTransform);
 
             babylonScene.MeshesList.Add(babylonMesh);
 
@@ -235,22 +235,8 @@ namespace Maya2Babylon
                 RaiseWarning($"Mesh {babylonMesh.name} has more than 65536 vertices which means that it will require specific WebGL extension to be rendered. This may impact portability of your scene on low end devices.", 2);
             }
 
-
             // Animations
-            try
-            {
-
-                babylonMesh.animations = GetAnimation(mFnTransform).ToArray();
-                babylonMesh.autoAnimate = true;
-                babylonMesh.autoAnimateFrom = GetMinTime()[0];
-                babylonMesh.autoAnimateTo = GetMaxTime()[0];
-                babylonMesh.autoAnimateLoop = true;
-
-            }
-            catch(Exception e)
-            {
-                RaiseMessage("no animation found");
-            }
+            ExportNodeAnimation(babylonMesh, mFnTransform);
 
             // Material
             MObjectArray shaders = new MObjectArray();
