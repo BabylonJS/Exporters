@@ -124,7 +124,7 @@ namespace Max2Babylon
                 exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                await exporter.ExportAsync(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this);
+                await exporter.ExportAsync(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this, txtScaleFactor.Text);
             }
             catch (OperationCanceledException)
             {
@@ -270,6 +270,11 @@ namespace Max2Babylon
         }
 
         private void chkOnlySelected_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtScaleFactor_TextChanged(object sender, EventArgs e)
         {
 
         }

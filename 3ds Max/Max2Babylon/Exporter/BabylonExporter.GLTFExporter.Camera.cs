@@ -16,7 +16,7 @@ namespace Max2Babylon
             RaiseMessage("GLTFExporter.Camera | Node", 2);
             // Node
             var gltfNode = new GLTFNode();
-            gltfNode.name = babylonCamera.name;
+            gltfNode.name = GetUniqueNodeName(babylonCamera.name);
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
             nodeToGltfNodeMap.Add(babylonCamera, gltfNode);

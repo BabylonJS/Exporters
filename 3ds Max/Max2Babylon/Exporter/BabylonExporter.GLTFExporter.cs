@@ -45,10 +45,19 @@ namespace Max2Babylon
             gltf.asset = new GLTFAsset
             {
                 version = "2.0",
-                generator = "Babylon2Gltf2017",
                 copyright = "2017 (c) BabylonJS"
                 // no minVersion
             };
+
+            string maxVersion = null;
+#if MAX2015
+            maxVersion = "2015";
+#elif MAX2017
+            maxVersion = "2017";
+#elif MAX2018
+            maxVersion = "2018";
+#endif
+            gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
 
             // Extensions
             gltf.extensionsUsed = new List<string>();
@@ -83,6 +92,7 @@ namespace Max2Babylon
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
             nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
             boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
+            NbNodesByName = new Dictionary<string, int>();
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
