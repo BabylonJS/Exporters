@@ -1,6 +1,5 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
-using MayaBabylon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +8,36 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
-
+        /// <summary>
+        /// Export TRS and visiblity animations of the transform
+        /// </summary>
+        /// <param name="babylonNode"></param>
+        /// <param name="mFnTransform">Transform above mesh/camera/light</param>
+        private void ExportNodeAnimation(BabylonNode babylonNode, MFnTransform mFnTransform)
+        {
+            try
+            {
+                babylonNode.animations = GetAnimation(mFnTransform).ToArray();
+                
+                // TODO - Retreive from Maya
+                babylonNode.autoAnimate = true;
+                babylonNode.autoAnimateFrom = GetMinTime()[0];
+                babylonNode.autoAnimateTo = GetMaxTime()[0];
+                babylonNode.autoAnimateLoop = true;
+            }
+            catch (Exception e)
+            {
+                RaiseVerbose("No animation found", 2);
+            }
+        }
 
         /// <summary>
-        /// 
+        /// Get TRS and visiblity animations of the transform
         /// </summary>
-        /// <param name="mDagPath">DAG path to the transform above mesh</param>
-        /// <param name="babylonScene"></param>
+        /// <param name="transform">Transform above mesh/camera/light</param>
         /// <returns></returns>
         private List<BabylonAnimation> GetAnimation(MFnTransform transform)
         {
-
             // Animations
             MPlugArray connections = new MPlugArray();
             MStringArray animCurvList = new MStringArray();
@@ -35,15 +53,8 @@ namespace Maya2Babylon
             List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
             List<BabylonAnimation> animationsObject = new List<BabylonAnimation>();
 
-            MIntArray minTime = new MIntArray();
-            MIntArray maxTime = new MIntArray();
-
             //Get the animCurve
             MGlobal.executeCommand("listConnections -type \"animCurve\" " + transform.fullPathName + ";", animCurvList);
-
-            //Get the min/max frame
-
-            MGlobal.executeCommand("playbackOptions -q -maxTime", maxTime);
 
             foreach (String animCurv in animCurvList)
             {
@@ -51,8 +62,7 @@ namespace Maya2Babylon
                 MGlobal.executeCommand("keyframe -q " + animCurv + ";", keysTime);
                 //Get the value for each curves
                 MGlobal.executeCommand("keyframe - q - vc - absolute " + animCurv + ";", keysValue);
-
-
+                
                 //Parse for each type of curve
                 foreach (float keyValue in keysValue)
                 {
@@ -79,12 +89,22 @@ namespace Maya2Babylon
             var scaleQuery = scaleValues.Where(num => num == 1);
             var visQuery = visibilityValues.Where(num => num == 1);
 
+            // Switch coordinate system at object level
+            // Position.z
+            for (int j = keysTime.Count * 2; j < keysTime.Count * 3; j++)
+            {
+                translateValues[j] *= -1;
+            }
+            // Rotation.x and Rotation.y
+            for (int j = 0; j < keysTime.Count * 2; j++)
+            {
+                rotateValues[j] *= -1;
+            }
 
-
+            // --- Position ---
             List<BabylonAnimationKey> keysObject = new List<BabylonAnimationKey>();
             int testOpti = 0;
             long i = 0;
-
 
             foreach (int keyTime in keysTime)
             {
@@ -107,7 +127,6 @@ namespace Maya2Babylon
 
             if (testOpti != keysTime.length)
             {
-
                 animationsObject.Add(new BabylonAnimation()
                 {
                     dataType = 1,
@@ -117,21 +136,16 @@ namespace Maya2Babylon
                     property = "position",
                     keys = keysObject.ToArray()
                 });
-
             }
 
-
-
-
+            // --- Rotation ---
             keysObject = new List<BabylonAnimationKey>();
             testOpti = 0;
             i = 0;
 
-
             foreach (int keyTime in keysTime)
             {
                 BabylonVector3 vectorValues = new BabylonVector3(rotateValues[(int)i], rotateValues[(int)(i + keysTime.length)], rotateValues[(int)(i + (keysTime.length * 2))]);
-
                 BabylonVector3 vectorValuesTestOpti = new BabylonVector3(rotateValues[0], rotateValues[(int)(keysTime.length)], rotateValues[(int)(keysTime.length * 2)]);
 
                 float[] quatValuesTestOpti = { vectorValuesTestOpti.toQuaternion().X, vectorValuesTestOpti.toQuaternion().Y, vectorValuesTestOpti.toQuaternion().Z, vectorValuesTestOpti.toQuaternion().W };
@@ -152,7 +166,6 @@ namespace Maya2Babylon
 
             if (testOpti != keysTime.length)
             {
-
                 animationsObject.Add(new BabylonAnimation()
                 {
                     dataType = 2,
@@ -162,19 +175,14 @@ namespace Maya2Babylon
                     property = "rotationQuaternion",
                     keys = keysObject.ToArray()
                 });
-
             }
 
-
-
-
-
+            // --- Scaling ---
             if (scaleValues.length != scaleQuery.Count())
             {
                 keysObject = new List<BabylonAnimationKey>();
                 testOpti = 0;
                 i = 0;
-
 
                 foreach (int keyTime in keysTime)
                 {
@@ -196,7 +204,6 @@ namespace Maya2Babylon
 
                 if (testOpti != keysTime.length)
                 {
-
                     animationsObject.Add(new BabylonAnimation()
                     {
                         dataType = 1,
@@ -206,18 +213,14 @@ namespace Maya2Babylon
                         property = "scaling",
                         keys = keysObject.ToArray()
                     });
-
                 }
-
             }
 
-
-
+            // --- Visibility ---
             if (visibilityValues.length != visQuery.Count())
             {
                 keysObject = new List<BabylonAnimationKey>();
                 i = 0;
-
 
                 foreach (int keyTime in keysTime)
                 {
@@ -239,12 +242,9 @@ namespace Maya2Babylon
                     property = "visibility",
                     keys = keysObject.ToArray()
                 });
-
             }
 
-
             return animationsObject;
-
         }
 
         private MIntArray GetMinTime()
