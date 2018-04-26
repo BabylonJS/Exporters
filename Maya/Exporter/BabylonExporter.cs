@@ -33,8 +33,8 @@ namespace Maya2Babylon
         /// Those cameras are always ignored when exporting (ie even when exporting hidden objects)
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
-        
-        private string exporterVersion = "1.0.9";
+
+        private string exporterVersion = "1.0.10";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, bool exportTangents, string scaleFactor)
         {
