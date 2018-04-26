@@ -374,7 +374,7 @@ namespace Max2Babylon
                         keys.Add(new BabylonAnimationKey()
                         {
                             frame = end / Ticks,
-                            values = keys[keys.Count - 1].values
+                            values = (float[])keys[keys.Count - 1].values.Clone()
                         });
                     }
 
