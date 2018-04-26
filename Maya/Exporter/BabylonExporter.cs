@@ -336,6 +336,14 @@ namespace Maya2Babylon
 
 
             // Todo Export skeletons
+            if (skins.Count > 0)
+            {
+                RaiseMessage("Exporting skeletons");
+                foreach (var skin in skins)
+                {
+                    ExportSkin(skin, babylonScene);
+                }
+            }
 
             // Output
             babylonScene.Prepare(false, false);
@@ -449,9 +457,13 @@ namespace Maya2Babylon
         /// 
         /// </summary>
         /// <param name="isFull">If true all nodes are printed, otherwise only relevant ones</param>
-        private void PrintDAG(bool isFull)
+        private void PrintDAG(bool isFull, MObject root = null)
         {
             var dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
+            if (root != null)
+            {
+                dagIterator.reset(root);
+            }
             RaiseMessage("DAG: " + (isFull ? "full" : "relevant"));
             while (!dagIterator.isDone)
             {
