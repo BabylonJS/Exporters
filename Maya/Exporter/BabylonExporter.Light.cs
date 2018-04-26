@@ -190,17 +190,17 @@ namespace Maya2Babylon
             // TODO - Shadows
             
             //Variable declaration
-            MStringArray enlightedMeshesNames = new MStringArray();
+            MStringArray enlightedMeshesFullPathNames = new MStringArray();
             List<string> includeMeshesIds = new List<string>();
             MStringArray kTransMesh = new MStringArray();
             String typeMesh = null;
             MStringArray UUIDMesh = new MStringArray();
 
             //MEL Command that get the enlighted mesh for a given light
-            MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.name};", enlightedMeshesNames);
+            MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.fullPathName};", enlightedMeshesFullPathNames);
 
             //For each enlighted mesh
-            foreach (String Mesh in enlightedMeshesNames)
+            foreach (String Mesh in enlightedMeshesFullPathNames)
             {
                 //MEL Command use to get the type of each mesh
                 typeMesh = MGlobal.executeCommandStringResult($@"nodeType -api {Mesh};");
@@ -208,7 +208,7 @@ namespace Maya2Babylon
                 //We are targeting the type kMesh and not kTransform (for parenting)
                 if (typeMesh == "kMesh")
                 {
-                    MGlobal.executeCommand($@"listRelatives -parent {Mesh};", kTransMesh);
+                    MGlobal.executeCommand($@"listRelatives -parent -fullPath {Mesh};", kTransMesh);
 
                     //And finally the MEL Command for the uuid of each mesh
                     MGlobal.executeCommand($@"ls -uuid {kTransMesh[0]};", UUIDMesh);
@@ -218,7 +218,8 @@ namespace Maya2Babylon
 
             babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
 
-                // TODO - Animations
+            // Animations
+            ExportNodeAnimation(babylonLight, mFnTransform);
 
             babylonScene.LightsList.Add(babylonLight);
 

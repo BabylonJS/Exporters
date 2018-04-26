@@ -140,7 +140,7 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked, chkOptimizeVertices.Checked, txtScaleFactor.Text);
+                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked, chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text);
             }
             catch (OperationCanceledException)
             {
