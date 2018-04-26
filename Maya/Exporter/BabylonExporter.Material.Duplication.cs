@@ -275,9 +275,14 @@ namespace Maya2Babylon
             {
                 if (mesh.materialId == materialId)
                 {
-                    int meshOpaqueInt;
+                    // Get mesh full path name (unique)
+                    MStringArray meshFullPathName = new MStringArray();
+                    // Surround uuid with quotes like so: ls "18D0785F-4E8E-1621-01E1-84AD39F92289";
+                    // ls command output must be an array
+                    MGlobal.executeCommand($@"ls ""{mesh.id}"";", meshFullPathName);
 
-                    MGlobal.executeCommand($@"getAttr {mesh.name}.aiOpaque;", out meshOpaqueInt);
+                    int meshOpaqueInt;
+                    MGlobal.executeCommand($@"getAttr {meshFullPathName[0]}.aiOpaque;", out meshOpaqueInt);
                     if (meshOpaqueInt == 1)
                     {
                         meshesOpaque.Add(mesh);

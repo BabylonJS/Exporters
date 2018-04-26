@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="BabylonExportActionItem.cs" />
     <Compile Include="Exporter\BabylonExporter.Camera.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Animation.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Camera.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Texture.cs" />
     <Compile Include="Exporter\BabylonExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.Material.cs" />
+    <Compile Include="Exporter\BabylonExporter.Animation.cs" />
     <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Node.cs" />
     <Compile Include="Exporter\BabylonExporter.Skeleton.cs" />
