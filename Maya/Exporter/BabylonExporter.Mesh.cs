@@ -10,6 +10,9 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
+        private MFnSkinCluster mFnSkinCluster;
+        private MFnTransform mFnTransform;
+
         /// <summary>
         /// 
         /// </summary>
@@ -49,7 +52,7 @@ namespace Maya2Babylon
             RaiseMessage(mDagPath.partialPathName, 1);
 
             // Transform above mesh
-            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+            mFnTransform = new MFnTransform(mDagPath);
 
             // Mesh direct child of the transform
             MFnMesh mFnMesh = null;
@@ -288,7 +291,7 @@ namespace Maya2Babylon
             }
 
             // skin
-            MFnSkinCluster mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            mFnSkinCluster = getMFnSkinCluster(mFnMesh);
             int maxNbBones = 0;
             if (mFnSkinCluster != null)
             {
@@ -296,31 +299,30 @@ namespace Maya2Babylon
 
                 // get the max number of joints acting on a vertex
                 int numVertices = mFnMesh.numVertices;
-                int maxInfluences = 0;
+                int maxNumInfluences = 0;
 
                 for (int index = 0; index < numVertices; index++)
                 {
-                    MDoubleArray result = new MDoubleArray();
-                    String command = $"skinPercent -query -value {mFnSkinCluster.name} dragon_wings2.vtx[{index}]";
+                    MDoubleArray influenceWeights = new MDoubleArray();
+                    String command = $"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{index}]";
                     // Get the weight values of all the influences for this vertex
-                    MGlobal.executeCommand(command, result);
-
-                    int currentInfluences = 0;
-                    foreach (double weight in result)
-                    {
-                        if(weight > 0)
-                        {
-                            currentInfluences++;
-                        }
-                    }
-                    maxInfluences = Math.Max(maxInfluences,currentInfluences);
+                    MGlobal.executeCommand(command, influenceWeights);
+                    
+                    int numInfluences = influenceWeights.Count(weight => weight != 0);
+                   
+                    maxNumInfluences = Math.Max(maxNumInfluences,numInfluences);
                 }
-                RaiseMessage($"Max influences : {maxInfluences}",2);
-                if (maxInfluences > 8)
+                RaiseMessage($"Max influences : {maxNumInfluences}",2);
+                if (maxNumInfluences > 8)
                 {
-                    RaiseError($"Too many bones influences per vertex: {maxInfluences}. Babylon.js only support 8 bones influences per vertex.", 2);
+                    RaiseError($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
                 }
-                maxNbBones = Math.Min(maxInfluences, 8);
+                maxNbBones = Math.Min(maxNumInfluences, 8);
+
+                if (!skins.Contains(mFnSkinCluster))
+                {
+                    skins.Add(mFnSkinCluster);
+                }
             }
 
             // TODO - color, alpha
@@ -639,48 +641,42 @@ namespace Maya2Babylon
             }
 
             // skin
-            MFnSkinCluster mFnSkinCluster = getMFnSkinCluster(mFnMesh);
             if (mFnSkinCluster != null)
             {
                 // Export Weights and BonesIndices for the vertex
-                MDoubleArray result = new MDoubleArray();
-                String command = $"skinPercent -query -value {mFnSkinCluster.name} dragon_wings2.vtx[{vertexIndexGlobal}]";
+                MDoubleArray allMayaInfluenceWeights = new MDoubleArray();
+                String command = $"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{vertexIndexGlobal}]";
                 // Get the weight values of all the influences for this vertex
-                MGlobal.executeCommand(command, result);
-                result.get(out double[] results);
+                MGlobal.executeCommand(command, allMayaInfluenceWeights);
+                allMayaInfluenceWeights.get(out double[] allInfluenceWeights);
 
-                List<int> influenceIndeces = new List<int>();   // contains the influence indeces (with weight > 0)
+                // Filter null weights
+                List<int> influenceIndices = new List<int>();   // contains the influence indices (with weight > 0)
                 List<double> influenceWeights = new List<double>(); // contains the coresponding influence weight
-                for (int influenceIndex = 0; influenceIndex < results.Length; influenceIndex++)
+                for (int influenceIndex = 0; influenceIndex < allInfluenceWeights.Length; influenceIndex++)
                 {
-                    double weight = results[influenceIndex];
+                    double weight = allInfluenceWeights[influenceIndex];
                     if (weight > 0)
                     {
                         // add indice and weight
-                        influenceIndeces.Add(influenceIndex);
+                        influenceIndices.Add(influenceIndex);
                         influenceWeights.Add(weight);
                     }
                 }
-                //RaiseMessage($"Vertex index: {vertexIndexGlobal} - influence indeces ({influenceIndeces.Count}): {String.Join(", ", influenceIndeces)} - weights : {String.Join(", ", influenceWeights)}", 2);
 
-                // if there are more than 8 bones/influences. Remove the ones with lowers weight because Babylon.js only support 8 bones influences per vertex.
-                if (influenceIndeces.Count() > 8)
+                // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
+                while(influenceIndices.Count() > 8)
                 {
-                    //RaiseWarning("Too many influence indeces. Some will be removed.", 2);
-                    while(influenceIndeces.Count() > 8)
-                    {
-                        // get the min weight
-                        double minWeight = influenceWeights.Min();
-                        int indexToRemove = influenceWeights.IndexOf(minWeight);
+                    // get the min weight
+                    double minWeight = influenceWeights.Min();
+                    int indexToRemove = influenceWeights.IndexOf(minWeight);
 
-                        // delete the min
-                        influenceIndeces.RemoveAt(indexToRemove);
-                        influenceWeights.RemoveAt(indexToRemove);
-                    }
-                    //RaiseWarning($"Vertex index: {vertexIndexGlobal} - influence indeces ({influenceIndeces.Count}): {String.Join(", ", influenceIndeces)} - weights : {String.Join(", ", influenceWeights)}", 2);
+                    // delete the min
+                    influenceIndices.RemoveAt(indexToRemove);
+                    influenceWeights.RemoveAt(indexToRemove);
                 }
 
-                int bonesCount = results.Length; // number total of bones/influences for the mesh
+                int bonesCount = allInfluenceWeights.Length; // number total of bones/influences for the mesh
                 float weight0 = 0;
                 float weight1 = 0;
                 float weight2 = 0;
@@ -689,7 +685,7 @@ namespace Maya2Babylon
                 int bone1 = bonesCount;
                 int bone2 = bonesCount;
                 int bone3 = bonesCount;
-                int nbBones = influenceIndeces.Count; // number of bones/influences for this vertex
+                int nbBones = influenceIndices.Count; // number of bones/influences for this vertex
 
                 if (nbBones == 0)
                 {
@@ -699,22 +695,22 @@ namespace Maya2Babylon
 
                 if (nbBones > 0)
                 {
-                    bone0 = influenceIndeces.ElementAt(0);
+                    bone0 = influenceIndices.ElementAt(0);
                     weight0 = (float)influenceWeights.ElementAt(0);
 
                     if (nbBones > 1)
                     {
-                        bone1 = influenceIndeces.ElementAt(1);
+                        bone1 = influenceIndices.ElementAt(1);
                         weight1 = (float)influenceWeights.ElementAt(1);
 
                         if (nbBones > 2)
                         {
-                            bone2 = influenceIndeces.ElementAt(2);
+                            bone2 = influenceIndices.ElementAt(2);
                             weight2 = (float)influenceWeights.ElementAt(2);
 
                             if (nbBones > 3)
                             {
-                                bone3 = influenceIndeces.ElementAt(3);
+                                bone3 = influenceIndices.ElementAt(3);
                                 weight3 = (float)influenceWeights.ElementAt(3);
                             }
                         }
@@ -727,7 +723,7 @@ namespace Maya2Babylon
 
                 if (nbBones > 4)
                 {
-                    bone0 = influenceIndeces.ElementAt(4);
+                    bone0 = influenceIndices.ElementAt(4);
                     weight0 = (float)influenceWeights.ElementAt(4);
 
                     weight1 = 0;
@@ -736,17 +732,17 @@ namespace Maya2Babylon
 
                     if (nbBones > 5)
                     {
-                        bone1 = influenceIndeces.ElementAt(5);
+                        bone1 = influenceIndices.ElementAt(5);
                         weight1 = (float)influenceWeights.ElementAt(4);
 
                         if (nbBones > 6)
                         {
-                            bone2 = influenceIndeces.ElementAt(6);
+                            bone2 = influenceIndices.ElementAt(6);
                             weight2 = (float)influenceWeights.ElementAt(4);
 
                             if (nbBones > 7)
                             {
-                                bone3 = influenceIndeces.ElementAt(7);
+                                bone3 = influenceIndices.ElementAt(7);
                                 weight3 = (float)influenceWeights.ElementAt(7);
                             }
                         }
