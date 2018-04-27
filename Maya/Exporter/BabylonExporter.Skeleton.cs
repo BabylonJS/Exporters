@@ -15,18 +15,18 @@ namespace Maya2Babylon
 
         private void ExportSkin(MFnSkinCluster skin, BabylonScene babylonScene)
         {
-            Print(skin, 1, "skin cluster");
+            //Print(skin, 1, "skin cluster");
            
             int skinIndex = skins.IndexOf(skin);
             BabylonSkeleton babylonSkeleton = new BabylonSkeleton { id = skinIndex };
             babylonSkeleton.name = "skeleton #" + babylonSkeleton.id;
 
-            RaiseMessage(babylonSkeleton.name, 1);
+            //RaiseMessage(babylonSkeleton.name, 1);
 
             // get the root node
             MObject rootNode = getRootNode(skin);
             // print the DAG from this joint
-            PrintDAG(true, rootNode);
+            //PrintDAG(true, rootNode);
 
             MFnTransform rootTransform = new MFnTransform(rootNode);
 

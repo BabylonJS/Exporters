@@ -23,7 +23,7 @@ namespace Maya2Babylon
         {
             try
             {
-                babylonNode.animations = GetAnimation(mFnTransform).ToArray();
+                babylonNode.animations = GetAnimationsFrameByFrame(babylonNode, mFnTransform).ToArray();
                 
                 // TODO - Retreive from Maya
                 babylonNode.autoAnimate = true;
@@ -35,6 +35,118 @@ namespace Maya2Babylon
             {
                 RaiseError("Error while exporting animation: "+ e.Message, 2);
             }
+        }
+
+        /// <summary>
+        /// Export TRS and visiblity animations of the transform.
+        /// Used for camera with target.
+        /// </summary>
+        /// <param name="babylonNode"></param>
+        /// <param name="mFnTransform">Transform above mesh/camera/light</param>
+        private void ExportNodeAnimationFrameByFrame(BabylonNode babylonNode, MFnTransform mFnTransform)
+        {
+            try
+            {
+            babylonNode.animations = GetAnimationsFrameByFrame(babylonNode, mFnTransform).ToArray();
+
+                babylonNode.autoAnimate = true;
+                babylonNode.autoAnimateFrom = GetMinTime()[0];
+                babylonNode.autoAnimateTo = GetMaxTime()[0];
+                babylonNode.autoAnimateLoop = true;
+            }
+            catch (Exception e)
+            {
+                RaiseError("Error while exporting animation: "+ e.Message, 2);
+            }
+        }
+
+        private List<BabylonAnimation> GetAnimationsFrameByFrame(BabylonNode babylonNode, MFnTransform mFnTransform)
+        {
+            int start = GetMinTime()[0];
+            int end = GetMaxTime()[0];
+            // Animations
+            List<BabylonAnimation> animations = new List<BabylonAnimation>();
+
+            string[] babylonAnimationProperties = new string[] { "scaling", "rotationQuaternion", "position" };
+
+            // create animation for each type
+            for(int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
+            {
+                string babylonAnimationProperty = babylonAnimationProperties[indexAnimation];
+
+                List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
+                // get keys
+                for (int currentFrame = start; currentFrame <= end; currentFrame++)
+                {
+                    MDoubleArray mDoubleMatrix = new MDoubleArray();
+                    MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
+
+                    mDoubleMatrix.get(out float[] localMatrix);
+
+                    MMatrix matrix = new MMatrix(localMatrix);
+                    var transformationMatrix = new MTransformationMatrix(matrix);
+
+                    var position = transformationMatrix.getTranslation();
+                    var rotationQuaternion = transformationMatrix.getRotationQuaternion();
+                    var scaling = transformationMatrix.getScale();
+
+                    // Switch coordinate system at object level
+                    position[2] *= -1;
+                    rotationQuaternion[0] *= -1;
+                    rotationQuaternion[1] *= -1;
+
+                    BabylonAnimationKey key = new BabylonAnimationKey();
+                    key.frame = currentFrame;
+                    switch(indexAnimation)
+                    {
+                        case 0: // scaling
+                            key.values = scaling.ToArray();
+                            break;
+                        case 1: // rotationQuaternion
+                            key.values = rotationQuaternion.ToArray();
+                            break;
+                        case 2: // position
+                            key.values = position.ToArray();
+                            break;
+                    }
+
+                    keys.Add(key);
+                }
+
+                // Optimization
+                OptimizeAnimations(keys, true);
+
+                // Ensure animation has at least 2 frames
+                if (keys.Count > 1)
+                {
+                    var animationPresent = true;
+
+                    // Ensure animation has at least 2 non equal frames
+                    if (keys.Count == 2)
+                    {
+                        if (keys[0].values.IsEqualTo(keys[1].values))
+                        {
+                            animationPresent = false;
+                        }
+                    }
+
+                    if (animationPresent)
+                    {
+                        // Create BabylonAnimation
+                        animations.Add(new BabylonAnimation()
+                        {
+                            dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
+                            name = babylonAnimationProperty + " animation",
+                            framePerSecond = 30, // TODO - Get from Maya
+                            loopBehavior = (int) BabylonAnimation.LoopBehavior.Cycle,
+                            property = babylonAnimationProperty,
+                            keys = keys.ToArray()
+                        });
+                    }
+                }
+            }
+
+            return animations;
         }
 
         /// <summary>
@@ -212,7 +324,7 @@ namespace Maya2Babylon
                             dataType = indexAnimationProperty == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
                             framePerSecond = 30,
-                            loopBehavior = 1,
+                            loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = babylonAnimationKeys.ToArray()
                         });
@@ -279,14 +391,14 @@ namespace Maya2Babylon
         private MIntArray GetMinTime()
         {
             MIntArray minTime = new MIntArray();
-            MGlobal.executeCommand("playbackOptions -q -minTime", minTime);
+            MGlobal.executeCommand("playbackOptions -q -animationStartTime", minTime);
             return minTime;
         }
 
         private MIntArray GetMaxTime()
         {
             MIntArray maxTime = new MIntArray();
-            MGlobal.executeCommand("playbackOptions -q -maxTime", maxTime);
+            MGlobal.executeCommand("playbackOptions -q -animationEndTime", maxTime);
             return maxTime;
         }
     }
