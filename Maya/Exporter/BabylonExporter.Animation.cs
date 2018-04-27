@@ -15,16 +15,32 @@ namespace Maya2Babylon
     internal partial class BabylonExporter
     {
         /// <summary>
-        /// Export TRS and visiblity animations of the transform
+        /// Export TRS animations of the transform
         /// </summary>
         /// <param name="babylonNode"></param>
         /// <param name="mFnTransform">Transform above mesh/camera/light</param>
         private void ExportNodeAnimation(BabylonNode babylonNode, MFnTransform mFnTransform)
         {
+            _exporNodeAnimation(babylonNode, mFnTransform, GetAnimationsFrameByFrame); // currently using frame by frame instead
+        }
+
+        /// <summary>
+        /// Export TRS animations of the transform
+        /// 
+        /// </summary>
+        /// <param name="babylonNode"></param>
+        /// <param name="mFnTransform">Transform above mesh/camera/light</param>
+        private void ExportNodeAnimationFrameByFrame(BabylonNode babylonNode, MFnTransform mFnTransform)
+        {
+            _exporNodeAnimation(babylonNode, mFnTransform, GetAnimationsFrameByFrame);
+        }
+
+        private void _exporNodeAnimation(BabylonNode babylonNode, MFnTransform mFnTransform, Func<MFnTransform, List<BabylonAnimation>>  getAnimationsFunc)
+        {
             try
             {
-                babylonNode.animations = GetAnimationsFrameByFrame(mFnTransform).ToArray();
-                
+                babylonNode.animations = getAnimationsFunc(mFnTransform).ToArray();
+
                 // TODO - Retreive from Maya
                 babylonNode.autoAnimate = true;
                 babylonNode.autoAnimateFrom = GetMinTime()[0];
@@ -33,30 +49,7 @@ namespace Maya2Babylon
             }
             catch (Exception e)
             {
-                RaiseError("Error while exporting animation: "+ e.Message, 2);
-            }
-        }
-
-        /// <summary>
-        /// Export TRS and visiblity animations of the transform.
-        /// Used for camera with target.
-        /// </summary>
-        /// <param name="babylonNode"></param>
-        /// <param name="mFnTransform">Transform above mesh/camera/light</param>
-        private void ExportNodeAnimationFrameByFrame(BabylonNode babylonNode, MFnTransform mFnTransform)
-        {
-            try
-            {
-            babylonNode.animations = GetAnimationsFrameByFrame(mFnTransform).ToArray();
-
-                babylonNode.autoAnimate = true;
-                babylonNode.autoAnimateFrom = GetMinTime()[0];
-                babylonNode.autoAnimateTo = GetMaxTime()[0];
-                babylonNode.autoAnimateLoop = true;
-            }
-            catch (Exception e)
-            {
-                RaiseError("Error while exporting animation: "+ e.Message, 2);
+                RaiseError("Error while exporting animation: " + e.Message, 2);
             }
         }
 
@@ -64,40 +57,46 @@ namespace Maya2Babylon
         {
             int start = GetMinTime()[0];
             int end = GetMaxTime()[0];
+
             // Animations
             List<BabylonAnimation> animations = new List<BabylonAnimation>();
 
             string[] babylonAnimationProperties = new string[] { "scaling", "rotationQuaternion", "position" };
 
-            // create animation for each type
-            for(int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
+
+            Dictionary<string, List<BabylonAnimationKey>> keysPerProperty = new Dictionary<string, List<BabylonAnimationKey>>();
+            keysPerProperty.Add("scaling", new List<BabylonAnimationKey>());
+            keysPerProperty.Add("rotationQuaternion", new List<BabylonAnimationKey>());
+            keysPerProperty.Add("position", new List<BabylonAnimationKey>());
+
+            // get keys
+            for (int currentFrame = start; currentFrame <= end; currentFrame++)
             {
-                string babylonAnimationProperty = babylonAnimationProperties[indexAnimation];
+                // get transformation matrix at this frame
+                MDoubleArray mDoubleMatrix = new MDoubleArray();
+                MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
+                mDoubleMatrix.get(out float[] localMatrix);
+                MMatrix matrix = new MMatrix(localMatrix);
+                var transformationMatrix = new MTransformationMatrix(matrix);
 
-                List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
-                // get keys
-                for (int currentFrame = start; currentFrame <= end; currentFrame++)
+                // Retreive TRS vectors from matrix
+                var position = transformationMatrix.getTranslation();
+                var rotationQuaternion = transformationMatrix.getRotationQuaternion();
+                var scaling = transformationMatrix.getScale();
+
+                // Switch coordinate system at object level
+                position[2] *= -1;
+                rotationQuaternion[0] *= -1;
+                rotationQuaternion[1] *= -1;
+
+                // create animation key for each property
+                for (int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
                 {
-                    MDoubleArray mDoubleMatrix = new MDoubleArray();
-                    MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
-
-                    mDoubleMatrix.get(out float[] localMatrix);
-                    
-                    MMatrix matrix = new MMatrix(localMatrix);
-                    var transformationMatrix = new MTransformationMatrix(matrix);
-
-                    var position = transformationMatrix.getTranslation();
-                    var rotationQuaternion = transformationMatrix.getRotationQuaternion();
-                    var scaling = transformationMatrix.getScale();
-
-                    // Switch coordinate system at object level
-                    position[2] *= -1;
-                    rotationQuaternion[0] *= -1;
-                    rotationQuaternion[1] *= -1;
+                    string babylonAnimationProperty = babylonAnimationProperties[indexAnimation];
 
                     BabylonAnimationKey key = new BabylonAnimationKey();
                     key.frame = currentFrame;
-                    switch(indexAnimation)
+                    switch (indexAnimation)
                     {
                         case 0: // scaling
                             key.values = scaling.ToArray();
@@ -110,8 +109,16 @@ namespace Maya2Babylon
                             break;
                     }
 
-                    keys.Add(key);
+                    keysPerProperty[babylonAnimationProperty].Add(key);
                 }
+            }
+
+            // create animation for each property
+            for (int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
+            {
+                string babylonAnimationProperty = babylonAnimationProperties[indexAnimation];
+
+                List<BabylonAnimationKey> keys = keysPerProperty[babylonAnimationProperty];
 
                 // Optimization
                 OptimizeAnimations(keys, true);
@@ -138,7 +145,7 @@ namespace Maya2Babylon
                             dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
                             framePerSecond = 30, // TODO - Get from Maya
-                            loopBehavior = (int) BabylonAnimation.LoopBehavior.Cycle,
+                            loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = keys.ToArray()
                         });
@@ -225,7 +232,7 @@ namespace Maya2Babylon
             defaultValues.Add("scaleX", scaling[0]);
             defaultValues.Add("scaleY", scaling[1]);
             defaultValues.Add("scaleZ", scaling[2]);
-            
+
             for (int indexAnimationProperty = 0; indexAnimationProperty < mayaAnimationProperties.Length; indexAnimationProperty++)
             {
                 string mayaAnimationProperty = mayaAnimationProperties[indexAnimationProperty];
