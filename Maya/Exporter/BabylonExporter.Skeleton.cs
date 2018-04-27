@@ -10,31 +10,63 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
-        readonly List<MFnSkinCluster> skins = new List<MFnSkinCluster>();
-        //readonly list<> skinnednodes = new list<>();
+        private List<MFnSkinCluster> skins = new List<MFnSkinCluster>();
+        private Dictionary<MObject, int> indexByNode = new Dictionary<MObject, int>();
 
         private void ExportSkin(MFnSkinCluster skin, BabylonScene babylonScene)
         {
-            //Print(skin, 1, "skin cluster");
-           
             int skinIndex = skins.IndexOf(skin);
-            BabylonSkeleton babylonSkeleton = new BabylonSkeleton { id = skinIndex };
-            babylonSkeleton.name = "skeleton #" + babylonSkeleton.id;
+            BabylonSkeleton babylonSkeleton = new BabylonSkeleton {
+                id = skinIndex,
+                name = "skeleton #" + skinIndex,
+                //BabylonBone[] bones 
+                needInitialSkinMatrix = true
+            };
+            List<BabylonBone> bones = new List<BabylonBone>();
 
-            //RaiseMessage(babylonSkeleton.name, 1);
+            RaiseMessage(babylonSkeleton.name, 1);
 
             // get the root node
             MObject rootNode = getRootNode(skin);
-            // print the DAG from this joint
-            //PrintDAG(true, rootNode);
+            
+            // Travel the DAG
+            MItDag dagIterator = new MItDag();
+            dagIterator.reset(rootNode);
+            for (int index = 0 ; !dagIterator.isDone ; dagIterator.next())
+            {
+                // current node
+                MDagPath mDagPath = new MDagPath();
+                dagIterator.getPath(mDagPath);
+                MObject currentNode = mDagPath.node;
+                MFnTransform currentNodeTransform = new MFnTransform(currentNode);
+                indexByNode.Add(currentNode, index);
 
-            MFnTransform rootTransform = new MFnTransform(rootNode);
+                // parent node
+                MFnDagNode mFnDagNode = new MFnDagNode(currentNode);
+                MObject firstParent = mFnDagNode.parent(0);
+                int parentIndex = (index == 0) ? -1 : indexByNode[firstParent];
 
-            //RaiseWarning( string.Join(",",rootTransform.transformation.asMatrixProperty.toArray()) );
-            //RaiseWarning( string.Join(",", rootTransform.transformationMatrix.toArray()) );
-            //var transformationMatrix = new MTransformationMatrix(rootTransform.transformationMatrix);
+                // create the bone
+                BabylonBone bone = new BabylonBone()
+                {
+                    name = currentNodeTransform.name,
+                    index = index,
+                    parentBoneIndex = parentIndex,
+                    matrix = currentNodeTransform.transformationMatrix.toArray(),
+                    //animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
+                };
+                bones.Add(bone);
 
-            //RaiseWarning( string.Join(",", transformationMatrix.asMatrixProperty.toArray()) );
+
+                RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ",bone.matrix)}", (int)dagIterator.depth + 1);
+            }
+            babylonSkeleton.bones = bones.ToArray();
+            babylonScene.SkeletonsList.Add(babylonSkeleton);
+
+            RaiseMessage($"{indexByNode.Count} bone(s) exported", 1);
+
+            // clear the dictionary
+            indexByNode.Clear();
         }
 
 
