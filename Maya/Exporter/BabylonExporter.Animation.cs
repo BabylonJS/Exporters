@@ -23,7 +23,7 @@ namespace Maya2Babylon
         {
             try
             {
-                babylonNode.animations = GetAnimationsFrameByFrame(babylonNode, mFnTransform).ToArray();
+                babylonNode.animations = GetAnimationsFrameByFrame(mFnTransform).ToArray();
                 
                 // TODO - Retreive from Maya
                 babylonNode.autoAnimate = true;
@@ -47,7 +47,7 @@ namespace Maya2Babylon
         {
             try
             {
-            babylonNode.animations = GetAnimationsFrameByFrame(babylonNode, mFnTransform).ToArray();
+            babylonNode.animations = GetAnimationsFrameByFrame(mFnTransform).ToArray();
 
                 babylonNode.autoAnimate = true;
                 babylonNode.autoAnimateFrom = GetMinTime()[0];
@@ -60,7 +60,7 @@ namespace Maya2Babylon
             }
         }
 
-        private List<BabylonAnimation> GetAnimationsFrameByFrame(BabylonNode babylonNode, MFnTransform mFnTransform)
+        private List<BabylonAnimation> GetAnimationsFrameByFrame(MFnTransform mFnTransform)
         {
             int start = GetMinTime()[0];
             int end = GetMaxTime()[0];
@@ -82,7 +82,7 @@ namespace Maya2Babylon
                     MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
 
                     mDoubleMatrix.get(out float[] localMatrix);
-
+                    
                     MMatrix matrix = new MMatrix(localMatrix);
                     var transformationMatrix = new MTransformationMatrix(matrix);
 
