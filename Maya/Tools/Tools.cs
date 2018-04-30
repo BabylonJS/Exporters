@@ -1,6 +1,7 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Maya2Babylon
@@ -9,6 +10,14 @@ namespace Maya2Babylon
     {
         public const float Epsilon = 0.001f;
 
+        // -------------------------
+        // --------- Math ----------
+        // -------------------------
+
+        public static float Lerp(float min, float max, float t)
+        {
+            return min + (max - min) * t;
+        }
 
         // -------------------------
         // --------- Array ---------
@@ -91,6 +100,16 @@ namespace Maya2Babylon
                 res[index] = array[index] * value;
             }
             return res;
+        }
+
+        public static bool IsEqualTo(this float[] value, float[] other)
+        {
+            if (value.Length != other.Length)
+            {
+                return false;
+            }
+
+            return !value.Where((t, i) => Math.Abs(t - other[i]) > Epsilon).Any();
         }
 
         // -------------------------

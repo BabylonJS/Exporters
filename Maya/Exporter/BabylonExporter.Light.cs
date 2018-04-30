@@ -218,7 +218,8 @@ namespace Maya2Babylon
 
             babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
 
-                // TODO - Animations
+            // Animations
+            ExportNodeAnimation(babylonLight, mFnTransform);
 
             babylonScene.LightsList.Add(babylonLight);
 
