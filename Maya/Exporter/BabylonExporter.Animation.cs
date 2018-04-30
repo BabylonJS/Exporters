@@ -408,5 +408,89 @@ namespace Maya2Babylon
             MGlobal.executeCommand("playbackOptions -q -animationEndTime", maxTime);
             return maxTime;
         }
+
+
+
+
+        private BabylonMatrix ConvertMayaToBabylonMatrix(MMatrix mMatrix)
+        {
+            var transformationMatrix = new MTransformationMatrix(mMatrix);
+
+            // Retreive TRS vectors from matrix
+            float[] position = transformationMatrix.getTranslation();
+            float[] rotationQuaternion = transformationMatrix.getRotationQuaternion();
+            float[] scaling = transformationMatrix.getScale();
+
+            // Switch coordinate system at object level
+            position[2] *= -1;
+            rotationQuaternion[0] *= -1;
+            rotationQuaternion[1] *= -1;
+
+            // The composed matrix
+            return BabylonMatrix.Compose(new BabylonVector3(scaling[0], scaling[1], scaling[2]),   // scaling
+                                                new BabylonQuaternion(rotationQuaternion[0], rotationQuaternion[1], rotationQuaternion[2], rotationQuaternion[3]), // rotation
+                                                new BabylonVector3(position[0], position[1], position[2])   // position
+                                            );
+        }
+
+        private BabylonAnimation GetAnimationsFrameByFrameMatrix(MFnTransform mFnTransform)
+        {
+            int start = GetMinTime()[0];
+            int end = GetMaxTime()[0];
+            BabylonAnimation animation = null;
+
+            // get keys
+            List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
+            for (int currentFrame = start; currentFrame <= end; currentFrame++)
+            {
+                // get transformation matrix at this frame
+                MDoubleArray mDoubleMatrix = new MDoubleArray();
+                MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
+                mDoubleMatrix.get(out float[] localMatrix);
+
+                // Set the animation key
+                BabylonAnimationKey key = new BabylonAnimationKey() {
+                    frame = currentFrame,
+                    values = ConvertMayaToBabylonMatrix(new MMatrix(localMatrix)).m.ToArray()
+                };
+
+                keys.Add(key);
+            }
+
+            // Optimization
+            OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
+
+            // Ensure animation has at least 2 frames
+            if (keys.Count > 1)
+            {
+                var animationPresent = true;
+
+                // Ensure animation has at least 2 non equal frames
+                if (keys.Count == 2)
+                {
+                    if (keys[0].values.IsEqualTo(keys[1].values))
+                    {
+                        animationPresent = false;
+                    }
+                }
+
+                if (animationPresent)
+                {
+                    // Create BabylonAnimation
+                    // Animations
+                    animation = new BabylonAnimation()
+                    {
+                        name = mFnTransform.name + "Animation", // override default animation name
+                        dataType = (int)BabylonAnimation.DataType.Matrix,
+                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                        framePerSecond = 30, // TODO - Get from Maya
+                        keys = keys.ToArray(),
+                        property = "_matrix"
+                    };
+                }
+            }
+
+            return animation;
+        }
     }
 }

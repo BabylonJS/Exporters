@@ -12,6 +12,7 @@ namespace Maya2Babylon
     {
         private MFnSkinCluster mFnSkinCluster;
         private MFnTransform mFnTransform;
+        private MStringArray allMayaInfluenceNames;
 
         /// <summary>
         /// 
@@ -55,6 +56,7 @@ namespace Maya2Babylon
             mFnTransform = new MFnTransform(mDagPath);
 
             // Mesh direct child of the transform
+            // TODO get the original one rather than the modified?
             MFnMesh mFnMesh = null;
             for (uint i = 0; i < mFnTransform.childCount; i++)
             {
@@ -300,10 +302,18 @@ namespace Maya2Babylon
             {
                 RaiseMessage("There is a SkinCluster named " + mFnSkinCluster.name, 2);
 
+                // Create the bones dictionary<name, index>
+                initIndexByNodeNameDictionary(mFnSkinCluster);
+                // Get the joint names that influence this vertex
+                allMayaInfluenceNames = new MStringArray();
+                MGlobal.executeCommand($"skinCluster -q -influence {mFnTransform.name}",
+                                        allMayaInfluenceNames);
+
                 // get the max number of joints acting on a vertex
                 int numVertices = mFnMesh.numVertices;
                 int maxNumInfluences = 0;
 
+                // Get max influence on a vertex
                 for (int index = 0; index < numVertices; index++)
                 {
                     MDoubleArray influenceWeights = new MDoubleArray();
@@ -326,6 +336,7 @@ namespace Maya2Babylon
                 {
                     skins.Add(mFnSkinCluster);
                 }
+                babylonMesh.skeletonId = skins.IndexOf(mFnSkinCluster);
             }
             // Export tangents if option is checked and mesh have tangents
             bool isTangentExportSuccess = _exportTangents;
@@ -670,29 +681,31 @@ namespace Maya2Babylon
             // skin
             if (mFnSkinCluster != null)
             {
-                // Export Weights and BonesIndices for the vertex
-                MDoubleArray allMayaInfluenceWeights = new MDoubleArray();
-                String command = $"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{vertexIndexGlobal}]";
-                // Get the weight values of all the influences for this vertex
-                MGlobal.executeCommand(command, allMayaInfluenceWeights);
-                allMayaInfluenceWeights.get(out double[] allInfluenceWeights);
-
                 // Filter null weights
                 List<int> influenceIndices = new List<int>();   // contains the influence indices (with weight > 0)
                 List<double> influenceWeights = new List<double>(); // contains the coresponding influence weight
+
+                // Export Weights and BonesIndices for the vertex
+                // Get the weight values of all the influences for this vertex
+                MDoubleArray allMayaInfluenceWeights = new MDoubleArray();
+                MGlobal.executeCommand($"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{vertexIndexGlobal}]",
+                                        allMayaInfluenceWeights);
+                allMayaInfluenceWeights.get(out double[] allInfluenceWeights);
+
                 for (int influenceIndex = 0; influenceIndex < allInfluenceWeights.Length; influenceIndex++)
                 {
                     double weight = allInfluenceWeights[influenceIndex];
+
                     if (weight > 0)
                     {
-                        // add indice and weight
-                        influenceIndices.Add(influenceIndex);
+                        // add indice and weight in the local lists
+                        influenceIndices.Add( indexByNodeName[ allMayaInfluenceNames[influenceIndex] ] );
                         influenceWeights.Add(weight);
                     }
                 }
 
                 // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
-                while(influenceIndices.Count() > 8)
+                while (influenceIndices.Count() > 8)
                 {
                     // get the min weight
                     double minWeight = influenceWeights.Min();
@@ -703,7 +716,10 @@ namespace Maya2Babylon
                     influenceWeights.RemoveAt(indexToRemove);
                 }
 
-                int bonesCount = allInfluenceWeights.Length; // number total of bones/influences for the mesh
+                // TODO normalize weights => Sum weights == 1
+
+
+                int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
                 float weight1 = 0;
                 float weight2 = 0;
