@@ -33,6 +33,12 @@ namespace BabylonExport.Entities
         public float blurScale { get; set; }
 
         [DataMember]
+        public float blurKernel { get; set; }
+
+        [DataMember]
+        public bool useKernelBlur { get; set; }
+
+        [DataMember]
         public float blurBoxOffset { get; set; }
 
         [DataMember]
@@ -45,7 +51,9 @@ namespace BabylonExport.Entities
         {
             darkness = 0;
             blurScale = 2;
+            blurKernel = 1;
             blurBoxOffset = 0;
+            useKernelBlur = false;
             bias = 0.00005f;
             depthScale = null;
             forceBackFacesOnly = false;

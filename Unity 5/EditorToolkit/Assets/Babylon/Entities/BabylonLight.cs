@@ -15,6 +15,9 @@ namespace BabylonExport.Entities
         public int type { get; set; }
 
         [DataMember]
+        public string tags { get; set; }
+
+        [DataMember]
         public float[] diffuse { get; set; }
 
         [DataMember]
@@ -42,16 +45,17 @@ namespace BabylonExport.Entities
         public string[] includedOnlyMeshesIds { get; set; }
 
         [DataMember]
-        public object metadata { get; set; }
+        public int intensityMode = 0;
 
         [DataMember]
-        public string tags { get; set; }
+        public UnityEditor.UnityMetaData metadata { get; set; }
 
         public BabylonLight()
         {
             diffuse = new[] {1.0f, 1.0f, 1.0f};
             specular = new[] { 1.0f, 1.0f, 1.0f };
             intensity = 1.0f;
+            intensityMode = 0;
             range = float.MaxValue;
         }
     }
