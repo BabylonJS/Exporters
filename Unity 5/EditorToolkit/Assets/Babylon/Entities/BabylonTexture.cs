@@ -14,6 +14,7 @@ namespace BabylonExport.Entities
 
         public enum SamplingMode
         {
+            NEAREST_SAMPLINGMODE = 1,
             // Constants
             NEAREST_NEAREST_MIPLINEAR = 1, // nearest is mag = nearest and min = nearest and mip = linear
             LINEAR_LINEAR_MIPNEAREST = 2, // Bilinear is mag = linear and min = linear and mip = nearest
@@ -94,9 +95,12 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public string[] extensions { get; set; }
-
+        
         [DataMember]
         public SamplingMode samplingMode { get; set; }
+
+        [DataMember]
+        public bool noMipmap { get; set; }
 
         public BabylonTexture()
         {
@@ -113,6 +117,7 @@ namespace BabylonExport.Entities
             hasAlpha = false;
             coordinatesIndex = 0;
             samplingMode = SamplingMode.LINEAR_LINEAR_MIPLINEAR;
+            noMipmap = false;
         }
     }
 }

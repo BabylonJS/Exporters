@@ -3,6 +3,19 @@
 namespace BabylonExport.Entities
 {
     [DataContract]
+    public class BabylonRange
+    {
+        [DataMember]
+        public string name { get; set; }
+
+        [DataMember]
+        public int from { get; set; }
+
+        [DataMember]
+        public int to { get; set; }
+    }
+    
+    [DataContract]
     public class BabylonSkeleton
     {
         [DataMember]
@@ -13,6 +26,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonBone[] bones { get; set; }
+
+        [DataMember]
+        public BabylonRange[] ranges { get; set; }
 
         [DataMember]
         public bool needInitialSkinMatrix { get; set; }

@@ -1,0 +1,183 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>###TITLE###</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="-1">
+    <meta http-equiv="content-type" content="text/html" charset="utf-8" />
+    <meta name="edge" content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <style>
+        html, body {
+            position: absolute;
+            min-height: 100%;
+            width: 100%;
+            height: 100%;
+            padding: 0px;
+            margin: 0px;
+            overflow: hidden;
+            font-family: "Segoe UI", "Segoe WP", "Verdana", "Arial";
+            background-color: #000000;
+        }
+
+        #load {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            margin-left: -24px;
+            z-index: 10000;
+            animation: spin 2s linear infinite;
+        }
+
+        #cvs {
+            position: absolute;
+            min-height: 100%;
+            width: 100%;
+            height: 100%;
+            padding: 0px;
+            margin: 0px;
+            z-index: 1;
+            opacity: 0;
+            outline: none;
+            overflow: hidden;
+            touch-action: none;
+            -ms-touch-action: none;
+        }
+
+        .hidden { display: none; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="load"></div>
+    <canvas id="cvs"></canvas>
+
+    <!-- ********************************************************************* -->
+    <!-- REQUIRED SECTION 1 - Babylon Toolkit Project Libraries And Properties -->
+    <!-- ********************************************************************* -->
+    <script type="text/javascript" src="###SCRIPT###/tvjs.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/pako.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/hand.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/stats.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/cannon.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/msgpack.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.gui.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.navmesh.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.inspector.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.manager.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.markup.js"></script>
+    <script type="text/javascript" src="###SCRIPT###/babylon.terrains.js"></script>
+    <script type="text/javascript" src="###PATH###/###PROJECT###.js"></script>
+    <script type="text/javascript">var pagetype = "###TYPE###", defaultmap = "###SCENE###", antialias = ###ANTIALIAS###, adaptive = ###ADAPTIVE###, wasm = ###WASM###, offline=###OFFLINE###, folder = "###PATH###/", title = "###TITLE###";</script>
+    <!-- ********************************************************************* -->
+
+    <script type="text/javascript">
+        var loaded = false, scene = null;
+        var divcvs = document.getElementById("cvs");
+        var loader = document.getElementById("load");
+        if (loader && loader.parentElement) loader.parentElement.removeChild(loader);
+        // ..
+        // Create Babylon Engine
+        // ..
+        var engine = new BABYLON.Engine(divcvs, antialias, null, adaptive);
+        engine.enableOfflineSupport = offline;
+        engine.clear(new BABYLON.Color3(0, 0, 0), true, true);
+        engine.displayLoadingUI();
+        engine.loadingUIText = "Loading Content Assets";
+        // ..
+        // Scene Loading Functions
+        // ..
+        var updateStatus = (status) => {
+            engine.loadingUIText = status;
+        };
+        var showSceneLoader = () => {
+            divcvs.style.opacity = "0";
+            engine.clear(new BABYLON.Color3(0, 0, 0), true, true);
+            engine.displayLoadingUI();
+            updateStatus("Loading Content Assets");
+        };
+        var removeSceneLoader = () => {
+            engine.hideLoadingUI();
+            divcvs.style.opacity = "1";
+            updateStatus("");
+        };
+        var progressSceneLoader = () => {
+            if (loaded === false && TimerPlugin && TimerPlugin.requestAnimFrame) {
+                if (scene != null) {
+                    var waiting = 0 + scene.getWaitingItemsCount();
+                    var content = (waiting > 1) ? " Content Assets" : " Content Asset";
+                    updateStatus((waiting > 0) ? "Streaming " + waiting.toString() + content : ("Starting " + title));
+                }
+                TimerPlugin.requestAnimFrame(progressSceneLoader);
+            }
+        };
+        var executeSceneLoader = (root, name) => {
+            progressSceneLoader();
+            BABYLON.SceneLoader.Load(root, name, engine, (newscene) => {
+                scene = newscene;
+                // ************************************************************************** //
+                // REQUIRED SECTION 2 - Validate Scene Manager Session Created                //
+                // ************************************************************************** //
+                // IMPORTANT NOTE: Any scene file type NOT parsed by the toolkit scene loader //
+                // plugin will NOT have a valid scene manager session. You SHOULD validate    //
+                // the current scene has a manager. Create a default scene manager if needed. //
+                // ************************************************************************** //
+                if (!scene.manager) {
+                    if (BABYLON.SceneManager && BABYLON.SceneManager.CreateManagerSession) {
+                        BABYLON.SceneManager.CreateManagerSession(root, scene);
+                        BABYLON.Tools.Warn("Babylon.js created default scene manager session");
+                    }
+                }
+                // ************************************************************************** //
+                scene.executeWhenReady(() => {
+                    loaded = true;
+                    // ********************************************************************* //
+                    // REQUIRED SECTION 3 - Start Scene Manager Render Loop                  //
+                    // ********************************************************************* //
+                    if (scene.manager && scene.manager.start) {
+                        scene.manager.start();
+                    } else {
+                        engine.runRenderLoop(function () { scene.render(); });
+                        BABYLON.Tools.Warn("Babylon.js running default scene render loop");
+                    }
+                    // ********************************************************************* //
+                    removeSceneLoader();
+                });
+            });
+        };
+        // ..
+        // Default babylon scene loader
+        // ..
+        var defaultSceneLoader = (root, name) => {
+            scene = null;
+            loaded = false;
+            showSceneLoader();
+            executeSceneLoader(root, name);            
+        };
+        if (engine) window.addEventListener("resize", () => { engine.resize(); });
+    </script>
+
+    <!-- ********************************************************************* -->
+    <!-- REQUIRED SECTION 4 - Register Scene Manager Default Loader            -->
+    <!-- ********************************************************************* -->
+    <script type="text/javascript">
+        if (BABYLON.SceneManager && BABYLON.SceneManager.RegisterLoader) {
+            BABYLON.SceneManager.RegisterLoader(defaultSceneLoader);
+        }
+        window.addEventListener("DOMContentLoaded", () => { defaultSceneLoader(folder, defaultmap); });
+    </script>
+    <!-- ********************************************************************* -->
+</body>
+</html>

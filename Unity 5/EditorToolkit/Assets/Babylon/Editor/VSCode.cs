@@ -375,20 +375,20 @@ namespace dotBunny.Unity
 
             foreach (var filePath in solutionFiles)
             {
-                string content = File.ReadAllText(filePath);
+                string content = FileTools.ReadAllText(filePath);
                 content = ScrubSolutionContent(content);
 
-                File.WriteAllText(filePath, content);
+                FileTools.WriteAllText(filePath, content);
 
                 ScrubFile(filePath);
             }
 
             foreach (var filePath in projectFiles)
             {
-                string content = File.ReadAllText(filePath);
+                string content = FileTools.ReadAllText(filePath);
                 content = ScrubProjectContent(content);
 
-                File.WriteAllText(filePath, content);
+                FileTools.WriteAllText(filePath, content);
 
                 ScrubFile(filePath);
             }
@@ -544,7 +544,7 @@ namespace dotBunny.Unity
                         fileInfo.IsReadOnly = false;
 
                         // Write update file
-                        File.WriteAllText(path, fileContent);
+                        FileTools.WriteAllText(path, fileContent);
 
                         // Force update on text file
                         AssetDatabase.ImportAsset(AssetDatabase.GUIDToAssetPath(GUIDs[0]), ImportAssetOptions.ForceUpdate);
@@ -763,7 +763,7 @@ namespace dotBunny.Unity
             // Do we have a file to install?
             if ( fileContent != null ) {
                 string fileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".vsix";
-                File.WriteAllBytes(fileName, fileContent);
+                FileTools.WriteAllBytes(fileName, fileContent);
                 
                 CallVSCode(fileName);
             }
@@ -990,7 +990,7 @@ namespace dotBunny.Unity
         /// Remove extra/erroneous lines from a file.
         static void ScrubFile(string path)
         {
-            string[] lines = File.ReadAllLines(path);
+            string[] lines = FileTools.ReadAllLines(path);
             System.Collections.Generic.List<string> newLines = new System.Collections.Generic.List<string>();
             for (int i = 0; i < lines.Length; i++)
             {
@@ -1004,7 +1004,7 @@ namespace dotBunny.Unity
                     newLines.Add(lines[i]);
                 }
             }
-            File.WriteAllLines(path, newLines.ToArray());
+            FileTools.WriteAllLines(path, newLines.ToArray());
         }
 
         /// <summary>
@@ -1121,7 +1121,7 @@ namespace dotBunny.Unity
 
                 // Write out proper formatted JSON (hence no more SimpleJSON here)
                 string fileContent = "{\n\t\"version\": \"0.2.0\",\n\t\"configurations\": [\n\t\t{\n\t\t\t\"name\": \"Unity Editor\",\n\t\t\t\"type\": \"unity\",\n\t\t\t\"request\": \"launch\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"Windows Player\",\n\t\t\t\"type\": \"unity\",\n\t\t\t\"request\": \"launch\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"OSX Player\",\n\t\t\t\"type\": \"unity\",\n\t\t\t\"request\": \"launch\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"Linux Player\",\n\t\t\t\"type\": \"unity\",\n\t\t\t\"request\": \"launch\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"iOS Player\",\n\t\t\t\"type\": \"unity\",\n\t\t\t\"request\": \"launch\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"Android Player\",\n\t\t\t\"type\": \"unity\",\n\t\t\t\"request\": \"launch\"\n\n\t\t}\n\t]\n}";
-                File.WriteAllText(VSCode.LaunchPath, fileContent);
+                FileTools.WriteAllText(VSCode.LaunchPath, fileContent);
             }
             else if (VSCode.WriteLaunchFile)
             {
@@ -1133,7 +1133,7 @@ namespace dotBunny.Unity
 
                     // Write out proper formatted JSON (hence no more SimpleJSON here)
                     string fileContent = "{\n\t\"version\":\"0.2.0\",\n\t\"configurations\":[ \n\t\t{\n\t\t\t\"name\":\"Unity\",\n\t\t\t\"type\":\"mono\",\n\t\t\t\"request\":\"attach\",\n\t\t\t\"address\":\"localhost\",\n\t\t\t\"port\":" + port + "\n\t\t}\n\t]\n}";
-                    File.WriteAllText(VSCode.LaunchPath, fileContent);
+                    FileTools.WriteAllText(VSCode.LaunchPath, fileContent);
 
                     if (VSCode.Debug)
                     {
@@ -1357,7 +1357,7 @@ namespace dotBunny.Unity
                 "}";
 
             // Dont like the replace but it fixes the issue with the JSON
-            File.WriteAllText(VSCode.SettingsPath, exclusions);
+            FileTools.WriteAllText(VSCode.SettingsPath, exclusions);
         }
 
         #endregion

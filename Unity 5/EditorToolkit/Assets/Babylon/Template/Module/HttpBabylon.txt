@@ -18,10 +18,13 @@ Note: You must enable manage pipeline for all request
   <system.webServer>
     <modules runAllManagedModulesForAllRequests="true" />
     <staticContent>		
-      <mimeMap fileExtension=".fx" mimeType="application/fx" />		
-      <mimeMap fileExtension=".hdr" mimeType="application/hdr" />		
-      <mimeMap fileExtension=".dds" mimeType="application/dds" />
+      <mimeMap fileExtension=".fx" mimeType="application/fx" />
+      <mimeMap fileExtension=".gz" mimeType="application/gzip" />
+      <mimeMap fileExtension=".dds" mimeType="image/vnd-ms.dds" />
+      <mimeMap fileExtension=".hdr" mimeType="application/hdr" />
       <mimeMap fileExtension=".tga" mimeType="application/tga" />
+      <mimeMap fileExtension=".data" mimeType="application/data" />
+      <mimeMap fileExtension=".wasm" mimeType="application/wasm" />
       <mimeMap fileExtension=".babylon" mimeType="application/babylon" />	
       <mimeMap fileExtension=".babylonbinarymeshdata" mimeType="application/babylonbinarymeshdata" />
       <mimeMap fileExtension=".babylonbinarygeometrydata" mimeType="application/babylonbinarygeometrydata" />

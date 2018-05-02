@@ -66,7 +66,7 @@ namespace BabylonExport.Entities
         public bool isStereoscopicSideBySide;
 
         [DataMember]
-        public object metadata { get; set; }
+        public UnityEditor.UnityMetaData metadata { get; set; }
 
         [DataMember]
         public string tags { get; set; }

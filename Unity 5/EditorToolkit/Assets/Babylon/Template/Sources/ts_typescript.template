@@ -1,5 +1,5 @@
 /* Babylon Typescript Class Template */
-/* <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
+/* /// <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
 
 module PROJECT {
     export class NewScriptClass {
