@@ -63,11 +63,10 @@ namespace Maya2Babylon
                 // Skin
                 if (gltfMesh.idBabylonSkeleton.HasValue)
                 {
-                    // TODO - Skin
-                    //var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
-                    //// Export a new skeleton if necessary and a new skin
-                    //var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
-                    //gltfNode.skin = gltfSkin.index;
+                    var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
+                    // Export a new skeleton if necessary and a new skin
+                    var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
+                    gltfNode.skin = gltfSkin.index;
                 }
             }
             
