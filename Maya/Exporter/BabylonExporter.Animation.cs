@@ -57,6 +57,7 @@ namespace Maya2Babylon
         {
             int start = GetMinTime()[0];
             int end = GetMaxTime()[0];
+            MDoubleArray framePerSecond = new MDoubleArray();
 
             // Animations
             List<BabylonAnimation> animations = new List<BabylonAnimation>();
@@ -113,6 +114,9 @@ namespace Maya2Babylon
                 }
             }
 
+            //Get the fps for this animation
+            MGlobal.executeCommand("currentTimeUnitToFPS", framePerSecond);
+
             // create animation for each property
             for (int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
             {
@@ -144,7 +148,7 @@ namespace Maya2Babylon
                         {
                             dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
-                            framePerSecond = 30, // TODO - Get from Maya
+                            framePerSecond = (int)framePerSecond[0], // TODO - Get from Maya
                             loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = keys.ToArray()
