@@ -1,7 +1,6 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using Autodesk.Maya.OpenMayaAnim;
 using BabylonExport.Entities;
-using MayaBabylon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,18 +67,12 @@ namespace Maya2Babylon
             babylonScene.SkeletonsList.Add(babylonSkeleton);
 
             RaiseMessage($"{indexByNodeName.Count} bone(s) exported", 1);
-
-            // clear the dictionary
-            //indexByNodeName.Clear();
         }
 
 
         // Init the dictionary
         private void initIndexByNodeNameDictionary(MFnSkinCluster skin)
         {
-            // clear the dictionary
-            indexByNodeName.Clear();
-            
             // get the root node
             MObject rootNode = getRootNode(skin);
             // Travel the DAG

@@ -682,8 +682,7 @@ namespace Maya2Babylon
             if (mFnSkinCluster != null)
             {
                 // Filter null weights
-                List<int> influenceIndices = new List<int>();   // contains the influence indices (with weight > 0)
-                List<double> influenceWeights = new List<double>(); // contains the coresponding influence weight
+                Dictionary<int, double> weightByInfluenceIndex = new Dictionary<int, double>(); // contains the influence indices with weight > 0
 
                 // Export Weights and BonesIndices for the vertex
                 // Get the weight values of all the influences for this vertex
@@ -699,25 +698,33 @@ namespace Maya2Babylon
                     if (weight > 0)
                     {
                         // add indice and weight in the local lists
-                        influenceIndices.Add( indexByNodeName[ allMayaInfluenceNames[influenceIndex] ] );
-                        influenceWeights.Add(weight);
+                        weightByInfluenceIndex.Add(indexByNodeName[allMayaInfluenceNames[influenceIndex]], weight);
                     }
                 }
 
                 // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
-                while (influenceIndices.Count() > 8)
+                if (weightByInfluenceIndex.Count > 8)
                 {
-                    // get the min weight
-                    double minWeight = influenceWeights.Min();
-                    int indexToRemove = influenceWeights.IndexOf(minWeight);
+                    do
+                    {
+                        // get the min weight
+                        int indexToRemove = weightByInfluenceIndex.Min().Key;
 
-                    // delete the min
-                    influenceIndices.RemoveAt(indexToRemove);
-                    influenceWeights.RemoveAt(indexToRemove);
+                        // delete the min
+                        weightByInfluenceIndex.Remove(indexToRemove);
+                    }
+                    while (weightByInfluenceIndex.Count > 8);
+
+                    // normalize weights => Sum weights == 1
+                    double totalWeight = weightByInfluenceIndex.Values.Sum();
+                    if (totalWeight != 1)
+                    {
+                        foreach (int influenceIndex in weightByInfluenceIndex.Keys)
+                        {
+                            weightByInfluenceIndex[influenceIndex] /= totalWeight;
+                        }
+                    }
                 }
-
-                // TODO normalize weights => Sum weights == 1
-
 
                 int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
@@ -728,7 +735,7 @@ namespace Maya2Babylon
                 int bone1 = bonesCount;
                 int bone2 = bonesCount;
                 int bone3 = bonesCount;
-                int nbBones = influenceIndices.Count; // number of bones/influences for this vertex
+                int nbBones = weightByInfluenceIndex.Count; // number of bones/influences for this vertex
 
                 if (nbBones == 0)
                 {
@@ -738,23 +745,23 @@ namespace Maya2Babylon
 
                 if (nbBones > 0)
                 {
-                    bone0 = influenceIndices.ElementAt(0);
-                    weight0 = (float)influenceWeights.ElementAt(0);
+                    bone0 = weightByInfluenceIndex.ElementAt(0).Key;
+                    weight0 = (float)weightByInfluenceIndex.ElementAt(0).Value;
 
                     if (nbBones > 1)
                     {
-                        bone1 = influenceIndices.ElementAt(1);
-                        weight1 = (float)influenceWeights.ElementAt(1);
+                        bone1 = weightByInfluenceIndex.ElementAt(1).Key;
+                        weight1 = (float)weightByInfluenceIndex.ElementAt(1).Value;
 
                         if (nbBones > 2)
                         {
-                            bone2 = influenceIndices.ElementAt(2);
-                            weight2 = (float)influenceWeights.ElementAt(2);
+                            bone2 = weightByInfluenceIndex.ElementAt(2).Key;
+                            weight2 = (float)weightByInfluenceIndex.ElementAt(2).Value;
 
                             if (nbBones > 3)
                             {
-                                bone3 = influenceIndices.ElementAt(3);
-                                weight3 = (float)influenceWeights.ElementAt(3);
+                                bone3 = weightByInfluenceIndex.ElementAt(3).Key;
+                                weight3 = (float)weightByInfluenceIndex.ElementAt(3).Value;
                             }
                         }
                     }
@@ -766,8 +773,8 @@ namespace Maya2Babylon
 
                 if (nbBones > 4)
                 {
-                    bone0 = influenceIndices.ElementAt(4);
-                    weight0 = (float)influenceWeights.ElementAt(4);
+                    bone0 = weightByInfluenceIndex.ElementAt(4).Key;
+                    weight0 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                     weight1 = 0;
                     weight2 = 0;
@@ -775,18 +782,18 @@ namespace Maya2Babylon
 
                     if (nbBones > 5)
                     {
-                        bone1 = influenceIndices.ElementAt(5);
-                        weight1 = (float)influenceWeights.ElementAt(4);
+                        bone1 = weightByInfluenceIndex.ElementAt(5).Key;
+                        weight1 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                         if (nbBones > 6)
                         {
-                            bone2 = influenceIndices.ElementAt(6);
-                            weight2 = (float)influenceWeights.ElementAt(4);
+                            bone2 = weightByInfluenceIndex.ElementAt(6).Key;
+                            weight2 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                             if (nbBones > 7)
                             {
-                                bone3 = influenceIndices.ElementAt(7);
-                                weight3 = (float)influenceWeights.ElementAt(7);
+                                bone3 = weightByInfluenceIndex.ElementAt(7).Key;
+                                weight3 = (float)weightByInfluenceIndex.ElementAt(7).Value;
                             }
                         }
                     }
@@ -856,14 +863,41 @@ namespace Maya2Babylon
                 foreach (MPlug connection in connections)
                 {
                     MObject source = connection.source.node;
-                    if (source != null && source.hasFn(MFn.Type.kSkinClusterFilter))
+                    if (source != null)
                     {
-                        mFnSkinCluster = new MFnSkinCluster(source);
+                        if (source.hasFn(MFn.Type.kSkinClusterFilter))
+                        {
+                            mFnSkinCluster = new MFnSkinCluster(source);
+                        }
+
+                        if ((mFnSkinCluster == null) && (source.hasFn(MFn.Type.kSet) || source.hasFn(MFn.Type.kPolyNormalPerVertex)))
+                        {
+                            mFnSkinCluster = getMFnSkinCluster(source);
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
+            }
+
+            return mFnSkinCluster;
+        }
+
+        private MFnSkinCluster getMFnSkinCluster(MObject mObject)
+        {
+            MFnSkinCluster mFnSkinCluster = null;
+
+            MFnDependencyNode mFnDependencyNode = new MFnDependencyNode(mObject);
+            MPlugArray connections = new MPlugArray();
+            mFnDependencyNode.getConnections(connections);
+            for (int index = 0; index < connections.Count && mFnSkinCluster == null; index++)
+            {
+                MObject source = connections[index].source.node;
+                if (source != null && source.hasFn(MFn.Type.kSkinClusterFilter))
+                {
+                    mFnSkinCluster = new MFnSkinCluster(source);
+                }
             }
 
             return mFnSkinCluster;
