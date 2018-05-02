@@ -10,7 +10,7 @@ Place the 'BabylonJS' folder containing the .unitypackage in your Unity Asset St
 
 - Example: ---> Asset Store-5.x
              ---> BabylonJS
-                 ---> BabylonJS Editor Toolkit.unitypackage
+                 ---> Babylon Editor Toolkit.unitypackage
 
 
 ==========================================

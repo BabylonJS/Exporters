@@ -84,10 +84,22 @@ namespace BabylonExport.Entities
         public BabylonActions actions { get; set; }
 
         [DataMember]
-        public object metadata { get; set; }
+        public UnityEditor.SceneMetaData metadata { get; set; }
 
         [DataMember]
         public bool workerCollisions { get; set; }
+
+        [DataMember]
+        public string environmentTexture { get; set; }
+
+        [DataMember]
+        public string environmentTextureType { get; set; }
+
+        [DataMember]
+        public int? environmentTextureSize { get; set; }
+        
+        [DataMember]
+        public float? environmentTextureRotationY { get; set; }
 
         public BabylonVector3 MaxVector { get; set; }
         public BabylonVector3 MinVector { get; set; }
@@ -118,11 +130,16 @@ namespace BabylonExport.Entities
             SkeletonsList = new List<BabylonSkeleton>();
             SoundsList = new List<BabylonSound>();
 
+            environmentTexture = null;
+            environmentTextureType = null;
+            environmentTextureSize = null;
+            environmentTextureRotationY = null;
+
             // Default values
             autoClear = true;
-            clearColor = new[] { 0.2f, 0.2f, 0.3f };
+            clearColor = new[] { 0.2f, 0.2f, 0.2f };
             ambientColor = new[] { 0f, 0f, 0f };
-            gravity = new[] { 0f, 0f, -0.9f };
+            gravity = new[] { 0f, -9.81f, -0.0f };
 
             MaxVector = new BabylonVector3 { X = float.MinValue, Y = float.MinValue, Z = float.MinValue };
             MinVector = new BabylonVector3 { X = float.MaxValue, Y = float.MaxValue, Z = float.MaxValue };

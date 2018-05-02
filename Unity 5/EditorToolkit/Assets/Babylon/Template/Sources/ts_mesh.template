@@ -1,5 +1,5 @@
 /* Babylon Mesh Component Template */
-/* <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
+/* /// <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
 
 module PROJECT {
     export class NewMeshComponent extends BABYLON.MeshComponent {

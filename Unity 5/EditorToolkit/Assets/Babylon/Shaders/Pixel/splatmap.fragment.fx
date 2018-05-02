@@ -42,6 +42,66 @@ varying vec4 vColor;
 #include<lightsFragmentFunctions>
 #include<shadowsFragmentFunctions>
 
+// Splatmaps
+#ifdef splatmapDef
+uniform sampler2D splatmap;
+varying vec2 splatmapUV;
+uniform vec2 splatmapInfos;
+uniform float splatmapRects;
+uniform vec4 splatmapRect1;
+uniform vec4 splatmapRect2;
+#endif
+#ifdef atlasTexture1Def
+uniform sampler2D atlasTexture1;
+varying vec2 atlasTexture1UV;
+uniform vec2 atlasTexture1Infos;
+#endif
+#ifdef atlasTexture2Def
+uniform sampler2D atlasTexture2;
+varying vec2 atlasTexture2UV;
+uniform vec2 atlasTexture2Infos;
+#endif
+#ifdef atlasTexture3Def
+uniform sampler2D atlasTexture3;
+varying vec2 atlasTexture3UV;
+uniform vec2 atlasTexture3Infos;
+#endif
+#ifdef atlasTexture4Def
+uniform sampler2D atlasTexture4;
+varying vec2 atlasTexture4UV;
+uniform vec2 atlasTexture4Infos;
+#endif
+#ifdef atlasTexture5Def
+uniform sampler2D atlasTexture5;
+varying vec2 atlasTexture5UV;
+uniform vec2 atlasTexture5Infos;
+#endif
+#ifdef bumpTexture1Def
+uniform sampler2D bumpTexture1;
+varying vec2 bumpTexture1UV;
+uniform vec2 bumpTexture1Infos;
+#endif
+#ifdef bumpTexture2Def
+uniform sampler2D bumpTexture2;
+varying vec2 bumpTexture2UV;
+uniform vec2 bumpTexture2Infos;
+#endif
+#ifdef bumpTexture3Def
+uniform sampler2D bumpTexture3;
+varying vec2 bumpTexture3UV;
+uniform vec2 bumpTexture3Infos;
+#endif
+#ifdef bumpTexture4Def
+uniform sampler2D bumpTexture4;
+varying vec2 bumpTexture4UV;
+uniform vec2 bumpTexture4Infos;
+#endif
+#ifdef bumpTexture5Def
+uniform sampler2D bumpTexture5;
+varying vec2 bumpTexture5UV;
+uniform vec2 bumpTexture5Infos;
+#endif
+
 // Samplers
 #ifdef DIFFUSE
 	#if DIFFUSEDIRECTUV == 1
@@ -152,33 +212,105 @@ varying vec3 vDirectionW;
 #include<logDepthDeclaration>
 #include<fogFragmentDeclaration>
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Texture Atlas Support
+//////////////////////////////////////////////////////////////////////////////////////
+vec4 textureFract2D(sampler2D atlas, vec4 rect, vec2 size, vec2 scale, vec2 uv, vec2 offset) {
+	vec2 fractUV = fract(uv * scale);
+	vec2 atlasUV = vec2((fractUV.x * rect.w) + rect.x, (fractUV.y * rect.z) + rect.y);
+	vec2 tiledUV = atlasUV + offset;
+	return texture2D(atlas, tiledUV);
+}
+vec4 textureAtlas2D(sampler2D atlas, vec4 rect, vec2 uv, vec2 offset) {
+	vec2 atlasUV = vec2((uv.x * rect.w) + rect.x, (uv.y * rect.z) + rect.y);
+	vec2 tiledUV = atlasUV + offset;
+	return texture2D(atlas, tiledUV);
+}
+//////////////////////////////////////////////////////////////////////////////////////
+
 void main(void) {
 #include<clipPlaneFragment>
-
 	vec3 viewDirectionW = normalize(vEyePosition - vPositionW);
 
 	// Base color
-	vec4 baseColor = vec4(1., 1., 1., 1.);
+	vec4 baseColor = vec4(1.0, 1.0, 1.0, 1.0);
 	vec3 diffuseColor = vDiffuseColor.rgb;
 
 	// Alpha
 	float alpha = vDiffuseColor.a;
 
 	// Bump
-#ifdef NORMAL
-	vec3 normalW = normalize(vNormalW);
+	#ifdef NORMAL
+		vec3 normalW = normalize(vNormalW);
+	#else
+		vec3 normalW = normalize(-cross(dFdx(vPositionW), dFdy(vPositionW)));
+	#endif
+
+#ifdef splatmapDef
+	vec2 uvOffset = vec2(0.0, 0.0);
+	#if defined(BUMP) || defined(PARALLAX)
+		#ifdef NORMALXYSCALE
+			float normalScale = 1.0;
+		#else		
+			float normalScale = vBumpInfos.y;
+		#endif
+
+		#if defined(TANGENT) && defined(NORMAL)
+			mat3 TBN = vTBN;
+		#else
+			mat3 TBN = cotangent_frame(normalW * normalScale, vPositionW, vBumpUV);
+		#endif
+	#endif
+
+	#ifdef PARALLAX
+		mat3 invTBN = transposeMat3(TBN);
+
+		#ifdef PARALLAXOCCLUSION
+			uvOffset = parallaxOcclusion(invTBN * -viewDirectionW, invTBN * normalW, vBumpUV, vBumpInfos.z);
+		#else
+			uvOffset = parallaxOffset(invTBN * viewDirectionW, vBumpInfos.z);
+		#endif
+	#endif
 #else
-	vec3 normalW = normalize(-cross(dFdx(vPositionW), dFdy(vPositionW)));
-#endif
-
-#include<bumpFragment>
-
-#ifdef TWOSIDEDLIGHTING
-	normalW = gl_FrontFacing ? normalW : -normalW;
+	#include<bumpFragment>
+	#ifdef TWOSIDEDLIGHTING
+		normalW = gl_FrontFacing ? normalW : -normalW;
+	#endif
 #endif
 
 #ifdef DIFFUSE
-	baseColor = texture2D(diffuseSampler, vDiffuseUV + uvOffset);
+	// Splatmaps
+	#if defined(SPLATMAPS_ENABLED) && defined(splatmapDef)
+		vec4 baseColor1 = vec4(0.0, 0.0, 0.0, 0.0);
+		vec4 baseColor2 = vec4(0.0, 0.0, 0.0, 0.0);
+		// Base splat colors
+		if (splatmapRects > 0.0) {
+			baseColor1 = textureAtlas2D(splatmap, splatmapRect1, splatmapUV, uvOffset);
+		}
+		if (splatmapRects > 1.0) {
+			baseColor2 = textureAtlas2D(splatmap, splatmapRect2, splatmapUV, uvOffset);
+		}
+		// Primary splat colors
+		baseColor = texture2D(diffuseSampler, vDiffuseUV + uvOffset) * baseColor1.r;
+		#ifdef atlasTexture1Def
+			baseColor += texture2D(atlasTexture1, atlasTexture1UV + uvOffset) * baseColor1.g;
+		#endif
+		#ifdef atlasTexture2Def
+			baseColor += texture2D(atlasTexture2, atlasTexture2UV + uvOffset) * baseColor1.b;
+		#endif
+		// Second splat colors
+		#ifdef atlasTexture3Def
+			baseColor += texture2D(atlasTexture3, atlasTexture3UV + uvOffset) * baseColor2.r;
+		#endif
+		#ifdef atlasTexture4Def
+			baseColor += texture2D(atlasTexture4, atlasTexture4UV + uvOffset) * baseColor2.g;
+		#endif
+		#ifdef atlasTexture5Def
+			baseColor += texture2D(atlasTexture5, atlasTexture5UV + uvOffset) * baseColor2.b;
+		#endif
+	#else
+		baseColor = texture2D(diffuseSampler, vDiffuseUV + uvOffset);
+	#endif
 
 	#ifdef ALPHATEST
 		if (baseColor.a < 0.4)
@@ -190,6 +322,17 @@ void main(void) {
 	#endif
 
 	baseColor.rgb *= vDiffuseInfos.y;
+
+#ifdef splatmapDef
+	#ifdef BUMP
+		//normalW = perturbNormal(TBN, vBumpUV + uvOffset);
+	#endif
+
+	#ifdef TWOSIDEDLIGHTING
+		normalW = gl_FrontFacing ? normalW : -normalW;
+	#endif
+#endif
+	
 #endif
 
 #include<depthPrePass>
