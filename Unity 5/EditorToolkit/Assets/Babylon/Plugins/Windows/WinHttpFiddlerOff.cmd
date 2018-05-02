@@ -1,1 +1,0 @@
-netsh winhttp reset proxy
