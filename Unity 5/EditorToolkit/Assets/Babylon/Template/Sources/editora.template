@@ -3,12 +3,13 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Unity3D2Babylon;
 
 namespace MyProject
 {
 	public class NewScriptComponent : EditorScriptComponent
 	{
-        [Header("[Script Properties]")]
+        [Header("-Script Properties-")]
 
         [BabylonProperty]
         public string hello = "Hello World";

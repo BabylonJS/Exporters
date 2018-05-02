@@ -83,7 +83,7 @@ namespace BabylonExport.Entities
         public float? metallic { get; set; }
 
         [DataMember]
-        public bool useMicroSurfaceFromReflectivityMapAplha { get; set; }
+        public bool useAmbientOcclusionFromMetallicTextureRed { get; set; }
 
         [DataMember]
         public bool linkRefractionWithTransparency { get; set; }
@@ -95,6 +95,9 @@ namespace BabylonExport.Entities
         public bool useRoughnessFromMetallicTextureGreen { get; set; }
 
         [DataMember]
+        public bool useMetallnessFromMetallicTextureBlue { get; set; }
+
+        [DataMember]
         public bool useAlphaFromAlbedoTexture { get; set; }
 
         [DataMember]
@@ -102,6 +105,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public bool useMicroSurfaceFromReflectivityMapAlpha { get; set; }
+
+        [DataMember]
+        public bool useAutoMicroSurfaceFromReflectivityMap { get; set; }
 
         [DataMember]
         public bool useSpecularOverAlpha { get; set; }
@@ -133,15 +139,24 @@ namespace BabylonExport.Entities
         [DataMember]
         public int maxSimultaneousLights { get; set; }
 
+        [DataMember]
+        public int sideOrientation { get; set; }
+
+        [DataMember]
+        public float alphaCutoff { get; set; }
+
+        [DataMember]
+        public int? transparencyMode { get; set; }
+
         public BabylonPBRMaterial() : base()
         {
             SetCustomType("BABYLON.PBRMaterial");
-            directIntensity = 1.0f;
-            emissiveIntensity = 1.0f;
-            environmentIntensity = 1.0f;
-            specularIntensity = 1.0f;
             cameraExposure = 1.0f;
             cameraContrast = 1.0f;
+            directIntensity = 1.0f;
+            emissiveIntensity = 0.5f;
+            specularIntensity = 0.5f;
+            environmentIntensity = 1.0f;
             indexOfRefraction = 0.66f;
             twoSidedLighting = false;
             maxSimultaneousLights = 4;
@@ -149,20 +164,26 @@ namespace BabylonExport.Entities
             useSpecularOverAlpha = true;
             usePhysicalLightFalloff = true;
             useEmissiveAsIllumination = false;
+            transparencyMode = null;
+            alphaCutoff = 0.4f;
 
             // Default Null Metallic Workflow
             metallic = null;
             roughness = null;
-            useRoughnessFromMetallicTextureAlpha = true;
-            useRoughnessFromMetallicTextureGreen = false;
+            useRoughnessFromMetallicTextureAlpha = false;
+            useRoughnessFromMetallicTextureGreen = true;
+            useMetallnessFromMetallicTextureBlue = true;
+            useAmbientOcclusionFromMetallicTextureRed = false;
+            sideOrientation = 1;
 
             microSurface = 0.9f;
-            useMicroSurfaceFromReflectivityMapAplha = false;
+            useMicroSurfaceFromReflectivityMapAlpha = false;
+            useAutoMicroSurfaceFromReflectivityMap = false;
 
             ambient = new[] { 0f, 0f, 0f };
             albedo = new[] { 1f, 1f, 1f };
             reflectivity = new[] { 1f, 1f, 1f };
-            reflection = new[] { 0.5f, 0.5f, 0.5f };
+            reflection = new[] { 1f, 1f, 1f };
             emissive = new[] { 0f, 0f, 0f };
         }
 
