@@ -25,43 +25,53 @@ namespace Maya2Babylon
 
             RaiseMessage(babylonSkeleton.name, 1);
 
+            // TODO OPTIMIZATION stock the dictionary with the skinCluster
+            InitIndexByNodeNameDictionary(skin);
+
             // get the root node
-            MObject rootNode = getRootNode(skin);
+            MObject rootNode = GetRootNode(skin);
             
             // Travel the DAG
             MItDag dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(rootNode);
             for (; !dagIterator.isDone ; dagIterator.next())
             {
-                // current node
-                MDagPath mDagPath = new MDagPath();
-                dagIterator.getPath(mDagPath);
-                MObject currentNode = mDagPath.node;
-                MFnTransform currentNodeTransform = new MFnTransform(currentNode);
-                string currentName = currentNodeTransform.name;
-                //indexByNodeName.Add(currentName, index);
-
-                // parent node
-                int parentIndex = -1;
-                if (indexByNodeName[currentName] > 0)
+                try
                 {
-                    MFnDagNode mFnDagNode = new MFnDagNode(currentNode);
-                    MFnTransform firstParentTransform = new MFnTransform(mFnDagNode.parent(0));
-                    parentIndex = indexByNodeName[firstParentTransform.name];
+                    // current node
+                    MDagPath mDagPath = new MDagPath();
+                    dagIterator.getPath(mDagPath);
+                    MObject currentNode = mDagPath.node;
+                    MFnTransform currentNodeTransform = new MFnTransform(currentNode);
+                    string currentName = currentNodeTransform.name;
+                    //indexByNodeName.Add(currentName, index);
+
+                    // parent node
+                    int parentIndex = -1;
+                    if (indexByNodeName[currentName] > 0)
+                    {
+                        MFnDagNode mFnDagNode = new MFnDagNode(currentNode);
+                        MFnTransform firstParentTransform = new MFnTransform(mFnDagNode.parent(0));
+                        parentIndex = indexByNodeName[firstParentTransform.name];
+                    }
+
+                    // create the bone
+                    BabylonBone bone = new BabylonBone()
+                    {
+                        name = currentNodeTransform.name,
+                        index = indexByNodeName[currentName],
+                        parentBoneIndex = parentIndex,
+                        matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
+                        animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
+                    };
+                    bones.Add(bone);
+
+                    // The RaiseMessage is only here to prevent Maya from freezing...
+                    RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", (int)dagIterator.depth + 2);
                 }
-
-                // create the bone
-                BabylonBone bone = new BabylonBone()
+                catch
                 {
-                    name = currentNodeTransform.name,
-                    index = indexByNodeName[currentName],
-                    parentBoneIndex = parentIndex,
-                    matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
-                    animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
-                };
-                bones.Add(bone);
-
-                RaiseVerbose($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ",bone.matrix)}", (int)dagIterator.depth + 1);
+                }
             }
             babylonSkeleton.bones = bones.ToArray();
             babylonScene.SkeletonsList.Add(babylonSkeleton);
@@ -71,10 +81,14 @@ namespace Maya2Babylon
 
 
         // Init the dictionary
-        private void initIndexByNodeNameDictionary(MFnSkinCluster skin)
+        private void InitIndexByNodeNameDictionary(MFnSkinCluster skin)
         {
+            // TODO OPTIMIZATION stock the dictionary with the skinCluster
+            // TODO OPTIMIZATION check if a same dictionary already exists (compare root node for exemple)
+            indexByNodeName.Clear();
+
             // get the root node
-            MObject rootNode = getRootNode(skin);
+            MObject rootNode = GetRootNode(skin);
             // Travel the DAG
             MItDag dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(rootNode);
@@ -85,19 +99,39 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
                 MObject currentNode = mDagPath.node;
-                MFnTransform currentNodeTransform = new MFnTransform(currentNode);
-                string currentName = currentNodeTransform.name;
-                indexByNodeName.Add(currentName, index);
 
+                try
+                {
+                    MFnTransform currentNodeTransform = new MFnTransform(currentNode);
+                    string currentName = currentNodeTransform.name;
+
+                    try
+                    {
+                        indexByNodeName.Add(currentName, index);
+                    }
+                    catch (ArgumentException e) // Exception raised when adding nodes with same names
+                    {
+                        isSkinExportSuccess = false;
+                        RaiseError($"Two items have the same name: {currentName} - partial name: {mDagPath.partialPathName}.", 2);
+                        // TOTO OPTIMIZATION
+                        //RaiseError("Or the same skeletal is used by two different mesh...", 2);
+                    }
+                }
+                catch   // When it's not a kTransform or kJoint node. For exemple a kLocator.
+                {
+                    isSkinExportSuccess = false;
+                    //RaiseError(e.Message);
+                    RaiseError($"{currentNode.apiType} is not supported: {mDagPath.fullPathName}", 2);
+                }
+                
                 // increment iter and index
                 dagIterator.next();
                 index++;
             }
-
         }
 
 
-        private MObject getRootNode(MFnSkinCluster skin)
+        private MObject GetRootNode(MFnSkinCluster skin)
         {
             MObject rootJoint = null;
 
@@ -130,7 +164,7 @@ namespace Maya2Babylon
                     node = new MFnDependencyNode(firstParent);
                 }
             }
-            catch (Exception e)
+            catch
             {
             }
 

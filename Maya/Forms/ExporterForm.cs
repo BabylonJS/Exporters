@@ -1,13 +1,7 @@
-﻿using Maya2Babylon;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -140,7 +134,9 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked, chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text);
+                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked,
+                                chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked,
+                                chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -322,6 +318,11 @@ namespace Maya2Babylon.Forms
         }
 
         private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkExportSkin_CheckedChanged(object sender, EventArgs e)
         {
 
         }

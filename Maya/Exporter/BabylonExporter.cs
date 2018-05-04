@@ -36,7 +36,9 @@ namespace Maya2Babylon
 
         private string exporterVersion = "1.1.0";
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, bool exportTangents, string scaleFactor)
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
+                            bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
         {
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
@@ -46,7 +48,7 @@ namespace Maya2Babylon
                 scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                 scaleFactorFloat = float.Parse(scaleFactor);
             }
-            catch(Exception e)
+            catch
             {
                 RaiseError("Scale factor is not a valid number.");
                 return;
@@ -336,13 +338,16 @@ namespace Maya2Babylon
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
 
-            // Todo Export skeletons
-            if (skins.Count > 0)
+            // Export skeletons
+            if (exportSkin)
             {
-                RaiseMessage("Exporting skeletons");
-                foreach (var skin in skins)
+                if (skins.Count > 0)
                 {
-                    ExportSkin(skin, babylonScene);
+                    RaiseMessage("Exporting skeletons");
+                    foreach (var skin in skins)
+                    {
+                        ExportSkin(skin, babylonScene);
+                    }
                 }
             }
 
