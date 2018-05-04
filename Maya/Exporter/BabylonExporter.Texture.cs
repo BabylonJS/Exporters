@@ -248,8 +248,99 @@ namespace Maya2Babylon
             MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
             MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
 
-            return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
+            string sourcePathMetallic = getSourcePathFromFileTexture(metallicTextureDependencyNode);
+            string sourcePathRoughness = getSourcePathFromFileTexture(roughnessTextureDependencyNode);
+
+            if(sourcePathMetallic == sourcePathRoughness)
+            {
+                return ExportMRTextureAlreadyMerge(metallicTextureDependencyNode, babylonScene);
+            }
+            else
+            {
+                return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
+            }
+
+            
+
         }
+
+        private BabylonTexture ExportMRTextureAlreadyMerge(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, List<MFnDependencyNode> textureModifiers = null, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
+        {
+            if (textureDependencyNode == null)
+            {
+                return null;
+            }
+
+            Print(textureDependencyNode, logRankTexture, "Print ExportMRTexture textureDependencyNode");
+
+            // Retreive texture file path
+            string sourcePath = getSourcePathFromFileTexture(textureDependencyNode);
+            if (sourcePath == null)
+            {
+                RaiseError("Texture path is not a valid string.", logRankTexture + 1);
+                return null;
+            }
+            if (sourcePath == "")
+            {
+                RaiseError("Texture path is missing.", logRankTexture + 1);
+                return null;
+            }
+
+            // Check format
+            var validImageFormat = GetValidImageFormat(Path.GetExtension(sourcePath));
+            if (validImageFormat == null)
+            {
+                // Image format is not supported by the exporter
+                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
+                return null;
+            }
+            RaiseVerbose("validImageFormat=" + validImageFormat, logRankTexture + 1);
+
+            var babylonTexture = new BabylonTexture
+            {
+                name = Path.GetFileNameWithoutExtension(sourcePath) + "." + validImageFormat
+            };
+
+            // Level
+            babylonTexture.level = amount;
+
+            // Alpha
+            babylonTexture.hasAlpha = false;
+            babylonTexture.getAlphaFromRGB = false;
+
+            // UVs
+            _exportUV(textureDependencyNode, babylonTexture);
+
+            // TODO - Animations
+
+            // Copy texture to output
+            if (isBabylonExported)
+            {
+                var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
+
+                if (textureModifiers == null || textureModifiers.FindAll(textureModifier => textureModifier.objectProperty.hasFn(MFn.Type.kReverse)).Count % 2 == 0)
+                {
+                    CopyTexture(sourcePath, destPath);
+                }
+                else
+                {
+                    // TODO - Reverse texture
+                    CopyTexture(sourcePath, destPath);
+                }
+
+                // Is cube
+                _exportIsCube(Path.Combine(babylonScene.OutputPath, babylonTexture.name), babylonTexture, allowCube);
+            }
+            else
+            {
+                babylonTexture.originalPath = sourcePath;
+                babylonTexture.isCube = false;
+            }
+
+            return babylonTexture;
+        }
+
+
 
         private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName, float defaultMetallic = 1.0f, float defaultRoughness = 1.0f)
         {
@@ -300,6 +391,8 @@ namespace Maya2Babylon
 
 
             // --- Merge metallic and roughness maps ---
+
+            
 
             if (CopyTexturesToOutput)
             {
@@ -352,6 +445,8 @@ namespace Maya2Babylon
                     babylonTexture.bitmap = metallicRoughnessBitmap;
                 }
             }
+
+
 
             return babylonTexture;
         }
