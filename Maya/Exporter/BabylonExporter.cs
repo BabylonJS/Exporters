@@ -21,6 +21,7 @@ namespace Maya2Babylon
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
         private bool isBabylonExported;
+        private bool _exportSkin;
 
         public bool IsCancelled { get; set; }
 
@@ -65,6 +66,7 @@ namespace Maya2Babylon
             _exportTangents = exportTangents;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
+            _exportSkin = exportSkin;
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))

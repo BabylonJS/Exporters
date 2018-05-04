@@ -93,7 +93,7 @@ namespace Maya2Babylon
             MItDag dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
             dagIterator.reset(rootNode);
             int index = 0;
-            while( !dagIterator.isDone )
+            while( !dagIterator.isDone && isSkinExportSuccess )
             {
                 // current node
                 MDagPath mDagPath = new MDagPath();
