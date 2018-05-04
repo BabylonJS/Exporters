@@ -234,7 +234,6 @@ namespace Maya2Babylon
             }
         }
 
-
         // TODO clean up
         private BabylonMatrix _removeScale(BabylonMatrix boneWorldMatrix)
         {

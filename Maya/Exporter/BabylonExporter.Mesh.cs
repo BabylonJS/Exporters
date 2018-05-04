@@ -297,11 +297,14 @@ namespace Maya2Babylon
             }
 
             // skin
-            mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            if(_exportSkin)
+            {
+                mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            }
             int maxNbBones = 0;
-            isSkinExportSuccess = true;
             if (mFnSkinCluster != null)
             {
+                isSkinExportSuccess = true;
                 RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
 
                 // Create the bones dictionary<name, index>
