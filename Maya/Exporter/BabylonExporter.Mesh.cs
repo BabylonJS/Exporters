@@ -1,4 +1,5 @@
 ﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMayaAnim;
 using BabylonExport.Entities;
 using MayaBabylon;
 using System;
@@ -9,6 +10,11 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
+        private MFnSkinCluster mFnSkinCluster;
+        private MFnTransform mFnTransform;
+        private MStringArray allMayaInfluenceNames;
+        private bool isSkinExportSuccess;
+
         /// <summary>
         /// 
         /// </summary>
@@ -18,7 +24,7 @@ namespace Maya2Babylon
         private BabylonNode ExportDummy(MDagPath mDagPath, BabylonScene babylonScene)
         {
             RaiseMessage(mDagPath.partialPathName, 1);
-
+            
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
 
             Print(mFnTransform, 2, "Print ExportDummy mFnTransform");
@@ -48,9 +54,10 @@ namespace Maya2Babylon
             RaiseMessage(mDagPath.partialPathName, 1);
 
             // Transform above mesh
-            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+            mFnTransform = new MFnTransform(mDagPath);
 
             // Mesh direct child of the transform
+            // TODO get the original one rather than the modified?
             MFnMesh mFnMesh = null;
             for (uint i = 0; i < mFnTransform.childCount; i++)
             {
@@ -200,7 +207,6 @@ namespace Maya2Babylon
 
             #endregion
 
-
             if (IsMeshExportable(mFnMesh, mDagPath) == false)
             {
                 return null;
@@ -295,6 +301,62 @@ namespace Maya2Babylon
                 isUVExportSuccess[indexUVSet] = true;
             }
 
+            // skin
+            if(_exportSkin)
+            {
+                mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            }
+            int maxNbBones = 0;
+            if (mFnSkinCluster != null)
+            {
+                isSkinExportSuccess = true;
+                RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
+
+                // Create the bones dictionary<name, index>
+                InitIndexByNodeNameDictionary(mFnSkinCluster);
+
+                // Get the joint names that influence this vertex
+                allMayaInfluenceNames = new MStringArray();
+                MGlobal.executeCommand($"skinCluster -q -influence {mFnTransform.name}",
+                                        allMayaInfluenceNames);
+
+                // get the max number of joints acting on a vertex
+                int numVertices = mFnMesh.numVertices;
+                int maxNumInfluences = 0;
+
+                // Get max influence on a vertex
+                for (int index = 0; index < numVertices; index++)
+                {
+                    MDoubleArray influenceWeights = new MDoubleArray();
+                    String command = $"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{index}]";
+                    // Get the weight values of all the influences for this vertex
+                    MGlobal.executeCommand(command, influenceWeights);
+                    
+                    int numInfluences = influenceWeights.Count(weight => weight != 0);
+                   
+                    maxNumInfluences = Math.Max(maxNumInfluences,numInfluences);
+                }
+                RaiseMessage($"Max influences : {maxNumInfluences}",2);
+                if (maxNumInfluences > 8)
+                {
+                    RaiseError($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
+                    isSkinExportSuccess = false;
+                }
+                maxNbBones = Math.Min(maxNumInfluences, 8);
+
+                if (isSkinExportSuccess)
+                {
+                    if (!skins.Contains(mFnSkinCluster))
+                    {
+                        skins.Add(mFnSkinCluster);
+                    }
+                    babylonMesh.skeletonId = skins.IndexOf(mFnSkinCluster);
+                }
+                else
+                {
+                    mFnSkinCluster = null;
+                }
+            }
             // Export tangents if option is checked and mesh have tangents
             bool isTangentExportSuccess = _exportTangents;
 
@@ -335,6 +397,21 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
+
+            // export the skin
+            if (mFnSkinCluster != null)
+            {
+                babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
+                babylonMesh.matricesIndices = vertices.Select(v => v.BonesIndices).ToArray();
+
+                babylonMesh.numBoneInfluencers = maxNbBones;
+                if (maxNbBones > 4)
+                {
+                    babylonMesh.matricesWeightsExtra = vertices.SelectMany(v => v.WeightsExtra != null ? v.WeightsExtra.ToArray() : new[] { 0.0f, 0.0f, 0.0f, 0.0f }).ToArray();
+                    babylonMesh.matricesIndicesExtra = vertices.Select(v => v.BonesIndicesExtra).ToArray();
+                }
+            }
+
             // Tangent
             if (isTangentExportSuccess)
             {
@@ -555,7 +632,7 @@ namespace Maya2Babylon
                     // Invert W to switch to left handed system
                     vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
                 }
-                catch (Exception e)
+                catch
                 {
                     // Exception raised when mesh don't have tangents
                     isTangentExportSuccess = false;
@@ -612,11 +689,138 @@ namespace Maya2Babylon
                     mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
                     vertex.UV2 = new float[] { u, v };
                 }
-                catch (Exception e)
+                catch
                 {
                     // An exception is raised when a vertex isn't mapped to an UV coordinate
                     isUVExportSuccess[indexUVSet] = false;
                 }
+            }
+
+            // skin
+            if (mFnSkinCluster != null)
+            {
+                // Filter null weights
+                Dictionary<int, double> weightByInfluenceIndex = new Dictionary<int, double>(); // contains the influence indices with weight > 0
+
+                // Export Weights and BonesIndices for the vertex
+                // Get the weight values of all the influences for this vertex
+                MDoubleArray allMayaInfluenceWeights = new MDoubleArray();
+                MGlobal.executeCommand($"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{vertexIndexGlobal}]",
+                                        allMayaInfluenceWeights);
+                allMayaInfluenceWeights.get(out double[] allInfluenceWeights);
+
+                for (int influenceIndex = 0; influenceIndex < allInfluenceWeights.Length; influenceIndex++)
+                {
+                    double weight = allInfluenceWeights[influenceIndex];
+
+                    if (weight > 0)
+                    {
+                        // add indice and weight in the local lists
+                        weightByInfluenceIndex.Add(indexByNodeName[allMayaInfluenceNames[influenceIndex]], weight);
+                    }
+                }
+
+                // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
+                if (weightByInfluenceIndex.Count > 8)
+                {
+                    do
+                    {
+                        // get the min weight
+                        int indexToRemove = weightByInfluenceIndex.Min().Key;
+
+                        // delete the min
+                        weightByInfluenceIndex.Remove(indexToRemove);
+                    }
+                    while (weightByInfluenceIndex.Count > 8);
+
+                    // normalize weights => Sum weights == 1
+                    double totalWeight = weightByInfluenceIndex.Values.Sum();
+                    if (totalWeight != 1)
+                    {
+                        foreach (int influenceIndex in weightByInfluenceIndex.Keys)
+                        {
+                            weightByInfluenceIndex[influenceIndex] /= totalWeight;
+                        }
+                    }
+                }
+
+                int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
+                float weight0 = 0;
+                float weight1 = 0;
+                float weight2 = 0;
+                float weight3 = 0;
+                int bone0 = bonesCount;
+                int bone1 = bonesCount;
+                int bone2 = bonesCount;
+                int bone3 = bonesCount;
+                int nbBones = weightByInfluenceIndex.Count; // number of bones/influences for this vertex
+
+                if (nbBones == 0)
+                {
+                    weight0 = 1.0f;
+                    bone0 = bonesCount;
+                }
+
+                if (nbBones > 0)
+                {
+                    bone0 = weightByInfluenceIndex.ElementAt(0).Key;
+                    weight0 = (float)weightByInfluenceIndex.ElementAt(0).Value;
+
+                    if (nbBones > 1)
+                    {
+                        bone1 = weightByInfluenceIndex.ElementAt(1).Key;
+                        weight1 = (float)weightByInfluenceIndex.ElementAt(1).Value;
+
+                        if (nbBones > 2)
+                        {
+                            bone2 = weightByInfluenceIndex.ElementAt(2).Key;
+                            weight2 = (float)weightByInfluenceIndex.ElementAt(2).Value;
+
+                            if (nbBones > 3)
+                            {
+                                bone3 = weightByInfluenceIndex.ElementAt(3).Key;
+                                weight3 = (float)weightByInfluenceIndex.ElementAt(3).Value;
+                            }
+                        }
+                    }
+                }
+
+                float[] weights = { weight0, weight1, weight2, weight3 };
+                vertex.Weights = weights;
+                vertex.BonesIndices = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+
+                if (nbBones > 4)
+                {
+                    bone0 = weightByInfluenceIndex.ElementAt(4).Key;
+                    weight0 = (float)weightByInfluenceIndex.ElementAt(4).Value;
+
+                    weight1 = 0;
+                    weight2 = 0;
+                    weight3 = 0;
+
+                    if (nbBones > 5)
+                    {
+                        bone1 = weightByInfluenceIndex.ElementAt(5).Key;
+                        weight1 = (float)weightByInfluenceIndex.ElementAt(4).Value;
+
+                        if (nbBones > 6)
+                        {
+                            bone2 = weightByInfluenceIndex.ElementAt(6).Key;
+                            weight2 = (float)weightByInfluenceIndex.ElementAt(4).Value;
+
+                            if (nbBones > 7)
+                            {
+                                bone3 = weightByInfluenceIndex.ElementAt(7).Key;
+                                weight3 = (float)weightByInfluenceIndex.ElementAt(7).Value;
+                            }
+                        }
+                    }
+
+                    float[] weightsExtra = { weight0, weight1, weight2, weight3 };
+                    vertex.WeightsExtra = weightsExtra;
+                    vertex.BonesIndicesExtra = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+                }
+
             }
 
             return vertex;
@@ -664,6 +868,51 @@ namespace Maya2Babylon
         private bool IsMeshExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
             return IsNodeExportable(mFnDagNode, mDagPath);
+        }
+
+        private MFnSkinCluster getMFnSkinCluster(MFnMesh mFnMesh)
+        {
+            MFnSkinCluster mFnSkinCluster = null;
+
+            MPlugArray connections = new MPlugArray();
+            mFnMesh.getConnections(connections);
+            foreach (MPlug connection in connections)
+            {
+                MObject source = connection.source.node;
+                if (source != null)
+                {
+                    if (source.hasFn(MFn.Type.kSkinClusterFilter))
+                    {
+                        mFnSkinCluster = new MFnSkinCluster(source);
+                    }
+
+                    if ((mFnSkinCluster == null) && (source.hasFn(MFn.Type.kSet) || source.hasFn(MFn.Type.kPolyNormalPerVertex)))
+                    {
+                        mFnSkinCluster = getMFnSkinCluster(source);
+                    }
+                }
+            }
+
+            return mFnSkinCluster;
+        }
+
+        private MFnSkinCluster getMFnSkinCluster(MObject mObject)
+        {
+            MFnSkinCluster mFnSkinCluster = null;
+
+            MFnDependencyNode mFnDependencyNode = new MFnDependencyNode(mObject);
+            MPlugArray connections = new MPlugArray();
+            mFnDependencyNode.getConnections(connections);
+            for (int index = 0; index < connections.Count && mFnSkinCluster == null; index++)
+            {
+                MObject source = connections[index].source.node;
+                if (source != null && source.hasFn(MFn.Type.kSkinClusterFilter))
+                {
+                    mFnSkinCluster = new MFnSkinCluster(source);
+                }
+            }
+
+            return mFnSkinCluster;
         }
     }
 }

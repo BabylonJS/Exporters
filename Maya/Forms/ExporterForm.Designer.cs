@@ -41,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkExportSkin = new System.Windows.Forms.CheckBox();
             this.chkExportTangents = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtScaleFactor = new System.Windows.Forms.TextBox();
@@ -187,6 +188,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkExportSkin);
             this.groupBox1.Controls.Add(this.chkExportTangents);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtScaleFactor);
@@ -208,6 +210,20 @@
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // chkExportSkin
+            // 
+            this.chkExportSkin.AutoSize = true;
+            this.chkExportSkin.Checked = true;
+            this.chkExportSkin.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportSkin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportSkin.Location = new System.Drawing.Point(166, 163);
+            this.chkExportSkin.Name = "chkExportSkin";
+            this.chkExportSkin.Size = new System.Drawing.Size(110, 17);
+            this.chkExportSkin.TabIndex = 21;
+            this.chkExportSkin.Text = "Export skins";
+            this.chkExportSkin.UseVisualStyleBackColor = true;
+            this.chkExportSkin.CheckedChanged += new System.EventHandler(this.chkExportSkin_CheckedChanged);
             // 
             // chkExportTangents
             // 
@@ -394,5 +410,6 @@
         private System.Windows.Forms.TextBox txtScaleFactor;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox chkExportTangents;
+        private System.Windows.Forms.CheckBox chkExportSkin;
     }
 }

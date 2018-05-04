@@ -104,7 +104,7 @@ namespace Maya2Babylon
                     if (source != null && source.hasFn(MFn.Type.kDependencyNode))
                     {
                         MFnDependencyNode node = new MFnDependencyNode(source);
-                        RaiseVerbose("name=" + connection.name + "    source=" + node.name, logRank + 2);
+                        RaiseVerbose("name=" + connection.name + "    source=" + node.name + "    source.apiType=" + source.apiType, logRank + 2);
                     }
                     else
                     {
@@ -112,10 +112,7 @@ namespace Maya2Babylon
                     }
                 }
             }
-            catch(Exception e)
-            {
-
-            }
+            catch {}
         }
     }
 }
