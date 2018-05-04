@@ -34,7 +34,7 @@ namespace Max2Babylon
 
         private bool _onlySelected;
 
-        private string exporterVersion = "1.0.4";
+        private string exporterVersion = "1.0.5";
 
         void ReportProgressChanged(int progress)
         {
