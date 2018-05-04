@@ -207,6 +207,11 @@ namespace Maya2Babylon
 
             #endregion
 
+            if (IsMeshExportable(mFnMesh, mDagPath) == false)
+            {
+                return null;
+            }
+
             var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
 
             // Position / rotation / scaling / hierarchy
