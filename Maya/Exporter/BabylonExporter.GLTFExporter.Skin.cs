@@ -234,16 +234,19 @@ namespace Maya2Babylon
             }
         }
 
+
+        // TODO clean up
         private BabylonMatrix _removeScale(BabylonMatrix boneWorldMatrix)
         {
-            var translation = new BabylonVector3();
-            var rotation = new BabylonQuaternion();
-            var scale = new BabylonVector3();
-            boneWorldMatrix.decompose(scale, rotation, translation);
-            scale.X = 1;
-            scale.Y = 1;
-            scale.Z = 1;
-            return BabylonMatrix.Compose(scale, rotation, translation);
+            //var translation = new BabylonVector3();
+            //var rotation = new BabylonQuaternion();
+            //var scale = new BabylonVector3();
+            //boneWorldMatrix.decompose(scale, rotation, translation);
+            //scale.X = 1;
+            //scale.Y = 1;
+            //scale.Z = 1;
+            //return BabylonMatrix.Compose(scale, rotation, translation);
+            return boneWorldMatrix;
         }
 
         /// <summary>

@@ -13,6 +13,7 @@ namespace Maya2Babylon
         private MFnSkinCluster mFnSkinCluster;
         private MFnTransform mFnTransform;
         private MStringArray allMayaInfluenceNames;
+        private bool isSkinExportSuccess;
 
         /// <summary>
         /// 
@@ -298,12 +299,14 @@ namespace Maya2Babylon
             // skin
             mFnSkinCluster = getMFnSkinCluster(mFnMesh);
             int maxNbBones = 0;
+            isSkinExportSuccess = true;
             if (mFnSkinCluster != null)
             {
-                RaiseMessage("There is a SkinCluster named " + mFnSkinCluster.name, 2);
+                RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
 
                 // Create the bones dictionary<name, index>
-                initIndexByNodeNameDictionary(mFnSkinCluster);
+                InitIndexByNodeNameDictionary(mFnSkinCluster);
+
                 // Get the joint names that influence this vertex
                 allMayaInfluenceNames = new MStringArray();
                 MGlobal.executeCommand($"skinCluster -q -influence {mFnTransform.name}",
@@ -329,14 +332,22 @@ namespace Maya2Babylon
                 if (maxNumInfluences > 8)
                 {
                     RaiseError($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
+                    isSkinExportSuccess = false;
                 }
                 maxNbBones = Math.Min(maxNumInfluences, 8);
 
-                if (!skins.Contains(mFnSkinCluster))
+                if (isSkinExportSuccess)
                 {
-                    skins.Add(mFnSkinCluster);
+                    if (!skins.Contains(mFnSkinCluster))
+                    {
+                        skins.Add(mFnSkinCluster);
+                    }
+                    babylonMesh.skeletonId = skins.IndexOf(mFnSkinCluster);
                 }
-                babylonMesh.skeletonId = skins.IndexOf(mFnSkinCluster);
+                else
+                {
+                    mFnSkinCluster = null;
+                }
             }
             // Export tangents if option is checked and mesh have tangents
             bool isTangentExportSuccess = _exportTangents;
@@ -378,7 +389,6 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
-            babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
 
             // export the skin
             if (mFnSkinCluster != null)
@@ -614,7 +624,7 @@ namespace Maya2Babylon
                     // Invert W to switch to left handed system
                     vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
                 }
-                catch (Exception e)
+                catch
                 {
                     // Exception raised when mesh don't have tangents
                     isTangentExportSuccess = false;
@@ -671,7 +681,7 @@ namespace Maya2Babylon
                     mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
                     vertex.UV2 = new float[] { u, v };
                 }
-                catch (Exception e)
+                catch
                 {
                     // An exception is raised when a vertex isn't mapped to an UV coordinate
                     isUVExportSuccess[indexUVSet] = false;
@@ -857,28 +867,22 @@ namespace Maya2Babylon
             MFnSkinCluster mFnSkinCluster = null;
 
             MPlugArray connections = new MPlugArray();
-            try
+            mFnMesh.getConnections(connections);
+            foreach (MPlug connection in connections)
             {
-                mFnMesh.getConnections(connections);
-                foreach (MPlug connection in connections)
+                MObject source = connection.source.node;
+                if (source != null)
                 {
-                    MObject source = connection.source.node;
-                    if (source != null)
+                    if (source.hasFn(MFn.Type.kSkinClusterFilter))
                     {
-                        if (source.hasFn(MFn.Type.kSkinClusterFilter))
-                        {
-                            mFnSkinCluster = new MFnSkinCluster(source);
-                        }
+                        mFnSkinCluster = new MFnSkinCluster(source);
+                    }
 
-                        if ((mFnSkinCluster == null) && (source.hasFn(MFn.Type.kSet) || source.hasFn(MFn.Type.kPolyNormalPerVertex)))
-                        {
-                            mFnSkinCluster = getMFnSkinCluster(source);
-                        }
+                    if ((mFnSkinCluster == null) && (source.hasFn(MFn.Type.kSet) || source.hasFn(MFn.Type.kPolyNormalPerVertex)))
+                    {
+                        mFnSkinCluster = getMFnSkinCluster(source);
                     }
                 }
-            }
-            catch (Exception e)
-            {
             }
 
             return mFnSkinCluster;
