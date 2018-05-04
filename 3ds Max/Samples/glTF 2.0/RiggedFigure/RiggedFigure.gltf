@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for 3ds max 2017 v1.0.5",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,

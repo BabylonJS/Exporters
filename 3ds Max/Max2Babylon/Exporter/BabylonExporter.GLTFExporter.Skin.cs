@@ -16,17 +16,17 @@ namespace Max2Babylon
         // Skeletons, aka group of nodes, are re-used when exporting same babylon skeleton
         // Only the inverseBindMatrices change, as it is linked to the mesh of the gltf node the skin is applied to
         // This dictionary is reset everytime a scene is exported
-        private Dictionary<BabylonSkeleton, BabylonSkeletonExportData> alreadyExportedSkeletons;
+        private Dictionary<BabylonSkeleton, BabylonSkeletonExportData> alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
 
         private GLTFSkin ExportSkin(BabylonSkeleton babylonSkeleton, GLTF gltf, GLTFNode gltfNode)
         {
             RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on skeleton '" + babylonSkeleton.name + "'", 2);
-            
+
             // Retreive gltf skeleton data if babylon skeleton has already been exported
             if (!alreadyExportedSkeletons.ContainsKey(babylonSkeleton))
             {
                 alreadyExportedSkeletons.Add(babylonSkeleton, new BabylonSkeletonExportData());
-                
+
                 // Switch coordinate system at object level
                 foreach (var babylonBone in babylonSkeleton.bones)
                 {
@@ -234,16 +234,18 @@ namespace Max2Babylon
             }
         }
 
+        // TODO clean up
         private BabylonMatrix _removeScale(BabylonMatrix boneWorldMatrix)
         {
-            var translation = new BabylonVector3();
-            var rotation = new BabylonQuaternion();
-            var scale = new BabylonVector3();
-            boneWorldMatrix.decompose(scale, rotation, translation);
-            scale.X = 1;
-            scale.Y = 1;
-            scale.Z = 1;
-            return BabylonMatrix.Compose(scale, rotation, translation);
+            //var translation = new BabylonVector3();
+            //var rotation = new BabylonQuaternion();
+            //var scale = new BabylonVector3();
+            //boneWorldMatrix.decompose(scale, rotation, translation);
+            //scale.X = 1;
+            //scale.Y = 1;
+            //scale.Z = 1;
+            //return BabylonMatrix.Compose(scale, rotation, translation);
+            return boneWorldMatrix;
         }
 
         /// <summary>
