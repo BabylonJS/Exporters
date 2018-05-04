@@ -8,7 +8,7 @@ namespace Maya2Babylon
 {
     static class Tools
     {
-        public const float Epsilon = 0.001f;
+        public const float Epsilon = 0.00001f;
 
         // -------------------------
         // --------- Math ----------

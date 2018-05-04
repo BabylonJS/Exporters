@@ -393,8 +393,9 @@ namespace Maya2Babylon
                 // Normal
                 gltfMaterial.normalTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.normalTexture, gltf);
 
-                // Occulison
-                gltfMaterial.occlusionTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.occlusionTexture, gltf);
+                // Occlusion
+                var occlusionText = ExportTexture(babylonPBRMetallicRoughnessMaterial.occlusionTexture, gltf);
+                gltfMaterial.occlusionTexture = occlusionText;
 
                 // Emissive
                 gltfMaterial.emissiveFactor = babylonPBRMetallicRoughnessMaterial.emissive;
@@ -448,9 +449,29 @@ namespace Maya2Babylon
                     }
                     else
                     {
-                        // Metallic & roughness texture was already merged
+                        // Metallic & roughness & occlusion texture was already merged
                         // Copy file
-                        gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                        if(babylonPBRMetallicRoughnessMaterial.occlusionTexture != null)
+                        {
+                            if (babylonPBRMetallicRoughnessMaterial.occlusionTexture.originalPath == babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture.originalPath)
+                            {
+                                gltfPbrMetallicRoughness.metallicRoughnessTexture = occlusionText;
+                            }
+                            else
+                            {
+                                // Metallic & roughness texture was already merged
+                                // Copy file
+                                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                            }
+                        }
+                        else
+                        {
+                            // Metallic & roughness texture was already merged
+                            // Copy file
+                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                        }
+
+
                     }
                 }
             }
