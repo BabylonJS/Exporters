@@ -157,7 +157,14 @@ namespace Maya2Babylon
             //babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
 
             // Animations
-            ExportNodeAnimation(babylonCamera, mFnTransform);
+            if (target == null)
+            {
+                ExportNodeAnimation(babylonCamera, mFnTransform);
+            }
+            else
+            {
+                ExportNodeAnimationFrameByFrame(babylonCamera, mFnTransform);
+            }
 
             babylonScene.CamerasList.Add(babylonCamera);
             RaiseMessage("BabylonExporter.Camera | done", 2);
