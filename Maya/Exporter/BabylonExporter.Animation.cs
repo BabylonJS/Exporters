@@ -148,7 +148,7 @@ namespace Maya2Babylon
                         {
                             dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
-                            framePerSecond = (int)framePerSecond[0], // TODO - Get from Maya
+                            framePerSecond = (int)framePerSecond[0],
                             loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = keys.ToArray()
@@ -480,6 +480,9 @@ namespace Maya2Babylon
 
                 if (animationPresent)
                 {
+                    //Get the fps for this animation
+                    MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
+
                     // Create BabylonAnimation
                     // Animations
                     animation = new BabylonAnimation()
@@ -487,7 +490,7 @@ namespace Maya2Babylon
                         name = mFnTransform.name + "Animation", // override default animation name
                         dataType = (int)BabylonAnimation.DataType.Matrix,
                         loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        framePerSecond = 30, // TODO - Get from Maya
+                        framePerSecond = (int)framePerSecond,
                         keys = keys.ToArray(),
                         property = "_matrix"
                     };
