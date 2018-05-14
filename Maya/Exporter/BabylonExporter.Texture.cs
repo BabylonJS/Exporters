@@ -248,20 +248,24 @@ namespace Maya2Babylon
             MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
             MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
 
-            string sourcePathMetallic = getSourcePathFromFileTexture(metallicTextureDependencyNode);
-            string sourcePathRoughness = getSourcePathFromFileTexture(roughnessTextureDependencyNode);
-
-            if(sourcePathMetallic == sourcePathRoughness)
+            if (metallicTextureDependencyNode != null && roughnessTextureDependencyNode != null)
             {
-                return ExportMRTextureAlreadyMerge(metallicTextureDependencyNode, babylonScene);
+                string sourcePathMetallic = getSourcePathFromFileTexture(metallicTextureDependencyNode);
+                string sourcePathRoughness = getSourcePathFromFileTexture(roughnessTextureDependencyNode);
+
+                if (sourcePathMetallic == sourcePathRoughness)
+                {
+                    return ExportMRTextureAlreadyMerge(metallicTextureDependencyNode, babylonScene);
+                }
+                else
+                {
+                    return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
+                }
             }
             else
             {
                 return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
             }
-
-            
-
         }
 
         private BabylonTexture ExportMRTextureAlreadyMerge(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, List<MFnDependencyNode> textureModifiers = null, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
