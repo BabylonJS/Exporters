@@ -346,11 +346,11 @@ namespace Maya2Babylon
 
                 if (isSkinExportSuccess)
                 {
-                    if (!skins.Contains(mFnSkinCluster))
+                    if ( skins.Count(skin => skin.absoluteName.Equals(mFnSkinCluster.absoluteName)) == 0 )
                     {
                         skins.Add(mFnSkinCluster);
                     }
-                    babylonMesh.skeletonId = skins.IndexOf(mFnSkinCluster);
+                    babylonMesh.skeletonId = skins.FindIndex(skin => skin.absoluteName.Equals(mFnSkinCluster.absoluteName));
                 }
                 else
                 {
