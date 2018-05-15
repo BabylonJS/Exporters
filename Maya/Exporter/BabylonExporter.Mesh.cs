@@ -10,10 +10,11 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
-        private MFnSkinCluster mFnSkinCluster;
-        private MFnTransform mFnTransform;
-        private MStringArray allMayaInfluenceNames;
-        private bool isSkinExportSuccess;
+        private MFnSkinCluster mFnSkinCluster;          // the skin cluster of the mesh/vertices
+        private MFnTransform mFnTransform;              // the transform of the mesh
+        private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
+        private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
+        private bool isSkinExportSuccess;               // if the skin of the mesh will be exported
 
         /// <summary>
         /// 
@@ -311,14 +312,19 @@ namespace Maya2Babylon
             {
                 isSkinExportSuccess = true;
                 RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
+                Print(mFnSkinCluster, 3, $"Print {mFnSkinCluster.name}");
 
                 // Create the bones dictionary<name, index>
+                // TODO: create an index for all nodes in the full DAG
                 InitIndexByNodeNameDictionary(mFnSkinCluster);
 
-                // Get the joint names that influence this vertex
+                // Get the joint names that influence this mesh
                 allMayaInfluenceNames = new MStringArray();
                 MGlobal.executeCommand($"skinCluster -q -influence {mFnTransform.name}",
                                         allMayaInfluenceNames);
+
+                // Convert name to fullPathName to manage duplicates
+                ConvertBoneNameToFullPathName(mFnSkinCluster, allMayaInfluenceNames);
 
                 // get the max number of joints acting on a vertex
                 int numVertices = mFnMesh.numVertices;
@@ -346,11 +352,7 @@ namespace Maya2Babylon
 
                 if (isSkinExportSuccess)
                 {
-                    if ( skins.Count(skin => skin.absoluteName.Equals(mFnSkinCluster.absoluteName)) == 0 )
-                    {
-                        skins.Add(mFnSkinCluster);
-                    }
-                    babylonMesh.skeletonId = skins.FindIndex(skin => skin.absoluteName.Equals(mFnSkinCluster.absoluteName));
+                    babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
                 }
                 else
                 {
@@ -674,7 +676,7 @@ namespace Maya2Babylon
                     mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
                     vertex.UV = new float[] { u, v };
                 }
-                catch (Exception e)
+                catch
                 {
                     // An exception is raised when a vertex isn't mapped to an UV coordinate
                     isUVExportSuccess[indexUVSet] = false;
@@ -704,7 +706,7 @@ namespace Maya2Babylon
 
                 // Export Weights and BonesIndices for the vertex
                 // Get the weight values of all the influences for this vertex
-                MDoubleArray allMayaInfluenceWeights = new MDoubleArray();
+                allMayaInfluenceWeights = new MDoubleArray();
                 MGlobal.executeCommand($"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{vertexIndexGlobal}]",
                                         allMayaInfluenceWeights);
                 allMayaInfluenceWeights.get(out double[] allInfluenceWeights);
@@ -744,7 +746,8 @@ namespace Maya2Babylon
                     }
                 }
 
-                int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
+                //int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
+                int bonesCount = allMayaInfluenceNames.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
                 float weight1 = 0;
                 float weight2 = 0;
