@@ -345,8 +345,8 @@ namespace Maya2Babylon
                 RaiseMessage($"Max influences : {maxNumInfluences}",2);
                 if (maxNumInfluences > 8)
                 {
-                    RaiseError($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
-                    isSkinExportSuccess = false;
+                    RaiseWarning($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
+                    RaiseWarning("The result may not be as expected.");
                 }
                 maxNbBones = Math.Min(maxNumInfluences, 8);
 
@@ -717,37 +717,52 @@ namespace Maya2Babylon
 
                     if (weight > 0)
                     {
-                        // add indice and weight in the local lists
-                        weightByInfluenceIndex.Add(indexByNodeName[allMayaInfluenceNames[influenceIndex]], weight);
-                    }
-                }
-
-                // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
-                if (weightByInfluenceIndex.Count > 8)
-                {
-                    do
-                    {
-                        // get the min weight
-                        int indexToRemove = weightByInfluenceIndex.Min().Key;
-
-                        // delete the min
-                        weightByInfluenceIndex.Remove(indexToRemove);
-                    }
-                    while (weightByInfluenceIndex.Count > 8);
-
-                    // normalize weights => Sum weights == 1
-                    double totalWeight = weightByInfluenceIndex.Values.Sum();
-                    if (totalWeight != 1)
-                    {
-                        foreach (int influenceIndex in weightByInfluenceIndex.Keys)
+                        try
                         {
-                            weightByInfluenceIndex[influenceIndex] /= totalWeight;
+                            // add indice and weight in the local lists
+                            weightByInfluenceIndex.Add(indexByNodeName[allMayaInfluenceNames[influenceIndex]], weight);
+                        }
+                        catch
+                        {
+                            //RaiseError($"{allMayaInfluenceNames[influenceIndex]} is not supported.", 2);
                         }
                     }
                 }
 
+                if (weightByInfluenceIndex.Count > 0)
+                {
+                    // normalize weights => Sum weights == 1
+                    double totalWeight = weightByInfluenceIndex.Values.Sum();
+                    if (totalWeight != 1)
+                    {
+                        for (int index = 0; index < weightByInfluenceIndex.Count; index ++)
+                        {
+                            int influenceIndex = weightByInfluenceIndex.ElementAt(index).Key;
+
+                            weightByInfluenceIndex[influenceIndex] /= totalWeight;
+                        }
+                    }
+
+                    // decreasing sort
+                    Dictionary<int, double> sortedWeightByInfluenceIndex = new Dictionary<int, double>();
+                    sortedWeightByInfluenceIndex = weightByInfluenceIndex.OrderByDescending(pair => pair.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
+                    weightByInfluenceIndex = sortedWeightByInfluenceIndex;
+                    string message = $"{vertexIndexGlobal}: ";
+
+                    // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
+                    while (weightByInfluenceIndex.Count > 8)
+                    {
+                        // get the min weight
+                        int indexToRemove = weightByInfluenceIndex.ElementAt(weightByInfluenceIndex.Count - 1).Key;
+
+                        // delete the min
+                        weightByInfluenceIndex.Remove(indexToRemove);
+                    }
+                }
+
+
                 //int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
-                int bonesCount = allMayaInfluenceNames.Count; // number total of bones/influences for the mesh
+                int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
                 float weight1 = 0;
                 float weight2 = 0;
@@ -796,7 +811,6 @@ namespace Maya2Babylon
                 {
                     bone0 = weightByInfluenceIndex.ElementAt(4).Key;
                     weight0 = (float)weightByInfluenceIndex.ElementAt(4).Value;
-
                     weight1 = 0;
                     weight2 = 0;
                     weight3 = 0;
@@ -823,9 +837,7 @@ namespace Maya2Babylon
                     vertex.WeightsExtra = weightsExtra;
                     vertex.BonesIndicesExtra = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
                 }
-
             }
-
             return vertex;
         }
         
