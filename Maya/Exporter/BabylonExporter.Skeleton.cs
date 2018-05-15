@@ -10,11 +10,12 @@ namespace Maya2Babylon
     internal partial class BabylonExporter
     {
         private List<MFnSkinCluster> skins = new List<MFnSkinCluster>();                    // contains the skins to export
-        private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents) name and its index
+        private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
         private List<MObject> skeletalRoots = new List<MObject>();                          // contains the root node of each skeleton (skin)
 
         private void ExportSkin(MFnSkinCluster skin, BabylonScene babylonScene)
         {
+            int logRank = 1;
             int skinIndex = skins.IndexOf(skin);
             BabylonSkeleton babylonSkeleton = new BabylonSkeleton {
                 id = skinIndex,
@@ -24,17 +25,14 @@ namespace Maya2Babylon
             };
             List<BabylonBone> bones = new List<BabylonBone>();
 
-            RaiseMessage(babylonSkeleton.name, 1);
+            RaiseMessage(babylonSkeleton.name, logRank);
 
             // TODO OPTIMIZATION stock the dictionary with the skinCluster
             InitIndexByNodeNameDictionary(skin);
 
-            // get the root node
-            MObject rootNode = GetRootNode(skin);
-            
             // Travel the DAG
             MItDag dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
-            dagIterator.reset(rootNode);
+            dagIterator.reset(GetRootNode(skin));                               // start from the root node of the skin
             for (; !dagIterator.isDone ; dagIterator.next())
             {
                 try
@@ -45,7 +43,6 @@ namespace Maya2Babylon
                     MObject currentNode = mDagPath.node;
                     MFnTransform currentNodeTransform = new MFnTransform(currentNode);
                     string currentFullPathName = currentNodeTransform.fullPathName;
-                    //indexByNodeName.Add(currentName, index);
 
                     // find the parent node to get its index
                     int parentIndex = -1;
@@ -68,7 +65,7 @@ namespace Maya2Babylon
                     bones.Add(bone);
 
                     // The RaiseMessage is only here to prevent Maya from freezing...
-                    RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", (int)dagIterator.depth + 2);
+                    RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", (int)dagIterator.depth + logRank+1);
                 }
                 catch
                 {
@@ -77,22 +74,21 @@ namespace Maya2Babylon
             babylonSkeleton.bones = bones.ToArray();
             babylonScene.SkeletonsList.Add(babylonSkeleton);
 
-            RaiseMessage($"{indexByNodeName.Count} bone(s) exported", 1);
+            RaiseMessage($"{indexByNodeName.Count} bone(s) exported", logRank + 1);
         }
 
 
-        // Init the dictionary
+        // Init the dictionary that contains the fullPathName and its index of each bone
         private void InitIndexByNodeNameDictionary(MFnSkinCluster skin)
         {
             // TODO OPTIMIZATION stock the dictionary with the skinCluster
-            // TODO OPTIMIZATION check if a same dictionary already exists (compare root node for exemple)
             indexByNodeName.Clear();
 
             // get the root node
             MObject rootNode = GetRootNode(skin);
             // Travel the DAG
             MItDag dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
-            dagIterator.reset(rootNode);
+            dagIterator.reset(rootNode); // TODO think about what to export
             int index = 0;
             while( !dagIterator.isDone && isSkinExportSuccess )
             {
@@ -108,7 +104,9 @@ namespace Maya2Babylon
 
                     try
                     {
+                        // TODO: add only revelant node
                         indexByNodeName.Add(currentFullPathName, index);
+                        index++;
                     }
                     catch (ArgumentException e) // Exception raised when adding nodes with same names
                     {
@@ -120,14 +118,11 @@ namespace Maya2Babylon
                 }
                 catch   // When it's not a kTransform or kJoint node. For exemple a kLocator.
                 {
-                    isSkinExportSuccess = false;
-                    //RaiseError(e.Message);
-                    RaiseError($"{currentNode.apiType} is not supported: {mDagPath.fullPathName}", 2);
+                    RaiseMessage($"{currentNode.apiType} is not supported. It will not be exported: {mDagPath.fullPathName}", System.Drawing.Color.Orange , 2);
                 }
                 
                 // increment iter and index
                 dagIterator.next();
-                index++;
             }
         }
 
@@ -178,6 +173,7 @@ namespace Maya2Babylon
             List<string> boneFullPathNames = new List<string>();
             MPlugArray connections = new MPlugArray();
 
+            // Get the bones connected to the skin cluster
             skin.getConnections(connections);
             foreach (MPlug connection in connections)
             {
@@ -192,13 +188,26 @@ namespace Maya2Babylon
                 }
             }
 
+            // Change the name to the fullPathName. And check that they all share the same root node.
+            string rootName = "";
             for(int index = 0; index < allMayaInfluenceNames.Count; index++)
             {
                 string name = allMayaInfluenceNames[index];
-                int i = boneFullPathNames.FindIndex(fullPathName => fullPathName.EndsWith(name));
-                allMayaInfluenceNames[index] = boneFullPathNames[i];
+                int indexFullPathName = boneFullPathNames.FindIndex(fullPathName => fullPathName.EndsWith(name));
+                allMayaInfluenceNames[index] = boneFullPathNames[indexFullPathName];
 
-                RaiseVerbose($"{name} => {allMayaInfluenceNames[index]}", logRank + 1);
+                if (index == 0) {
+                    rootName = allMayaInfluenceNames[index].Split('|')[1];
+                    RaiseVerbose($"rootName: {rootName}", logRank + 1);
+                }
+                RaiseVerbose($"{index}: {name} => {allMayaInfluenceNames[index]}", logRank + 1);
+
+                if (! allMayaInfluenceNames[index].StartsWith($"|{rootName}|") && ! allMayaInfluenceNames[index].Equals($"|{rootName}"))
+                {
+                    RaiseError($"Bones don't share the same root node. {rootName} != |{allMayaInfluenceNames[index].Split('|')[1]}|", logRank + 1);
+                    isSkinExportSuccess = false;
+                    return;
+                }
             }
         }
 
