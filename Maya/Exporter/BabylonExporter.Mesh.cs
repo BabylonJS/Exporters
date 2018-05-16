@@ -761,7 +761,6 @@ namespace Maya2Babylon
                 }
 
 
-                //int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
                 float weight1 = 0;
