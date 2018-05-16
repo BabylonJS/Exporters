@@ -41,6 +41,14 @@ namespace Maya2Babylon
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
                             bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
         {
+            // Chekc if the animation is running
+            MGlobal.executeCommand("play -q - state", out int isPlayed);
+            if(isPlayed == 1)
+            {
+                RaiseError("Stop the animation before proceeding");
+                return;
+            }
+
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
             try
