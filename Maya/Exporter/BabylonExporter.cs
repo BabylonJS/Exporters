@@ -45,7 +45,7 @@ namespace Maya2Babylon
             MGlobal.executeCommand("play -q - state", out int isPlayed);
             if(isPlayed == 1)
             {
-                RaiseError("Stop the animation before proceeding");
+                RaiseError("Stop the animation before exporting.");
                 return;
             }
 
@@ -349,7 +349,7 @@ namespace Maya2Babylon
 
 
             // Export skeletons
-            if (exportSkin)
+            if (_exportSkin)
             {
                 if (skins.Count > 0)
                 {

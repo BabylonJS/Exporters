@@ -447,15 +447,10 @@ namespace Maya2Babylon
             List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
             for (int currentFrame = start; currentFrame <= end; currentFrame++)
             {
-                // get transformation matrix at this frame
-                MDoubleArray mDoubleMatrix = new MDoubleArray();
-                MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
-                mDoubleMatrix.get(out float[] localMatrix);
-
                 // Set the animation key
                 BabylonAnimationKey key = new BabylonAnimationKey() {
                     frame = currentFrame,
-                    values = ConvertMayaToBabylonMatrix(new MMatrix(localMatrix)).m.ToArray()
+                    values = GetBabylonMatrix(mFnTransform, currentFrame).m.ToArray()
                 };
 
                 keys.Add(key);
@@ -498,6 +493,21 @@ namespace Maya2Babylon
             }
 
             return animation;
+        }
+
+        private MMatrix GetMMatrix(MFnTransform mFnTransform, int currentFrame = 0)
+        {
+            // get transformation matrix at this frame
+            MDoubleArray mDoubleMatrix = new MDoubleArray();
+            MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
+            mDoubleMatrix.get(out float[] localMatrix);
+
+            return new MMatrix(localMatrix);
+        }
+
+        private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, int currentFrame = 0)
+        {
+            return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
         }
     }
 }
