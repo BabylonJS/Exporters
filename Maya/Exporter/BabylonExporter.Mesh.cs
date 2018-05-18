@@ -14,7 +14,8 @@ namespace Maya2Babylon
         private MFnTransform mFnTransform;              // the transform of the mesh
         private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
-        private bool isSkinExportSuccess;               // if the skin of the mesh will be exported
+        private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
+
 
         /// <summary>
         /// 
@@ -310,47 +311,27 @@ namespace Maya2Babylon
             int maxNbBones = 0;
             if (mFnSkinCluster != null)
             {
-                isSkinExportSuccess = true;
                 RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
                 Print(mFnSkinCluster, 3, $"Print {mFnSkinCluster.name}");
 
-                // Create the bones dictionary<name, index>
-                // TODO: create an index for all nodes in the full DAG
-                InitIndexByNodeNameDictionary(mFnSkinCluster);
+                // Get the bones dictionary<name, index> => it represents all the bones in the skeleton
+                indexByNodeName = GetIndexByFullPathNameDictionary(mFnSkinCluster);
 
                 // Get the joint names that influence this mesh
-                allMayaInfluenceNames = new MStringArray();
-                MGlobal.executeCommand($"skinCluster -q -influence {mFnTransform.name}",
-                                        allMayaInfluenceNames);
+                allMayaInfluenceNames = GetBoneFullPathName(mFnSkinCluster, mFnTransform);
 
-                // Convert name to fullPathName to manage duplicates
-                ConvertBoneNameToFullPathName(mFnSkinCluster, allMayaInfluenceNames);
+                // Get the max number of joints acting on a vertex
+                int maxNumInfluences = GetMaxInfluence(mFnSkinCluster, mFnTransform, mFnMesh);
 
-                // get the max number of joints acting on a vertex
-                int numVertices = mFnMesh.numVertices;
-                int maxNumInfluences = 0;
-
-                // Get max influence on a vertex
-                for (int index = 0; index < numVertices; index++)
-                {
-                    MDoubleArray influenceWeights = new MDoubleArray();
-                    String command = $"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{index}]";
-                    // Get the weight values of all the influences for this vertex
-                    MGlobal.executeCommand(command, influenceWeights);
-                    
-                    int numInfluences = influenceWeights.Count(weight => weight != 0);
-                   
-                    maxNumInfluences = Math.Max(maxNumInfluences,numInfluences);
-                }
                 RaiseMessage($"Max influences : {maxNumInfluences}",2);
                 if (maxNumInfluences > 8)
                 {
                     RaiseWarning($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
-                    RaiseWarning("The result may not be as expected.");
+                    RaiseWarning("The result may not be as expected.",2);
                 }
                 maxNbBones = Math.Min(maxNumInfluences, 8);
 
-                if (isSkinExportSuccess)
+                if (indexByNodeName != null && allMayaInfluenceNames != null)
                 {
                     babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
                 }
@@ -722,44 +703,19 @@ namespace Maya2Babylon
                             // add indice and weight in the local lists
                             weightByInfluenceIndex.Add(indexByNodeName[allMayaInfluenceNames[influenceIndex]], weight);
                         }
-                        catch
+                        catch (Exception e)
                         {
-                            //RaiseError($"{allMayaInfluenceNames[influenceIndex]} is not supported.", 2);
+                            RaiseError(e.Message, 2);
+                            RaiseError(e.StackTrace, 3);
                         }
                     }
                 }
 
-                if (weightByInfluenceIndex.Count > 0)
-                {
-                    // normalize weights => Sum weights == 1
-                    double totalWeight = weightByInfluenceIndex.Values.Sum();
-                    if (totalWeight != 1)
-                    {
-                        for (int index = 0; index < weightByInfluenceIndex.Count; index ++)
-                        {
-                            int influenceIndex = weightByInfluenceIndex.ElementAt(index).Key;
+                // normalize weights => Sum weights == 1
+                Normalize(ref weightByInfluenceIndex);
 
-                            weightByInfluenceIndex[influenceIndex] /= totalWeight;
-                        }
-                    }
-
-                    // decreasing sort
-                    Dictionary<int, double> sortedWeightByInfluenceIndex = new Dictionary<int, double>();
-                    sortedWeightByInfluenceIndex = weightByInfluenceIndex.OrderByDescending(pair => pair.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
-                    weightByInfluenceIndex = sortedWeightByInfluenceIndex;
-                    string message = $"{vertexIndexGlobal}: ";
-
-                    // if there are more than 8 bones/influences. Remove the ones with lowest weights because Babylon.js only support up to 8 bones influences per vertex.
-                    while (weightByInfluenceIndex.Count > 8)
-                    {
-                        // get the min weight
-                        int indexToRemove = weightByInfluenceIndex.ElementAt(weightByInfluenceIndex.Count - 1).Key;
-
-                        // delete the min
-                        weightByInfluenceIndex.Remove(indexToRemove);
-                    }
-                }
-
+                // decreasing sort
+                OrderByDescending(ref weightByInfluenceIndex);
 
                 int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
