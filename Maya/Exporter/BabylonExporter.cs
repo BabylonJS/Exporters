@@ -35,12 +35,20 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.1.4";
+        private string exporterVersion = "1.1.5";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
                             bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
         {
+            // Chekc if the animation is running
+            MGlobal.executeCommand("play -q - state", out int isPlayed);
+            if(isPlayed == 1)
+            {
+                RaiseError("Stop the animation before exporting.");
+                return;
+            }
+
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
             try
@@ -341,7 +349,7 @@ namespace Maya2Babylon
 
 
             // Export skeletons
-            if (exportSkin)
+            if (_exportSkin)
             {
                 if (skins.Count > 0)
                 {

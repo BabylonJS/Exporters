@@ -148,7 +148,7 @@ namespace Maya2Babylon
                         {
                             dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
-                            framePerSecond = (int)framePerSecond[0], // TODO - Get from Maya
+                            framePerSecond = (int)framePerSecond[0],
                             loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = keys.ToArray()
@@ -447,15 +447,10 @@ namespace Maya2Babylon
             List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
             for (int currentFrame = start; currentFrame <= end; currentFrame++)
             {
-                // get transformation matrix at this frame
-                MDoubleArray mDoubleMatrix = new MDoubleArray();
-                MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
-                mDoubleMatrix.get(out float[] localMatrix);
-
                 // Set the animation key
                 BabylonAnimationKey key = new BabylonAnimationKey() {
                     frame = currentFrame,
-                    values = ConvertMayaToBabylonMatrix(new MMatrix(localMatrix)).m.ToArray()
+                    values = GetBabylonMatrix(mFnTransform, currentFrame).m.ToArray()
                 };
 
                 keys.Add(key);
@@ -480,6 +475,9 @@ namespace Maya2Babylon
 
                 if (animationPresent)
                 {
+                    //Get the fps for this animation
+                    MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
+
                     // Create BabylonAnimation
                     // Animations
                     animation = new BabylonAnimation()
@@ -487,7 +485,7 @@ namespace Maya2Babylon
                         name = mFnTransform.name + "Animation", // override default animation name
                         dataType = (int)BabylonAnimation.DataType.Matrix,
                         loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        framePerSecond = 30, // TODO - Get from Maya
+                        framePerSecond = (int)framePerSecond,
                         keys = keys.ToArray(),
                         property = "_matrix"
                     };
@@ -495,6 +493,21 @@ namespace Maya2Babylon
             }
 
             return animation;
+        }
+
+        private MMatrix GetMMatrix(MFnTransform mFnTransform, int currentFrame = 0)
+        {
+            // get transformation matrix at this frame
+            MDoubleArray mDoubleMatrix = new MDoubleArray();
+            MGlobal.executeCommand($"getAttr -t {currentFrame} {mFnTransform.fullPathName}.matrix", mDoubleMatrix);
+            mDoubleMatrix.get(out float[] localMatrix);
+
+            return new MMatrix(localMatrix);
+        }
+
+        private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, int currentFrame = 0)
+        {
+            return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
         }
     }
 }
