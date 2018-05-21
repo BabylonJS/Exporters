@@ -57,7 +57,6 @@ namespace Maya2Babylon
         {
             int start = GetMinTime()[0];
             int end = GetMaxTime()[0];
-            MDoubleArray framePerSecond = new MDoubleArray();
 
             // Animations
             List<BabylonAnimation> animations = new List<BabylonAnimation>();
@@ -114,9 +113,6 @@ namespace Maya2Babylon
                 }
             }
 
-            //Get the fps for this animation
-            MGlobal.executeCommand("currentTimeUnitToFPS", framePerSecond);
-
             // create animation for each property
             for (int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
             {
@@ -148,7 +144,7 @@ namespace Maya2Babylon
                         {
                             dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
-                            framePerSecond = (int)framePerSecond[0],
+                            framePerSecond = GetFPS(),
                             loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = keys.ToArray()
@@ -475,9 +471,6 @@ namespace Maya2Babylon
 
                 if (animationPresent)
                 {
-                    //Get the fps for this animation
-                    MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
-
                     // Create BabylonAnimation
                     // Animations
                     animation = new BabylonAnimation()
@@ -485,7 +478,7 @@ namespace Maya2Babylon
                         name = mFnTransform.name + "Animation", // override default animation name
                         dataType = (int)BabylonAnimation.DataType.Matrix,
                         loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        framePerSecond = (int)framePerSecond,
+                        framePerSecond = GetFPS(),
                         keys = keys.ToArray(),
                         property = "_matrix"
                     };
@@ -508,6 +501,13 @@ namespace Maya2Babylon
         private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, int currentFrame = 0)
         {
             return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
+        }
+
+        private int GetFPS()
+        {
+            MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
+
+            return (int)framePerSecond;
         }
     }
 }

@@ -349,15 +349,12 @@ namespace Maya2Babylon
 
 
             // Export skeletons
-            if (_exportSkin)
+            if (_exportSkin && skins.Count > 0)
             {
-                if (skins.Count > 0)
+                RaiseMessage("Exporting skeletons");
+                foreach (var skin in skins)
                 {
-                    RaiseMessage("Exporting skeletons");
-                    foreach (var skin in skins)
-                    {
-                        ExportSkin(skin, babylonScene);
-                    }
+                    ExportSkin(skin, babylonScene);
                 }
             }
 
