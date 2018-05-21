@@ -12,6 +12,8 @@ namespace Maya2Babylon
         private List<MFnSkinCluster> skins = new List<MFnSkinCluster>();                    // contains the skins to export
         private Dictionary<string, Dictionary<string, int>> skinDictionary = new Dictionary<string, Dictionary<string, int>>();
         private Dictionary<MFnSkinCluster, MObject> rootBySkin = new Dictionary<MFnSkinCluster, MObject>();
+        private Dictionary<MFnSkinCluster, List<MObject>> influentNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
+        private Dictionary<MFnSkinCluster, List<MObject>> revelantNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
 
         /// <summary>
         /// Create the BabylonSkeleton from the Maya MFnSkinCluster.
@@ -23,7 +25,7 @@ namespace Maya2Babylon
         private void ExportSkin(MFnSkinCluster skin, BabylonScene babylonScene)
         {
             int logRank = 1;
-            int skinIndex = skins.IndexOf(skin);
+            int skinIndex = GetSkeletonIndex(skin);
             string name = "skeleton #" + skinIndex;
             RaiseMessage(name, logRank);
 
@@ -54,45 +56,34 @@ namespace Maya2Babylon
                 return rootBySkin[skin];
             }
 
-            MPlugArray connections = new MPlugArray();
-            try
-            {
-                skin.getConnections(connections);
-                // Search a joint in the connections
-                int connectionsCount = connections.Count;
-                int connectionIndex = 0;
-                while(connectionIndex < connectionsCount && rootJoint == null)
-                {
-                    MObject source = connections[connectionIndex].source.node;
-                    if (source != null && source.hasFn(MFn.Type.kJoint))
-                    {
-                        rootJoint = source;
-                    }
-                    connectionIndex++;
-                }
+            // Get a joint of the skin
+            rootJoint = GetInfluentNodes(skin)[0];
 
-                // Check the joint parent until it's a kWorld
-                MFnDagNode mFnDagNode = new MFnDagNode(rootJoint);
-                MObject firstParent = mFnDagNode.parent(0);
-                MFnDependencyNode node = new MFnDependencyNode(firstParent);
-                while(!firstParent.apiType.Equals(MFn.Type.kWorld))
-                {
-                    rootJoint = firstParent;
-                    mFnDagNode = new MFnDagNode(rootJoint);
-                    firstParent = mFnDagNode.parent(0);
-                    node = new MFnDependencyNode(firstParent);
-                }
-            }
-            catch (Exception e)
+            // Check the joint parent until it's a kWorld
+            MFnDagNode mFnDagNode = new MFnDagNode(rootJoint);
+            MObject firstParent = mFnDagNode.parent(0);
+            MFnDependencyNode node = new MFnDependencyNode(firstParent);
+            while(!firstParent.apiType.Equals(MFn.Type.kWorld))
             {
-                //RaiseError(e.Message, logRank);
-                //RaiseError(e.StackTrace, logRank + 1);
+                rootJoint = firstParent;
+                mFnDagNode = new MFnDagNode(rootJoint);
+                firstParent = mFnDagNode.parent(0);
+                node = new MFnDependencyNode(firstParent);
             }
 
             rootBySkin.Add(skin, rootJoint);
             return rootJoint;
         }
 
+        /// <summary>
+        /// The MEL command only return name and not fullPathName. Unfortunatly you need the full path name to differentiate two nodes with the same names.
+        /// 
+        /// </summary>
+        /// <param name="skin">The skin cluster</param>
+        /// <param name="transform">The transform above the mesh</param>
+        /// <returns>
+        /// The array with the node full path names.
+        /// </returns>
         private MStringArray GetBoneFullPathName(MFnSkinCluster skin, MFnTransform transform)
         {
             int logRank = 3;
@@ -105,19 +96,10 @@ namespace Maya2Babylon
             List<string> boneFullPathNames = new List<string>();
             MPlugArray connections = new MPlugArray();
 
-            // Get the bones connected to the skin cluster
-            skin.getConnections(connections);
-            foreach (MPlug connection in connections)
+            // Get the bone full path names of the skin cluster
+            foreach(MObject node in GetInfluentNodes(skin))
             {
-                MObject source = connection.source.node;
-                if (source != null && source.hasFn(MFn.Type.kJoint))
-                {
-                    MFnDagNode node = new MFnDagNode(source);
-                    if(! boneFullPathNames.Contains(node.fullPathName))
-                    {
-                        boneFullPathNames.Add(node.fullPathName);
-                    }
-                }
+                boneFullPathNames.Add((new MFnDagNode(node)).fullPathName);
             }
 
             // Change the name to the fullPathName. And check that they all share the same root node.
@@ -136,7 +118,7 @@ namespace Maya2Babylon
 
                 if (! mayaInfluenceNames[index].StartsWith($"|{rootName}|") && ! mayaInfluenceNames[index].Equals($"|{rootName}"))
                 {
-                    RaiseError($"Bones don't share the same root node. {rootName} != {mayaInfluenceNames[index].Split('|')[1]}", logRank + 1);
+                    RaiseError($"Bones don't share the same root node. {rootName} != {mayaInfluenceNames[index].Split('|')[1]}", logRank);
                     return null;
                 }
             }
@@ -144,12 +126,18 @@ namespace Maya2Babylon
             return mayaInfluenceNames;
         }
 
+        /// <summary>
+        /// If the skin is not in the list of those that will be export, it add the skin into the list .
+        /// Then it returns its index.
+        /// </summary>
+        /// <param name="skin">the skin to export</param>
+        /// <returns>The index of the skin in the list of those that will be exported</returns>
         private int GetSkeletonIndex(MFnSkinCluster skin)
         {
             // improvement? how can we distinguish skeleton?
-            string rootNodeFullPathName = GetIndexByFullPathNameDictionary(skin).ElementAt(0).Key;
-            int index = skins.FindIndex(skinToExport => GetIndexByFullPathNameDictionary(skinToExport).ElementAt(0).Key.Equals(rootNodeFullPathName));
-            //int index = skins.FindIndex(skinToExport => skinToExport.name.Equals(skin.name));
+            //string rootNodeFullPathName = GetIndexByFullPathNameDictionary(skin).ElementAt(0).Key;
+            //int index = skins.FindIndex(skinToExport => GetIndexByFullPathNameDictionary(skinToExport).ElementAt(0).Key.Equals(rootNodeFullPathName));
+            int index = skins.FindIndex(skinToExport => skinToExport.name.Equals(skin.name));
 
             if (index == -1)
             {
@@ -160,6 +148,13 @@ namespace Maya2Babylon
             return index;
         }
 
+        /// <summary>
+        /// Return the max influence of a skin cluster on a mesh.
+        /// </summary>
+        /// <param name="skin">the skin</param>
+        /// <param name="transform">the transform above the mesh</param>
+        /// <param name="mesh">the mesh</param>
+        /// <returns>The max influence</returns>
         private int GetMaxInfluence(MFnSkinCluster skin, MFnTransform transform, MFnMesh mesh)
         {
             int maxNumInfluences = 0;
@@ -180,16 +175,104 @@ namespace Maya2Babylon
 
             return maxNumInfluences;
         }
-        
+
+        /// <summary>
+        /// Init the list influentNodesBySkin of a skin cluster.
+        /// By find the kjoint that are connected to the skin.
+        /// </summary>
+        /// <param name="skin">the skin cluster</param>
+        /// <returns>
+        /// The list of skin kjoint
+        /// </returns>
+        private List<MObject> GetInfluentNodes(MFnSkinCluster skin)
+        {
+            if (influentNodesBySkin.ContainsKey(skin))
+            {
+                return influentNodesBySkin[skin];
+            }
+
+            List<MObject> influentNodes = new List<MObject>();
+
+            // Get all influenting nodes
+            MPlugArray connections = new MPlugArray();
+            skin.getConnections(connections);
+            foreach (MPlug connection in connections)
+            {
+                MObject source = connection.source.node;
+                if (source != null && source.hasFn(MFn.Type.kJoint))
+                {
+                    if (influentNodes.Count(node => Equals(node, source)) == 0)
+                    {
+                        influentNodes.Add(source);
+                    }
+                }
+            }
+            influentNodesBySkin.Add(skin, influentNodes);
+
+            return influentNodes;
+        }
+
+        /// <summary>
+        /// Init the two list influentNodesBySkin and revelantNodesBySkin of a skin cluster.
+        /// By getting the parents of the influent nodes.
+        /// </summary>
+        /// <param name="skin">the skin cluster</param>
+        /// <returns>
+        /// The list of nodes that form the skeleton
+        /// </returns>
+        private List<MObject> GetRevelantNodes(MFnSkinCluster skin)
+        {
+            if (revelantNodesBySkin.ContainsKey(skin))
+            {
+                return revelantNodesBySkin[skin];
+            }
+
+            List<MObject> influentNodes = GetInfluentNodes(skin);
+            List<MObject> revelantNodes = new List<MObject>();
+
+
+            // Add parents until it's a kWorld
+            foreach(MObject node in influentNodes)
+            {
+                MObject currentNode = node;
+                //MObject parent = findValidParent(node);   // A node can have several parents. Which one is the right one ? It seems that the first one is most likely a transform
+
+                while (!currentNode.apiType.Equals(MFn.Type.kWorld))
+                {
+                    MFnDagNode dagNode = new MFnDagNode(currentNode);
+
+                    if (revelantNodes.Count(revelantNode => Equals(revelantNode,currentNode)) == 0)
+                    {
+                        revelantNodes.Add(currentNode);
+                    }
+
+                    // iter
+                    MObject firstParent = dagNode.parent(0);
+                    currentNode = firstParent;
+                }
+            }
+            revelantNodesBySkin.Add(skin, revelantNodes);
+
+            return revelantNodes;
+        }
+
+        /// <summary>
+        /// Init the dictionary of the skin. This dictionary represents the skeleton. It contains the node names and their index.
+        /// And add it to skinDictionary
+        /// </summary>
+        /// <param name="skin">the skin cluster</param>
+        /// <returns>
+        /// The dictionary that represents the skin skeleton
+        /// </returns>
         private Dictionary<string, int> GetIndexByFullPathNameDictionary(MFnSkinCluster skin)
         {
             if (skinDictionary.ContainsKey(skin.name))
             {
                 return skinDictionary[skin.name];
             }
-
             Dictionary<string, int> indexByFullPathName = new Dictionary<string, int>();
-            
+            List<MObject> revelantNodes = GetRevelantNodes(skin);
+
             // get the root node
             MObject rootNode = GetRootNode(skin);
             // Travel the DAG
@@ -205,19 +288,18 @@ namespace Maya2Babylon
 
                 try
                 {
-                    MFnTransform currentNodeTransform = new MFnTransform(currentNode);
-                    string currentFullPathName = currentNodeTransform.fullPathName;
+                    if (revelantNodes.Count(node => Equals(node, currentNode)) > 0)
+                    {
+                        MFnTransform currentNodeTransform = new MFnTransform(currentNode);
+                        string currentFullPathName = currentNodeTransform.fullPathName;
 
-                    indexByFullPathName.Add(currentFullPathName, index);
-                    index++;
+                        indexByFullPathName.Add(currentFullPathName, index);
+                        index++;
+                    }
                 }
                 catch   // When it's not a kTransform or kJoint node. For exemple a kLocator, kNurbsCurve.
                 {
-                    if (currentNode.apiType == MFn.Type.kNurbsCurve)
-                    {
-                        RaiseError($"{currentNode.apiType} is not supported. It will not be exported: {mDagPath.fullPathName}", 3);
-                        return null;
-                    }
+                    RaiseError($"{currentNode.apiType} is not supported. It will not be exported: {mDagPath.fullPathName}", 3);
                 }
 
                 dagIterator.next();
@@ -229,66 +311,57 @@ namespace Maya2Babylon
         }
 
         /// <summary>
-        /// Convert Maya nodes to BabylonBone
+        /// Return the bones to export.
         /// </summary>
-        /// <param name="skin">The Maya skin cluster to export</param>
-        /// <returns>
-        /// An array of the babylon bones that form the BabylonSkeleton
-        /// </returns>
+        /// <param name="skin">the skin to export</param>
+        /// <returns>Array of BabylonBone to export</returns>
         private BabylonBone[] GetBones(MFnSkinCluster skin)
         {
             int logRank = 1;
-            int skinIndex = skins.IndexOf(skin);
+            int skinIndex = GetSkeletonIndex(skin);
             List<BabylonBone> bones = new List<BabylonBone>();
             Dictionary<string, int> indexByFullPathName = GetIndexByFullPathNameDictionary(skin);
+            List<MObject> revelantNodes = GetRevelantNodes(skin);
 
-            // Travel the DAG
-            MItDag dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
-            dagIterator.reset(GetRootNode(skin));                               // start from the root node of the skin
-            for (; !dagIterator.isDone; dagIterator.next())
+            foreach (MObject node in revelantNodes)
             {
-                try
+                MFnDagNode dagNode = new MFnDagNode(node);
+                MFnTransform currentNodeTransform = new MFnTransform(node);
+                string currentFullPathName = dagNode.fullPathName;
+                int index = indexByFullPathName[currentFullPathName];
+                int parentIndex = -1;
+
+                // find the parent node to get its index
+                if (! dagNode.parent(0).hasFn(MFn.Type.kWorld))
                 {
-                    // current node
-                    MDagPath mDagPath = new MDagPath();
-                    dagIterator.getPath(mDagPath);
-                    MObject currentNode = mDagPath.node;
-                    MFnTransform currentNodeTransform = new MFnTransform(currentNode);
-                    string currentFullPathName = currentNodeTransform.fullPathName;
-
-                    // find the parent node to get its index
-                    int parentIndex = -1;
-                    if (indexByFullPathName[currentFullPathName] > 0)
-                    {
-                        MFnDagNode mFnDagNode = new MFnDagNode(currentNode);
-                        MFnTransform firstParentTransform = new MFnTransform(mFnDagNode.parent(0));
-                        parentIndex = indexByFullPathName[firstParentTransform.fullPathName];
-                    }
-
-                    // create the bone
-                    BabylonBone bone = new BabylonBone()
-                    {
-                        name = currentFullPathName,
-                        index = indexByFullPathName[currentFullPathName],
-                        parentBoneIndex = parentIndex,
-                        matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
-                        animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
-                    };
-                    bones.Add(bone);
-
-                    // The RaiseMessage is only here to prevent Maya from freezing...
-                    RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", (int)dagIterator.depth + logRank + 1);
+                    MFnTransform firstParentTransform = new MFnTransform(dagNode.parent(0));
+                    parentIndex = indexByFullPathName[firstParentTransform.fullPathName];
                 }
-                catch(Exception e)
+
+                // create the bone
+                BabylonBone bone = new BabylonBone()
                 {
-                    //RaiseError(e.Message,logRank);
-                    //RaiseError(e.StackTrace, logRank + 1);
-                }
+                    name = currentFullPathName,
+                    index = indexByFullPathName[currentFullPathName],
+                    parentBoneIndex = parentIndex,
+                    matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
+                    //matrix = ConvertMayaToBabylonMatrix(GetMMatrix(currentNodeTransform)).m.ToArray(),    // which frame to use in orderto get the right matrix?
+                    animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
+                };
+
+                bones.Add(bone);
+                RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);
             }
-            RaiseMessage($"{bones.Count} bone(s) exported", logRank + 1);
 
+            // sort
+            List<BabylonBone> sorted = new List<BabylonBone>();
+            sorted = bones.OrderBy(bone => bone.index).ToList();
+            bones = sorted;
+
+            RaiseMessage($"{bones.Count} bone(s) exported", logRank + 1);
             return bones.ToArray();
         }
+
 
         /// <summary>
         /// Normalize the value in the dictionary.
