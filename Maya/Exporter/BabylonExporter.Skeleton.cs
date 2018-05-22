@@ -135,8 +135,6 @@ namespace Maya2Babylon
         private int GetSkeletonIndex(MFnSkinCluster skin)
         {
             // improvement? how can we distinguish skeleton?
-            //string rootNodeFullPathName = GetIndexByFullPathNameDictionary(skin).ElementAt(0).Key;
-            //int index = skins.FindIndex(skinToExport => GetIndexByFullPathNameDictionary(skinToExport).ElementAt(0).Key.Equals(rootNodeFullPathName));
             int index = skins.FindIndex(skinToExport => skinToExport.name.Equals(skin.name));
 
             if (index == -1)
@@ -300,6 +298,7 @@ namespace Maya2Babylon
                 catch   // When it's not a kTransform or kJoint node. For exemple a kLocator, kNurbsCurve.
                 {
                     RaiseError($"{currentNode.apiType} is not supported. It will not be exported: {mDagPath.fullPathName}", 3);
+                    return null;
                 }
 
                 dagIterator.next();
