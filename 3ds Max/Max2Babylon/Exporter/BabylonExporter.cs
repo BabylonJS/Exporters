@@ -20,11 +20,10 @@ namespace Max2Babylon
         public event Action<string, Color, int, bool> OnMessage;
         public event Action<string, int> OnError;
 
-        public bool AutoSave3dsMaxFile { get; set; }
-        public bool ExportHiddenObjects { get; set; }
-        public bool IsCancelled { get; set; }
+        public Form callerForm;
 
-        public bool CopyTexturesToOutput { get; set; }
+        public ExportParameters exportParameters;
+        public bool IsCancelled { get; set; }
 
         public string MaxSceneFileName { get; set; }
 
@@ -32,9 +31,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
-        private bool _onlySelected;
-
-        private string exporterVersion = "1.0.5";
+        private string exporterVersion = "1.1.0";
 
         void ReportProgressChanged(int progress)
         {
@@ -87,11 +84,12 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
-
-        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm, string scaleFactor)
+        
+        public void Export(ExportParameters exportParameters)
         {
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
+            string scaleFactor = exportParameters.scaleFactor;
             try
             {
                 scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
@@ -104,12 +102,13 @@ namespace Max2Babylon
                 return;
             }
 
+            this.exportParameters = exportParameters;
+
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
             gameScene.InitialiseIGame(false);
-            this._onlySelected = onlySelected;
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
@@ -117,6 +116,9 @@ namespace Max2Babylon
             IsCancelled = false;
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
+
+            string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
+            string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -138,10 +140,11 @@ namespace Max2Babylon
             var watch = new Stopwatch();
             watch.Start();
 
+            string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
 
             // Save scene
-            if (AutoSave3dsMaxFile)
+            if (exportParameters.autoSave3dsMaxFile)
             {
                 RaiseMessage("Saving 3ds max file");
                 var forceSave = Loader.Core.FileSave;
@@ -354,22 +357,19 @@ namespace Max2Babylon
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-
-                await Task.Run(() =>
+                
+                using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
-                    using (var jsonWriter = new JsonTextWriterOptimized(sw))
-                    {
-                        jsonWriter.Formatting = Formatting.None;
-                        jsonSerializer.Serialize(jsonWriter, babylonScene);
-                    }
-                    File.WriteAllText(outputFile, sb.ToString());
+                    jsonWriter.Formatting = Formatting.None;
+                    jsonSerializer.Serialize(jsonWriter, babylonScene);
+                }
+                File.WriteAllText(outputFile, sb.ToString());
 
-                    if (generateManifest)
-                    {
-                        File.WriteAllText(outputFile + ".manifest",
-                            "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
-                    }
-                });
+                if (exportParameters.generateManifest)
+                {
+                    File.WriteAllText(outputFile + ".manifest",
+                        "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
+                }
 
                 // Binary
                 if (outputFormat == "binary babylon")
@@ -553,12 +553,12 @@ namespace Max2Babylon
                 return false;
             }
 
-            if (_onlySelected && !gameNode.MaxNode.Selected)
+            if (exportParameters.exportOnlySelected && !gameNode.MaxNode.Selected)
             {
                 return false;
             }
 
-            if (!ExportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
+            if (!exportParameters.exportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
             {
                 return false;
             }
