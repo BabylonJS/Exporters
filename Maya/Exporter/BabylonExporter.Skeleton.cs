@@ -134,8 +134,24 @@ namespace Maya2Babylon
         /// <returns>The index of the skin in the list of those that will be exported</returns>
         private int GetSkeletonIndex(MFnSkinCluster skin)
         {
-            // improvement? how can we distinguish skeleton?
-            int index = skins.FindIndex(skinToExport => skinToExport.name.Equals(skin.name));
+            int index = -1;
+            List<MObject> revelantNodes = GetRevelantNodes(skin);
+
+            // Compare the revelant nodes with the list of those exported
+            int currentIndex = 0;
+
+            while(currentIndex < skins.Count && index == -1)
+            {
+                List<MObject> currentRevelantNodes = GetRevelantNodes(skins[currentIndex]);
+
+                if (revelantNodes.Count == currentRevelantNodes.Count
+                    && revelantNodes.All(node1 => currentRevelantNodes.Count(node2 => Equals(node1,node2)) == 1))
+                {
+                    index = currentIndex;
+                }
+
+                currentIndex++;
+            }
 
             if (index == -1)
             {
