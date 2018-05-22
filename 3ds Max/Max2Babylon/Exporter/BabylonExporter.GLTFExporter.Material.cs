@@ -215,7 +215,7 @@ namespace Max2Babylon
                     Bitmap baseColorBitmap = null;
                     Bitmap metallicRoughnessBitmap = null;
 
-                    if (CopyTexturesToOutput)
+                    if (exportParameters.copyTexturesToOutput)
                     {
                         // Diffuse
                         Bitmap diffuseBitmap = null;

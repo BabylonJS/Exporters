@@ -119,12 +119,19 @@ namespace Max2Babylon
             bool success = true;
             try
             {
-                exporter.AutoSave3dsMaxFile = chkAutoSave.Checked;
-                exporter.ExportHiddenObjects = chkHidden.Checked;
-                exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
-                var directoryName = Path.GetDirectoryName(txtFilename.Text);
-                var fileName = Path.GetFileName(txtFilename.Text);
-                await exporter.ExportAsync(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this, txtScaleFactor.Text);
+                ExportParameters exportParameters = new ExportParameters();
+                exportParameters.outputPath = txtFilename.Text;
+                exportParameters.outputFormat = comboOutputFormat.SelectedItem.ToString();
+                exportParameters.scaleFactor = txtScaleFactor.Text;
+                exportParameters.copyTexturesToOutput = chkCopyTextures.Checked;
+                exportParameters.exportHiddenObjects = chkHidden.Checked;
+                exportParameters.exportOnlySelected = chkOnlySelected.Checked;
+                exportParameters.generateManifest = chkManifest.Checked;
+                exportParameters.autoSave3dsMaxFile = chkAutoSave.Checked;
+
+                exporter.callerForm = this;
+
+                exporter.Export(exportParameters);
             }
             catch (OperationCanceledException)
             {
