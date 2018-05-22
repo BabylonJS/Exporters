@@ -3,6 +3,7 @@ using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 namespace Maya2Babylon
@@ -1079,7 +1080,24 @@ namespace Maya2Babylon
             }
 
             string path = Path.Combine(directoryName, fileName);
-            bitmap.Save(path, imageFormat);
+            using (FileStream fs = File.Open(path, FileMode.Create))
+            {
+                ImageCodecInfo encoder = GetEncoder(imageFormat);
+
+                if (encoder != null)
+                {
+                    // Create an Encoder object based on the GUID for the Quality parameter category
+                    EncoderParameters encoderParameters = new EncoderParameters(1);
+                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, 100L);
+                    encoderParameters.Param[0] = encoderQualityParameter;
+
+                    bitmap.Save(fs, encoder, encoderParameters);
+                }
+                else
+                {
+                    bitmap.Save(fs, imageFormat);
+                }
+            }
         }
 
         private List<char> GetInvalidChars(string s, char[] invalidChars)
@@ -1094,6 +1112,19 @@ namespace Maya2Babylon
                 }
             }
             return invalidCharsInString;
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
         }
     }
 }
