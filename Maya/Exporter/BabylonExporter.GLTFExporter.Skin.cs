@@ -10,8 +10,8 @@ namespace Maya2Babylon
         // Bones stored in BabylonSkeleton array are not assumed to be tree-ordered
         // Meaning, first element could be a leaf thus resulting in exporting all its ancestors before himself
         // Store bones already exported to prevent multiple exportation of same bone
-        // This dictionary is reset everytime a skin is exported
-        private Dictionary<BabylonBone, GLTFNode> alreadyExportedBones;
+        // This dictionary is NOT reset everytime a skin is exported
+        private Dictionary<string, GLTFNode> alreadyExportedBones = new Dictionary<string, GLTFNode>();
 
         // Skeletons, aka group of nodes, are re-used when exporting same babylon skeleton
         // Only the inverseBindMatrices change, as it is linked to the mesh of the gltf node the skin is applied to
@@ -88,7 +88,7 @@ namespace Maya2Babylon
             //printMatrix("nodeWorldMatrix[" + gltfNode.name + "]", nodeWorldMatrix);
 
             var gltfJoints = new List<int>();
-            alreadyExportedBones = new Dictionary<BabylonBone, GLTFNode>();
+            //alreadyExportedBones = new Dictionary<BabylonBone, GLTFNode>();
             foreach (var babylonBone in babylonSkeleton.bones)
             {
                 GLTFNode gltfBoneNode = null;
@@ -144,9 +144,9 @@ namespace Maya2Babylon
 
         private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
         {
-            if (alreadyExportedBones.ContainsKey(babylonBone))
+            if (alreadyExportedBones.ContainsKey(babylonBone.name))
             {
-                return alreadyExportedBones[babylonBone];
+                return alreadyExportedBones[babylonBone.name];
             }
 
             // Node
@@ -156,7 +156,7 @@ namespace Maya2Babylon
             };
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
-            alreadyExportedBones.Add(babylonBone, gltfNode);
+            alreadyExportedBones.Add(babylonBone.name, gltfNode);
 
             // Hierarchy
             if (babylonBone.parentBoneIndex >= 0)
