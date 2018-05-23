@@ -15,6 +15,11 @@ namespace Maya2Babylon
         private Dictionary<MFnSkinCluster, List<MObject>> influentNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
         private Dictionary<MFnSkinCluster, List<MObject>> revelantNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
 
+        // For the progress bar
+        private float progressSkin;
+        private float progressSkinStep;
+        private float progressBoneStep;
+
         /// <summary>
         /// Create the BabylonSkeleton from the Maya MFnSkinCluster.
         /// And add it to the BabylonScene.
@@ -32,7 +37,7 @@ namespace Maya2Babylon
             BabylonSkeleton babylonSkeleton = new BabylonSkeleton {
                 id = skinIndex,
                 name = name,
-                bones = GetBones(skin),
+                bones = ExportBones(skin),
                 needInitialSkinMatrix = true
             };
             
@@ -330,13 +335,15 @@ namespace Maya2Babylon
         /// </summary>
         /// <param name="skin">the skin to export</param>
         /// <returns>Array of BabylonBone to export</returns>
-        private BabylonBone[] GetBones(MFnSkinCluster skin)
+        private BabylonBone[] ExportBones(MFnSkinCluster skin)
         {
             int logRank = 1;
             int skinIndex = GetSkeletonIndex(skin);
             List<BabylonBone> bones = new List<BabylonBone>();
             Dictionary<string, int> indexByFullPathName = GetIndexByFullPathNameDictionary(skin);
             List<MObject> revelantNodes = GetRevelantNodes(skin);
+
+            progressBoneStep = progressSkinStep / revelantNodes.Count;
 
             foreach (MObject node in revelantNodes)
             {
@@ -360,12 +367,16 @@ namespace Maya2Babylon
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,
                     matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
-                    //matrix = ConvertMayaToBabylonMatrix(GetMMatrix(currentNodeTransform)).m.ToArray(),    // which frame to use in orderto get the right matrix?
                     animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
                 };
 
                 bones.Add(bone);
                 RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);
+
+                // Progress bar
+                progressSkin += progressBoneStep;
+                ReportProgressChanged(progressSkin);
+                CheckCancelled();
             }
 
             // sort
@@ -374,6 +385,7 @@ namespace Maya2Babylon
             bones = sorted;
 
             RaiseMessage($"{bones.Count} bone(s) exported", logRank + 1);
+
             return bones.ToArray();
         }
 
