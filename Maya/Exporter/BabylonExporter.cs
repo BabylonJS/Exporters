@@ -351,17 +351,14 @@ namespace Maya2Babylon
             // Export skeletons
             if (_exportSkin && skins.Count > 0)
             {
-                float progress = 0;
-                float increment = 100 / skins.Count;
-                ReportProgressChanged(progress);
+                progressSkin = 0;
+                progressSkinStep = 100 / skins.Count;
+                ReportProgressChanged(progressSkin);
                 RaiseMessage("Exporting skeletons");
                 foreach (var skin in skins)
                 {
                     ExportSkin(skin, babylonScene);
-                    progress += increment;
-                    ReportProgressChanged(progress);
                 }
-                ReportProgressChanged(100);
             }
 
             // Output

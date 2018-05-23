@@ -88,7 +88,7 @@ namespace Maya2Babylon
             //printMatrix("nodeWorldMatrix[" + gltfNode.name + "]", nodeWorldMatrix);
 
             var gltfJoints = new List<int>();
-            //alreadyExportedBones = new Dictionary<BabylonBone, GLTFNode>();
+
             foreach (var babylonBone in babylonSkeleton.bones)
             {
                 GLTFNode gltfBoneNode = null;
