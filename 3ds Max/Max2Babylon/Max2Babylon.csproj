@@ -114,6 +114,8 @@
     <Compile Include="GlobalUtility.cs" />
     <Compile Include="JsonTextWriterOptimized.cs" />
     <Compile Include="Loader.cs" />
+    <Compile Include="ExportParameters.cs" />
+    <Compile Include="MaxScriptManager.cs" />
     <Compile Include="BabylonExportActionItem.cs" />
     <Compile Include="Forms\ObjectPropertiesForm.cs">
       <SubType>Form</SubType>
