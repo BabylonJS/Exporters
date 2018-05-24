@@ -35,7 +35,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.1.6";
+        private string exporterVersion = "1.1.7";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
@@ -349,15 +349,15 @@ namespace Maya2Babylon
 
 
             // Export skeletons
-            if (_exportSkin)
+            if (_exportSkin && skins.Count > 0)
             {
-                if (skins.Count > 0)
+                progressSkin = 0;
+                progressSkinStep = 100 / skins.Count;
+                ReportProgressChanged(progressSkin);
+                RaiseMessage("Exporting skeletons");
+                foreach (var skin in skins)
                 {
-                    RaiseMessage("Exporting skeletons");
-                    foreach (var skin in skins)
-                    {
-                        ExportSkin(skin, babylonScene);
-                    }
+                    ExportSkin(skin, babylonScene);
                 }
             }
 
