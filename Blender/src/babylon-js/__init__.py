@@ -45,6 +45,7 @@ else:
 
 import bpy
 from bpy_extras.io_utils import ExportHelper, ImportHelper
+from .exporter_settings_panel import ExporterSettingsPanel
 #===============================================================================
 def register():
     bpy.utils.register_module(__name__)
@@ -64,7 +65,7 @@ if __name__ == '__main__':
     unregister()
     register()
 #===============================================================================
-class JsonMain(bpy.types.Operator, ExportHelper):
+class JsonMain(bpy.types.Operator, ExportHelper, ExporterSettingsPanel):
     bl_idname = 'bjs.main'
     bl_label = 'Export Babylon.js scene' # used on the label of the actual 'save' button
     bl_options = {'REGISTER', 'UNDO'}
