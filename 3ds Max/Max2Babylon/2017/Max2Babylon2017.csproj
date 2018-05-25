@@ -256,6 +256,12 @@
     <Compile Include="..\Loader.cs">
       <Link>Loader.cs</Link>
     </Compile>
+    <Compile Include="..\ExportParameters.cs">
+      <Link>ExportParameters.cs</Link>
+    </Compile>
+    <Compile Include="..\MaxScriptManager.cs">
+      <Link>MaxScriptManager.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\Tools.cs">
       <Link>Tools\Tools.cs</Link>
     </Compile>

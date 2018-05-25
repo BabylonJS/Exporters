@@ -60,8 +60,8 @@ namespace Maya2Babylon
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
 
-            // TODO - Animations
-            //ExportNodeAnimation(babylonCamera, gltf, gltfNode);
+            // Animations
+            ExportNodeAnimation(babylonCamera, gltf, gltfNode);
 
             // --- prints ---
             #region prints

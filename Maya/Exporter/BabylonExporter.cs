@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Maya2Babylon
@@ -22,6 +21,7 @@ namespace Maya2Babylon
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
         private bool isBabylonExported;
+        private bool _exportSkin;
 
         public bool IsCancelled { get; set; }
 
@@ -34,11 +34,21 @@ namespace Maya2Babylon
         /// Those cameras are always ignored when exporting (ie even when exporting hidden objects)
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
-        
-        private string exporterVersion = "1.0.7";
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, bool exportTangents, string scaleFactor)
+        private string exporterVersion = "1.1.7";
+
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
+                            bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
         {
+            // Chekc if the animation is running
+            MGlobal.executeCommand("play -q - state", out int isPlayed);
+            if(isPlayed == 1)
+            {
+                RaiseError("Stop the animation before exporting.");
+                return;
+            }
+
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
             try
@@ -47,7 +57,7 @@ namespace Maya2Babylon
                 scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                 scaleFactorFloat = float.Parse(scaleFactor);
             }
-            catch(Exception e)
+            catch
             {
                 RaiseError("Scale factor is not a valid number.");
                 return;
@@ -64,6 +74,7 @@ namespace Maya2Babylon
             _exportTangents = exportTangents;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
+            _exportSkin = exportSkin;
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -336,6 +347,20 @@ namespace Maya2Babylon
             UpdateMeshesMaterialId(babylonScene);
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
+
+            // Export skeletons
+            if (_exportSkin && skins.Count > 0)
+            {
+                progressSkin = 0;
+                progressSkinStep = 100 / skins.Count;
+                ReportProgressChanged(progressSkin);
+                RaiseMessage("Exporting skeletons");
+                foreach (var skin in skins)
+                {
+                    ExportSkin(skin, babylonScene);
+                }
+            }
+
             // Output
             babylonScene.Prepare(false, false);
             if (isBabylonExported)
@@ -448,9 +473,13 @@ namespace Maya2Babylon
         /// 
         /// </summary>
         /// <param name="isFull">If true all nodes are printed, otherwise only relevant ones</param>
-        private void PrintDAG(bool isFull)
+        private void PrintDAG(bool isFull, MObject root = null)
         {
             var dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
+            if (root != null)
+            {
+                dagIterator.reset(root);
+            }
             RaiseMessage("DAG: " + (isFull ? "full" : "relevant"));
             while (!dagIterator.isDone)
             {
