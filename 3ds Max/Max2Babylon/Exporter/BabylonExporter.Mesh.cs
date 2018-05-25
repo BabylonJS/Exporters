@@ -11,8 +11,6 @@ namespace Max2Babylon
     {
         private int bonesCount;
 
-        readonly Dictionary<IIGameSkin, List<int>> skinSortedBones = new Dictionary<IIGameSkin, List<int>>();
-
         private bool IsMeshExportable(IIGameNode meshNode)
         {
             return IsNodeExportable(meshNode);
@@ -196,11 +194,9 @@ namespace Max2Babylon
                     skin = skinAlreadyStored;
                 }
 
-                skinnedNodes.Add(meshNode);
                 babylonMesh.skeletonId = skins.IndexOf(skin);
                 skin.GetInitSkinTM(skinInitPoseMatrix);
-                boneIds = SortBones(skin);
-                skinSortedBones[skin] = boneIds;
+                boneIds = GetNodeIndices(skin);
             }
 
             // Mesh
@@ -627,57 +623,6 @@ namespace Max2Babylon
 
             indexCount += 3;
             CheckCancelled();
-        }
-
-        List<int> SortBones(IIGameSkin skin)
-        {
-            var boneIds = new List<int>();
-            var boneIndex = new Dictionary<int, IIGameNode>();
-            for (var index = 0; index < skin.TotalSkinBoneCount; index++)
-            {
-                var bone = skin.GetIGameBone(index, false);
-                if (bone == null)
-                {
-                    // non bone in skeletton
-                    boneIds.Add(-2);
-
-                }
-                else
-                {
-                    boneIds.Add(bone.NodeID);
-                    boneIndex[bone.NodeID] = bone;
-                }
-            }
-            while (true)
-            {
-                bool foundMisMatch = false;
-                for (int i = 0; i < boneIds.Count; ++i)
-                {
-                    var id = boneIds[i];
-                    if (id == -2)
-                    {
-                        continue;
-                    }
-                    var parent = boneIndex[id].NodeParent;
-                    if (parent != null)
-                    {
-                        var parentId = parent.NodeID;
-                        if (boneIds.IndexOf(parentId) > i)
-                        {
-                            boneIds.RemoveAt(i);
-                            boneIds.Insert(boneIds.IndexOf(parentId) + 1, id);
-                            foundMisMatch = true;
-                            break;
-                        }
-                    }
-                }
-                if (!foundMisMatch)
-                {
-                    break;
-                }
-            }
-            return boneIds;
-
         }
 
         int CreateGlobalVertex(IIGameMesh mesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
