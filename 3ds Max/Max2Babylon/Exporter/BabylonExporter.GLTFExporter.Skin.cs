@@ -88,11 +88,6 @@ namespace Max2Babylon
 
             var gltfJoints = new List<int>();
 
-            // TO DELETE once the issue on the partial skeleton export is fix.
-            // The deletion will fix the duplicated nodes/bones in glTF.
-            alreadyExportedBones = new Dictionary<string, GLTFNode>();
-            // TO DELETE end
-
             foreach (var babylonBone in babylonSkeleton.bones)
             {
                 GLTFNode gltfBoneNode = null;
