@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for 3ds max 2017 v1.0.5",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,
@@ -23,10 +23,10 @@
 				-0.8652992
 			],
 			"rotation": [
-				-5.96046448e-8,
+				5.96046448e-8,
 				0,
 				0,
-				-1
+				1
 			],
 			"scale": [
 				1,

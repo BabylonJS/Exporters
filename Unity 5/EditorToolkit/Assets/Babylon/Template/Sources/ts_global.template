@@ -1,6 +1,0 @@
-/* Global Application Script Template */
-/* <reference path="{*path*}/Assets/Babylon/Library/babylon.d.ts" /> */
-
-BABYLON.SceneManager.ExecuteWhenReady((scene:BABYLON.Scene, manager:BABYLON.SceneManager)=> {
-    console.log("Loading project...");
-});
