@@ -2,7 +2,6 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Max2Babylon
 {
