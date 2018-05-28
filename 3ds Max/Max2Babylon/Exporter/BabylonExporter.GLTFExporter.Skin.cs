@@ -7,12 +7,6 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        // Bones stored in BabylonSkeleton array are not assumed to be tree-ordered
-        // Meaning, first element could be a leaf thus resulting in exporting all its ancestors before himself
-        // Store bones already exported to prevent multiple exportation of same bone
-        // This dictionary is NOT reset everytime a skin is exported
-        private Dictionary<string, GLTFNode> alreadyExportedBones = new Dictionary<string, GLTFNode>();
-
         // Skeletons, aka group of nodes, are re-used when exporting same babylon skeleton
         // Only the inverseBindMatrices change, as it is linked to the mesh of the gltf node the skin is applied to
         // This dictionary is reset everytime a scene is exported
@@ -143,9 +137,9 @@ namespace Max2Babylon
 
         private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
         {
-            if (alreadyExportedBones.ContainsKey(babylonBone.name))
+            if (alreadyExportedNodes.ContainsKey(babylonBone.name))
             {
-                return alreadyExportedBones[babylonBone.name];
+                return alreadyExportedNodes[babylonBone.name];
             }
 
             // Node
@@ -155,7 +149,7 @@ namespace Max2Babylon
             };
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
-            alreadyExportedBones.Add(babylonBone.name, gltfNode);
+            alreadyExportedNodes.Add(babylonBone.name, gltfNode);
 
             // Hierarchy
             if (babylonBone.parentBoneIndex >= 0)

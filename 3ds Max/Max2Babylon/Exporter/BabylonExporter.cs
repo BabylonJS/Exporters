@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
-        private string exporterVersion = "1.1.1";
+        private string exporterVersion = "1.1.2";
 
         void ReportProgressChanged(int progress)
         {
@@ -407,6 +407,9 @@ namespace Max2Babylon
                 case Autodesk.Max.IGameObject.ObjectTypes.Light:
                     babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
                     break;
+                case Autodesk.Max.IGameObject.ObjectTypes.Helper:
+                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+                    break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
                     // Create a dummy (empty mesh) when type is unknown
                     // An example of unknown type object is the target of target light or camera
@@ -435,6 +438,8 @@ namespace Max2Babylon
                     exportNodeRec(descendant, babylonScene, maxGameScene);
                 }
             }
+
+
         }
 
         /// <summary>
@@ -453,6 +458,9 @@ namespace Max2Babylon
                     break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Light:
                     isRelevantToExport = IsLightExportable(maxGameNode);
+                    break;
+                case Autodesk.Max.IGameObject.ObjectTypes.Helper:
+                    isRelevantToExport = IsNodeExportable(maxGameNode);
                     break;
                 default:
                     isRelevantToExport = false;
@@ -519,6 +527,7 @@ namespace Max2Babylon
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Mesh);
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Light);
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Camera);
+            addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Helper);
 
             return maxGameNodes;
         }
