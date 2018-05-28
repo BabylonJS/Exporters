@@ -225,7 +225,7 @@ namespace Maya2Babylon
             BabylonMesh babylonMasterMesh = GetMasterMesh(mFnMesh, babylonMesh);
             if (babylonMasterMesh != null)
             {
-                RaiseWarning($"The master mesh {babylonMasterMesh.name} was already exported. This one will be exported as an instance.",2);
+                RaiseMessage($"The master mesh {babylonMasterMesh.name} was already exported. This one will be exported as an instance.",2);
 
                 // Export this node as instance
                 var babylonInstanceMesh = new BabylonAbstractMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
@@ -243,9 +243,6 @@ namespace Maya2Babylon
 
                 return babylonInstanceMesh;
             }
-            RaiseWarning("Exported as a master mesh.",2);
-
-
 
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
