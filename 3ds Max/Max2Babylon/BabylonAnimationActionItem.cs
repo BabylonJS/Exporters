@@ -20,11 +20,14 @@ namespace Max2Babylon
             if (parentWindow.Handle == IntPtr.Zero)
                 parentWindow.AssignHandle(Loader.Core.MAXHWnd);
 
-            form.Show(parentWindow);
-			form.BringToFront();
-			form.WindowState = FormWindowState.Normal;
+            if (!form.Visible)
+                form.Show(parentWindow);
 
-			return true;
+            form.WindowState = FormWindowState.Normal;
+            form.BringToFront();
+
+
+            return true;
 		}
 
         public override void Dispose()
