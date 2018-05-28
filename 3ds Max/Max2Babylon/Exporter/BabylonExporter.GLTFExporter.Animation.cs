@@ -18,7 +18,7 @@ namespace Max2Babylon
 
             foreach (AnimationGroup animGroup in animationList)
             {
-                RaiseMessage("GLTFExporter.Animation | Exporting animation group named: " + animGroup.Name, 1);
+                RaiseMessage("GLTFExporter.Animation | " + animGroup.Name, 1);
 
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = animGroup.Name;
@@ -48,7 +48,15 @@ namespace Max2Babylon
                         }
                     }
                 }
-                gltf.AnimationsList.Add(gltfAnimation);
+
+                if (gltfAnimation.ChannelList.Count > 0)
+                {
+                    gltf.AnimationsList.Add(gltfAnimation);
+                }
+                else
+                {
+                    RaiseMessage("No data exported for this animation, it is ignored.", 2);
+                }
             }
         }
 
