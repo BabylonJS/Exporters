@@ -2,6 +2,7 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Maya2Babylon
@@ -11,13 +12,13 @@ namespace Maya2Babylon
         /// <summary>
         /// List of simple materials
         /// </summary>
-         List<MFnDependencyNode> referencedMaterials = new List<MFnDependencyNode>();
+        List<MFnDependencyNode> referencedMaterials = new List<MFnDependencyNode>();
 
         /// <summary>
         /// List of sub materials binded to each multimaterial
         /// </summary>
         readonly Dictionary<string, List<MFnDependencyNode>> multiMaterials = new Dictionary<string, List<MFnDependencyNode>>();
-        
+
         private void ExportMultiMaterial(string uuidMultiMaterial, List<MFnDependencyNode> materials, BabylonScene babylonScene)
         {
             var babylonMultimaterial = new BabylonMultiMaterial { id = uuidMultiMaterial };
@@ -69,7 +70,7 @@ namespace Maya2Babylon
             RaiseVerbose("materialObject.hasFn(MFn.Type.kBlinn)=" + materialObject.hasFn(MFn.Type.kBlinn), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhong)=" + materialObject.hasFn(MFn.Type.kPhong), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhongExplorer)=" + materialObject.hasFn(MFn.Type.kPhongExplorer), 2);
-            
+
             Print(materialDependencyNode, 2, "Print ExportMaterial materialDependencyNode");
 
             // Standard material
@@ -144,7 +145,7 @@ namespace Maya2Babylon
                     {
                         MFnPhongShader phongShader = new MFnPhongShader(materialObject);
 
-                        float glossiness = (float) Math.Log(phongShader.cosPower, 2) * 10;
+                        float glossiness = (float)Math.Log(phongShader.cosPower, 2) * 10;
                         babylonMaterial.specularPower = glossiness / 100 * 256;
                     }
                     else if (materialObject.hasFn(MFn.Type.kPhongExplorer))
@@ -200,10 +201,10 @@ namespace Maya2Babylon
                 };
 
                 // --- Global ---
-                
+
                 // Color3
                 babylonMaterial.baseColor = materialDependencyNode.findPlug("base_color").asFloatArray();
-                
+
                 // Alpha
                 string opacityAttributeName = "opacity";
                 if (materialDependencyNode.hasAttribute(opacityAttributeName))
@@ -244,7 +245,7 @@ namespace Maya2Babylon
                 bool useMetallicMap = materialDependencyNode.findPlug("use_metallic_map").asBoolProperty;
                 bool useRoughnessMap = materialDependencyNode.findPlug("use_roughness_map").asBoolProperty;
                 babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialDependencyNode, useMetallicMap, useRoughnessMap, babylonScene, name);
-                
+
                 if (materialDependencyNode.findPlug("use_normal_map").asBoolProperty)
                 {
                     babylonMaterial.normalTexture = ExportTexture(materialDependencyNode, "TEX_normal_map", babylonScene);
@@ -306,24 +307,59 @@ namespace Maya2Babylon
                 // --- Global ---
 
                 // Color3
-                babylonMaterial.baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
+                float baseWeight = materialDependencyNode.findPlug("base").asFloatProperty;
+                float[] baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
+                babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
 
                 // Alpha
-                float opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatProperty;
-                babylonMaterial.alpha = 1.0f - opacityAttributeValue;
+                MaterialDuplicationData materialDuplicationData = materialDuplicationDatas[id];
+                // If at least one mesh is Transparent and is using this material either directly or as a sub material
+                if (materialDuplicationData.isArnoldTransparent())
+                {
+                    float[] opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatArray();
+                    babylonMaterial.alpha = opacityAttributeValue[0];
+                }
+                else
+                {
+                    // Do not bother about alpha
+                    babylonMaterial.alpha = 1.0f;
+                }
 
                 // Metallic & roughness
                 babylonMaterial.metallic = materialDependencyNode.findPlug("metalness").asFloatProperty;
                 babylonMaterial.roughness = materialDependencyNode.findPlug("specularRoughness").asFloatProperty;
 
                 // Emissive
-                babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray();
+                float emissionWeight = materialDependencyNode.findPlug("emission").asFloatProperty;
+                babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray().Multiply(emissionWeight);
 
                 // --- Textures ---
 
                 // Base color & alpha
-                // Base color and alpha are already merged into a single file
-                babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "baseColor", babylonScene);
+                if (materialDuplicationData.isArnoldTransparent())
+                {
+                    MFnDependencyNode baseColorTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "baseColor");
+                    MFnDependencyNode opacityTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "opacity");
+                    if (baseColorTextureDependencyNode != null && opacityTextureDependencyNode != null &&
+                        getSourcePathFromFileTexture(baseColorTextureDependencyNode) == getSourcePathFromFileTexture(opacityTextureDependencyNode))
+                    {
+                        // If the same file is used for base color and opacity
+                        // Base color and alpha are already merged into a single file
+                        babylonMaterial.baseTexture = ExportTexture(baseColorTextureDependencyNode, babylonScene, false, true);
+                    }
+                    else
+                    {
+                        // Base color and alpha files need to be merged into a single file
+                        Color _baseColor = Color.FromArgb((int)baseColor[0] * 255, (int)baseColor[1] * 255, (int)baseColor[2] * 255);
+                        babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTextureDependencyNode, opacityTextureDependencyNode, babylonScene, name, _baseColor, babylonMaterial.alpha);
+                    }
+                }
+                else
+                {
+                    // Base color only
+                    // Do not bother about alpha
+                    babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "baseColor", babylonScene);
+                }
 
                 // Metallic & roughness
                 MFnDependencyNode metallicTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "metalness");
@@ -344,7 +380,7 @@ namespace Maya2Babylon
                 {
                     // Metallic and roughness files need to be merged into a single file
                     // Occlusion texture is not exported since aiStandardSurface material doesn't provide input for it
-                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name);
+                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name, babylonMaterial.metallic, babylonMaterial.roughness);
                 }
 
                 // Normal
@@ -356,12 +392,8 @@ namespace Maya2Babylon
                 // Constraints
                 if (babylonMaterial.baseTexture != null)
                 {
-                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.baseColor = new[] { baseWeight, baseWeight, baseWeight };
                     babylonMaterial.alpha = 1.0f;
-                }
-                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
-                {
-                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
                 if (babylonMaterial.metallicRoughnessTexture != null)
                 {
@@ -370,7 +402,23 @@ namespace Maya2Babylon
                 }
                 if (babylonMaterial.emissiveTexture != null)
                 {
-                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.emissive = new[] { emissionWeight, emissionWeight, emissionWeight };
+                }
+
+                // If this material is containing alpha data
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+                {
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+
+                    // If this material is assigned to both Transparent and Opaque meshes (either directly or as a sub material)
+                    if (materialDuplicationData.isDuplicationRequired())
+                    {
+                        // Duplicate material
+                        BabylonPBRMetallicRoughnessMaterial babylonMaterialCloned = DuplicateMaterial(babylonMaterial, materialDuplicationData);
+
+                        // Store duplicated material too
+                        babylonScene.MaterialsList.Add(babylonMaterialCloned);
+                    }
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
@@ -413,7 +461,7 @@ namespace Maya2Babylon
 
             string uuidConcatenated = "";
             bool isFirstTime = true;
-            foreach(MFnDependencyNode material in materialsSorted)
+            foreach (MFnDependencyNode material in materialsSorted)
             {
                 if (!isFirstTime)
                 {
@@ -423,7 +471,7 @@ namespace Maya2Babylon
 
                 uuidConcatenated += material.uuid().asString();
             }
-            
+
             return uuidConcatenated;
         }
 

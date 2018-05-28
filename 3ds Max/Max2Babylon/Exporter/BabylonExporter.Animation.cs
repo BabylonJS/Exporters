@@ -2,7 +2,6 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Max2Babylon
 {
@@ -374,7 +373,7 @@ namespace Max2Babylon
                         keys.Add(new BabylonAnimationKey()
                         {
                             frame = end / Ticks,
-                            values = keys[keys.Count - 1].values
+                            values = (float[])keys[keys.Count - 1].values.Clone()
                         });
                     }
 

@@ -23,7 +23,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MAX2018</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -229,6 +229,12 @@
     <Compile Include="..\Loader.cs">
       <Link>Loader.cs</Link>
     </Compile>
+    <Compile Include="..\ExportParameters.cs">
+      <Link>ExportParameters.cs</Link>
+    </Compile>
+    <Compile Include="..\MaxScriptManager.cs">
+      <Link>MaxScriptManager.cs</Link>
+    </Compile>
     <Compile Include="..\Extensions\ColorExtension.cs">
       <Link>Extensions\ColorExtension.cs</Link>
     </Compile>
@@ -305,7 +311,9 @@
     <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
 if not exist "$(SolutionDir)assemblies\2018" mkdir "$(SolutionDir)assemblies\2018"
 del "$(SolutionDir)assemblies\2018\*.dll"
-copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2018\"</PostBuildEvent>
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2018\"
+if exist "C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\" copy "$(SolutionDir)assemblies\2018\*.dll" "C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\"
+if exist "D:\Programmes\Autodesk\3ds Max 2018\bin\assemblies\" copy "$(SolutionDir)assemblies\2018\*.dll" "D:\Programmes\Autodesk\3ds Max 2018\bin\assemblies\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

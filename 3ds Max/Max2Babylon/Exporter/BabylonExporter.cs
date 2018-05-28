@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 
@@ -22,11 +21,10 @@ namespace Max2Babylon
         public event Action<string, Color, int, bool> OnMessage;
         public event Action<string, int> OnError;
 
-        public bool AutoSave3dsMaxFile { get; set; }
-        public bool ExportHiddenObjects { get; set; }
-        public bool IsCancelled { get; set; }
+        public Form callerForm;
 
-        public bool CopyTexturesToOutput { get; set; }
+        public ExportParameters exportParameters;
+        public bool IsCancelled { get; set; }
 
         public string MaxSceneFileName { get; set; }
 
@@ -35,7 +33,7 @@ namespace Max2Babylon
         private bool isBabylonExported;
         private bool isGLTFExported;
 
-        private bool _onlySelected;
+        private string exporterVersion = "1.1.1";
 
         void ReportProgressChanged(int progress)
         {
@@ -88,15 +86,31 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
-
-        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm)
+        
+        public void Export(ExportParameters exportParameters)
         {
+            // Check input text is valid
+            var scaleFactorFloat = 1.0f;
+            string scaleFactor = exportParameters.scaleFactor;
+            try
+            {
+                scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                scaleFactorFloat = float.Parse(scaleFactor);
+            }
+            catch (Exception e)
+            {
+                RaiseError("Scale factor is not a valid number.");
+                return;
+            }
+
+            this.exportParameters = exportParameters;
+
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
             gameScene.InitialiseIGame(false);
-            this._onlySelected = onlySelected;
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
@@ -104,6 +118,9 @@ namespace Max2Babylon
             IsCancelled = false;
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
+
+            string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
+            string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -125,11 +142,12 @@ namespace Max2Babylon
             var watch = new Stopwatch();
             watch.Start();
 
+            string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             isGLTFExported = outputFormat == "gltf" || outputFormat == "glb";
 
             // Save scene
-            if (AutoSave3dsMaxFile)
+            if (exportParameters.autoSave3dsMaxFile)
             {
                 RaiseMessage("Saving 3ds max file");
                 var forceSave = Loader.Core.FileSave;
@@ -148,7 +166,7 @@ namespace Max2Babylon
 #else
                 version = Loader.Core.ProductVersion.ToString(),
 #endif
-                exporter_version = "0.4.5",
+                exporter_version = exporterVersion,
                 file = outputFileName
             };
 
@@ -260,6 +278,33 @@ namespace Max2Babylon
                 RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
             }
 
+            if (scaleFactorFloat != 1.0f)
+            {
+                RaiseMessage("A root node is added for scaling", 1);
+
+                // Create root node for scaling
+                BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
+                rootNode.isDummy = true;
+                float rootNodeScale = 1.0f / scaleFactorFloat;
+                rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                // Update all top nodes
+                var babylonNodes = new List<BabylonNode>();
+                babylonNodes.AddRange(babylonScene.MeshesList);
+                babylonNodes.AddRange(babylonScene.CamerasList);
+                babylonNodes.AddRange(babylonScene.LightsList);
+                foreach (BabylonNode babylonNode in babylonNodes)
+                {
+                    if (babylonNode.parentId == null)
+                    {
+                        babylonNode.parentId = rootNode.id;
+                    }
+                }
+
+                // Store root node
+                babylonScene.MeshesList.Add(rootNode);
+            }
+
             // Materials
             RaiseMessage("Exporting materials");
             
@@ -331,22 +376,19 @@ namespace Max2Babylon
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-
-                await Task.Run(() =>
+                
+                using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
-                    using (var jsonWriter = new JsonTextWriterOptimized(sw))
-                    {
-                        jsonWriter.Formatting = Formatting.None;
-                        jsonSerializer.Serialize(jsonWriter, babylonScene);
-                    }
-                    File.WriteAllText(outputFile, sb.ToString());
+                    jsonWriter.Formatting = Formatting.None;
+                    jsonSerializer.Serialize(jsonWriter, babylonScene);
+                }
+                File.WriteAllText(outputFile, sb.ToString());
 
-                    if (generateManifest)
-                    {
-                        File.WriteAllText(outputFile + ".manifest",
-                            "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
-                    }
-                });
+                if (exportParameters.generateManifest)
+                {
+                    File.WriteAllText(outputFile + ".manifest",
+                        "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
+                }
 
                 // Binary
                 if (outputFormat == "binary babylon")
@@ -530,12 +572,12 @@ namespace Max2Babylon
                 return false;
             }
 
-            if (_onlySelected && !gameNode.MaxNode.Selected)
+            if (exportParameters.exportOnlySelected && !gameNode.MaxNode.Selected)
             {
                 return false;
             }
 
-            if (!ExportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
+            if (!exportParameters.exportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
             {
                 return false;
             }

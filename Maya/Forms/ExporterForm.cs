@@ -1,13 +1,7 @@
-﻿using Maya2Babylon;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -140,7 +134,9 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked);
+                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked,
+                                chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked,
+                                chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -282,14 +278,17 @@ namespace Maya2Babylon.Forms
                 case "binary babylon":
                     this.saveFileDialog.DefaultExt = "babylon";
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
+                    chkExportTangents.Checked = true;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
+                    chkExportTangents.Checked = false;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
+                    chkExportTangents.Checked = false;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
@@ -308,6 +307,25 @@ namespace Maya2Babylon.Forms
         }
 
         private void chkCopyTextures_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkOptimizeVertices_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtScalingFactor_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkExportSkin_CheckedChanged(object sender, EventArgs e)
         {
 
         }

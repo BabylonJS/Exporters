@@ -34,5 +34,15 @@ namespace BabylonExport.Entities
 
             alphaMode = 2;
         }
+
+        public BabylonMaterial(BabylonMaterial original)
+        {
+            name = original.name;
+            id = original.id;
+            backFaceCulling = original.backFaceCulling;
+            wireframe = original.wireframe;
+            alpha = original.alpha;
+            alphaMode = original.alphaMode;
+        }
     }
 }

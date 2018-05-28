@@ -65,23 +65,29 @@
   <ItemGroup>
     <Compile Include="BabylonExportActionItem.cs" />
     <Compile Include="Exporter\BabylonExporter.Camera.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Animation.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Camera.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Material.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Mesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Skin.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Texture.cs" />
     <Compile Include="Exporter\BabylonExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.Material.cs" />
+    <Compile Include="Exporter\BabylonExporter.Animation.cs" />
     <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
     <Compile Include="Exporter\BabylonExporter.Node.cs" />
+    <Compile Include="Exporter\BabylonExporter.Skeleton.cs" />
     <Compile Include="Exporter\BabylonExporter.Texture.cs" />
     <Compile Include="Exporter\BabylonExporter.Writer.cs" />
     <Compile Include="Exporter\BabylonExporter.Logger.cs" />
     <Compile Include="Exporter\BabylonExporter.cs" />
     <Compile Include="Exporter\GlobalVertex.cs" />
     <Compile Include="Exporter\GLTFGlobalVertex.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.Duplication.cs" />
+    <Compile Include="Exporter\MaterialDuplicationData.cs" />
     <Compile Include="Extensions\ColorExtension.cs" />
     <Compile Include="Extensions\MColorExtension.cs" />
     <Compile Include="Extensions\MFloatVectorExtension.cs" />
@@ -139,6 +145,7 @@
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\"
 del "$(SolutionDir)assemblies\$(TargetName).dll"
 copy "$(TargetPath)" "$(SolutionDir)assemblies\$(TargetName).nll.dll"
-copy "$(SolutionDir)assemblies\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
+if exist "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"
+if exist "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\*.dll" "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

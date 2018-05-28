@@ -40,15 +40,12 @@ namespace Max2Babylon
                 var extension = Path.GetExtension(name);
 
                 // Write image to output
-                if (CopyTexturesToOutput)
+                if (exportParameters.copyTexturesToOutput)
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
                     RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
-                    using (FileStream fs = File.Open(absolutePath, FileMode.Create))
-                    {
-                        bitmap.Save(fs, imageFormat);
-                    }
+                    SaveBitmap(bitmap, absolutePath, imageFormat);
                 }
 
                 return extension.Substring(1); // remove the dot
@@ -152,7 +149,8 @@ namespace Max2Babylon
             // --------------------------
             var gltfTextureInfo = new GLTFTextureInfo
             {
-                index = gltfTexture.index
+                index = gltfTexture.index,
+                texCoord = babylonTexture.coordinatesIndex
             };
 
             return gltfTextureInfo;
@@ -169,7 +167,7 @@ namespace Max2Babylon
 
             Bitmap emissivePremultipliedBitmap = null;
 
-            if (CopyTexturesToOutput)
+            if (exportParameters.copyTexturesToOutput)
             {
                 // Emissive
                 Bitmap emissiveBitmap = null;

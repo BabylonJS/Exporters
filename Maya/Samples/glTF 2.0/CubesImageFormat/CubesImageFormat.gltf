@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for maya 2018 v1.0.0",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,
@@ -278,7 +278,7 @@
 		{
 			"bufferView": 1,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -294,16 +294,16 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4464,
+			"byteOffset": 2784,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -317,9 +317,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8928,
+			"byteOffset": 5568,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -335,17 +335,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13392,
+			"byteOffset": 8352,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 2976,
+			"byteOffset": 1856,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -359,9 +359,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17856,
+			"byteOffset": 11136,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -377,17 +377,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22320,
+			"byteOffset": 13920,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 5952,
+			"byteOffset": 3712,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -401,9 +401,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26784,
+			"byteOffset": 16704,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -419,17 +419,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31248,
+			"byteOffset": 19488,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 8928,
+			"byteOffset": 5568,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -443,9 +443,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 35712,
+			"byteOffset": 22272,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -461,17 +461,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 40176,
+			"byteOffset": 25056,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 11904,
+			"byteOffset": 7424,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -485,9 +485,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 44640,
+			"byteOffset": 27840,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -503,17 +503,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 49104,
+			"byteOffset": 30624,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 14880,
+			"byteOffset": 9280,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		},
@@ -527,9 +527,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 53568,
+			"byteOffset": 33408,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"max": [
 				50,
 				50,
@@ -545,17 +545,17 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 58032,
+			"byteOffset": 36192,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 17856,
+			"byteOffset": 11136,
 			"componentType": 5126,
-			"count": 372,
+			"count": 232,
 			"type": "VEC2",
 			"name": "accessorUVs"
 		}
@@ -569,14 +569,14 @@
 		{
 			"buffer": 0,
 			"byteOffset": 5208,
-			"byteLength": 62496,
+			"byteLength": 38976,
 			"byteStride": 12,
 			"name": "bufferViewFloatVec3"
 		},
 		{
 			"buffer": 0,
-			"byteOffset": 67704,
-			"byteLength": 20832,
+			"byteOffset": 44184,
+			"byteLength": 12992,
 			"byteStride": 8,
 			"name": "bufferViewFloatVec2"
 		}
@@ -584,7 +584,7 @@
 	"buffers": [
 		{
 			"uri": "CubesImageFormat.bin",
-			"byteLength": 88536
+			"byteLength": 57176
 		}
 	],
 	"materials": [

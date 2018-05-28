@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Maya2Babylon
@@ -16,10 +15,13 @@ namespace Maya2Babylon
         // Export options
         private bool _onlySelected;
         private bool _exportHiddenObjects;
+        private bool _optimizeVertices;
+        private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
         private bool isBabylonExported;
+        private bool _exportSkin;
 
         public bool IsCancelled { get; set; }
 
@@ -33,8 +35,34 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput)
+        private string exporterVersion = "1.1.7";
+
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
+                            bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
         {
+            // Chekc if the animation is running
+            MGlobal.executeCommand("play -q - state", out int isPlayed);
+            if(isPlayed == 1)
+            {
+                RaiseError("Stop the animation before exporting.");
+                return;
+            }
+
+            // Check input text is valid
+            var scaleFactorFloat = 1.0f;
+            try
+            {
+                scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                scaleFactorFloat = float.Parse(scaleFactor);
+            }
+            catch
+            {
+                RaiseError("Scale factor is not a valid number.");
+                return;
+            }
+
             RaiseMessage("Exportation started", Color.Blue);
             var progression = 0.0f;
             ReportProgressChanged(progression);
@@ -42,8 +70,11 @@ namespace Maya2Babylon
             // Store export options
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
+            _optimizeVertices = optimizeVertices;
+            _exportTangents = exportTangents;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
+            _exportSkin = exportSkin;
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -117,7 +148,7 @@ namespace Maya2Babylon
             {
                 name = "Maya",
                 version = "2018",
-                exporter_version = "1.0",
+                exporter_version = exporterVersion,
                 file = outputFileName
             };
 
@@ -150,7 +181,7 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
                 
-                // Check if one of its descendant (direct or not) is a mesh/camera/light
+                // Check if one of its descendant (direct or not) is a mesh/camera/light/locator
                 if (isNodeRelevantToExportRec(mDagPath)
                     // Ensure it's not one of the default cameras used as viewports in Maya
                     && defaultCameraNames.Contains(mDagPath.partialPathName) == false)
@@ -271,10 +302,38 @@ namespace Maya2Babylon
                 RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
             }
 
+            if (scaleFactorFloat != 1.0f)
+            {
+                RaiseMessage("A root node is added for scaling", 1);
+
+                // Create root node for scaling
+                BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };
+                rootNode.isDummy = true;
+                float rootNodeScale = 1.0f / scaleFactorFloat;
+                rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                // Update all top nodes
+                var babylonNodes = new List<BabylonNode>();
+                babylonNodes.AddRange(babylonScene.MeshesList);
+                babylonNodes.AddRange(babylonScene.CamerasList);
+                babylonNodes.AddRange(babylonScene.LightsList);
+                foreach (BabylonNode babylonNode in babylonNodes)
+                {
+                    if (babylonNode.parentId == null)
+                    {
+                        babylonNode.parentId = rootNode.id;
+                    }
+                }
+
+                // Store root node
+                babylonScene.MeshesList.Add(rootNode);
+            }
+
             // --------------------
             // ----- Materials ----
             // --------------------
             RaiseMessage("Exporting materials");
+            GenerateMaterialDuplicationDatas(babylonScene);
             foreach (var mat in referencedMaterials)
             {
                 ExportMaterial(mat, babylonScene);
@@ -285,7 +344,22 @@ namespace Maya2Babylon
                 ExportMultiMaterial(mat.Key, mat.Value, babylonScene);
                 CheckCancelled();
             }
+            UpdateMeshesMaterialId(babylonScene);
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
+
+
+            // Export skeletons
+            if (_exportSkin && skins.Count > 0)
+            {
+                progressSkin = 0;
+                progressSkinStep = 100 / skins.Count;
+                ReportProgressChanged(progressSkin);
+                RaiseMessage("Exporting skeletons");
+                foreach (var skin in skins)
+                {
+                    ExportSkin(skin, babylonScene);
+                }
+            }
 
             // Output
             babylonScene.Prepare(false, false);
@@ -317,7 +391,7 @@ namespace Maya2Babylon
         }
 
         /// <summary>
-        /// Return true if node descendant hierarchy has any exportable Mesh, Camera or Light
+        /// Return true if node descendant hierarchy has any exportable Mesh, Camera, Light or Locator
         /// </summary>
         private bool isNodeRelevantToExportRec(MDagPath mDagPathRoot)
         {
@@ -375,19 +449,20 @@ namespace Maya2Babylon
                             return MFn.Type.kCamera;
                         }
                         break;
-                    case MFn.Type.kLocator:
-                        if (IsNodeExportable(nodeObject, mDagPath))
-                        {
-                            return MFn.Type.kLocator;
-                        }
-                        break;
                 }
+
                 // Lights api type are kPointLight, kSpotLight...
                 // Easier to check if has generic light function set rather than check all cases
                 if (mDagPath.hasFn(MFn.Type.kLight) && IsLightExportable(nodeObject, mDagPath))
                 {
                     // Return generic kLight api type
                     return MFn.Type.kLight;
+                }
+
+                // Locators
+                if (mDagPath.hasFn(MFn.Type.kLocator) && IsNodeExportable(nodeObject, mDagPath))
+                {
+                    return MFn.Type.kLocator;
                 }
             }
 
@@ -398,9 +473,13 @@ namespace Maya2Babylon
         /// 
         /// </summary>
         /// <param name="isFull">If true all nodes are printed, otherwise only relevant ones</param>
-        private void PrintDAG(bool isFull)
+        private void PrintDAG(bool isFull, MObject root = null)
         {
             var dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
+            if (root != null)
+            {
+                dagIterator.reset(root);
+            }
             RaiseMessage("DAG: " + (isFull ? "full" : "relevant"));
             while (!dagIterator.isDone)
             {

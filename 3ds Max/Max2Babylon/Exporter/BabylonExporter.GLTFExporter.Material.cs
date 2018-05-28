@@ -239,7 +239,7 @@ namespace Max2Babylon
                     Bitmap baseColorBitmap = null;
                     Bitmap metallicRoughnessBitmap = null;
 
-                    if (CopyTexturesToOutput)
+                    if (exportParameters.copyTexturesToOutput)
                     {
                         // Diffuse
                         Bitmap diffuseBitmap = null;
@@ -460,7 +460,17 @@ namespace Max2Babylon
                     babylonPBRMetallicRoughnessMaterial.baseColor[2],
                     babylonPBRMetallicRoughnessMaterial.alpha
                 };
-                gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.baseTexture);
+                if (babylonPBRMetallicRoughnessMaterial.baseTexture != null)
+                {
+                    if (babylonPBRMetallicRoughnessMaterial.baseTexture.bitmap != null)
+                    {
+                        gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.baseTexture);
+                    }
+                    else
+                    {
+                        gltfPbrMetallicRoughness.baseColorTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.baseTexture, gltf);
+                    }
+                }
 
                 // Metallic roughness
                 gltfPbrMetallicRoughness.metallicFactor = babylonPBRMetallicRoughnessMaterial.metallic;
