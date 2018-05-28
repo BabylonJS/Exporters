@@ -16,37 +16,19 @@ namespace Max2Babylon
             gltf.AnimationsList.Clear();
             gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
 
-            foreach (AnimationGroup animGroup in animationList)
+            if (animationList.Count <= 0)
             {
-                RaiseMessage("GLTFExporter.Animation | " + animGroup.Name, 1);
-
+                RaiseMessage("GLTFExporter.Animation | No AnimationGroups: exporting all animations together.", 1);
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
-                gltfAnimation.name = animGroup.Name;
-                foreach (uint nodeHandle in animGroup.NodeHandles)
+                gltfAnimation.name = "All Animations";
+                
+                foreach (var pair in nodeToGltfNodeMap)
                 {
-                    // todo: make something a little more efficient..
-                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
-
-                    // node could have been deleted, silently ignore it
-                    if (maxNode == null)
-                        continue;
-
-                    string id = maxNode.GetGuid().ToString();
-                    BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
-                    
-                    if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out GLTFNode gltfNode))
-                    {
-                        ExportNodeAnimation(gltfAnimation, animGroup.FrameStart, animGroup.FrameEnd, gltf, babylonNode, gltfNode, babylonScene);
-                    }
-
-                    // export all bones that match this id
-                    foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
-                    {
-                        if (pair.Key.id.Equals(id))
-                        {
-                            ExportBoneAnimation(gltfAnimation, animGroup.FrameStart, animGroup.FrameEnd, gltf, pair.Key, pair.Value);
-                        }
-                    }
+                    ExportNodeAnimation(gltfAnimation, Loader.Core.AnimRange.Start, Loader.Core.AnimRange.End, gltf, pair.Key, pair.Value, babylonScene);
+                }
+                foreach(var pair in boneToGltfNodeMap)
+                {
+                    ExportBoneAnimation(gltfAnimation, Loader.Core.AnimRange.Start, Loader.Core.AnimRange.End, gltf, pair.Key, pair.Value);
                 }
 
                 if (gltfAnimation.ChannelList.Count > 0)
@@ -55,7 +37,59 @@ namespace Max2Babylon
                 }
                 else
                 {
-                    RaiseMessage("No data exported for this animation, it is ignored.", 2);
+                    RaiseMessage("GLTFExporter.Animation | No animation data for this animation, it is ignored.", 2);
+                }
+            }
+            else
+            {
+                foreach (AnimationGroup animGroup in animationList)
+                {
+                    RaiseMessage("GLTFExporter.Animation | " + animGroup.Name, 1);
+
+                    GLTFAnimation gltfAnimation = new GLTFAnimation();
+                    gltfAnimation.name = animGroup.Name;
+                    
+                    // ensure min <= start <= end <= max
+                    int minFrame = Loader.Core.AnimRange.Start;
+                    int maxFrame = Loader.Core.AnimRange.End;
+                    int startFrame = Math.Min(Math.Max(minFrame, animGroup.FrameStart), maxFrame);
+                    int endFrame = Math.Min(Math.Max(startFrame, animGroup.FrameEnd), maxFrame);
+
+                    foreach (uint nodeHandle in animGroup.NodeHandles)
+                    {
+                        // todo: make something a little more efficient..
+                        IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+
+                        // node could have been deleted, silently ignore it
+                        if (maxNode == null)
+                            continue;
+
+                        string id = maxNode.GetGuid().ToString();
+                        BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
+
+                        if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out GLTFNode gltfNode))
+                        {
+                            ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
+                        }
+
+                        // export all bones that match this id
+                        foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
+                        {
+                            if (pair.Key.id.Equals(id))
+                            {
+                                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, pair.Key, pair.Value);
+                            }
+                        }
+                    }
+
+                    if (gltfAnimation.ChannelList.Count > 0)
+                    {
+                        gltf.AnimationsList.Add(gltfAnimation);
+                    }
+                    else
+                    {
+                        RaiseMessage("No data exported for this animation, it is ignored.", 2);
+                    }
                 }
             }
         }
@@ -65,12 +99,6 @@ namespace Max2Babylon
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
 
-            // ensure min <= start <= end <= max
-            int minFrame = Loader.Core.AnimRange.Start;
-            int maxFrame = Loader.Core.AnimRange.End;
-            startFrame = Math.Min(Math.Max(minFrame, startFrame), maxFrame);
-            endFrame = Math.Min(Math.Max(startFrame, endFrame), maxFrame);
-
             bool exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             bool hasAnimations = (babylonNode.animations != null && babylonNode.animations.Length > 0) ||
@@ -78,7 +106,14 @@ namespace Max2Babylon
 
             if(hasAnimations || exportNonAnimated)
             {
-                RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
+                if (hasAnimations)
+                {
+                    RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
+                }
+                else
+                {
+                    RaiseMessage("GLTFExporter.Animation | Export dummy animation for node named: " + babylonNode.name, 2);
+                }
 
                 // Combine babylon animations from .babylon file and cached ones
                 var babylonAnimations = new List<BabylonAnimation>();
@@ -90,9 +125,9 @@ namespace Max2Babylon
                 {
                     babylonAnimations.AddRange(babylonNode.extraAnimations);
                 }
-
-                // [Selmar] I don't like this, but we need a way to find nodes that are selected as part of an animation group but aren't actually animated
-                if(babylonAnimations.Count == 0 && exportNonAnimated)
+                
+                // If there are no animations at this point, we will export a dummy animation.
+                if(babylonAnimations.Count <= 0 && exportNonAnimated)
                 {
                     babylonAnimations.Add(GetDummyAnimation(gltfNode, startFrame));
                 }
