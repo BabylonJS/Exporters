@@ -175,11 +175,6 @@ namespace Max2Babylon
                 BabylonFresnelParameters fresnelParameters;
 
                 babylonMaterial.ambientTexture = ExportTexture(stdMat, 0, out fresnelParameters, babylonScene);                // Ambient
-                babylonMaterial.diffuseTexture = ExportTexture(stdMat, 1, out fresnelParameters, babylonScene);                // Diffuse
-                if (fresnelParameters != null)
-                {
-                    babylonMaterial.diffuseFresnelParameters = fresnelParameters;
-                }
 
                 babylonMaterial.specularTexture = ExportTexture(stdMat, 2, out fresnelParameters, babylonScene);               // Specular
                 babylonMaterial.emissiveTexture = ExportTexture(stdMat, 5, out fresnelParameters, babylonScene);               // Emissive
@@ -204,6 +199,19 @@ namespace Max2Babylon
                     {
                         babylonMaterial.alpha = 0;
                     }
+                }
+                babylonMaterial.diffuseTexture = ExportTexture(stdMat, 1, out fresnelParameters, babylonScene);                // Diffuse
+                if (fresnelParameters != null)
+                {
+                    babylonMaterial.diffuseFresnelParameters = fresnelParameters;
+                }
+                if ((babylonMaterial.alpha == 1.0f && babylonMaterial.opacityTexture == null) &&
+                    babylonMaterial.diffuseTexture != null &&
+                    (babylonMaterial.diffuseTexture.originalPath.EndsWith(".tif") || babylonMaterial.diffuseTexture.originalPath.EndsWith(".tiff")) &&
+                    babylonMaterial.diffuseTexture.hasAlpha)
+                {
+                    RaiseWarning($"Diffuse texture named {babylonMaterial.diffuseTexture.originalPath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 2);
+                    RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 2);
                 }
 
                 babylonMaterial.bumpTexture = ExportTexture(stdMat, 8, out fresnelParameters, babylonScene);                   // Bump

@@ -29,12 +29,14 @@ namespace Max2Babylon
             bool hasUV2 = babylonMesh.uvs2 != null && babylonMesh.uvs2.Length > 0;
             bool hasColor = babylonMesh.colors != null && babylonMesh.colors.Length > 0;
             bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
+            bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
 
             RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
             RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
             RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -341,6 +343,11 @@ namespace Max2Babylon
                     List<float> weightBones = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesWeights[0], v.BonesWeights[1], v.BonesWeights[2], v.BonesWeights[3] }).ToList();
                     weightBones.ForEach(n => accessorWeights.bytesList.AddRange(BitConverter.GetBytes(n)));
                     accessorWeights.count = globalVerticesSubMesh.Count;
+                }
+
+                if (hasBonesExtra)
+                {
+                    RaiseWarning("Too many bones influences per vertex. glTF only support up to 4 bones influences per vertex. The result may not be as expected.", 3);
                 }
 
                 // Morph targets positions and normals

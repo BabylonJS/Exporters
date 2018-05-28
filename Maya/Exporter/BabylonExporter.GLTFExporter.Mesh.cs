@@ -25,16 +25,19 @@ namespace Maya2Babylon
             RaiseMessage("GLTFExporter.Mesh | Mesh from babylon", 2);
             // Retreive general data from babylon mesh
             int nbVertices = babylonMesh.positions.Length / 3;
+            bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
             bool hasUV = babylonMesh.uvs != null && babylonMesh.uvs.Length > 0;
             bool hasUV2 = babylonMesh.uvs2 != null && babylonMesh.uvs2.Length > 0;
             bool hasColor = babylonMesh.colors != null && babylonMesh.colors.Length > 0;
             bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
+            bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
 
             RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
             RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
             RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -43,6 +46,16 @@ namespace Maya2Babylon
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
                 globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+                if (hasTangents)
+                {
+                    globalVertex.Tangent = BabylonQuaternion.FromArray(babylonMesh.tangents, indexVertex);
+
+                    // Switch coordinate system at object level
+                    globalVertex.Tangent.Z *= -1;
+
+                    // Invert W to switch to right handed system
+                    globalVertex.Tangent.W *= -1;
+                }
 
                 // Switch coordinate system at object level
                 globalVertex.Position.Z *= -1;
@@ -259,6 +272,23 @@ namespace Maya2Babylon
                 normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
                 accessorNormals.count = globalVerticesSubMesh.Count;
 
+                // --- Tangents ---
+                if (hasTangents)
+                {
+                    var accessorTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec4(gltf, buffer),
+                        "accessorTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC4
+                    );
+                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTangents.index);
+                    // Populate accessor
+                    List<float> tangents = globalVerticesSubMesh.SelectMany(v => v.Tangent.ToArray()).ToList();
+                    tangents.ForEach(n => accessorTangents.bytesList.AddRange(BitConverter.GetBytes(n)));
+                    accessorTangents.count = globalVerticesSubMesh.Count;
+                }
+
                 // --- Colors ---
                 if (hasColor)
                 {
@@ -341,6 +371,11 @@ namespace Maya2Babylon
                     List<float> weightBones = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesWeights[0], v.BonesWeights[1], v.BonesWeights[2], v.BonesWeights[3] }).ToList();
                     weightBones.ForEach(n => accessorWeights.bytesList.AddRange(BitConverter.GetBytes(n)));
                     accessorWeights.count = globalVerticesSubMesh.Count;
+                }
+
+                if (hasBonesExtra)
+                {
+                    RaiseWarning("Too many bones influences per vertex. glTF only support up to 4 bones influences per vertex. The result may not be as expected.", 3);
                 }
 
                 // Morph targets positions and normals
@@ -468,6 +503,8 @@ namespace Maya2Babylon
                     }
                     accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
+
+                // TODO - Tangents
 
                 gltfMorphTargets.Add(gltfMorphTarget);
             }

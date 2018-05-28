@@ -172,6 +172,14 @@ namespace GLTFExport.Entities
             {
                 skins = SkinsList.ToArray();
             }
+            if (extensionsUsed != null && extensionsUsed.Count == 0)
+            {
+                extensionsUsed = null;
+            }
+            if (extensionsRequired != null && extensionsRequired.Count == 0)
+            {
+                extensionsRequired = null;
+            }
         }
         
         public GLTFSampler AddSampler()

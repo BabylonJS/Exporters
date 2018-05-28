@@ -62,19 +62,28 @@ namespace Max2Babylon
             return SubArray(array, startEntityIndex * count, count);
         }
 
-        public static string ToString<T>(this T[] array)
+        public static string ToString<T>(this T[] array, bool withBrackets = true)
         {
-            var res = "[";
+            if (array == null)
+            {
+                return "";
+            }
+
+            var result = "";
             if (array.Length > 0)
             {
-                res += array[0];
+                result += array[0];
                 for (int i = 1; i < array.Length; i++)
                 {
-                    res += ", " + array[i];
+                    result += ", " + array[i];
                 }
             }
-            res += "]";
-            return res;
+
+            if (withBrackets)
+            {
+                result = "[" + result + "]";
+            }
+            return result;
         }
 
         public static float[] Multiply(this float[] array, float[] array2)
