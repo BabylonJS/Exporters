@@ -65,6 +65,12 @@ namespace Max2Babylon
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
 
+            // ensure min <= start <= end <= max
+            int minFrame = Loader.Core.AnimRange.Start;
+            int maxFrame = Loader.Core.AnimRange.End;
+            startFrame = Math.Min(Math.Max(minFrame, startFrame), maxFrame);
+            endFrame = Math.Min(Math.Max(startFrame, endFrame), maxFrame);
+
             bool exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             bool hasAnimations = (babylonNode.animations != null && babylonNode.animations.Length > 0) ||
