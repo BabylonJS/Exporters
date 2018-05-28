@@ -132,7 +132,10 @@ namespace Max2Babylon
                             continue;
 
                         numKeys++;
-                        var outputValues = babylonAnimationKey.values;
+
+                        // copy data before changing it!
+                        float[] outputValues = new float[babylonAnimationKey.values.Length];
+                        babylonAnimationKey.values.CopyTo(outputValues,0);
 
                         // Switch coordinate system at object level
                         if (babylonAnimation.property == "position")
@@ -234,10 +237,8 @@ namespace Max2Babylon
                     matrix.decompose(scaleBabylon, rotationQuatBabylon, translationBabylon);
 
                     translationBabylon.Z *= -1;
-                    BabylonVector3 rotationVector3 = rotationQuatBabylon.toEulerAngles();
-                    rotationVector3.X *= -1;
-                    rotationVector3.Y *= -1;
-                    rotationQuatBabylon = rotationVector3.toQuaternion();
+                    rotationQuatBabylon.X *= -1;
+                    rotationQuatBabylon.Y *= -1;
 
                     var outputValuesByPath = new Dictionary<string, float[]>();
                     outputValuesByPath.Add("translation", translationBabylon.ToArray());
