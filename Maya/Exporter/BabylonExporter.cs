@@ -35,13 +35,13 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.1.7";
+        private string exporterVersion = "1.1.8";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
                             bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
         {
-            // Chekc if the animation is running
+            // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
             if(isPlayed == 1)
             {
