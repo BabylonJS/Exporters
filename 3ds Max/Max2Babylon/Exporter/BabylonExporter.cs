@@ -407,9 +407,6 @@ namespace Max2Babylon
                 case Autodesk.Max.IGameObject.ObjectTypes.Light:
                     babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
                     break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Helper:
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-                    break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
                     // Create a dummy (empty mesh) when type is unknown
                     // An example of unknown type object is the target of target light or camera
