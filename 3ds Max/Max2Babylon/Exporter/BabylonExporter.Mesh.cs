@@ -301,7 +301,7 @@ namespace Max2Babylon
                 // Compute normals
                 var subMeshes = new List<BabylonSubMesh>();
                 List<int> faceIndexes = null;
-                ExtractGeometry(vertices, indices, subMeshes, boneIds, skin, unskinnedMesh, invertedWorldMatrix, hasUV, hasUV2, hasColor, hasAlpha, optimizeVertices, multiMatsCount, meshNode, ref faceIndexes);
+                ExtractGeometry(babylonMesh, vertices, indices, subMeshes, boneIds, skin, unskinnedMesh, invertedWorldMatrix, hasUV, hasUV2, hasColor, hasAlpha, optimizeVertices, multiMatsCount, meshNode, ref faceIndexes);
 
                 if (vertices.Count >= 65536)
                 {
@@ -426,7 +426,7 @@ namespace Max2Babylon
                                 babylonMorphTarget.influence = 0f;
 
                                 // Target geometry
-                                var targetVertices = ExtractVertices(maxMorphTarget, optimizeVertices, faceIndexes);
+                                var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
                                 babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
 
@@ -455,7 +455,7 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
-        private List<GlobalVertex> ExtractVertices(IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+        private List<GlobalVertex> ExtractVertices(BabylonAbstractMesh babylonAbstractMesh, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
         {
             var gameMesh = maxMorphTarget.IGameObject.AsGameMesh();
             bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
@@ -472,11 +472,11 @@ namespace Max2Babylon
             var invertedWorldMatrix = GetInvertWorldTM(maxMorphTarget, 0);
 
             var vertices = new List<GlobalVertex>();
-            ExtractGeometry(vertices, new List<int>(), new List<BabylonSubMesh>(), null, null, gameMesh, invertedWorldMatrix, false, false, false, false, optimizeVertices, multiMatsCount, maxMorphTarget, ref faceIndexes);
+            ExtractGeometry(babylonAbstractMesh, vertices, new List<int>(), new List<BabylonSubMesh>(), null, null, gameMesh, invertedWorldMatrix, false, false, false, false, optimizeVertices, multiMatsCount, maxMorphTarget, ref faceIndexes);
             return vertices;
         }
 
-        private void ExtractGeometry(List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, List<int> boneIds, IIGameSkin skin, IIGameMesh unskinnedMesh, IMatrix3 invertedWorldMatrix, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, bool optimizeVertices, int multiMatsCount, IIGameNode meshNode, ref List<int> faceIndexes)
+        private void ExtractGeometry(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, List<int> boneIds, IIGameSkin skin, IIGameMesh unskinnedMesh, IMatrix3 invertedWorldMatrix, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, bool optimizeVertices, int multiMatsCount, IIGameNode meshNode, ref List<int> faceIndexes)
         {
             List<GlobalVertex>[] verticesAlreadyExported = null;
 
@@ -519,7 +519,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
                 else
@@ -544,7 +544,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
 
@@ -562,7 +562,7 @@ namespace Max2Babylon
             }
         }
 
-        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, IMatrix3 invertedWorldMatrix, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
+        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
@@ -574,16 +574,16 @@ namespace Max2Babylon
             if (invertedWorldMatrix.Parity)
             {
                 // flipped case: reverse winding order
-                a = CreateGlobalVertex(unskinnedMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
             else
             {
                 // normal case
-                a = CreateGlobalVertex(unskinnedMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
 
             indices.Add(a);
@@ -625,7 +625,7 @@ namespace Max2Babylon
             CheckCancelled();
         }
 
-        int CreateGlobalVertex(IIGameMesh mesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
+        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
 
@@ -640,7 +640,10 @@ namespace Max2Babylon
 
             // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
-            vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal).Normalize;
+            vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal);
+            var nodeScaling = BabylonVector3.FromArray(babylonAbstractMesh.scaling);
+            vertex.Normal = vertex.Normal.Multiply(Loader.Global.Point3.Create(nodeScaling.X, nodeScaling.Y, nodeScaling.Z));
+            vertex.Normal = vertex.Normal.Normalize;
 
             if (hasUV)
             {
