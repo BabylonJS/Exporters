@@ -16,6 +16,9 @@ namespace Max2Babylon
             gltf.AnimationsList.Clear();
             gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
 
+            int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+            int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+
             if (animationList.Count <= 0)
             {
                 RaiseMessage("GLTFExporter.Animation | No AnimationGroups: exporting all animations together.", 1);
@@ -24,11 +27,11 @@ namespace Max2Babylon
                 
                 foreach (var pair in nodeToGltfNodeMap)
                 {
-                    ExportNodeAnimation(gltfAnimation, Loader.Core.AnimRange.Start, Loader.Core.AnimRange.End, gltf, pair.Key, pair.Value, babylonScene);
+                    ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
                 }
                 foreach(var pair in boneToGltfNodeMap)
                 {
-                    ExportBoneAnimation(gltfAnimation, Loader.Core.AnimRange.Start, Loader.Core.AnimRange.End, gltf, pair.Key, pair.Value);
+                    ExportBoneAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value);
                 }
 
                 if (gltfAnimation.ChannelList.Count > 0)
@@ -48,11 +51,8 @@ namespace Max2Babylon
 
                     GLTFAnimation gltfAnimation = new GLTFAnimation();
                     gltfAnimation.name = animGroup.Name;
-                    
-                    // ensure min <= start <= end <= max
-                    int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
-                    int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
 
+                    // ensure min <= start <= end <= max
                     // warning messages before correcting
                     if(animGroup.FrameStart < minFrame || animGroup.FrameStart > maxFrame)
                         RaiseWarning("GLTFExporter.Animation | Start frame outside of timeline range: " + animGroup.FrameStart, 2);
@@ -351,7 +351,7 @@ namespace Max2Babylon
             return dummyAnimation;
         }
 
-        private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation, int startFrame, int endFrame)
+        private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation, int startFrame, int endFrame, bool offsetToStartAtFrameZero = true)
         {
             var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
             var accessorInput = GLTFBufferService.Instance.CreateAccessor(
@@ -375,7 +375,9 @@ namespace Max2Babylon
                     continue;
 
                 numKeys++;
-                var inputValue = babylonAnimationKey.frame / (float)Loader.Global.FrameRate;
+                float inputValue = babylonAnimationKey.frame;
+                if (offsetToStartAtFrameZero) inputValue -= startFrame;
+                inputValue /= Loader.Global.FrameRate;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values
