@@ -50,8 +50,17 @@ namespace Max2Babylon
                     gltfAnimation.name = animGroup.Name;
                     
                     // ensure min <= start <= end <= max
-                    int minFrame = Loader.Core.AnimRange.Start;
-                    int maxFrame = Loader.Core.AnimRange.End;
+                    int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+                    int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+
+                    // warning messages before correcting
+                    if(animGroup.FrameStart < minFrame || animGroup.FrameStart > maxFrame)
+                        RaiseWarning("GLTFExporter.Animation | Start frame outside of timeline range: " + animGroup.FrameStart, 2);
+                    if(animGroup.FrameEnd < minFrame || animGroup.FrameEnd > maxFrame)
+                        RaiseWarning("GLTFExporter.Animation | End frame outside of timeline range: " + animGroup.FrameEnd, 2);
+                    if(animGroup.FrameEnd <= animGroup.FrameStart)
+                        RaiseWarning("GLTFExporter.Animation | End frame smaller than or equal to Start frame: " + animGroup.FrameStart + " to " + animGroup.FrameEnd, 2);
+
                     int startFrame = Math.Min(Math.Max(minFrame, animGroup.FrameStart), maxFrame);
                     int endFrame = Math.Min(Math.Max(startFrame, animGroup.FrameEnd), maxFrame);
 
