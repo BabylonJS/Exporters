@@ -137,19 +137,19 @@ namespace Max2Babylon
 
         private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
         {
-            if (alreadyExportedNodes.ContainsKey(babylonBone.name))
+            if (alreadyExportedNodes.ContainsKey(babylonBone.id))
             {
-                return alreadyExportedNodes[babylonBone.name];
+                return alreadyExportedNodes[babylonBone.id];
             }
 
             // Node
             var gltfNode = new GLTFNode
             {
-                name = babylonBone.name
+                name = babylonBone.name,
+                index = gltf.NodesList.Count
             };
-            gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
-            alreadyExportedNodes.Add(babylonBone.name, gltfNode);
+            alreadyExportedNodes.Add(babylonBone.id, gltfNode);
 
             // Hierarchy
             if (babylonBone.parentBoneIndex >= 0)
