@@ -271,7 +271,7 @@ namespace Max2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
-            if (alreadyExportedNodes.ContainsKey(babylonNode.name))
+            if (alreadyExportedNodes.ContainsKey(babylonNode.id))
             {
                 return;
             }
@@ -311,7 +311,7 @@ namespace Max2Babylon
             // If node is exported successfully...
             if (gltfNode != null)
             {
-                alreadyExportedNodes[gltfNode.name] = gltfNode;
+                alreadyExportedNodes[babylonNode.id] = gltfNode;
                 
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);

@@ -5,6 +5,8 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonBone
     {
+        public string id { get; set; }
+
         [DataMember]
         public string name { get; set; }
 

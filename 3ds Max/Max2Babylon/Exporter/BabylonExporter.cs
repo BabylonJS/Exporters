@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
-        private string exporterVersion = "1.1.2";
+        private string exporterVersion = "1.1.4";
 
         void ReportProgressChanged(int progress)
         {
@@ -406,9 +406,6 @@ namespace Max2Babylon
                     break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Light:
                     babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Helper:
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
                     break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
                     // Create a dummy (empty mesh) when type is unknown
