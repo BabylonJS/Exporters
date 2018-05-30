@@ -8,16 +8,45 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
+        private void InitAnimationGroups()
         {
-            AnimationGroupList animationList = new AnimationGroupList();
+            animationList = new AnimationGroupList();
             animationList.LoadFromData();
 
-            gltf.AnimationsList.Clear();
-            gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
+            if (animationList.Count == 0)
+            {
+                return;
+            }
+
+            RaiseMessage("Initialize animation groups");
 
             int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
             int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+            
+            foreach (AnimationGroup animGroup in animationList)
+            {
+                // ensure min <= start <= end <= max
+                // warning messages before correcting
+                if (animGroup.FrameStart < minFrame || animGroup.FrameStart > maxFrame)
+                    RaiseWarning("GLTFExporter.Animation | Start frame outside of timeline range: " + animGroup.FrameStart, 1);
+                if (animGroup.FrameEnd < minFrame || animGroup.FrameEnd > maxFrame)
+                    RaiseWarning("GLTFExporter.Animation | End frame outside of timeline range: " + animGroup.FrameEnd, 1);
+                if (animGroup.FrameEnd <= animGroup.FrameStart)
+                    RaiseWarning("GLTFExporter.Animation | End frame smaller than or equal to Start frame: " + animGroup.FrameStart + " to " + animGroup.FrameEnd, 1);
+
+                int startFrame = Math.Min(Math.Max(minFrame, animGroup.FrameStart), maxFrame);
+                int endFrame = Math.Min(Math.Max(startFrame, animGroup.FrameEnd), maxFrame);
+
+                // Correct animation group boundaries
+                animGroup.FrameStart = startFrame;
+                animGroup.FrameEnd = endFrame;
+            }
+        }
+       
+        private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
+        {
+            gltf.AnimationsList.Clear();
+            gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
 
             if (animationList.Count <= 0)
             {
@@ -25,6 +54,9 @@ namespace Max2Babylon
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = "All Animations";
                 
+                int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+                int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+
                 foreach (var pair in nodeToGltfNodeMap)
                 {
                     ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
@@ -51,18 +83,9 @@ namespace Max2Babylon
 
                     GLTFAnimation gltfAnimation = new GLTFAnimation();
                     gltfAnimation.name = animGroup.Name;
-
-                    // ensure min <= start <= end <= max
-                    // warning messages before correcting
-                    if(animGroup.FrameStart < minFrame || animGroup.FrameStart > maxFrame)
-                        RaiseWarning("GLTFExporter.Animation | Start frame outside of timeline range: " + animGroup.FrameStart, 2);
-                    if(animGroup.FrameEnd < minFrame || animGroup.FrameEnd > maxFrame)
-                        RaiseWarning("GLTFExporter.Animation | End frame outside of timeline range: " + animGroup.FrameEnd, 2);
-                    if(animGroup.FrameEnd <= animGroup.FrameStart)
-                        RaiseWarning("GLTFExporter.Animation | End frame smaller than or equal to Start frame: " + animGroup.FrameStart + " to " + animGroup.FrameEnd, 2);
-
-                    int startFrame = Math.Min(Math.Max(minFrame, animGroup.FrameStart), maxFrame);
-                    int endFrame = Math.Min(Math.Max(startFrame, animGroup.FrameEnd), maxFrame);
+                    
+                    int startFrame = animGroup.FrameStart;
+                    int endFrame = animGroup.FrameEnd;
 
                     foreach (uint nodeHandle in animGroup.NodeHandles)
                     {

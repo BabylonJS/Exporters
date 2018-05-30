@@ -218,6 +218,10 @@ namespace Max2Babylon
                 }
             }
 
+            // Retreive and parse animation group data
+            // Used while exporting and optimizing animations
+            InitAnimationGroups();
+
             // Root nodes
             RaiseMessage("Exporting nodes");
             HashSet<IIGameNode> maxRootNodes = getRootNodes(gameScene);
