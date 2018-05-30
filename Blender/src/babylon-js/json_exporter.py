@@ -81,7 +81,10 @@ class JsonExporter:
             elif (scene.exportScope == 'SELECTED'):
                 scanObjects = bpy.context.selected_objects
             elif (scene.exportScope == 'VISIBLE'):
-                scanObjects = bpy.context.visible_objects
+                scanObjects = list(filter(
+                    lambda o: self.isInSelectedLayer(o, scene),
+                    bpy.context.visible_objects
+                ))
 
             # Scene level sound
             if scene.attachedSound != '':
@@ -91,23 +94,16 @@ class JsonExporter:
             for object in [object for object in scanObjects]:
                 scene.frame_set(currentFrame)
                 if object.type == 'ARMATURE':  #skeleton.pose.bones
-                    if object.is_visible(scene):
-                        self.skeletons.append(Skeleton(object, scene, skeletonId, scene.ignoreIKBones))
-                        skeletonId += 1
-                    else:
-                        Logger.warn('The following armature not visible in scene thus ignored: ' + object.name)
+                    self.skeletons.append(Skeleton(object, scene, skeletonId, scene.ignoreIKBones))
+                    skeletonId += 1
 
             # exclude lamps in this pass, so ShadowGenerator constructor can be passed meshesAnNodes
             for object in [object for object in scanObjects]:
                 scene.frame_set(currentFrame)
                 if object.type == 'CAMERA':
-                    if object.is_visible(scene): # no isInSelectedLayer() required, is_visible() handles this for them
-                        self.cameras.append(Camera(object))
-                    else:
-                        Logger.warn('The following camera not visible in scene thus ignored: ' + object.name)
+                    self.cameras.append(Camera(object))
 
                 elif object.type == 'MESH':
-                    # if not self.isInSelectedLayer(object, scene): continue
                     mesh = Mesh(object, scene, self)
                     if mesh.hasUnappliedTransforms and hasattr(mesh, 'skeletonWeights'):
                         self.fatalError = 'Mesh: ' + mesh.name + ' has un-applied transformations.  This will never work for a mesh with an armature.  Export cancelled'
@@ -133,16 +129,13 @@ class JsonExporter:
             # Lamp / shadow Generator pass; meshesAnNodes complete & forceParents included
             for object in [object for object in scanObjects]:
                 if object.type == 'LAMP':
-                    if object.is_visible(scene): # no isInSelectedLayer() required, is_visible() handles this for them
-                        bulb = Light(object, self.meshesAndNodes)
-                        self.lights.append(bulb)
-                        if object.data.shadowMap != 'NONE':
-                            if bulb.light_type == DIRECTIONAL_LIGHT or bulb.light_type == SPOT_LIGHT:
-                                self.shadowGenerators.append(ShadowGenerator(object, self.meshesAndNodes, scene))
-                            else:
-                                Logger.warn('Only directional (sun) and spot types of lamp are valid for shadows thus ignored: ' + object.name)
-                    else:
-                        Logger.warn('The following lamp not visible in scene thus ignored: ' + object.name)
+                    bulb = Light(object, self.meshesAndNodes)
+                    self.lights.append(bulb)
+                    if object.data.shadowMap != 'NONE':
+                        if bulb.light_type == DIRECTIONAL_LIGHT or bulb.light_type == SPOT_LIGHT:
+                            self.shadowGenerators.append(ShadowGenerator(object, self.meshesAndNodes, scene))
+                        else:
+                            Logger.warn('Only directional (sun) and spot types of lamp are valid for shadows thus ignored: ' + object.name)
 
             bpy.context.scene.frame_set(currentFrame)
 

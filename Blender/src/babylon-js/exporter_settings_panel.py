@@ -12,7 +12,7 @@ class ExporterSettingsPanel(bpy.types.Panel):
         items=(
             ('ALL', "All", "Export the whole scene"),
             ('SELECTED', "Selected", "Export the selected objects only"),
-            ('VISIBLE', "Visible", "Export only visible objects"),
+            ('VISIBLE', "Layers", "Export only objects in the active layers"),
         ),
         name="ui_tab",
         description="Export selection control",
@@ -94,8 +94,10 @@ class ExporterSettingsPanel(bpy.types.Panel):
 
         scene = context.scene
 
+        layout.label('Export')
         layout.prop(scene, 'exportScope', expand=True)
-        layout.prop(scene, 'export_flatshadeScene')
+        layout.separator()
+
         layout.prop(scene, 'ignoreIKBones')
         layout.prop(scene, 'writeManifestFile')
 
