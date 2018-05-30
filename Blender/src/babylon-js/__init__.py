@@ -64,8 +64,8 @@ if __name__ == '__main__':
     unregister()
     register()
 #===============================================================================
-    bl_idname = 'bjs.main'
 class JsonMain(bpy.types.Operator, ExportHelper):
+    bl_idname = 'export.bjs'
     bl_label = 'Export Babylon.js scene' # used on the label of the actual 'save' button
     bl_options = {'REGISTER', 'UNDO'}
     filename_ext = '.babylon'            # used as the extension on file selector
