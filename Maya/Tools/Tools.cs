@@ -1,14 +1,23 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Maya2Babylon
 {
     static class Tools
     {
-        public const float Epsilon = 0.001f;
+        public const float Epsilon = 0.00001f;
 
+        // -------------------------
+        // --------- Math ----------
+        // -------------------------
+
+        public static float Lerp(float min, float max, float t)
+        {
+            return min + (max - min) * t;
+        }
 
         // -------------------------
         // --------- Array ---------
@@ -47,14 +56,14 @@ namespace Maya2Babylon
             return true;
         }
 
-        public static string toString<T>(this T[] array)
+        public static string toString<T>(this T[] array, bool withBrackets = true)
         {
             if (array == null)
             {
                 return "";
             }
 
-            var result = "[";
+            var result = "";
             bool isFirst = true;
             for (uint index = 0; index < array.Length; index++)
             {
@@ -65,7 +74,42 @@ namespace Maya2Babylon
                 isFirst = false;
                 result += array[index];
             }
-            return result + "]";
+
+            if (withBrackets)
+            {
+                result = "[" + result + "]";
+            }
+            return result;
+        }
+
+        public static float[] Multiply(this float[] array, float[] array2)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * array2[index];
+            }
+            return res;
+        }
+
+        public static float[] Multiply(this float[] array, float value)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * value;
+            }
+            return res;
+        }
+
+        public static bool IsEqualTo(this float[] value, float[] other)
+        {
+            if (value.Length != other.Length)
+            {
+                return false;
+            }
+
+            return !value.Where((t, i) => Math.Abs(t - other[i]) > Epsilon).Any();
         }
 
         // -------------------------
@@ -79,6 +123,27 @@ namespace Maya2Babylon
                 // TODO find function
                 //node.setUserPropBool(propertyName, checkBox.CheckState == CheckState.Checked);
             }
+        }
+
+        // -------------------------
+        // --------- Math ----------
+        // -------------------------
+
+        public static float Clamp(float value, float min, float max)
+        {
+            return (value < min) ? min : (value > max) ? max : value;
+        }
+
+
+        // -------------------------
+        // --------- UUID ----------
+        // -------------------------
+
+        public static string GenerateUUID()
+        {
+            MUuid mUuid = new MUuid();
+            mUuid.generate();
+            return mUuid.asString();
         }
     }
 }

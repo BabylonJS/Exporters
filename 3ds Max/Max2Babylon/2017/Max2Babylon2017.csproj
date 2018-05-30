@@ -23,7 +23,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2017\bin\assemblies\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MAX2017</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -226,6 +226,12 @@
     <Compile Include="..\Loader.cs">
       <Link>Loader.cs</Link>
     </Compile>
+    <Compile Include="..\ExportParameters.cs">
+      <Link>ExportParameters.cs</Link>
+    </Compile>
+    <Compile Include="..\MaxScriptManager.cs">
+      <Link>MaxScriptManager.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\Tools.cs">
       <Link>Tools\Tools.cs</Link>
     </Compile>
@@ -245,6 +251,9 @@
       <Link>Exporter\BabylonExporter.GLTFExporter.Skin.cs</Link>
     </Compile>
     <Compile Include="Exporter\BabylonExporter.WorldModifiers.cs" />
+    <Compile Include="..\Extensions\ColorExtension.cs">
+      <Link>Extensions\ColorExtension.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -296,8 +305,12 @@
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+if not exist "$(SolutionDir)assemblies\2017" mkdir "$(SolutionDir)assemblies\2017"
+del "$(SolutionDir)assemblies\2017\*.dll"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2017\"
+if exist "C:\Program Files\Autodesk\3ds Max 2017\bin\assemblies\" copy "$(SolutionDir)assemblies\2017\*.dll" "C:\Program Files\Autodesk\3ds Max 2017\bin\assemblies\"
+if exist "D:\Program Files\Autodesk\3ds Max 2017\bin\assemblies\" copy "$(SolutionDir)assemblies\2017\*.dll" "D:\Program Files\Autodesk\3ds Max 2017\bin\assemblies\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

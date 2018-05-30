@@ -41,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtScaleFactor = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.comboOutputFormat = new System.Windows.Forms.ComboBox();
             this.chkOnlySelected = new System.Windows.Forms.CheckBox();
@@ -48,6 +49,7 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -180,6 +182,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.txtScaleFactor);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.comboOutputFormat);
             this.groupBox1.Controls.Add(this.chkOnlySelected);
@@ -197,6 +201,16 @@
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // txtScaleFactor
+            // 
+            this.txtScaleFactor.Location = new System.Drawing.Point(402, 66);
+            this.txtScaleFactor.Name = "txtScaleFactor";
+            this.txtScaleFactor.Size = new System.Drawing.Size(42, 20);
+            this.txtScaleFactor.TabIndex = 19;
+            this.txtScaleFactor.Text = "1";
+            this.txtScaleFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtScaleFactor.TextChanged += new System.EventHandler(this.txtScaleFactor_TextChanged);
             // 
             // label3
             // 
@@ -280,6 +294,15 @@
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(329, 69);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Scale factor:";
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,5 +354,7 @@
         private System.Windows.Forms.Button butClose;
         private System.Windows.Forms.ComboBox comboOutputFormat;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtScaleFactor;
+        private System.Windows.Forms.Label label4;
     }
 }

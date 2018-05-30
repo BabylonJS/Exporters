@@ -49,26 +49,29 @@ namespace Maya2Babylon
             }
             gltfNode.scale = babylonAbstractMesh.scaling;
 
+            // Switch coordinate system at object level
+            gltfNode.translation[2] *= -1;
+            gltfNode.rotation[0] *= -1;
+            gltfNode.rotation[1] *= -1;
+
             // Mesh
             var gltfMesh = gltf.MeshesList.Find(_gltfMesh => _gltfMesh.idGroupInstance == babylonAbstractMesh.idGroupInstance);
             if (gltfMesh != null)
             {
                 gltfNode.mesh = gltfMesh.index;
-                
+
                 // Skin
                 if (gltfMesh.idBabylonSkeleton.HasValue)
                 {
-                    // TODO - Skin
-                    //var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
-                    //// Export a new skeleton if necessary and a new skin
-                    //var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
-                    //gltfNode.skin = gltfSkin.index;
+                    var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
+                    // Export a new skeleton if necessary and a new skin
+                    var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
+                    gltfNode.skin = gltfSkin.index;
                 }
             }
-
-            // TODO - Animations
-            //// Animations
-            //ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
+            
+            // Animations
+            ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
 
             return gltfNode;
         }

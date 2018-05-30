@@ -40,12 +40,12 @@ namespace Max2Babylon
                 var extension = Path.GetExtension(name);
 
                 // Write image to output
-                if (CopyTexturesToOutput)
+                if (exportParameters.copyTexturesToOutput)
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 2);
-                    bitmap.Save(absolutePath, imageFormat);
+                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
+                    SaveBitmap(bitmap, absolutePath, imageFormat);
                 }
 
                 return extension.Substring(1); // remove the dot
@@ -60,7 +60,7 @@ namespace Max2Babylon
 
                 if (sourcePath == null || sourcePath == "")
                 {
-                    RaiseWarning("Texture path is missing.", 2);
+                    RaiseWarning("Texture path is missing.", 3);
                     return null;
                 }
 
@@ -69,7 +69,7 @@ namespace Max2Babylon
                 if (validImageFormat == null)
                 {
                     // Image format is not supported by the exporter
-                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 2);
+                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
                     return null;
                 }
 
@@ -79,7 +79,7 @@ namespace Max2Babylon
                 CopyGltfTexture(sourcePath, destPath);
 
                 return validImageFormat;
-             });
+            });
         }
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Func<string> writeImageFunc)
@@ -94,7 +94,7 @@ namespace Max2Babylon
                 name = babylonTexture.name;
             }
 
-            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 1);
+            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             string validImageFormat = writeImageFunc.Invoke();
             if (validImageFormat == null)
@@ -108,7 +108,7 @@ namespace Max2Babylon
             // -------- Sampler ---------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create sampler", 2);
+            RaiseMessage("GLTFExporter.Texture | create sampler", 3);
             GLTFSampler gltfSampler = new GLTFSampler();
             gltfSampler.index = gltf.SamplersList.Count;
             gltf.SamplersList.Add(gltfSampler);
@@ -123,13 +123,13 @@ namespace Max2Babylon
             // WrapS and wrapT
             gltfSampler.wrapS = getWrapMode(babylonTexture.wrapU);
             gltfSampler.wrapT = getWrapMode(babylonTexture.wrapV);
-            
+
 
             // --------------------------
             // --------- Image ----------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create image", 2);
+            RaiseMessage("GLTFExporter.Texture | create image", 3);
             GLTFImage gltfImage = new GLTFImage
             {
                 uri = name
@@ -152,7 +152,7 @@ namespace Max2Babylon
             // -------- Texture ---------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Texture | create texture", 2);
+            RaiseMessage("GLTFExporter.Texture | create texture", 3);
             var gltfTexture = new GLTFTexture
             {
                 name = name,
@@ -168,10 +168,76 @@ namespace Max2Babylon
             // --------------------------
             var gltfTextureInfo = new GLTFTextureInfo
             {
-                index = gltfTexture.index
+                index = gltfTexture.index,
+                texCoord = babylonTexture.coordinatesIndex
             };
 
             return gltfTextureInfo;
+        }
+
+        private GLTFTextureInfo ExportEmissiveTexture(BabylonStandardMaterial babylonMaterial, GLTF gltf, float[] defaultEmissive, float[] defaultDiffuse)
+        {
+            // Use one as a reference for UVs parameters
+            var babylonTexture = babylonMaterial.emissiveTexture != null ? babylonMaterial.emissiveTexture : babylonMaterial.diffuseTexture;
+            if (babylonTexture == null)
+            {
+                return null;
+            }
+
+            Bitmap emissivePremultipliedBitmap = null;
+
+            if (exportParameters.copyTexturesToOutput)
+            {
+                // Emissive
+                Bitmap emissiveBitmap = null;
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    emissiveBitmap = LoadTexture(babylonMaterial.emissiveTexture.originalPath);
+                }
+
+                // Diffuse
+                Bitmap diffuseBitmap = null;
+                if (babylonMaterial.diffuseTexture != null)
+                {
+                    diffuseBitmap = LoadTexture(babylonMaterial.diffuseTexture.originalPath);
+                }
+
+                if (emissiveBitmap != null || diffuseBitmap != null)
+                {
+                    // Retreive dimensions
+                    int width = 0;
+                    int height = 0;
+                    var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, emissiveBitmap, diffuseBitmap);
+                    if (!haveSameDimensions)
+                    {
+                        RaiseError("Emissive and diffuse maps should have same dimensions", 2);
+                    }
+
+                    // Create pre-multiplied emissive map
+                    emissivePremultipliedBitmap = new Bitmap(width, height);
+                    for (int x = 0; x < width; x++)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            var _emissive = emissiveBitmap != null ? emissiveBitmap.GetPixel(x, y).toArrayRGB().Multiply(1f / 255.0f) : defaultEmissive;
+                            var _diffuse = diffuseBitmap != null ? diffuseBitmap.GetPixel(x, y).toArrayRGB().Multiply(1f / 255.0f) : defaultDiffuse;
+
+                            var emissivePremultiplied = _emissive.Multiply(_diffuse);
+
+                            Color colorEmissivePremultiplied = Color.FromArgb(
+                                (int)(emissivePremultiplied[0] * 255),
+                                (int)(emissivePremultiplied[1] * 255),
+                                (int)(emissivePremultiplied[2] * 255)
+                            );
+                            emissivePremultipliedBitmap.SetPixel(x, y, colorEmissivePremultiplied);
+                        }
+                    }
+                }
+            }
+
+            var name = babylonMaterial.name + "_emissive.jpg";
+
+            return ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
         }
 
         private void getSamplingParameters(BabylonTexture.SamplingMode samplingMode, out GLTFSampler.TextureMagFilter? magFilter, out GLTFSampler.TextureMinFilter? minFilter)
@@ -227,7 +293,7 @@ namespace Max2Babylon
                     minFilter = GLTFSampler.TextureMinFilter.NEAREST;
                     break;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture sampling mode not found");
+                    RaiseError("GLTFExporter.Texture | texture sampling mode not found", 3);
                     magFilter = null;
                     minFilter = null;
                     break;
@@ -245,7 +311,7 @@ namespace Max2Babylon
                 case BabylonTexture.AddressMode.MIRROR_ADDRESSMODE:
                     return GLTFSampler.TextureWrapMode.MIRRORED_REPEAT;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture wrap mode not found");
+                    RaiseError("GLTFExporter.Texture | texture wrap mode not found", 3);
                     return null;
             }
         }
@@ -257,7 +323,7 @@ namespace Max2Babylon
 
         private void CopyGltfTexture(string sourcePath, string destPath)
         {
-            _copyTexture(sourcePath, destPath, validFormats, invalidFormats);
+            _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
         }
     }
 }
