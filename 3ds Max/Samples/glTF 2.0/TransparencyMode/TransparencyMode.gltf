@@ -1306,6 +1306,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Standard_Color_Opaque"
 		},
 		{
@@ -1327,6 +1328,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Standard_ColorMap_Opaque"
 		},
 		{
@@ -1433,6 +1435,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Wood"
 		},
 		{
@@ -1473,6 +1476,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "PBR_Color_Opaque"
 		},
 		{
@@ -1494,6 +1498,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "PBR_ColorMap_Opaque"
 		},
 		{
@@ -1556,6 +1561,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "PBR_ColorMap_Blend"
 		},
 		{

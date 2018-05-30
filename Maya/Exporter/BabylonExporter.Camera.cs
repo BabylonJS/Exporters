@@ -25,7 +25,11 @@ namespace Maya2Babylon
                 MObject childObject = mFnTransform.child(i);
                 if (childObject.apiType == MFn.Type.kCamera)
                 {
-                    mFnCamera = new MFnCamera(childObject);
+                    var _mFnCamera = new MFnCamera(childObject);
+                    if (!_mFnCamera.isIntermediateObject)
+                    {
+                        mFnCamera = _mFnCamera;
+                    }
                 }
             }
             if (mFnCamera == null)
@@ -64,6 +68,10 @@ namespace Maya2Babylon
             RaiseVerbose("BabylonExporter.Camera | mFnCamera.shutterAngle=" + mFnCamera.shutterAngle, 3);
             RaiseVerbose("BabylonExporter.Camera | mFnCamera.isDepthOfField=" + mFnCamera.isDepthOfField, 3);
             RaiseVerbose("BabylonExporter.Camera | mFnCamera.renderPanZoom=" + mFnCamera.renderPanZoom, 3);
+
+            Print(mFnTransform, 2, "Print ExportCamera mFnTransform");
+
+            Print(mFnCamera, 2, "Print ExportCamera mFnCamera");
 
             #endregion
 
@@ -116,12 +124,30 @@ namespace Maya2Babylon
             //babylonCamera.applyGravity = cameraNode.MaxNode.GetBoolProperty("babylonjs_applygravity");
             //babylonCamera.ellipsoid = cameraNode.MaxNode.GetVector3Property("babylonjs_ellipsoid");
 
-            // TODO - Target
-            //var target = mFnCamera.target;
-            //if (target != null)
-            //{
-            //    babylonCamera.lockedTargetId = target.MaxNode.GetGuid().ToString();
-            //}
+            // Target
+            MFnTransform target = null;
+            MObject cameraGroupObject = mFnCamera.findPlug("centerOfInterest").source.node;
+            if (cameraGroupObject.apiType == MFn.Type.kLookAt)
+            {
+                MFnDependencyNode cameraGroup = new MFnDependencyNode(cameraGroupObject);
+
+                // Retreive the camera aim transform
+                MPlugArray connections = new MPlugArray();
+                cameraGroup.getConnections(connections);
+                foreach (MPlug connection in connections)
+                {
+                    if (connection.name.EndsWith("targetParentMatrix")) // ugly
+                    {
+                        MObject connectionSourceObject = connection.source.node;
+                        target = new MFnTransform(connectionSourceObject);
+                        break;
+                    }
+                }
+            }
+            if (target != null)
+            {
+                babylonCamera.lockedTargetId = target.uuid().asString();
+            }
 
             //// TODO - Check if should be local or world
             //var vDir = new MVector(0, 0, -1);
@@ -130,7 +156,15 @@ namespace Maya2Babylon
             //vDir = vDir.Add(position);
             //babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
 
-            // TODO - Animations
+            // Animations
+            if (target == null)
+            {
+                ExportNodeAnimation(babylonCamera, mFnTransform);
+            }
+            else
+            {
+                ExportNodeAnimationFrameByFrame(babylonCamera, mFnTransform);
+            }
 
             babylonScene.CamerasList.Add(babylonCamera);
             RaiseMessage("BabylonExporter.Camera | done", 2);

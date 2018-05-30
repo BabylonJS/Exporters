@@ -17,6 +17,9 @@ namespace Max2Babylon
 
         private List<BabylonNode> babylonNodes;
 
+        // Store nodes already exported to prevent multiple exportation of same node
+        private Dictionary<string, GLTFNode> alreadyExportedNodes = new Dictionary<string, GLTFNode>();
+
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
             RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
@@ -41,10 +44,23 @@ namespace Max2Babylon
             gltf.asset = new GLTFAsset
             {
                 version = "2.0",
-                generator = "Babylon2Gltf2017",
                 copyright = "2017 (c) BabylonJS"
                 // no minVersion
             };
+
+            string maxVersion = null;
+#if MAX2015
+            maxVersion = "2015";
+#elif MAX2017
+            maxVersion = "2017";
+#elif MAX2018
+            maxVersion = "2018";
+#endif
+            gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
+
+            // Extensions
+            gltf.extensionsUsed = new List<string>();
+            gltf.extensionsRequired = new List<string>();
 
             // Scene
             gltf.scene = 0;
@@ -72,6 +88,7 @@ namespace Max2Babylon
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            NbNodesByName = new Dictionary<string, int>();
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
@@ -241,6 +258,11 @@ namespace Max2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
+            if (alreadyExportedNodes.ContainsKey(babylonNode.id))
+            {
+                return;
+            }
+
             GLTFNode gltfNode = null;
             var type = babylonNode.GetType();
             if (type == typeof(BabylonAbstractMesh) ||
@@ -276,6 +298,8 @@ namespace Max2Babylon
             // If node is exported successfully...
             if (gltfNode != null)
             {
+                alreadyExportedNodes[babylonNode.id] = gltfNode;
+                
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
                 babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));

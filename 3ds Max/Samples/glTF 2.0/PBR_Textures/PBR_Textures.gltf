@@ -529,6 +529,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "BumpMat"
 		},
 		{
@@ -550,6 +551,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "BaseColorMat"
 		},
 		{
@@ -593,6 +595,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "MetallicRoughnessMat"
 		},
 		{
@@ -617,6 +620,7 @@
 				1,
 				1
 			],
+			"alphaMode": "OPAQUE",
 			"name": "EmissiveMat"
 		},
 		{
@@ -641,6 +645,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "BaseColorAOMat"
 		}
 	],

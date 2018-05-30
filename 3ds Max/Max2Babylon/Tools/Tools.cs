@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Autodesk.Max;
-using BabylonExport.Entities;
+﻿using Autodesk.Max;
 using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace Max2Babylon
 {
@@ -41,18 +38,47 @@ namespace Max2Babylon
             return SubArray(array, startEntityIndex * count, count);
         }
 
-        public static string ToString<T>(this T[] array)
+        public static string ToString<T>(this T[] array, bool withBrackets = true)
         {
-            var res = "[";
+            if (array == null)
+            {
+                return "";
+            }
+
+            var result = "";
             if (array.Length > 0)
             {
-                res += array[0];
+                result += array[0];
                 for (int i = 1; i < array.Length; i++)
                 {
-                    res += ", " + array[i];
+                    result += ", " + array[i];
                 }
             }
-            res += "]";
+
+            if (withBrackets)
+            {
+                result = "[" + result + "]";
+            }
+            return result;
+        }
+
+        public static float[] Multiply(this float[] array, float[] array2)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * array2[index];
+            }
+            return res;
+        }
+
+        public static float[] Multiply(this float[] array, float value)
+        {
+            float[] res = new float[array.Length];
+            for (int index = 0; index < array.Length; index++)
+            {
+                res[index] = array[index] * value;
+            }
             return res;
         }
 
@@ -766,44 +792,6 @@ namespace Max2Babylon
             {
                 UpdateComboBox(comboBox, node, propertyName);
             }
-        }
-
-        public static IMatrix3 ExtractCoordinates(IINode meshNode, BabylonAbstractMesh babylonMesh, bool exportQuaternionsInsteadOfEulers)
-        {
-            var wm = meshNode.GetWorldMatrix(0, meshNode.HasParent());
-            babylonMesh.position = wm.Trans.ToArraySwitched();
-
-            var parts = Loader.Global.AffineParts.Create();
-            Loader.Global.DecompAffine(wm, parts);
-
-            if (exportQuaternionsInsteadOfEulers)
-            {
-                babylonMesh.rotationQuaternion = parts.Q.ToArray();
-            }
-            else
-            {
-                var rotate = new float[3];
-
-                IntPtr xPtr = Marshal.AllocHGlobal(sizeof(float));
-                IntPtr yPtr = Marshal.AllocHGlobal(sizeof(float));
-                IntPtr zPtr = Marshal.AllocHGlobal(sizeof(float));
-                parts.Q.GetEuler(xPtr, yPtr, zPtr);
-
-                Marshal.Copy(xPtr, rotate, 0, 1);
-                Marshal.Copy(yPtr, rotate, 1, 1);
-                Marshal.Copy(zPtr, rotate, 2, 1);
-
-                var temp = rotate[1];
-                rotate[0] = -rotate[0] * parts.F;
-                rotate[1] = -rotate[2] * parts.F;
-                rotate[2] = -temp * parts.F;
-
-                babylonMesh.rotation = rotate;
-            }
-
-            babylonMesh.scaling = parts.K.ToArraySwitched();
-
-            return wm;
         }
     }
 }

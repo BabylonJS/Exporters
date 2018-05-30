@@ -7047,6 +7047,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_1"
 		},
 		{
@@ -7065,6 +7066,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_3"
 		},
 		{
@@ -7083,6 +7085,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_5"
 		},
 		{
@@ -7101,6 +7104,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_7"
 		},
 		{
@@ -7119,6 +7123,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_9"
 		},
 		{
@@ -7137,6 +7142,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_15"
 		},
 		{
@@ -7155,6 +7161,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_13"
 		},
 		{
@@ -7173,6 +7180,7 @@
 				0,
 				0
 			],
+			"alphaMode": "OPAQUE",
 			"name": "Material_11"
 		}
 	]

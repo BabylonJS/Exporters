@@ -55,8 +55,13 @@ namespace Maya2Babylon
             // No scaling defined for babylon camera. Use identity instead.
             gltfNode.scale = new float[3] { 1, 1, 1 };
 
-            // TODO - Animations
-            //ExportNodeAnimation(babylonCamera, gltf, gltfNode);
+            // Switch coordinate system at object level
+            gltfNode.translation[2] *= -1;
+            gltfNode.rotation[0] *= -1;
+            gltfNode.rotation[1] *= -1;
+
+            // Animations
+            ExportNodeAnimation(babylonCamera, gltf, gltfNode);
 
             // --- prints ---
             #region prints
