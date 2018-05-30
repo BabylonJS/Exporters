@@ -350,7 +350,9 @@
 if not exist "$(SolutionDir)assemblies\2015 - 2016" mkdir "$(SolutionDir)assemblies\2015 - 2016"
 del "$(SolutionDir)assemblies\2015 - 2016\*.dll"
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2015 - 2016\"
+if exist "C:\Program Files\Autodesk\3ds Max 2015\bin\assemblies\" copy "$(SolutionDir)assemblies\2015 - 2016\*.dll" "C:\Program Files\Autodesk\3ds Max 2015\bin\assemblies\"
 if exist "C:\Program Files\Autodesk\3ds Max 2016\bin\assemblies\" copy "$(SolutionDir)assemblies\2015 - 2016\*.dll" "C:\Program Files\Autodesk\3ds Max 2016\bin\assemblies\"
+if exist "D:\Programmes\Autodesk\3ds Max 2015\bin\assemblies\" copy "$(SolutionDir)assemblies\2015 - 2016\*.dll" "D:\Programmes\Autodesk\3ds Max 2015\bin\assemblies\"
 if exist "D:\Programmes\Autodesk\3ds Max 2016\bin\assemblies\" copy "$(SolutionDir)assemblies\2015 - 2016\*.dll" "D:\Programmes\Autodesk\3ds Max 2016\bin\assemblies\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
