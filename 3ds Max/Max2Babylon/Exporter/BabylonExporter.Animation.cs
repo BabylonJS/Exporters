@@ -7,6 +7,8 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        AnimationGroupList animationList;
+
         private static bool ExportBabylonKeys(List<BabylonAnimationKey> keys, string property, List<BabylonAnimation> animations, BabylonAnimation.DataType dataType, BabylonAnimation.LoopBehavior loopBehavior)
         {
             if (keys.Count == 0)
@@ -234,36 +236,36 @@ namespace Max2Babylon
         // ---- From ext func ----
         // -----------------------
 
-        private static void ExportColor3Animation(string property, List<BabylonAnimation> animations,
+        private void ExportColor3Animation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Color3);
         }
 
-        private static void ExportVector3Animation(string property, List<BabylonAnimation> animations,
+        private void ExportVector3Animation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Vector3);
         }
 
-        private static void ExportQuaternionAnimation(string property, List<BabylonAnimation> animations,
+        private void ExportQuaternionAnimation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Quaternion);
         }
 
-        private static void ExportFloatAnimation(string property, List<BabylonAnimation> animations,
+        private void ExportFloatAnimation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Float);
         }
 
-        private static BabylonAnimation ExportMatrixAnimation(string property, Func<int, float[]> extractValueFunc, bool removeLinearAnimationKeys = true)
+        private BabylonAnimation ExportMatrixAnimation(string property, Func<int, float[]> extractValueFunc, bool removeLinearAnimationKeys = true)
         {
             return ExportAnimation(property, extractValueFunc, BabylonAnimation.DataType.Matrix, removeLinearAnimationKeys);
         }
 
-        static void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
+        private void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
             for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
             {
@@ -277,7 +279,21 @@ namespace Max2Babylon
             }
         }
 
-        static float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
+        private bool isKeyAtAnimationGroupBoundaries(int frame)
+        {
+            foreach (AnimationGroup animGroup in animationList)
+            {
+                if (animGroup.FrameStart == frame || animGroup.FrameEnd == frame)
+                {
+                    // TODO - Optimization - Detect if node for which animations are exported is part of the Animation Group
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
         {
             double weight2 = (frame1 - frame0) / (double)(frame2 - frame0);
             double weight0 = 1 - weight2;
@@ -289,11 +305,17 @@ namespace Max2Babylon
             return result;
         }
 
-        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
+        private bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
         {
             var first = keys[ixFirst];
             var middle = keys[ixFirst + 1];
             var last = keys[ixFirst + 2];
+
+            // Do not remove animation key if an animation group is using this frame as start or end
+            if (isKeyAtAnimationGroupBoundaries(middle.frame))
+            {
+                return false;
+            }
 
             // first pass, frame equality
             if (first.values.IsEqualTo(last.values) && first.values.IsEqualTo(middle.values))
@@ -316,7 +338,7 @@ namespace Max2Babylon
 
         }
 
-        private static void ExportAnimation(string property, List<BabylonAnimation> animations, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
+        private void ExportAnimation(string property, List<BabylonAnimation> animations, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
             var babylonAnimation = ExportAnimation(property, extractValueFunc, dataType, removeLinearAnimationKeys);
             if (babylonAnimation != null)
@@ -325,7 +347,7 @@ namespace Max2Babylon
             }
         }
 
-        private static BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
+        private BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
             var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
 
