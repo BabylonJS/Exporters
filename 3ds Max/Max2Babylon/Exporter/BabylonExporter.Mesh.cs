@@ -446,6 +446,9 @@ namespace Max2Babylon
                 }
             }
 
+            // World Modifiers
+            ExportWorldModifiers(meshNode, babylonScene, babylonMesh);
+
             // Animations
             // Done last to avoid '0 vertex found' error (unkown cause)
             exportAnimation(babylonMesh, meshNode);

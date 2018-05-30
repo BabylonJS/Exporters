@@ -250,6 +250,7 @@
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Skin.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.Skin.cs</Link>
     </Compile>
+    <Compile Include="Exporter\BabylonExporter.WorldModifiers.cs" />
     <Compile Include="..\Extensions\ColorExtension.cs">
       <Link>Extensions\ColorExtension.cs</Link>
     </Compile>
