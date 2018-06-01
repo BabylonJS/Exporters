@@ -20,7 +20,6 @@ namespace Max2Babylon
             gltfNode.name = GetUniqueNodeName(babylonAbstractMesh.name);
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
-            nodeToGltfNodeMap.Add(babylonAbstractMesh, gltfNode);
 
             // Hierarchy
             if (gltfParentNode != null)

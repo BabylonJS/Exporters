@@ -19,7 +19,6 @@ namespace Max2Babylon
             gltfNode.name = GetUniqueNodeName(babylonCamera.name);
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
-            nodeToGltfNodeMap.Add(babylonCamera, gltfNode);
 
             // Hierarchy
             if (gltfParentNode != null)
