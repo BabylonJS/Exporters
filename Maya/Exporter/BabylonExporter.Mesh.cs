@@ -215,6 +215,34 @@ namespace Maya2Babylon
             }
 
             var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+            
+            // Instance
+            // For a mesh with instances, we distinguish between master and instance meshes:
+            //      - a master mesh stores all the info of the mesh (transform, hierarchy, animations + vertices, indices, materials, bones...)
+            //      - an instance mesh only stores the info of the node (transform, hierarchy, animations)
+
+            // Check if this mesh has already been exported as a master mesh
+            BabylonMesh babylonMasterMesh = GetMasterMesh(mFnMesh, babylonMesh);
+            if (babylonMasterMesh != null)
+            {
+                RaiseMessage($"The master mesh {babylonMasterMesh.name} was already exported. This one will be exported as an instance.",2);
+
+                // Export this node as instance
+                var babylonInstanceMesh = new BabylonAbstractMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+
+                //// Add instance to master mesh
+                List<BabylonAbstractMesh> instances = babylonMasterMesh.instances != null ? babylonMasterMesh.instances.ToList() : new List<BabylonAbstractMesh>();
+                instances.Add(babylonInstanceMesh);
+                babylonMasterMesh.instances = instances.ToArray();
+
+                // Export transform / hierarchy / animations
+                ExportNode(babylonInstanceMesh, mFnTransform, babylonScene);
+
+                // Animations
+                ExportNodeAnimation(babylonInstanceMesh, mFnTransform);
+
+                return babylonInstanceMesh;
+            }
 
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
@@ -883,6 +911,30 @@ namespace Maya2Babylon
             }
 
             return mFnSkinCluster;
+        }
+
+
+        /// <summary>
+        /// Instances manager
+        /// </summary>
+        private List<MFnMesh> exportedMFnMesh = new List<MFnMesh>();
+        private List<BabylonMesh> exportedMasterBabylonMesh = new List<BabylonMesh>();
+        private BabylonMesh GetMasterMesh(MFnMesh mFnMesh, BabylonMesh babylonMesh)
+        {
+            BabylonMesh babylonMasterMesh = null;
+            int index = exportedMFnMesh.FindIndex(mesh => mesh.fullPathName.Equals(mFnMesh.fullPathName));
+
+            if(index == -1)
+            {
+                exportedMFnMesh.Add(mFnMesh);
+                exportedMasterBabylonMesh.Add(babylonMesh);
+            }
+            else
+            {
+                babylonMasterMesh = exportedMasterBabylonMesh[index];
+            }
+
+            return babylonMasterMesh;
         }
     }
 }
