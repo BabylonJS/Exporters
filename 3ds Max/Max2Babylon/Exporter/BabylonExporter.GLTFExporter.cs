@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -20,10 +21,6 @@ namespace Max2Babylon
         // from BabylonNode to GLTFNode
         Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
         Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
-        
-        // Store nodes already exported to prevent multiple exportation of same node
-        private Dictionary<string, GLTFNode> alreadyExportedNodes = new Dictionary<string, GLTFNode>();
-
 
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
@@ -271,7 +268,14 @@ namespace Max2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
-            if (alreadyExportedNodes.ContainsKey(babylonNode.id))
+            // TODO: refactoring
+            // Currently:
+            //      - If the node is already exported, do nothing.
+            //      - But if it was exported as a bone, its properties as a mesh, camera or light) are not exported...
+            // To improve this code:
+            //      - Extract the shared part of "ExportAbstractMesh()", "ExportCamera()", "ExportLight()", "_exportBone()" => this shared part (node creation) should not be repeated to avoid duplicated nodes
+            //      - If the node is already exported, only the properties should be update
+            if (boneToGltfNodeMap.Count(pair => pair.Key.id.Equals(babylonNode.id)) > 0 || nodeToGltfNodeMap.Count(pair => pair.Key.id.Equals(babylonNode.id)) > 0)
             {
                 return;
             }
@@ -311,8 +315,8 @@ namespace Max2Babylon
             // If node is exported successfully...
             if (gltfNode != null)
             {
-                alreadyExportedNodes[babylonNode.id] = gltfNode;
-                
+                nodeToGltfNodeMap.Add(babylonNode, gltfNode);
+
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
                 babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));
