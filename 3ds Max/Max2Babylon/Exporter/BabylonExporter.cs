@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool isBabylonExported;
         private bool isGLTFExported;
 
-        private string exporterVersion = "1.1.1";
+        private string exporterVersion = "1.1.4";
 
         void ReportProgressChanged(int progress)
         {
@@ -455,6 +455,8 @@ namespace Max2Babylon
                     exportNodeRec(descendant, babylonScene, maxGameScene);
                 }
             }
+
+
         }
 
         /// <summary>
@@ -473,6 +475,9 @@ namespace Max2Babylon
                     break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Light:
                     isRelevantToExport = IsLightExportable(maxGameNode);
+                    break;
+                case Autodesk.Max.IGameObject.ObjectTypes.Helper:
+                    isRelevantToExport = IsNodeExportable(maxGameNode);
                     break;
                 default:
                     isRelevantToExport = false;
@@ -539,6 +544,7 @@ namespace Max2Babylon
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Mesh);
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Light);
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Camera);
+            addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Helper);
 
             return maxGameNodes;
         }

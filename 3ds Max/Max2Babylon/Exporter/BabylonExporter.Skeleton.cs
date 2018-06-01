@@ -192,6 +192,7 @@ namespace Max2Babylon
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
+                    id = node.MaxNode.GetGuid().ToString(),
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
