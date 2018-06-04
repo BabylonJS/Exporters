@@ -1,5 +1,17 @@
 # Blender2Babylon add-on changelog
 
+## Blender Exporter Version 5.6.3
+
+*01 June 2018*
+
+* Fix exporter settings panel (in Properties > Scene tab)
+
+* Remove active layers export, replace with 3 options (All, Selected objects, and visible Layers)
+
+* Show message in exporter settings panel to redirect user to Scene tab
+
+* Fix bl_idname to allow setting of a shortcut
+
 ## Blender Exporter Version 5.6.2
 
 *23 March 2018*
