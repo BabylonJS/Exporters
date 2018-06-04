@@ -313,6 +313,18 @@ namespace Max2Babylon
                     }
                 }
 
+                // Tangent
+                bool isTangentExportSuccess = exportParameters.exportTangents;  // Export tangents if option is checked and mesh have tangents
+                if (isTangentExportSuccess)
+                {
+                    babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
+                    RaiseMessage("Tangents exported.", 2);
+                }
+                else
+                {
+                    RaiseMessage("Tangents not exported.", 2);
+                }
+
                 RaiseMessage($"{vertices.Count} vertices, {indices.Count / 3} faces", 2);
 
                 // Buffers
@@ -628,6 +640,9 @@ namespace Max2Babylon
             CheckCancelled();
         }
 
+
+        int toPrint = 0;
+
         int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
@@ -640,6 +655,12 @@ namespace Max2Babylon
                 Position = mesh.GetVertex(vertexIndex, false), // world space
                 Normal = mesh.GetNormal((int)face.Norm[facePart], false) // world space
             };
+
+            if (exportParameters.exportTangents)
+            {
+                float[] tangent = mesh.GetTangent(vertexIndex, 1).Normalize.ToArray();
+                vertex.Tangent = new float[] { tangent[0], tangent[1], tangent[2], 1f };
+            }
 
             // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
