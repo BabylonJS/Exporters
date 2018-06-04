@@ -6,6 +6,7 @@ namespace Max2Babylon
     {
         public BabylonVector3 Position { get; set; }
         public BabylonVector3 Normal { get; set; }
+        public BabylonQuaternion Tangent { get; set; }
         public BabylonVector2 UV { get; set; }
         public BabylonVector2 UV2 { get; set; }
         public float[] Color { get; set; }
