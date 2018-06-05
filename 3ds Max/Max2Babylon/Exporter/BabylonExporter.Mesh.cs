@@ -641,8 +641,6 @@ namespace Max2Babylon
         }
 
 
-        int toPrint = 0;
-
         int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
@@ -659,7 +657,7 @@ namespace Max2Babylon
             if (exportParameters.exportTangents)
             {
                 float[] tangent = mesh.GetTangent(vertexIndex, 1).Normalize.ToArray();
-                vertex.Tangent = new float[] { tangent[0], tangent[1], tangent[2], 1f };
+                vertex.Tangent = new float[] { tangent[0], tangent[1], tangent[2], -1f };
             }
 
             // Convert position and normal to local space
