@@ -1,6 +1,7 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Max2Babylon
@@ -137,9 +138,16 @@ namespace Max2Babylon
 
         private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
         {
-            if (alreadyExportedNodes.ContainsKey(babylonBone.id))
+            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
+            if (nodeNodePair.Key != null)
             {
-                return alreadyExportedNodes[babylonBone.id];
+                return nodeNodePair.Value;
+            }
+
+            var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
+            if (boneNodePair.Key != null)
+            {
+                return boneNodePair.Value;
             }
 
             // Node
@@ -150,7 +158,6 @@ namespace Max2Babylon
             };
             gltf.NodesList.Add(gltfNode);
             
-            alreadyExportedNodes.Add(babylonBone.id, gltfNode);
             boneToGltfNodeMap.Add(babylonBone, gltfNode);
 
             // Hierarchy
