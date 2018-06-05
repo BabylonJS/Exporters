@@ -61,7 +61,7 @@ namespace Max2Babylon
             gltfNode.rotation[1] *= -1;
 
             // Animations
-            ExportNodeAnimation(babylonCamera, gltf, gltfNode);
+            //ExportNodeAnimation(babylonCamera, gltf, gltfNode);
 
             // --- prints ---
             #region prints

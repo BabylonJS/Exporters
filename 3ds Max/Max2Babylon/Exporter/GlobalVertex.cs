@@ -8,6 +8,7 @@ namespace Max2Babylon
         public int CurrentIndex { get; set; }
         public IPoint3 Position { get; set; }
         public IPoint3 Normal { get; set; }
+        public float[] Tangent { get; set; }
         public IPoint2 UV { get; set; }
         public IPoint2 UV2 { get; set; }
         public int BonesIndices { get; set; }

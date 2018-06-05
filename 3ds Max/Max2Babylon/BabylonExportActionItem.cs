@@ -9,7 +9,7 @@ namespace Max2Babylon
 
         public override bool ExecuteAction()
         {
-            if (form == null)
+            if (form == null || form.IsDisposed)
                 form = new ExporterForm(this);
             form.Show();
             form.BringToFront();
