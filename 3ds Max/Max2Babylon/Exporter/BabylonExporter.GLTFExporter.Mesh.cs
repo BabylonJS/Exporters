@@ -30,6 +30,7 @@ namespace Max2Babylon
             bool hasColor = babylonMesh.colors != null && babylonMesh.colors.Length > 0;
             bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
+            bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
 
             RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
@@ -45,6 +46,17 @@ namespace Max2Babylon
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
                 globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                if (hasTangents)
+                {
+                    globalVertex.Tangent = BabylonQuaternion.FromArray(babylonMesh.tangents, indexVertex);
+
+                    // Switch coordinate system at object level
+                    globalVertex.Tangent.Z *= -1;
+
+                    // Invert W to switch to right handed system
+                    globalVertex.Tangent.W *= -1;
+                }
 
                 // Switch coordinate system at object level
                 globalVertex.Position.Z *= -1;
@@ -246,6 +258,23 @@ namespace Max2Babylon
                     GLTFBufferService.UpdateMinMaxAccessor(accessorPositions, positions);
                 });
                 accessorPositions.count = globalVerticesSubMesh.Count;
+
+                // --- Tangents ---
+                if (hasTangents)
+                {
+                    var accessorTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec4(gltf, buffer),
+                        "accessorTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC4
+                    );
+                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTangents.index);
+                    // Populate accessor
+                    List<float> tangents = globalVerticesSubMesh.SelectMany(v => v.Tangent.ToArray()).ToList();
+                    tangents.ForEach(n => accessorTangents.bytesList.AddRange(BitConverter.GetBytes(n)));
+                    accessorTangents.count = globalVerticesSubMesh.Count;
+                }
 
                 // --- Normals ---
                 var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
