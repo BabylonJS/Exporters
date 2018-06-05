@@ -113,7 +113,6 @@ namespace Max2Babylon
 
             // Animations
             RaiseMessage("GLTFExporter | Exporting Animations");
-            gltf.AnimationsList.Clear();
             ExportAnimationGroups(gltf, babylonScene);
 
             // Prepare buffers
