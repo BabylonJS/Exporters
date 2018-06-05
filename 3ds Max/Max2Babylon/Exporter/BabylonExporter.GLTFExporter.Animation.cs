@@ -8,63 +8,64 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private void InitAnimationGroups()
+        private AnimationGroupList InitAnimationGroups()
         {
-            animationList = new AnimationGroupList();
+            AnimationGroupList animationList = new AnimationGroupList();
             animationList.LoadFromData();
 
-            if (animationList.Count == 0)
+            if (animationList.Count > 0)
             {
-                return;
-            }
-
-            RaiseMessage("Initialize animation groups");
-
-            int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
-            int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+                int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+                int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
             
-            foreach (AnimationGroup animGroup in animationList)
-            {
-                // ensure min <= start <= end <= max
-                List<string> warnings = new List<string>();
-                if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
+                foreach (AnimationGroup animGroup in animationList)
                 {
-                    warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
-                    animGroup.FrameStart = timelineStart;
-                }
-                if (animGroup.FrameEnd < timelineStart || animGroup.FrameEnd > timelineEnd)
-                {
-                    warnings.Add("End frame '" + animGroup.FrameEnd + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline end time '" + timelineEnd + "'");
-                    animGroup.FrameEnd = timelineEnd;
-                }
-                if (animGroup.FrameEnd <= animGroup.FrameStart)
-                {
-                    if (animGroup.FrameEnd < animGroup.FrameStart)
-                        // Strict
-                        warnings.Add("End frame '" + animGroup.FrameEnd + "' lower than Start frame '" + animGroup.FrameStart + "'. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
-                    else
-                        // Equal
-                        warnings.Add("End frame '" + animGroup.FrameEnd + "' equal to Start frame '" + animGroup.FrameStart + "'. Single frame animation are not allowed. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
-
-                    animGroup.FrameStart = timelineStart;
-                    animGroup.FrameEnd = timelineEnd;
-                }
-
-                // Print animation group warnings if any
-                // Nothing printed otherwise
-                if (warnings.Count > 0)
-                {
-                    RaiseWarning(animGroup.Name, 1);
-                    foreach(string warning in warnings)
+                    // ensure min <= start <= end <= max
+                    List<string> warnings = new List<string>();
+                    if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
                     {
-                        RaiseWarning(warning, 2);
+                        warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
+                        animGroup.FrameStart = timelineStart;
+                    }
+                    if (animGroup.FrameEnd < timelineStart || animGroup.FrameEnd > timelineEnd)
+                    {
+                        warnings.Add("End frame '" + animGroup.FrameEnd + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline end time '" + timelineEnd + "'");
+                        animGroup.FrameEnd = timelineEnd;
+                    }
+                    if (animGroup.FrameEnd <= animGroup.FrameStart)
+                    {
+                        if (animGroup.FrameEnd < animGroup.FrameStart)
+                            // Strict
+                            warnings.Add("End frame '" + animGroup.FrameEnd + "' lower than Start frame '" + animGroup.FrameStart + "'. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+                        else
+                            // Equal
+                            warnings.Add("End frame '" + animGroup.FrameEnd + "' equal to Start frame '" + animGroup.FrameStart + "'. Single frame animation are not allowed. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+
+                        animGroup.FrameStart = timelineStart;
+                        animGroup.FrameEnd = timelineEnd;
+                    }
+
+                    // Print animation group warnings if any
+                    // Nothing printed otherwise
+                    if (warnings.Count > 0)
+                    {
+                        RaiseWarning(animGroup.Name, 1);
+                        foreach(string warning in warnings)
+                        {
+                            RaiseWarning(warning, 2);
+                        }
                     }
                 }
             }
+
+            return animationList;
         }
        
         private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
+            // Retreive and parse animation group data
+            AnimationGroupList animationList = InitAnimationGroups();
+
             gltf.AnimationsList.Clear();
             gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
 
@@ -167,11 +168,37 @@ namespace Max2Babylon
             // Filter animations to only keep TRS ones
             babylonAnimations = babylonAnimations.FindAll(babylonAnimation => _getTargetPath(babylonAnimation.property) != null);
 
+            // Optimize animations to only keep ones animated between start and end frames
+            var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
+            if (optimizeAnimations)
+            {
+                List<BabylonAnimation> babylonAnimationsOptimized = new List<BabylonAnimation>();
+                foreach (BabylonAnimation babylonAnimation in babylonAnimations)
+                {
+                    // Filter animation keys to only keep frames between start and end
+                    List<BabylonAnimationKey> keysInRangeFull = babylonAnimation.keysFull.FindAll(babylonAnimationKey => babylonAnimationKey.frame >= startFrame && babylonAnimationKey.frame <= endFrame);
+
+                    // Optimization process always keeps first and last frames
+                    OptimizeAnimations(keysInRangeFull, true);
+
+                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    {
+                        // Override animation keys
+                        babylonAnimation.keys = keysInRangeFull.ToArray();
+
+                        babylonAnimationsOptimized.Add(babylonAnimation);
+                    }
+                }
+
+                // From now, use optimized animations instead
+                babylonAnimations = babylonAnimationsOptimized;
+            }
+
             if (babylonAnimations.Count > 0 || exportNonAnimated)
             {
                 if (babylonAnimations.Count > 0)
                 {
-                    RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
+                    RaiseMessage("GLTFExporter.Animation | Export animations of node named: " + babylonNode.name, 2);
                 }
                 else if (exportNonAnimated)
                 {
@@ -209,7 +236,7 @@ namespace Max2Babylon
 
                         numKeys++;
 
-                        // copy data before changing it!
+                        // copy data before changing it in case animation groups overlap
                         float[] outputValues = new float[babylonAnimationKey.values.Length];
                         babylonAnimationKey.values.CopyTo(outputValues,0);
 
@@ -279,6 +306,24 @@ namespace Max2Babylon
                 RaiseMessage("GLTFExporter.Animation | Export animation of bone named: " + babylonBone.name, 2);
 
                 var babylonAnimation = babylonBone.animation;
+
+                // Optimize animation
+                var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
+                if (optimizeAnimations)
+                {
+                    // Filter animation keys to only keep frames between start and end
+                    List<BabylonAnimationKey> keysInRangeFull = babylonAnimation.keysFull.FindAll(babylonAnimationKey => babylonAnimationKey.frame >= startFrame && babylonAnimationKey.frame <= endFrame);
+
+                    // Optimization process always keeps first and last frames
+                    OptimizeAnimations(keysInRangeFull, false);
+
+                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    {
+                        // From now, use optimized animation instead
+                        // Override animation keys
+                        babylonAnimation.keys = keysInRangeFull.ToArray();
+                    }
+                }
 
                 // --- Input ---
                 var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
