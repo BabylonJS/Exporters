@@ -118,18 +118,15 @@ namespace Max2Babylon
             bool success = true;
             try
             {
-                ExportParameters exportParameters = new ExportParameters
-                {
-                    outputPath = txtFilename.Text,
-                    outputFormat = comboOutputFormat.SelectedItem.ToString(),
-                    scaleFactor = txtScaleFactor.Text,
-                    copyTexturesToOutput = chkCopyTextures.Checked,
-                    exportHiddenObjects = chkHidden.Checked,
-                    exportOnlySelected = chkOnlySelected.Checked,
-                    generateManifest = chkManifest.Checked,
-                    autoSave3dsMaxFile = chkAutoSave.Checked,
-                    exportTangents = chkExportTangents.Checked
-                };
+                ExportParameters exportParameters = new ExportParameters();
+                exportParameters.outputPath = txtFilename.Text;
+                exportParameters.outputFormat = comboOutputFormat.SelectedItem.ToString();
+                exportParameters.scaleFactor = txtScaleFactor.Text;
+                exportParameters.copyTexturesToOutput = chkCopyTextures.Checked;
+                exportParameters.exportHiddenObjects = chkHidden.Checked;
+                exportParameters.exportOnlySelected = chkOnlySelected.Checked;
+                exportParameters.generateManifest = chkManifest.Checked;
+                exportParameters.autoSave3dsMaxFile = chkAutoSave.Checked;
 
                 exporter.callerForm = this;
 
@@ -142,9 +139,10 @@ namespace Max2Babylon
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
-
+                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message, Color.Red);
+                currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
+
                 progressBar.Value = 0;
                 success = false;
             }
