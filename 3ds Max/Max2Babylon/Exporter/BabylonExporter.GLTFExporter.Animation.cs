@@ -20,26 +20,46 @@ namespace Max2Babylon
 
             RaiseMessage("Initialize animation groups");
 
-            int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
-            int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+            int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+            int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
             
             foreach (AnimationGroup animGroup in animationList)
             {
                 // ensure min <= start <= end <= max
-                // warning messages before correcting
-                if (animGroup.FrameStart < minFrame || animGroup.FrameStart > maxFrame)
-                    RaiseWarning("GLTFExporter.Animation | Start frame outside of timeline range: " + animGroup.FrameStart, 1);
-                if (animGroup.FrameEnd < minFrame || animGroup.FrameEnd > maxFrame)
-                    RaiseWarning("GLTFExporter.Animation | End frame outside of timeline range: " + animGroup.FrameEnd, 1);
+                List<string> warnings = new List<string>();
+                if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
+                {
+                    warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
+                    animGroup.FrameStart = timelineStart;
+                }
+                if (animGroup.FrameEnd < timelineStart || animGroup.FrameEnd > timelineEnd)
+                {
+                    warnings.Add("End frame '" + animGroup.FrameEnd + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline end time '" + timelineEnd + "'");
+                    animGroup.FrameEnd = timelineEnd;
+                }
                 if (animGroup.FrameEnd <= animGroup.FrameStart)
-                    RaiseWarning("GLTFExporter.Animation | End frame smaller than or equal to Start frame: " + animGroup.FrameStart + " to " + animGroup.FrameEnd, 1);
+                {
+                    if (animGroup.FrameEnd < animGroup.FrameStart)
+                        // Strict
+                        warnings.Add("End frame '" + animGroup.FrameEnd + "' lower than Start frame '" + animGroup.FrameStart + "'. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+                    else
+                        // Equal
+                        warnings.Add("End frame '" + animGroup.FrameEnd + "' equal to Start frame '" + animGroup.FrameStart + "'. Single frame animation are not allowed. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
 
-                int startFrame = Math.Min(Math.Max(minFrame, animGroup.FrameStart), maxFrame);
-                int endFrame = Math.Min(Math.Max(startFrame, animGroup.FrameEnd), maxFrame);
+                    animGroup.FrameStart = timelineStart;
+                    animGroup.FrameEnd = timelineEnd;
+                }
 
-                // Correct animation group boundaries
-                animGroup.FrameStart = startFrame;
-                animGroup.FrameEnd = endFrame;
+                // Print animation group warnings if any
+                // Nothing printed otherwise
+                if (warnings.Count > 0)
+                {
+                    RaiseWarning(animGroup.Name, 1);
+                    foreach(string warning in warnings)
+                    {
+                        RaiseWarning(warning, 2);
+                    }
+                }
             }
         }
        
@@ -132,36 +152,32 @@ namespace Max2Babylon
             var samplerList = gltfAnimation.SamplerList;
 
             bool exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
-
-            bool hasAnimations = (babylonNode.animations != null && babylonNode.animations.Length > 0) ||
-                (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0);
-
-            if(hasAnimations || exportNonAnimated)
+            
+            // Combine babylon animations from .babylon file and cached ones
+            var babylonAnimations = new List<BabylonAnimation>();
+            if (babylonNode.animations != null)
             {
-                if (hasAnimations)
+                babylonAnimations.AddRange(babylonNode.animations);
+            }
+            if (babylonNode.extraAnimations != null)
+            {
+                babylonAnimations.AddRange(babylonNode.extraAnimations);
+            }
+
+            // Filter animations to only keep TRS ones
+            babylonAnimations = babylonAnimations.FindAll(babylonAnimation => _getTargetPath(babylonAnimation.property) != null);
+
+            if (babylonAnimations.Count > 0 || exportNonAnimated)
+            {
+                if (babylonAnimations.Count > 0)
                 {
                     RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
                 }
-                else
+                else if (exportNonAnimated)
                 {
                     RaiseMessage("GLTFExporter.Animation | Export dummy animation for node named: " + babylonNode.name, 2);
-                }
-
-                // Combine babylon animations from .babylon file and cached ones
-                var babylonAnimations = new List<BabylonAnimation>();
-                if (babylonNode.animations != null)
-                {
-                    babylonAnimations.AddRange(babylonNode.animations);
-                }
-                if (babylonNode.extraAnimations != null)
-                {
-                    babylonAnimations.AddRange(babylonNode.extraAnimations);
-                }
-                
-                // If there are no animations at this point, we will export a dummy animation.
-                if(babylonAnimations.Count <= 0 && exportNonAnimated)
-                {
-                    babylonAnimations.Add(GetDummyAnimation(gltfNode, startFrame));
+                    // Export a dummy animation
+                    babylonAnimations.Add(GetDummyAnimation(gltfNode, startFrame, endFrame));
                 }
 
                 foreach (BabylonAnimation babylonAnimation in babylonAnimations)
@@ -172,13 +188,6 @@ namespace Max2Babylon
                         node = gltfNode.index
                     };
                     gltfTarget.path = _getTargetPath(babylonAnimation.property);
-                    if (gltfTarget.path == null)
-                    {
-                        // Unkown babylon animation property
-                        //RaiseWarning("GLTFExporter.Animation | Unkown animation property '" + babylonAnimation.property + "'", 3);
-                        // Ignore this babylon animation
-                        continue;
-                    }
 
                     // --- Input ---
                     var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
@@ -357,7 +366,7 @@ namespace Max2Babylon
             }
         }
 
-        private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame)
+        private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame, int endFrame)
         {
             BabylonAnimation dummyAnimation = new BabylonAnimation();
             dummyAnimation.name = "Dummy";
@@ -365,11 +374,15 @@ namespace Max2Babylon
             dummyAnimation.framePerSecond = Loader.Global.FrameRate;
             dummyAnimation.dataType = (int)BabylonAnimation.DataType.Vector3;
 
-            BabylonAnimationKey dummyKey = new BabylonAnimationKey();
-            dummyKey.frame = startFrame;
-            dummyKey.values = gltfNode.scale;
+            BabylonAnimationKey startKey = new BabylonAnimationKey();
+            startKey.frame = startFrame;
+            startKey.values = gltfNode.scale;
 
-            dummyAnimation.keys = new BabylonAnimationKey[] { dummyKey };
+            BabylonAnimationKey endKey = new BabylonAnimationKey();
+            endKey.frame = endFrame;
+            endKey.values = gltfNode.scale;
+
+            dummyAnimation.keys = new BabylonAnimationKey[] { startKey, endKey };
 
             return dummyAnimation;
         }
