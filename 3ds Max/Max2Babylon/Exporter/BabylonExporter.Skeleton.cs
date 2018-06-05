@@ -61,7 +61,7 @@ namespace Max2Babylon
 
             List<IIGameNode> revelantNodes = new List<IIGameNode>();
             List<IIGameNode> bones = GetBones(skin);
-
+            
             // for each bone of the skin, add their parents in the revelantNodes list.
             foreach (IIGameNode bone in bones)
             {

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -17,8 +18,9 @@ namespace Max2Babylon
 
         private List<BabylonNode> babylonNodes;
 
-        // Store nodes already exported to prevent multiple exportation of same node
-        private Dictionary<string, GLTFNode> alreadyExportedNodes = new Dictionary<string, GLTFNode>();
+        // from BabylonNode to GLTFNode
+        Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
+        Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
 
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
@@ -83,11 +85,14 @@ namespace Max2Babylon
                 CheckCancelled();
             }
 
+
             // Root nodes
             RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
+            boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
             NbNodesByName = new Dictionary<string, int>();
             babylonRootNodes.ForEach(babylonNode =>
             {
@@ -105,6 +110,10 @@ namespace Max2Babylon
                 CheckCancelled();
             };
             RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
+
+            // Animations
+            RaiseMessage("GLTFExporter | Exporting Animations");
+            ExportAnimationGroups(gltf, babylonScene);
 
             // Prepare buffers
             gltf.BuffersList.ForEach(buffer =>
@@ -258,7 +267,14 @@ namespace Max2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
-            if (alreadyExportedNodes.ContainsKey(babylonNode.id))
+            // TODO: refactoring
+            // Currently:
+            //      - If the node is already exported, do nothing.
+            //      - But if it was exported as a bone, its properties as a mesh, camera or light) are not exported...
+            // To improve this code:
+            //      - Extract the shared part of "ExportAbstractMesh()", "ExportCamera()", "ExportLight()", "_exportBone()" => this shared part (node creation) should not be repeated to avoid duplicated nodes
+            //      - If the node is already exported, only the properties should be update
+            if (boneToGltfNodeMap.Count(pair => pair.Key.id.Equals(babylonNode.id)) > 0 || nodeToGltfNodeMap.Count(pair => pair.Key.id.Equals(babylonNode.id)) > 0)
             {
                 return;
             }
@@ -298,8 +314,8 @@ namespace Max2Babylon
             // If node is exported successfully...
             if (gltfNode != null)
             {
-                alreadyExportedNodes[babylonNode.id] = gltfNode;
-                
+                nodeToGltfNodeMap.Add(babylonNode, gltfNode);
+
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
                 babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));
