@@ -2,26 +2,33 @@
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Max2Babylon
 {
     public static class Tools
     {
-        // -------------------------
-        // --------- Math ----------
-        // -------------------------
+        public static Random Random = new Random();
+
+        #region Math
 
         public static float Lerp(float min, float max, float t)
         {
             return min + (max - min) * t;
         }
 
-        // -------------------------
-        // --------- Array ----------
-        // -------------------------
+        public static int RoundToInt(float f)
+        {
+            return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
+        }
+
+        #endregion
+
+        #region Array
 
         public static T[] SubArray<T>(T[] array, int startIndex, int count)
         {
@@ -82,9 +89,9 @@ namespace Max2Babylon
             return res;
         }
 
-        // -------------------------
-        // -- IIPropertyContainer --
-        // -------------------------
+        #endregion
+
+        #region IIPropertyContainer
 
         public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {
@@ -126,7 +133,11 @@ namespace Max2Babylon
             return value;
         }
 
+        #endregion
+
         // -------------------------
+
+        #region Max Helpers
 
         public static IntPtr GetNativeHandle(this INativeObject obj)
         {
@@ -414,6 +425,15 @@ namespace Max2Babylon
             return from n in rootNode.NodeTree() where n.ObjectRef != null && sids.Any(sid => n.EvalWorldState(0, false).Obj.SuperClassID == sid) select n;
         }
 
+        public static IINode FindChildNode(this IINode node, uint nodeHandle)
+        {
+            foreach (IINode childNode in node.NodeTree())
+                if (childNode.Handle.Equals(nodeHandle))
+                    return childNode;
+
+            return null;
+        }
+
         /// <summary>
         /// Convert horizontal FOV to vertical FOV using default aspect ratio
         /// </summary>
@@ -426,7 +446,7 @@ namespace Max2Babylon
 
         public static bool HasParent(this IINode node)
         {
-            return node.ParentNode != null && node.ParentNode.ObjectRef != null;
+            return node.ParentNode != null && !node.ParentNode.IsRootNode;
         }
 
         public static bool IsInstance(this IAnimatable node)
@@ -618,6 +638,10 @@ namespace Max2Babylon
             return true;
         }
 
+        #endregion
+
+        #region UserProperties
+
         public static void SetStringProperty(this IINode node, string propertyName, string defaultState)
         {
             string state = defaultState;
@@ -662,6 +686,93 @@ namespace Max2Babylon
 
             return new[] { state0, state1, state2 };
         }
+
+        public static string[] GetStringArrayProperty(this IINode node, string propertyName, char itemSeparator = ';')
+        {
+            string animationListString = string.Empty;
+            if (!node.GetUserPropString(propertyName, ref animationListString) || string.IsNullOrEmpty(animationListString))
+            {
+                return new string[] { };
+            }
+
+            return animationListString.Split(itemSeparator);
+        }
+
+        public static void SetStringArrayProperty(this IINode node, string propertyName, IEnumerable<string> stringEnumerable, char itemSeparator = ';')
+        {
+            if (itemSeparator == ' ' || itemSeparator == '=')
+                throw new Exception("Illegal separator. Spaces and equal signs are not allowed by the max sdk.");
+
+            string itemSeparatorString = itemSeparator.ToString();
+            foreach (string str in stringEnumerable)
+            {
+                if (str.Contains(" ") || str.Contains("="))
+                    throw new Exception("Illegal character(s) in string array. Spaces and equal signs are not allowed by the max sdk.");
+
+                if (str.Contains(itemSeparatorString))
+                    throw new Exception("Illegal character(s) in string array. Found a separator ('" + itemSeparatorString + "') character.");
+            }
+
+            StringBuilder builder = new StringBuilder();
+
+            bool first = true;
+            foreach (string str in stringEnumerable)
+            {
+                if (first) first = false;
+                else builder.Append(itemSeparator);
+
+                builder.Append(str);
+            }
+
+            node.SetStringProperty(propertyName, builder.ToString());
+        }
+
+        /// <summary>
+        /// Removes all properties with the given name found in the UserBuffer. Returns true if a property was found and removed.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to remove.</param>
+        /// <returns>True if a property was found and removed, false otherwise.</returns>
+        public static bool DeleteProperty(this IINode node, string propertyName)
+        {
+            string inBuffer = string.Empty;
+            string outBuffer = string.Empty;
+            node.GetUserPropBuffer(ref inBuffer);
+
+            bool foundProperty = false;
+
+            using (StringReader reader = new StringReader(inBuffer))
+            {
+                using (StringWriter writer = new StringWriter())
+                {
+                    // simply read all lines and write them back into the ouput
+                    // skip the lines that have a matching property name
+                    for(string line = reader.ReadLine(); line != null; line = reader.ReadLine())
+                    {
+                        string[] propValuePair = line.Split('=');
+                        string currentPropertyName = propValuePair[0].Trim();
+                        if (currentPropertyName.Equals(propertyName))
+                        {
+                            foundProperty = true;
+                            continue;
+                        }
+                        writer.WriteLine(line);
+                    }
+
+                    outBuffer = writer.ToString();
+                }
+            }
+
+            if (foundProperty)
+            {
+                node.SetUserPropBuffer(outBuffer);
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Windows.Forms.Control Serialization
 
         public static bool PrepareCheckBox(CheckBox checkBox, IINode node, string propertyName, int defaultState = 0)
         {
@@ -793,5 +904,24 @@ namespace Max2Babylon
                 UpdateComboBox(comboBox, node, propertyName);
             }
         }
+        #endregion
+
+
+        #region Windows.Forms Helpers
+
+        /// <summary>
+        /// Enumerates the whole tree, excluding the given node.
+        /// </summary>
+        public static IEnumerable<TreeNode> NodeTree(this TreeNode node)
+        {
+            foreach (TreeNode x in node.Nodes)
+            {
+                yield return x;
+                foreach (TreeNode y in x.NodeTree())
+                    yield return y;
+            }
+        }
+
+        #endregion
     }
 }

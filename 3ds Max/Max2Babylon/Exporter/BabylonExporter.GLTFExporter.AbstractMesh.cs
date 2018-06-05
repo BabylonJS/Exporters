@@ -77,7 +77,7 @@ namespace Max2Babylon
             }
 
             // Animations
-            ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
+            //ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
 
             return gltfNode;
         }
