@@ -234,36 +234,36 @@ namespace Max2Babylon
         // ---- From ext func ----
         // -----------------------
 
-        private static void ExportColor3Animation(string property, List<BabylonAnimation> animations,
+        private void ExportColor3Animation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Color3);
         }
 
-        private static void ExportVector3Animation(string property, List<BabylonAnimation> animations,
+        private void ExportVector3Animation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Vector3);
         }
 
-        private static void ExportQuaternionAnimation(string property, List<BabylonAnimation> animations,
+        private void ExportQuaternionAnimation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Quaternion);
         }
 
-        private static void ExportFloatAnimation(string property, List<BabylonAnimation> animations,
+        private void ExportFloatAnimation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Float);
         }
 
-        private static BabylonAnimation ExportMatrixAnimation(string property, Func<int, float[]> extractValueFunc, bool removeLinearAnimationKeys = true)
+        private BabylonAnimation ExportMatrixAnimation(string property, Func<int, float[]> extractValueFunc, bool removeLinearAnimationKeys = true)
         {
             return ExportAnimation(property, extractValueFunc, BabylonAnimation.DataType.Matrix, removeLinearAnimationKeys);
         }
 
-        static void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
+        private void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
             for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
             {
@@ -277,7 +277,7 @@ namespace Max2Babylon
             }
         }
 
-        static float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
+        private float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
         {
             double weight2 = (frame1 - frame0) / (double)(frame2 - frame0);
             double weight0 = 1 - weight2;
@@ -289,7 +289,7 @@ namespace Max2Babylon
             return result;
         }
 
-        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
+        private bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
         {
             var first = keys[ixFirst];
             var middle = keys[ixFirst + 1];
@@ -316,7 +316,7 @@ namespace Max2Babylon
 
         }
 
-        private static void ExportAnimation(string property, List<BabylonAnimation> animations, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
+        private void ExportAnimation(string property, List<BabylonAnimation> animations, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
             var babylonAnimation = ExportAnimation(property, extractValueFunc, dataType, removeLinearAnimationKeys);
             if (babylonAnimation != null)
@@ -325,7 +325,7 @@ namespace Max2Babylon
             }
         }
 
-        private static BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
+        private BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
             var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
 
@@ -346,48 +346,55 @@ namespace Max2Babylon
 
                 previous = current;
             }
+            var keysFull = new List<BabylonAnimationKey>(keys);
 
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);
             }
 
+            if (IsAnimationKeysRelevant(keys))
+            {
+                if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
+                {
+                    keys.Add(new BabylonAnimationKey()
+                    {
+                        frame = end / Loader.Global.TicksPerFrame,
+                        values = (float[])keys[keys.Count - 1].values.Clone()
+                    });
+                }
+
+                var babylonAnimation = new BabylonAnimation
+                {
+                    dataType = (int)dataType,
+                    name = property + " animation",
+                    keys = keys.ToArray(),
+                    keysFull = keysFull,
+                    framePerSecond = Loader.Global.FrameRate,
+                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                    property = property
+                };
+                return babylonAnimation;
+            }
+            return null;
+        }
+
+        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys)
+        {
             if (keys.Count > 1)
             {
-                var animationPresent = true;
-
                 if (keys.Count == 2)
                 {
                     if (keys[0].values.IsEqualTo(keys[1].values))
                     {
-                        animationPresent = false;
+                        return false;
                     }
                 }
 
-                if (animationPresent)
-                {
-                    if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
-                    {
-                        keys.Add(new BabylonAnimationKey()
-                        {
-                            frame = end / Loader.Global.TicksPerFrame,
-                            values = (float[])keys[keys.Count - 1].values.Clone()
-                        });
-                    }
-
-                    var babylonAnimation = new BabylonAnimation
-                    {
-                        dataType = (int)dataType,
-                        name = property + " animation",
-                        keys = keys.ToArray(),
-                        framePerSecond = Loader.Global.FrameRate,
-                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        property = property
-                    };
-                    return babylonAnimation;
-                }
+                return true;
             }
-            return null;
+
+            return false;
         }
 
         public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)

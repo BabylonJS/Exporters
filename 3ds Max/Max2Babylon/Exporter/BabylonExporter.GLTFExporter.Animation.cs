@@ -8,16 +8,66 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
+        private AnimationGroupList InitAnimationGroups()
         {
             AnimationGroupList animationList = new AnimationGroupList();
             animationList.LoadFromData();
 
+            if (animationList.Count > 0)
+            {
+                int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+                int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+            
+                foreach (AnimationGroup animGroup in animationList)
+                {
+                    // ensure min <= start <= end <= max
+                    List<string> warnings = new List<string>();
+                    if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
+                    {
+                        warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
+                        animGroup.FrameStart = timelineStart;
+                    }
+                    if (animGroup.FrameEnd < timelineStart || animGroup.FrameEnd > timelineEnd)
+                    {
+                        warnings.Add("End frame '" + animGroup.FrameEnd + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline end time '" + timelineEnd + "'");
+                        animGroup.FrameEnd = timelineEnd;
+                    }
+                    if (animGroup.FrameEnd <= animGroup.FrameStart)
+                    {
+                        if (animGroup.FrameEnd < animGroup.FrameStart)
+                            // Strict
+                            warnings.Add("End frame '" + animGroup.FrameEnd + "' lower than Start frame '" + animGroup.FrameStart + "'. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+                        else
+                            // Equal
+                            warnings.Add("End frame '" + animGroup.FrameEnd + "' equal to Start frame '" + animGroup.FrameStart + "'. Single frame animation are not allowed. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+
+                        animGroup.FrameStart = timelineStart;
+                        animGroup.FrameEnd = timelineEnd;
+                    }
+
+                    // Print animation group warnings if any
+                    // Nothing printed otherwise
+                    if (warnings.Count > 0)
+                    {
+                        RaiseWarning(animGroup.Name, 1);
+                        foreach(string warning in warnings)
+                        {
+                            RaiseWarning(warning, 2);
+                        }
+                    }
+                }
+            }
+
+            return animationList;
+        }
+       
+        private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
+        {
+            // Retreive and parse animation group data
+            AnimationGroupList animationList = InitAnimationGroups();
+
             gltf.AnimationsList.Clear();
             gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
-
-            int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
-            int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
 
             if (animationList.Count <= 0)
             {
@@ -25,6 +75,9 @@ namespace Max2Babylon
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = "All Animations";
                 
+                int minFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+                int maxFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+
                 foreach (var pair in nodeToGltfNodeMap)
                 {
                     ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
@@ -51,18 +104,9 @@ namespace Max2Babylon
 
                     GLTFAnimation gltfAnimation = new GLTFAnimation();
                     gltfAnimation.name = animGroup.Name;
-
-                    // ensure min <= start <= end <= max
-                    // warning messages before correcting
-                    if(animGroup.FrameStart < minFrame || animGroup.FrameStart > maxFrame)
-                        RaiseWarning("GLTFExporter.Animation | Start frame outside of timeline range: " + animGroup.FrameStart, 2);
-                    if(animGroup.FrameEnd < minFrame || animGroup.FrameEnd > maxFrame)
-                        RaiseWarning("GLTFExporter.Animation | End frame outside of timeline range: " + animGroup.FrameEnd, 2);
-                    if(animGroup.FrameEnd <= animGroup.FrameStart)
-                        RaiseWarning("GLTFExporter.Animation | End frame smaller than or equal to Start frame: " + animGroup.FrameStart + " to " + animGroup.FrameEnd, 2);
-
-                    int startFrame = Math.Min(Math.Max(minFrame, animGroup.FrameStart), maxFrame);
-                    int endFrame = Math.Min(Math.Max(startFrame, animGroup.FrameEnd), maxFrame);
+                    
+                    int startFrame = animGroup.FrameStart;
+                    int endFrame = animGroup.FrameEnd;
 
                     foreach (uint nodeHandle in animGroup.NodeHandles)
                     {
@@ -109,36 +153,58 @@ namespace Max2Babylon
             var samplerList = gltfAnimation.SamplerList;
 
             bool exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
-
-            bool hasAnimations = (babylonNode.animations != null && babylonNode.animations.Length > 0) ||
-                (babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0);
-
-            if(hasAnimations || exportNonAnimated)
+            
+            // Combine babylon animations from .babylon file and cached ones
+            var babylonAnimations = new List<BabylonAnimation>();
+            if (babylonNode.animations != null)
             {
-                if (hasAnimations)
+                babylonAnimations.AddRange(babylonNode.animations);
+            }
+            if (babylonNode.extraAnimations != null)
+            {
+                babylonAnimations.AddRange(babylonNode.extraAnimations);
+            }
+
+            // Filter animations to only keep TRS ones
+            babylonAnimations = babylonAnimations.FindAll(babylonAnimation => _getTargetPath(babylonAnimation.property) != null);
+
+            // Optimize animations to only keep ones animated between start and end frames
+            var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
+            if (optimizeAnimations)
+            {
+                List<BabylonAnimation> babylonAnimationsOptimized = new List<BabylonAnimation>();
+                foreach (BabylonAnimation babylonAnimation in babylonAnimations)
                 {
-                    RaiseMessage("GLTFExporter.Animation | Export animation of node named: " + babylonNode.name, 2);
+                    // Filter animation keys to only keep frames between start and end
+                    List<BabylonAnimationKey> keysInRangeFull = babylonAnimation.keysFull.FindAll(babylonAnimationKey => babylonAnimationKey.frame >= startFrame && babylonAnimationKey.frame <= endFrame);
+
+                    // Optimization process always keeps first and last frames
+                    OptimizeAnimations(keysInRangeFull, true);
+
+                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    {
+                        // Override animation keys
+                        babylonAnimation.keys = keysInRangeFull.ToArray();
+
+                        babylonAnimationsOptimized.Add(babylonAnimation);
+                    }
                 }
-                else
+
+                // From now, use optimized animations instead
+                babylonAnimations = babylonAnimationsOptimized;
+            }
+
+            if (babylonAnimations.Count > 0 || exportNonAnimated)
+            {
+                if (babylonAnimations.Count > 0)
+                {
+                    RaiseMessage("GLTFExporter.Animation | Export animations of node named: " + babylonNode.name, 2);
+                }
+                else if (exportNonAnimated)
                 {
                     RaiseMessage("GLTFExporter.Animation | Export dummy animation for node named: " + babylonNode.name, 2);
-                }
-
-                // Combine babylon animations from .babylon file and cached ones
-                var babylonAnimations = new List<BabylonAnimation>();
-                if (babylonNode.animations != null)
-                {
-                    babylonAnimations.AddRange(babylonNode.animations);
-                }
-                if (babylonNode.extraAnimations != null)
-                {
-                    babylonAnimations.AddRange(babylonNode.extraAnimations);
-                }
-                
-                // If there are no animations at this point, we will export a dummy animation.
-                if(babylonAnimations.Count <= 0 && exportNonAnimated)
-                {
-                    babylonAnimations.Add(GetDummyAnimation(gltfNode, startFrame));
+                    // Export a dummy animation
+                    babylonAnimations.Add(GetDummyAnimation(gltfNode, startFrame, endFrame));
                 }
 
                 foreach (BabylonAnimation babylonAnimation in babylonAnimations)
@@ -149,13 +215,6 @@ namespace Max2Babylon
                         node = gltfNode.index
                     };
                     gltfTarget.path = _getTargetPath(babylonAnimation.property);
-                    if (gltfTarget.path == null)
-                    {
-                        // Unkown babylon animation property
-                        //RaiseWarning("GLTFExporter.Animation | Unkown animation property '" + babylonAnimation.property + "'", 3);
-                        // Ignore this babylon animation
-                        continue;
-                    }
 
                     // --- Input ---
                     var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
@@ -177,7 +236,7 @@ namespace Max2Babylon
 
                         numKeys++;
 
-                        // copy data before changing it!
+                        // copy data before changing it in case animation groups overlap
                         float[] outputValues = new float[babylonAnimationKey.values.Length];
                         babylonAnimationKey.values.CopyTo(outputValues,0);
 
@@ -247,6 +306,24 @@ namespace Max2Babylon
                 RaiseMessage("GLTFExporter.Animation | Export animation of bone named: " + babylonBone.name, 2);
 
                 var babylonAnimation = babylonBone.animation;
+
+                // Optimize animation
+                var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
+                if (optimizeAnimations)
+                {
+                    // Filter animation keys to only keep frames between start and end
+                    List<BabylonAnimationKey> keysInRangeFull = babylonAnimation.keysFull.FindAll(babylonAnimationKey => babylonAnimationKey.frame >= startFrame && babylonAnimationKey.frame <= endFrame);
+
+                    // Optimization process always keeps first and last frames
+                    OptimizeAnimations(keysInRangeFull, false);
+
+                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    {
+                        // From now, use optimized animation instead
+                        // Override animation keys
+                        babylonAnimation.keys = keysInRangeFull.ToArray();
+                    }
+                }
 
                 // --- Input ---
                 var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
@@ -334,7 +411,7 @@ namespace Max2Babylon
             }
         }
 
-        private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame)
+        private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame, int endFrame)
         {
             BabylonAnimation dummyAnimation = new BabylonAnimation();
             dummyAnimation.name = "Dummy";
@@ -342,11 +419,15 @@ namespace Max2Babylon
             dummyAnimation.framePerSecond = Loader.Global.FrameRate;
             dummyAnimation.dataType = (int)BabylonAnimation.DataType.Vector3;
 
-            BabylonAnimationKey dummyKey = new BabylonAnimationKey();
-            dummyKey.frame = startFrame;
-            dummyKey.values = gltfNode.scale;
+            BabylonAnimationKey startKey = new BabylonAnimationKey();
+            startKey.frame = startFrame;
+            startKey.values = gltfNode.scale;
 
-            dummyAnimation.keys = new BabylonAnimationKey[] { dummyKey };
+            BabylonAnimationKey endKey = new BabylonAnimationKey();
+            endKey.frame = endFrame;
+            endKey.values = gltfNode.scale;
+
+            dummyAnimation.keys = new BabylonAnimationKey[] { startKey, endKey };
 
             return dummyAnimation;
         }
