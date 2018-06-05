@@ -7,8 +7,6 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        AnimationGroupList animationList;
-
         private static bool ExportBabylonKeys(List<BabylonAnimationKey> keys, string property, List<BabylonAnimation> animations, BabylonAnimation.DataType dataType, BabylonAnimation.LoopBehavior loopBehavior)
         {
             if (keys.Count == 0)
@@ -279,20 +277,6 @@ namespace Max2Babylon
             }
         }
 
-        private bool isKeyAtAnimationGroupBoundaries(int frame)
-        {
-            foreach (AnimationGroup animGroup in animationList)
-            {
-                if (animGroup.FrameStart == frame || animGroup.FrameEnd == frame)
-                {
-                    // TODO - Optimization - Detect if node for which animations are exported is part of the Animation Group
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
         {
             double weight2 = (frame1 - frame0) / (double)(frame2 - frame0);
@@ -310,12 +294,6 @@ namespace Max2Babylon
             var first = keys[ixFirst];
             var middle = keys[ixFirst + 1];
             var last = keys[ixFirst + 2];
-
-            // Do not remove animation key if an animation group is using this frame as start or end
-            if (isKeyAtAnimationGroupBoundaries(middle.frame))
-            {
-                return false;
-            }
 
             // first pass, frame equality
             if (first.values.IsEqualTo(last.values) && first.values.IsEqualTo(middle.values))
@@ -368,48 +346,55 @@ namespace Max2Babylon
 
                 previous = current;
             }
+            var keysFull = new List<BabylonAnimationKey>(keys);
 
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);
             }
 
+            if (IsAnimationKeysRelevant(keys))
+            {
+                if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
+                {
+                    keys.Add(new BabylonAnimationKey()
+                    {
+                        frame = end / Loader.Global.TicksPerFrame,
+                        values = (float[])keys[keys.Count - 1].values.Clone()
+                    });
+                }
+
+                var babylonAnimation = new BabylonAnimation
+                {
+                    dataType = (int)dataType,
+                    name = property + " animation",
+                    keys = keys.ToArray(),
+                    keysFull = keysFull,
+                    framePerSecond = Loader.Global.FrameRate,
+                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                    property = property
+                };
+                return babylonAnimation;
+            }
+            return null;
+        }
+
+        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys)
+        {
             if (keys.Count > 1)
             {
-                var animationPresent = true;
-
                 if (keys.Count == 2)
                 {
                     if (keys[0].values.IsEqualTo(keys[1].values))
                     {
-                        animationPresent = false;
+                        return false;
                     }
                 }
 
-                if (animationPresent)
-                {
-                    if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
-                    {
-                        keys.Add(new BabylonAnimationKey()
-                        {
-                            frame = end / Loader.Global.TicksPerFrame,
-                            values = (float[])keys[keys.Count - 1].values.Clone()
-                        });
-                    }
-
-                    var babylonAnimation = new BabylonAnimation
-                    {
-                        dataType = (int)dataType,
-                        name = property + " animation",
-                        keys = keys.ToArray(),
-                        framePerSecond = Loader.Global.FrameRate,
-                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        property = property
-                    };
-                    return babylonAnimation;
-                }
+                return true;
             }
-            return null;
+
+            return false;
         }
 
         public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)

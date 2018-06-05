@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -28,6 +29,8 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonAnimationKey[] keys { get; set; }
+
+        public List<BabylonAnimationKey> keysFull { get; set; }
 
         public enum DataType
         {
