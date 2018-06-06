@@ -15,11 +15,7 @@ namespace Max2Babylon
         private void ExportWorldModifiers(IIGameNode meshNode, BabylonScene babylonScene, BabylonMesh babylonMesh)
         {
             var derivedObject = meshNode.MaxNode.WSMDerivedObject;
-            if (derivedObject == null)
-            {
-                RaiseMessage("WSMDerivedObject is null", 2);
-            }
-            else
+            if (derivedObject != null)
             {
                 foreach (var modifier in derivedObject.Modifiers)
                 {
