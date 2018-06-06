@@ -258,14 +258,29 @@ namespace Max2Babylon
 
                 if (mtl != null)
                 {
-                    babylonMesh.materialId = mtl.MaxMaterial.GetGuid().ToString();
-
-                    if (!referencedMaterials.Contains(mtl))
+                    IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
+                    if (unsupportedMaterial == null)
                     {
-                        referencedMaterials.Add(mtl);
-                    }
+                        babylonMesh.materialId = mtl.MaxMaterial.GetGuid().ToString();
 
-                    multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
+                        if (!referencedMaterials.Contains(mtl))
+                        {
+                            referencedMaterials.Add(mtl);
+                        }
+
+                        multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
+                    }
+                    else
+                    {
+                        if (mtl.SubMaterialCount == 0 || mtl == unsupportedMaterial)
+                        {
+                            RaiseWarning("Unsupported material type '" + unsupportedMaterial.MaterialClass + "'. Material is ignored.", 2);
+                        }
+                        else
+                        {
+                            RaiseWarning("Unsupported sub-material type '" + unsupportedMaterial.MaterialClass + "'. Material is ignored.", 2);
+                        }
+                    }
                 }
 
                 babylonMesh.visibility = meshNode.MaxNode.GetVisibility(0, Tools.Forever);
@@ -318,11 +333,6 @@ namespace Max2Babylon
                 if (isTangentExportSuccess)
                 {
                     babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
-                    RaiseMessage("Tangents exported.", 2);
-                }
-                else
-                {
-                    RaiseMessage("Tangents not exported.", 2);
                 }
 
                 RaiseMessage($"{vertices.Count} vertices, {indices.Count / 3} faces", 2);
