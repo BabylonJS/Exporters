@@ -136,9 +136,6 @@
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Light.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Light.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Material.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.Material.cs</Link>
     </Compile>

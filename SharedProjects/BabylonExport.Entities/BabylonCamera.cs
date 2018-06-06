@@ -18,13 +18,10 @@ namespace BabylonExport.Entities
         public string type { get; set; }
 
         [DataMember]
-        public float[] position { get; set; }
+        override public float[] rotation { get; set; }
 
         [DataMember]
-        public float[] rotation { get; set; }
-
-        [DataMember]
-        public float[] rotationQuaternion { get; set; }
+        override public float[] rotationQuaternion { get; set; }
 
         [DataMember]
         public float[] target { get; set; }
