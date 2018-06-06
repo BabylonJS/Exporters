@@ -15,15 +15,14 @@ namespace Max2Babylon
         private void ExportWorldModifiers(IIGameNode meshNode, BabylonScene babylonScene, BabylonMesh babylonMesh)
         {
             var derivedObject = meshNode.MaxNode.WSMDerivedObject;
-            if (derivedObject == null)
-            {
-                RaiseMessage("derivedOvject is null", 2);
-            }
-            else
+            if (derivedObject != null)
             {
                 foreach (var modifier in derivedObject.Modifiers)
                 {
-                    if (modifier.Name == "Hair and Fur" || modifier.Name == "Chevelure et Pelage")
+                    // TODO - Find another way to detect if modifier is a HairAndFur
+                    if (modifier.Name == "Hair and Fur" || // English
+                        modifier.Name == "Haar und Fell" || // German
+                        modifier.Name == "Chevelure et Pelage") // French
                     {
                         var babylonFurMaterial = ExportFurModifier(modifier, babylonMesh.name, babylonScene);
                         babylonScene.MaterialsList.Add(babylonFurMaterial);
@@ -31,7 +30,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                        RaiseWarning("Modifier or Language" + modifier.Name + " is not supported");
+                        RaiseWarning("Modifier or Language '" + modifier.Name + "' is not supported", 2);
                     }
                 }
             }
@@ -39,6 +38,7 @@ namespace Max2Babylon
 
         private BabylonFurMaterial ExportFurModifier(IModifier modifier, String sourceMeshName, BabylonScene babylonScene)
         {
+            RaiseMessage("Export Fur Modifier", 2);
             var paramBlock = modifier.GetParamBlock(0);
             
             // 3dsMax "Cut Length" is in percentages - "100%" will be "20" babylon spacing 
@@ -56,7 +56,7 @@ namespace Max2Babylon
 
             if (paramBlock.GetTexmap(MAPS_PARAM_ID, 0, 11) != null)
             {
-                RaiseWarning("tip texture is not supported - use root texture instead");
+                RaiseWarning("Tip texture is not supported. Use root texture instead", 2);
             }
 
             BabylonTexture diffuseTexture = null;
