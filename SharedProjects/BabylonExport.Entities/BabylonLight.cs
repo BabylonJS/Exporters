@@ -6,9 +6,6 @@ namespace BabylonExport.Entities
     public class BabylonLight : BabylonNode
     {
         [DataMember]
-        public float[] position { get; set; }
-
-        [DataMember]
         public float[] direction { get; set; }
 
         [DataMember]
