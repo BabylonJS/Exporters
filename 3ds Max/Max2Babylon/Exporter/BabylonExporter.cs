@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
-        private string exporterVersion = "1.1.5";
+        private string exporterVersion = "1.2.0";
 
         void ReportProgressChanged(int progress)
         {
@@ -95,7 +95,7 @@ namespace Max2Babylon
                 scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                 scaleFactorFloat = float.Parse(scaleFactor);
             }
-            catch
+            catch (Exception e)
             {
                 RaiseError("Scale factor is not a valid number.");
                 return;

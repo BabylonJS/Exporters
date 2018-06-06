@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -17,8 +18,9 @@ namespace Max2Babylon
 
         private List<BabylonNode> babylonNodes;
 
-        // Store nodes already exported to prevent multiple exportation of same node
-        private Dictionary<string, GLTFNode> alreadyExportedNodes = new Dictionary<string, GLTFNode>();
+        // from BabylonNode to GLTFNode
+        Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
+        Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
 
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
@@ -83,11 +85,14 @@ namespace Max2Babylon
                 CheckCancelled();
             }
 
+
             // Root nodes
             RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
+            boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
             NbNodesByName = new Dictionary<string, int>();
             babylonRootNodes.ForEach(babylonNode =>
             {
@@ -105,6 +110,10 @@ namespace Max2Babylon
                 CheckCancelled();
             };
             RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
+
+            // Animations
+            RaiseMessage("GLTFExporter | Exporting Animations");
+            ExportAnimationGroups(gltf, babylonScene);
 
             // Prepare buffers
             gltf.BuffersList.ForEach(buffer =>
@@ -393,22 +402,29 @@ namespace Max2Babylon
 
 
         /// <summary>
-        /// 
+        /// Create a gltf node from the babylon node.
         /// </summary>
         /// <param name="babylonNode"></param>
         /// <param name="gltf"></param>
         /// <param name="babylonScene"></param>
-        /// <param name="gltfParentNode"></param>
-        /// <returns></returns>
+        /// <param name="gltfParentNode">The parent of the glTF node that will be created.</param>
+        /// <returns>The gltf node created.</returns>
         private GLTFNode ExportNode(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode)
         {
             RaiseMessage($"GLTFExporter | ExportNode {babylonNode.name}", 1);
             GLTFNode gltfNode = null;
             var type = babylonNode.GetType();
 
-            if (alreadyExportedNodes.ContainsKey(babylonNode.id))
+            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
+            if (nodeNodePair.Key != null)
             {
-                return alreadyExportedNodes[babylonNode.id];
+                return nodeNodePair.Value;
+            }
+
+            var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
+            if (boneNodePair.Key != null)
+            {
+                return boneNodePair.Value;
             }
 
             if (type == typeof(BabylonLight))
@@ -431,8 +447,8 @@ namespace Max2Babylon
                 name = GetUniqueNodeName(babylonNode.name),
                 index = gltf.NodesList.Count
             };
-            gltf.NodesList.Add(gltfNode);
-            alreadyExportedNodes[babylonNode.id] = gltfNode;
+            gltf.NodesList.Add(gltfNode);   // add the node to the gltf list
+            nodeToGltfNodeMap.Add(babylonNode, gltfNode);   // add the node to the global map
 
             // Hierarchy
             if (gltfParentNode != null)
@@ -494,7 +510,7 @@ namespace Max2Babylon
             gltfNode.rotation[1] *= -1;
 
             // Animations
-            ExportNodeAnimation(babylonNode, gltf, gltfNode);
+            //ExportNodeAnimation(babylonNode, gltf, gltfNode);
 
             return gltfNode;
         }

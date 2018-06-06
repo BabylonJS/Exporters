@@ -75,6 +75,7 @@ namespace Max2Babylon
                 babylonExportActionItem = new BabylonExportActionItem();
                 actionTable.AppendOperation(babylonExportActionItem);
                 actionTable.AppendOperation(new BabylonPropertiesActionItem()); // Babylon Properties forms are modals => no need to store reference
+                actionTable.AppendOperation(new BabylonAnimationActionItem());
                 actionCallback = new BabylonActionCallback();
 
                 actionManager.RegisterActionTable(actionTable);
@@ -116,7 +117,6 @@ namespace Max2Babylon
             menuItemBabylon = Loader.Global.IMenuItem;
             menuItemBabylon.Title = "&File Exporter";
             menuItemBabylon.ActionItem = actionTable[0];
-
             menu.AddItem(menuItemBabylon, -1);
 
             menuItem = Loader.Global.IMenuItem;
@@ -147,8 +147,13 @@ namespace Max2Babylon
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.Title = "Babylon Animation Groups";
             menuItemBabylon.ActionItem = actionTable[2];
+            menu.AddItem(menuItemBabylon, -1);
+
+            menuItemBabylon = Loader.Global.IMenuItem;
+            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.ActionItem = actionTable[3];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItem = Loader.Global.IMenuItem;
