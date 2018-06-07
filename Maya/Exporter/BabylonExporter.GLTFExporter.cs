@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
+using System.Linq;
 
 namespace Maya2Babylon
 {
@@ -16,6 +17,10 @@ namespace Maya2Babylon
         List<BabylonMaterial> babylonMaterialsToExport;
 
         private List<BabylonNode> babylonNodes;
+
+        // from BabylonNode to GLTFNode
+        Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
+        Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
 
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
@@ -242,41 +247,26 @@ namespace Maya2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
-            GLTFNode gltfNode = null;
-            var type = babylonNode.GetType();
-            if (type == typeof(BabylonAbstractMesh) ||
-                type.IsSubclassOf(typeof(BabylonAbstractMesh)))
+            GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
+
+            if (gltfNode != null)
             {
-                gltfNode = ExportAbstractMesh(babylonNode as BabylonAbstractMesh, gltf, gltfParentNode, babylonScene);
-            }
-            else if (type == typeof(BabylonCamera))
-            {
-                GLTFCamera gltfCamera = ExportCamera(babylonNode as BabylonCamera, gltf, gltfParentNode);
-                gltfNode = gltfCamera.gltfNode;
-            }
-            else if (type == typeof(BabylonLight))
-            {
-                if (isNodeRelevantToExport(babylonNode))
+                var type = babylonNode.GetType();
+                if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
                 {
-                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
-                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 1);
-                    gltfNode = ExportLight(babylonNode as BabylonLight, gltf, gltfParentNode);
+                    gltfNode = ExportAbstractMesh(ref gltfNode, babylonNode as BabylonAbstractMesh, gltf, gltfParentNode, babylonScene);
+                }
+                else if (type == typeof(BabylonCamera))
+                {
+                    GLTFCamera gltfCamera = ExportCamera(ref gltfNode, babylonNode as BabylonCamera, gltf, gltfParentNode);
                 }
                 else
                 {
-                    RaiseMessage($"GLTFExporter | Light named {babylonNode.name} is not relevant to export", 1);
+                    RaiseError($"Node named {babylonNode.name} as no exporter", 1);
                 }
-            }
-            else
-            {
-                RaiseError($"Node named {babylonNode.name} as no exporter", 1);
-            }
 
-            CheckCancelled();
+                CheckCancelled();
 
-            // If node is exported successfully...
-            if (gltfNode != null)
-            {
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
                 babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));
@@ -388,6 +378,120 @@ namespace Maya2Babylon
                 chunkList.Add(trailingChar);
             }
             return chunkList.ToArray();
+        }
+
+        /// <summary>
+        /// Create a gltf node from the babylon node.
+        /// </summary>
+        /// <param name="babylonNode"></param>
+        /// <param name="gltf"></param>
+        /// <param name="babylonScene"></param>
+        /// <param name="gltfParentNode">The parent of the glTF node that will be created.</param>
+        /// <returns>The gltf node created.</returns>
+        private GLTFNode ExportNode(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode)
+        {
+            RaiseMessage($"GLTFExporter | ExportNode {babylonNode.name}", 1);
+            GLTFNode gltfNode = null;
+            var type = babylonNode.GetType();
+
+            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
+            if (nodeNodePair.Key != null)
+            {
+                return nodeNodePair.Value;
+            }
+
+            var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
+            if (boneNodePair.Key != null)
+            {
+                return boneNodePair.Value;
+            }
+
+            if (type == typeof(BabylonLight))
+            {
+                if (isNodeRelevantToExport(babylonNode))
+                {
+                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
+                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 2);
+                }
+                else
+                {
+                    RaiseMessage($"GLTFExporter | Light named {babylonNode.name} is not relevant to export", 2);
+                    return gltfNode;
+                }
+            }
+
+            // Node
+            gltfNode = new GLTFNode
+            {
+                name = GetUniqueNodeName(babylonNode.name),
+                index = gltf.NodesList.Count
+            };
+            gltf.NodesList.Add(gltfNode);   // add the node to the gltf list
+            nodeToGltfNodeMap.Add(babylonNode, gltfNode);   // add the node to the global map
+
+            // Hierarchy
+            if (gltfParentNode != null)
+            {
+                RaiseMessage("GLTFExporter.Node| Add " + babylonNode.name + " as child to " + gltfParentNode.name, 2);
+                gltfParentNode.ChildrenList.Add(gltfNode.index);
+                gltfNode.parent = gltfParentNode;
+            }
+            else
+            {
+                // It's a root node
+                // Only root nodes are listed in a gltf scene
+                RaiseMessage("GLTFExporter.Node | Add " + babylonNode.name + " as root node to scene", 2);
+                gltf.scenes[0].NodesList.Add(gltfNode.index);
+            }
+
+            // Transform
+            // Position
+            gltfNode.translation = babylonNode.position;
+
+            // Rotation
+            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)) || type == typeof(BabylonCamera))
+            {
+                if (babylonNode.rotationQuaternion != null)
+                {
+                    gltfNode.rotation = babylonNode.rotationQuaternion;
+                }
+                else
+                {
+                    // Convert rotation vector to quaternion
+                    BabylonVector3 rotationVector3 = new BabylonVector3
+                    {
+                        X = babylonNode.rotation[0],
+                        Y = babylonNode.rotation[1],
+                        Z = babylonNode.rotation[2]
+                    };
+                    gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
+                }
+            }
+            else // Light
+            {
+                gltfNode.rotation = new float[4] { 0, 0, 0, 1 };
+            }
+
+            // Scale
+            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
+            {
+                gltfNode.scale = babylonNode.scaling;
+            }
+            else // Camera and light
+            {
+                gltfNode.scale = new float[3] { 1, 1, 1 };
+
+            }
+
+            // Switch coordinate system at object level
+            gltfNode.translation[2] *= -1;
+            gltfNode.rotation[0] *= -1;
+            gltfNode.rotation[1] *= -1;
+
+            // Animations
+            ExportNodeAnimation(babylonNode, gltf, gltfNode);
+
+            return gltfNode;
         }
     }
 }
