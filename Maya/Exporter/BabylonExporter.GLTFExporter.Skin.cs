@@ -1,18 +1,13 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Maya2Babylon
 {
     partial class BabylonExporter
     {
-        // Bones stored in BabylonSkeleton array are not assumed to be tree-ordered
-        // Meaning, first element could be a leaf thus resulting in exporting all its ancestors before himself
-        // Store bones already exported to prevent multiple exportation of same bone
-        // This dictionary is NOT reset everytime a skin is exported
-        private Dictionary<string, GLTFNode> alreadyExportedBones = new Dictionary<string, GLTFNode>();
-
         // Skeletons, aka group of nodes, are re-used when exporting same babylon skeleton
         // Only the inverseBindMatrices change, as it is linked to the mesh of the gltf node the skin is applied to
         // This dictionary is reset everytime a scene is exported
@@ -85,7 +80,6 @@ namespace Maya2Babylon
 
             // World matrix of the node
             var nodeWorldMatrix = _getNodeWorldMatrix(gltfNode);
-            //printMatrix("nodeWorldMatrix[" + gltfNode.name + "]", nodeWorldMatrix);
 
             var gltfJoints = new List<int>();
 
@@ -112,7 +106,6 @@ namespace Maya2Babylon
                 // Compute inverseBindMatrice for this bone when attached to this node
                 var boneLocalMatrix = new BabylonMatrix();
                 boneLocalMatrix.m = babylonBone.matrix;
-                //printMatrix("boneLocalMatrix[" + babylonBone.name + "]", boneLocalMatrix);
 
                 BabylonMatrix boneWorldMatrix = null;
                 if (babylonBone.parentBoneIndex == -1)
@@ -128,7 +121,6 @@ namespace Maya2Babylon
 
                     boneWorldMatrix = boneLocalMatrix * parentWorldMatrix;
                 }
-                //printMatrix("boneWorldMatrix[" + babylonBone.name + "]", boneWorldMatrix);
 
                 var inverseBindMatrices = nodeWorldMatrix * BabylonMatrix.Invert(boneWorldMatrix);
 
@@ -144,19 +136,26 @@ namespace Maya2Babylon
 
         private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
         {
-            if (alreadyExportedBones.ContainsKey(babylonBone.name))
+            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
+            if (nodeNodePair.Key != null)
             {
-                return alreadyExportedBones[babylonBone.name];
+                return nodeNodePair.Value;
+            }
+
+            var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
+            if (boneNodePair.Key != null)
+            {
+                return boneNodePair.Value;
             }
 
             // Node
             var gltfNode = new GLTFNode
             {
-                name = babylonBone.name
+                name = GetUniqueNodeName(babylonBone.name)
             };
             gltfNode.index = gltf.NodesList.Count;
             gltf.NodesList.Add(gltfNode);
-            alreadyExportedBones.Add(babylonBone.name, gltfNode);
+            boneToGltfNodeMap.Add(babylonBone, gltfNode);
 
             // Hierarchy
             if (babylonBone.parentBoneIndex >= 0)
