@@ -53,6 +53,8 @@ namespace Max2Babylon
         private Dictionary<IIGameSkin, List<IIGameNode>> revelantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
         private List<IIGameNode> GetRevelantNodes(IIGameSkin skin)
         {
+            int logRank = 2;
+            
             // For optimization
             if (revelantNodesBySkin.ContainsKey(skin))
             {
@@ -84,12 +86,19 @@ namespace Max2Babylon
                 }
             }
 
-            // throw exception if there is more than one root
+            // return an empty list if there is more than one root
             List<IIGameNode> rootNodes = revelantNodes.FindAll(node => node.NodeParent == null);    // should contains only one node
             if (rootNodes.Count > 1)
             {
-                RaiseError("More than one root node for the skin!");
-                throw new Exception("More than one root node for the skin!");
+                string rootNames = "";
+                foreach(IIGameNode root in rootNodes)
+                {
+                    rootNames += $" {root.Name}";
+                }
+                RaiseError($"More than one root node for the skin: {rootNames}", logRank);
+                RaiseError($"The skin cannot be exported", logRank);
+
+                return new List<IIGameNode>();
             }
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
