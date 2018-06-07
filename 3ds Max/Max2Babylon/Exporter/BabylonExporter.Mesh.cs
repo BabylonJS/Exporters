@@ -175,13 +175,14 @@ namespace Max2Babylon
             // Collisions
             babylonMesh.checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions");
 
+            // Skin
             var isSkinned = gameMesh.IsObjectSkinned;
             var skin = gameMesh.IGameSkin;
             var unskinnedMesh = gameMesh;
             IGMatrix skinInitPoseMatrix = Loader.Global.GMatrix.Create(Loader.Global.Matrix3.Create(true));
             List<int> boneIds = null;
             int maxNbBones = 0;
-            if (isSkinned)
+            if (isSkinned && GetRevelantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
             {
                 bonesCount = skin.TotalSkinBoneCount;
                 var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
@@ -197,6 +198,10 @@ namespace Max2Babylon
                 babylonMesh.skeletonId = skins.IndexOf(skin);
                 skin.GetInitSkinTM(skinInitPoseMatrix);
                 boneIds = GetNodeIndices(skin);
+            }
+            else
+            {
+                skin = null;
             }
 
             // Mesh
