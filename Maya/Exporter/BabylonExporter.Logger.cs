@@ -67,7 +67,7 @@ namespace Maya2Babylon
 
         void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
         {
-            RaiseVerbose(message, Color.DarkGray, rank, emphasis);
+            RaiseVerbose(message, Color.FromArgb(100, 100, 100), rank, emphasis);
         }
 
         void RaiseVerbose(string message, Color color, int rank = 0, bool emphasis = false)
@@ -104,7 +104,7 @@ namespace Maya2Babylon
                     if (source != null && source.hasFn(MFn.Type.kDependencyNode))
                     {
                         MFnDependencyNode node = new MFnDependencyNode(source);
-                        RaiseVerbose("name=" + connection.name + "    source=" + node.name, logRank + 2);
+                        RaiseVerbose("name=" + connection.name + "    source=" + node.name + "    source.apiType=" + source.apiType, logRank + 2);
                     }
                     else
                     {
@@ -112,10 +112,7 @@ namespace Maya2Babylon
                     }
                 }
             }
-            catch(Exception e)
-            {
-
-            }
+            catch {}
         }
     }
 }

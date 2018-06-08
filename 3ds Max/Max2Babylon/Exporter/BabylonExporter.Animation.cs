@@ -2,14 +2,11 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        const int Ticks = 160;
-
         private static bool ExportBabylonKeys(List<BabylonAnimationKey> keys, string property, List<BabylonAnimation> animations, BabylonAnimation.DataType dataType, BabylonAnimation.LoopBehavior loopBehavior)
         {
             if (keys.Count == 0)
@@ -18,11 +15,11 @@ namespace Max2Babylon
             }
 
             var end = Loader.Core.AnimRange.End;
-            if (keys[keys.Count - 1].frame != end / Ticks)
+            if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
             {
                 keys.Add(new BabylonAnimationKey()
                 {
-                    frame = end / Ticks,
+                    frame = end / Loader.Global.TicksPerFrame,
                     values = keys[keys.Count - 1].values
                 });
             }
@@ -85,15 +82,12 @@ namespace Max2Babylon
 #if MAX2017 || MAX2018
                 var gameKey = gameKeyTab[indexKey];
 #else
-                var indexer = Marshal.AllocHGlobal(sizeof(int));
-                Marshal.WriteInt32(indexer, indexKey);
-                var gameKey = gameKeyTab[indexer];
-                Marshal.FreeHGlobal(indexer);
+                var gameKey = gameKeyTab[new IntPtr(indexKey)];
 #endif
 
                 var key = new BabylonAnimationKey()
                 {
-                    frame = gameKey.T / Ticks,
+                    frame = gameKey.T / Loader.Global.TicksPerFrame,
                     values = extractValueFunc(gameKey)
                 };
                 keys.Add(key);
@@ -113,7 +107,7 @@ namespace Max2Babylon
 
             return new BabylonAnimationKey
             {
-                frame = key.Time / Ticks,
+                frame = key.Time / Loader.Global.TicksPerFrame,
                 values = new[] { key.Val }
             };
         }
@@ -143,7 +137,7 @@ namespace Max2Babylon
 
                     return new BabylonAnimationKey
                     {
-                        frame = key.Time / Ticks,
+                        frame = key.Time / Loader.Global.TicksPerFrame,
                         values = newQuat.ToArray()
                     };
                 });
@@ -175,7 +169,7 @@ namespace Max2Babylon
 
                     return new BabylonAnimationKey
                     {
-                        frame = key.Time / Ticks,
+                        frame = key.Time / Loader.Global.TicksPerFrame,
                         values = key.Val.ToArraySwitched()
                     };
                 }))
@@ -191,7 +185,7 @@ namespace Max2Babylon
 
                     return new BabylonAnimationKey
                     {
-                        frame = key.Time / Ticks,
+                        frame = key.Time / Loader.Global.TicksPerFrame,
                         values = key.Val.S.ToArraySwitched()
                     };
                 });
@@ -240,36 +234,36 @@ namespace Max2Babylon
         // ---- From ext func ----
         // -----------------------
 
-        private static void ExportColor3Animation(string property, List<BabylonAnimation> animations,
+        private void ExportColor3Animation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Color3);
         }
 
-        private static void ExportVector3Animation(string property, List<BabylonAnimation> animations,
+        private void ExportVector3Animation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Vector3);
         }
 
-        private static void ExportQuaternionAnimation(string property, List<BabylonAnimation> animations,
+        private void ExportQuaternionAnimation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Quaternion);
         }
 
-        private static void ExportFloatAnimation(string property, List<BabylonAnimation> animations,
+        private void ExportFloatAnimation(string property, List<BabylonAnimation> animations,
             Func<int, float[]> extractValueFunc)
         {
             ExportAnimation(property, animations, extractValueFunc, BabylonAnimation.DataType.Float);
         }
 
-        private static BabylonAnimation ExportMatrixAnimation(string property, Func<int, float[]> extractValueFunc, bool removeLinearAnimationKeys = true)
+        private BabylonAnimation ExportMatrixAnimation(string property, Func<int, float[]> extractValueFunc, bool removeLinearAnimationKeys = true)
         {
             return ExportAnimation(property, extractValueFunc, BabylonAnimation.DataType.Matrix, removeLinearAnimationKeys);
         }
 
-        static void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
+        private void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
             for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
             {
@@ -283,7 +277,7 @@ namespace Max2Babylon
             }
         }
 
-        static float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
+        private float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
         {
             double weight2 = (frame1 - frame0) / (double)(frame2 - frame0);
             double weight0 = 1 - weight2;
@@ -295,7 +289,7 @@ namespace Max2Babylon
             return result;
         }
 
-        private static bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
+        private bool RemoveAnimationKey(List<BabylonAnimationKey> keys, int ixFirst, bool removeLinearAnimationKeys)
         {
             var first = keys[ixFirst];
             var middle = keys[ixFirst + 1];
@@ -322,7 +316,7 @@ namespace Max2Babylon
 
         }
 
-        private static void ExportAnimation(string property, List<BabylonAnimation> animations, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
+        private void ExportAnimation(string property, List<BabylonAnimation> animations, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
             var babylonAnimation = ExportAnimation(property, extractValueFunc, dataType, removeLinearAnimationKeys);
             if (babylonAnimation != null)
@@ -331,7 +325,7 @@ namespace Max2Babylon
             }
         }
 
-        private static BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
+        private BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
             var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
 
@@ -340,60 +334,67 @@ namespace Max2Babylon
 
             float[] previous = null;
             var keys = new List<BabylonAnimationKey>();
-            for (var key = start; key <= end; key += Ticks)
+            for (var key = start; key <= end; key += Loader.Global.TicksPerFrame)
             {
                 var current = extractValueFunc(key);
 
                 keys.Add(new BabylonAnimationKey()
                 {
-                    frame = key / Ticks,
+                    frame = key / Loader.Global.TicksPerFrame,
                     values = current
                 });
 
                 previous = current;
             }
-            
+            var keysFull = new List<BabylonAnimationKey>(keys);
+
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);
             }
 
+            if (IsAnimationKeysRelevant(keys))
+            {
+                if (keys[keys.Count - 1].frame != end / Loader.Global.TicksPerFrame)
+                {
+                    keys.Add(new BabylonAnimationKey()
+                    {
+                        frame = end / Loader.Global.TicksPerFrame,
+                        values = (float[])keys[keys.Count - 1].values.Clone()
+                    });
+                }
+
+                var babylonAnimation = new BabylonAnimation
+                {
+                    dataType = (int)dataType,
+                    name = property + " animation",
+                    keys = keys.ToArray(),
+                    keysFull = keysFull,
+                    framePerSecond = Loader.Global.FrameRate,
+                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                    property = property
+                };
+                return babylonAnimation;
+            }
+            return null;
+        }
+
+        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys)
+        {
             if (keys.Count > 1)
             {
-                var animationPresent = true;
-
                 if (keys.Count == 2)
                 {
                     if (keys[0].values.IsEqualTo(keys[1].values))
                     {
-                        animationPresent = false;
+                        return false;
                     }
                 }
 
-                if (animationPresent)
-                {
-                    if (keys[keys.Count - 1].frame != end / Ticks)
-                    {
-                        keys.Add(new BabylonAnimationKey()
-                        {
-                            frame = end / Ticks,
-                            values = keys[keys.Count - 1].values
-                        });
-                    }
-
-                    var babylonAnimation = new BabylonAnimation
-                    {
-                        dataType = (int)dataType,
-                        name = property + " animation",
-                        keys = keys.ToArray(),
-                        framePerSecond = Loader.Global.FrameRate,
-                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        property = property
-                    };
-                    return babylonAnimation;
-                }
+                return true;
             }
-            return null;
+
+            return false;
         }
 
         public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
@@ -406,8 +407,16 @@ namespace Max2Babylon
                 ExportVector3Animation("position", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-                    var trans = localMatrix.Translation;
-                    return new[] { trans.X, trans.Y, trans.Z };
+                    var tm_babylon = new BabylonMatrix();
+                    tm_babylon.m = localMatrix.ToArray();
+
+                    var s_babylon = new BabylonVector3();
+                    var q_babylon = new BabylonQuaternion();
+                    var t_babylon = new BabylonVector3();
+
+                    tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+
+                    return new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
                 });
             }
         }
@@ -423,8 +432,20 @@ namespace Max2Babylon
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-                    var rot = localMatrix.Rotation;
-                    return new[] { rot.X, rot.Y, rot.Z, -rot.W };
+                    var tm_babylon = new BabylonMatrix();
+                    tm_babylon.m = localMatrix.ToArray();
+
+                    var s_babylon = new BabylonVector3();
+                    var q_babylon = new BabylonQuaternion();
+                    var t_babylon = new BabylonVector3();
+
+                    tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+
+                    // normalize
+                    var q = q_babylon;
+                    float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+
+                    return new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
                 });
             }
         }
@@ -436,8 +457,16 @@ namespace Max2Babylon
                 ExportVector3Animation("scaling", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
-                    var scale = localMatrix.Scaling;
-                    return new[] { scale.X, scale.Y, scale.Z };
+                    var tm_babylon = new BabylonMatrix();
+                    tm_babylon.m = localMatrix.ToArray();
+
+                    var s_babylon = new BabylonVector3();
+                    var q_babylon = new BabylonQuaternion();
+                    var t_babylon = new BabylonVector3();
+
+                    tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+
+                    return new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
                 });
             }
         }

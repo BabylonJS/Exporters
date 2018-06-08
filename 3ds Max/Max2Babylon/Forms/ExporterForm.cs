@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -119,12 +118,22 @@ namespace Max2Babylon
             bool success = true;
             try
             {
-                exporter.AutoSave3dsMaxFile = chkAutoSave.Checked;
-                exporter.ExportHiddenObjects = chkHidden.Checked;
-                exporter.CopyTexturesToOutput = chkCopyTextures.Checked;
-                var directoryName = Path.GetDirectoryName(txtFilename.Text);
-                var fileName = Path.GetFileName(txtFilename.Text);
-                await exporter.ExportAsync(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked, chkOnlySelected.Checked,this);
+                ExportParameters exportParameters = new ExportParameters
+                {
+                    outputPath = txtFilename.Text,
+                    outputFormat = comboOutputFormat.SelectedItem.ToString(),
+                    scaleFactor = txtScaleFactor.Text,
+                    copyTexturesToOutput = chkCopyTextures.Checked,
+                    exportHiddenObjects = chkHidden.Checked,
+                    exportOnlySelected = chkOnlySelected.Checked,
+                    generateManifest = chkManifest.Checked,
+                    autoSave3dsMaxFile = chkAutoSave.Checked,
+                    exportTangents = chkExportTangents.Checked
+                };
+
+                exporter.callerForm = this;
+
+                exporter.Export(exportParameters);
             }
             catch (OperationCanceledException)
             {
@@ -134,8 +143,9 @@ namespace Max2Babylon
             catch (Exception ex)
             {
                 currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message, Color.Red);
-
+                currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
+
                 progressBar.Value = 0;
                 success = false;
             }
@@ -269,6 +279,11 @@ namespace Max2Babylon
         }
 
         private void chkOnlySelected_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtScaleFactor_TextChanged(object sender, EventArgs e)
         {
 
         }

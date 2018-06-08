@@ -11,9 +11,18 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public string id { get; set; }
-
+        
         [DataMember]
         public string parentId { get; set; }
+
+        [DataMember]
+        public float[] position { get; set; }
+
+        virtual public float[] rotation { get; set; }
+
+        virtual public float[] scaling { get; set; }
+
+        virtual public float[] rotationQuaternion { get; set; }
 
         [DataMember]
         public BabylonAnimation[] animations { get; set; }

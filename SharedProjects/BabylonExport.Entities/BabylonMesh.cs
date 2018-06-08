@@ -27,6 +27,9 @@ namespace BabylonExport.Entities
         public float[] normals { get; set; }
 
         [DataMember]
+        public float[] tangents { get; set; }
+
+        [DataMember]
         public float[] uvs { get; set; }
 
         [DataMember]
