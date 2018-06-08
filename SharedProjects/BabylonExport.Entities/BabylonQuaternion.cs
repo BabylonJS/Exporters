@@ -154,9 +154,10 @@ namespace BabylonExport.Entities
         /**
          * Retuns a new Quaternion set from the starting index of the passed array.
          */
-        public static BabylonQuaternion FromArray(float[] array, int offset = 0)
+        public static BabylonQuaternion FromArray(float[] array, int countOffset = 0)
         {
-            return new BabylonQuaternion(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
+                var offset = countOffset * 4;
+                return new BabylonQuaternion(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
         }
     }
 }

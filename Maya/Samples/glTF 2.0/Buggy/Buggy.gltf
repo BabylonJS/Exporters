@@ -1,7 +1,7 @@
 {
 	"asset": {
 		"version": "2.0",
-		"generator": "Babylon2Gltf2017",
+		"generator": "babylon.js glTF exporter for maya 2018 v1.0.0",
 		"copyright": "2017 (c) BabylonJS"
 	},
 	"scene": 0,
@@ -7065,7 +7065,7 @@
 		{
 			"bufferView": 1,
 			"componentType": 5126,
-			"count": 1896,
+			"count": 660,
 			"max": [
 				24.1,
 				4.1,
@@ -7081,9 +7081,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22752,
+			"byteOffset": 7920,
 			"componentType": 5126,
-			"count": 1896,
+			"count": 660,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7097,9 +7097,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 45504,
+			"byteOffset": 15840,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"max": [
 				3,
 				3,
@@ -7115,9 +7115,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 127872,
+			"byteOffset": 37752,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7131,9 +7131,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 210240,
+			"byteOffset": 59664,
 			"componentType": 5126,
-			"count": 19731,
+			"count": 5595,
 			"max": [
 				20.8838215,
 				10.864851,
@@ -7149,9 +7149,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 447012,
+			"byteOffset": 126804,
 			"componentType": 5126,
-			"count": 19731,
+			"count": 5595,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7165,9 +7165,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 683784,
+			"byteOffset": 193944,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"max": [
 				3.7,
 				3.7,
@@ -7183,9 +7183,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 814932,
+			"byteOffset": 224268,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7199,9 +7199,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 946080,
+			"byteOffset": 254592,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -7217,9 +7217,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1066248,
+			"byteOffset": 293688,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7233,9 +7233,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1186416,
+			"byteOffset": 332784,
 			"componentType": 5126,
-			"count": 7047,
+			"count": 2429,
 			"max": [
 				24,
 				23.5,
@@ -7251,9 +7251,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1270980,
+			"byteOffset": 361932,
 			"componentType": 5126,
-			"count": 7047,
+			"count": 2429,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7267,9 +7267,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1355544,
+			"byteOffset": 391080,
 			"componentType": 5126,
-			"count": 2229,
+			"count": 565,
 			"max": [
 				3.2,
 				3.2,
@@ -7285,9 +7285,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1382292,
+			"byteOffset": 397860,
 			"componentType": 5126,
-			"count": 2229,
+			"count": 565,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7301,9 +7301,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1409040,
+			"byteOffset": 404640,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -7319,9 +7319,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1471968,
+			"byteOffset": 421536,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7335,9 +7335,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1534896,
+			"byteOffset": 438432,
 			"componentType": 5126,
-			"count": 10230,
+			"count": 2993,
 			"max": [
 				5.55,
 				-3.7,
@@ -7353,9 +7353,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1657656,
+			"byteOffset": 474348,
 			"componentType": 5126,
-			"count": 10230,
+			"count": 2993,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7369,9 +7369,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1780416,
+			"byteOffset": 510264,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"max": [
 				3.797598,
 				-3.802402,
@@ -7387,9 +7387,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 1994904,
+			"byteOffset": 553980,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7403,9 +7403,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2209392,
+			"byteOffset": 597696,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"max": [
 				24.1,
 				12,
@@ -7421,9 +7421,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2293344,
+			"byteOffset": 625920,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7437,9 +7437,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2377296,
+			"byteOffset": 654144,
 			"componentType": 5126,
-			"count": 6039,
+			"count": 2065,
 			"max": [
 				40.1,
 				4,
@@ -7455,9 +7455,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2449764,
+			"byteOffset": 678924,
 			"componentType": 5126,
-			"count": 6039,
+			"count": 2065,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7471,9 +7471,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2522232,
+			"byteOffset": 703704,
 			"componentType": 5126,
-			"count": 2436,
+			"count": 840,
 			"max": [
 				8.1,
 				12,
@@ -7489,9 +7489,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2551464,
+			"byteOffset": 713784,
 			"componentType": 5126,
-			"count": 2436,
+			"count": 840,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7505,9 +7505,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2580696,
+			"byteOffset": 723864,
 			"componentType": 5126,
-			"count": 1692,
+			"count": 602,
 			"max": [
 				16.1,
 				4,
@@ -7523,9 +7523,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2601000,
+			"byteOffset": 731088,
 			"componentType": 5126,
-			"count": 1692,
+			"count": 602,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7539,9 +7539,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2621304,
+			"byteOffset": 738312,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"max": [
 				40.1,
 				4.1,
@@ -7557,9 +7557,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2685384,
+			"byteOffset": 759912,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7573,9 +7573,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2749464,
+			"byteOffset": 781512,
 			"componentType": 5126,
-			"count": 3300,
+			"count": 1120,
 			"max": [
 				16.1,
 				4.1,
@@ -7591,9 +7591,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2789064,
+			"byteOffset": 794952,
 			"componentType": 5126,
-			"count": 3300,
+			"count": 1120,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7607,9 +7607,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2828664,
+			"byteOffset": 808392,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -7625,9 +7625,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2858472,
+			"byteOffset": 818568,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7641,9 +7641,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2888280,
+			"byteOffset": 828744,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"max": [
 				24.1,
 				4,
@@ -7659,9 +7659,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 2998728,
+			"byteOffset": 865800,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7675,9 +7675,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3109176,
+			"byteOffset": 902856,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"max": [
 				8.1,
 				4.1,
@@ -7693,9 +7693,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3119976,
+			"byteOffset": 906792,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7709,9 +7709,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3130776,
+			"byteOffset": 910728,
 			"componentType": 5126,
-			"count": 1812,
+			"count": 624,
 			"max": [
 				0.1,
 				4,
@@ -7727,9 +7727,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3152520,
+			"byteOffset": 918216,
 			"componentType": 5126,
-			"count": 1812,
+			"count": 624,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7743,9 +7743,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3174264,
+			"byteOffset": 925704,
 			"componentType": 5126,
-			"count": 4338,
+			"count": 1466,
 			"max": [
 				8.1,
 				4,
@@ -7761,9 +7761,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3226320,
+			"byteOffset": 943296,
 			"componentType": 5126,
-			"count": 4338,
+			"count": 1466,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7777,9 +7777,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3278376,
+			"byteOffset": 960888,
 			"componentType": 5126,
-			"count": 3684,
+			"count": 1248,
 			"max": [
 				8.1,
 				12,
@@ -7795,9 +7795,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3322584,
+			"byteOffset": 975864,
 			"componentType": 5126,
-			"count": 3684,
+			"count": 1248,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7811,9 +7811,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3366792,
+			"byteOffset": 990840,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"max": [
 				3.953101,
 				11.5531006,
@@ -7829,9 +7829,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3447432,
+			"byteOffset": 1018584,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7845,9 +7845,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3528072,
+			"byteOffset": 1046328,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"max": [
 				7.925,
 				2.976153,
@@ -7863,9 +7863,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3683088,
+			"byteOffset": 1086864,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7879,9 +7879,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3838104,
+			"byteOffset": 1127400,
 			"componentType": 5126,
-			"count": 3972,
+			"count": 1344,
 			"max": [
 				24.1,
 				4.1,
@@ -7897,9 +7897,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3885768,
+			"byteOffset": 1143528,
 			"componentType": 5126,
-			"count": 3972,
+			"count": 1344,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7913,9 +7913,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 3933432,
+			"byteOffset": 1159656,
 			"componentType": 5126,
-			"count": 5748,
+			"count": 1936,
 			"max": [
 				16.1,
 				12,
@@ -7931,9 +7931,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4002408,
+			"byteOffset": 1182888,
 			"componentType": 5126,
-			"count": 5748,
+			"count": 1936,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7947,9 +7947,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4071384,
+			"byteOffset": 1206120,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"max": [
 				8.1,
 				4.1,
@@ -7965,9 +7965,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4082184,
+			"byteOffset": 1210056,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -7981,9 +7981,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4092984,
+			"byteOffset": 1213992,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"max": [
 				8.1,
 				4.1,
@@ -7999,9 +7999,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4103784,
+			"byteOffset": 1217928,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8015,9 +8015,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4114584,
+			"byteOffset": 1221864,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"max": [
 				8.1,
 				4.1,
@@ -8033,9 +8033,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4125384,
+			"byteOffset": 1225800,
 			"componentType": 5126,
-			"count": 900,
+			"count": 328,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8049,9 +8049,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4136184,
+			"byteOffset": 1229736,
 			"componentType": 5126,
-			"count": 1896,
+			"count": 660,
 			"max": [
 				24.1,
 				4.1,
@@ -8067,9 +8067,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4158936,
+			"byteOffset": 1237656,
 			"componentType": 5126,
-			"count": 1896,
+			"count": 660,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8083,9 +8083,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4181688,
+			"byteOffset": 1245576,
 			"componentType": 5126,
-			"count": 1896,
+			"count": 660,
 			"max": [
 				24.1,
 				4.1,
@@ -8101,9 +8101,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4204440,
+			"byteOffset": 1253496,
 			"componentType": 5126,
-			"count": 1896,
+			"count": 660,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8117,9 +8117,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4227192,
+			"byteOffset": 1261416,
 			"componentType": 5126,
-			"count": 20280,
+			"count": 6774,
 			"max": [
 				88.1,
 				4,
@@ -8135,9 +8135,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4470552,
+			"byteOffset": 1342704,
 			"componentType": 5126,
-			"count": 20280,
+			"count": 6774,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8151,9 +8151,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4713912,
+			"byteOffset": 1423992,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"max": [
 				53.1,
 				2.4,
@@ -8169,9 +8169,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4714128,
+			"byteOffset": 1424136,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8185,9 +8185,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4714344,
+			"byteOffset": 1424280,
 			"componentType": 5126,
-			"count": 20280,
+			"count": 6774,
 			"max": [
 				88.1,
 				4,
@@ -8203,9 +8203,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 4957704,
+			"byteOffset": 1505568,
 			"componentType": 5126,
-			"count": 20280,
+			"count": 6774,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8219,9 +8219,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5201064,
+			"byteOffset": 1586856,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"max": [
 				53.1,
 				2.4,
@@ -8237,9 +8237,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5201280,
+			"byteOffset": 1587000,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8253,9 +8253,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5201496,
+			"byteOffset": 1587144,
 			"componentType": 5126,
-			"count": 26340,
+			"count": 8831,
 			"max": [
 				120.1,
 				4,
@@ -8271,9 +8271,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5517576,
+			"byteOffset": 1693116,
 			"componentType": 5126,
-			"count": 26340,
+			"count": 8831,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8287,9 +8287,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5833656,
+			"byteOffset": 1799088,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"max": [
 				53.1,
 				2.4,
@@ -8305,9 +8305,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5833872,
+			"byteOffset": 1799232,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8321,9 +8321,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 5834088,
+			"byteOffset": 1799376,
 			"componentType": 5126,
-			"count": 26340,
+			"count": 8831,
 			"max": [
 				120.1,
 				4,
@@ -8339,9 +8339,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6150168,
+			"byteOffset": 1905348,
 			"componentType": 5126,
-			"count": 26340,
+			"count": 8831,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8355,9 +8355,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6466248,
+			"byteOffset": 2011320,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"max": [
 				53.1,
 				2.4,
@@ -8373,9 +8373,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6466464,
+			"byteOffset": 2011464,
 			"componentType": 5126,
-			"count": 18,
+			"count": 12,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8389,9 +8389,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6466680,
+			"byteOffset": 2011608,
 			"componentType": 5126,
-			"count": 4338,
+			"count": 1466,
 			"max": [
 				8.1,
 				4,
@@ -8407,9 +8407,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6518736,
+			"byteOffset": 2029200,
 			"componentType": 5126,
-			"count": 4338,
+			"count": 1466,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8423,9 +8423,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6570792,
+			"byteOffset": 2046792,
 			"componentType": 5126,
-			"count": 4338,
+			"count": 1466,
 			"max": [
 				8.1,
 				4,
@@ -8441,9 +8441,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6622848,
+			"byteOffset": 2064384,
 			"componentType": 5126,
-			"count": 4338,
+			"count": 1466,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8457,9 +8457,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6674904,
+			"byteOffset": 2081976,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8475,9 +8475,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6704712,
+			"byteOffset": 2092152,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8491,9 +8491,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6734520,
+			"byteOffset": 2102328,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8509,9 +8509,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6764328,
+			"byteOffset": 2112504,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8525,9 +8525,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6794136,
+			"byteOffset": 2122680,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8543,9 +8543,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6823944,
+			"byteOffset": 2132856,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8559,9 +8559,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6853752,
+			"byteOffset": 2143032,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8577,9 +8577,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6883560,
+			"byteOffset": 2153208,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8593,9 +8593,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6913368,
+			"byteOffset": 2163384,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8611,9 +8611,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6943176,
+			"byteOffset": 2173560,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8627,9 +8627,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 6972984,
+			"byteOffset": 2183736,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8645,9 +8645,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7002792,
+			"byteOffset": 2193912,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8661,9 +8661,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7032600,
+			"byteOffset": 2204088,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8679,9 +8679,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7062408,
+			"byteOffset": 2214264,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8695,9 +8695,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7092216,
+			"byteOffset": 2224440,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8713,9 +8713,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7122024,
+			"byteOffset": 2234616,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8729,9 +8729,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7151832,
+			"byteOffset": 2244792,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8747,9 +8747,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7181640,
+			"byteOffset": 2254968,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8763,9 +8763,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7211448,
+			"byteOffset": 2265144,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"max": [
 				8.1,
 				4.1,
@@ -8781,9 +8781,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7241256,
+			"byteOffset": 2275320,
 			"componentType": 5126,
-			"count": 2484,
+			"count": 848,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8797,9 +8797,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7271064,
+			"byteOffset": 2285496,
 			"componentType": 5126,
-			"count": 3300,
+			"count": 1120,
 			"max": [
 				16.1,
 				4.1,
@@ -8815,9 +8815,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7310664,
+			"byteOffset": 2298936,
 			"componentType": 5126,
-			"count": 3300,
+			"count": 1120,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8831,9 +8831,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7350264,
+			"byteOffset": 2312376,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"max": [
 				24.1,
 				4,
@@ -8849,9 +8849,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7460712,
+			"byteOffset": 2349432,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8865,9 +8865,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7571160,
+			"byteOffset": 2386488,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"max": [
 				24.1,
 				4,
@@ -8883,9 +8883,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7681608,
+			"byteOffset": 2423544,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8899,9 +8899,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7792056,
+			"byteOffset": 2460600,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"max": [
 				24.1,
 				4,
@@ -8917,9 +8917,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 7902504,
+			"byteOffset": 2497656,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8933,9 +8933,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8012952,
+			"byteOffset": 2534712,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"max": [
 				24.1,
 				4,
@@ -8951,9 +8951,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8123400,
+			"byteOffset": 2571768,
 			"componentType": 5126,
-			"count": 9204,
+			"count": 3088,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -8967,9 +8967,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8233848,
+			"byteOffset": 2608824,
 			"componentType": 5126,
-			"count": 3972,
+			"count": 1344,
 			"max": [
 				24.1,
 				4.1,
@@ -8985,9 +8985,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8281512,
+			"byteOffset": 2624952,
 			"componentType": 5126,
-			"count": 3972,
+			"count": 1344,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9001,9 +9001,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8329176,
+			"byteOffset": 2641080,
 			"componentType": 5126,
-			"count": 3972,
+			"count": 1344,
 			"max": [
 				24.1,
 				4.1,
@@ -9019,9 +9019,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8376840,
+			"byteOffset": 2657208,
 			"componentType": 5126,
-			"count": 3972,
+			"count": 1344,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9035,9 +9035,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8424504,
+			"byteOffset": 2673336,
 			"componentType": 5126,
-			"count": 13176,
+			"count": 4412,
 			"max": [
 				40.1,
 				4,
@@ -9053,9 +9053,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8582616,
+			"byteOffset": 2726280,
 			"componentType": 5126,
-			"count": 13176,
+			"count": 4412,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9069,9 +9069,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8740728,
+			"byteOffset": 2779224,
 			"componentType": 5126,
-			"count": 6,
+			"count": 4,
 			"max": [
 				38.5,
 				2.4,
@@ -9087,9 +9087,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8740800,
+			"byteOffset": 2779272,
 			"componentType": 5126,
-			"count": 6,
+			"count": 4,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9103,9 +9103,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8740872,
+			"byteOffset": 2779320,
 			"componentType": 5126,
-			"count": 13176,
+			"count": 4412,
 			"max": [
 				40.1,
 				4,
@@ -9121,9 +9121,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 8898984,
+			"byteOffset": 2832264,
 			"componentType": 5126,
-			"count": 13176,
+			"count": 4412,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9137,9 +9137,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9057096,
+			"byteOffset": 2885208,
 			"componentType": 5126,
-			"count": 6,
+			"count": 4,
 			"max": [
 				38.5,
 				2.4,
@@ -9155,9 +9155,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9057168,
+			"byteOffset": 2885256,
 			"componentType": 5126,
-			"count": 6,
+			"count": 4,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9171,9 +9171,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9057240,
+			"byteOffset": 2885304,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"max": [
 				40.1,
 				4.1,
@@ -9189,9 +9189,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9121320,
+			"byteOffset": 2906904,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9205,9 +9205,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9185400,
+			"byteOffset": 2928504,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"max": [
 				40.1,
 				4.1,
@@ -9223,9 +9223,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9249480,
+			"byteOffset": 2950104,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9239,9 +9239,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9313560,
+			"byteOffset": 2971704,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"max": [
 				40.1,
 				4.1,
@@ -9257,9 +9257,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9377640,
+			"byteOffset": 2993304,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9273,9 +9273,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9441720,
+			"byteOffset": 3014904,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"max": [
 				40.1,
 				4.1,
@@ -9291,9 +9291,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9505800,
+			"byteOffset": 3036504,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1800,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9307,9 +9307,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9569880,
+			"byteOffset": 3058104,
 			"componentType": 5126,
-			"count": 3684,
+			"count": 1248,
 			"max": [
 				8.1,
 				12,
@@ -9325,9 +9325,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9614088,
+			"byteOffset": 3073080,
 			"componentType": 5126,
-			"count": 3684,
+			"count": 1248,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9341,9 +9341,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9658296,
+			"byteOffset": 3088056,
 			"componentType": 5126,
-			"count": 5748,
+			"count": 1936,
 			"max": [
 				16.1,
 				12,
@@ -9359,9 +9359,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9727272,
+			"byteOffset": 3111288,
 			"componentType": 5126,
-			"count": 5748,
+			"count": 1936,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9375,9 +9375,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9796248,
+			"byteOffset": 3134520,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"max": [
 				24.1,
 				12,
@@ -9393,9 +9393,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9880200,
+			"byteOffset": 3162744,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9409,9 +9409,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 9964152,
+			"byteOffset": 3190968,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"max": [
 				24.1,
 				12,
@@ -9427,9 +9427,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10048104,
+			"byteOffset": 3219192,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9443,9 +9443,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10132056,
+			"byteOffset": 3247416,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"max": [
 				24.1,
 				12,
@@ -9461,9 +9461,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10216008,
+			"byteOffset": 3275640,
 			"componentType": 5126,
-			"count": 6996,
+			"count": 2352,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9477,9 +9477,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10299960,
+			"byteOffset": 3303864,
 			"componentType": 5126,
-			"count": 13620,
+			"count": 4532,
 			"max": [
 				56.1,
 				12,
@@ -9495,9 +9495,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10463400,
+			"byteOffset": 3358248,
 			"componentType": 5126,
-			"count": 13620,
+			"count": 4532,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9511,9 +9511,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10626840,
+			"byteOffset": 3412632,
 			"componentType": 5126,
-			"count": 13620,
+			"count": 4532,
 			"max": [
 				56.1,
 				12,
@@ -9529,9 +9529,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10790280,
+			"byteOffset": 3467016,
 			"componentType": 5126,
-			"count": 13620,
+			"count": 4532,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9545,9 +9545,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 10953720,
+			"byteOffset": 3521400,
 			"componentType": 5126,
-			"count": 13620,
+			"count": 4532,
 			"max": [
 				56.1,
 				12,
@@ -9563,9 +9563,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11117160,
+			"byteOffset": 3575784,
 			"componentType": 5126,
-			"count": 13620,
+			"count": 4532,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9579,9 +9579,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11280600,
+			"byteOffset": 3630168,
 			"componentType": 5126,
-			"count": 1692,
+			"count": 602,
 			"max": [
 				16.1,
 				4,
@@ -9597,9 +9597,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11300904,
+			"byteOffset": 3637392,
 			"componentType": 5126,
-			"count": 1692,
+			"count": 602,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9613,9 +9613,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11321208,
+			"byteOffset": 3644616,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9631,9 +9631,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11441376,
+			"byteOffset": 3683712,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9647,9 +9647,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11561544,
+			"byteOffset": 3722808,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9665,9 +9665,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11681712,
+			"byteOffset": 3761904,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9681,9 +9681,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11801880,
+			"byteOffset": 3801000,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9699,9 +9699,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 11922048,
+			"byteOffset": 3840096,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9715,9 +9715,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12042216,
+			"byteOffset": 3879192,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9733,9 +9733,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12162384,
+			"byteOffset": 3918288,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9749,9 +9749,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12282552,
+			"byteOffset": 3957384,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9767,9 +9767,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12402720,
+			"byteOffset": 3996480,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9783,9 +9783,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12522888,
+			"byteOffset": 4035576,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9801,9 +9801,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12643056,
+			"byteOffset": 4074672,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9817,9 +9817,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12763224,
+			"byteOffset": 4113768,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9835,9 +9835,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 12883392,
+			"byteOffset": 4152864,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9851,9 +9851,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13003560,
+			"byteOffset": 4191960,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"max": [
 				3.75,
 				-3.85,
@@ -9869,9 +9869,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13123728,
+			"byteOffset": 4231056,
 			"componentType": 5126,
-			"count": 10014,
+			"count": 3258,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9885,9 +9885,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13243896,
+			"byteOffset": 4270152,
 			"componentType": 5126,
-			"count": 10230,
+			"count": 2993,
 			"max": [
 				5.55,
 				-3.7,
@@ -9903,9 +9903,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13366656,
+			"byteOffset": 4306068,
 			"componentType": 5126,
-			"count": 10230,
+			"count": 2993,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9919,9 +9919,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13489416,
+			"byteOffset": 4341984,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"max": [
 				3.797598,
 				-3.802402,
@@ -9937,9 +9937,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13703904,
+			"byteOffset": 4385700,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9953,9 +9953,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 13918392,
+			"byteOffset": 4429416,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"max": [
 				3.797598,
 				-3.802402,
@@ -9971,9 +9971,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14132880,
+			"byteOffset": 4473132,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -9987,9 +9987,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14347368,
+			"byteOffset": 4516848,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"max": [
 				3.797598,
 				-3.802402,
@@ -10005,9 +10005,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14561856,
+			"byteOffset": 4560564,
 			"componentType": 5126,
-			"count": 17874,
+			"count": 3643,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10021,9 +10021,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14776344,
+			"byteOffset": 4604280,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"max": [
 				0.1,
 				4,
@@ -10039,9 +10039,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14795208,
+			"byteOffset": 4610808,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10055,9 +10055,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14814072,
+			"byteOffset": 4617336,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"max": [
 				0.1,
 				4,
@@ -10073,9 +10073,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14832936,
+			"byteOffset": 4623864,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10089,9 +10089,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14851800,
+			"byteOffset": 4630392,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"max": [
 				0.1,
 				4,
@@ -10107,9 +10107,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14870664,
+			"byteOffset": 4636920,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10123,9 +10123,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14889528,
+			"byteOffset": 4643448,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"max": [
 				0.1,
 				4,
@@ -10141,9 +10141,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14908392,
+			"byteOffset": 4649976,
 			"componentType": 5126,
-			"count": 1572,
+			"count": 544,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10157,9 +10157,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14927256,
+			"byteOffset": 4656504,
 			"componentType": 5126,
-			"count": 1812,
+			"count": 624,
 			"max": [
 				0.1,
 				4,
@@ -10175,9 +10175,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14949000,
+			"byteOffset": 4663992,
 			"componentType": 5126,
-			"count": 1812,
+			"count": 624,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10191,9 +10191,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 14970744,
+			"byteOffset": 4671480,
 			"componentType": 5126,
-			"count": 2544,
+			"count": 896,
 			"max": [
 				8.1,
 				4.1,
@@ -10209,9 +10209,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15001272,
+			"byteOffset": 4682232,
 			"componentType": 5126,
-			"count": 2544,
+			"count": 896,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10225,9 +10225,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15031800,
+			"byteOffset": 4692984,
 			"componentType": 5126,
-			"count": 2544,
+			"count": 896,
 			"max": [
 				8.1,
 				4.1,
@@ -10243,9 +10243,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15062328,
+			"byteOffset": 4703736,
 			"componentType": 5126,
-			"count": 2544,
+			"count": 896,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10259,9 +10259,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15092856,
+			"byteOffset": 4714488,
 			"componentType": 5126,
-			"count": 6039,
+			"count": 2065,
 			"max": [
 				40.1,
 				4,
@@ -10277,9 +10277,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15165324,
+			"byteOffset": 4739268,
 			"componentType": 5126,
-			"count": 6039,
+			"count": 2065,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10293,9 +10293,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15237792,
+			"byteOffset": 4764048,
 			"componentType": 5126,
-			"count": 2436,
+			"count": 840,
 			"max": [
 				8.1,
 				12,
@@ -10311,9 +10311,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15267024,
+			"byteOffset": 4774128,
 			"componentType": 5126,
-			"count": 2436,
+			"count": 840,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10327,9 +10327,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15296256,
+			"byteOffset": 4784208,
 			"componentType": 5126,
-			"count": 4830,
+			"count": 1654,
 			"max": [
 				16.1,
 				4.1,
@@ -10345,9 +10345,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15354216,
+			"byteOffset": 4804056,
 			"componentType": 5126,
-			"count": 4830,
+			"count": 1654,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10361,9 +10361,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15412176,
+			"byteOffset": 4823904,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"max": [
 				3.953101,
 				11.5531006,
@@ -10379,9 +10379,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15492816,
+			"byteOffset": 4851648,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10395,9 +10395,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15573456,
+			"byteOffset": 4879392,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"max": [
 				3.953101,
 				11.5531006,
@@ -10413,9 +10413,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15654096,
+			"byteOffset": 4907136,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10429,9 +10429,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15734736,
+			"byteOffset": 4934880,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"max": [
 				3.953101,
 				11.5531006,
@@ -10447,9 +10447,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15815376,
+			"byteOffset": 4962624,
 			"componentType": 5126,
-			"count": 6720,
+			"count": 2312,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10463,9 +10463,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15896016,
+			"byteOffset": 4990368,
 			"componentType": 5126,
-			"count": 6936,
+			"count": 1424,
 			"max": [
 				11.29191,
 				1.272939,
@@ -10481,9 +10481,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 15979248,
+			"byteOffset": 5007456,
 			"componentType": 5126,
-			"count": 6936,
+			"count": 1424,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10497,9 +10497,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16062480,
+			"byteOffset": 5024544,
 			"componentType": 5126,
-			"count": 7794,
+			"count": 1558,
 			"max": [
 				11.29191,
 				1.272939,
@@ -10515,9 +10515,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16156008,
+			"byteOffset": 5043240,
 			"componentType": 5126,
-			"count": 7794,
+			"count": 1558,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10531,9 +10531,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16249536,
+			"byteOffset": 5061936,
 			"componentType": 5126,
-			"count": 7794,
+			"count": 1558,
 			"max": [
 				11.29191,
 				1.272939,
@@ -10549,9 +10549,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16343064,
+			"byteOffset": 5080632,
 			"componentType": 5126,
-			"count": 7794,
+			"count": 1558,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10565,9 +10565,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16436592,
+			"byteOffset": 5099328,
 			"componentType": 5126,
-			"count": 7794,
+			"count": 1558,
 			"max": [
 				11.29191,
 				1.272939,
@@ -10583,9 +10583,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16530120,
+			"byteOffset": 5118024,
 			"componentType": 5126,
-			"count": 7794,
+			"count": 1558,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10599,9 +10599,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16623648,
+			"byteOffset": 5136720,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 1429,
 			"max": [
 				11.29191,
 				1.272939,
@@ -10617,9 +10617,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16707384,
+			"byteOffset": 5153868,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 1429,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10633,9 +10633,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16791120,
+			"byteOffset": 5171016,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 1429,
 			"max": [
 				11.29191,
 				1.272939,
@@ -10651,9 +10651,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16874856,
+			"byteOffset": 5188164,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 1429,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10667,9 +10667,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 16958592,
+			"byteOffset": 5205312,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"max": [
 				3.7,
 				3.7,
@@ -10685,9 +10685,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17089740,
+			"byteOffset": 5235636,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10701,9 +10701,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17220888,
+			"byteOffset": 5265960,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -10719,9 +10719,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17283816,
+			"byteOffset": 5282856,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10735,9 +10735,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17346744,
+			"byteOffset": 5299752,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -10753,9 +10753,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17409672,
+			"byteOffset": 5316648,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10769,9 +10769,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17472600,
+			"byteOffset": 5333544,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -10787,9 +10787,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17535528,
+			"byteOffset": 5350440,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10803,9 +10803,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17598456,
+			"byteOffset": 5367336,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -10821,9 +10821,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17661384,
+			"byteOffset": 5384232,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10837,9 +10837,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17724312,
+			"byteOffset": 5401128,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -10855,9 +10855,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17787240,
+			"byteOffset": 5418024,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10871,9 +10871,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 17850168,
+			"byteOffset": 5434920,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"max": [
 				7.925,
 				2.976153,
@@ -10889,9 +10889,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18005184,
+			"byteOffset": 5475456,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10905,9 +10905,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18160200,
+			"byteOffset": 5515992,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"max": [
 				7.925,
 				2.976153,
@@ -10923,9 +10923,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18315216,
+			"byteOffset": 5556528,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10939,9 +10939,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18470232,
+			"byteOffset": 5597064,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"max": [
 				7.925,
 				2.976153,
@@ -10957,9 +10957,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18625248,
+			"byteOffset": 5637600,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -10973,9 +10973,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18780264,
+			"byteOffset": 5678136,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"max": [
 				7.925,
 				2.976153,
@@ -10991,9 +10991,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 18935280,
+			"byteOffset": 5718672,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11007,9 +11007,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19090296,
+			"byteOffset": 5759208,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"max": [
 				7.925,
 				2.976153,
@@ -11025,9 +11025,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19245312,
+			"byteOffset": 5799744,
 			"componentType": 5126,
-			"count": 12918,
+			"count": 3378,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11041,9 +11041,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19400328,
+			"byteOffset": 5840280,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"max": [
 				3,
 				3,
@@ -11059,9 +11059,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19482696,
+			"byteOffset": 5862192,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11075,9 +11075,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19565064,
+			"byteOffset": 5884104,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"max": [
 				3,
 				3,
@@ -11093,9 +11093,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19647432,
+			"byteOffset": 5906016,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11109,9 +11109,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19729800,
+			"byteOffset": 5927928,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"max": [
 				3,
 				3,
@@ -11127,9 +11127,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19812168,
+			"byteOffset": 5949840,
 			"componentType": 5126,
-			"count": 6864,
+			"count": 1826,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11143,9 +11143,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19894536,
+			"byteOffset": 5971752,
 			"componentType": 5126,
-			"count": 2028,
+			"count": 706,
 			"max": [
 				8.1,
 				4,
@@ -11161,9 +11161,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19918872,
+			"byteOffset": 5980224,
 			"componentType": 5126,
-			"count": 2028,
+			"count": 706,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11177,9 +11177,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19943208,
+			"byteOffset": 5988696,
 			"componentType": 5126,
-			"count": 2028,
+			"count": 706,
 			"max": [
 				8.1,
 				4,
@@ -11195,9 +11195,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19967544,
+			"byteOffset": 5997168,
 			"componentType": 5126,
-			"count": 2028,
+			"count": 706,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11211,9 +11211,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 19991880,
+			"byteOffset": 6005640,
 			"componentType": 5126,
-			"count": 4968,
+			"count": 1892,
 			"max": [
 				7.925,
 				7.925,
@@ -11229,9 +11229,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20051496,
+			"byteOffset": 6028344,
 			"componentType": 5126,
-			"count": 4968,
+			"count": 1892,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11245,9 +11245,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20111112,
+			"byteOffset": 6051048,
 			"componentType": 5126,
-			"count": 4833,
+			"count": 1652,
 			"max": [
 				8.1,
 				12,
@@ -11263,9 +11263,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20169108,
+			"byteOffset": 6070872,
 			"componentType": 5126,
-			"count": 4833,
+			"count": 1652,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11279,9 +11279,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20227104,
+			"byteOffset": 6090696,
 			"componentType": 5126,
-			"count": 4968,
+			"count": 1892,
 			"max": [
 				7.925,
 				7.925,
@@ -11297,9 +11297,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20286720,
+			"byteOffset": 6113400,
 			"componentType": 5126,
-			"count": 4968,
+			"count": 1892,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11313,9 +11313,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20346336,
+			"byteOffset": 6136104,
 			"componentType": 5126,
-			"count": 4833,
+			"count": 1652,
 			"max": [
 				8.1,
 				12,
@@ -11331,9 +11331,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20404332,
+			"byteOffset": 6155928,
 			"componentType": 5126,
-			"count": 4833,
+			"count": 1652,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11347,9 +11347,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20462328,
+			"byteOffset": 6175752,
 			"componentType": 5126,
-			"count": 16524,
+			"count": 5852,
 			"max": [
 				21.0362473,
 				11.0172768,
@@ -11365,9 +11365,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20660616,
+			"byteOffset": 6245976,
 			"componentType": 5126,
-			"count": 16524,
+			"count": 5852,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11381,9 +11381,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20858904,
+			"byteOffset": 6316200,
 			"componentType": 5126,
-			"count": 5856,
+			"count": 1968,
 			"max": [
 				13.4129705,
 				3.394001,
@@ -11399,9 +11399,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20929176,
+			"byteOffset": 6339816,
 			"componentType": 5126,
-			"count": 5856,
+			"count": 1968,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11415,9 +11415,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 20999448,
+			"byteOffset": 6363432,
 			"componentType": 5126,
-			"count": 5856,
+			"count": 1968,
 			"max": [
 				13.4129705,
 				3.394001,
@@ -11433,9 +11433,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21069720,
+			"byteOffset": 6387048,
 			"componentType": 5126,
-			"count": 5856,
+			"count": 1968,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11449,9 +11449,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21139992,
+			"byteOffset": 6410664,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 1429,
 			"max": [
 				11.29191,
 				1.272939,
@@ -11467,9 +11467,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21223728,
+			"byteOffset": 6427812,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 1429,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11483,9 +11483,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21307464,
+			"byteOffset": 6444960,
 			"componentType": 5126,
-			"count": 16656,
+			"count": 5740,
 			"max": [
 				21.5066471,
 				11.4876766,
@@ -11501,9 +11501,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21507336,
+			"byteOffset": 6513840,
 			"componentType": 5126,
-			"count": 16656,
+			"count": 5740,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11517,9 +11517,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21707208,
+			"byteOffset": 6582720,
 			"componentType": 5126,
-			"count": 19731,
+			"count": 5595,
 			"max": [
 				20.8838215,
 				10.864851,
@@ -11535,9 +11535,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 21943980,
+			"byteOffset": 6649860,
 			"componentType": 5126,
-			"count": 19731,
+			"count": 5595,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11551,9 +11551,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22180752,
+			"byteOffset": 6717000,
 			"componentType": 5126,
-			"count": 7005,
+			"count": 1430,
 			"max": [
 				11.29191,
 				1.272939,
@@ -11569,9 +11569,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22264812,
+			"byteOffset": 6734160,
 			"componentType": 5126,
-			"count": 7005,
+			"count": 1430,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11585,9 +11585,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22348872,
+			"byteOffset": 6751320,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"max": [
 				3.7,
 				3.7,
@@ -11603,9 +11603,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22480020,
+			"byteOffset": 6781644,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11619,9 +11619,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22611168,
+			"byteOffset": 6811968,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"max": [
 				3.7,
 				3.7,
@@ -11637,9 +11637,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22742316,
+			"byteOffset": 6842292,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11653,9 +11653,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 22873464,
+			"byteOffset": 6872616,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"max": [
 				3.7,
 				3.7,
@@ -11671,9 +11671,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23004612,
+			"byteOffset": 6902940,
 			"componentType": 5126,
-			"count": 10929,
+			"count": 2527,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11687,9 +11687,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23135760,
+			"byteOffset": 6933264,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"max": [
 				1,
 				1,
@@ -11705,9 +11705,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23155200,
+			"byteOffset": 6937584,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11721,9 +11721,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23174640,
+			"byteOffset": 6941904,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"max": [
 				10.4396582,
 				3.951214,
@@ -11739,9 +11739,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23265072,
+			"byteOffset": 6962196,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11755,9 +11755,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23355504,
+			"byteOffset": 6982488,
 			"componentType": 5126,
-			"count": 1380,
+			"count": 468,
 			"max": [
 				3.903017,
 				3.903017,
@@ -11773,9 +11773,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23372064,
+			"byteOffset": 6988104,
 			"componentType": 5126,
-			"count": 1380,
+			"count": 468,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11789,9 +11789,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23388624,
+			"byteOffset": 6993720,
 			"componentType": 5126,
-			"count": 14322,
+			"count": 2845,
 			"max": [
 				7,
 				7.003289,
@@ -11807,9 +11807,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23560488,
+			"byteOffset": 7027860,
 			"componentType": 5126,
-			"count": 14322,
+			"count": 2845,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11823,9 +11823,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23732352,
+			"byteOffset": 7062000,
 			"componentType": 5126,
-			"count": 3327,
+			"count": 933,
 			"max": [
 				9.049748,
 				9.003234,
@@ -11841,9 +11841,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23772276,
+			"byteOffset": 7073196,
 			"componentType": 5126,
-			"count": 3327,
+			"count": 933,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11857,9 +11857,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23812200,
+			"byteOffset": 7084392,
 			"componentType": 5126,
-			"count": 6048,
+			"count": 2072,
 			"max": [
 				19.2,
 				5.66695,
@@ -11875,9 +11875,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23884776,
+			"byteOffset": 7109256,
 			"componentType": 5126,
-			"count": 6048,
+			"count": 2072,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11891,9 +11891,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 23957352,
+			"byteOffset": 7134120,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1209,
 			"max": [
 				15.8,
 				7.8,
@@ -11909,9 +11909,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24021432,
+			"byteOffset": 7148628,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1209,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11925,9 +11925,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24085512,
+			"byteOffset": 7163136,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"max": [
 				6.2,
 				1.575,
@@ -11943,9 +11943,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24182784,
+			"byteOffset": 7182804,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11959,9 +11959,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24280056,
+			"byteOffset": 7202472,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"max": [
 				6.2,
 				1.575,
@@ -11977,9 +11977,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24377328,
+			"byteOffset": 7222140,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -11993,9 +11993,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24474600,
+			"byteOffset": 7241808,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"max": [
 				6.2,
 				1.575,
@@ -12011,9 +12011,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24571872,
+			"byteOffset": 7261476,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12027,9 +12027,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24669144,
+			"byteOffset": 7281144,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"max": [
 				6.2,
 				1.575,
@@ -12045,9 +12045,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24766416,
+			"byteOffset": 7300812,
 			"componentType": 5126,
-			"count": 8106,
+			"count": 1639,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12061,9 +12061,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24863688,
+			"byteOffset": 7320480,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"max": [
 				10.4396582,
 				3.951214,
@@ -12079,9 +12079,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 24954120,
+			"byteOffset": 7340772,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12095,9 +12095,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25044552,
+			"byteOffset": 7361064,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"max": [
 				10.4396582,
 				3.951214,
@@ -12113,9 +12113,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25134984,
+			"byteOffset": 7381356,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12129,9 +12129,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25225416,
+			"byteOffset": 7401648,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"max": [
 				10.4396582,
 				3.951214,
@@ -12147,9 +12147,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25315848,
+			"byteOffset": 7421940,
 			"componentType": 5126,
-			"count": 7536,
+			"count": 1691,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12163,9 +12163,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25406280,
+			"byteOffset": 7442232,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"max": [
 				1,
 				1,
@@ -12181,9 +12181,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25425720,
+			"byteOffset": 7446552,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12197,9 +12197,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25445160,
+			"byteOffset": 7450872,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"max": [
 				1,
 				1,
@@ -12215,9 +12215,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25464600,
+			"byteOffset": 7455192,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12231,9 +12231,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25484040,
+			"byteOffset": 7459512,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"max": [
 				1,
 				1,
@@ -12249,9 +12249,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25503480,
+			"byteOffset": 7463832,
 			"componentType": 5126,
-			"count": 1620,
+			"count": 360,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12265,9 +12265,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25522920,
+			"byteOffset": 7468152,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1209,
 			"max": [
 				15.8,
 				7.8,
@@ -12283,9 +12283,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25587000,
+			"byteOffset": 7482660,
 			"componentType": 5126,
-			"count": 5340,
+			"count": 1209,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12299,9 +12299,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25651080,
+			"byteOffset": 7497168,
 			"componentType": 5126,
-			"count": 1380,
+			"count": 468,
 			"max": [
 				3.903017,
 				3.903017,
@@ -12317,9 +12317,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25667640,
+			"byteOffset": 7502784,
 			"componentType": 5126,
-			"count": 1380,
+			"count": 468,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12333,9 +12333,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25684200,
+			"byteOffset": 7508400,
 			"componentType": 5126,
-			"count": 204,
+			"count": 72,
 			"max": [
 				3.35,
 				3.35,
@@ -12351,9 +12351,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25686648,
+			"byteOffset": 7509264,
 			"componentType": 5126,
-			"count": 204,
+			"count": 72,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12367,9 +12367,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25689096,
+			"byteOffset": 7510128,
 			"componentType": 5126,
-			"count": 14178,
+			"count": 2775,
 			"max": [
 				6.35,
 				7,
@@ -12385,9 +12385,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 25859232,
+			"byteOffset": 7543428,
 			"componentType": 5126,
-			"count": 14178,
+			"count": 2775,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12401,9 +12401,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26029368,
+			"byteOffset": 7576728,
 			"componentType": 5126,
-			"count": 1938,
+			"count": 541,
 			"max": [
 				8,
 				2.883424,
@@ -12419,9 +12419,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26052624,
+			"byteOffset": 7583220,
 			"componentType": 5126,
-			"count": 1938,
+			"count": 541,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12435,9 +12435,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26075880,
+			"byteOffset": 7589712,
 			"componentType": 5126,
-			"count": 10092,
+			"count": 1805,
 			"max": [
 				22.1904449,
 				17.5938854,
@@ -12453,9 +12453,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26196984,
+			"byteOffset": 7611372,
 			"componentType": 5126,
-			"count": 10092,
+			"count": 1805,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12469,9 +12469,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26318088,
+			"byteOffset": 7633032,
 			"componentType": 5126,
-			"count": 11625,
+			"count": 2341,
 			"max": [
 				22.8414173,
 				18.5203514,
@@ -12487,9 +12487,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26457588,
+			"byteOffset": 7661124,
 			"componentType": 5126,
-			"count": 11625,
+			"count": 2341,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12503,9 +12503,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26597088,
+			"byteOffset": 7689216,
 			"componentType": 5126,
-			"count": 8202,
+			"count": 1773,
 			"max": [
 				21.95,
 				9.75,
@@ -12521,9 +12521,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26695512,
+			"byteOffset": 7710492,
 			"componentType": 5126,
-			"count": 8202,
+			"count": 1773,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12537,9 +12537,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26793936,
+			"byteOffset": 7731768,
 			"componentType": 5126,
-			"count": 8820,
+			"count": 3016,
 			"max": [
 				24.1,
 				8.2,
@@ -12555,9 +12555,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 26899776,
+			"byteOffset": 7767960,
 			"componentType": 5126,
-			"count": 8820,
+			"count": 3016,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12571,9 +12571,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27005616,
+			"byteOffset": 7804152,
 			"componentType": 5126,
-			"count": 8820,
+			"count": 3016,
 			"max": [
 				24.1,
 				8.2,
@@ -12589,9 +12589,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27111456,
+			"byteOffset": 7840344,
 			"componentType": 5126,
-			"count": 8820,
+			"count": 3016,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12605,9 +12605,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27217296,
+			"byteOffset": 7876536,
 			"componentType": 5126,
-			"count": 6135,
+			"count": 2076,
 			"max": [
 				19.2,
 				5.666971,
@@ -12623,9 +12623,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27290916,
+			"byteOffset": 7901448,
 			"componentType": 5126,
-			"count": 6135,
+			"count": 2076,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12639,9 +12639,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27364536,
+			"byteOffset": 7926360,
 			"componentType": 5126,
-			"count": 9642,
+			"count": 2123,
 			"max": [
 				20,
 				11.0507278,
@@ -12657,9 +12657,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27480240,
+			"byteOffset": 7951836,
 			"componentType": 5126,
-			"count": 9642,
+			"count": 2123,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12673,9 +12673,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27595944,
+			"byteOffset": 7977312,
 			"componentType": 5126,
-			"count": 3492,
+			"count": 1184,
 			"max": [
 				24.1,
 				4.1,
@@ -12691,9 +12691,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27637848,
+			"byteOffset": 7991520,
 			"componentType": 5126,
-			"count": 3492,
+			"count": 1184,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12707,9 +12707,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27679752,
+			"byteOffset": 8005728,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"max": [
 				56.1,
 				4,
@@ -12725,9 +12725,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27763488,
+			"byteOffset": 8037144,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12741,9 +12741,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27847224,
+			"byteOffset": 8068560,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"max": [
 				19.125,
 				7.85,
@@ -12759,9 +12759,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 27927360,
+			"byteOffset": 8095920,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12775,9 +12775,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28007496,
+			"byteOffset": 8123280,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"max": [
 				56.1,
 				4,
@@ -12793,9 +12793,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28091232,
+			"byteOffset": 8154696,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12809,9 +12809,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28174968,
+			"byteOffset": 8186112,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"max": [
 				56.1,
 				4,
@@ -12827,9 +12827,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28258704,
+			"byteOffset": 8217528,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12843,9 +12843,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28342440,
+			"byteOffset": 8248944,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"max": [
 				19.125,
 				7.85,
@@ -12861,9 +12861,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28422576,
+			"byteOffset": 8276304,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12877,9 +12877,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28502712,
+			"byteOffset": 8303664,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -12895,9 +12895,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28565640,
+			"byteOffset": 8320560,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12911,9 +12911,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28628568,
+			"byteOffset": 8337456,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -12929,9 +12929,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28691496,
+			"byteOffset": 8354352,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12945,9 +12945,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28754424,
+			"byteOffset": 8371248,
 			"componentType": 5126,
-			"count": 3492,
+			"count": 1184,
 			"max": [
 				24.1,
 				4.1,
@@ -12963,9 +12963,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28796328,
+			"byteOffset": 8385456,
 			"componentType": 5126,
-			"count": 3492,
+			"count": 1184,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -12979,9 +12979,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28838232,
+			"byteOffset": 8399664,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"max": [
 				56.1,
 				4,
@@ -12997,9 +12997,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 28921968,
+			"byteOffset": 8431080,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13013,9 +13013,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29005704,
+			"byteOffset": 8462496,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"max": [
 				56.1,
 				4,
@@ -13031,9 +13031,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29089440,
+			"byteOffset": 8493912,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13047,9 +13047,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29173176,
+			"byteOffset": 8525328,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"max": [
 				56.1,
 				4,
@@ -13065,9 +13065,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29256912,
+			"byteOffset": 8556744,
 			"componentType": 5126,
-			"count": 6978,
+			"count": 2618,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13081,9 +13081,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29340648,
+			"byteOffset": 8588160,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"max": [
 				19.125,
 				7.85,
@@ -13099,9 +13099,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29420784,
+			"byteOffset": 8615520,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13115,9 +13115,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29500920,
+			"byteOffset": 8642880,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"max": [
 				19.125,
 				7.85,
@@ -13133,9 +13133,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29581056,
+			"byteOffset": 8670240,
 			"componentType": 5126,
-			"count": 6678,
+			"count": 2280,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13149,9 +13149,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29661192,
+			"byteOffset": 8697600,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13167,9 +13167,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29724120,
+			"byteOffset": 8714496,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13183,9 +13183,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29787048,
+			"byteOffset": 8731392,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13201,9 +13201,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29849976,
+			"byteOffset": 8748288,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13217,9 +13217,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 29912904,
+			"byteOffset": 8765184,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"max": [
 				8.5,
 				7.85,
@@ -13235,9 +13235,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30064968,
+			"byteOffset": 8800944,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13251,9 +13251,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30217032,
+			"byteOffset": 8836704,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"max": [
 				14.994256,
 				10.7,
@@ -13269,9 +13269,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30355272,
+			"byteOffset": 8878128,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13285,9 +13285,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30493512,
+			"byteOffset": 8919552,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13303,9 +13303,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30556440,
+			"byteOffset": 8936448,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13319,9 +13319,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30619368,
+			"byteOffset": 8953344,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"max": [
 				8.5,
 				7.85,
@@ -13337,9 +13337,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30771432,
+			"byteOffset": 8989104,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13353,9 +13353,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30923496,
+			"byteOffset": 9024864,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13371,9 +13371,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 30986424,
+			"byteOffset": 9041760,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13387,9 +13387,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31049352,
+			"byteOffset": 9058656,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"max": [
 				14.994256,
 				10.7,
@@ -13405,9 +13405,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31187592,
+			"byteOffset": 9100080,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13421,9 +13421,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31325832,
+			"byteOffset": 9141504,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"max": [
 				8.5,
 				7.85,
@@ -13439,9 +13439,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31477896,
+			"byteOffset": 9177264,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13455,9 +13455,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31629960,
+			"byteOffset": 9213024,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13473,9 +13473,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31692888,
+			"byteOffset": 9229920,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13489,9 +13489,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31755816,
+			"byteOffset": 9246816,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"max": [
 				14.994256,
 				10.7,
@@ -13507,9 +13507,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 31894056,
+			"byteOffset": 9288240,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13523,9 +13523,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32032296,
+			"byteOffset": 9329664,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"max": [
 				8.5,
 				7.85,
@@ -13541,9 +13541,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32184360,
+			"byteOffset": 9365424,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13557,9 +13557,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32336424,
+			"byteOffset": 9401184,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13575,9 +13575,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32399352,
+			"byteOffset": 9418080,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13591,9 +13591,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32462280,
+			"byteOffset": 9434976,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"max": [
 				14.994256,
 				10.7,
@@ -13609,9 +13609,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32600520,
+			"byteOffset": 9476400,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13625,9 +13625,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32738760,
+			"byteOffset": 9517824,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"max": [
 				8.5,
 				7.85,
@@ -13643,9 +13643,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 32890824,
+			"byteOffset": 9553584,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13659,9 +13659,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33042888,
+			"byteOffset": 9589344,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13677,9 +13677,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33105816,
+			"byteOffset": 9606240,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13693,9 +13693,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33168744,
+			"byteOffset": 9623136,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"max": [
 				14.994256,
 				10.7,
@@ -13711,9 +13711,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33306984,
+			"byteOffset": 9664560,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13727,9 +13727,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33445224,
+			"byteOffset": 9705984,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"max": [
 				8.5,
 				7.85,
@@ -13745,9 +13745,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33597288,
+			"byteOffset": 9741744,
 			"componentType": 5126,
-			"count": 12672,
+			"count": 2980,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13761,9 +13761,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33749352,
+			"byteOffset": 9777504,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"max": [
 				7.925,
 				3,
@@ -13779,9 +13779,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33812280,
+			"byteOffset": 9794400,
 			"componentType": 5126,
-			"count": 5244,
+			"count": 1408,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		},
@@ -13795,9 +13795,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 33875208,
+			"byteOffset": 9811296,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"max": [
 				14.994256,
 				10.7,
@@ -13813,9 +13813,9 @@
 		},
 		{
 			"bufferView": 1,
-			"byteOffset": 34013448,
+			"byteOffset": 9852720,
 			"componentType": 5126,
-			"count": 11520,
+			"count": 3452,
 			"type": "VEC3",
 			"name": "accessorNormals"
 		}
@@ -13829,7 +13829,7 @@
 		{
 			"buffer": 0,
 			"byteOffset": 2846008,
-			"byteLength": 34151688,
+			"byteLength": 9894144,
 			"byteStride": 12,
 			"name": "bufferViewFloatVec3"
 		}
@@ -13837,7 +13837,7 @@
 	"buffers": [
 		{
 			"uri": "Buggy.bin",
-			"byteLength": 36997696
+			"byteLength": 12740152
 		}
 	],
 	"materials": [

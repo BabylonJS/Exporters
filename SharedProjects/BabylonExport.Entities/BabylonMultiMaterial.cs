@@ -12,6 +12,18 @@ namespace BabylonExport.Entities
         public string id { get; set; }
 
         [DataMember]
-        public string[] materials { get; set; }        
+        public string[] materials { get; set; }    
+        
+        public BabylonMultiMaterial()
+        {
+
+        }
+
+        public BabylonMultiMaterial(BabylonMultiMaterial original)
+        {
+            name = original.name;
+            id = original.id;
+            materials = (string[]) original.materials.Clone();
+        }
     }
 }

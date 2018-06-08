@@ -17,6 +17,9 @@ namespace BabylonExport.Entities
         [DataMember(IsRequired = true)]
         public float[] normals { get; set; }
 
+        [DataMember(IsRequired = false)]
+        public float[] tangents { get; set; }
+
         [DataMember(EmitDefaultValue = false)]
         public BabylonAnimation[] animations { get; set; }
     }

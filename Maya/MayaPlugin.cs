@@ -28,10 +28,13 @@ namespace Maya2Babylon
 
         bool IExtensionPlugin.UninitializePlugin()
         {
-            // Remove menu from main menu bar
+            // Remove menu from main menu bar and close the form
             MGlobal.executeCommand($@"deleteUI -menu ""{MenuPath}"";");
 
             MGlobal.displayInfo("Babylon plug-in uninitialized");
+
+            toBabylon.disposeForm();
+            
             return true;
         }
 
@@ -58,15 +61,19 @@ namespace Maya2Babylon
             form.Show();
             form.BringToFront();
             form.WindowState = FormWindowState.Normal;
-            form.FormClosed += (object sender, FormClosedEventArgs e) =>
+            form.closingByUser = () => { return disposeForm(); };
+            // TODO - save states - FORM: checkboxes and inputs. MEL: reselected meshes / nodes?
+            form.closingByShutDown = () => { return disposeForm(); };
+            // form.closingByCrash = () => { return disposeForm(); };
+        }
+        public static bool disposeForm()
+        {
+            if (form != null)
             {
-                if (form == null)
-                {
-                    return;
-                }
                 form.Dispose();
                 form = null;
-            };
+            }
+            return true;
         }
     }
 }

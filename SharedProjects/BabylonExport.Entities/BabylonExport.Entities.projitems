@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonColor3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonDirectionalLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonFresnelParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonFurMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonHDRCubeTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonIAnimatable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonLensFlare.cs" />
