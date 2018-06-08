@@ -334,8 +334,8 @@ namespace Max2Babylon
                 }
 
                 // Tangent
-                bool isTangentExportSuccess = exportParameters.exportTangents;  // Export tangents if option is checked and mesh have tangents
-                if (isTangentExportSuccess)
+                // Export tangents if option is checked and mesh have tangents
+                if (exportParameters.exportTangents)
                 {
                     babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
                 }
@@ -456,6 +456,12 @@ namespace Max2Babylon
                                 var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
                                 babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
+
+                                // Tangent
+                                if (exportParameters.exportTangents)
+                                {
+                                    babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
+                                }
 
                                 // Animations
                                 var animations = new List<BabylonAnimation>();
@@ -671,8 +677,12 @@ namespace Max2Babylon
 
             if (exportParameters.exportTangents)
             {
-                float[] tangent = mesh.GetTangent(vertexIndex, 1).Normalize.ToArray();
-                vertex.Tangent = new float[] { tangent[0], tangent[1], tangent[2], -1f };
+                int indexTangentBinormal = mesh.GetFaceVertexTangentBinormal(face.MeshFaceIndex, facePart, 1);
+                IPoint3 normal = vertex.Normal.Normalize;
+                IPoint3 tangent = mesh.GetTangent(indexTangentBinormal, 1).Normalize;
+                IPoint3 bitangent = mesh.GetBinormal(indexTangentBinormal, 1).Normalize;
+                int w = GetW(normal, tangent, bitangent);
+                vertex.Tangent = new float[] { tangent.X, tangent.Y, tangent.Z, w };
             }
 
             // Convert position and normal to local space
@@ -913,6 +923,36 @@ namespace Max2Babylon
             GeneratePositionAnimation(meshNode, animations);
             GenerateRotationAnimation(meshNode, animations);
             GenerateScalingAnimation(meshNode, animations);
+        }
+
+        /// <summary>
+        /// get the w of the tangent
+        /// </summary>
+        /// <param name="normal"></param>
+        /// <param name="tangent"></param>
+        /// <param name="bitangent"></param>
+        /// <returns>
+        /// -1 when the normal is not flipped
+        /// 1 when the normal is flipped
+        /// </returns>
+        private int GetW(IPoint3 normal, IPoint3 tangent, IPoint3 bitangent)
+        {
+            //Cross product bitangent = w * normal ^ tangent
+            float x = normal.Y * tangent.Z - normal.Z * tangent.Y;
+            float y = normal.Z * tangent.X - normal.X * tangent.Z;
+            float z = normal.X * tangent.Y - normal.Y * tangent.X;
+
+            int w = Math.Sign(bitangent.X * x);
+            if (w == 0)
+            {
+                w = Math.Sign(bitangent.Y * y);
+            }
+            if (w == 0)
+            {
+                w = Math.Sign(bitangent.Z * z);
+            }
+
+            return w;
         }
     }
 }
