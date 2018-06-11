@@ -363,7 +363,8 @@ namespace Maya2Babylon
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    name = currentFullPathName,
+                    id = currentNodeTransform.uuid().asString(),
+                    name = dagNode.name,
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,
                     matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),

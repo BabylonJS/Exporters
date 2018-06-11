@@ -1,58 +1,19 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using System.Collections.Generic;
 
 namespace Maya2Babylon
 {
     partial class BabylonExporter
     {
-        private GLTFNode ExportAbstractMesh(BabylonAbstractMesh babylonAbstractMesh, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
+        /// <summary>
+        /// Store the number of nodes with a specific name
+        /// </summary>
+        private Dictionary<string, int> NbNodesByName = new Dictionary<string, int>();
+
+        private GLTFNode ExportAbstractMesh(ref GLTFNode gltfNode, BabylonAbstractMesh babylonAbstractMesh, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
-            RaiseMessage("GLTFExporter.AbstractMesh | Export abstract mesh named: " + babylonAbstractMesh.name, 1);
-
-            // Node
-            var gltfNode = new GLTFNode();
-            gltfNode.name = babylonAbstractMesh.name;
-            gltfNode.index = gltf.NodesList.Count;
-            gltf.NodesList.Add(gltfNode);
-
-            // Hierarchy
-            if (gltfParentNode != null)
-            {
-                RaiseMessage("GLTFExporter.AbstractMesh | Add " + babylonAbstractMesh.name + " as child to " + gltfParentNode.name, 2);
-                gltfParentNode.ChildrenList.Add(gltfNode.index);
-                gltfNode.parent = gltfParentNode;
-            }
-            else
-            {
-                // It's a root node
-                // Only root nodes are listed in a gltf scene
-                RaiseMessage("GLTFExporter.AbstractMesh | Add " + babylonAbstractMesh.name + " as root node to scene", 2);
-                gltf.scenes[0].NodesList.Add(gltfNode.index);
-            }
-
-            // Transform
-            gltfNode.translation = babylonAbstractMesh.position;
-            if (babylonAbstractMesh.rotationQuaternion != null)
-            {
-                gltfNode.rotation = babylonAbstractMesh.rotationQuaternion;
-            }
-            else
-            {
-                // Convert rotation vector to quaternion
-                BabylonVector3 rotationVector3 = new BabylonVector3
-                {
-                    X = babylonAbstractMesh.rotation[0],
-                    Y = babylonAbstractMesh.rotation[1],
-                    Z = babylonAbstractMesh.rotation[2]
-                };
-                gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
-            }
-            gltfNode.scale = babylonAbstractMesh.scaling;
-
-            // Switch coordinate system at object level
-            gltfNode.translation[2] *= -1;
-            gltfNode.rotation[0] *= -1;
-            gltfNode.rotation[1] *= -1;
+            RaiseMessage("GLTFExporter.AbstractMesh | Export abstract mesh named: " + babylonAbstractMesh.name, 2);
 
             // Mesh
             var gltfMesh = gltf.MeshesList.Find(_gltfMesh => _gltfMesh.idGroupInstance == babylonAbstractMesh.idGroupInstance);
@@ -69,11 +30,30 @@ namespace Maya2Babylon
                     gltfNode.skin = gltfSkin.index;
                 }
             }
-            
-            // Animations
-            ExportNodeAnimation(babylonAbstractMesh, gltf, gltfNode, babylonScene);
 
             return gltfNode;
+        }
+
+        /// <summary>
+        /// Append a suffix to the specified name if a node already has same name
+        /// 
+        /// This is used for ThreeJS engine because animations are referenced by names.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string GetUniqueNodeName(string name)
+        {
+            if (NbNodesByName.ContainsKey(name))
+            {
+                string nameSuffix = " (" + NbNodesByName[name] + ")";
+                NbNodesByName[name]++;
+                name += nameSuffix;
+            }
+            else
+            {
+                NbNodesByName.Add(name, 1);
+            }
+            return name;
         }
     }
 }

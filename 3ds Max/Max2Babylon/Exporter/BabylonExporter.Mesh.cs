@@ -175,13 +175,14 @@ namespace Max2Babylon
             // Collisions
             babylonMesh.checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions");
 
+            // Skin
             var isSkinned = gameMesh.IsObjectSkinned;
             var skin = gameMesh.IGameSkin;
             var unskinnedMesh = gameMesh;
             IGMatrix skinInitPoseMatrix = Loader.Global.GMatrix.Create(Loader.Global.Matrix3.Create(true));
             List<int> boneIds = null;
             int maxNbBones = 0;
-            if (isSkinned)
+            if (isSkinned && GetRevelantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
             {
                 bonesCount = skin.TotalSkinBoneCount;
                 var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
@@ -197,6 +198,10 @@ namespace Max2Babylon
                 babylonMesh.skeletonId = skins.IndexOf(skin);
                 skin.GetInitSkinTM(skinInitPoseMatrix);
                 boneIds = GetNodeIndices(skin);
+            }
+            else
+            {
+                skin = null;
             }
 
             // Mesh
@@ -258,14 +263,29 @@ namespace Max2Babylon
 
                 if (mtl != null)
                 {
-                    babylonMesh.materialId = mtl.MaxMaterial.GetGuid().ToString();
-
-                    if (!referencedMaterials.Contains(mtl))
+                    IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
+                    if (unsupportedMaterial == null)
                     {
-                        referencedMaterials.Add(mtl);
-                    }
+                        babylonMesh.materialId = mtl.MaxMaterial.GetGuid().ToString();
 
-                    multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
+                        if (!referencedMaterials.Contains(mtl))
+                        {
+                            referencedMaterials.Add(mtl);
+                        }
+
+                        multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
+                    }
+                    else
+                    {
+                        if (mtl.SubMaterialCount == 0 || mtl == unsupportedMaterial)
+                        {
+                            RaiseWarning("Unsupported material type '" + unsupportedMaterial.MaterialClass + "'. Material is ignored.", 2);
+                        }
+                        else
+                        {
+                            RaiseWarning("Unsupported sub-material type '" + unsupportedMaterial.MaterialClass + "'. Material is ignored.", 2);
+                        }
+                    }
                 }
 
                 babylonMesh.visibility = meshNode.MaxNode.GetVisibility(0, Tools.Forever);
@@ -311,6 +331,13 @@ namespace Max2Babylon
                     {
                         RaiseError("You can try to optimize your object using [Try to optimize vertices] option", 2);
                     }
+                }
+
+                // Tangent
+                // Export tangents if option is checked and mesh have tangents
+                if (exportParameters.exportTangents)
+                {
+                    babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
                 }
 
                 RaiseMessage($"{vertices.Count} vertices, {indices.Count / 3} faces", 2);
@@ -430,6 +457,12 @@ namespace Max2Babylon
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
                                 babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
 
+                                // Tangent
+                                if (exportParameters.exportTangents)
+                                {
+                                    babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
+                                }
+
                                 // Animations
                                 var animations = new List<BabylonAnimation>();
                                 var morphWeight = morpher.GetMorphWeight(i);
@@ -445,6 +478,9 @@ namespace Max2Babylon
                     babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
                 }
             }
+
+            // World Modifiers
+            ExportWorldModifiers(meshNode, babylonScene, babylonMesh);
 
             // Animations
             // Done last to avoid '0 vertex found' error (unkown cause)
@@ -625,6 +661,7 @@ namespace Max2Babylon
             CheckCancelled();
         }
 
+
         int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
@@ -637,6 +674,16 @@ namespace Max2Babylon
                 Position = mesh.GetVertex(vertexIndex, false), // world space
                 Normal = mesh.GetNormal((int)face.Norm[facePart], false) // world space
             };
+
+            if (exportParameters.exportTangents)
+            {
+                int indexTangentBinormal = mesh.GetFaceVertexTangentBinormal(face.MeshFaceIndex, facePart, 1);
+                IPoint3 normal = vertex.Normal.Normalize;
+                IPoint3 tangent = mesh.GetTangent(indexTangentBinormal, 1).Normalize;
+                IPoint3 bitangent = mesh.GetBinormal(indexTangentBinormal, 1).Normalize;
+                int w = GetW(normal, tangent, bitangent);
+                vertex.Tangent = new float[] { tangent.X, tangent.Y, tangent.Z, w };
+            }
 
             // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
@@ -876,6 +923,36 @@ namespace Max2Babylon
             GeneratePositionAnimation(meshNode, animations);
             GenerateRotationAnimation(meshNode, animations);
             GenerateScalingAnimation(meshNode, animations);
+        }
+
+        /// <summary>
+        /// get the w of the tangent
+        /// </summary>
+        /// <param name="normal"></param>
+        /// <param name="tangent"></param>
+        /// <param name="bitangent"></param>
+        /// <returns>
+        /// -1 when the normal is not flipped
+        /// 1 when the normal is flipped
+        /// </returns>
+        private int GetW(IPoint3 normal, IPoint3 tangent, IPoint3 bitangent)
+        {
+            //Cross product bitangent = w * normal ^ tangent
+            float x = normal.Y * tangent.Z - normal.Z * tangent.Y;
+            float y = normal.Z * tangent.X - normal.X * tangent.Z;
+            float z = normal.X * tangent.Y - normal.Y * tangent.X;
+
+            int w = Math.Sign(bitangent.X * x);
+            if (w == 0)
+            {
+                w = Math.Sign(bitangent.Y * y);
+            }
+            if (w == 0)
+            {
+                w = Math.Sign(bitangent.Z * z);
+            }
+
+            return w;
         }
     }
 }

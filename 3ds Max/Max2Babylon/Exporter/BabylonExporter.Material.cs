@@ -252,10 +252,7 @@ namespace Max2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
-            // TODO - Find another way to detect if material is physical
-            else if (materialNode.MaterialClass.ToLower() == "physical material" || // English
-                     materialNode.MaterialClass.ToLower() == "physisches material" || // German // TODO - check if translation is ok
-                     materialNode.MaterialClass.ToLower() == "matériau physique") // French
+            else if (isPhysicalMaterial(materialNode))
             {
                 var propertyContainer = materialNode.IPropertyContainer;
 
@@ -333,8 +330,70 @@ namespace Max2Babylon
             }
             else
             {
-                RaiseWarning("Unsupported material type: " + materialNode.MaterialClass, 2);
+                // isMaterialExportable check should prevent this to happen
+                RaiseError("Unsupported material type: " + materialNode.MaterialClass, 2);
             }
+        }
+
+        public bool isPhysicalMaterial(IIGameMaterial materialNode)
+        {
+            // TODO - Find another way to detect if material is physical
+            return materialNode.MaterialClass.ToLower() == "physical material" || // English
+                     materialNode.MaterialClass.ToLower() == "physikalisches material" || // German
+                     materialNode.MaterialClass.ToLower() == "matériau physique"; // French
+        }
+
+        public bool isMultiSubObjectMaterial(IIGameMaterial materialNode)
+        {
+            // TODO - Find another way to detect if material is a multi/sub-object
+            return materialNode.MaterialClass.ToLower() == "multi/sub-object" || // English
+                     materialNode.MaterialClass.ToLower() == "multi-/unterobjekt" || // German
+                     materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
+        }
+
+        /// <summary>
+        /// Return null if the material is supported.
+        /// Otherwise return the unsupported material (himself or one of its sub-materials)
+        /// </summary>
+        /// <param name="materialNode"></param>
+        /// <returns></returns>
+        public IIGameMaterial isMaterialSupported(IIGameMaterial materialNode)
+        {
+            if (materialNode.SubMaterialCount > 0)
+            {
+                // Check sub materials recursively
+                for(int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
+                {
+                    IIGameMaterial subMaterialNode = materialNode.GetSubMaterial(indexSubMaterial);
+                    IIGameMaterial unsupportedSubMaterial = isMaterialSupported(subMaterialNode);
+                    if (unsupportedSubMaterial != null)
+                    {
+                        return unsupportedSubMaterial;
+                    }
+                }
+
+                // Multi/sub-object material
+                if (isMultiSubObjectMaterial(materialNode))
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                // Standard material
+                var stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+                if (stdMat != null)
+                {
+                    return null;
+                }
+
+                // Physical material
+                if (isPhysicalMaterial(materialNode))
+                {
+                    return null;
+                }
+            }
+            return materialNode;
         }
 
         // -------------------------

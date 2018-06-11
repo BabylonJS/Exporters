@@ -42,16 +42,16 @@ class JsonExporter:
                     Logger.warn('Texture sub-directory did not already exist, created: ' + self.textureFullPath)
 
             Logger.log('========= Conversion from Blender to Babylon.js =========', 0)
-            Logger.log('Scene settings used:', 1)
-            Logger.log('selected layers only:  ' + format_bool(scene.export_onlySelectedLayer), 2)
-            Logger.log('inline textures:  ' + format_bool(scene.inlineTextures), 2)
+            Logger.log('Scene settings used :', 1)
+            Logger.log('export scope        :  ' + scene.exportScope, 2)
+            Logger.log('inline textures     :  ' + format_bool(scene.inlineTextures), 2)
             Logger.log('Positions Precision :  ' + format_int(scene.positionsPrecision), 2)
             Logger.log('Normals Precision   :  ' + format_int(scene.normalsPrecision), 2)
             Logger.log('UVs Precision       :  ' + format_int(scene.UVsPrecision), 2)
             Logger.log('Vert Color Precision:  ' + format_int(scene.vColorsPrecision), 2)
             Logger.log('Mat Weight Precision:  ' + format_int(scene.mWeightsPrecision), 2)
             if not scene.inlineTextures:
-                Logger.log('texture directory:  ' + self.textureFullPath, 2)
+                Logger.log('texture directory   :  ' + self.textureFullPath, 2)
             self.world = World(scene)
 
             bpy.ops.screen.animation_cancel()
@@ -75,31 +75,35 @@ class JsonExporter:
             self.sounds = []
             self.needPhysics = False
 
+            scanObjects = []
+            if (scene.exportScope == 'ALL'):
+                scanObjects = scene.objects
+            elif (scene.exportScope == 'SELECTED'):
+                scanObjects = bpy.context.selected_objects
+            elif (scene.exportScope == 'VISIBLE'):
+                scanObjects = list(filter(
+                    lambda o: self.isInSelectedLayer(o, scene),
+                    bpy.context.visible_objects
+                ))
+
             # Scene level sound
             if scene.attachedSound != '':
                 self.sounds.append(Sound(scene.attachedSound, scene.autoPlaySound, scene.loopSound))
 
             # separate loop doing all skeletons, so available in Mesh to make skipping IK bones possible
-            for object in [object for object in scene.objects]:
+            for object in [object for object in scanObjects]:
                 scene.frame_set(currentFrame)
                 if object.type == 'ARMATURE':  #skeleton.pose.bones
-                    if object.is_visible(scene):
-                        self.skeletons.append(Skeleton(object, scene, skeletonId, scene.ignoreIKBones))
-                        skeletonId += 1
-                    else:
-                        Logger.warn('The following armature not visible in scene thus ignored: ' + object.name)
+                    self.skeletons.append(Skeleton(object, scene, skeletonId, scene.ignoreIKBones))
+                    skeletonId += 1
 
             # exclude lamps in this pass, so ShadowGenerator constructor can be passed meshesAnNodes
-            for object in [object for object in scene.objects]:
+            for object in [object for object in scanObjects]:
                 scene.frame_set(currentFrame)
                 if object.type == 'CAMERA':
-                    if object.is_visible(scene): # no isInSelectedLayer() required, is_visible() handles this for them
-                        self.cameras.append(Camera(object))
-                    else:
-                        Logger.warn('The following camera not visible in scene thus ignored: ' + object.name)
+                    self.cameras.append(Camera(object))
 
                 elif object.type == 'MESH':
-                    if not self.isInSelectedLayer(object, scene): continue
                     mesh = Mesh(object, scene, self)
                     if mesh.hasUnappliedTransforms and hasattr(mesh, 'skeletonWeights'):
                         self.fatalError = 'Mesh: ' + mesh.name + ' has un-applied transformations.  This will never work for a mesh with an armature.  Export cancelled'
@@ -123,18 +127,15 @@ class JsonExporter:
                     Logger.warn('The following object (type - ' +  object.type + ') is not currently exportable thus ignored: ' + object.name)
 
             # Lamp / shadow Generator pass; meshesAnNodes complete & forceParents included
-            for object in [object for object in scene.objects]:
+            for object in [object for object in scanObjects]:
                 if object.type == 'LAMP':
-                    if object.is_visible(scene): # no isInSelectedLayer() required, is_visible() handles this for them
-                        bulb = Light(object, self.meshesAndNodes)
-                        self.lights.append(bulb)
-                        if object.data.shadowMap != 'NONE':
-                            if bulb.light_type == DIRECTIONAL_LIGHT or bulb.light_type == SPOT_LIGHT:
-                                self.shadowGenerators.append(ShadowGenerator(object, self.meshesAndNodes, scene))
-                            else:
-                                Logger.warn('Only directional (sun) and spot types of lamp are valid for shadows thus ignored: ' + object.name)
-                    else:
-                        Logger.warn('The following lamp not visible in scene thus ignored: ' + object.name)
+                    bulb = Light(object, self.meshesAndNodes)
+                    self.lights.append(bulb)
+                    if object.data.shadowMap != 'NONE':
+                        if bulb.light_type == DIRECTIONAL_LIGHT or bulb.light_type == SPOT_LIGHT:
+                            self.shadowGenerators.append(ShadowGenerator(object, self.meshesAndNodes, scene))
+                        else:
+                            Logger.warn('Only directional (sun) and spot types of lamp are valid for shadows thus ignored: ' + object.name)
 
             bpy.context.scene.frame_set(currentFrame)
 
