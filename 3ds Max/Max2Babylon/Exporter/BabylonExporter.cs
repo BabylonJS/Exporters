@@ -86,6 +86,9 @@ namespace Max2Babylon
         
         public void Export(ExportParameters exportParameters)
         {
+            RaiseMessage("testestestest", 5);
+            RaiseMessage("testestestest", -5);
+
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
             string scaleFactor = exportParameters.scaleFactor;
