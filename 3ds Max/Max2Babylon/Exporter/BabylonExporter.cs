@@ -193,6 +193,21 @@ namespace Max2Babylon
                     babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
                 }
             }
+            
+            // Instantiate custom material exporters
+            materialExporters = new Dictionary<ClassIDWrapper, IMaterialExporter>();
+            foreach (Type type in Tools.GetAllLoadableTypes())
+            {
+                if (type.IsAbstract || type.IsInterface || !typeof(IMaterialExporter).IsAssignableFrom(type))
+                    continue;
+
+                IMaterialExporter exporter = Activator.CreateInstance(type) as IMaterialExporter;
+
+                if (exporter == null)
+                    RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+                materialExporters.Add(exporter.MaterialClassID, exporter);
+            }
 
             // Sounds
             var soundName = rawScene.GetStringProperty("babylonjs_sound_filename", "");
@@ -307,21 +322,6 @@ namespace Max2Babylon
 
             // Materials
             RaiseMessage("Exporting materials");
-            
-            // get all material exporters
-            materialExporters = new Dictionary<ClassIDWrapper, IMaterialExporter>();
-            foreach (Type type in Tools.GetAllLoadableTypes())
-            {
-                if (type.IsAbstract || type.IsInterface || !typeof(IMaterialExporter).IsAssignableFrom(type))
-                    continue;
-
-                IMaterialExporter exporter = Activator.CreateInstance(type) as IMaterialExporter;
-
-                if (exporter == null)
-                    RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
-
-                materialExporters.Add(exporter.MaterialClassID, exporter);
-            }
 
             var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
             foreach (var mat in matsToExport)
