@@ -43,8 +43,8 @@ namespace Maya2Babylon
 
                 // TODO - Retreive from Maya
                 babylonNode.autoAnimate = true;
-                babylonNode.autoAnimateFrom = GetMinTime()[0];
-                babylonNode.autoAnimateTo = GetMaxTime()[0];
+                babylonNode.autoAnimateFrom = Loader.GetMinTime();
+                babylonNode.autoAnimateTo = Loader.GetMaxTime();
                 babylonNode.autoAnimateLoop = true;
             }
             catch (Exception e)
@@ -55,8 +55,8 @@ namespace Maya2Babylon
 
         private List<BabylonAnimation> GetAnimationsFrameByFrame(MFnTransform mFnTransform)
         {
-            int start = GetMinTime()[0];
-            int end = GetMaxTime()[0];
+            int start = Loader.GetMinTime();
+            int end = Loader.GetMaxTime();
 
             // Animations
             List<BabylonAnimation> animations = new List<BabylonAnimation>();
@@ -144,7 +144,7 @@ namespace Maya2Babylon
                         {
                             dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                             name = babylonAnimationProperty + " animation",
-                            framePerSecond = GetFPS(),
+                            framePerSecond = Loader.GetFPS(),
                             loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                             property = babylonAnimationProperty,
                             keys = keys.ToArray()
@@ -395,23 +395,6 @@ namespace Maya2Babylon
 
         }
 
-        private MIntArray GetMinTime()
-        {
-            MIntArray minTime = new MIntArray();
-            MGlobal.executeCommand("playbackOptions -q -animationStartTime", minTime);
-            return minTime;
-        }
-
-        private MIntArray GetMaxTime()
-        {
-            MIntArray maxTime = new MIntArray();
-            MGlobal.executeCommand("playbackOptions -q -animationEndTime", maxTime);
-            return maxTime;
-        }
-
-
-
-
         private BabylonMatrix ConvertMayaToBabylonMatrix(MMatrix mMatrix)
         {
             var transformationMatrix = new MTransformationMatrix(mMatrix);
@@ -435,8 +418,8 @@ namespace Maya2Babylon
 
         private BabylonAnimation GetAnimationsFrameByFrameMatrix(MFnTransform mFnTransform)
         {
-            int start = GetMinTime()[0];
-            int end = GetMaxTime()[0];
+            int start = Loader.GetMinTime();
+            int end = Loader.GetMaxTime();
             BabylonAnimation animation = null;
 
             // get keys
@@ -478,7 +461,7 @@ namespace Maya2Babylon
                         name = mFnTransform.name + "Animation", // override default animation name
                         dataType = (int)BabylonAnimation.DataType.Matrix,
                         loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        framePerSecond = GetFPS(),
+                        framePerSecond = Loader.GetFPS(),
                         keys = keys.ToArray(),
                         property = "_matrix"
                     };
@@ -501,13 +484,6 @@ namespace Maya2Babylon
         private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, int currentFrame = 0)
         {
             return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
-        }
-
-        private int GetFPS()
-        {
-            MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
-
-            return (int)framePerSecond;
         }
     }
 }

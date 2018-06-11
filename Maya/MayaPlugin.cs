@@ -5,6 +5,7 @@ using System.Windows.Forms;
 
 [assembly: MPxCommandClass(typeof(Maya2Babylon.toBabylon), "toBabylon")]
 [assembly: ExtensionPlugin(typeof(Maya2Babylon.MayaPlugin), "Any")]
+[assembly: MPxCommandClass(typeof(Maya2Babylon.AnimationGroups), "AnimationGroups")]
 
 namespace Maya2Babylon
 {
@@ -21,6 +22,7 @@ namespace Maya2Babylon
             MenuPath = MGlobal.executeCommandStringResult($@"menu - parent MayaWindow - label ""Babylon"";");
             // Add item to this menu
             MGlobal.executeCommand($@"menuItem - label ""Babylon File Exporter..."" - command ""toBabylon"";");
+            MGlobal.executeCommand($@"menuItem - label ""Animation groups"" - command ""AnimationGroups"";");
 
             MGlobal.displayInfo("Babylon plug-in initialized");
             return true;
@@ -74,6 +76,26 @@ namespace Maya2Babylon
                 form = null;
             }
             return true;
+        }
+    }
+
+    /// <summary>
+    /// For the animation groups form
+    /// </summary>
+    public class AnimationGroups : MPxCommand, IMPxCommand
+    {
+        private AnimationForm animationForm;
+
+        public override void doIt(MArgList args)
+        {
+            if (animationForm == null)
+            {
+                animationForm = new AnimationForm();
+            }
+
+            animationForm.Show();
+            animationForm.BringToFront();
+            animationForm.WindowState = FormWindowState.Normal;
         }
     }
 }
