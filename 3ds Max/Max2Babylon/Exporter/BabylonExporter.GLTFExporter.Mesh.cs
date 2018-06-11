@@ -30,6 +30,7 @@ namespace Max2Babylon
             bool hasColor = babylonMesh.colors != null && babylonMesh.colors.Length > 0;
             bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
+            bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
 
             RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
@@ -45,6 +46,17 @@ namespace Max2Babylon
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
                 globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                if (hasTangents)
+                {
+                    globalVertex.Tangent = BabylonQuaternion.FromArray(babylonMesh.tangents, indexVertex);
+
+                    // Switch coordinate system at object level
+                    globalVertex.Tangent.Z *= -1;
+
+                    // Invert W to switch to right handed system
+                    globalVertex.Tangent.W *= -1;
+                }
 
                 // Switch coordinate system at object level
                 globalVertex.Position.Z *= -1;
@@ -246,6 +258,23 @@ namespace Max2Babylon
                     GLTFBufferService.UpdateMinMaxAccessor(accessorPositions, positions);
                 });
                 accessorPositions.count = globalVerticesSubMesh.Count;
+
+                // --- Tangents ---
+                if (hasTangents)
+                {
+                    var accessorTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec4(gltf, buffer),
+                        "accessorTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC4
+                    );
+                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTangents.index);
+                    // Populate accessor
+                    List<float> tangents = globalVerticesSubMesh.SelectMany(v => v.Tangent.ToArray()).ToList();
+                    tangents.ForEach(n => accessorTangents.bytesList.AddRange(BitConverter.GetBytes(n)));
+                    accessorTangents.count = globalVerticesSubMesh.Count;
+                }
 
                 // --- Normals ---
                 var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
@@ -475,6 +504,43 @@ namespace Max2Babylon
                     }
                     accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
+
+                // Tangents
+                if(babylonMorphTarget.tangents != null)
+                {
+                    var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
+                        "accessorTargetTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC3
+                    );
+                    gltfMorphTarget.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTargetTangents.index);
+                    // Populate accessor
+                    // Note that the w component for handedness is omitted when targeting TANGENT data since handedness cannot be displaced.
+                    int nbComponents = 4; // Vector4
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
+                    for (int indexTangent = startIndex; indexTangent < endIndex; indexTangent += 4)
+                    {
+                        var tangentTarget = Tools.SubArray(babylonMorphTarget.tangents, indexTangent, 3);
+
+                        // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
+                        var tangentMesh = Tools.SubArray(babylonMesh.tangents, indexTangent, 3);
+                        for (int indexCoordinate = 0; indexCoordinate < tangentTarget.Length; indexCoordinate++)
+                        {
+                            tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
+                        }
+
+                        // Store values as bytes
+                        foreach (var coordinate in tangentTarget)
+                        {
+                            accessorTargetTangents.bytesList.AddRange(BitConverter.GetBytes(coordinate));
+                        }
+                    }
+                    accessorTargetTangents.count = babylonSubMesh.verticesCount;
+                }
+
 
                 gltfMorphTargets.Add(gltfMorphTarget);
             }

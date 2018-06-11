@@ -91,7 +91,7 @@ namespace BabylonExport.Entities
             var offset = countOffset * 3;
             return new BabylonVector3(array[offset], array[offset + 1], array[offset + 2]);
         }
-
+        
         public override string ToString()
         {
             return "{ X=" + X + ", Y=" + Y + ", Z=" + Z + " }";

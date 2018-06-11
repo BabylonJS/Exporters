@@ -145,7 +145,7 @@ namespace Maya2Babylon.Forms
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message, Color.Red);
+                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
 
                 currentNode.EnsureVisible();
                 progressBar.Value = 0;

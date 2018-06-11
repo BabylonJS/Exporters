@@ -41,6 +41,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkExportTangents = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.txtScaleFactor = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.comboOutputFormat = new System.Windows.Forms.ComboBox();
@@ -49,7 +51,6 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -182,6 +183,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkExportTangents);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtScaleFactor);
             this.groupBox1.Controls.Add(this.label3);
@@ -201,6 +203,28 @@
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // chkExportTangents
+            // 
+            this.chkExportTangents.AutoSize = true;
+            this.chkExportTangents.Checked = true;
+            this.chkExportTangents.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportTangents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportTangents.Location = new System.Drawing.Point(320, 140);
+            this.chkExportTangents.Name = "chkExportTangents";
+            this.chkExportTangents.Size = new System.Drawing.Size(97, 17);
+            this.chkExportTangents.TabIndex = 21;
+            this.chkExportTangents.Text = "Export tangents";
+            this.chkExportTangents.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(329, 69);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Scale factor:";
             // 
             // txtScaleFactor
             // 
@@ -294,15 +318,6 @@
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(329, 69);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 13);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "Scale factor:";
-            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -356,5 +371,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtScaleFactor;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkExportTangents;
     }
 }

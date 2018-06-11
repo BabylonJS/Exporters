@@ -10,5 +10,6 @@
         public bool exportOnlySelected = false;
         public bool generateManifest = false;
         public bool autoSave3dsMaxFile = false;
+        public bool exportTangents = true;
     }
 }

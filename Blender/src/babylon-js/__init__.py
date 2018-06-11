@@ -1,7 +1,7 @@
 bl_info = {
     'name': 'Babylon.js',
     'author': 'David Catuhe, Jeff Palmer',
-    'version': (5, 6, 2),
+    'version': (5, 6, 3),
     'blender': (2, 76, 0),
     'location': 'File > Export > Babylon.js (.babylon)',
     'description': 'Export Babylon.js scenes (.babylon)',
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     register()
 #===============================================================================
 class JsonMain(bpy.types.Operator, ExportHelper):
-    bl_idname = 'bjs.main'
+    bl_idname = 'export.bjs'
     bl_label = 'Export Babylon.js scene' # used on the label of the actual 'save' button
     bl_options = {'REGISTER', 'UNDO'}
     filename_ext = '.babylon'            # used as the extension on file selector
@@ -91,3 +91,9 @@ class JsonMain(bpy.types.Operator, ExportHelper):
             self.report({'WARNING'}, 'Processing completed, but ' + str(exporter.nWarnings) + ' WARNINGS were raised,  see log file.')
 
         return {'FINISHED'}
+
+    def draw(self, context):
+        self.layout.label(
+            text='Find export settings in the properties panel',
+            icon='INFO'
+        )

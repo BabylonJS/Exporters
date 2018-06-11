@@ -8,11 +8,15 @@ class ExporterSettingsPanel(bpy.types.Panel):
     bl_region_type = 'WINDOW'
     bl_context = 'scene'
 
-    bpy.types.Scene.export_onlySelectedLayer = bpy.props.BoolProperty(
-        name='Export only selected layers',
-        description='Export only selected layers',
-        default = False,
-        )
+    bpy.types.Scene.exportScope = bpy.props.EnumProperty(
+        items=(
+            ('ALL', "All", "Export the whole scene"),
+            ('SELECTED', "Selected", "Export the selected objects only"),
+            ('VISIBLE', "Layers", "Export only objects in the active layers"),
+        ),
+        name="ui_tab",
+        description="Export selection control",
+    )
     bpy.types.Scene.positionsPrecision = bpy.props.IntProperty(
         name='Positions / Shape Keys:',
         description='Max number of digits for positions / shape keys.  Reducing useful to reduce\nfile size when units of meshes already small, .e.g inches',
@@ -89,8 +93,11 @@ class ExporterSettingsPanel(bpy.types.Panel):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene, 'export_onlySelectedLayer')
-        layout.prop(scene, 'export_flatshadeScene')
+
+        layout.label('Export')
+        layout.prop(scene, 'exportScope', expand=True)
+        layout.separator()
+
         layout.prop(scene, 'ignoreIKBones')
         layout.prop(scene, 'writeManifestFile')
 
