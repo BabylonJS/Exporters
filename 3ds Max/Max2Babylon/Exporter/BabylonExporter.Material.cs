@@ -392,6 +392,15 @@ namespace Max2Babylon
                 {
                     return null;
                 }
+
+                // Custom material exporters
+                if (materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter))
+                {
+                    if (isGLTFExported && materialExporter is IGLTFMaterialExporter)
+                        return null;
+                    else if (isBabylonExported && materialExporter is IBabylonMaterialExporter)
+                        return null;
+                }
             }
             return materialNode;
         }
