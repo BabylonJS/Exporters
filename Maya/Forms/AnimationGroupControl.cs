@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autodesk.Maya.OpenMaya;
 
 namespace Maya2Babylon.Forms
 {
@@ -14,7 +15,7 @@ namespace Maya2Babylon.Forms
     {
         public Color ChangedTextColor { get; set; } = Color.Red;
 
-        AnimationGroup currentInfo = null;
+        private AnimationGroup currentInfo = null;
 
         // Typically called when the user presses confirm, but can also happen when scene changes are detected.
         public event Action<AnimationGroup> InfoChanged;
@@ -27,10 +28,7 @@ namespace Maya2Babylon.Forms
 
         public void SetAnimationGroupInfo(AnimationGroup info)
         {
-            if (info == null)
-                currentInfo = null;
-            else
-                currentInfo = info;
+            currentInfo = info;
 
             SetFieldsFromInfo(currentInfo);
         }
@@ -128,7 +126,7 @@ namespace Maya2Babylon.Forms
 
         private void confirmButton_Click(object sender, EventArgs e)
         {
-/*TODO            if (currentInfo == null)
+            if (currentInfo == null)
                 return;
 
             AnimationGroup confirmedInfo = currentInfo;
@@ -140,50 +138,59 @@ namespace Maya2Babylon.Forms
             if (!int.TryParse(endTextBox.Text, out int newFrameEnd))
                 newFrameEnd = confirmedInfo.FrameEnd;
 
-            List<uint> newHandles;
-            bool nodesChanged = NodeTree.ApplyQueuedChanges(out newHandles);
+//TODO            List<uint> newHandles;
+//            bool nodesChanged = NodeTree.ApplyQueuedChanges(out newHandles);
 
-            bool changed = newName != confirmedInfo.Name || newFrameStart != confirmedInfo.FrameStart || newFrameEnd != confirmedInfo.FrameEnd || nodesChanged;
+//            bool changed = newName != confirmedInfo.Name || newFrameStart != confirmedInfo.FrameStart || newFrameEnd != confirmedInfo.FrameEnd || nodesChanged;
 
-            if (!changed)
-                return;
+//            if (!changed)
+//                return;
 
             confirmedInfo.Name = newName;
             confirmedInfo.FrameStart = newFrameStart;
             confirmedInfo.FrameEnd = newFrameEnd;
 
-            if (nodesChanged)
-                confirmedInfo.NodeHandles = newHandles;
+//            if (nodesChanged)
+//                confirmedInfo.NodeHandles = newHandles;
 
             ResetChangedTextBoxColors();
             NodeTree.SelectedNode = null;
 
             InfoChanged?.Invoke(confirmedInfo);
             ConfirmPressed?.Invoke(confirmedInfo);
-*/        }
+        }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-/*TODO            if (currentInfo == null)
-                return;
-
-*/            SetFieldsFromInfo(currentInfo);
+            SetFieldsFromInfo(currentInfo);
         }
 
 
         private void addSelectedButton_Click(object sender, EventArgs e)
         {
-/*TODO            if (currentInfo == null)
+            if (currentInfo == null)
                 return;
 
-            NodeTree.BeginUpdate();
-            for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
+            MDagPath node;
+            MObject component = new MObject();
+            MFnDagNode nodeFn = new MFnDagNode();
+            MSelectionList selected = new MSelectionList();
+            MGlobal.getActiveSelectionList(selected);
+            for (uint index = 0; index < selected.length; index++)
             {
-                IINode node = Loader.Core.GetSelNode(i);
-                NodeTree.QueueAddNode(node);
+                node = selected.getDagPath(index, component);
+                nodeFn.setObject(node);
+                MGlobal.displayInfo($"{nodeFn.name} - {nodeFn.fullPathName} - {component.apiType}");
             }
-            NodeTree.EndUpdate();
-*/        }
+
+            //NodeTree.BeginUpdate();
+            //for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
+            //{
+            //    IINode node = Loader.Core.GetSelNode(i);
+            //    NodeTree.QueueAddNode(node);
+            //}
+            //NodeTree.EndUpdate();
+        }
 
         private void removeNodeButton_Click(object sender, EventArgs e)
         {

@@ -7,8 +7,11 @@ namespace Maya2Babylon
 {
     public class AnimationGroup
     {
+        public static List<AnimationGroup> animationGroups = new List<AnimationGroup>();
+
         public bool IsDirty { get; private set; } = true;
 
+        private Guid serializedId = Guid.NewGuid();
         public Guid SerializedId
         {
             get { return serializedId; }
@@ -20,6 +23,8 @@ namespace Maya2Babylon
                 serializedId = value;
             }
         }
+
+        private string name = "Animation";
         public string Name
         {
             get { return name; }
@@ -31,9 +36,11 @@ namespace Maya2Babylon
                 name = value;
             }
         }
+
+        private int ticksStart = Loader.GetMinTime();
         public int FrameStart
         {
-            get { return FrameStart; }
+            get { return ticksStart; }
             set
             {
                 if (value.Equals(FrameStart)) // property getter
@@ -42,9 +49,11 @@ namespace Maya2Babylon
                 ticksStart = value;
             }
         }
+
+        private int ticksEnd = Loader.GetMaxTime();
         public int FrameEnd
         {
-            get { return FrameEnd; }
+            get { return ticksEnd; }
             set
             {
                 if (value.Equals(FrameEnd)) // property getter
@@ -53,6 +62,9 @@ namespace Maya2Babylon
                 ticksEnd = value;
             }
         }
+
+        // use current timeline frame range by default
+        private List<uint> nodeHandles = new List<uint>();
         public IList<uint> NodeHandles
         {
             get { return nodeHandles.AsReadOnly(); }
@@ -82,115 +94,102 @@ namespace Maya2Babylon
             }
         }
 
-        public int TicksStart { get { return ticksStart; } }
-        public int TicksEnd { get { return ticksEnd; } }
-
-        const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
-        const char s_PropertySeparator = ';';
-        const string s_PropertyFormat = "{0};{1};{2};{3}";
-
-        private Guid serializedId = Guid.NewGuid();
-        private string name = "Animation";
-        // use current timeline frame range by default
-        private int ticksStart = Loader.GetMinTime();
-        private int ticksEnd = Loader.GetMaxTime();
-        private List<uint> nodeHandles = new List<uint>();
+        //const char s_PropertySeparator = ';';
+        //const string s_PropertyFormat = "{0};{1};{2};{3}";
 
         public AnimationGroup() { }
-        public AnimationGroup(AnimationGroup other)
-        {
-            DeepCopyFrom(other);
-        }
-        public void DeepCopyFrom(AnimationGroup other)
-        {
-            serializedId = other.serializedId;
-            name = other.name;
-            ticksStart = other.ticksStart;
-            ticksEnd = other.ticksEnd;
-            nodeHandles.Clear();
-            nodeHandles.AddRange(other.nodeHandles);
-            IsDirty = true;
-        }
+        //public AnimationGroup(AnimationGroup other)
+        //{
+        //    DeepCopyFrom(other);
+        //}
+        //public void DeepCopyFrom(AnimationGroup other)
+        //{
+        //    serializedId = other.serializedId;
+        //    name = other.name;
+        //    ticksStart = other.ticksStart;
+        //    ticksEnd = other.ticksEnd;
+        //    nodeHandles.Clear();
+        //    nodeHandles.AddRange(other.nodeHandles);
+        //    IsDirty = true;
+        //}
 
         public override string ToString()
         {
-            return string.Format(s_DisplayNameFormat, name, FrameStart, FrameEnd);
+            return $"{Name} ({FrameStart}, {FrameEnd})";
         }
 
-        #region Serialization
+        //#region Serialization
 
-        public string GetPropertyName() { return serializedId.ToString(); }
+        //public string GetPropertyName() { return serializedId.ToString(); }
 
-        public void LoadFromData(string propertyName)
-        {
-            if (!Guid.TryParse(propertyName, out serializedId))
-                throw new Exception("Invalid ID, can't deserialize.");
+        //        public void LoadFromData(string propertyName)
+        //        {
+        //            if (!Guid.TryParse(propertyName, out serializedId))
+        //                throw new Exception("Invalid ID, can't deserialize.");
 
-            string propertiesString = string.Empty;
-            // TODO: find a way to stock/save the data
-            // use an attribut to simulate this
-            //if (!Loader.Core.RootNode.GetUserPropString(propertyName, ref propertiesString))
-            //    return;
+        //            string propertiesString = string.Empty;
+        //            //if (!Loader.Core.RootNode.GetUserPropString(propertyName, ref propertiesString))
+        //            //    return;
 
-            string[] properties = propertiesString.Split(s_PropertySeparator);
+        //            string[] properties = propertiesString.Split(s_PropertySeparator);
 
-            if (properties.Length < 4)
-                throw new Exception("Invalid number of properties, can't deserialize.");
+        //            if (properties.Length < 4)
+        //                throw new Exception("Invalid number of properties, can't deserialize.");
 
-            // set dirty explicitly just before we start loading, set to false when loading is done
-            // if any exception is thrown, it will have a correct value
-            IsDirty = true;
+        //            // set dirty explicitly just before we start loading, set to false when loading is done
+        //            // if any exception is thrown, it will have a correct value
+        //            IsDirty = true;
 
-            name = properties[0];
-            if (!int.TryParse(properties[1], out ticksStart))
-                throw new Exception("Failed to parse FrameStart property.");
-            if (!int.TryParse(properties[2], out ticksEnd))
-                throw new Exception("Failed to parse FrameEnd property.");
+        //            name = properties[0];
+        //            if (!int.TryParse(properties[1], out ticksStart))
+        //                throw new Exception("Failed to parse FrameStart property.");
+        //            if (!int.TryParse(properties[2], out ticksEnd))
+        //                throw new Exception("Failed to parse FrameEnd property.");
 
-            if (string.IsNullOrEmpty(properties[3]))
-                return;
+        //            if (string.IsNullOrEmpty(properties[3]))
+        //                return;
 
-            int numNodeIDs = properties.Length - 3;
-            if (nodeHandles.Capacity < numNodeIDs) nodeHandles.Capacity = numNodeIDs;
-            int numFailed = 0;
-            for (int i = 0; i < numNodeIDs; ++i)
-            {
-                if (!uint.TryParse(properties[3 + i], out uint id))
-                {
-                    ++numFailed;
-                    continue;
-                }
-                nodeHandles.Add(id);
-            }
+        //            int numNodeIDs = properties.Length - 3;
+        //            if (nodeHandles.Capacity < numNodeIDs) nodeHandles.Capacity = numNodeIDs;
+        //            int numFailed = 0;
+        //            for (int i = 0; i < numNodeIDs; ++i)
+        //            {
+        //                if (!uint.TryParse(properties[3 + i], out uint id))
+        //                {
+        //                    ++numFailed;
+        //                    continue;
+        //                }
+        //                nodeHandles.Add(id);
+        //            }
 
-            if (numFailed > 0)
-                throw new Exception(string.Format("Failed to parse {0} node ids.", numFailed));
+        //            if (numFailed > 0)
+        //                throw new Exception(string.Format("Failed to parse {0} node ids.", numFailed));
 
-            IsDirty = false;
-        }
+        //            IsDirty = false;
+        //        }
 
         public void SaveToData()
         {
-            // ' ' and '=' are not allowed by max, ';' is our data separator
-            if (name.Contains(' ') || name.Contains('=') || name.Contains(s_PropertySeparator))
-                throw new FormatException("Invalid character(s) in animation Name: " + name + ". Spaces, equal signs and the separator '" + s_PropertySeparator + "' are not allowed.");
+            ////' ' and '=' are not allowed by max, ';' is our data separator
+            //if (name.Contains(' ') || name.Contains('=') || name.Contains(s_PropertySeparator))
+            //    throw new FormatException("Invalid character(s) in animation Name: " + name + ". Spaces, equal signs and the separator '" + s_PropertySeparator + "' are not allowed.");
 
-            string nodes = string.Join(s_PropertySeparator.ToString(), nodeHandles);
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(s_PropertyFormat, name, ticksStart, ticksEnd, nodes);
+            //string nodes = string.Join(s_PropertySeparator.ToString(), nodeHandles);
+            //StringBuilder stringBuilder = new StringBuilder();
+            //stringBuilder.AppendFormat(s_PropertyFormat, name, ticksStart, ticksEnd, nodes);
 
-//            Loader.Core.RootNode.SetStringProperty(GetPropertyName(), stringBuilder.ToString());
+            //Loader.Core.RootNode.SetStringProperty(GetPropertyName(), stringBuilder.ToString());
 
             IsDirty = false;
         }
 
-        public void DeleteFromData()
-        {
-//            Loader.Core.RootNode.DeleteProperty(GetPropertyName());
-            IsDirty = true;
-        }
+        //public void DeleteFromData()
+        //{
+        //    Loader.Core.RootNode.DeleteProperty(GetPropertyName());
+        //    IsDirty = true;
+        //}
 
-        #endregion
+        //#endregion
     }
 
     public class AnimationGroupList : List<AnimationGroup>
@@ -199,7 +198,7 @@ namespace Maya2Babylon
 
         public void LoadFromData()
         {
-            //string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+            string[] animationPropertyNames = Loader.GetStringArrayProperty(s_AnimationListPropertyName);
 
             //if (Capacity < animationPropertyNames.Length)
             //    Capacity = animationPropertyNames.Length;
@@ -210,19 +209,25 @@ namespace Maya2Babylon
             //    info.LoadFromData(propertyNameStr);
             //    Add(info);
             //}
+
+            foreach (AnimationGroup a in AnimationGroup.animationGroups)
+                Add(a);
         }
 
         public void SaveToData()
         {
-            //List<string> animationPropertyNameList = new List<string>();
-            //for (int i = 0; i < Count; ++i)
-            //{
-            //    if (this[i].IsDirty)
-            //        this[i].SaveToData();
-            //    animationPropertyNameList.Add(this[i].GetPropertyName());
-            //}
+            List<string> animationPropertyNameList = new List<string>();
+            for (int i = 0; i < Count; ++i)
+            {
+                if (this[i].IsDirty)
+                    this[i].SaveToData();
+                animationPropertyNameList.Add(this[i].GetPropertyName());
+            }
 
-            //Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+            AnimationGroup.animationGroups.Clear();
+            foreach (AnimationGroup a in this)
+                AnimationGroup.animationGroups.Add(a);
         }
     }
 }

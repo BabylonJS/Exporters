@@ -37,8 +37,13 @@ namespace Maya2Babylon
         public static int GetFPS()
         {
             MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
-
             return (int)framePerSecond;
+        }
+
+        public string GetStringArrayProperty(string property)
+        {
+            MGlobal.executeCommand("fileInfo -q", out string result);
+            return result;
         }
     }
 }

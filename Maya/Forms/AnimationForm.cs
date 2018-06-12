@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autodesk.Maya.OpenMaya;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,8 @@ namespace Maya2Babylon.Forms
 {
     public partial class AnimationForm : Form
     {
+        public event Action On_animationFormClosed;
+
         const string s_AnimationListPropertyName = "babylonjs_AnimationList";
 
 //TODO        private readonly BabylonAnimationActionItem babylonAnimationAction;
@@ -31,29 +34,34 @@ namespace Maya2Babylon.Forms
 
         private void AnimationForm_Load(object sender, EventArgs e)
         {
-/*            animationGroups.LoadFromData();
+            animationGroups.LoadFromData();
 
             animationListBinding.DataSource = animationGroups;
-            AnimationListBox.DataSource = animationListBinding;
-            AnimationListBox.ClearSelected();
+            animationListBox.DataSource = animationListBinding;
+            animationListBox.ClearSelected();
 
             animationGroupControl.SetAnimationGroupInfo(null);
             animationGroupControl.InfoChanged += animationGroupControl_InfoChanged;
             animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
 
-            Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
-*/        }
+            //            Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
+        }
 
         #endregion
 
         #region State change events
 
+        /// <summary>
+        /// Click on the "Create" button. It create a new animation group with default value.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void createAnimationButton_Click(object sender, EventArgs e)
         {
-            AnimationGroup info = new AnimationGroup();
+            AnimationGroup newAnimationGroup = new AnimationGroup();
 
-            // get a unique name and guid
-            string baseName = info.Name;
+            //get a unique name and guid
+            string baseName = newAnimationGroup.Name;
             int i = 0;
             bool hasConflict = true;
             while (hasConflict)
@@ -61,16 +69,16 @@ namespace Maya2Babylon.Forms
                 hasConflict = false;
                 foreach (AnimationGroup animationGroup in animationGroups)
                 {
-                    if (info.Name.Equals(animationGroup.Name))
+                    if (newAnimationGroup.Name.Equals(animationGroup.Name))
                     {
-                        info.Name = baseName + i.ToString();
+                        newAnimationGroup.Name = baseName + i.ToString();
                         ++i;
                         hasConflict = true;
                         break;
                     }
-                    if (info.SerializedId.Equals(animationGroup.SerializedId))
+                    if (newAnimationGroup.SerializedId.Equals(animationGroup.SerializedId))
                     {
-                        info.SerializedId = Guid.NewGuid();
+                        newAnimationGroup.SerializedId = Guid.NewGuid();
                         hasConflict = true;
                         break;
                     }
@@ -78,41 +86,45 @@ namespace Maya2Babylon.Forms
             }
 
             // save info and animation list entry
-            animationGroups.Add(info);
+            animationGroups.Add(newAnimationGroup);
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
-//            Loader.Global.SetSaveRequiredFlag(true, false);
+            animationListBox.SelectedItem = newAnimationGroup;
 
-            AnimationListBox.SelectedItem = info;
         }
 
+        /// <summary>
+        /// Click on the "Delete" button. It delete the selected animation group.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void deleteAnimationButton_Click(object sender, EventArgs e)
         {
-            int selectedIndex = AnimationListBox.SelectedIndex;
+            int selectedIndex = animationListBox.SelectedIndex;
 
             if (selectedIndex < 0)
                 return;
 
-            AnimationGroup selectedItem = (AnimationGroup)AnimationListBox.SelectedItem;
+            AnimationGroup selectedItem = (AnimationGroup)animationListBox.SelectedItem;
 
             // delete item
-            selectedItem.DeleteFromData();
+            //selectedItem.DeleteFromData();
 
             // update list
             animationGroups.Remove(selectedItem);
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
-//            Loader.Global.SetSaveRequiredFlag(true, false);
+            //Loader.Global.SetSaveRequiredFlag(true, false);
 
             // get new selected item at the current index, if any
-            selectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
-            selectedItem = selectedIndex < 0 ? null : (AnimationGroup)AnimationListBox.Items[selectedIndex];
-            AnimationListBox.SelectedItem = selectedItem;
+            //selectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
+            //selectedItem = selectedIndex < 0 ? null : (AnimationGroup)AnimationListBox.Items[selectedIndex];
+            //AnimationListBox.SelectedItem = selectedItem;
         }
 
         private void animationList_SelectedValueChanged(object sender, EventArgs e)
         {
-//            animationGroupControl.SetAnimationGroupInfo((AnimationGroup)AnimationListBox.SelectedItem);
+            animationGroupControl.SetAnimationGroupInfo((AnimationGroup)animationListBox.SelectedItem);
         }
 
         // Typically called when the user presses confirm, but can also happen when scene changes are detected.
@@ -125,7 +137,7 @@ namespace Maya2Babylon.Forms
 
         private void animationGroupControl_ConfirmPressed(AnimationGroup info)
         {
-            AnimationListBox.SelectedItem = info;
+            animationListBox.SelectedItem = info;
         }
 
         #endregion
@@ -134,25 +146,13 @@ namespace Maya2Babylon.Forms
 
         private void AnimationForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-//            babylonAnimationAction.Close();
-        }
-
-        private void AnimationForm_Activated(object sender, EventArgs e)
-        {
-//            Loader.Global.DisableAccelerators();
-        }
-
-        private void AnimationForm_Deactivate(object sender, EventArgs e)
-        {
-//            Loader.Global.EnableAccelerators();
+            //babylonAnimationAction.Close();
+            //ToDelete
+            On_animationFormClosed();
+            //ToDelete
         }
 
         #endregion
 
-        private void exportNonAnimatedNodesCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-//            Tools.UpdateCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
-//            Loader.Global.SetSaveRequiredFlag(true, false);
-        }
     }
 }

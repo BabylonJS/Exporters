@@ -32,7 +32,7 @@
             this.createAnimationButton = new System.Windows.Forms.Button();
             this.deleteAnimationButton = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.AnimationListBox = new System.Windows.Forms.ListBox();
+            this.animationListBox = new System.Windows.Forms.ListBox();
             this.ExportPropertiesGroupBox = new System.Windows.Forms.GroupBox();
             this.exportNonAnimatedNodesCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -88,7 +88,7 @@
             // 
             this.panel2.AutoSize = true;
             this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel2.Controls.Add(this.AnimationListBox);
+            this.panel2.Controls.Add(this.animationListBox);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 45);
             this.panel2.Name = "panel2";
@@ -97,14 +97,14 @@
             // 
             // AnimationListBox
             // 
-            this.AnimationListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AnimationListBox.HorizontalScrollbar = true;
-            this.AnimationListBox.Location = new System.Drawing.Point(0, 0);
-            this.AnimationListBox.Name = "AnimationListBox";
-            this.AnimationListBox.Size = new System.Drawing.Size(171, 337);
-            this.AnimationListBox.Sorted = true;
-            this.AnimationListBox.TabIndex = 0;
-            this.AnimationListBox.SelectedValueChanged += new System.EventHandler(this.animationList_SelectedValueChanged);
+            this.animationListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.animationListBox.HorizontalScrollbar = true;
+            this.animationListBox.Location = new System.Drawing.Point(0, 0);
+            this.animationListBox.Name = "AnimationListBox";
+            this.animationListBox.Size = new System.Drawing.Size(171, 337);
+            this.animationListBox.Sorted = true;
+            this.animationListBox.TabIndex = 0;
+            this.animationListBox.SelectedValueChanged += new System.EventHandler(this.animationList_SelectedValueChanged);
             // 
             // ExportPropertiesGroupBox
             // 
@@ -125,7 +125,7 @@
             this.exportNonAnimatedNodesCheckBox.TabIndex = 6;
             this.exportNonAnimatedNodesCheckBox.Text = "Export non-animated node targets (not implemented)";
             this.exportNonAnimatedNodesCheckBox.UseVisualStyleBackColor = true;
-            this.exportNonAnimatedNodesCheckBox.CheckedChanged += new System.EventHandler(this.exportNonAnimatedNodesCheckBox_CheckedChanged);
+//            this.exportNonAnimatedNodesCheckBox.CheckedChanged += new System.EventHandler(this.exportNonAnimatedNodesCheckBox_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -192,8 +192,8 @@
             this.Name = "AnimationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js - Animation Groups";
-            this.Activated += new System.EventHandler(this.AnimationForm_Activated);
-            this.Deactivate += new System.EventHandler(this.AnimationForm_Deactivate);
+//            this.Activated += new System.EventHandler(this.AnimationForm_Activated);
+//            this.Deactivate += new System.EventHandler(this.AnimationForm_Deactivate);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AnimationForm_FormClosed);
             this.Load += new System.EventHandler(this.AnimationForm_Load);
             this.panel1.ResumeLayout(false);
@@ -220,7 +220,7 @@
         private System.Windows.Forms.Button deleteAnimationButton;
         private AnimationGroupControl animationGroupControl;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox AnimationListBox;
+        private System.Windows.Forms.ListBox animationListBox;
         private System.Windows.Forms.CheckBox exportNonAnimatedNodesCheckBox;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
