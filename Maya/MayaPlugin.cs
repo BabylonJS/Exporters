@@ -1,6 +1,7 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using Maya2Babylon.Forms;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 [assembly: MPxCommandClass(typeof(Maya2Babylon.toBabylon), "toBabylon")]
@@ -84,18 +85,26 @@ namespace Maya2Babylon
     /// </summary>
     public class AnimationGroups : MPxCommand, IMPxCommand
     {
-        private AnimationForm animationForm;
+        public static AnimationForm animationForm = null;
 
         public override void doIt(MArgList args)
         {
             if (animationForm == null)
             {
+                MGlobal.displayInfo($"Babylonjs - Animation groups");
                 animationForm = new AnimationForm();
+                animationForm.On_animationFormClosed += On_animationFormClosed;
             }
 
             animationForm.Show();
             animationForm.BringToFront();
             animationForm.WindowState = FormWindowState.Normal;
+        }
+
+        private void On_animationFormClosed()
+        {
+            MGlobal.displayInfo($"Babylonjs - Animation groups closed");
+            animationForm = null;
         }
     }
 }
