@@ -14,6 +14,7 @@ namespace Maya2Babylon.Forms
     public partial class AnimationForm : Form
     {
         public event Action On_animationFormClosed;
+        const string exportNonAnimatedNodesCheckBoxProperty = "babylonjs_animgroup_exportnonanimated";
 
         const string s_AnimationListPropertyName = "babylonjs_AnimationList";
 
@@ -44,7 +45,7 @@ namespace Maya2Babylon.Forms
             animationGroupControl.InfoChanged += animationGroupControl_InfoChanged;
             animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
 
-            //Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
+            exportNonAnimatedNodesCheckBox.Checked = Loader.GetBoolProperty(exportNonAnimatedNodesCheckBoxProperty);
         }
 
         #endregion
@@ -155,5 +156,9 @@ namespace Maya2Babylon.Forms
 
         #endregion
 
+        private void exportNonAnimatedNodesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Loader.SetBoolProperty(exportNonAnimatedNodesCheckBoxProperty, exportNonAnimatedNodesCheckBox.Checked);
+        }
     }
 }

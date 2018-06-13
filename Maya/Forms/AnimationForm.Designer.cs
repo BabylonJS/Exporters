@@ -123,9 +123,9 @@
             this.exportNonAnimatedNodesCheckBox.Name = "exportNonAnimatedNodesCheckBox";
             this.exportNonAnimatedNodesCheckBox.Size = new System.Drawing.Size(271, 17);
             this.exportNonAnimatedNodesCheckBox.TabIndex = 6;
-            this.exportNonAnimatedNodesCheckBox.Text = "Export non-animated node targets (not implemented)";
+            this.exportNonAnimatedNodesCheckBox.Text = "Export non-animated node targets";
             this.exportNonAnimatedNodesCheckBox.UseVisualStyleBackColor = true;
-//            this.exportNonAnimatedNodesCheckBox.CheckedChanged += new System.EventHandler(this.exportNonAnimatedNodesCheckBox_CheckedChanged);
+            this.exportNonAnimatedNodesCheckBox.CheckedChanged += new System.EventHandler(this.exportNonAnimatedNodesCheckBox_CheckedChanged);
             // 
             // groupBox1
             // 
