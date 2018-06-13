@@ -16,21 +16,14 @@ namespace Maya2Babylon.Forms
         public event Action On_animationFormClosed;
         const string exportNonAnimatedNodesCheckBoxProperty = "babylonjs_animgroup_exportnonanimated";
 
-        const string s_AnimationListPropertyName = "babylonjs_AnimationList";
-
-//TODO        private readonly BabylonAnimationActionItem babylonAnimationAction;
-
         AnimationGroupList animationGroups = new AnimationGroupList();
         BindingSource animationListBinding = new BindingSource();
 
         #region Initialization
 
-//TODO        public AnimationForm(BabylonAnimationActionItem babylonAnimationAction)
         public AnimationForm()
         {
             InitializeComponent();
-
-//TODO            this.babylonAnimationAction = babylonAnimationAction;
         }
 
         private void AnimationForm_Load(object sender, EventArgs e)
@@ -117,7 +110,6 @@ namespace Maya2Babylon.Forms
             animationGroups.Remove(selectedItem);
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
-            //Loader.Global.SetSaveRequiredFlag(true, false);
 
             // get new selected item at the current index, if any
             selectedIndex = Math.Min(selectedIndex, animationListBox.Items.Count - 1);
@@ -135,7 +127,6 @@ namespace Maya2Babylon.Forms
         {
             info.SaveToData();
             animationListBinding.ResetBindings(false);
-//            Loader.Global.SetSaveRequiredFlag(true, false);
         }
 
         private void animationGroupControl_ConfirmPressed(AnimationGroup info)
@@ -149,8 +140,6 @@ namespace Maya2Babylon.Forms
 
         private void AnimationForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //babylonAnimationAction.Close();
-
             On_animationFormClosed();
         }
 
