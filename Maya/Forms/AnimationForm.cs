@@ -44,7 +44,7 @@ namespace Maya2Babylon.Forms
             animationGroupControl.InfoChanged += animationGroupControl_InfoChanged;
             animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
 
-            //            Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
+            //Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
         }
 
         #endregion
@@ -89,6 +89,8 @@ namespace Maya2Babylon.Forms
             animationGroups.Add(newAnimationGroup);
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
+
+            // Select the new animation group
             animationListBox.SelectedItem = newAnimationGroup;
 
         }
@@ -108,7 +110,7 @@ namespace Maya2Babylon.Forms
             AnimationGroup selectedItem = (AnimationGroup)animationListBox.SelectedItem;
 
             // delete item
-            //selectedItem.DeleteFromData();
+            selectedItem.DeleteFromData();
 
             // update list
             animationGroups.Remove(selectedItem);
@@ -117,9 +119,9 @@ namespace Maya2Babylon.Forms
             //Loader.Global.SetSaveRequiredFlag(true, false);
 
             // get new selected item at the current index, if any
-            //selectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
-            //selectedItem = selectedIndex < 0 ? null : (AnimationGroup)AnimationListBox.Items[selectedIndex];
-            //AnimationListBox.SelectedItem = selectedItem;
+            selectedIndex = Math.Min(selectedIndex, animationListBox.Items.Count - 1);
+            selectedItem = selectedIndex < 0 ? null : (AnimationGroup)animationListBox.Items[selectedIndex];
+            animationListBox.SelectedItem = selectedItem;
         }
 
         private void animationList_SelectedValueChanged(object sender, EventArgs e)
@@ -147,9 +149,8 @@ namespace Maya2Babylon.Forms
         private void AnimationForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             //babylonAnimationAction.Close();
-            //ToDelete
+
             On_animationFormClosed();
-            //ToDelete
         }
 
         #endregion
