@@ -155,8 +155,7 @@ namespace Maya2Babylon
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
 
-            // TODO
-            bool exportNonAnimated = true; // Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
+            bool exportNonAnimated = Loader.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             // Combine babylon animations from .babylon file and cached ones
             var babylonAnimations = new List<BabylonAnimation>();

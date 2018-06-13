@@ -95,5 +95,24 @@ namespace Maya2Babylon
             MGlobal.executeCommand($"fileInfo -remove \"{property}\"");
         }
 
+        internal static bool GetBoolProperty(string property)
+        {
+            bool value = false;
+            MCommandResult result = new MCommandResult();
+            MGlobal.executeCommand($"fileInfo -q \"{property}\"", result);
+            if (result.resultType == MCommandResult.Type.kStringArray)
+            {
+                MStringArray stringArray = new MStringArray();
+                result.getResult(stringArray);
+                value = string.Join("", stringArray.ToArray()).Equals(true.ToString());
+            }
+
+            return value;
+        }
+
+        internal static void SetBoolProperty(string property, bool value)
+        {
+            SetStringProperty(property, value.ToString());
+        }
     }
 }
