@@ -94,6 +94,10 @@ namespace Maya2Babylon
             };
             RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
 
+            // Animations
+            RaiseMessage("GLTFExporter | Exporting Animations");
+            ExportAnimationGroups(gltf, babylonScene);
+
             // Prepare buffers
             gltf.BuffersList.ForEach(buffer =>
             {
@@ -487,9 +491,6 @@ namespace Maya2Babylon
             gltfNode.translation[2] *= -1;
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
-
-            // Animations
-            ExportNodeAnimation(babylonNode, gltf, gltfNode);
 
             return gltfNode;
         }
