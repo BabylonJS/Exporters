@@ -91,7 +91,6 @@ namespace Maya2Babylon
         {
             if (animationForm == null)
             {
-                MGlobal.displayInfo($"Babylonjs - Animation groups");
                 animationForm = new AnimationForm();
                 animationForm.On_animationFormClosed += On_animationFormClosed;
             }
@@ -103,7 +102,6 @@ namespace Maya2Babylon
 
         private void On_animationFormClosed()
         {
-            MGlobal.displayInfo($"Babylonjs - Animation groups closed");
             animationForm = null;
         }
     }
