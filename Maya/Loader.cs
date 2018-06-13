@@ -21,7 +21,6 @@ namespace Maya2Babylon
         }
 
 
-        // TODO use an int or a float instead of MInArray
         public static int GetMinTime()
         {
             MGlobal.executeCommand("playbackOptions -q -animationStartTime", out double minTime);
@@ -40,10 +39,61 @@ namespace Maya2Babylon
             return (int)framePerSecond;
         }
 
-        public string GetStringArrayProperty(string property)
+
+
+
+        /// <summary>
+        /// Mthodes to load/save data from/in the maya file
+        /// </summary>
+        /// 
+        private static char separator = ';';
+        public static string[] GetStringArrayProperty(string property)
         {
-            MGlobal.executeCommand("fileInfo -q", out string result);
-            return result;
+            string value = "";
+            string[] values = { };
+
+            if(GetUserPropString(property, ref value))
+            {
+                values = value.Split(separator);
+            }
+
+            return values;
         }
+
+        public static void SetStringArrayProperty(string property, List<string> values)
+        {
+            string value = string.Join(separator.ToString(), values);
+
+            SetStringProperty(property, value);
+        }
+
+        internal static bool GetUserPropString(string property, ref string value)
+        {
+            MCommandResult result = new MCommandResult();
+            MGlobal.executeCommand($"fileInfo -q \"{property}\"", result);
+            if (result.resultType == MCommandResult.Type.kStringArray)
+            {
+                MStringArray stringArray = new MStringArray();
+                result.getResult(stringArray);
+                value = string.Join("", stringArray.ToArray());
+            }
+            else
+            {
+                value = null;
+            }
+
+            return !string.IsNullOrEmpty(value);
+        }
+
+        internal static void SetStringProperty(string property, string value)
+        {
+            MGlobal.executeCommand($"fileInfo \"{property}\" \"{value}\"");
+        }
+
+        public static void DeleteProperty(string property)
+        {
+            MGlobal.executeCommand($"fileInfo -remove \"{property}\"");
+        }
+
     }
 }
