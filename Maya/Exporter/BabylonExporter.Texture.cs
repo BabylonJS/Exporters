@@ -368,7 +368,7 @@ namespace Maya2Babylon
 
             var babylonTexture = new BabylonTexture
             {
-                name = materialName + "_metallicRoughness" + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                name = metallicTextureDependencyNode.name + roughnessTextureDependencyNode.name + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
 
             // Level
