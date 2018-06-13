@@ -120,36 +120,25 @@ namespace Maya2Babylon
 
                 List<BabylonAnimationKey> keys = keysPerProperty[babylonAnimationProperty];
 
+                var keysFull = new List<BabylonAnimationKey>(keys);
+
                 // Optimization
                 OptimizeAnimations(keys, true);
 
                 // Ensure animation has at least 2 frames
-                if (keys.Count > 1)
+                if (IsAnimationKeysRelevant(keys))
                 {
-                    var animationPresent = true;
-
-                    // Ensure animation has at least 2 non equal frames
-                    if (keys.Count == 2)
+                    // Create BabylonAnimation
+                    animations.Add(new BabylonAnimation()
                     {
-                        if (keys[0].values.IsEqualTo(keys[1].values))
-                        {
-                            animationPresent = false;
-                        }
-                    }
-
-                    if (animationPresent)
-                    {
-                        // Create BabylonAnimation
-                        animations.Add(new BabylonAnimation()
-                        {
-                            dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
-                            name = babylonAnimationProperty + " animation",
-                            framePerSecond = Loader.GetFPS(),
-                            loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                            property = babylonAnimationProperty,
-                            keys = keys.ToArray()
-                        });
-                    }
+                        dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
+                        name = babylonAnimationProperty + " animation",
+                        framePerSecond = Loader.GetFPS(),
+                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                        property = babylonAnimationProperty,
+                        keys = keys.ToArray(),
+                        keysFull = keysFull
+                    });
                 }
             }
 
@@ -294,9 +283,6 @@ namespace Maya2Babylon
                     lastBabylonAnimationKey = babylonAnimationKey;
                 }
 
-                // Optimization
-                OptimizeAnimations(babylonAnimationKeys, true);
-
                 // Convert euler to quaternion angles
                 if (indexAnimationProperty == 1) // Rotation
                 {
@@ -308,34 +294,26 @@ namespace Maya2Babylon
                     }
                 }
 
+                var keysFull = new List<BabylonAnimationKey>(babylonAnimationKeys);
+
+                // Optimization
+                OptimizeAnimations(babylonAnimationKeys, true);
+
                 // Ensure animation has at least 2 frames
-                if (babylonAnimationKeys.Count > 1)
+                if (IsAnimationKeysRelevant(keys))
                 {
-                    var animationPresent = true;
-
-                    // Ensure animation has at least 2 non equal frames
-                    if (babylonAnimationKeys.Count == 2)
+                    // Create BabylonAnimation
+                    string babylonAnimationProperty = babylonAnimationProperties[indexAnimationProperty];
+                    animationsObject.Add(new BabylonAnimation()
                     {
-                        if (babylonAnimationKeys[0].values.IsEqualTo(babylonAnimationKeys[1].values))
-                        {
-                            animationPresent = false;
-                        }
-                    }
-
-                    if (animationPresent)
-                    {
-                        // Create BabylonAnimation
-                        string babylonAnimationProperty = babylonAnimationProperties[indexAnimationProperty];
-                        animationsObject.Add(new BabylonAnimation()
-                        {
-                            dataType = indexAnimationProperty == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
-                            name = babylonAnimationProperty + " animation",
-                            framePerSecond = 30,
-                            loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                            property = babylonAnimationProperty,
-                            keys = babylonAnimationKeys.ToArray()
-                        });
-                    }
+                        dataType = indexAnimationProperty == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
+                        name = babylonAnimationProperty + " animation",
+                        framePerSecond = 30,
+                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                        property = babylonAnimationProperty,
+                        keys = babylonAnimationKeys.ToArray(),
+                        keysFull = keysFull
+                    });
                 }
             }
 
@@ -435,37 +413,25 @@ namespace Maya2Babylon
                 keys.Add(key);
             }
 
+            var keysFull = new List<BabylonAnimationKey>(keys);
+
             // Optimization
             OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
 
             // Ensure animation has at least 2 frames
-            if (keys.Count > 1)
+            if (IsAnimationKeysRelevant(keys))
             {
-                var animationPresent = true;
-
-                // Ensure animation has at least 2 non equal frames
-                if (keys.Count == 2)
+                // Animations
+                animation = new BabylonAnimation()
                 {
-                    if (keys[0].values.IsEqualTo(keys[1].values))
-                    {
-                        animationPresent = false;
-                    }
-                }
-
-                if (animationPresent)
-                {
-                    // Create BabylonAnimation
-                    // Animations
-                    animation = new BabylonAnimation()
-                    {
-                        name = mFnTransform.name + "Animation", // override default animation name
-                        dataType = (int)BabylonAnimation.DataType.Matrix,
-                        loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                        framePerSecond = Loader.GetFPS(),
-                        keys = keys.ToArray(),
-                        property = "_matrix"
-                    };
-                }
+                    name = mFnTransform.name + "Animation", // override default animation name
+                    dataType = (int)BabylonAnimation.DataType.Matrix,
+                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                    framePerSecond = Loader.GetFPS(),
+                    keys = keys.ToArray(),
+                    keysFull = keysFull,
+                    property = "_matrix"
+                };
             }
 
             return animation;
@@ -484,6 +450,24 @@ namespace Maya2Babylon
         private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, int currentFrame = 0)
         {
             return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
+        }
+
+        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys)
+        {
+            if (keys.Count > 1)
+            {
+                if (keys.Count == 2)
+                {
+                    if (keys[0].values.IsEqualTo(keys[1].values))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
