@@ -166,6 +166,11 @@ namespace Max2Babylon
             Invoke(new Action(() =>
             {
                 newNode = new TreeNode(text) {ForeColor = color};
+                if(rank < 0 || rank > currentRank+1)
+                {
+                    rank = 0;
+                    treeView.Nodes.Add(new TreeNode("Invalid rank passed to CreateTreeNode (through RaiseMessage, RaiseWarning or RaiseError)!") { ForeColor = Color.DarkOrange });
+                }
                 if (rank == 0)
                 {
                     treeView.Nodes.Add(newNode);
