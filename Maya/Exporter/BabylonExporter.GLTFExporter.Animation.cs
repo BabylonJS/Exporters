@@ -107,28 +107,6 @@ namespace Maya2Babylon
                     int startFrame = animGroup.FrameStart;
                     int endFrame = animGroup.FrameEnd;
 
-                    //foreach (BabylonNode babylonNode in babylonNodes)
-                    //{
-
-
-
-                    //    if (nodeToGltfNodeMap.TryGetValue(babylonNode, out GLTFNode gltfNode))
-                    //    {
-
-
-                    //        ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
-                    //    }
-
-                    //    // export all bones that match this id
-                    //    foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
-                    //    {
-                    //        if (pair.Key.id.Equals(babylonNode.id))
-                    //        {
-                    //            ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, pair.Key, pair.Value);
-                    //        }
-                    //    }
-                    //}
-
                     foreach (var pair in nodeToGltfNodeMap)
                     {
                         ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, pair.Key, pair.Value, babylonScene);

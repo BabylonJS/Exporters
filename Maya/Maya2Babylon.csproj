@@ -110,12 +110,6 @@
     <Compile Include="Forms\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\NodeTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\NodeTreeView.Designer.cs">
-      <DependentUpon>NodeTreeView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\AnimationGroupControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

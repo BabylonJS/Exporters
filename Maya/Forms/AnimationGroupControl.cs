@@ -48,16 +48,6 @@ namespace Maya2Babylon.Forms
                 // possible if we change a name, don't confirm and switch to another item with the same name
                 ResetChangedTextBoxColors();
 
-/*TODO                NodeTree.BeginUpdate();
-                NodeTree.QueueSetNodes(info.NodeHandles, false);
-                NodeTree.ApplyQueuedChanges(out List<uint> handles, false);
-                NodeTree.EndUpdate();
-
-                // if the nodes changed on max' side, even though the data has not changed, the list may be different (e.g. deleted nodes)
-                // since we haven't loaded the list before, we can't compare it to the node tree
-                // thus, we save it, and the property checks for actual differences (and set isdirty to true)
-                info.NodeHandles = handles;
-*/
                 if (info.IsDirty)
                 {
                     InfoChanged?.Invoke(info);
@@ -71,12 +61,7 @@ namespace Maya2Babylon.Forms
                 nameTextBox.Text = "";
                 startTextBox.Text = "";
                 endTextBox.Text = "";
-
-/*TODO                NodeTree.BeginUpdate();
-                NodeTree.QueueSetNodes(null, false);
-                NodeTree.ApplyQueuedChanges(out List<uint> handles, false);
-                NodeTree.EndUpdate();
-*/            }
+            }
         }
 
         void ResetChangedTextBoxColors()
@@ -138,23 +123,11 @@ namespace Maya2Babylon.Forms
             if (!int.TryParse(endTextBox.Text, out int newFrameEnd))
                 newFrameEnd = confirmedInfo.FrameEnd;
 
-//TODO            List<uint> newHandles;
-//            bool nodesChanged = NodeTree.ApplyQueuedChanges(out newHandles);
-
-//            bool changed = newName != confirmedInfo.Name || newFrameStart != confirmedInfo.FrameStart || newFrameEnd != confirmedInfo.FrameEnd || nodesChanged;
-
-//            if (!changed)
-//                return;
-
             confirmedInfo.Name = newName;
             confirmedInfo.FrameStart = newFrameStart;
             confirmedInfo.FrameEnd = newFrameEnd;
 
-//            if (nodesChanged)
-//                confirmedInfo.NodeHandles = newHandles;
-
             ResetChangedTextBoxColors();
-            NodeTree.SelectedNode = null;
 
             InfoChanged?.Invoke(confirmedInfo);
             ConfirmPressed?.Invoke(confirmedInfo);
@@ -182,28 +155,10 @@ namespace Maya2Babylon.Forms
                 nodeFn.setObject(node);
                 MGlobal.displayInfo($"{nodeFn.name} - {nodeFn.fullPathName} - {component.apiType}");
             }
-
-            //NodeTree.BeginUpdate();
-            //for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
-            //{
-            //    IINode node = Loader.Core.GetSelNode(i);
-            //    NodeTree.QueueAddNode(node);
-            //}
-            //NodeTree.EndUpdate();
         }
 
         private void removeNodeButton_Click(object sender, EventArgs e)
         {
-/*TODO            if (currentInfo == null)
-                return;
-
-            NodeTree.BeginUpdate();
-            for (int i = 0; i < Loader.Core.SelNodeCount; ++i)
-            {
-                IINode node = Loader.Core.GetSelNode(i);
-                NodeTree.QueueRemoveNode(node);
-            }
-            NodeTree.EndUpdate();
-*/        }
+        }
     }
 }

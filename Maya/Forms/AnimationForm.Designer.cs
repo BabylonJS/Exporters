@@ -57,7 +57,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(3, 16);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(171, 29);
+            this.panel1.Size = new System.Drawing.Size(244, 29);
             this.panel1.TabIndex = 4;
             // 
             // createAnimationButton
@@ -92,16 +92,16 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 45);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(171, 337);
+            this.panel2.Size = new System.Drawing.Size(244, 208);
             this.panel2.TabIndex = 5;
             // 
-            // AnimationListBox
+            // animationListBox
             // 
             this.animationListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.animationListBox.HorizontalScrollbar = true;
             this.animationListBox.Location = new System.Drawing.Point(0, 0);
-            this.animationListBox.Name = "AnimationListBox";
-            this.animationListBox.Size = new System.Drawing.Size(171, 337);
+            this.animationListBox.Name = "animationListBox";
+            this.animationListBox.Size = new System.Drawing.Size(244, 208);
             this.animationListBox.Sorted = true;
             this.animationListBox.TabIndex = 0;
             this.animationListBox.SelectedValueChanged += new System.EventHandler(this.animationList_SelectedValueChanged);
@@ -111,7 +111,7 @@
             this.ExportPropertiesGroupBox.Controls.Add(this.exportNonAnimatedNodesCheckBox);
             this.ExportPropertiesGroupBox.Location = new System.Drawing.Point(12, 12);
             this.ExportPropertiesGroupBox.Name = "ExportPropertiesGroupBox";
-            this.ExportPropertiesGroupBox.Size = new System.Drawing.Size(293, 46);
+            this.ExportPropertiesGroupBox.Size = new System.Drawing.Size(476, 46);
             this.ExportPropertiesGroupBox.TabIndex = 7;
             this.ExportPropertiesGroupBox.TabStop = false;
             this.ExportPropertiesGroupBox.Text = "Animation Group Options";
@@ -121,7 +121,7 @@
             this.exportNonAnimatedNodesCheckBox.AutoSize = true;
             this.exportNonAnimatedNodesCheckBox.Location = new System.Drawing.Point(6, 19);
             this.exportNonAnimatedNodesCheckBox.Name = "exportNonAnimatedNodesCheckBox";
-            this.exportNonAnimatedNodesCheckBox.Size = new System.Drawing.Size(271, 17);
+            this.exportNonAnimatedNodesCheckBox.Size = new System.Drawing.Size(185, 17);
             this.exportNonAnimatedNodesCheckBox.TabIndex = 6;
             this.exportNonAnimatedNodesCheckBox.Text = "Export non-animated node targets";
             this.exportNonAnimatedNodesCheckBox.UseVisualStyleBackColor = true;
@@ -138,7 +138,7 @@
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(114, 256);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(177, 385);
+            this.groupBox1.Size = new System.Drawing.Size(250, 256);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Animations";
@@ -156,14 +156,14 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
-            this.splitContainer1.Panel1MinSize = 114;
+            this.splitContainer1.Panel1MinSize = 190;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.animationGroupControl);
-            this.splitContainer1.Panel2MinSize = 295;
-            this.splitContainer1.Size = new System.Drawing.Size(660, 385);
-            this.splitContainer1.SplitterDistance = 177;
+            this.splitContainer1.Panel2MinSize = 190;
+            this.splitContainer1.Size = new System.Drawing.Size(476, 256);
+            this.splitContainer1.SplitterDistance = 250;
             this.splitContainer1.TabIndex = 5;
             // 
             // animationGroupControl
@@ -176,7 +176,7 @@
             this.animationGroupControl.Location = new System.Drawing.Point(0, 0);
             this.animationGroupControl.MinimumSize = new System.Drawing.Size(295, 256);
             this.animationGroupControl.Name = "animationGroupControl";
-            this.animationGroupControl.Size = new System.Drawing.Size(479, 385);
+            this.animationGroupControl.Size = new System.Drawing.Size(295, 256);
             this.animationGroupControl.TabIndex = 3;
             // 
             // AnimationForm
@@ -184,7 +184,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(684, 461);
+            this.ClientSize = new System.Drawing.Size(500, 332);
             this.Controls.Add(this.ExportPropertiesGroupBox);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -192,8 +192,6 @@
             this.Name = "AnimationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js - Animation Groups";
-//            this.Activated += new System.EventHandler(this.AnimationForm_Activated);
-//            this.Deactivate += new System.EventHandler(this.AnimationForm_Deactivate);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AnimationForm_FormClosed);
             this.Load += new System.EventHandler(this.AnimationForm_Load);
             this.panel1.ResumeLayout(false);

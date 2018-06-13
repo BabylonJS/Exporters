@@ -146,25 +146,6 @@ namespace Maya2Babylon
             if (!int.TryParse(properties[2], out ticksEnd))
                 throw new Exception("Failed to parse FrameEnd property.");
 
-            //if (string.IsNullOrEmpty(properties[3]))
-            //    return;
-
-            //int numNodeIDs = properties.Length - 3;
-            //if (nodeHandles.Capacity < numNodeIDs) nodeHandles.Capacity = numNodeIDs;
-            //int numFailed = 0;
-            //for (int i = 0; i < numNodeIDs; ++i)
-            //{
-            //    if (!uint.TryParse(properties[3 + i], out uint id))
-            //    {
-            //        ++numFailed;
-            //        continue;
-            //    }
-            //    nodeHandles.Add(id);
-            //}
-
-            //if (numFailed > 0)
-            //    throw new Exception(string.Format("Failed to parse {0} node ids.", numFailed));
-
             IsDirty = false;
         }
 
