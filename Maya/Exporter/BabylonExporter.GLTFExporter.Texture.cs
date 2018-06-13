@@ -94,6 +94,13 @@ namespace Maya2Babylon
                 name = babylonTexture.name;
             }
 
+            if (CheckIfImageIsRegistered(name))
+            {
+                var TextureComponent = GetRegisteredTexture(name);
+
+                return TextureComponent;
+            }
+
             RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             string validImageFormat = writeImageFunc.Invoke();
@@ -172,6 +179,8 @@ namespace Maya2Babylon
                 texCoord = babylonTexture.coordinatesIndex
             };
 
+            RegisterTexture(gltfTextureInfo, name);
+
             return gltfTextureInfo;
         }
 
@@ -186,6 +195,11 @@ namespace Maya2Babylon
             if (babylonMaterial.emissiveTexture == null && defaultEmissive.IsAlmostEqualTo(new float[] { 0, 0, 0 }, 0))
             {
                 return null;
+            }
+
+            if (GetRegisteredEmissive(babylonMaterial, defaultDiffuse, defaultEmissive) != null)
+            {
+                return GetRegisteredEmissive(babylonMaterial, defaultDiffuse, defaultEmissive);
             }
 
             Bitmap emissivePremultipliedBitmap = null;
@@ -241,7 +255,11 @@ namespace Maya2Babylon
 
             var name = babylonMaterial.name + "_emissive.jpg";
 
-            return ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
+            var emissiveTextureInfo = ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
+
+            RegisterEmissive( emissiveTextureInfo, babylonMaterial, defaultDiffuse, defaultEmissive);
+
+            return emissiveTextureInfo;
         }
 
         private void getSamplingParameters(BabylonTexture.SamplingMode samplingMode, out GLTFSampler.TextureMagFilter? magFilter, out GLTFSampler.TextureMinFilter? minFilter)
