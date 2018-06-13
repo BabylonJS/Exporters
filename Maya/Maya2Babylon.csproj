@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BabylonExportActionItem.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.Optimiser.cs" />
     <Compile Include="Exporter\BabylonExporter.Camera.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.Animation.cs" />
     <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
