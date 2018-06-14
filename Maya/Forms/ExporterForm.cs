@@ -278,17 +278,14 @@ namespace Maya2Babylon.Forms
                 case "binary babylon":
                     this.saveFileDialog.DefaultExt = "babylon";
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
-                    chkExportTangents.Checked = true;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
-                    chkExportTangents.Checked = false;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
-                    chkExportTangents.Checked = false;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
