@@ -347,13 +347,8 @@ namespace Max2Babylon
 
                 // flip normals depending on parity
                 var parityObject = meshNode.GetObjectTM(0).ExtractMatrix3().Parity;
-                var parityWorld = meshNode.GetWorldTM(0).ExtractMatrix3().Parity;
 
                 // for cesium, threejs and babylonjs (all the same)
-                var name = meshNode.Name;
-                var offsetQuat = meshNode.MaxNode.ObjOffsetRot;
-                var offsetScale = meshNode.MaxNode.ObjOffsetScale.S;
-                //if (parityObject)
                 if (parityObject)
                 {
                     // flipped case: reverse normals
@@ -1009,7 +1004,6 @@ namespace Max2Babylon
             var m32 = 2 * (qy * qz - qw * qx);
             var m33 = 1 - 2 * qx * qx - 2 * qy * qy;
 
-        
             // matrix multiplication
             var vx_rot = m11 * v.X + m12 * v.Y + m13 * v.Z;
             var vy_rot = m21 * v.X + m22 * v.Y + m23 * v.Z;
