@@ -94,6 +94,13 @@ namespace Max2Babylon
                 name = babylonTexture.name;
             }
 
+            if (CheckIfImageIsRegistered(name))
+            {
+                var TextureComponent = GetRegisteredTexture(name);
+
+                return TextureComponent;
+            }
+
             RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             string validImageFormat = writeImageFunc.Invoke();
@@ -172,6 +179,8 @@ namespace Max2Babylon
                 texCoord = babylonTexture.coordinatesIndex
             };
 
+            RegisterTexture(gltfTextureInfo, name);
+
             return gltfTextureInfo;
         }
 
@@ -182,6 +191,18 @@ namespace Max2Babylon
             if (babylonTexture == null)
             {
                 return null;
+            }
+
+            // Anticipate if a black texture is going to be export 
+            if (babylonMaterial.emissiveTexture == null && defaultEmissive.IsAlmostEqualTo(new float[] { 0, 0, 0 }, 0))
+            {
+                return null;
+            }
+
+            // Check if the texture has already been exported
+            if (GetRegisteredEmissive(babylonMaterial, defaultDiffuse, defaultEmissive) != null)
+            {
+                return GetRegisteredEmissive(babylonMaterial, defaultDiffuse, defaultEmissive);
             }
 
             Bitmap emissivePremultipliedBitmap = null;
@@ -236,8 +257,12 @@ namespace Max2Babylon
             }
 
             var name = babylonMaterial.name + "_emissive.jpg";
+            var emissiveTextureInfo = ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
 
-            return ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
+            // Register the texture for optimisation
+            RegisterEmissive(emissiveTextureInfo, babylonMaterial, defaultDiffuse, defaultEmissive);
+
+            return emissiveTextureInfo;
         }
 
         private void getSamplingParameters(BabylonTexture.SamplingMode samplingMode, out GLTFSampler.TextureMagFilter? magFilter, out GLTFSampler.TextureMinFilter? minFilter)

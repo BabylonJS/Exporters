@@ -98,6 +98,8 @@ namespace Maya2Babylon
             {
                 var TextureComponent = GetRegisteredTexture(name);
 
+                RaiseWarning(name);
+
                 return TextureComponent;
             }
 
@@ -192,11 +194,14 @@ namespace Maya2Babylon
             {
                 return null;
             }
+
+            // Anticipate if a black texture is going to be export 
             if (babylonMaterial.emissiveTexture == null && defaultEmissive.IsAlmostEqualTo(new float[] { 0, 0, 0 }, 0))
             {
                 return null;
             }
 
+            // Check if the texture has already been exported
             if (GetRegisteredEmissive(babylonMaterial, defaultDiffuse, defaultEmissive) != null)
             {
                 return GetRegisteredEmissive(babylonMaterial, defaultDiffuse, defaultEmissive);
@@ -257,6 +262,7 @@ namespace Maya2Babylon
 
             var emissiveTextureInfo = ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
 
+            // Register the texture for optimisation
             RegisterEmissive( emissiveTextureInfo, babylonMaterial, defaultDiffuse, defaultEmissive);
 
             return emissiveTextureInfo;

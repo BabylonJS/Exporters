@@ -88,9 +88,15 @@ namespace Max2Babylon
 
             RaiseMessage("Export baseColor+Alpha texture", 2);
 
+            string nameText = null;
+
+            nameText = (baseColorTexture != null ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) : "") +
+                        (alphaTexture != null ? Path.GetFileNameWithoutExtension(alphaTexture.Map.FullFilePath) : "") +
+                        (alphaTexture == null && baseColorTexture == null ? materialName : "") + "_baseColor";
+
             var babylonTexture = new BabylonTexture
             {
-                name = materialName + "_baseColor" // TODO - unsafe name, may conflict with another texture name
+                name = nameText // TODO - unsafe name, may conflict with another texture name
             };
 
             // Level
@@ -218,7 +224,7 @@ namespace Max2Babylon
 
             var babylonTexture = new BabylonTexture
             {
-                name = materialName + "_metallicRoughness" + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                name = Path.GetFileNameWithoutExtension(metallicTexture.Map.FileName) + Path.GetFileNameWithoutExtension(roughnessTexture.Map.FileName) + "_metallicRoughness" + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
 
             // Level
