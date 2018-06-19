@@ -94,11 +94,10 @@ namespace Maya2Babylon
                 name = babylonTexture.name;
             }
 
+            //Check for texture optimisation
             if (CheckIfImageIsRegistered(name))
             {
                 var TextureComponent = GetRegisteredTexture(name);
-
-                RaiseWarning(name);
 
                 return TextureComponent;
             }
@@ -181,6 +180,7 @@ namespace Maya2Babylon
                 texCoord = babylonTexture.coordinatesIndex
             };
 
+            // Add the texture in the dictionary 
             RegisterTexture(gltfTextureInfo, name);
 
             return gltfTextureInfo;

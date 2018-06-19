@@ -94,6 +94,7 @@ namespace Max2Babylon
                 name = babylonTexture.name;
             }
 
+            // Check for texture optimisation
             if (CheckIfImageIsRegistered(name))
             {
                 var TextureComponent = GetRegisteredTexture(name);
@@ -179,6 +180,7 @@ namespace Max2Babylon
                 texCoord = babylonTexture.coordinatesIndex
             };
 
+            // Add the texture in the dictionary
             RegisterTexture(gltfTextureInfo, name);
 
             return gltfTextureInfo;
