@@ -16,6 +16,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)GLTFAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFBufferView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFNodeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFCameraOrthographic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFCameraPerspective.cs" />

@@ -264,6 +264,10 @@ namespace Maya2Babylon
                 {
                     GLTFCamera gltfCamera = ExportCamera(ref gltfNode, babylonNode as BabylonCamera, gltf, gltfParentNode);
                 }
+                else if (type == typeof(BabylonLight) || type.IsSubclassOf(typeof(BabylonLight)))
+                {
+                    ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
+                }
                 else
                 {
                     RaiseError($"Node named {babylonNode.name} as no exporter", 1);
@@ -410,25 +414,26 @@ namespace Maya2Babylon
                 return boneNodePair.Value;
             }
 
-            if (type == typeof(BabylonLight))
-            {
-                if (isNodeRelevantToExport(babylonNode))
-                {
-                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
-                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 2);
-                }
-                else
-                {
-                    RaiseMessage($"GLTFExporter | Light named {babylonNode.name} is not relevant to export", 2);
-                    return gltfNode;
-                }
-            }
+            //if (type == typeof(BabylonLight))
+            //{
+            //    if (isNodeRelevantToExport(babylonNode))
+            //    {
+            //        // Export light nodes as empty nodes (no lights in glTF 2.0 core)
+            //        RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 2);
+            //    }
+            //    else
+            //    {
+            //        RaiseMessage($"GLTFExporter | Light named {babylonNode.name} is not relevant to export", 2);
+            //        return gltfNode;
+            //    }
+            //}
 
             // Node
             gltfNode = new GLTFNode
             {
                 name = GetUniqueNodeName(babylonNode.name),
-                index = gltf.NodesList.Count
+                index = gltf.NodesList.Count,
+                id = babylonNode.id
             };
             gltf.NodesList.Add(gltfNode);   // add the node to the gltf list
             nodeToGltfNodeMap.Add(babylonNode, gltfNode);   // add the node to the global map
