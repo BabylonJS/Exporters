@@ -11,10 +11,10 @@ namespace GLTFExport.Entities
         public GLTFAsset asset { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public List<string> extensionsUsed { get; set; }
+        public string[] extensionsUsed { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public List<string> extensionsRequired { get; set; }
+        public string[] extensionsRequired { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public int? scene { get; set; }
@@ -58,6 +58,9 @@ namespace GLTFExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public GLTFSkin[] skins { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public GLTFExtensions extensions { get; set; }
+
         public string OutputFolder { get; private set; }
         public string OutputFile { get; private set; }
 
@@ -73,6 +76,9 @@ namespace GLTFExport.Entities
         public List<GLTFSampler> SamplersList { get; private set; }
         public List<GLTFAnimation> AnimationsList { get; private set; }
         public List<GLTFSkin> SkinsList { get; private set; }
+        public List<string> extensionsUsedList { get; set; }
+        public List<string> extensionsRequiredList { get; set; }
+
 
         public GLTFBuffer buffer;
         public GLTFBufferView bufferViewScalar;
@@ -103,6 +109,9 @@ namespace GLTFExport.Entities
             SamplersList = new List<GLTFSampler>();
             AnimationsList = new List<GLTFAnimation>();
             SkinsList = new List<GLTFSkin>();
+            extensionsUsedList = new List<string>();
+            extensionsRequiredList = new List<string>();
+            extensions = new GLTFExtensions();
         }
 
         public void Prepare()
@@ -172,14 +181,15 @@ namespace GLTFExport.Entities
             {
                 skins = SkinsList.ToArray();
             }
-            if (extensionsUsed != null && extensionsUsed.Count == 0)
+            if (extensionsUsedList.Count > 0)
             {
-                extensionsUsed = null;
+                extensionsUsed = extensionsUsedList.ToArray();
             }
-            if (extensionsRequired != null && extensionsRequired.Count == 0)
+            if (extensionsRequiredList.Count > 0)
             {
-                extensionsRequired = null;
+                extensionsRequired = extensionsRequiredList.ToArray();
             }
+            extensions.Prepare();
         }
     }
 }
