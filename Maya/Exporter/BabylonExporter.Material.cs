@@ -301,7 +301,7 @@ namespace Maya2Babylon
                     {
                         // Simply export occlusion texture
                         RaiseVerbose("Simply export occlusion texture", 2);
-                        babylonMaterial.emissiveTexture = ExportTexture(ambientOcclusionTextureDependencyNode, babylonScene);
+                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTextureDependencyNode, babylonScene);
                     }
                 }
 
