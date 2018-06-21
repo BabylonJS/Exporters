@@ -20,7 +20,6 @@ namespace Maya2Babylon
             if (gltf.extensionsUsed.Contains(KHR_lights) == false)
             {
                 gltf.extensionsUsed.Add(KHR_lights);
-                gltf.extensionsRequired.Add(KHR_lights);    // is it really required ?
             }
 
             // new light in the gltf extensions
