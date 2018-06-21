@@ -14,6 +14,7 @@ namespace GLTFExport.Entities
         public GLTFScene()
         {
             NodesList = new List<int>();
+            extensions = new GLTFExtensions();
         }
 
         public void Prepare()

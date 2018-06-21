@@ -1,4 +1,6 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
 
 namespace GLTFExport.Entities
 {
@@ -7,10 +9,10 @@ namespace GLTFExport.Entities
     {
         public enum LightType
         {
-            point,      // 0
+            point,      // BabylonLight.type == 0
             directional,// 1
             spot,       // 2
-            ambient     // 3
+            ambient     // 3                        They are referenced only by a scene object and only 1 can be referenced per scene.
         }
 
 
@@ -20,7 +22,6 @@ namespace GLTFExport.Entities
 
 
         // Properties used by GLTFextension
-
         [DataMember(EmitDefaultValue = false)]
         public float[] color { get; set; }
 
@@ -28,7 +29,7 @@ namespace GLTFExport.Entities
         public float intensity { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public LightType type { get; set; }         // ambient, directional, point or spot
+        public string type { get; set; }         // ambient, directional, point or spot
 
         [DataMember(EmitDefaultValue = false)]
         public float range { get; set; }            // point or spot
@@ -41,6 +42,7 @@ namespace GLTFExport.Entities
         [DataContract]
         public class Spot
         {
+            // 0 < innerConeAngle < outerConeAngle < Math.PI /2.0
             [DataMember(EmitDefaultValue = false)]
             public float? innerConeAngle { get; set; }
 
@@ -48,41 +50,4 @@ namespace GLTFExport.Entities
             public float? outerConeAngle { get; set; }
         }
     }
-
-    //Loader
-    //module BABYLON.GLTF2.Extensions
-    //{
-    //const NAME = "KHR_lights";
-
-    //enum LightType
-    //{
-    //    AMBIENT = "ambient",
-    //    DIRECTIONAL = "directional",
-    //    POINT = "point",
-    //    SPOT = "spot"
-    //}
-
-    //interface ILightReference
-    //{
-    //    light: number;
-    //}
-
-    //interface ILight
-    //{
-    //    type: LightType;
-    //    color?: number[];
-    //    intensity?: number;
-    //}
-
-    //interface ISpotLight extends ILight
-    //{
-    //    innerConeAngle?: number;
-    //    outerConeAngle?: number;
-    //}
-
-    //interface ILights
-    //{
-    //    lights: ILight[];
-    //}
-
 }

@@ -1,14 +1,6 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using Color = System.Drawing.Color;
-using System.Linq;
 
 namespace Maya2Babylon
 {
@@ -18,48 +10,82 @@ namespace Maya2Babylon
 
 
         /// <summary>
-        /// 
+        /// Add the light the global extensions
         /// </summary>
-        /// <param name="gltf"></param>
+        /// <param name="gltf">The gltf data</param>
+        /// <param name="babylonLight">The light to export</param>
         /// <returns>the index of the light</returns>
         private int AddLightExtension(ref GLTF gltf, BabylonLight babylonLight)
         {
-            if (gltf.extensionsUsedList.Contains(KHR_lights) == false)
+            if (gltf.extensionsUsed.Contains(KHR_lights) == false)
             {
-                gltf.extensionsUsedList.Add(KHR_lights);
-                gltf.extensionsRequiredList.Add(KHR_lights);
+                gltf.extensionsUsed.Add(KHR_lights);
+                gltf.extensionsRequired.Add(KHR_lights);    // is it really required ?
             }
 
-            //RaiseWarning($"gltf.extensionsUsedList: {string.Join(" ", gltf.extensionsUsedList)}", 2);
-            //RaiseWarning($"gltf.extensionsRequiredList: {string.Join(" ", gltf.extensionsRequiredList)}", 2);
-
-            // new light
+            // new light in the gltf extensions
             GLTFLight light = new GLTFLight
             {
-                color = babylonLight.groundColor,
-                type = (GLTFLight.LightType)babylonLight.type
+                color = babylonLight.diffuse,
+                type = ((GLTFLight.LightType)babylonLight.type).ToString(),
+                intensity = babylonLight.intensity,
             };
 
-            //RaiseWarning($"light: color: {string.Join(" ", light.color)} type: {light.type}",2);
-            gltf.extensions.KHR_lightsList.Add(light);
-            //RaiseWarning($"gltf.extensions.KHR_lightsList: {string.Join(" ", gltf.extensions.KHR_lightsList)}",2);
+            switch (babylonLight.type)
+            {
+                case (0): // point
+                    light.type = GLTFLight.LightType.point.ToString();
+                    light.range = babylonLight.range;
+                    break;
+                case (1): // directional
+                    light.type = GLTFLight.LightType.directional.ToString();
+                    break;
+                case (2): // spot
+                    light.type = GLTFLight.LightType.spot.ToString();
+                    light.range = babylonLight.range;
+                    light.spot = new GLTFLight.Spot
+                    {
+                        innerConeAngle = 0,
+                        outerConeAngle = babylonLight.angle
+                    };
+                    break;
+                case (3): // ambient
+                    light.type = GLTFLight.LightType.ambient.ToString();
+                    break;
+            }
 
-            return gltf.extensions.KHR_lightsList.Count - 1; // the index of the light
+            Dictionary<string, List<GLTFLight>> KHR_lightsExtension;
+            if (gltf.extensions.ContainsKey(KHR_lights))
+            {
+                KHR_lightsExtension = (Dictionary<string, List<GLTFLight>>)gltf.extensions[KHR_lights];
+                KHR_lightsExtension["lights"].Add(light);
+            }
+            else
+            {
+                KHR_lightsExtension = new Dictionary<string, List<GLTFLight>>();
+                KHR_lightsExtension["lights"] = new List<GLTFLight>();
+                KHR_lightsExtension["lights"].Add(light);
+                gltf.extensions[KHR_lights] = KHR_lightsExtension;
+            }
+
+            return KHR_lightsExtension["lights"].Count - 1; // the index of the light
         }
 
         private GLTFNode ExportLight(ref GLTFNode gltfNode, BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
             RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
 
+            // new light in the node extensions
             GLTFLight light = new GLTFLight
             {
                 light = AddLightExtension(ref gltf, babylonLight)
             };
 
-            //RaiseWarning($"light: light: {light.light}", 2);
-            //if()
-            gltfNode.extensions.KHR_lights = light;
-            //RaiseWarning
+            if (gltfNode.extensions == null)
+            {
+                gltfNode.extensions = new GLTFExtensions();
+            }
+            gltfNode.extensions[KHR_lights] = light;
 
             return gltfNode;
         }
