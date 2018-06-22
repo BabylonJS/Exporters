@@ -11,6 +11,7 @@ namespace Maya2Babylon
     {
         private static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
         private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
+        public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
 
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
@@ -179,6 +180,12 @@ namespace Maya2Babylon
                 index = gltfTexture.index,
                 texCoord = babylonTexture.coordinatesIndex
             };
+
+            // Add texture extension
+            if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
+            {
+                AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+            }
 
             // Add the texture in the dictionary 
             RegisterTexture(gltfTextureInfo, name);
@@ -352,6 +359,41 @@ namespace Maya2Babylon
         private void CopyGltfTexture(string sourcePath, string destPath)
         {
             _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
+        }
+
+
+        /// <summary>
+        /// Add the KHR_texture_transform to the glTF file
+        /// </summary>
+        /// <param name="gltf"></param>
+        /// <param name="babylonMaterial"></param>
+        private void AddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
+        {
+            if (gltf.extensionsUsed.Contains(KHR_texture_transform) == false)
+            {
+                gltf.extensionsUsed.Add(KHR_texture_transform);
+            }
+
+            float angle = babylonTexture.wAng;  // - ou + Rotate the UVs by this many radians counter-clockwise around the origin. This is equivalent to a similar rotation of the image clockwise.
+
+            KHR_texture_transform textureTransform = new KHR_texture_transform
+            {
+                offset = new float[] { babylonTexture.uOffset + (float)Math.Cos(angle) - (float)Math.Sin(angle),
+                                        babylonTexture.vOffset + (float)Math.Sin(angle) + (float)Math.Cos(angle) },
+                rotation = angle,
+                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale }
+            };
+
+            if (gltfTextureInfo.texCoord != babylonTexture.coordinatesIndex)
+            {
+                textureTransform.texCoord = babylonTexture.coordinatesIndex;
+            }
+
+            if (gltfTextureInfo.extensions == null)
+            {
+                gltfTextureInfo.extensions = new GLTFExtensions();
+            }
+            gltfTextureInfo.extensions[KHR_texture_transform] = textureTransform;
         }
     }
 }

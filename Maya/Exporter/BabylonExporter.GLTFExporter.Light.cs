@@ -6,7 +6,7 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
-        public const string KHR_lights = "KHR_lights";
+        public const string KHR_lights = "KHR_lights";  // Name of the extension
 
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Maya2Babylon
                     light.range = babylonLight.range;
                     light.spot = new GLTFLight.Spot
                     {
-                        innerConeAngle = 0,
+                        //innerConeAngle = 0, Babylon doesn't support the innerConeAngle
                         outerConeAngle = babylonLight.angle
                     };
                     break;
