@@ -63,7 +63,7 @@ namespace Max2Babylon
             ITexmap rootColorTexmap = paramBlock.GetTexmap(MAPS_PARAM_ID, 0, 14);
             if (rootColorTexmap != null)
             {
-                diffuseTexture = ExportTexture(rootColorTexmap, 0f, babylonScene);
+                diffuseTexture = ExportTexture(rootColorTexmap, babylonScene, 0f);
                 diffuseTexture.level = 1;
             }
 
