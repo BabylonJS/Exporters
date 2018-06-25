@@ -374,23 +374,21 @@ namespace Maya2Babylon
                 gltf.extensionsUsed.Add(KHR_texture_transform);
             }
 
-            float angle = babylonTexture.wAng;  // - ou + Rotate the UVs by this many radians counter-clockwise around the origin. This is equivalent to a similar rotation of the image clockwise.
+            float angle = babylonTexture.wAng;
+            float angleDirect = -babylonTexture.wAng;
 
             KHR_texture_transform textureTransform = new KHR_texture_transform
             {
                 offset = new float[] { babylonTexture.uOffset,
-                                        -babylonTexture.vOffset }, // is the -1 really necessary ?
+                                        -babylonTexture.vOffset },
                 rotation = angle,
-                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale }
+                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale },
+                texCoord = babylonTexture.coordinatesIndex
             };
 
             textureTransform.offset[1] += 1 - babylonTexture.vScale;    // update vOffset according to the vScale
-            //textureTransform.offset[1] += ; // update vOffset according to the rotation
-
-            if (gltfTextureInfo.texCoord != babylonTexture.coordinatesIndex)
-            {
-                textureTransform.texCoord = babylonTexture.coordinatesIndex;
-            }
+            textureTransform.offset[0] += (float)( 0.5 * (1-(Math.Cos(angleDirect) - Math.Sin(angleDirect)) ) ); // update uOffset according to the rotation
+            textureTransform.offset[1] += (float)( 0.5 * (1-(Math.Sin(angleDirect) + Math.Cos(angleDirect)) ) ); // update vOffset according to the rotation
 
             if (gltfTextureInfo.extensions == null)
             {
