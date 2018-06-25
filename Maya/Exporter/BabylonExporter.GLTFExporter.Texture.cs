@@ -378,11 +378,14 @@ namespace Maya2Babylon
 
             KHR_texture_transform textureTransform = new KHR_texture_transform
             {
-                offset = new float[] { babylonTexture.uOffset + (float)Math.Cos(angle) - (float)Math.Sin(angle),
-                                        babylonTexture.vOffset + (float)Math.Sin(angle) + (float)Math.Cos(angle) },
+                offset = new float[] { babylonTexture.uOffset,
+                                        -babylonTexture.vOffset }, // is the -1 really necessary ?
                 rotation = angle,
                 scale = new float[] { babylonTexture.uScale, babylonTexture.vScale }
             };
+
+            textureTransform.offset[1] += 1 - babylonTexture.vScale;    // update vOffset according to the vScale
+            //textureTransform.offset[1] += ; // update vOffset according to the rotation
 
             if (gltfTextureInfo.texCoord != babylonTexture.coordinatesIndex)
             {
