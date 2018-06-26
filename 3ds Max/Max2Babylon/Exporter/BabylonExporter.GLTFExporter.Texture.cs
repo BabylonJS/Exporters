@@ -11,6 +11,7 @@ namespace Max2Babylon
     {
         private static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
         private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
+        public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
 
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
@@ -179,6 +180,13 @@ namespace Max2Babylon
                 index = gltfTexture.index,
                 texCoord = babylonTexture.coordinatesIndex
             };
+
+            // Add texture extension
+            RaiseWarning($"{babylonTexture.uOffset} != 0f || {babylonTexture.vOffset} != 0f || {babylonTexture.uScale} != 1f || {babylonTexture.vScale} != 1f || {babylonTexture.wAng} != 0f", 3);
+            if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
+            {
+                AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+            }
 
             // Add the texture in the dictionary
             RegisterTexture(gltfTextureInfo, name);
@@ -351,6 +359,40 @@ namespace Max2Babylon
         private void CopyGltfTexture(string sourcePath, string destPath)
         {
             _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
+        }
+
+        /// <summary>
+        /// Add the KHR_texture_transform to the glTF file
+        /// </summary>
+        /// <param name="gltf"></param>
+        /// <param name="babylonMaterial"></param>
+        private void AddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
+        {
+            if (gltf.extensionsUsed.Contains(KHR_texture_transform) == false)
+            {
+                gltf.extensionsUsed.Add(KHR_texture_transform);
+            }
+
+            float angle = babylonTexture.wAng;
+            float angleDirect = -babylonTexture.wAng;
+
+            KHR_texture_transform textureTransform = new KHR_texture_transform
+            {
+                offset = new float[] { babylonTexture.uOffset, -babylonTexture.vOffset },
+                rotation = angle,
+                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale },
+                texCoord = babylonTexture.coordinatesIndex
+            };
+
+            textureTransform.offset[1] += 1 - babylonTexture.vScale;    // update vOffset according to the vScale
+            textureTransform.offset[0] += (float)(0.5 * (1 - (Math.Cos(angleDirect) - Math.Sin(angleDirect)))); // update uOffset according to the rotation
+            textureTransform.offset[1] += (float)(0.5 * (1 - (Math.Sin(angleDirect) + Math.Cos(angleDirect)))); // update vOffset according to the rotation
+
+            if (gltfTextureInfo.extensions == null)
+            {
+                gltfTextureInfo.extensions = new GLTFExtensions();
+            }
+            gltfTextureInfo.extensions[KHR_texture_transform] = textureTransform;
         }
     }
 }

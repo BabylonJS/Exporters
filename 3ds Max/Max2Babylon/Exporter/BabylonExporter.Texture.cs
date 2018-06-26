@@ -524,6 +524,13 @@ namespace Max2Babylon
             babylonTexture.vAng = uvGen.GetVAng(0);
             babylonTexture.wAng = uvGen.GetWAng(0);
 
+
+            // Fix offset according to the rotation
+            var angle = -babylonTexture.wAng;
+            babylonTexture.uOffset -= (float) Math.Sin(angle);
+            babylonTexture.vOffset -= (float) Math.Cos(angle);
+
+
             babylonTexture.wrapU = BabylonTexture.AddressMode.CLAMP_ADDRESSMODE; // CLAMP
             if ((uvGen.TextureTiling & 1) != 0) // WRAP
             {
