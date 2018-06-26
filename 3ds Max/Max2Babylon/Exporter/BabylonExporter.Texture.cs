@@ -560,7 +560,7 @@ namespace Max2Babylon
             // TODO - rotation and scale
             if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 0f || babylonTexture.vScale != 0f))
             {
-                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly.", 3);
+                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", 3);
             }
 
 
