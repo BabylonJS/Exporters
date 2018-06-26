@@ -240,9 +240,7 @@ namespace MakeIncremental
                 {
                     if (mesh.checkCollisions.Value) // Do not delay load collisions object
                     {
-                        if (mesh.geometryId != null)
-                            doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);
-                        continue;
+                        if (mesh.geometryId != null) doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);                       
                     }
 
                     Extract(mesh, outputDir, rootFilename);
@@ -257,8 +255,7 @@ namespace MakeIncremental
                     {
                         var id = geometry.id.Value;
 
-                        if (doNotDelayLoadingForGeometries.Any(g => g == id))
-                            continue;
+                        if (doNotDelayLoadingForGeometries.Any(g => g == id)) continue;
 
                         Extract(geometry, outputDir, rootFilename, false);
                     }
