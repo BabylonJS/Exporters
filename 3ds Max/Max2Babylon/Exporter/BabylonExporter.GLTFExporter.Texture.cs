@@ -182,7 +182,6 @@ namespace Max2Babylon
             };
 
             // Add texture extension
-            RaiseWarning($"{babylonTexture.uOffset} != 0f || {babylonTexture.vOffset} != 0f || {babylonTexture.uScale} != 1f || {babylonTexture.vScale} != 1f || {babylonTexture.wAng} != 0f", 3);
             if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
             {
                 AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
