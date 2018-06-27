@@ -509,9 +509,6 @@ namespace Max2Babylon
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
 
-            // Animations
-            //ExportNodeAnimation(babylonNode, gltf, gltfNode);
-
             return gltfNode;
         }
     }
