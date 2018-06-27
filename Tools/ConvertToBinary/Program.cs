@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -100,9 +100,7 @@ namespace ConvertToBinary
                 {
                     if (mesh.checkCollisions.Value) // Do not delay load collisions object
                     {
-                        if (mesh.geometryId != null)
-                            doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);
-                        continue;
+                        if (mesh.geometryId != null) doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);
                     }
 
                     isMesh = true;
@@ -120,8 +118,7 @@ namespace ConvertToBinary
                     {
                         var id = geometry.id.Value;
 
-                        if (doNotDelayLoadingForGeometries.Any(g => g == id))
-                            continue;
+                        if (doNotDelayLoadingForGeometries.Any(g => g == id)) continue;
 
                         isMesh = false;
 
