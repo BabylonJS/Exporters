@@ -509,8 +509,8 @@ namespace Max2Babylon
                 RaiseWarning(string.Format("Unsupported map channel, Only channel 1 and 2 are supported."), 3);
             }
 
-            babylonTexture.uOffset = uvGen.GetUOffs(0);
-            babylonTexture.vOffset = uvGen.GetVOffs(0);
+            babylonTexture.uOffset = -uvGen.GetUOffs(0);
+            babylonTexture.vOffset = -uvGen.GetVOffs(0);
 
             babylonTexture.uScale = uvGen.GetUScl(0);
             babylonTexture.vScale = uvGen.GetVScl(0);
@@ -523,6 +523,46 @@ namespace Max2Babylon
             babylonTexture.uAng = uvGen.GetUAng(0);
             babylonTexture.vAng = uvGen.GetVAng(0);
             babylonTexture.wAng = uvGen.GetWAng(0);
+
+
+            // Fix offset according to the rotation
+            // 3DS Max and babylon don't use the same origin for the rotation
+            if(babylonTexture.wAng != 0f)
+            {
+                var angle = -babylonTexture.wAng;
+                var cos = (float)Math.Cos(angle);
+                var sin = (float)Math.Sin(angle);
+                var u = babylonTexture.uOffset;
+                var v = babylonTexture.vOffset;
+
+                // uOffset
+                babylonTexture.uOffset = u * cos;
+                babylonTexture.vOffset = u * -sin;
+                // vOffset
+                babylonTexture.uOffset += v * sin;
+                babylonTexture.vOffset += v * cos;
+                // rotation
+                babylonTexture.uOffset -= sin;
+                babylonTexture.vOffset -= cos;
+            }
+
+            // Fix offset according to the scale
+            // 3DS Max keep the tiling symmetrical
+            if(babylonTexture.uScale != 0f)
+            {
+                babylonTexture.uOffset += (1f - babylonTexture.uScale) / 2f;
+            }
+            if(babylonTexture.vScale != 0f)
+            {
+                babylonTexture.vOffset += (1f - babylonTexture.vScale) * 1.5f;
+            }
+
+            // TODO - rotation and scale
+            if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
+            {
+                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", 3);
+            }
+
 
             babylonTexture.wrapU = BabylonTexture.AddressMode.CLAMP_ADDRESSMODE; // CLAMP
             if ((uvGen.TextureTiling & 1) != 0) // WRAP
