@@ -220,11 +220,11 @@
             // labelQuality
             // 
             this.labelQuality.AutoSize = true;
-            this.labelQuality.Location = new System.Drawing.Point(214, 93);
+            this.labelQuality.Location = new System.Drawing.Point(317, 93);
             this.labelQuality.Name = "labelQuality";
-            this.labelQuality.Size = new System.Drawing.Size(182, 13);
+            this.labelQuality.Size = new System.Drawing.Size(79, 13);
             this.labelQuality.TabIndex = 23;
-            this.labelQuality.Text = "Quality used to convert bitmap to jpg:";
+            this.labelQuality.Text = "Texture quality:";
             // 
             // chkExportTangents
             // 
