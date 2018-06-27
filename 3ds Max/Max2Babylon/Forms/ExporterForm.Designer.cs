@@ -41,7 +41,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.labelCompression = new System.Windows.Forms.Label();
+            this.txtQuality = new System.Windows.Forms.TextBox();
+            this.labelQuality = new System.Windows.Forms.Label();
             this.chkExportTangents = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtScaleFactor = new System.Windows.Forms.TextBox();
@@ -52,7 +53,6 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
-            this.txtCompression = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -185,8 +185,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.txtCompression);
-            this.groupBox1.Controls.Add(this.labelCompression);
+            this.groupBox1.Controls.Add(this.txtQuality);
+            this.groupBox1.Controls.Add(this.labelQuality);
             this.groupBox1.Controls.Add(this.chkExportTangents);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtScaleFactor);
@@ -208,14 +208,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
-            // labelCompression
+            // txtQuality
             // 
-            this.labelCompression.AutoSize = true;
-            this.labelCompression.Location = new System.Drawing.Point(329, 93);
-            this.labelCompression.Name = "labelCompression";
-            this.labelCompression.Size = new System.Drawing.Size(70, 13);
-            this.labelCompression.TabIndex = 23;
-            this.labelCompression.Text = "Compression:";
+            this.txtQuality.Location = new System.Drawing.Point(401, 90);
+            this.txtQuality.Name = "txtQuality";
+            this.txtQuality.Size = new System.Drawing.Size(43, 20);
+            this.txtQuality.TabIndex = 24;
+            this.txtQuality.Text = "100";
+            this.txtQuality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // labelQuality
+            // 
+            this.labelQuality.AutoSize = true;
+            this.labelQuality.Location = new System.Drawing.Point(214, 93);
+            this.labelQuality.Name = "labelQuality";
+            this.labelQuality.Size = new System.Drawing.Size(182, 13);
+            this.labelQuality.TabIndex = 23;
+            this.labelQuality.Text = "Quality used to convert bitmap to jpg:";
             // 
             // chkExportTangents
             // 
@@ -331,15 +340,6 @@
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
             // 
-            // txtCompression
-            // 
-            this.txtCompression.Location = new System.Drawing.Point(401, 90);
-            this.txtCompression.Name = "txtCompression";
-            this.txtCompression.Size = new System.Drawing.Size(43, 20);
-            this.txtCompression.TabIndex = 24;
-            this.txtCompression.Text = "0";
-            this.txtCompression.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -394,7 +394,7 @@
         private System.Windows.Forms.TextBox txtScaleFactor;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox chkExportTangents;
-        private System.Windows.Forms.Label labelCompression;
-        private System.Windows.Forms.TextBox txtCompression;
+        private System.Windows.Forms.Label labelQuality;
+        private System.Windows.Forms.TextBox txtQuality;
     }
 }
