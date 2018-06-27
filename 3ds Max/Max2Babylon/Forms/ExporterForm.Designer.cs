@@ -41,6 +41,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtQuality = new System.Windows.Forms.TextBox();
+            this.labelQuality = new System.Windows.Forms.Label();
             this.chkExportTangents = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtScaleFactor = new System.Windows.Forms.TextBox();
@@ -183,6 +185,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.txtQuality);
+            this.groupBox1.Controls.Add(this.labelQuality);
             this.groupBox1.Controls.Add(this.chkExportTangents);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtScaleFactor);
@@ -203,6 +207,24 @@
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // txtQuality
+            // 
+            this.txtQuality.Location = new System.Drawing.Point(401, 90);
+            this.txtQuality.Name = "txtQuality";
+            this.txtQuality.Size = new System.Drawing.Size(43, 20);
+            this.txtQuality.TabIndex = 24;
+            this.txtQuality.Text = "100";
+            this.txtQuality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // labelQuality
+            // 
+            this.labelQuality.AutoSize = true;
+            this.labelQuality.Location = new System.Drawing.Point(317, 93);
+            this.labelQuality.Name = "labelQuality";
+            this.labelQuality.Size = new System.Drawing.Size(79, 13);
+            this.labelQuality.TabIndex = 23;
+            this.labelQuality.Text = "Texture quality:";
             // 
             // chkExportTangents
             // 
@@ -372,5 +394,7 @@
         private System.Windows.Forms.TextBox txtScaleFactor;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox chkExportTangents;
+        private System.Windows.Forms.Label labelQuality;
+        private System.Windows.Forms.TextBox txtQuality;
     }
 }

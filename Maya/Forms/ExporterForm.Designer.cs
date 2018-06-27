@@ -53,6 +53,8 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
+            this.labelQuality = new System.Windows.Forms.Label();
+            this.txtQuality = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -188,6 +190,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.txtQuality);
+            this.groupBox1.Controls.Add(this.labelQuality);
             this.groupBox1.Controls.Add(this.chkExportSkin);
             this.groupBox1.Controls.Add(this.chkExportTangents);
             this.groupBox1.Controls.Add(this.label4);
@@ -219,7 +223,7 @@
             this.chkExportSkin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkExportSkin.Location = new System.Drawing.Point(166, 163);
             this.chkExportSkin.Name = "chkExportSkin";
-            this.chkExportSkin.Size = new System.Drawing.Size(110, 17);
+            this.chkExportSkin.Size = new System.Drawing.Size(80, 17);
             this.chkExportSkin.TabIndex = 21;
             this.chkExportSkin.Text = "Export skins";
             this.chkExportSkin.UseVisualStyleBackColor = true;
@@ -295,7 +299,6 @@
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 0;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
-			this.comboOutputFormat.SelectedIndex = 0;
             // 
             // chkOnlySelected
             // 
@@ -355,6 +358,24 @@
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
             // 
+            // labelQuality
+            // 
+            this.labelQuality.AutoSize = true;
+            this.labelQuality.Location = new System.Drawing.Point(317, 98);
+            this.labelQuality.Name = "labelQuality";
+            this.labelQuality.Size = new System.Drawing.Size(79, 13);
+            this.labelQuality.TabIndex = 22;
+            this.labelQuality.Text = "Texture quality:";
+            // 
+            // txtQuality
+            // 
+            this.txtQuality.Location = new System.Drawing.Point(402, 93);
+            this.txtQuality.Name = "txtQuality";
+            this.txtQuality.Size = new System.Drawing.Size(42, 20);
+            this.txtQuality.TabIndex = 23;
+            this.txtQuality.Text = "100";
+            this.txtQuality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -411,5 +432,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox chkExportTangents;
         private System.Windows.Forms.CheckBox chkExportSkin;
+        private System.Windows.Forms.TextBox txtQuality;
+        private System.Windows.Forms.Label labelQuality;
     }
 }
