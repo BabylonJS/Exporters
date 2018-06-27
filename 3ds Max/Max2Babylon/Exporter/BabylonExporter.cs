@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
-        private string exporterVersion = "1.2.10";
+        private string exporterVersion = "1.2.11";
 
         void ReportProgressChanged(int progress)
         {
@@ -98,6 +98,24 @@ namespace Max2Babylon
             catch
             {
                 RaiseError("Scale factor is not a valid number.");
+                return;
+            }
+
+            long quality = 0L;
+            string txtQuality = exportParameters.txtQuality;
+            try
+            {
+                quality = long.Parse(txtQuality);
+
+                if(quality < 0 || quality > 100)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
+                RaiseError("This parameter set the quality of jpg compression.");
                 return;
             }
 
