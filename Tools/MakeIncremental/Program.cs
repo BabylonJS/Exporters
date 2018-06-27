@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -19,7 +19,9 @@ namespace MakeIncremental
             }
 
             // Parsing arguments
-            string input = "";
+            string srcFilename = "";
+            string dstPath = "";
+
             foreach (var arg in args)
             {
                 var order = arg.Substring(0, 3);
@@ -27,7 +29,10 @@ namespace MakeIncremental
                 switch (order)
                 {
                     case "/i:":
-                        input = arg.Substring(3);
+                        srcFilename = arg.Substring(3);
+                        break;
+                    case "/o:":
+                        dstPath = arg.Substring(3);
                         break;
                     default:
                         DisplayUsage();
@@ -35,13 +40,13 @@ namespace MakeIncremental
                 }
             }
 
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(srcFilename))
             {
                 DisplayUsage();
                 return;
             }
 
-            ProcessSourceFile(input);
+            ProcessSourceFile(srcFilename, dstPath);
         }
 
         static void Extract(dynamic meshOrGeometry, string outputDir, string rootFilename, bool mesh = true)
@@ -140,7 +145,7 @@ namespace MakeIncremental
         static string CreateDelayLoadingFile(dynamic meshOrGeometry, string outputDir, string rootFilename, bool mesh = true)
         {
             string encodedName;
-            if(mesh)
+            if (mesh)
                 encodedName = meshOrGeometry.name.ToString();
             else
                 encodedName = meshOrGeometry.id.ToString();
@@ -193,12 +198,20 @@ namespace MakeIncremental
             return HttpUtility.UrlEncode(Path.GetFileName(outputPath));
         }
 
-        static void ProcessSourceFile(string input)
+        static void ProcessSourceFile(string input, string dstPath)
         {
             try
             {
+                if (dstPath != "")
+                {
+                    if (!Directory.Exists(dstPath))
+                    {
+                        Directory.CreateDirectory(dstPath);
+                    }
+                }
+
                 dynamic scene;
-                var outputDir = Path.GetDirectoryName(input);
+                var outputDir = Path.GetDirectoryName(dstPath);
                 var rootFilename = Path.GetFileNameWithoutExtension(input);
 
                 // Loading
@@ -206,9 +219,10 @@ namespace MakeIncremental
                 Console.WriteLine("Loading " + input);
                 Console.WriteLine();
                 Console.ResetColor();
-                using (var streamReader = new StreamReader(input))
+                var streamReader = new StreamReader(input);
+                using (var stream = streamReader)
                 {
-                    using (var reader = new JsonTextReader(streamReader))
+                    using (var reader = new JsonTextReader(stream))
                     {
                         scene = JObject.Load(reader);
                     }
@@ -226,9 +240,7 @@ namespace MakeIncremental
                 {
                     if (mesh.checkCollisions.Value) // Do not delay load collisions object
                     {
-                        if (mesh.geometryId != null)
-                            doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);
-                        continue;
+                        if (mesh.geometryId != null) doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);                       
                     }
 
                     Extract(mesh, outputDir, rootFilename);
@@ -243,8 +255,7 @@ namespace MakeIncremental
                     {
                         var id = geometry.id.Value;
 
-                        if (doNotDelayLoadingForGeometries.Any(g => g == id))
-                            continue;
+                        if (doNotDelayLoadingForGeometries.Any(g => g == id)) continue;
 
                         Extract(geometry, outputDir, rootFilename, false);
                     }
@@ -276,7 +287,7 @@ namespace MakeIncremental
 
         static void DisplayUsage()
         {
-            Console.WriteLine("MakeIncremental usage: MakeIncremental.exe /i:\"source file\" [/textures]");
+            Console.WriteLine("MakeIncremental usage: MakeIncremental.exe /i:\"source file\" /o:\"source dest\" [/textures]");
         }
     }
 }
