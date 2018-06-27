@@ -379,8 +379,7 @@ namespace Maya2Babylon
 
             KHR_texture_transform textureTransform = new KHR_texture_transform
             {
-                offset = new float[] { babylonTexture.uOffset,
-                                        -babylonTexture.vOffset },
+                offset = new float[] { babylonTexture.uOffset, -babylonTexture.vOffset },
                 rotation = angle,
                 scale = new float[] { babylonTexture.uScale, babylonTexture.vScale },
                 texCoord = babylonTexture.coordinatesIndex
