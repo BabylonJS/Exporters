@@ -172,6 +172,9 @@
     <Compile Include="..\Exporter\GLTFGlobalVertex.cs">
       <Link>Exporter\GLTFGlobalVertex.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Light.cs">
+      <Link>Exporter\GLTFGlobalVertex.cs</Link>
+    </Compile>
     <Compile Include="..\Forms\AnimationForm.cs">
       <Link>Forms\AnimationForm.cs</Link>
       <SubType>Form</SubType>
