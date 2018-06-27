@@ -944,7 +944,7 @@ namespace Max2Babylon
                 {
                     // Create an Encoder object based on the GUID for the Quality parameter category
                     EncoderParameters encoderParameters = new EncoderParameters(1);
-                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, 100L);
+                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, long.Parse(exportParameters.txtQuality));
                     encoderParameters.Param[0] = encoderQualityParameter;
 
                     bitmap.Save(fs, encoder, encoderParameters);

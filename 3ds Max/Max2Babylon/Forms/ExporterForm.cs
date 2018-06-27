@@ -33,6 +33,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
             Tools.PrepareCheckBox(chkExportTangents, Loader.Core.RootNode, "babylonjs_exporttangents");
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");
+            Tools.PrepareTextBox(txtQuality, Loader.Core.RootNode, "babylonjs_txtCompression", "100");
         }
 
         private void butBrowse_Click(object sender, EventArgs e)
@@ -57,6 +58,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
             Tools.UpdateCheckBox(chkExportTangents, Loader.Core.RootNode, "babylonjs_exporttangents");
             Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
+            Tools.UpdateTextBox(txtQuality, Loader.Core.RootNode, "babylonjs_txtCompression");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
@@ -131,7 +133,7 @@ namespace Max2Babylon
                     generateManifest = chkManifest.Checked,
                     autoSave3dsMaxFile = chkAutoSave.Checked,
                     exportTangents = chkExportTangents.Checked,
-                    txtCompression = txtCompression.Text
+                    txtQuality = txtQuality.Text
                 };
 
                 exporter.callerForm = this;

@@ -101,23 +101,21 @@ namespace Max2Babylon
                 return;
             }
 
-            float compression = 0f;
-            string txtCompresion = exportParameters.txtCompression;
+            long quality = 0L;
+            string txtQuality = exportParameters.txtQuality;
             try
             {
-                txtCompresion = txtCompresion.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-                txtCompresion = txtCompresion.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-                compression = float.Parse(txtCompresion);
+                quality = long.Parse(txtQuality);
 
-                if(compression < 0 || compression > 100)
+                if(quality < 0 || quality > 100)
                 {
                     throw new Exception();
                 }
             }
             catch
             {
-                RaiseError("Compression is not a valid number. It should be between 0 and 100.");
-                RaiseError("This value is used to save the texture in jpg format.");
+                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
+                RaiseError("This parameter set the quality of compression in jpg format for all bitmap texture.");
                 return;
             }
 
