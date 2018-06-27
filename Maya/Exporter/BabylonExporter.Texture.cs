@@ -487,6 +487,12 @@ namespace Maya2Babylon
             babylonTexture.vAng = 0;
             babylonTexture.wAng = textureDependencyNode.findPlug("rotateFrame").asFloatProperty;
 
+            // TODO - rotation and scale
+            if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
+            {
+                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", logRankTexture + 1);
+            }
+
             // Adress mode U
             // TODO - What is adress mode when both wrap and mirror?
             if (textureDependencyNode.findPlug("mirrorU").asBoolProperty)
