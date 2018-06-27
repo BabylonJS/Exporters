@@ -115,7 +115,7 @@ namespace Max2Babylon
             catch
             {
                 RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
-                RaiseError("This parameter set the quality of compression in jpg format for all bitmap texture.");
+                RaiseError("This parameter set the quality of jpg compression.");
                 return;
             }
 
