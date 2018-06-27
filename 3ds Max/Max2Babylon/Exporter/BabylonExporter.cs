@@ -101,6 +101,26 @@ namespace Max2Babylon
                 return;
             }
 
+            float compression = 0f;
+            string txtCompresion = exportParameters.txtCompression;
+            try
+            {
+                txtCompresion = txtCompresion.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                txtCompresion = txtCompresion.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+                compression = float.Parse(txtCompresion);
+
+                if(compression < 0 || compression > 100)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                RaiseError("Compression is not a valid number. It should be between 0 and 100.");
+                RaiseError("This value is used to save the texture in jpg format.");
+                return;
+            }
+
             this.exportParameters = exportParameters;
 
             var gameConversionManger = Loader.Global.ConversionManager;
