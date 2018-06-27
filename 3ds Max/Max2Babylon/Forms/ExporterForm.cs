@@ -130,7 +130,8 @@ namespace Max2Babylon
                     exportOnlySelected = chkOnlySelected.Checked,
                     generateManifest = chkManifest.Checked,
                     autoSave3dsMaxFile = chkAutoSave.Checked,
-                    exportTangents = chkExportTangents.Checked
+                    exportTangents = chkExportTangents.Checked,
+                    txtCompression = txtCompression.Text
                 };
 
                 exporter.callerForm = this;
