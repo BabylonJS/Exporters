@@ -554,7 +554,7 @@ namespace Max2Babylon
             }
             if(babylonTexture.vScale != 0f)
             {
-                babylonTexture.vOffset -= (1f - babylonTexture.vScale) / 2f;
+                babylonTexture.vOffset += (1f - babylonTexture.vScale) * 1.5f;
             }
 
             // TODO - rotation and scale
