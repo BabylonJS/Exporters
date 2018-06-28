@@ -40,6 +40,34 @@ namespace Maya2Babylon
         }
 
 
+        /// <summary>
+        /// Using MEL command, it return the visibility of a Maya object.
+        /// </summary>
+        /// <param name="objectFullPathName">The name of the Maya object</param>
+        /// <returns>
+        /// 0 if invisible
+        /// 1 if visible
+        /// </returns>
+        public static float GetVisibility(string objectFullPathName)
+        {
+            MGlobal.executeCommand($"getAttr {objectFullPathName}.visibility", out double visibility);
+            return (float)visibility;
+        }
+
+        /// <summary>
+        /// Using MEL command, it return the visibility of a Maya object at a specific frame.
+        /// </summary>
+        /// <param name="objectFullPathName">The name of the Maya object</param>
+        /// <param name="currentFrame">The frame to use</param>
+        /// <returns>
+        /// 0 if invisible
+        /// 1 if visible
+        /// </returns>
+        public static float GetVisibility(string objectFullPathName, int currentFrame)
+        {
+            MGlobal.executeCommand($"getAttr -t {currentFrame} {objectFullPathName}.visibility", out double visibility);
+            return (float)visibility;
+        }
 
 
         /// <summary>

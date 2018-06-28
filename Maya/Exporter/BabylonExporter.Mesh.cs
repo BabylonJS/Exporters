@@ -214,7 +214,11 @@ namespace Maya2Babylon
                 return null;
             }
 
-            var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+            var babylonMesh = new BabylonMesh{
+                                        name = mFnTransform.name,
+                                        id = mFnTransform.uuid().asString(),
+                                        visibility = Loader.GetVisibility(mFnTransform.fullPathName)
+                                    };
             
             // Instance
             // For a mesh with instances, we distinguish between master and instance meshes:
