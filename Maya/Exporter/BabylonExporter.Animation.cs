@@ -61,13 +61,14 @@ namespace Maya2Babylon
             // Animations
             List<BabylonAnimation> animations = new List<BabylonAnimation>();
 
-            string[] babylonAnimationProperties = new string[] { "scaling", "rotationQuaternion", "position" };
+            string[] babylonAnimationProperties = new string[] { "scaling", "rotationQuaternion", "position", "visibility" };
 
 
             Dictionary<string, List<BabylonAnimationKey>> keysPerProperty = new Dictionary<string, List<BabylonAnimationKey>>();
             keysPerProperty.Add("scaling", new List<BabylonAnimationKey>());
             keysPerProperty.Add("rotationQuaternion", new List<BabylonAnimationKey>());
             keysPerProperty.Add("position", new List<BabylonAnimationKey>());
+            keysPerProperty.Add("visibility", new List<BabylonAnimationKey>());
 
             // get keys
             for (int currentFrame = start; currentFrame <= end; currentFrame++)
@@ -107,6 +108,9 @@ namespace Maya2Babylon
                         case 2: // position
                             key.values = position.ToArray();
                             break;
+                        case 3: // visibility
+                            key.values = new float[] { Loader.GetVisibility(mFnTransform.fullPathName, currentFrame) };
+                            break;
                     }
 
                     keysPerProperty[babylonAnimationProperty].Add(key);
@@ -128,10 +132,23 @@ namespace Maya2Babylon
                 // Ensure animation has at least 2 frames
                 if (IsAnimationKeysRelevant(keys))
                 {
+                    int dataType = 0;   // "scaling", "rotationQuaternion", "position", "visibility"
+                    if (indexAnimation == 0 || indexAnimation == 2) // scaling and position
+                    {
+                        dataType = (int)BabylonAnimation.DataType.Vector3;
+                    }
+                    else if(indexAnimation == 1)    // rotationQuaternion
+                    {
+                        dataType = (int)BabylonAnimation.DataType.Quaternion;
+                    }
+                    else   // visibility
+                    {
+                        dataType = (int)BabylonAnimation.DataType.Float;
+                    }
                     // Create BabylonAnimation
                     animations.Add(new BabylonAnimation()
                     {
-                        dataType = indexAnimation == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
+                        dataType = dataType,
                         name = babylonAnimationProperty + " animation",
                         framePerSecond = Loader.GetFPS(),
                         loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
@@ -141,7 +158,6 @@ namespace Maya2Babylon
                     });
                 }
             }
-
             return animations;
         }
 
