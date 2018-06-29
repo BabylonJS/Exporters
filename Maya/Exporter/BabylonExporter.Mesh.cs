@@ -451,6 +451,26 @@ namespace Maya2Babylon
             babylonMesh.indices = indices.ToArray();
 
 
+            // ------------------------
+            // ---- Morph targets -----
+            // ------------------------
+
+            // Maya blend shape influencing the mesh
+            List<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh);
+
+            if(blendShapeDeformers.Count > 0)
+            {
+                // Morph Target Manager
+                BabylonMorphTargetManager babylonMorphTargetManager = new BabylonMorphTargetManager();
+                babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
+                babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
+
+                List<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(mFnMesh.objectProperty, blendShapeDeformers);
+
+                babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
+            }
+
+
             babylonScene.MeshesList.Add(babylonMesh);
             RaiseMessage("BabylonExporter.Mesh | done", 2);
 
@@ -935,6 +955,103 @@ namespace Maya2Babylon
             }
 
             return babylonMasterMesh;
+        }
+
+
+
+        private List<MFnBlendShapeDeformer> GetBlendShape(MFnMesh mFnMesh)
+        {
+            List<MFnBlendShapeDeformer> blendShapeDeformers = new List<MFnBlendShapeDeformer>();
+
+            MPlugArray connections = new MPlugArray();
+            mFnMesh.getConnections(connections);
+            foreach (MPlug connection in connections)
+            {
+                MObject source = connection.source.node;
+                if (source != null)
+                {
+                    if (source.hasFn(MFn.Type.kBlendShape))
+                    {
+                        MFnBlendShapeDeformer blendShapeDeformer = new MFnBlendShapeDeformer(source);
+                        RaiseWarning("Blend shape: " + blendShapeDeformer.name, 2);
+
+                        blendShapeDeformers.Add(blendShapeDeformer);
+                    }
+                }
+            }
+
+            return blendShapeDeformers;
+        }
+
+
+
+
+        private List<BabylonMorphTarget> GetMorphTargets(MObject baseObject, List<MFnBlendShapeDeformer> blendShapeDeformers)
+        {
+            // Morph Targets
+            List<BabylonMorphTarget> babylonMorphTargets = new List<BabylonMorphTarget>();
+
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
+            {
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+                RaiseMessage($"Export morph targets based on {blendShapeDeformer.name}", 2);
+
+                float envelope = blendShapeDeformer.envelope;
+
+                MIntArray weightIndexList = new MIntArray();    // list of weight. For each weith, there are multiple targets
+                blendShapeDeformer.weightIndexList(weightIndexList);
+
+                for (int i = 0; i < weightIndexList.Count; i++)
+                {
+                    int weightIndex = weightIndexList[i];
+                    float weight = blendShapeDeformer.weight((uint)weightIndex);
+
+                    RaiseWarning($"targets at weightIndex {weightIndex}", 3);
+
+                    MObjectArray targets = new MObjectArray();  // the targets for the given weight
+                    blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
+
+                    for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
+                    {
+                        MObject target = targets[targetIndex];
+                        RaiseWarning($"target{targetIndex}: {(new MFnDependencyNode(target)).name} - weight: {weight}", 4);
+
+
+
+                        BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
+                        {
+                            name = (new MFnDependencyNode(targets[targetIndex])).name,
+                            influence = envelope * weight
+                        };
+                        babylonMorphTargets.Add(babylonMorphTarget);
+
+                        // Target geometry
+                        var targetVertices = new List<GlobalVertex>();
+                        var indices = new List<int>();
+                        var subMeshes = new List<BabylonSubMesh>();
+                        var uvSetNames = new MStringArray();
+                        bool[] isUVExportSuccess = { false, false };
+                        bool isTangentExportSuccess = _exportTangents;
+                        bool optimizeVertices = _optimizeVertices;
+                        ExtractGeometry(new MFnMesh(target), targetVertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+
+                        babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
+                        babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
+
+                        // Tangent
+                        //if (isTangentExportSuccess)
+                        //{
+                        //    babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent.Take(3)).ToArray();
+                        //}
+
+                        // Animation
+
+                    }
+
+                }
+            }
+
+            return babylonMorphTargets;
         }
     }
 }
