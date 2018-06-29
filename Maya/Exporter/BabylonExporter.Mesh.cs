@@ -994,19 +994,17 @@ namespace Maya2Babylon
             for (int index = 0; index < blendShapeDeformers.Count; index++)
             {
                 MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
-                RaiseMessage($"Export morph targets based on {blendShapeDeformer.name}", 2);
 
                 float envelope = blendShapeDeformer.envelope;
 
                 MIntArray weightIndexList = new MIntArray();    // list of weight. For each weith, there are multiple targets
                 blendShapeDeformer.weightIndexList(weightIndexList);
 
+
                 for (int i = 0; i < weightIndexList.Count; i++)
                 {
                     int weightIndex = weightIndexList[i];
                     float weight = blendShapeDeformer.weight((uint)weightIndex);
-
-                    RaiseWarning($"targets at weightIndex {weightIndex}", 3);
 
                     MObjectArray targets = new MObjectArray();  // the targets for the given weight
                     blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
@@ -1014,9 +1012,6 @@ namespace Maya2Babylon
                     for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
                     {
                         MObject target = targets[targetIndex];
-                        RaiseWarning($"target{targetIndex}: {(new MFnDependencyNode(target)).name} - weight: {weight}", 4);
-
-
 
                         BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
                         {
@@ -1045,13 +1040,83 @@ namespace Maya2Babylon
                         //}
 
                         // Animation
-
+                        babylonMorphTarget.animations = GetAnimationsFrameByFrameInfluence(blendShapeDeformer.name, weightIndex).ToArray();
                     }
 
                 }
             }
 
             return babylonMorphTargets;
+        }
+
+
+        private IDictionary<double, IList<double>> GetMorphWeightsByFrame(string blendShapeDeformerName)
+        {
+            Dictionary<double, IList<double>> weights = new Dictionary<double, IList<double>>();
+
+            MDoubleArray keyArray = new MDoubleArray();
+            MGlobal.executeCommand($"keyframe -t \":\" -q -timeChange {blendShapeDeformerName}", keyArray);
+
+            SortedSet<double> sortedKeys = new SortedSet<double>(keyArray);
+            List<double> keys = new List<double>(sortedKeys);
+
+            for(int index = 0; index < keys.Count; index++)
+            {
+                double key = keys[index];
+                MDoubleArray weightArray = new MDoubleArray();
+                MGlobal.executeCommand($"getAttr -t {key} {blendShapeDeformerName}.weight", weightArray);
+
+                weights[key] = weightArray;
+            }
+
+            return weights;
+        }
+
+        private List<BabylonAnimation> GetAnimationsFrameByFrameInfluence(string blendShapeDeformerName, int weightIndex)
+        {
+            IDictionary<double, IList<double>> morphWeights = GetMorphWeightsByFrame(blendShapeDeformerName);
+
+            BabylonAnimation animation = null;
+
+            // get keys
+            List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
+            for (int index = 0; index < morphWeights.Count; index++)
+            {
+                KeyValuePair<double, IList<double>> keyValue = morphWeights.ElementAt(index);
+                // Set the animation key
+                BabylonAnimationKey key = new BabylonAnimationKey()
+                {
+                    frame = (int)keyValue.Key,
+                    values = new float[] { (float) keyValue.Value[weightIndex] }
+                };
+
+                keys.Add(key);
+            }
+
+            var keysFull = new List<BabylonAnimationKey>(keys);
+
+            // Optimization
+            OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
+
+            // Ensure animation has at least 2 frames
+            if (IsAnimationKeysRelevant(keys))
+            {
+                // Animations
+                animation = new BabylonAnimation()
+                {
+                    name = "influence animation", // override default animation name
+                    dataType = (int)BabylonAnimation.DataType.Float,
+                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                    framePerSecond = Loader.GetFPS(),
+                    keys = keys.ToArray(),
+                    keysFull = keysFull,
+                    property = "influence"
+                };
+            }
+
+            List<BabylonAnimation> animations = new List<BabylonAnimation>();
+            animations.Add(animation);
+            return animations;
         }
     }
 }
