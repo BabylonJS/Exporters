@@ -16,6 +16,7 @@ namespace Maya2Babylon
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
 
+        private bool hasMorphTarget = false;
 
         /// <summary>
         /// 
@@ -60,7 +61,8 @@ namespace Maya2Babylon
 
             // Mesh direct child of the transform
             // TODO get the original one rather than the modified?
-            MFnMesh mFnMesh = null;
+            MFnMesh mFnMesh = null;         // Shape of the mesh displayed by maya when the export begins. It contains the material, skin, blendShape information.
+            MFnMesh meshShapeOrig = null;   // Original shape of the mesh
             for (uint i = 0; i < mFnTransform.childCount; i++)
             {
                 MObject childObject = mFnTransform.child(i);
@@ -71,8 +73,23 @@ namespace Maya2Babylon
                     {
                         mFnMesh = _mFnMesh;
                     }
+                    else
+                    {
+                        meshShapeOrig = _mFnMesh;
+                    }
                 }
             }
+
+            if (meshShapeOrig != null)
+            {
+                hasMorphTarget = hasBlendShape(mFnMesh.objectProperty);
+            }
+            else
+            {
+                hasMorphTarget = false;
+            }
+
+
             if (mFnMesh == null)
             {
                 RaiseError("No mesh found has child of " + mDagPath.fullPathName);
@@ -381,7 +398,15 @@ namespace Maya2Babylon
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
-            ExtractGeometry(mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+
+            if (hasMorphTarget)
+            {
+                ExtractGeometry(meshShapeOrig, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+            }
+            else
+            {
+                ExtractGeometry(mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+            }
 
             if (vertices.Count >= 65536)
             {
@@ -454,13 +479,12 @@ namespace Maya2Babylon
             // ------------------------
             // ---- Morph targets -----
             // ------------------------
-
-            // Maya blend shape influencing the mesh
-            RaiseMessage("Morph target", 2);
-            List<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh.objectProperty);
-            
-            if(blendShapeDeformers.Count > 0)
+            if (hasMorphTarget)
             {
+                // Maya blend shape influencing the mesh
+                RaiseMessage("Morph target", 2);
+                IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh.objectProperty);
+            
                 if(blendShapeDeformers.Count > 7)
                 {
                     RaiseWarning($"There are {blendShapeDeformers.Count} morph targets.", 3);
@@ -472,10 +496,10 @@ namespace Maya2Babylon
                 babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
                 babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
 
-                List<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(mFnMesh.objectProperty, blendShapeDeformers);
-
+                IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(mFnMesh.objectProperty);
                 babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
             }
+
 
 
             babylonScene.MeshesList.Add(babylonMesh);
@@ -965,9 +989,55 @@ namespace Maya2Babylon
         }
 
 
+        /// <summary>
+        /// Check if a Maya object is link to a blend shape by counting its connections to it. 
+        /// </summary>
+        /// <param name="mObject"></param>
+        /// <returns>
+        /// True, if there at least one connection to a blend shape
+        /// False, otherwise
+        /// </returns>
+        private bool hasBlendShape(MObject mObject)
+        {
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
+            return blendShapeDeformers.Count > 0;
+        }
 
 
-        private List<MFnBlendShapeDeformer> GetBlendShape(MObject mObject)
+        /// <summary>
+        /// Search the blend shapes through the connections of the Maya object
+        /// </summary>
+        /// <param name="mObject"></param>
+        /// <returns>A list with all blend shape linked to the object</returns>
+        private IDictionary<MObject, IList<MFnBlendShapeDeformer>> blendShapeByMObject = new Dictionary<MObject, IList<MFnBlendShapeDeformer>>();
+        private IList<MFnBlendShapeDeformer> GetBlendShape(MObject mObject)
+        {
+            if (blendShapeByMObject.ContainsKey(mObject))
+            {
+                return blendShapeByMObject[mObject];
+            }
+
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShapeSub(mObject);
+            
+            // uniqueness
+            IList <MFnBlendShapeDeformer> uniqBlendShapeDeformers = new List<MFnBlendShapeDeformer>();
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
+            {
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+
+                if (uniqBlendShapeDeformers.Count(item => item.name.Equals(blendShapeDeformer.name)) == 0)
+                {
+                    RaiseMessage("Blend shape: " + blendShapeDeformer.name, 3);
+                    uniqBlendShapeDeformers.Add(blendShapeDeformer);
+                }
+            }
+
+            blendShapeByMObject[mObject] = uniqBlendShapeDeformers;
+            return uniqBlendShapeDeformers;
+        }
+
+
+        private IList<MFnBlendShapeDeformer> GetBlendShapeSub(MObject mObject)
         {
             List<MFnBlendShapeDeformer> blendShapeDeformers = new List<MFnBlendShapeDeformer>();
 
@@ -992,19 +1062,7 @@ namespace Maya2Babylon
                 }
             }
 
-            // uniqueness
-            List<MFnBlendShapeDeformer> uniqBlendShapeDeformers = new List<MFnBlendShapeDeformer>();
-            for (int index = 0; index < blendShapeDeformers.Count; index++)
-            {
-                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
-
-                if (uniqBlendShapeDeformers.Count(item => item.name.Equals(blendShapeDeformer.name)) == 0)
-                {
-                    RaiseMessage("Blend shape: " + blendShapeDeformer.name, 3);
-                    uniqBlendShapeDeformers.Add(blendShapeDeformer);
-                }
-            }
-            return uniqBlendShapeDeformers;
+            return blendShapeDeformers;
         }
 
 
@@ -1015,10 +1073,11 @@ namespace Maya2Babylon
         /// <param name="baseObject">The Maya object influenced by the blendShapes</param>
         /// <param name="blendShapeDeformers">List of Maya blendShape. Use GetBlendShape function to get the right one.</param>
         /// <returns>BabylonMorphTarget list</returns>
-        private List<BabylonMorphTarget> GetMorphTargets(MObject baseObject, List<MFnBlendShapeDeformer> blendShapeDeformers)
+        private IList<BabylonMorphTarget> GetMorphTargets(MObject baseObject)
         {
             // Morph Targets
-            List<BabylonMorphTarget> babylonMorphTargets = new List<BabylonMorphTarget>();
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(baseObject);
+            IList <BabylonMorphTarget> babylonMorphTargets = new List<BabylonMorphTarget>();
 
             for (int index = 0; index < blendShapeDeformers.Count; index++)
             {
@@ -1104,9 +1163,9 @@ namespace Maya2Babylon
         }
 
 
-        private List<BabylonAnimation> GetAnimationsFrameByFrameInfluence(string blendShapeDeformerName, int weightIndex)
+        private IList<BabylonAnimation> GetAnimationsFrameByFrameInfluence(string blendShapeDeformerName, int weightIndex)
         {
-            List<BabylonAnimation> animations = new List<BabylonAnimation>();
+            IList<BabylonAnimation> animations = new List<BabylonAnimation>();
             BabylonAnimation animation = null;
 
             IDictionary<double, IList<double>> morphWeights = GetMorphWeightsByFrame(blendShapeDeformerName);
@@ -1126,7 +1185,7 @@ namespace Maya2Babylon
                 keys.Add(key);
             }
 
-            var keysFull = new List<BabylonAnimationKey>(keys);
+            List<BabylonAnimationKey> keysFull = new List<BabylonAnimationKey>(keys);
 
             // Optimization
             OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
