@@ -456,10 +456,17 @@ namespace Maya2Babylon
             // ------------------------
 
             // Maya blend shape influencing the mesh
-            List<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh);
-
+            RaiseMessage("Morph target", 2);
+            List<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh.objectProperty);
+            
             if(blendShapeDeformers.Count > 0)
             {
+                if(blendShapeDeformers.Count > 7)
+                {
+                    RaiseWarning($"There are {blendShapeDeformers.Count} morph targets.", 3);
+                    RaiseWarning($"Please be aware that most of the browsers are limited to 16 attributes per mesh. Adding a single morph target to a mesh add 2 new attributes (position + normal). This could quickly go beyond the max attributes limitation.", 3);
+                }
+
                 // Morph Target Manager
                 BabylonMorphTargetManager babylonMorphTargetManager = new BabylonMorphTargetManager();
                 babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
@@ -959,33 +966,55 @@ namespace Maya2Babylon
 
 
 
-        private List<MFnBlendShapeDeformer> GetBlendShape(MFnMesh mFnMesh)
+
+        private List<MFnBlendShapeDeformer> GetBlendShape(MObject mObject)
         {
             List<MFnBlendShapeDeformer> blendShapeDeformers = new List<MFnBlendShapeDeformer>();
 
+            MFnDependencyNode dependencyNode = new MFnDependencyNode(mObject);
             MPlugArray connections = new MPlugArray();
-            mFnMesh.getConnections(connections);
+            dependencyNode.getConnections(connections);
             foreach (MPlug connection in connections)
             {
                 MObject source = connection.source.node;
                 if (source != null)
                 {
+                    if (source.hasFn(MFn.Type.kSet))
+                    {
+                        blendShapeDeformers.AddRange(GetBlendShape(source));
+                    }
+
                     if (source.hasFn(MFn.Type.kBlendShape))
                     {
                         MFnBlendShapeDeformer blendShapeDeformer = new MFnBlendShapeDeformer(source);
-                        RaiseWarning("Blend shape: " + blendShapeDeformer.name, 2);
-
                         blendShapeDeformers.Add(blendShapeDeformer);
                     }
                 }
             }
 
-            return blendShapeDeformers;
+            // uniqueness
+            List<MFnBlendShapeDeformer> uniqBlendShapeDeformers = new List<MFnBlendShapeDeformer>();
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
+            {
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+
+                if (uniqBlendShapeDeformers.Count(item => item.name.Equals(blendShapeDeformer.name)) == 0)
+                {
+                    RaiseMessage("Blend shape: " + blendShapeDeformer.name, 3);
+                    uniqBlendShapeDeformers.Add(blendShapeDeformer);
+                }
+            }
+            return uniqBlendShapeDeformers;
         }
 
 
 
-
+        /// <summary>
+        /// Convert a Maya blendShape influencing a Maya object into a BabylonMorphTarget list
+        /// </summary>
+        /// <param name="baseObject">The Maya object influenced by the blendShapes</param>
+        /// <param name="blendShapeDeformers">List of Maya blendShape. Use GetBlendShape function to get the right one.</param>
+        /// <returns>BabylonMorphTarget list</returns>
         private List<BabylonMorphTarget> GetMorphTargets(MObject baseObject, List<MFnBlendShapeDeformer> blendShapeDeformers)
         {
             // Morph Targets
@@ -1054,6 +1083,7 @@ namespace Maya2Babylon
         {
             Dictionary<double, IList<double>> weights = new Dictionary<double, IList<double>>();
 
+            // Get the keyframe of the blendSape
             MDoubleArray keyArray = new MDoubleArray();
             MGlobal.executeCommand($"keyframe -t \":\" -q -timeChange {blendShapeDeformerName}", keyArray);
 
@@ -1062,6 +1092,7 @@ namespace Maya2Babylon
 
             for(int index = 0; index < keys.Count; index++)
             {
+                // Get the weight at this keyframe
                 double key = keys[index];
                 MDoubleArray weightArray = new MDoubleArray();
                 MGlobal.executeCommand($"getAttr -t {key} {blendShapeDeformerName}.weight", weightArray);
@@ -1072,11 +1103,13 @@ namespace Maya2Babylon
             return weights;
         }
 
+
         private List<BabylonAnimation> GetAnimationsFrameByFrameInfluence(string blendShapeDeformerName, int weightIndex)
         {
-            IDictionary<double, IList<double>> morphWeights = GetMorphWeightsByFrame(blendShapeDeformerName);
-
+            List<BabylonAnimation> animations = new List<BabylonAnimation>();
             BabylonAnimation animation = null;
+
+            IDictionary<double, IList<double>> morphWeights = GetMorphWeightsByFrame(blendShapeDeformerName);
 
             // get keys
             List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
@@ -1112,10 +1145,10 @@ namespace Maya2Babylon
                     keysFull = keysFull,
                     property = "influence"
                 };
+
+                animations.Add(animation);
             }
 
-            List<BabylonAnimation> animations = new List<BabylonAnimation>();
-            animations.Add(animation);
             return animations;
         }
     }
