@@ -186,6 +186,9 @@ namespace Maya2Babylon
             // --------------------
             RaiseMessage("Exporting nodes");
 
+            // It makes each morph target manager export starts from id = 0.
+            BabylonMorphTargetManager.Reset();
+
             // Clear materials
             referencedMaterials.Clear();
             multiMaterials.Clear();

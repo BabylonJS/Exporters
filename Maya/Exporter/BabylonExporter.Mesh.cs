@@ -1012,9 +1012,10 @@ namespace Maya2Babylon
         private IDictionary<MObject, IList<MFnBlendShapeDeformer>> blendShapeByMObject = new Dictionary<MObject, IList<MFnBlendShapeDeformer>>();
         private IList<MFnBlendShapeDeformer> GetBlendShape(MObject mObject)
         {
-            if (blendShapeByMObject.ContainsKey(mObject))
+            var pair =  blendShapeByMObject.FirstOrDefault(item => item.Key.equalEqual(mObject));
+            if (! pair.Equals(default(KeyValuePair<MObject, IList<MFnBlendShapeDeformer>>)))
             {
-                return blendShapeByMObject[mObject];
+                return pair.Value;
             }
 
             IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShapeSub(mObject);
@@ -1051,7 +1052,7 @@ namespace Maya2Babylon
                 {
                     if (source.hasFn(MFn.Type.kSet))
                     {
-                        blendShapeDeformers.AddRange(GetBlendShape(source));
+                        blendShapeDeformers.AddRange(GetBlendShapeSub(source));
                     }
 
                     if (source.hasFn(MFn.Type.kBlendShape))
@@ -1122,10 +1123,10 @@ namespace Maya2Babylon
                         babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
 
                         // Tangent
-                        //if (isTangentExportSuccess)
-                        //{
-                        //    babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent.Take(3)).ToArray();
-                        //}
+                        if (isTangentExportSuccess)
+                        {
+                            babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent.Take(3)).ToArray();
+                        }
 
                         // Animation
                         babylonMorphTarget.animations = GetAnimationsFrameByFrameInfluence(blendShapeDeformer.name, weightIndex).ToArray();
