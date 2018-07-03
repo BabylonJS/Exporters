@@ -1028,7 +1028,6 @@ namespace Maya2Babylon
 
                 if (uniqBlendShapeDeformers.Count(item => item.name.Equals(blendShapeDeformer.name)) == 0)
                 {
-                    RaiseMessage("Blend shape: " + blendShapeDeformer.name, 3);
                     uniqBlendShapeDeformers.Add(blendShapeDeformer);
                 }
             }
@@ -1125,7 +1124,7 @@ namespace Maya2Babylon
                         // Tangent
                         if (isTangentExportSuccess)
                         {
-                            babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent.Take(3)).ToArray();
+                            babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                         }
 
                         // Animation
