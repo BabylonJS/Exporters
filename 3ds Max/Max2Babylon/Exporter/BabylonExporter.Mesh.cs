@@ -19,11 +19,7 @@ namespace Max2Babylon
         private BabylonNode ExportDummy(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
             RaiseMessage(meshNode.Name, 1);
-
-            var gameMesh = meshNode.IGameObject.AsGameMesh();
-            bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
-                                                        // translated into a property because it has no parameters
-
+            
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
             babylonMesh.isDummy = true;
 
@@ -103,8 +99,16 @@ namespace Max2Babylon
             }
 
             var gameMesh = meshNode.IGameObject.AsGameMesh();
-            bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
-                                                        // translated into a property because it has no parameters
+            try
+            {
+                bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
+                                                            // translated into a property because it has no parameters
+            }
+            catch (Exception e)
+            {
+                RaiseWarning($"Mesh {meshNode.Name} failed to initialize. Mesh is exported as dummy.", 2);
+                return ExportDummy(scene, meshNode, babylonScene);
+            }
 
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
 
