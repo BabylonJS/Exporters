@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported;
 
-        private string exporterVersion = "1.2.11";
+        private string exporterVersion = "1.2.12";
 
         void ReportProgressChanged(int progress)
         {
