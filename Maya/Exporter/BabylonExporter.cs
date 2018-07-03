@@ -22,6 +22,7 @@ namespace Maya2Babylon
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
         private bool isBabylonExported;
         private bool _exportSkin;
+        private long _quality;
 
         public bool IsCancelled { get; set; }
 
@@ -35,11 +36,11 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.1.9";
+        private string exporterVersion = "1.2.7";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
-                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality)
         {
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
@@ -60,6 +61,22 @@ namespace Maya2Babylon
             catch
             {
                 RaiseError("Scale factor is not a valid number.");
+                return;
+            }
+
+            try
+            {
+                _quality = long.Parse(quality);
+
+                if (_quality < 0 || _quality > 100)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
+                RaiseError("This parameter set the quality of jpg compression.");
                 return;
             }
 

@@ -241,11 +241,71 @@ namespace Maya2Babylon
                     babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "TEX_color_map", babylonScene, false, useOpacityMap);
                 }
 
-                // Metallic & roughness
+                // Metallic, roughness, ambient occlusion
                 bool useMetallicMap = materialDependencyNode.findPlug("use_metallic_map").asBoolProperty;
                 bool useRoughnessMap = materialDependencyNode.findPlug("use_roughness_map").asBoolProperty;
-                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialDependencyNode, useMetallicMap, useRoughnessMap, babylonScene, name);
+                string useAOMapAttributeName = "use_ao_map";
+                bool useAOMap = materialDependencyNode.hasAttribute(useAOMapAttributeName) && materialDependencyNode.findPlug(useAOMapAttributeName).asBoolProperty;
 
+                MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
+                MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
+                MFnDependencyNode ambientOcclusionTextureDependencyNode = useAOMap ? getTextureDependencyNode(materialDependencyNode, "TEX_ao_map") : null;
+
+                // Check if MR or ORM textures are already merged
+                bool areTexturesAlreadyMerged = false;
+                if (metallicTextureDependencyNode != null && roughnessTextureDependencyNode != null)
+                {
+                    string sourcePathMetallic = getSourcePathFromFileTexture(metallicTextureDependencyNode);
+                    string sourcePathRoughness = getSourcePathFromFileTexture(roughnessTextureDependencyNode);
+
+                    if (sourcePathMetallic == sourcePathRoughness)
+                    {
+                        if (ambientOcclusionTextureDependencyNode != null)
+                        {
+                            string sourcePathAmbientOcclusion = getSourcePathFromFileTexture(ambientOcclusionTextureDependencyNode);
+                            if (sourcePathMetallic == sourcePathAmbientOcclusion)
+                            {
+                                // Metallic, roughness and ambient occlusion are already merged
+                                RaiseVerbose("Metallic, roughness and ambient occlusion are already merged", 2);
+                                BabylonTexture ormTexture = ExportTexture(metallicTextureDependencyNode, babylonScene);
+                                babylonMaterial.metallicRoughnessTexture = ormTexture;
+                                babylonMaterial.occlusionTexture = ormTexture;
+                                areTexturesAlreadyMerged = true;
+                            }
+                        }
+                        else
+                        {
+                            // Metallic and roughness are already merged
+                            RaiseVerbose("Metallic and roughness are already merged", 2);
+                            BabylonTexture ormTexture = ExportTexture(metallicTextureDependencyNode, babylonScene);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            areTexturesAlreadyMerged = true;
+                        }
+                    }
+                }
+                if (areTexturesAlreadyMerged == false)
+                {
+                    if (metallicTextureDependencyNode != null || roughnessTextureDependencyNode != null)
+                    {
+                        // Merge metallic, roughness and ambient occlusion
+                        RaiseVerbose("Merge metallic, roughness and ambient occlusion", 2);
+                        BabylonTexture ormTexture = ExportORMTexture(babylonScene, metallicTextureDependencyNode, roughnessTextureDependencyNode, ambientOcclusionTextureDependencyNode, babylonMaterial.metallic, babylonMaterial.roughness);
+                        babylonMaterial.metallicRoughnessTexture = ormTexture;
+
+                        if (ambientOcclusionTextureDependencyNode != null)
+                        {
+                            babylonMaterial.occlusionTexture = ormTexture;
+                        }
+                    }
+                    else if (ambientOcclusionTextureDependencyNode != null)
+                    {
+                        // Simply export occlusion texture
+                        RaiseVerbose("Simply export occlusion texture", 2);
+                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTextureDependencyNode, babylonScene);
+                    }
+                }
+
+                // Normal
                 if (materialDependencyNode.findPlug("use_normal_map").asBoolProperty)
                 {
                     babylonMaterial.normalTexture = ExportTexture(materialDependencyNode, "TEX_normal_map", babylonScene);
@@ -256,13 +316,6 @@ namespace Maya2Babylon
                 if (useEmissiveMap)
                 {
                     babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "TEX_emissive_map", babylonScene, false, false, false, emissiveIntensity);
-                }
-
-                // Ambient occlusion
-                string useAOMapAttributeName = "use_ao_map";
-                if (materialDependencyNode.hasAttribute(useAOMapAttributeName) && materialDependencyNode.findPlug(useAOMapAttributeName).asBoolProperty)
-                {
-                    babylonMaterial.occlusionTexture = ExportTexture(materialDependencyNode, "TEX_ao_map", babylonScene);
                 }
 
                 // Constraints
@@ -380,7 +433,7 @@ namespace Maya2Babylon
                 {
                     // Metallic and roughness files need to be merged into a single file
                     // Occlusion texture is not exported since aiStandardSurface material doesn't provide input for it
-                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name, babylonMaterial.metallic, babylonMaterial.roughness);
+                    babylonMaterial.metallicRoughnessTexture = ExportORMTexture(babylonScene, metallicTextureDependencyNode, roughnessTextureDependencyNode, null, babylonMaterial.metallic, babylonMaterial.roughness);
                 }
 
                 // Normal

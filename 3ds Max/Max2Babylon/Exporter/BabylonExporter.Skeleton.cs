@@ -118,7 +118,6 @@ namespace Max2Babylon
                     int childCount = currentNode.ChildCount;
                     for (int index = 0; index < childCount; index++)
                     {
-                        RaiseWarning($"{index}: {currentNode.GetNodeChild(index).Name}", 5);
                         siblings.Push(currentNode.GetNodeChild(childCount - 1 - index));
                     }
                 }

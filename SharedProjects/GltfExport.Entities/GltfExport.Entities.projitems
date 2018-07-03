@@ -16,13 +16,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)GLTFAsset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFBufferView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFCameraOrthographic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFCameraPerspective.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFChannelTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFChildRootProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GLTFExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFIndexedChildRootProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFMaterial.cs" />

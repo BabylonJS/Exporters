@@ -19,11 +19,7 @@ namespace Max2Babylon
         private BabylonNode ExportDummy(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
             RaiseMessage(meshNode.Name, 1);
-
-            var gameMesh = meshNode.IGameObject.AsGameMesh();
-            bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
-                                                        // translated into a property because it has no parameters
-
+            
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
             babylonMesh.isDummy = true;
 
@@ -103,8 +99,16 @@ namespace Max2Babylon
             }
 
             var gameMesh = meshNode.IGameObject.AsGameMesh();
-            bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
-                                                        // translated into a property because it has no parameters
+            try
+            {
+                bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
+                                                            // translated into a property because it has no parameters
+            }
+            catch (Exception e)
+            {
+                RaiseWarning($"Mesh {meshNode.Name} failed to initialize. Mesh is exported as dummy.", 2);
+                return ExportDummy(scene, meshNode, babylonScene);
+            }
 
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
 
@@ -555,7 +559,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(meshNode, skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
                 else
@@ -580,7 +584,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(meshNode, skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
 
@@ -598,7 +602,7 @@ namespace Max2Babylon
             }
         }
 
-        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
+        private void ExtractFace(IIGameNode meshNode, IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
@@ -610,16 +614,16 @@ namespace Max2Babylon
             if (invertedWorldMatrix.Parity)
             {
                 // flipped case: reverse winding order
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                a = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
             else
             {
                 // normal case
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                a = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
 
             indices.Add(a);
@@ -662,7 +666,7 @@ namespace Max2Babylon
         }
 
 
-        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
+        int CreateGlobalVertex(IIGameNode meshNode, IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
 
@@ -687,10 +691,32 @@ namespace Max2Babylon
 
             // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
+
             vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal);
+            // 1. scale normals with node scales
             var nodeScaling = BabylonVector3.FromArray(babylonAbstractMesh.scaling);
-            vertex.Normal = vertex.Normal.Multiply(Loader.Global.Point3.Create(nodeScaling.X, nodeScaling.Y, nodeScaling.Z));
-            vertex.Normal = vertex.Normal.Normalize;
+            vertex.Normal = vertex.Normal.Multiply(Loader.Global.Point3.Create(Math.Abs(nodeScaling.X), Math.Abs(nodeScaling.Y), Math.Abs(nodeScaling.Z)));
+
+            // 2. scale normals with objectOffsetScales (unrotate by objectOffsetRot, then scale, then rotate again)
+            // note: LH coordinate system => flip y and z
+            var objOffsetScale = Loader.Global.Point3.Create(meshNode.MaxNode.ObjOffsetScale.S);
+            var scaleX = Math.Abs(objOffsetScale.X);
+            var scaleY = Math.Abs(objOffsetScale.Y);
+            var scaleZ = Math.Abs(objOffsetScale.Z);
+            var objOffsetScaleFlipYZInv = Loader.Global.Point3.Create(1/scaleX, 1/scaleZ, 1/scaleY);
+
+            var objOffsetQuat = meshNode.MaxNode.ObjOffsetRot;
+            var qFlippedYZ = objOffsetQuat;
+            var tmpSwap = objOffsetQuat.Y;
+            qFlippedYZ.Y = objOffsetQuat.Z;
+            qFlippedYZ.Z = tmpSwap;
+
+            var nUnrotated = RotateVectorByQuaternion(vertex.Normal, qFlippedYZ);
+            var nUnrotatedScaled = nUnrotated.Multiply(objOffsetScaleFlipYZInv);
+            nUnrotatedScaled = nUnrotatedScaled.Normalize;
+            var nRerotatedScaled = RotateVectorByQuaternion(nUnrotatedScaled, qFlippedYZ.Conjugate);
+
+            vertex.Normal = nRerotatedScaled;
 
             if (hasUV)
             {
@@ -954,5 +980,41 @@ namespace Max2Babylon
 
             return w;
         }
+
+        /// <summary>
+        /// rotate vector with quaternion
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="q"></param>
+        /// <returns>
+        /// the rotated vector
+        /// </returns>
+        private IPoint3 RotateVectorByQuaternion(IPoint3 v, IQuat q)
+        {
+            var qx = q.X; var qy = q.Y; var qz = q.Z; var qw = q.W;
+
+            // compute rotation matrix from q
+            // see: https://www.mathworks.com/help/aerotbx/ug/quatrotate.html
+
+            var m11 = 1 - 2 * qy * qy - 2 * qz * qz;
+            var m12 = 2 * (qx * qy + qw * qz);
+            var m13 = 2 * (qx * qz - qw * qy);
+
+            var m21 = 2 * (qx * qy - qw * qz);
+            var m22 = 1 - 2 * qx * qx - 2 * qz * qz;
+            var m23 = 2 * (qy * qz + qw * qx);
+
+            var m31 = 2 * (qx * qz + qw * qy);
+            var m32 = 2 * (qy * qz - qw * qx);
+            var m33 = 1 - 2 * qx * qx - 2 * qy * qy;
+
+            // matrix multiplication
+            var vx_rot = m11 * v.X + m12 * v.Y + m13 * v.Z;
+            var vy_rot = m21 * v.X + m22 * v.Y + m23 * v.Z;
+            var vz_rot = m31 * v.X + m32 * v.Y + m33 * v.Z;
+
+            return Loader.Global.Point3.Create(vx_rot, vy_rot, vz_rot);
+        }
+
     }
 }

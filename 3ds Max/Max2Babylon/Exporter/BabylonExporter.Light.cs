@@ -114,40 +114,47 @@ namespace Max2Babylon
             var maxScene = Loader.Core.RootNode;
 
             // Exclusion
-            var inclusion = maxLight.ExclList.TestFlag(1); //NT_INCLUDE 
-            var checkExclusionList = maxLight.ExclList.TestFlag(2); //NT_AFFECT_ILLUM
-
-            if (checkExclusionList)
+            try
             {
-                var excllist = new List<string>();
-                var incllist = new List<string>();
+                var inclusion = maxLight.ExclList.TestFlag(1); //NT_INCLUDE 
+                var checkExclusionList = maxLight.ExclList.TestFlag(2); //NT_AFFECT_ILLUM
 
-                foreach (var meshNode in maxScene.NodesListBySuperClass(SClass_ID.Geomobject))
+                if (checkExclusionList)
                 {
-#if MAX2017 || MAX2018
-                    if (meshNode.CastShadows)
-#else
-                    if (meshNode.CastShadows == 1)
-#endif
-                    {
-                        var inList = maxLight.ExclList.FindNode(meshNode) != -1;
+                    var excllist = new List<string>();
+                    var incllist = new List<string>();
 
-                        if (inList)
+                    foreach (var meshNode in maxScene.NodesListBySuperClass(SClass_ID.Geomobject))
+                    {
+#if MAX2017 || MAX2018
+                        if (meshNode.CastShadows)
+#else
+                        if (meshNode.CastShadows == 1)
+#endif
                         {
-                            if (inclusion)
+                            var inList = maxLight.ExclList.FindNode(meshNode) != -1;
+
+                            if (inList)
                             {
-                                incllist.Add(meshNode.GetGuid().ToString());
-                            }
-                            else
-                            {
-                                excllist.Add(meshNode.GetGuid().ToString());
+                                if (inclusion)
+                                {
+                                    incllist.Add(meshNode.GetGuid().ToString());
+                                }
+                                else
+                                {
+                                    excllist.Add(meshNode.GetGuid().ToString());
+                                }
                             }
                         }
                     }
-                }
 
-                babylonLight.includedOnlyMeshesIds = incllist.ToArray();
-                babylonLight.excludedMeshesIds = excllist.ToArray();
+                    babylonLight.includedOnlyMeshesIds = incllist.ToArray();
+                    babylonLight.excludedMeshesIds = excllist.ToArray();
+                }
+            }
+            catch (Exception e)
+            {
+                RaiseMessage("Light exclusion not supported", 2);
             }
 
             // Other fields 
