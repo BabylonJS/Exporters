@@ -1103,7 +1103,7 @@ namespace Maya2Babylon
 
                         BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
                         {
-                            name = (new MFnDependencyNode(targets[targetIndex])).name,
+                            name = blendShapeDeformer.name,
                             influence = envelope * weight
                         };
                         babylonMorphTargets.Add(babylonMorphTarget);
