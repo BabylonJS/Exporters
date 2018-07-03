@@ -866,6 +866,11 @@ namespace Max2Babylon
             }
         }
 
+        public static void UpdateTextBox(TextBox textBox, IINode node, string propertyName)
+        {
+            node.SetUserPropString(propertyName, textBox.Text);
+        }
+
         public static void UpdateTextBox(TextBox textBox, List<IINode> nodes, string propertyName)
         {
             foreach (var node in nodes)

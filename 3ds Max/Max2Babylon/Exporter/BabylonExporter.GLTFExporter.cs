@@ -60,10 +60,6 @@ namespace Max2Babylon
 #endif
             gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
 
-            // Extensions
-            gltf.extensionsUsed = new List<string>();
-            gltf.extensionsRequired = new List<string>();
-
             // Scene
             gltf.scene = 0;
 
@@ -267,11 +263,32 @@ namespace Max2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
+            var type = babylonNode.GetType();
+
+            // Ambiant light are attached to the scene
+            if (type == typeof(BabylonLight) && ((BabylonLight)babylonNode).type == 3)
+            {
+                RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
+                // new light in the scene extensions
+                GLTFLight light = new GLTFLight
+                {
+                    light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
+                };
+
+                int sceneIndex = (int)gltf.scene;
+                if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
+                {
+                    RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
+                }
+                gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
+
+                return;
+            }
+
             GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
 
             if (gltfNode != null)
             {
-                var type = babylonNode.GetType();
                 if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
                 {
                     gltfNode = ExportAbstractMesh(ref gltfNode, babylonNode as BabylonAbstractMesh, gltf, gltfParentNode, babylonScene);
@@ -279,6 +296,10 @@ namespace Max2Babylon
                 else if (type == typeof(BabylonCamera))
                 {
                     GLTFCamera gltfCamera = ExportCamera(ref gltfNode, babylonNode as BabylonCamera, gltf, gltfParentNode);
+                }
+                else if (type == typeof(BabylonLight) || type.IsSubclassOf(typeof(BabylonLight)))
+                {
+                    ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
                 }
                 else
                 {
@@ -428,20 +449,6 @@ namespace Max2Babylon
                 return boneNodePair.Value;
             }
 
-            if (type == typeof(BabylonLight))
-            {
-                if (isNodeRelevantToExport(babylonNode))
-                {
-                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
-                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 2);
-                }
-                else
-                {
-                    RaiseMessage($"GLTFExporter | Light named {babylonNode.name} is not relevant to export", 2);
-                    return gltfNode;
-                }
-            }
-
             // Node
             gltfNode = new GLTFNode
             {
@@ -509,9 +516,6 @@ namespace Max2Babylon
             gltfNode.translation[2] *= -1;
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
-
-            // Animations
-            //ExportNodeAnimation(babylonNode, gltf, gltfNode);
 
             return gltfNode;
         }

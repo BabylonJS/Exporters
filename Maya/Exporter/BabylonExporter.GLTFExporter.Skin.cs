@@ -190,9 +190,6 @@ namespace Maya2Babylon
             gltfNode.rotation = rotationQuatBabylon.ToArray();
             gltfNode.scale = scaleBabylon.ToArray();
 
-            // Animations
-            ExportBoneAnimation(babylonBone, gltf, gltfNode);
-
             return gltfNode;
         }
 

@@ -16,7 +16,7 @@ namespace Max2Babylon
             // --- Mesh from babylon ----
             // --------------------------
 
-            if (babylonMesh.positions == null)
+            if (babylonMesh.positions == null || babylonMesh.positions.Length == 0)
             {
                 RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
                 return null;

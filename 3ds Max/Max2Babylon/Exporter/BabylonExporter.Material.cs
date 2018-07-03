@@ -54,12 +54,12 @@ namespace Max2Babylon
                                     RaiseVerbose("propertyFloat=" + propertyFloat, 4);
                                     break;
                                 case PropType.Point3Prop:
-                                    IPoint3 propertyPoint3 = Loader.Global.Point3.Create(0, 0, 0); 
+                                    IPoint3 propertyPoint3 = Loader.Global.Point3.Create(0, 0, 0);
                                     RaiseVerbose("prop.GetPropertyValue(ref propertyPoint3, 0)=" + prop.GetPropertyValue(propertyPoint3, 0), 4);
                                     RaiseVerbose("propertyPoint3=" + Point3ToString(propertyPoint3), 4);
                                     break;
                                 case PropType.Point4Prop:
-                                    IPoint4 propertyPoint4 = Loader.Global.Point4.Create(0,0,0,0);
+                                    IPoint4 propertyPoint4 = Loader.Global.Point4.Create(0, 0, 0, 0);
                                     RaiseVerbose("prop.GetPropertyValue(ref propertyPoint4, 0)=" + prop.GetPropertyValue(propertyPoint4, 0), 4);
                                     RaiseVerbose("propertyPoint4=" + Point4ToString(propertyPoint4), 4);
                                     break;
@@ -293,15 +293,69 @@ namespace Max2Babylon
 
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
 
-                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name, invertRoughness);
+                // Metallic, roughness, ambient occlusion
+                ITexmap metallicTexmap = _getTexMap(materialNode, 5);
+                ITexmap roughnessTexmap = _getTexMap(materialNode, 4);
+                ITexmap ambientOcclusionTexmap = _getTexMap(materialNode, 6); // Use diffuse roughness map as ambient occlusion
+
+                // Check if MR or ORM textures are already merged
+                bool areTexturesAlreadyMerged = false;
+                if (metallicTexmap != null && roughnessTexmap != null)
+                {
+                    string sourcePathMetallic = getSourcePath(metallicTexmap);
+                    string sourcePathRoughness = getSourcePath(roughnessTexmap);
+
+                    if (sourcePathMetallic == sourcePathRoughness)
+                    {
+                        if (ambientOcclusionTexmap != null)
+                        {
+                            string sourcePathAmbientOcclusion = getSourcePath(ambientOcclusionTexmap);
+                            if (sourcePathMetallic == sourcePathAmbientOcclusion)
+                            {
+                                // Metallic, roughness and ambient occlusion are already merged
+                                RaiseVerbose("Metallic, roughness and ambient occlusion are already merged", 2);
+                                BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                                babylonMaterial.metallicRoughnessTexture = ormTexture;
+                                babylonMaterial.occlusionTexture = ormTexture;
+                                areTexturesAlreadyMerged = true;
+                            }
+                        }
+                        else
+                        {
+                            // Metallic and roughness are already merged
+                            RaiseVerbose("Metallic and roughness are already merged", 2);
+                            BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            areTexturesAlreadyMerged = true;
+                        }
+                    }
+                }
+                if (areTexturesAlreadyMerged == false)
+                {
+                    if (metallicTexmap != null || roughnessTexmap != null)
+                    {
+                        // Merge metallic, roughness and ambient occlusion
+                        RaiseVerbose("Merge metallic, roughness and ambient occlusion", 2);
+                        BabylonTexture ormTexture = ExportORMTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                        babylonMaterial.metallicRoughnessTexture = ormTexture;
+
+                        if (ambientOcclusionTexmap != null)
+                        {
+                            babylonMaterial.occlusionTexture = ormTexture;
+                        }
+                    }
+                    else if (ambientOcclusionTexmap != null)
+                    {
+                        // Simply export occlusion texture
+                        RaiseVerbose("Simply export occlusion texture", 2);
+                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
+                    }
+                }
 
                 var normalMapAmount = propertyContainer.GetFloatProperty(91);
                 babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
 
                 babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
-
-                // Use diffuse roughness map as ambient occlusion
-                babylonMaterial.occlusionTexture = ExportPBRTexture(materialNode, 6, babylonScene);
 
                 // Constraints
                 if (babylonMaterial.baseTexture != null)
@@ -362,7 +416,7 @@ namespace Max2Babylon
             if (materialNode.SubMaterialCount > 0)
             {
                 // Check sub materials recursively
-                for(int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
+                for (int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
                 {
                     IIGameMaterial subMaterialNode = materialNode.GetSubMaterial(indexSubMaterial);
                     IIGameMaterial unsupportedSubMaterial = isMaterialSupported(subMaterialNode);

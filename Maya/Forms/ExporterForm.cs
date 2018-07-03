@@ -22,7 +22,9 @@ namespace Maya2Babylon.Forms
 
         private void ExporterForm_Load(object sender, EventArgs e)
         {
-           /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
+            comboOutputFormat.SelectedIndex = 0;
+
+            /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.PrepareCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures", 1);
             Tools.PrepareCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
@@ -136,7 +138,7 @@ namespace Maya2Babylon.Forms
                 var fileName = Path.GetFileName(txtFilename.Text);
                 exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked,
                                 chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked,
-                                chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked);
+                                chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked, txtQuality.Text);
             }
             catch (OperationCanceledException)
             {
@@ -278,17 +280,14 @@ namespace Maya2Babylon.Forms
                 case "binary babylon":
                     this.saveFileDialog.DefaultExt = "babylon";
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
-                    chkExportTangents.Checked = true;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
-                    chkExportTangents.Checked = false;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
-                    chkExportTangents.Checked = false;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);

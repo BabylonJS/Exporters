@@ -180,10 +180,10 @@ namespace Maya2Babylon
                     break;
                 case MFn.Type.kAreaLight:
                 case MFn.Type.kVolumeLight:
-                    RaiseError("Unsupported light type '" + mFnLight.objectProperty.apiType + "' for DAG path '" + mFnLight.fullPathName + "'. Light is ignored. Supported light types are: ambient, directional, point and spot.");
+                    RaiseError("Unsupported light type '" + mFnLight.objectProperty.apiType + "' for DAG path '" + mFnLight.fullPathName + "'. Light is ignored. Supported light types are: ambient, directional, point and spot.", 1);
                     return null;
                 default:
-                    RaiseWarning("Unknown light type '" + mFnLight.objectProperty.apiType + "' for DAG path '" + mFnLight.fullPathName + "'. Light is ignored.");
+                    RaiseWarning("Unknown light type '" + mFnLight.objectProperty.apiType + "' for DAG path '" + mFnLight.fullPathName + "'. Light is ignored.", 1);
                     return null;
             }
 

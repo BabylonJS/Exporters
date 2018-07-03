@@ -233,14 +233,29 @@ namespace Max2Babylon
 
                 if (babylonTexture != null)
                 {
-                    bool isAlphaInTexture = (isTextureOk(babylonStandardMaterial.diffuseTexture) && babylonStandardMaterial.diffuseTexture.hasAlpha) ||
+                    //Check if the texture already exist
+                    var _key = SetStandText(babylonStandardMaterial);
+
+                    if (GetStandTextInfo(_key) != null)
+                    {
+                        var _pairBCMR = GetStandTextInfo(_key);
+                        gltfPbrMetallicRoughness.baseColorTexture = _pairBCMR.baseColor;
+                        gltfPbrMetallicRoughness.metallicRoughnessTexture = _pairBCMR.metallicRoughness;
+                    }
+                    else
+                    {
+
+                        bool isAlphaInTexture = (isTextureOk(babylonStandardMaterial.diffuseTexture) && babylonStandardMaterial.diffuseTexture.hasAlpha) ||
                                               isTextureOk(babylonStandardMaterial.opacityTexture);
 
                     Bitmap baseColorBitmap = null;
-                    Bitmap metallicRoughnessBitmap = null;
+                        Bitmap metallicRoughnessBitmap = null;
 
-                    if (exportParameters.copyTexturesToOutput)
-                    {
+                        GLTFTextureInfo textureInfoBC = new GLTFTextureInfo();
+                        GLTFTextureInfo textureInfoMR = new GLTFTextureInfo();
+
+                        if (exportParameters.copyTexturesToOutput)
+                        {
                         // Diffuse
                         Bitmap diffuseBitmap = null;
                         if (babylonStandardMaterial.diffuseTexture != null)
@@ -313,18 +328,25 @@ namespace Max2Babylon
                                         (int)(metallicRoughnessTexture.roughness * 255),
                                         (int)(metallicRoughnessTexture.metallic * 255)
                                     );
-                                    metallicRoughnessBitmap.SetPixel(x, y, colorMetallicRoughness);
+                                        metallicRoughnessBitmap.SetPixel(x, y, colorMetallicRoughness);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    // Export maps and textures
-                    var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
-                    gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
-                    if (isTextureOk(babylonStandardMaterial.specularTexture))
-                    {
-                        gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, babylonMaterial.name + "_metallicRoughness" + ".jpg");
+                        //export textures
+                        var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
+                        textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
+                        gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
+
+                        if (isTextureOk(babylonStandardMaterial.specularTexture))
+                        {
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, babylonMaterial.name + "_metallicRoughness" + ".jpg");
+                            gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
+                        }
+
+                        //register the texture
+                        AddStandText(_key, textureInfoBC, textureInfoMR);
                     }
 
                     // Constraints
@@ -435,7 +457,22 @@ namespace Max2Babylon
                 gltfMaterial.normalTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.normalTexture, gltf);
 
                 // Occulison
-                gltfMaterial.occlusionTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.occlusionTexture, gltf);
+                if (babylonPBRMetallicRoughnessMaterial.occlusionTexture != null)
+                {
+                    if (babylonPBRMetallicRoughnessMaterial.occlusionTexture.bitmap != null)
+                    {
+                        // ORM texture has been merged manually by the exporter
+                        // Occlusion is defined as well as metallic and/or roughness
+                        RaiseVerbose("Occlusion is defined as well as metallic and/or roughness", 2);
+                        gltfMaterial.occlusionTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.occlusionTexture);
+                    }
+                    else
+                    {
+                        // ORM texture was already merged or only occlusion is defined
+                        RaiseVerbose("ORM texture was already merged or only occlusion is defined", 2);
+                        gltfMaterial.occlusionTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.occlusionTexture, gltf);
+                    }
+                }
 
                 // Emissive
                 gltfMaterial.emissiveFactor = babylonPBRMetallicRoughnessMaterial.emissive;
@@ -475,7 +512,37 @@ namespace Max2Babylon
                 // Metallic roughness
                 gltfPbrMetallicRoughness.metallicFactor = babylonPBRMetallicRoughnessMaterial.metallic;
                 gltfPbrMetallicRoughness.roughnessFactor = babylonPBRMetallicRoughnessMaterial.roughness;
-                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture);
+                if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture != null)
+                {
+                    if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture == babylonPBRMetallicRoughnessMaterial.occlusionTexture)
+                    {
+                        // Occlusion is defined as well as metallic and/or roughness
+                        // Use same texture
+                        RaiseVerbose("Occlusion is defined as well as metallic and/or roughness", 2);
+                        gltfPbrMetallicRoughness.metallicRoughnessTexture = gltfMaterial.occlusionTexture;
+                    }
+                    else
+                    {
+                        // Occlusion is not defined, only metallic and/or roughness
+                        RaiseVerbose("Occlusion is not defined, only metallic and/or roughness", 2);
+
+                        if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture.bitmap != null)
+                        {
+                            // Metallic & roughness texture has been merged manually by the exporter
+                            // Write bitmap file
+                            RaiseVerbose("Metallic & roughness texture has been merged manually by the exporter", 2);
+                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture);
+                        }
+                        else
+                        {
+
+                            // Metallic & roughness texture was already merged
+                            // Copy file
+                            RaiseVerbose("Metallic & roughness texture was already merged", 2);
+                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                        }
+                    }
+                }
             }
             else
             {

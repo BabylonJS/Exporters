@@ -214,7 +214,11 @@ namespace Maya2Babylon
                 return null;
             }
 
-            var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+            var babylonMesh = new BabylonMesh{
+                                        name = mFnTransform.name,
+                                        id = mFnTransform.uuid().asString(),
+                                        visibility = Loader.GetVisibility(mFnTransform.fullPathName)
+                                    };
             
             // Instance
             // For a mesh with instances, we distinguish between master and instance meshes:
@@ -249,10 +253,6 @@ namespace Maya2Babylon
 
             // Misc.
             // TODO - Retreive from Maya
-            // TODO - What is the difference between isVisible and visibility?
-            // TODO - Fix fatal error: Attempting to save in C:/Users/Fabrice/AppData/Local/Temp/Fabrice.20171205.1613.ma
-            //babylonMesh.isVisible = mDagPath.isVisible;
-            //babylonMesh.visibility = meshNode.MaxNode.GetVisibility(0, Tools.Forever);
             //babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows == 1;
             //babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics == 1;
 
