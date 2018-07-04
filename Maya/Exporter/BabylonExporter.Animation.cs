@@ -497,9 +497,15 @@ namespace Maya2Babylon
         {
             Dictionary<double, IList<double>> weights = new Dictionary<double, IList<double>>();
 
+            int start = Loader.GetMinTime();
+            int end = Loader.GetMaxTime();
+
             // Get the keyframe of the blendSape
             MDoubleArray keyArray = new MDoubleArray();
             MGlobal.executeCommand($"keyframe -t \":\" -q -timeChange {blendShapeDeformerName}", keyArray);
+
+            keyArray.Add(start);
+            keyArray.Add(end);
 
             SortedSet<double> sortedKeys = new SortedSet<double>(keyArray);
             List<double> keys = new List<double>(sortedKeys);
