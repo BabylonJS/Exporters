@@ -16,8 +16,6 @@ namespace Maya2Babylon
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
 
-        private bool hasMorphTarget = false;
-
         /// <summary>
         /// 
         /// </summary>
@@ -80,15 +78,7 @@ namespace Maya2Babylon
                 }
             }
 
-            if (meshShapeOrig != null)
-            {
-                hasMorphTarget = hasBlendShape(mFnMesh.objectProperty);
-            }
-            else
-            {
-                hasMorphTarget = false;
-            }
-
+            bool hasMorphTarget = hasBlendShape(mFnMesh.objectProperty);
 
             if (mFnMesh == null)
             {
@@ -399,14 +389,12 @@ namespace Maya2Babylon
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
 
-            if (hasMorphTarget)
+            if (hasMorphTarget) // Remove the morph influence to extract the original geometry
             {
-                ExtractGeometry(meshShapeOrig, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+                setEnvelopesToZeros(mFnMesh.objectProperty);
             }
-            else
-            {
-                ExtractGeometry(mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
-            }
+
+            ExtractGeometry(babylonMesh, mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
 
             if (vertices.Count >= 65536)
             {
@@ -481,14 +469,20 @@ namespace Maya2Babylon
             // ------------------------
             if (hasMorphTarget)
             {
+                restoreEnvelopes(mFnMesh.objectProperty);
+                
                 // Maya blend shape influencing the mesh
                 RaiseMessage("Morph target", 2);
                 IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh.objectProperty);
-            
-                if(blendShapeDeformers.Count > 7)
+
+                if (_exportSkin && mFnSkinCluster != null)
                 {
-                    RaiseWarning($"There are {blendShapeDeformers.Count} morph targets.", 3);
-                    RaiseWarning($"Please be aware that most of the browsers are limited to 16 attributes per mesh. Adding a single morph target to a mesh add 2 new attributes (position + normal). This could quickly go beyond the max attributes limitation.", 3);
+                    RaiseWarning("A mesh with both skin and morph target is not fully supported.", 3);
+                }
+
+                if(blendShapeDeformers.Count > 1)
+                {
+                    RaiseWarning($"There are {blendShapeDeformers.Count} blend shapes. The exporter currently support one. So all blend shapes will be exported as one.", 3);
                 }
 
                 // Morph Target Manager
@@ -496,8 +490,14 @@ namespace Maya2Babylon
                 babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
                 babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
 
-                IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(mFnMesh.objectProperty);
+                IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(babylonMesh, mFnMesh.objectProperty);
                 babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
+
+                if (babylonMorphTargets.Count > 7)
+                {
+                    RaiseWarning($"There are {babylonMorphTargets.Count} morph targets.", 3);
+                    RaiseWarning($"Please be aware that most of the browsers are limited to 16 attributes per mesh. Adding a single morph target to a mesh add 2 new attributes (position + normal). This could quickly go beyond the max attributes limitation.", 3);
+                }
             }
 
 
@@ -519,7 +519,7 @@ namespace Maya2Babylon
         /// <param name="uvSetNames"></param>
         /// <param name="isUVExportSuccess"></param>
         /// <param name="optimizeVertices"></param>
-        private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess, bool optimizeVertices)
+        private void ExtractGeometry(BabylonMesh babylonMesh, MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess, bool optimizeVertices)
         {
             List<GlobalVertex>[] verticesAlreadyExported = null;
 
@@ -548,7 +548,7 @@ namespace Maya2Babylon
                 var minVertexIndexSubMesh = int.MaxValue;
                 var maxVertexIndexSubMesh = int.MinValue;
                 var subMesh = new BabylonSubMesh { indexStart = indices.Count, materialIndex = indexShader };
-                
+
                 // For each polygon of this mesh
                 for (int polygonId = 0; polygonId < faceMatIndices.Count; polygonId++)
                 {
@@ -611,6 +611,9 @@ namespace Maya2Babylon
                                         vertex.CurrentIndex = vertices.Count;
                                         verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
                                         vertices.Add(vertex);
+
+                                        // Store vertex data
+                                        babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
                                     }
                                 }
                                 else
@@ -620,12 +623,19 @@ namespace Maya2Babylon
                                     vertex.CurrentIndex = vertices.Count;
                                     verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
                                     vertices.Add(vertex);
+
+                                    // Store vertex data
+                                    babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
+
                                 }
                             }
                             else
                             {
                                 vertex.CurrentIndex = vertices.Count;
                                 vertices.Add(vertex);
+
+                                // Store vertex data
+                                babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
                             }
 
                             indices.Add(vertex.CurrentIndex);
@@ -1073,7 +1083,7 @@ namespace Maya2Babylon
         /// <param name="baseObject">The Maya object influenced by the blendShapes</param>
         /// <param name="blendShapeDeformers">List of Maya blendShape. Use GetBlendShape function to get the right one.</param>
         /// <returns>BabylonMorphTarget list</returns>
-        private IList<BabylonMorphTarget> GetMorphTargets(MObject baseObject)
+        private IList<BabylonMorphTarget> GetMorphTargets(BabylonMesh babylonMesh, MObject baseObject)
         {
             // Morph Targets
             IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(baseObject);
@@ -1085,7 +1095,7 @@ namespace Maya2Babylon
 
                 float envelope = blendShapeDeformer.envelope;
 
-                MIntArray weightIndexList = new MIntArray();    // list of weight. For each weith, there are multiple targets
+                MIntArray weightIndexList = new MIntArray();    // list of weight. For each weight, there are multiple targets
                 blendShapeDeformer.weightIndexList(weightIndexList);
 
 
@@ -1100,35 +1110,80 @@ namespace Maya2Babylon
                     for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
                     {
                         MObject target = targets[targetIndex];
+                        MFnMesh targetMesh = new MFnMesh(target);
 
                         BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
                         {
-                            name = blendShapeDeformer.name,
+                            name = $"{blendShapeDeformer.name}_{targetMesh.name}",
                             influence = envelope * weight
                         };
                         babylonMorphTargets.Add(babylonMorphTarget);
 
                         // Target geometry
                         var targetVertices = new List<GlobalVertex>();
-                        var indices = new List<int>();
-                        var subMeshes = new List<BabylonSubMesh>();
                         var uvSetNames = new MStringArray();
                         bool[] isUVExportSuccess = { false, false };
                         bool isTangentExportSuccess = _exportTangents;
                         bool optimizeVertices = _optimizeVertices;
-                        ExtractGeometry(new MFnMesh(target), targetVertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+
+                        List<VertexData> vertexDatas = babylonMesh.VertexDatas;
+                        for(int vertexIndex = 0; vertexIndex < vertexDatas.Count; vertexIndex++)
+                        {
+                            VertexData vertexData = vertexDatas[vertexIndex];
+
+                            MPoint position = new MPoint();
+                            targetMesh.getPoint(vertexData.vertexIndexGlobal, position);
+                            MVector normal = new MVector();
+                            targetMesh.getFaceVertexNormal(vertexData.polygonId, vertexData.vertexIndexGlobal, normal);
+
+                            // Switch coordinate system at object level
+                            position.z *= -1;
+                            normal.z *= -1;
+
+                            GlobalVertex vertex = new GlobalVertex
+                            {
+                                BaseIndex = vertexData.vertexIndexGlobal,
+                                Position = position.toArray(),
+                                Normal = normal.toArray()
+                            };
+
+                            if (isTangentExportSuccess)
+                            {
+                                try
+                                {
+                                    MVector tangent = new MVector();
+                                    targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
+
+                                    // Switch coordinate system at object level
+                                    tangent.z *= -1;
+
+                                    int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
+                                    bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
+
+                                    // Invert W to switch to left handed system
+                                    vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                }
+                                catch
+                                {
+                                    // Exception raised when mesh don't have tangents
+                                    isTangentExportSuccess = false;
+                                }
+                            }
+
+                            targetVertices.Add(vertex);
+                        }
 
                         babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
                         babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
 
                         // Tangent
-                        if (isTangentExportSuccess)
+                        if (!isBabylonExported && isTangentExportSuccess)
                         {
                             babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                         }
 
                         // Animation
-                        babylonMorphTarget.animations = GetAnimationsFrameByFrameInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                        babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
                     }
 
                 }
@@ -1138,77 +1193,48 @@ namespace Maya2Babylon
         }
 
 
-        private IDictionary<double, IList<double>> GetMorphWeightsByFrame(string blendShapeDeformerName)
+
+        /// <summary>
+        /// Set the blend shape envelope to 0.
+        /// </summary>
+        /// <param name="mObject"></param>
+        private IDictionary<MObject, IList<float>> envelopeByObject = new Dictionary<MObject, IList<float>>();
+        private void setEnvelopesToZeros(MObject mObject)
         {
-            Dictionary<double, IList<double>> weights = new Dictionary<double, IList<double>>();
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
+            IList<float> envelopes = new List<float>();
 
-            // Get the keyframe of the blendSape
-            MDoubleArray keyArray = new MDoubleArray();
-            MGlobal.executeCommand($"keyframe -t \":\" -q -timeChange {blendShapeDeformerName}", keyArray);
-
-            SortedSet<double> sortedKeys = new SortedSet<double>(keyArray);
-            List<double> keys = new List<double>(sortedKeys);
-
-            for(int index = 0; index < keys.Count; index++)
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
             {
-                // Get the weight at this keyframe
-                double key = keys[index];
-                MDoubleArray weightArray = new MDoubleArray();
-                MGlobal.executeCommand($"getAttr -t {key} {blendShapeDeformerName}.weight", weightArray);
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
 
-                weights[key] = weightArray;
+                envelopes.Add( blendShapeDeformer.envelope);
+
+                blendShapeDeformer.envelope = 0f;
             }
 
-            return weights;
+            envelopeByObject[mObject] = envelopes;
         }
 
-
-        private IList<BabylonAnimation> GetAnimationsFrameByFrameInfluence(string blendShapeDeformerName, int weightIndex)
+        /// <summary>
+        /// Restore the blend shape envelope to its previous value (before the setEnvelopesToZeros call)
+        /// </summary>
+        /// <param name="mObject"></param>
+        private void restoreEnvelopes(MObject mObject)
         {
-            IList<BabylonAnimation> animations = new List<BabylonAnimation>();
-            BabylonAnimation animation = null;
-
-            IDictionary<double, IList<double>> morphWeights = GetMorphWeightsByFrame(blendShapeDeformerName);
-
-            // get keys
-            List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
-            for (int index = 0; index < morphWeights.Count; index++)
+            try
             {
-                KeyValuePair<double, IList<double>> keyValue = morphWeights.ElementAt(index);
-                // Set the animation key
-                BabylonAnimationKey key = new BabylonAnimationKey()
+                IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
+                IList<float> envelopes = envelopeByObject.First(item => item.Key.equalEqual(mObject)).Value;
+
+                for(int index = 0; index < blendShapeDeformers.Count; index++)
                 {
-                    frame = (int)keyValue.Key,
-                    values = new float[] { (float) keyValue.Value[weightIndex] }
-                };
-
-                keys.Add(key);
+                    MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+                    float envelope = envelopes[index];
+                    blendShapeDeformer.envelope = envelope;
+                }
             }
-
-            List<BabylonAnimationKey> keysFull = new List<BabylonAnimationKey>(keys);
-
-            // Optimization
-            OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
-
-            // Ensure animation has at least 2 frames
-            if (IsAnimationKeysRelevant(keys))
-            {
-                // Animations
-                animation = new BabylonAnimation()
-                {
-                    name = "influence animation", // override default animation name
-                    dataType = (int)BabylonAnimation.DataType.Float,
-                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
-                    framePerSecond = Loader.GetFPS(),
-                    keys = keys.ToArray(),
-                    keysFull = keysFull,
-                    property = "influence"
-                };
-
-                animations.Add(animation);
-            }
-
-            return animations;
+            catch { }
         }
     }
 }
