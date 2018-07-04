@@ -36,7 +36,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.2.8";
+        private string exporterVersion = "1.2.9";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
@@ -185,6 +185,9 @@ namespace Maya2Babylon
             // ------ Nodes -------
             // --------------------
             RaiseMessage("Exporting nodes");
+
+            // It makes each morph target manager export starts from id = 0.
+            BabylonMorphTargetManager.Reset();
 
             // Clear materials
             referencedMaterials.Clear();
