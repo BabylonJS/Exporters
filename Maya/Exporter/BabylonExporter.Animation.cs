@@ -571,7 +571,11 @@ namespace Maya2Babylon
         }
 
 
-
+        /// <summary>
+        /// Using the Maya object name, find its keyframe.
+        /// </summary>
+        /// <param name="objectName"></param>
+        /// <returns>A sorted list of keyframe without duplication. This list contains at least the first and last key of the time range.</returns>
         public IList<double> GetKeyframes(string objectName)
         {
             IList<double> keys= new List<double>();
@@ -579,7 +583,7 @@ namespace Maya2Babylon
             int start = Loader.GetMinTime();
             int end = Loader.GetMaxTime();
 
-            // Get the keyframe of the blendSape
+            // Get the keyframe
             try
             {
                 MDoubleArray keyArray = new MDoubleArray();
@@ -598,13 +602,20 @@ namespace Maya2Babylon
         }
 
 
-
+        /// <summary>
+        /// Using MEL commands, it return the babylon animation
+        /// </summary>
+        /// <param name="objectName">The name of the Maya object</param>
+        /// <param name="mayaProperty">The attribut in Maya</param>
+        /// <param name="babylonProperty">The attribut in Babylon</param>
+        /// <returns>A Babylon animation that represents the Maya animation</returns>
         public BabylonAnimation GetAnimationFloat(string objectName, string mayaProperty, string babylonProperty)
         {
+            // Get keyframes
             IList<double> keyframes = GetKeyframes(objectName);
             BabylonAnimation animation = null;
 
-            // get keys
+            // set the key for each keyframe
             List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
 
             for (int index = 0; index < keyframes.Count; index++)
@@ -646,11 +657,17 @@ namespace Maya2Babylon
             return animation;
         }
 
-
+        /// <summary>
+        /// Convert the Maya texture animation of a MFnDependencyNode in Babylon animations
+        /// </summary>
+        /// <param name="textureDependencyNode">The MFnDependencyNode of the texture</param>
+        /// <returns>A list of texture animation</returns>
         public List<BabylonAnimation> GetTextureAnimations(MFnDependencyNode textureDependencyNode)
         {
             List<BabylonAnimation> animations = new List<BabylonAnimation>();
 
+            // Look for a "place2dTexture" object in the connections of the node.
+            // The "place2dTexture" object contains the animation parameters
             MPlugArray connections = new MPlugArray();
             textureDependencyNode.getConnections(connections);
 
@@ -670,13 +687,16 @@ namespace Maya2Babylon
 
             if(place2dTexture != null)
             {
-                IDictionary<string, string> properties = new Dictionary<string, string>();
-                properties["offsetU"] = "uOffset";
-                properties["offsetU"] = "uOffset";
-                properties["offsetV"] = "vOffset";
-                properties["repeatU"] = "uScale";
-                properties["repeatV"] = "vScale";
+                IDictionary<string, string> properties = new Dictionary<string, string>
+                {
+                    ["offsetU"] = "uOffset",
+                    ["offsetU"] = "uOffset",
+                    ["offsetV"] = "vOffset",
+                    ["repeatU"] = "uScale",
+                    ["repeatV"] = "vScale"
+                };
 
+                // Get the animation for each properties
                 for (index = 0; index < properties.Count; index++)
                 {
                     KeyValuePair<string, string> property = properties.ElementAt(index);
@@ -688,6 +708,7 @@ namespace Maya2Babylon
                     }
                 }
 
+                // For the rotation, convert degree to radian
                 BabylonAnimation rotationAnimation = GetAnimationFloat(place2dTexture, "rotateFrame", "wAng");
                 if (rotationAnimation != null)
                 {
@@ -695,7 +716,7 @@ namespace Maya2Babylon
                     for (index = 0; index < keys.Length; index++)
                     {
                         var key = keys[index];
-                        key.values[0] *= (float)(Math.PI / 360d);
+                        key.values[0] *= (float)(Math.PI / 180d);
                     }
                     animations.Add(rotationAnimation);
                 }
