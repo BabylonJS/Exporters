@@ -374,11 +374,6 @@ namespace Max2Babylon
                     accessorWeights.count = globalVerticesSubMesh.Count;
                 }
 
-                if (hasBonesExtra)
-                {
-                    RaiseWarning("Too many bones influences per vertex. glTF only support up to 4 bones influences per vertex. The result may not be as expected.", 3);
-                }
-
                 // Morph targets positions and normals
                 if (babylonMorphTargetManager != null)
                 {
