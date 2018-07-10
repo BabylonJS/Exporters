@@ -497,18 +497,7 @@ namespace Maya2Babylon
         {
             Dictionary<double, IList<double>> weights = new Dictionary<double, IList<double>>();
 
-            int start = Loader.GetMinTime();
-            int end = Loader.GetMaxTime();
-
-            // Get the keyframe of the blendSape
-            MDoubleArray keyArray = new MDoubleArray();
-            MGlobal.executeCommand($"keyframe -t \":\" -q -timeChange {blendShapeDeformerName}", keyArray);
-
-            keyArray.Add(start);
-            keyArray.Add(end);
-
-            SortedSet<double> sortedKeys = new SortedSet<double>(keyArray);
-            List<double> keys = new List<double>(sortedKeys);
+            IList<double> keys = GetKeyframes(blendShapeDeformerName);
 
             for (int index = 0; index < keys.Count; index++)
             {
@@ -576,6 +565,161 @@ namespace Maya2Babylon
                 };
 
                 animations.Add(animation);
+            }
+
+            return animations;
+        }
+
+
+        /// <summary>
+        /// Using the Maya object name, find its keyframe.
+        /// </summary>
+        /// <param name="objectName"></param>
+        /// <returns>A sorted list of keyframe without duplication. This list contains at least the first and last key of the time range.</returns>
+        public IList<double> GetKeyframes(string objectName)
+        {
+            IList<double> keys= new List<double>();
+
+            int start = Loader.GetMinTime();
+            int end = Loader.GetMaxTime();
+
+            // Get the keyframe
+            try
+            {
+                MDoubleArray keyArray = new MDoubleArray();
+                MGlobal.executeCommand($"keyframe -t \":\" -q -timeChange {objectName}", keyArray);
+
+                keyArray.Add(start);
+                keyArray.Add(end);
+
+                SortedSet<double> sortedKeys = new SortedSet<double>(keyArray);
+                keys = new List<double>(sortedKeys);
+
+            }
+            catch { }
+
+            return keys;
+        }
+
+
+        /// <summary>
+        /// Using MEL commands, it return the babylon animation
+        /// </summary>
+        /// <param name="objectName">The name of the Maya object</param>
+        /// <param name="mayaProperty">The attribut in Maya</param>
+        /// <param name="babylonProperty">The attribut in Babylon</param>
+        /// <returns>A Babylon animation that represents the Maya animation</returns>
+        public BabylonAnimation GetAnimationFloat(string objectName, string mayaProperty, string babylonProperty)
+        {
+            // Get keyframes
+            IList<double> keyframes = GetKeyframes(objectName);
+            BabylonAnimation animation = null;
+
+            // set the key for each keyframe
+            List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
+
+            for (int index = 0; index < keyframes.Count; index++)
+            {
+                double keyframe = keyframes[index];
+                MGlobal.executeCommand($"getAttr -t {keyframe} {objectName}.{mayaProperty}", out double value);
+
+                // Set the animation key
+                BabylonAnimationKey key = new BabylonAnimationKey()
+                {
+                    frame = (int)keyframe,
+                    values = new float[] { (float)value }
+                };
+
+                keys.Add(key);
+            }
+
+            List<BabylonAnimationKey> keysFull = new List<BabylonAnimationKey>(keys);
+
+            // Optimization
+            OptimizeAnimations(keys, false);
+
+            // Ensure animation has at least 2 frames
+            if (IsAnimationKeysRelevant(keys))
+            {
+                // Animations
+                animation = new BabylonAnimation()
+                {
+                    name = $"{babylonProperty} animation", // override default animation name
+                    dataType = (int)BabylonAnimation.DataType.Float,
+                    loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                    framePerSecond = Loader.GetFPS(),
+                    keys = keys.ToArray(),
+                    keysFull = keysFull,
+                    property = babylonProperty
+                };
+            }
+
+            return animation;
+        }
+
+        /// <summary>
+        /// Convert the Maya texture animation of a MFnDependencyNode in Babylon animations
+        /// </summary>
+        /// <param name="textureDependencyNode">The MFnDependencyNode of the texture</param>
+        /// <returns>A list of texture animation</returns>
+        public List<BabylonAnimation> GetTextureAnimations(MFnDependencyNode textureDependencyNode)
+        {
+            List<BabylonAnimation> animations = new List<BabylonAnimation>();
+
+            // Look for a "place2dTexture" object in the connections of the node.
+            // The "place2dTexture" object contains the animation parameters
+            MPlugArray connections = new MPlugArray();
+            textureDependencyNode.getConnections(connections);
+
+            int index = 0;
+            string place2dTexture = null;
+            while (index < connections.Count && place2dTexture == null)
+            {
+                MPlug connection = connections[index];
+                MObject source = connection.source.node;
+                if (source != null && source.hasFn(MFn.Type.kPlace2dTexture))
+                {
+                    MFnDependencyNode node = new MFnDependencyNode(source);
+                    place2dTexture = node.name;
+                }
+                index++;
+            }
+
+            if(place2dTexture != null)
+            {
+                IDictionary<string, string> properties = new Dictionary<string, string>
+                {
+                    ["offsetU"] = "uOffset",
+                    ["offsetU"] = "uOffset",
+                    ["offsetV"] = "vOffset",
+                    ["repeatU"] = "uScale",
+                    ["repeatV"] = "vScale"
+                };
+
+                // Get the animation for each properties
+                for (index = 0; index < properties.Count; index++)
+                {
+                    KeyValuePair<string, string> property = properties.ElementAt(index);
+                    BabylonAnimation animation = GetAnimationFloat(place2dTexture, property.Key, property.Value);
+
+                    if(animation != null)
+                    {
+                        animations.Add(animation);
+                    }
+                }
+
+                // For the rotation, convert degree to radian
+                BabylonAnimation rotationAnimation = GetAnimationFloat(place2dTexture, "rotateFrame", "wAng");
+                if (rotationAnimation != null)
+                {
+                    BabylonAnimationKey[] keys = rotationAnimation.keys;
+                    for (index = 0; index < keys.Length; index++)
+                    {
+                        var key = keys[index];
+                        key.values[0] *= (float)(Math.PI / 180d);
+                    }
+                    animations.Add(rotationAnimation);
+                }
             }
 
             return animations;

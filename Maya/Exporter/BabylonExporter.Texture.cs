@@ -524,6 +524,9 @@ namespace Maya2Babylon
                 // TODO - What is adress mode when not wrap nor mirror?
                 babylonTexture.wrapV = BabylonTexture.AddressMode.CLAMP_ADDRESSMODE;
             }
+
+            // Animation
+            babylonTexture.animations = GetTextureAnimations(textureDependencyNode).ToArray();
         }
 
         private void _exportIsCube(string absolutePath, BabylonTexture babylonTexture, bool allowCube)
