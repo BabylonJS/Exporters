@@ -100,6 +100,11 @@ namespace Max2Babylon
 
                 return new List<IIGameNode>();
             }
+            if(rootNodes.Count <= 0)
+            {
+                RaiseWarning("Skin has no bones.", logRank);
+                return new List<IIGameNode>();
+            }
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
