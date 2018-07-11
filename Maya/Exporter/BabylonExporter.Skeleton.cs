@@ -14,6 +14,7 @@ namespace Maya2Babylon
         private Dictionary<MFnSkinCluster, MObject> rootBySkin = new Dictionary<MFnSkinCluster, MObject>();
         private Dictionary<MFnSkinCluster, List<MObject>> influentNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
         private Dictionary<MFnSkinCluster, List<MObject>> revelantNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
+        private IDictionary<int, double> frameBySkeletonID = new Dictionary<int, double>(); // store the id of the skeleton and the frame to used for the bone export
 
         // For the progress bar
         private float progressSkin;
@@ -367,7 +368,8 @@ namespace Maya2Babylon
                     name = dagNode.name,
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,
-                    matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
+                    //matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
+                    matrix = GetBabylonMatrix(currentNodeTransform, frameBySkeletonID[skinIndex]).m,
                     animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
                 };
 
@@ -455,5 +457,85 @@ namespace Maya2Babylon
             return node1.fullPathName.Equals(node2.fullPathName);
         }
 
+
+
+        private MObject GetBindPose(MObject mObject)
+        {
+            MObject bindPose = null;
+            MFnDependencyNode skinCluster = new MFnDependencyNode(mObject);
+
+            MPlugArray connections = new MPlugArray();
+            skinCluster.getConnections(connections);
+            foreach (MPlug connection in connections)
+            {
+                MObject source = connection.source.node;
+                if (source != null)
+                {
+                    if (source.hasFn(MFn.Type.kDagPose))
+                    {
+                        bindPose = source;
+                    }
+                }
+            }
+
+
+            return bindPose;
+        }
+
+        private bool HasBindPose(MObject mObject)
+        {
+            return GetBindPose(mObject) != null;
+        }
+
+
+        private bool HasNonZeroScale(List<MObject> nodes, double currentFrame)
+        {
+            bool isValid = true;
+            for (int index = 0; index < nodes.Count && isValid; index++)
+            {
+                MObject node = nodes[index];
+                MFnTransform transform = new MFnTransform(node);
+
+                // get scale at this frame
+                MDoubleArray mDoubleScale = new MDoubleArray();
+                MGlobal.executeCommand($"getAttr -t {currentFrame.ToString(System.Globalization.CultureInfo.InvariantCulture)} {transform.fullPathName}.scale", mDoubleScale);
+                mDoubleScale.get(out float[] scale);
+
+                isValid = !scale.IsEqualTo(new float[] { 0, 0, 0 }, 0.01f);
+            }
+
+            return isValid;
+        }
+
+
+        private IList<double> GetValidFrames(MFnSkinCluster skin)
+        {
+            List<MObject> revelantNodes = GetRevelantNodes(skin);
+            int start = Loader.GetMinTime();
+            int end = Loader.GetMaxTime();
+
+            IList<double> validFrames = new List<double>();
+            for(int frame = start; frame <= end; frame++)
+            {
+                validFrames.Add(frame);
+            }
+
+            // For each frame:
+            //  if bone scale near 0, remove the frame
+            bool isValid = false;
+            while (!isValid && validFrames.Count > 0)
+            {
+                double currentFrame = validFrames[0];
+                isValid = HasNonZeroScale(revelantNodes, currentFrame);
+                
+
+                if(!isValid)
+                {
+                    validFrames.Remove(currentFrame);
+                }
+            }
+
+            return validFrames;
+        }
     }
 }
