@@ -368,7 +368,36 @@ namespace Maya2Babylon
 
                 if (indexByNodeName != null && allMayaInfluenceNames != null)
                 {
-                    babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
+                    int skeletonId = babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
+
+                    // Bones with zero scale damage the mesh geometry export
+                    // So you need to fid a frame were those bones have a higher scale
+                    if (frameBySkeletonID.ContainsKey(skeletonId))
+                    {
+                        double frame = frameBySkeletonID[skeletonId];
+                        RaiseWarning($"Export the mesh at the same frame as its skeleton {frame}");
+                    }
+                    else
+                    {
+                        List<MObject> bones = GetRevelantNodes(mFnSkinCluster);
+                        double currentFrame = Loader.GetCurrentTime();
+                        frameBySkeletonID[skeletonId] = currentFrame;
+
+                        if (HasNonZeroScale(bones, currentFrame) == false)
+                        {   // There is at least one bone in the skeleton that has a zero scale
+                            IList<double> validFrames = GetValidFrames(mFnSkinCluster);
+                            if(validFrames.Count > 0)
+                            {
+                                RaiseWarning($"Export the mesh at the frame {validFrames[0]}", 2);
+                                Loader.SetCurrentTime(validFrames[0]);
+                                frameBySkeletonID[skeletonId] = validFrames[0];
+                            }
+                            else
+                            {
+                                RaiseError($"No valid frame found for the mesh export. The bone scales are too close to zero.", 2);
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -421,6 +450,14 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
+
+            // Check that the positions of the vertices are different, otherwise raise a warning
+            float[] firstPosition = vertices[0].Position;
+            bool allEqual = vertices.All(v => v.Position.IsEqualTo(firstPosition, 0.001f));
+            if (allEqual)
+            {
+                RaiseWarning("All the vertices share the same position. Is the mesh invisible? The result may not be as expected.", 2);
+            }
 
             // export the skin
             if (mFnSkinCluster != null)

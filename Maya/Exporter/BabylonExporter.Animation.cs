@@ -453,7 +453,7 @@ namespace Maya2Babylon
             return animation;
         }
 
-        private MMatrix GetMMatrix(MFnTransform mFnTransform, int currentFrame = 0)
+        private MMatrix GetMMatrix(MFnTransform mFnTransform, double currentFrame = 0)
         {
             // get transformation matrix at this frame
             MDoubleArray mDoubleMatrix = new MDoubleArray();
@@ -463,7 +463,7 @@ namespace Maya2Babylon
             return new MMatrix(localMatrix);
         }
 
-        private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, int currentFrame = 0)
+        private BabylonMatrix GetBabylonMatrix(MFnTransform mFnTransform, double currentFrame = 0)
         {
             return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
         }
@@ -515,11 +515,11 @@ namespace Maya2Babylon
                 double key = keys[index];
 
                 // Get the envelope
-                MGlobal.executeCommand($"getAttr -t {key} {blendShapeDeformerName}.envelope", out double envelope);
+                MGlobal.executeCommand($"getAttr -t {key.ToString(System.Globalization.CultureInfo.InvariantCulture)} {blendShapeDeformerName}.envelope", out double envelope);
 
                 // Get the weight at this keyframe
                 MDoubleArray weightArray = new MDoubleArray();
-                MGlobal.executeCommand($"getAttr -t {key} {blendShapeDeformerName}.weight", weightArray);
+                MGlobal.executeCommand($"getAttr -t {key.ToString(System.Globalization.CultureInfo.InvariantCulture)} {blendShapeDeformerName}.weight", weightArray);
 
                 weights[key] = weightArray.Select(weight => envelope * weight).ToList();
             }
