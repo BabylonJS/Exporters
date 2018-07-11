@@ -38,7 +38,7 @@ namespace Maya2Babylon
 
             return ExportTexture(babylonTexture, gltf, name, () =>
             {
-                var extension = Path.GetExtension(name);
+                var extension = Path.GetExtension(name).ToLower();
 
                 // Write image to output
                 if (CopyTexturesToOutput)
