@@ -749,7 +749,7 @@ namespace Max2Babylon
             {
                 try
                 {
-                    switch (Path.GetExtension(absolutePath))
+                    switch (Path.GetExtension(absolutePath).ToLower())
                     {
                         case ".dds":
                             // External library GDImageLibrary.dll + TQ.Texture.dll
