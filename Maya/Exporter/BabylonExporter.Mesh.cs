@@ -375,7 +375,7 @@ namespace Maya2Babylon
                     if (frameBySkeletonID.ContainsKey(skeletonId))
                     {
                         double frame = frameBySkeletonID[skeletonId];
-                        RaiseWarning($"Export the mesh at the same frame as its skeleton {frame}");
+                        RaiseVerbose($"Export the mesh at the same frame as its skeleton {frame}");
                     }
                     else
                     {
@@ -383,12 +383,16 @@ namespace Maya2Babylon
                         double currentFrame = Loader.GetCurrentTime();
                         frameBySkeletonID[skeletonId] = currentFrame;
 
-                        if (HasNonZeroScale(bones, currentFrame) == false)
+                        if (HasNonZeroScale(bones, currentFrame))
+                        {
+                            RaiseVerbose($"Export the mesh at the current frame {currentFrame}", 2);
+                        }
+                        else
                         {   // There is at least one bone in the skeleton that has a zero scale
                             IList<double> validFrames = GetValidFrames(mFnSkinCluster);
                             if(validFrames.Count > 0)
                             {
-                                RaiseWarning($"Export the mesh at the frame {validFrames[0]}", 2);
+                                RaiseVerbose($"Export the mesh at the frame {validFrames[0]}", 2);
                                 Loader.SetCurrentTime(validFrames[0]);
                                 frameBySkeletonID[skeletonId] = validFrames[0];
                             }

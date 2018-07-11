@@ -368,13 +368,12 @@ namespace Maya2Babylon
                     name = dagNode.name,
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,
-                    //matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
                     matrix = GetBabylonMatrix(currentNodeTransform, frameBySkeletonID[skinIndex]).m,
                     animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
                 };
 
                 bones.Add(bone);
-                RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);
+                RaiseVerbose($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);
 
                 // Progress bar
                 progressSkin += progressBoneStep;
@@ -457,37 +456,15 @@ namespace Maya2Babylon
             return node1.fullPathName.Equals(node2.fullPathName);
         }
 
-
-
-        private MObject GetBindPose(MObject mObject)
-        {
-            MObject bindPose = null;
-            MFnDependencyNode skinCluster = new MFnDependencyNode(mObject);
-
-            MPlugArray connections = new MPlugArray();
-            skinCluster.getConnections(connections);
-            foreach (MPlug connection in connections)
-            {
-                MObject source = connection.source.node;
-                if (source != null)
-                {
-                    if (source.hasFn(MFn.Type.kDagPose))
-                    {
-                        bindPose = source;
-                    }
-                }
-            }
-
-
-            return bindPose;
-        }
-
-        private bool HasBindPose(MObject mObject)
-        {
-            return GetBindPose(mObject) != null;
-        }
-
-
+        /// <summary>
+        /// Check if the nodes have a scale near to zero.
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <param name="currentFrame"></param>
+        /// <returns>
+        /// True if all nodes have a scale higher than zero + epsilon
+        /// Flase otherwise
+        /// </returns>
         private bool HasNonZeroScale(List<MObject> nodes, double currentFrame)
         {
             bool isValid = true;
@@ -507,31 +484,37 @@ namespace Maya2Babylon
             return isValid;
         }
 
-
+        /// <summary>
+        /// Using the HasNonZeroScale function, it search for a frame where all bones have a scale higher than zero + epsilon.
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>
+        /// A list containing only the first valid frame. Otherwise it returns an empty list.
+        /// </returns>
         private IList<double> GetValidFrames(MFnSkinCluster skin)
         {
             List<MObject> revelantNodes = GetRevelantNodes(skin);
+            IList<double> validFrames = new List<double>();
             int start = Loader.GetMinTime();
             int end = Loader.GetMaxTime();
 
-            IList<double> validFrames = new List<double>();
-            for(int frame = start; frame <= end; frame++)
-            {
-                validFrames.Add(frame);
-            }
-
             // For each frame:
-            //  if bone scale near 0, remove the frame
+            //  if bone scale near 0, move to the next frame
+            //  else add the frame to the list and return the list
             bool isValid = false;
-            while (!isValid && validFrames.Count > 0)
+            double currentFrame = start;
+            while (!isValid && currentFrame <= end)
             {
-                double currentFrame = validFrames[0];
                 isValid = HasNonZeroScale(revelantNodes, currentFrame);
                 
 
                 if(!isValid)
                 {
-                    validFrames.Remove(currentFrame);
+                    currentFrame++;
+                }
+                else
+                {
+                    validFrames.Add(currentFrame);
                 }
             }
 
