@@ -107,7 +107,7 @@ namespace Maya2Babylon
             return res;
         }
 
-        public static bool IsEqualTo(this float[] value, float[] other)
+        public static bool IsEqualTo(this float[] value, float[] other, float Epsilon = Epsilon)
         {
             if (value.Length != other.Length)
             {

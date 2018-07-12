@@ -90,7 +90,7 @@ namespace Maya2Babylon
                 if (attribute.hasFn(MFn.Type.kAttribute))
                 {
                     MFnAttribute mFnAttribute = new MFnAttribute(attribute);
-                    RaiseVerbose("name=" + mFnAttribute.name, logRank + 2);
+                    RaiseVerbose("name=" + mFnAttribute.name + "    apiType=" + attribute.apiType, logRank + 2);
                 }
             }
             RaiseVerbose("Connections", logRank + 1);
