@@ -15,7 +15,7 @@ namespace Maya2Babylon
         }
 
         // TODO - Update log level for release
-        public LogLevel logLevel = LogLevel.VERBOSE;
+        public LogLevel logLevel = LogLevel.MESSAGE;
 
         public event Action<int> OnExportProgressChanged;
         public event Action<string, int> OnError;
