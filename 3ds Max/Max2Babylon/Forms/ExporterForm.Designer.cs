@@ -53,6 +53,7 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
+            this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -62,7 +63,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(211, 175);
+            this.butExport.Location = new System.Drawing.Point(211, 202);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 0;
@@ -121,9 +122,9 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(12, 208);
+            this.treeView.Location = new System.Drawing.Point(12, 235);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 312);
+            this.treeView.Size = new System.Drawing.Size(810, 285);
             this.treeView.TabIndex = 6;
             // 
             // butCancel
@@ -185,6 +186,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkMergeAOwithMR);
             this.groupBox1.Controls.Add(this.txtQuality);
             this.groupBox1.Controls.Add(this.labelQuality);
             this.groupBox1.Controls.Add(this.chkExportTangents);
@@ -203,7 +205,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(450, 163);
+            this.groupBox1.Size = new System.Drawing.Size(450, 190);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
@@ -320,7 +322,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(414, 175);
+            this.butExportAndRun.Location = new System.Drawing.Point(414, 202);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 14;
@@ -339,6 +341,17 @@
             this.butClose.Text = "Close";
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
+            // 
+            // chkMergeAOwithMR
+            // 
+            this.chkMergeAOwithMR.AutoSize = true;
+            this.chkMergeAOwithMR.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkMergeAOwithMR.Location = new System.Drawing.Point(18, 163);
+            this.chkMergeAOwithMR.Name = "chkMergeAOwithMR";
+            this.chkMergeAOwithMR.Size = new System.Drawing.Size(94, 17);
+            this.chkMergeAOwithMR.TabIndex = 25;
+            this.chkMergeAOwithMR.Text = "Merge AO map";
+            this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
             // 
             // ExporterForm
             // 
@@ -396,5 +409,6 @@
         private System.Windows.Forms.CheckBox chkExportTangents;
         private System.Windows.Forms.Label labelQuality;
         private System.Windows.Forms.TextBox txtQuality;
+        private System.Windows.Forms.CheckBox chkMergeAOwithMR;
     }
 }
