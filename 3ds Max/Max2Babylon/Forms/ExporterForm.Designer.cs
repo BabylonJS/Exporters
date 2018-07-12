@@ -41,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
             this.labelQuality = new System.Windows.Forms.Label();
             this.chkExportTangents = new System.Windows.Forms.CheckBox();
@@ -53,7 +54,6 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
-            this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -210,6 +210,19 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
+            // chkMergeAOwithMR
+            // 
+            this.chkMergeAOwithMR.AutoSize = true;
+            this.chkMergeAOwithMR.Checked = true;
+            this.chkMergeAOwithMR.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMergeAOwithMR.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkMergeAOwithMR.Location = new System.Drawing.Point(18, 163);
+            this.chkMergeAOwithMR.Name = "chkMergeAOwithMR";
+            this.chkMergeAOwithMR.Size = new System.Drawing.Size(94, 17);
+            this.chkMergeAOwithMR.TabIndex = 25;
+            this.chkMergeAOwithMR.Text = "Merge AO map";
+            this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
+            // 
             // txtQuality
             // 
             this.txtQuality.Location = new System.Drawing.Point(401, 90);
@@ -341,17 +354,6 @@
             this.butClose.Text = "Close";
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
-            // 
-            // chkMergeAOwithMR
-            // 
-            this.chkMergeAOwithMR.AutoSize = true;
-            this.chkMergeAOwithMR.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkMergeAOwithMR.Location = new System.Drawing.Point(18, 163);
-            this.chkMergeAOwithMR.Name = "chkMergeAOwithMR";
-            this.chkMergeAOwithMR.Size = new System.Drawing.Size(94, 17);
-            this.chkMergeAOwithMR.TabIndex = 25;
-            this.chkMergeAOwithMR.Text = "Merge AO map";
-            this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
             // 
             // ExporterForm
             // 
