@@ -14,6 +14,7 @@ namespace Maya2Babylon
         private Dictionary<MFnSkinCluster, MObject> rootBySkin = new Dictionary<MFnSkinCluster, MObject>();
         private Dictionary<MFnSkinCluster, List<MObject>> influentNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
         private Dictionary<MFnSkinCluster, List<MObject>> revelantNodesBySkin = new Dictionary<MFnSkinCluster, List<MObject>>();
+        private IDictionary<int, double> frameBySkeletonID = new Dictionary<int, double>(); // store the id of the skeleton and the frame to used for the bone export
 
         // For the progress bar
         private float progressSkin;
@@ -367,12 +368,12 @@ namespace Maya2Babylon
                     name = dagNode.name,
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,
-                    matrix = ConvertMayaToBabylonMatrix(currentNodeTransform.transformationMatrix).m.ToArray(),
+                    matrix = GetBabylonMatrix(currentNodeTransform, frameBySkeletonID[skinIndex]).m,
                     animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
                 };
 
                 bones.Add(bone);
-                RaiseMessage($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);
+                RaiseVerbose($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);
 
                 // Progress bar
                 progressSkin += progressBoneStep;
@@ -455,5 +456,69 @@ namespace Maya2Babylon
             return node1.fullPathName.Equals(node2.fullPathName);
         }
 
+        /// <summary>
+        /// Check if the nodes have a scale near to zero.
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <param name="currentFrame"></param>
+        /// <returns>
+        /// True if all nodes have a scale higher than zero + epsilon
+        /// Flase otherwise
+        /// </returns>
+        private bool HasNonZeroScale(List<MObject> nodes, double currentFrame)
+        {
+            bool isValid = true;
+            for (int index = 0; index < nodes.Count && isValid; index++)
+            {
+                MObject node = nodes[index];
+                MFnTransform transform = new MFnTransform(node);
+
+                // get scale at this frame
+                MDoubleArray mDoubleScale = new MDoubleArray();
+                MGlobal.executeCommand($"getAttr -t {currentFrame.ToString(System.Globalization.CultureInfo.InvariantCulture)} {transform.fullPathName}.scale", mDoubleScale);
+                mDoubleScale.get(out float[] scale);
+
+                isValid = !scale.IsEqualTo(new float[] { 0, 0, 0 }, 0.01f);
+            }
+
+            return isValid;
+        }
+
+        /// <summary>
+        /// Using the HasNonZeroScale function, it search for a frame where all bones have a scale higher than zero + epsilon.
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>
+        /// A list containing only the first valid frame. Otherwise it returns an empty list.
+        /// </returns>
+        private IList<double> GetValidFrames(MFnSkinCluster skin)
+        {
+            List<MObject> revelantNodes = GetRevelantNodes(skin);
+            IList<double> validFrames = new List<double>();
+            int start = Loader.GetMinTime();
+            int end = Loader.GetMaxTime();
+
+            // For each frame:
+            //  if bone scale near 0, move to the next frame
+            //  else add the frame to the list and return the list
+            bool isValid = false;
+            double currentFrame = start;
+            while (!isValid && currentFrame <= end)
+            {
+                isValid = HasNonZeroScale(revelantNodes, currentFrame);
+                
+
+                if(!isValid)
+                {
+                    currentFrame++;
+                }
+                else
+                {
+                    validFrames.Add(currentFrame);
+                }
+            }
+
+            return validFrames;
+        }
     }
 }
