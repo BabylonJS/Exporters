@@ -317,7 +317,7 @@ namespace Max2Babylon
         {
             ITexmap metallicTexMap = _getTexMap(materialNode, 5);
             ITexmap roughnessTexMap = _getTexMap(materialNode, 4);
-            ITexmap ambientOcclusionTexMap = _getTexMap(materialNode, 6);
+            ITexmap ambientOcclusionTexMap = exportParameters.mergeAOwithMR ? _getTexMap(materialNode, 6) : null;
 
             // --- Babylon texture ---
 

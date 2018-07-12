@@ -281,7 +281,7 @@ namespace Max2Babylon
 
                     if (sourcePathMetallic == sourcePathRoughness)
                     {
-                        if (ambientOcclusionTexmap != null)
+                        if (ambientOcclusionTexmap != null && exportParameters.mergeAOwithMR)
                         {
                             string sourcePathAmbientOcclusion = getSourcePath(ambientOcclusionTexmap);
                             if (sourcePathMetallic == sourcePathAmbientOcclusion)
@@ -315,7 +315,14 @@ namespace Max2Babylon
 
                         if (ambientOcclusionTexmap != null)
                         {
-                            babylonMaterial.occlusionTexture = ormTexture;
+                            if (exportParameters.mergeAOwithMR)
+                            {
+                                babylonMaterial.occlusionTexture = ormTexture;
+                            }
+                            else
+                            {
+                                babylonMaterial.occlusionTexture = ExportPBRTexture(materialNode, 6, babylonScene);
+                            }
                         }
                     }
                     else if (ambientOcclusionTexmap != null)
