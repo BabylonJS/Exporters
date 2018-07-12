@@ -33,6 +33,18 @@ namespace Maya2Babylon
             return (int)maxTime;
         }
 
+        public static double GetCurrentTime()
+        {
+            MGlobal.executeCommand("currentTime -q", out double currentTime);
+            return currentTime;
+        }
+
+        public static double SetCurrentTime(double time)
+        {
+            MGlobal.executeCommand($"currentTime {time.ToString(System.Globalization.CultureInfo.InvariantCulture)}", out double currentTime);
+            return currentTime;
+        }
+
         public static int GetFPS()
         {
             MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
