@@ -224,7 +224,7 @@ namespace Max2Babylon
                         bool isAlphaInTexture = (isTextureOk(babylonStandardMaterial.diffuseTexture) && babylonStandardMaterial.diffuseTexture.hasAlpha) ||
                                               isTextureOk(babylonStandardMaterial.opacityTexture);
 
-                    Bitmap baseColorBitmap = null;
+                        Bitmap baseColorBitmap = null;
                         Bitmap metallicRoughnessBitmap = null;
 
                         GLTFTextureInfo textureInfoBC = new GLTFTextureInfo();
@@ -243,7 +243,16 @@ namespace Max2Babylon
                         Bitmap specularBitmap = null;
                         if (babylonStandardMaterial.specularTexture != null)
                         {
-                            specularBitmap = LoadTexture(babylonStandardMaterial.specularTexture.originalPath);
+                                if (babylonStandardMaterial.specularTexture.bitmap != null)
+                                {
+                                    // Specular color map has been computed by the exporter
+                                    specularBitmap = babylonStandardMaterial.specularTexture.bitmap;
+                                }
+                                else
+                                {
+                                    // Specular color map is straight input
+                                    specularBitmap = LoadTexture(babylonStandardMaterial.specularTexture.originalPath);
+                                }
                         }
 
                         // Opacity / Alpha / Transparency
@@ -315,7 +324,8 @@ namespace Max2Babylon
                         textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
                         gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
 
-                        if (isTextureOk(babylonStandardMaterial.specularTexture))
+                        // If no specular map is defined, the metallic and roughness values are be driven by the global parameters
+                        if (babylonStandardMaterial.specularTexture != null)
                         {
                             textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, babylonMaterial.name + "_metallicRoughness" + ".jpg");
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;

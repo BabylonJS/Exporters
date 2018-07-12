@@ -24,6 +24,24 @@ namespace Max2Babylon
             return new float[] { color.R, color.G, color.B };
         }
 
+        public static Color multiply(this Color color, float factor)
+        {
+            return Color.FromArgb(
+            (int)(color.A * factor),
+            (int)(color.R * factor),
+            (int)(color.G * factor),
+            (int)(color.B * factor));
+        }
+
+        public static Color multiply(this Color color, Color otherColor)
+        {
+            return Color.FromArgb(
+            (int)(color.A * otherColor.A / 255.0f),
+            (int)(color.R * otherColor.R / 255.0f),
+            (int)(color.G * otherColor.G / 255.0f),
+            (int)(color.B * otherColor.B / 255.0f));
+        }
+
         public static string toString(this Color color)
         {
             return color == null ? "" : color.toArray().ToString();
