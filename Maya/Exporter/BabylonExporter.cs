@@ -181,6 +181,9 @@ namespace Maya2Babylon
             PrintDAG(true);
             PrintDAG(false);
 
+            // Store the current frame. It can be change to find a proper one for the node/bone export
+            double currentTime = Loader.GetCurrentTime();
+
             // --------------------
             // ------ Nodes -------
             // --------------------
@@ -380,6 +383,9 @@ namespace Maya2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
+
+            // set back the frame
+            Loader.SetCurrentTime(currentTime);
 
             // Output
             babylonScene.Prepare(false, false);
