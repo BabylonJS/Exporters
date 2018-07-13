@@ -13,97 +13,92 @@ namespace Max2Babylon
         private static Task runningTask;
 
         const string HtmlResponseText = @"
-<!doctype html>
-<html>
-
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
-    <title>Babylon.js</title>
-    <script type='text/javascript' src='https://preview.babylonjs.com/oimo.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/cannon.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/babylon.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/loaders/babylon.glTFFileLoader.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js'></script>
-    <style type='text/css'>
-        html, body, canvas {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
+    <title>BabylonJS Sandbox - View glTF, glb, obj and babylon files</title>
+    <meta name='description' content='Viewer for glTF, glb, obj and babylon files powered by BabylonJS' />
+    <meta name='keywords' content='Babylon.js, Babylon, BabylonJS, glTF, glb, obj, viewer, online viewer, 3D model viewer, 3D, webgl' />
+    <meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1'>
 
-        #debugLayerButton {
-            position: absolute;
-            border: white solid 1px;
-            background: rgba(128, 128, 128, 0.3);
-            color: white;
-            left: 50%;
-            width: 100px;
-            margin-left:-50px;
-            bottom: 10px;
-        }
-    </style>
+    <link rel='shortcut icon' href='https://www.babylonjs.com/img/favicon/favicon.ico'>
+    <link rel='apple-touch-icon' sizes='57x57' href='https://www.babylonjs.com/img/favicon/apple-icon-57x57.png'>
+    <link rel='apple-touch-icon' sizes='60x60' href='https://www.babylonjs.com/img/favicon/apple-icon-60x60.png'>
+    <link rel='apple-touch-icon' sizes='72x72' href='https://www.babylonjs.com/img/favicon/apple-icon-72x72.png'>
+    <link rel='apple-touch-icon' sizes='76x76' href='https://www.babylonjs.com/img/favicon/apple-icon-76x76.png'>
+    <link rel='apple-touch-icon' sizes='114x114' href='https://www.babylonjs.com/img/favicon/apple-icon-114x114.png'>
+    <link rel='apple-touch-icon' sizes='120x120' href='https://www.babylonjs.com/img/favicon/apple-icon-120x120.png'>
+    <link rel='apple-touch-icon' sizes='144x144' href='https://www.babylonjs.com/img/favicon/apple-icon-144x144.png'>
+    <link rel='apple-touch-icon' sizes='152x152' href='https://www.babylonjs.com/img/favicon/apple-icon-152x152.png'>
+    <link rel='apple-touch-icon' sizes='180x180' href='https://www.babylonjs.com/img/favicon/apple-icon-180x180.png'>
+    <link rel='icon' type='image/png' sizes='192x192' href='https://www.babylonjs.com/img/favicon/android-icon-192x192.png'>
+    <link rel='icon' type='image/png' sizes='32x32' href='https://www.babylonjs.com/img/favicon/favicon-32x32.png'>
+    <link rel='icon' type='image/png' sizes='96x96' href='https://www.babylonjs.com/img/favicon/favicon-96x96.png'>
+    <link rel='icon' type='image/png' sizes='16x16' href='https://www.babylonjs.com/img/favicon/favicon-16x16.png'>
+    <link rel='manifest' href='https://www.babylonjs.com/img/favicon/manifest.json'>
+    <meta name='msapplication-TileColor' content='#ffffff'>
+    <meta name='msapplication-TileImage' content='https://www.babylonjs.com/img/favicon/ms-icon-144x144.png'>
+    <meta name='msapplication-config' content='https://www.babylonjs.com/img/favicon/browserconfig.xml'>
+    <meta name='theme-color' content='#ffffff'>
+    <meta charset='UTF-8'>
+
+    <link href='https://sandbox.babylonjs.com/index.css' rel='stylesheet' />
+    <script src='https://code.jquery.com/pep/0.4.2/pep.min.js'></script>
+
+    <script src='https://preview.babylonjs.com/cannon.js'></script>
+    <script src='https://preview.babylonjs.com/Oimo.js'></script>
+    <script src='https://preview.babylonjs.com/babylon.js'></script>
+    <script src='https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js'></script>
+
+    <script src='https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js'></script>
+    <script src='https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js'></script>
+    <script src='https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js'></script>
 </head>
-
 <body>
-    <canvas id='canvas'></canvas>
-    <button id='debugLayerButton'>Debug layer</button>
-    <script type='text/javascript'>
-        var canvas = document.getElementById('canvas');
-        var engine = new BABYLON.Engine(canvas, true);
-       
-        BABYLON.SceneLoader.Load('', '###SCENE###', engine, function (newScene) {
+    <p id='droptext'>Drag and drop gltf, glb, obj or babylon files to view them</p>
+    <canvas id='renderCanvas' touch-action='none'></canvas>
+    <div id='logo'>
+    </div>
+    <div id='footer' class='footer'>
+        <div id='animationBar'>
+            <div class='dropdown'>
+                <div id='dropdownBtn'>
+                    <img src='https://sandbox.babylonjs.com/Assets/Icon_Up.svg' id='chevronUp'>
+                    <img src='https://sandbox.babylonjs.com/Assets/Icon_Down.svg' id='chevronDown'>
+                    <span id='dropdownLabel'></span>
+                </div>
+                <div id='dropdownContent'>
+                </div>
+            </div>
+            <div class='row'>
+                <button id='playBtn' class='pause'>
+                    <img id='playImg' src='https://sandbox.babylonjs.com/Assets/Icon_Play.svg'>
+                    <img id='pauseImg' src='https://sandbox.babylonjs.com/Assets/Icon_Pause.svg'>
+                </button>
+                <input id='slider' type='range' min='0' max='100' value='0' step='any'>
+            </div>
+        </div>               
+        <div class='footerRight'>
+            <a href='javascript:void(null);' id='btnFullscreen' class='hidden'><img src='https://sandbox.babylonjs.com/Assets/Icon_Fullscreen.svg' alt='Switch the scene to full screen' title='Switch the scene to full screen' /></a> 
+            <a href='javascript:void(null);' id='btnInspector' class='hidden'><img src='https://sandbox.babylonjs.com/Assets/Icon_EditModel.svg' alt='Display inspector' title='Display inspector' /></a> 
+            <a href='javascript:void(null);'>
+                <div class='custom-upload' title='Open your scene from your hard drive (.babylon, .gltf, .glb, .obj)'>
+                    <input type='file' id='files' multiple />
+                </div>
+            </a>
+        </div>
+    </div>
+    <div id='errorZone'></div>
+    <script src='https://sandbox.babylonjs.com/index.js'></script>
 
-            // Attach camera to canvas inputs
-            if (!newScene.activeCamera || newScene.lights.length === 0) {
-                newScene.createDefaultCameraOrLight(true);
-                // Enable camera's behaviors
-                newScene.activeCamera.useFramingBehavior = true;
-
-                var framingBehavior = newScene.activeCamera.getBehaviorByName('Framing');
-                framingBehavior.framingTime = 0;
-                framingBehavior.elevationReturnTime = -1;
-
-                if (newScene.meshes.length) {
-                    var worldExtends = newScene.getWorldExtends();
-                    newScene.activeCamera.lowerRadiusLimit = null;
-                    framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
-                }
-
-                newScene.activeCamera.pinchPrecision = 200 / newScene.activeCamera.radius;
-                newScene.activeCamera.upperRadiusLimit = 5 * newScene.activeCamera.radius;
-
-                newScene.activeCamera.wheelDeltaPercentage = 0.01;
-                newScene.activeCamera.pinchDeltaPercentage = 0.01;
-            }
-
-            newScene.activeCamera.attachControl(canvas);
-
-            var keyboard = newScene.activeCamera.inputs.attached.keyboard;
-            keyboard.keysUp.push(87);
-            keyboard.keysDown.push(83);
-            keyboard.keysLeft.push(65);
-            keyboard.keysRight.push(68);
-
-            engine.runRenderLoop(function() {
-                newScene.render();
-            });
-
-            window.addEventListener('resize', function () {
-                engine.resize();
-            });
-
-            document.getElementById('debugLayerButton').addEventListener('click', function () {
-                if (newScene.debugLayer.isVisible()) {
-                    newScene.debugLayer.hide();
-                } else {
-                    newScene.debugLayer.show();
-                }
-            });
-        });
+	<script type='text/javascript'>
+        assetUrl = '###SCENE###';
+        loadFromAssetUrl();
     </script>
+
 </body>
-</html>";
+</html>
+";
 
         public const int Port = 45478;
 
