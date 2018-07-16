@@ -44,9 +44,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public object metadata { get; set; }
 
-        [DataMember]
-        public string tags { get; set; }
-
         public BabylonLight()
         {
             diffuse = new[] {1.0f, 1.0f, 1.0f};

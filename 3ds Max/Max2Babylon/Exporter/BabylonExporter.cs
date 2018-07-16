@@ -447,6 +447,8 @@ namespace Max2Babylon
             
             if (babylonNode != null)
             {
+                babylonNode.tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
+                
                 // Export its children
                 for (int i = 0; i < maxGameNode.ChildCount; i++)
                 {
