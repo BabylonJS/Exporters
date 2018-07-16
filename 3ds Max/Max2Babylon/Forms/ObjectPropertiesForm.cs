@@ -50,6 +50,8 @@ namespace Max2Babylon
             Tools.UpdateNumericUpDown(nupConeOuterGain, objects, "babylonjs_sound_coneoutergain");
 
             Tools.UpdateTextBox(txtSound, objects, "babylonjs_sound_filename");
+
+            Tools.UpdateTextBox(tagInput, objects, "babylonjs_tag");
         }
 
         private void ObjectPropertiesForm_Load(object sender, EventArgs e)
@@ -104,6 +106,8 @@ namespace Max2Babylon
             Tools.PrepareNumericUpDown(nupConeOuterGain, objects, "babylonjs_sound_coneoutergain", 1.0f);
 
             Tools.PrepareTextBox(txtSound, objects[0], "babylonjs_sound_filename");
+
+            Tools.PrepareTextBox(tagInput, objects, "babylonjs_tag");
         }
 
         private void chkAutoAnimate_CheckedChanged(object sender, EventArgs e)

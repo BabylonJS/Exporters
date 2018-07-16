@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.17";
+        private string exporterVersion = "1.2.18";
 
         void ReportProgressChanged(int progress)
         {
@@ -447,6 +447,8 @@ namespace Max2Babylon
             
             if (babylonNode != null)
             {
+                babylonNode.tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
+                
                 // Export its children
                 for (int i = 0; i < maxGameNode.ChildCount; i++)
                 {
