@@ -28,7 +28,7 @@ namespace Max2Babylon
 
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
-        private bool isBabylonExported;
+        private bool isBabylonExported, isGltfExported;
 
         private string exporterVersion = "1.2.16";
 
@@ -159,6 +159,7 @@ namespace Max2Babylon
 
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
+            isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
 
             // Save scene
             if (exportParameters.autoSave3dsMaxFile)
@@ -401,7 +402,7 @@ namespace Max2Babylon
             ReportProgressChanged(100);
 
             // Export glTF
-            if (outputFormat == "gltf" || outputFormat == "glb")
+            if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
                 ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
