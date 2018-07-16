@@ -74,9 +74,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public object metadata { get; set; }
 
-        [DataMember]
-        public string tags { get; set; }
-
         public BabylonCamera()
         {
             // Default values

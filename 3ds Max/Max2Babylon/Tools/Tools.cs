@@ -821,6 +821,14 @@ namespace Max2Babylon
             textBox.Text = state;
         }
 
+        public static void PrepareTextBox(TextBox textBox, List<IINode> nodes, string propertyName, string defaultValue = "")
+        {
+            foreach(IINode node in nodes)
+            {
+                PrepareTextBox(textBox, node, propertyName, defaultValue);
+            }
+        }
+
         public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, string defaultValue)
         {
             comboBox.SelectedItem = node.GetStringProperty(propertyName, defaultValue);
