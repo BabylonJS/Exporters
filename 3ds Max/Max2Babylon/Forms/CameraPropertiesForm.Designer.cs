@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ellipsoidControl = new Max2Babylon.Vector3Control();
             this.label3 = new System.Windows.Forms.Label();
             this.chkGravity = new System.Windows.Forms.CheckBox();
             this.chkCollisions = new System.Windows.Forms.CheckBox();
@@ -52,6 +51,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.cbCameraType = new System.Windows.Forms.ComboBox();
             this.chkNoExport = new System.Windows.Forms.CheckBox();
+            this.ellipsoidControl = new Max2Babylon.Vector3Control();
+            this.tagLabel = new System.Windows.Forms.Label();
+            this.tagInput = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupInertia)).BeginInit();
@@ -76,16 +78,6 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Collisions";
-            // 
-            // ellipsoidControl
-            // 
-            this.ellipsoidControl.Location = new System.Drawing.Point(21, 95);
-            this.ellipsoidControl.Name = "ellipsoidControl";
-            this.ellipsoidControl.Size = new System.Drawing.Size(294, 28);
-            this.ellipsoidControl.TabIndex = 3;
-            this.ellipsoidControl.X = 0F;
-            this.ellipsoidControl.Y = 0F;
-            this.ellipsoidControl.Z = 0F;
             // 
             // label3
             // 
@@ -296,6 +288,8 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.tagInput);
+            this.groupBox4.Controls.Add(this.tagLabel);
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this.cbCameraType);
             this.groupBox4.Controls.Add(this.chkNoExport);
@@ -348,6 +342,32 @@
             this.chkNoExport.Text = "Do not export";
             this.chkNoExport.ThreeState = true;
             this.chkNoExport.UseVisualStyleBackColor = true;
+            // 
+            // ellipsoidControl
+            // 
+            this.ellipsoidControl.Location = new System.Drawing.Point(21, 95);
+            this.ellipsoidControl.Name = "ellipsoidControl";
+            this.ellipsoidControl.Size = new System.Drawing.Size(294, 28);
+            this.ellipsoidControl.TabIndex = 3;
+            this.ellipsoidControl.X = 0F;
+            this.ellipsoidControl.Y = 0F;
+            this.ellipsoidControl.Z = 0F;
+            // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(159, 28);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.TabIndex = 7;
+            this.tagLabel.Text = "Tag:";
+            // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(194, 25);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.TabIndex = 8;
             // 
             // CameraPropertiesForm
             // 
@@ -411,5 +431,7 @@
         private System.Windows.Forms.CheckBox chkNoExport;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox cbCameraType;
+        private System.Windows.Forms.TextBox tagInput;
+        private System.Windows.Forms.Label tagLabel;
     }
 }

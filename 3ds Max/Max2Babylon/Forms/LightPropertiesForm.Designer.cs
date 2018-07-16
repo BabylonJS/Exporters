@@ -51,6 +51,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbCameraType = new System.Windows.Forms.ComboBox();
+            this.tagLabel = new System.Windows.Forms.Label();
+            this.tagInput = new System.Windows.Forms.TextBox();
             this.groupBox3.SuspendLayout();
             this.grpAutoAnimate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupTo)).BeginInit();
@@ -183,6 +185,8 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.tagInput);
+            this.groupBox4.Controls.Add(this.tagLabel);
             this.groupBox4.Controls.Add(this.chkNoExport);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox4.Location = new System.Drawing.Point(12, 12);
@@ -354,6 +358,22 @@
             this.cbCameraType.TabIndex = 7;
             this.cbCameraType.SelectedIndexChanged += new System.EventHandler(this.cbCameraType_SelectedIndexChanged);
             // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(159, 28);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.TabIndex = 8;
+            this.tagLabel.Text = "Tag:";
+            // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(194, 25);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.TabIndex = 9;
+            // 
             // LightPropertiesForm
             // 
             this.AcceptButton = this.butOK;
@@ -415,5 +435,7 @@
         private System.Windows.Forms.NumericUpDown nupBlurBoxOffset;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox ckForceBackFaces;
+        private System.Windows.Forms.Label tagLabel;
+        private System.Windows.Forms.TextBox tagInput;
     }
 }

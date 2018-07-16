@@ -111,9 +111,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public object metadata { get; set; }
 
-        [DataMember]
-        public string tags { get; set; }
-
         [DataMember(EmitDefaultValue = false)]
         public int? morphTargetManagerId { get; set; }
 

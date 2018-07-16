@@ -84,6 +84,8 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chkAutoPlay = new System.Windows.Forms.CheckBox();
             this.ofdOpenSound = new System.Windows.Forms.OpenFileDialog();
+            this.tagInput = new System.Windows.Forms.TextBox();
+            this.tagLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupAlphaIndex)).BeginInit();
@@ -136,7 +138,7 @@
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(508, 457);
+            this.butCancel.Location = new System.Drawing.Point(508, 488);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(75, 23);
             this.butCancel.TabIndex = 6;
@@ -148,7 +150,7 @@
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(415, 457);
+            this.butOK.Location = new System.Drawing.Point(415, 488);
             this.butOK.Name = "butOK";
             this.butOK.Size = new System.Drawing.Size(75, 23);
             this.butOK.TabIndex = 5;
@@ -158,6 +160,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.tagLabel);
+            this.groupBox2.Controls.Add(this.tagInput);
             this.groupBox2.Controls.Add(this.nupAlphaIndex);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.chkNoExport);
@@ -168,7 +172,7 @@
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox2.Location = new System.Drawing.Point(12, 77);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(319, 126);
+            this.groupBox2.Size = new System.Drawing.Size(319, 154);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc.";
@@ -259,7 +263,7 @@
             this.groupBox3.Controls.Add(this.grpAutoAnimate);
             this.groupBox3.Controls.Add(this.chkAutoAnimate);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox3.Location = new System.Drawing.Point(12, 209);
+            this.groupBox3.Location = new System.Drawing.Point(12, 237);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(319, 156);
             this.groupBox3.TabIndex = 4;
@@ -358,7 +362,7 @@
             this.groupBox4.Controls.Add(this.nupMass);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox4.Location = new System.Drawing.Point(12, 371);
+            this.groupBox4.Location = new System.Drawing.Point(12, 399);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(319, 156);
             this.groupBox4.TabIndex = 7;
@@ -827,13 +831,29 @@
             // 
             this.ofdOpenSound.Filter = "Sound files|*.wav;*.mp3";
             // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(89, 121);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.TabIndex = 7;
+            // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(18, 124);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.TabIndex = 9;
+            this.tagLabel.Text = "Tag:";
+            // 
             // ObjectPropertiesForm
             // 
             this.AcceptButton = this.butOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(667, 536);
+            this.ClientSize = new System.Drawing.Size(667, 567);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -938,5 +958,7 @@
         private System.Windows.Forms.CheckBox chkDirectional;
         private System.Windows.Forms.ComboBox cbDistanceModel;
         private System.Windows.Forms.Button cmdFileBrowse;
+        private System.Windows.Forms.Label tagLabel;
+        private System.Windows.Forms.TextBox tagInput;
     }
 }
