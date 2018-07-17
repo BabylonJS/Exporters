@@ -1,5 +1,13 @@
 # Blender2Babylon add-on changelog
 
+## Blender Exporter Version 5.6.4
+
+*17 July 2018*
+
+* Fix typo for exporting only visible layers
+
+* Copy tags also to instances
+
 ## Blender Exporter Version 5.6.3
 
 *01 June 2018*
