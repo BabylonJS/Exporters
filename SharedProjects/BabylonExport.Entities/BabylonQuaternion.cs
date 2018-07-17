@@ -159,5 +159,19 @@ namespace BabylonExport.Entities
                 var offset = countOffset * 4;
                 return new BabylonQuaternion(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
         }
+
+
+        public BabylonQuaternion MultiplyWith(BabylonQuaternion quaternion)
+        {
+            BabylonQuaternion result = new BabylonQuaternion();
+            // (a + i b + j c + k d)*(e + i f + j g + k h) = a*e - b*f - c*g- d*h + i (b*e + a*f + c*h - d*g) + j (a*g - b*h + c*e + d*f) + k (a*h + b*g - c*f + d*e)
+            // W*result.W - X*result.X - Y*result.Y- Z*result.Z + i (X*result.W + W*result.X + Y*result.Z - Z*result.Y) + j (W*result.Y - X*result.Z + Y*result.W + Z*result.X) + k (W*result.Z + X*result.Y - Y*result.X + Z*result.W)
+            result.W = W * quaternion.W - X * quaternion.X - Y * quaternion.Y - Z * quaternion.Z;
+            result.X = X * quaternion.W + W * quaternion.X + Y * quaternion.Z - Z * quaternion.Y;
+            result.Y = W * quaternion.Y - X * quaternion.Z + Y * quaternion.W + Z * quaternion.X;
+            result.Z = W * quaternion.Z + X * quaternion.Y - Y * quaternion.X + Z * quaternion.W;
+
+            return result;
+        }
     }
 }

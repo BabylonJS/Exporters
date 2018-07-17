@@ -255,6 +255,39 @@ namespace Max2Babylon
             };
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
 
+            // In 3DS Max =>
+            // In Babylon =>
+            if(isBabylonExported && babylonScene.CamerasList.Count > 0)
+            {
+                RaiseMessage("Fix camera children rotation and position", 1);
+                for (int index = 0; index < babylonScene.CamerasList.Count; index++)
+                {
+                    BabylonCamera camera = babylonScene.CamerasList[index];
+                    IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(camera.id));
+
+                    RaiseMessage($"{camera.name}", 2);
+                    foreach(var mesh in meshes)
+                    {
+                        RaiseMessage($"{mesh.name}", 3);
+                        mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
+
+                        if (mesh.rotationQuaternion != null)
+                        {
+                            // quaternion for a rotation of -PI/2
+                            RaiseWarning($"{(float)Math.Cos(Math.PI / 4)}", 3);
+                            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Cos(Math.PI / 4), 0, 0, (float)-Math.Sin(Math.PI / 4));
+                            BabylonQuaternion quaternion = new BabylonQuaternion(mesh.rotationQuaternion[0], mesh.rotationQuaternion[1], mesh.rotationQuaternion[2], mesh.rotationQuaternion[3]);
+
+                            mesh.rotationQuaternion = quaternion.MultiplyWith(qFix).ToArray();
+                        }
+                        if (mesh.rotation != null)
+                        {
+                            mesh.rotation[0] -= (float)Math.PI / 2;
+                        }
+                    }
+                }
+            }
+
             // Main camera
             BabylonCamera babylonMainCamera = null;
             ICameraObject maxMainCameraObject = null;
