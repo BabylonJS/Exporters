@@ -255,8 +255,8 @@ namespace Max2Babylon
             };
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
 
-            // In 3DS Max =>
-            // In Babylon =>
+            // In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
+            // In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
             if(isBabylonExported && babylonScene.CamerasList.Count > 0)
             {
                 RaiseMessage("Fix camera children rotation and position", 1);
@@ -266,25 +266,69 @@ namespace Max2Babylon
                     IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(camera.id));
 
                     RaiseMessage($"{camera.name}", 2);
-                    foreach(var mesh in meshes)
+
+                    if (camera.target != null)
                     {
-                        RaiseMessage($"{mesh.name}", 3);
-                        mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
-
-                        if (mesh.rotationQuaternion != null)
+                        foreach (var mesh in meshes)
                         {
-                            // quaternion for a rotation of -PI/2
-                            RaiseWarning($"{(float)Math.Cos(Math.PI / 4)}", 3);
-                            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Cos(Math.PI / 4), 0, 0, (float)-Math.Sin(Math.PI / 4));
-                            BabylonQuaternion quaternion = new BabylonQuaternion(mesh.rotationQuaternion[0], mesh.rotationQuaternion[1], mesh.rotationQuaternion[2], mesh.rotationQuaternion[3]);
+                            RaiseMessage($"{mesh.name}", 3);
+                            mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
 
-                            mesh.rotationQuaternion = quaternion.MultiplyWith(qFix).ToArray();
-                        }
-                        if (mesh.rotation != null)
-                        {
-                            mesh.rotation[0] -= (float)Math.PI / 2;
+                            if (mesh.rotationQuaternion != null)
+                            {
+                                // quaternion for a rotation of -PI/2
+                                BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Cos(Math.PI / 4), 0, 0, (float)-Math.Sin(Math.PI / 4));
+                                BabylonQuaternion quaternion = new BabylonQuaternion(mesh.rotationQuaternion[0], mesh.rotationQuaternion[1], mesh.rotationQuaternion[2], mesh.rotationQuaternion[3]);
+
+                                mesh.rotationQuaternion = quaternion.MultiplyWith(qFix).ToArray();
+                            }
+                            if (mesh.rotation != null)
+                            {
+                                mesh.rotation[0] -= (float)Math.PI / 2;
+                            }
                         }
                     }
+
+                    else // if (camera.target == null)
+                    {
+
+                        // fix the vue
+                        // Rotation around the axis X of PI / 2 in the indirect direction
+                        if (camera.rotationQuaternion != null)
+                        {
+                            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Cos(Math.PI / 4), 0, 0, (float)Math.Sin(Math.PI / 4));
+                            BabylonQuaternion quaternion = new BabylonQuaternion(camera.rotationQuaternion[0], camera.rotationQuaternion[1], camera.rotationQuaternion[2], camera.rotationQuaternion[3]);
+
+                            camera.rotationQuaternion = quaternion.MultiplyWith(qFix).ToArray();
+                        }
+                        if(camera.rotation != null)
+                        {
+                            camera.rotation[0] += (float)Math.PI / 2;
+                        }
+
+                        // fix direct children
+                        // Rotation around the axis X of -PI / 2 in the indirect direction
+                        foreach (var mesh in meshes)
+                        {
+                            RaiseMessage($"{mesh.name}", 3);
+                            mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
+
+                            // Add a rotation of PI/2 axis X in direct
+                            if (mesh.rotationQuaternion != null)
+                            {
+                                // Rotation around the axis X of PI / 2 in the indirect direction
+                                BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Cos(-Math.PI / 4), 0, 0, (float)Math.Sin(-Math.PI / 4));
+                                BabylonQuaternion quaternion = new BabylonQuaternion(mesh.rotationQuaternion[0], mesh.rotationQuaternion[1], mesh.rotationQuaternion[2], mesh.rotationQuaternion[3]);
+
+                                //mesh.rotationQuaternion = quaternion.MultiplyWith(qFix).ToArray();
+                            }
+                            if (mesh.rotation != null)
+                            {
+                                mesh.rotation[0] -= (float)Math.PI / 2;
+                            }
+                        }
+                    }
+
                 }
             }
 

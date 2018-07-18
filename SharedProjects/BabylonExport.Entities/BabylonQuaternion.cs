@@ -165,7 +165,7 @@ namespace BabylonExport.Entities
         {
             BabylonQuaternion result = new BabylonQuaternion();
             // (a + i b + j c + k d)*(e + i f + j g + k h) = a*e - b*f - c*g- d*h + i (b*e + a*f + c*h - d*g) + j (a*g - b*h + c*e + d*f) + k (a*h + b*g - c*f + d*e)
-            // W*result.W - X*result.X - Y*result.Y- Z*result.Z + i (X*result.W + W*result.X + Y*result.Z - Z*result.Y) + j (W*result.Y - X*result.Z + Y*result.W + Z*result.X) + k (W*result.Z + X*result.Y - Y*result.X + Z*result.W)
+            // W*q.W - X*q.X - Y*q.Y- Z*q.Z + i (X*q.W + W*q.X + Y*q.Z - Z*q.Y) + j (W*q.Y - X*q.Z + Y*q.W + Z*q.X) + k (W*q.Z + X*q.Y - Y*q.X + Z*q.W)
             result.W = W * quaternion.W - X * quaternion.X - Y * quaternion.Y - Z * quaternion.Z;
             result.X = X * quaternion.W + W * quaternion.X + Y * quaternion.Z - Z * quaternion.Y;
             result.Y = W * quaternion.Y - X * quaternion.Z + Y * quaternion.W + Z * quaternion.X;

@@ -11,7 +11,23 @@ namespace BabylonExport.Entities
             ORTHOGRAPHIC_CAMERA = 1
         }
 
-        [DataMember]
+        public enum Type
+        {
+            AnaglyphArcRotateCamera,
+            AnaglyphFreeCamera,
+            ArcRotateCamera,
+            DeviceOrientationCamera,
+            FollowCamera,
+            FreeCamera,
+            GamepadCamera,
+            TouchCamera,
+            VirtualJoysticksCamera,
+            WebVRFreeCamera,
+            VRDeviceOrientationFreeCamera,
+            UniversalCamera
+        }
+
+        [DataMember(EmitDefaultValue = false)]
         public string lockedTargetId { get; set; }
 
         [DataMember]
@@ -23,7 +39,7 @@ namespace BabylonExport.Entities
         [DataMember]
         override public float[] rotationQuaternion { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public float[] target { get; set; }
 
         [DataMember]
