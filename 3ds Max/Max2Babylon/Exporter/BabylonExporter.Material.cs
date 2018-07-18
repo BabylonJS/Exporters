@@ -126,7 +126,7 @@ namespace Max2Babylon
                 }
                 else babylonScene.MaterialsList.Add(babylonMaterial);
             }
-            else if (isGLTFExported && materialExporter != null && materialExporter is IGLTFMaterialExporter)
+            else if (isGltfExported && materialExporter != null && materialExporter is IGLTFMaterialExporter)
             {
                 // add a basic babylon material to the list to forward the max material reference
                 var babylonMaterial = new BabylonMaterial
@@ -459,7 +459,7 @@ namespace Max2Babylon
                 // Custom material exporters
                 if (materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter))
                 {
-                    if (isGLTFExported && materialExporter is IGLTFMaterialExporter)
+                    if (isGltfExported && materialExporter is IGLTFMaterialExporter)
                         return null;
                     else if (isBabylonExported && materialExporter is IBabylonMaterialExporter)
                         return null;
