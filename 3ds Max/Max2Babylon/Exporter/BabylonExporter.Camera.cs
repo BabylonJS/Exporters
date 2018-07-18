@@ -91,7 +91,7 @@ namespace Max2Babylon
                 var vDir = Loader.Global.Point3.Create(0, -1, 0);
                 vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
                 vDir = vDir.Add(position);
-                babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
+                //babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
             }
 
             // Animations
