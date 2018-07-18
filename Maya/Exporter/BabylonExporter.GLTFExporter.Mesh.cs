@@ -504,7 +504,41 @@ namespace Maya2Babylon
                     accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
 
-                // TODO - Tangents
+                // Tangents
+                if (babylonMorphTarget.tangents != null)
+                {
+                    var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
+                        "accessorTargetTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC3
+                    );
+                    gltfMorphTarget.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTargetTangents.index);
+                    // Populate accessor
+                    // Note that the w component for handedness is omitted when targeting TANGENT data since handedness cannot be displaced.
+                    int nbComponents = 4; // Vector4
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
+                    for (int indexTangent = startIndex; indexTangent < endIndex; indexTangent += 4)
+                    {
+                        var tangentTarget = Tools.SubArray(babylonMorphTarget.tangents, indexTangent, 3);
+
+                        // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
+                        var tangentMesh = Tools.SubArray(babylonMesh.tangents, indexTangent, 3);
+                        for (int indexCoordinate = 0; indexCoordinate < tangentTarget.Length; indexCoordinate++)
+                        {
+                            tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
+                        }
+
+                        // Store values as bytes
+                        foreach (var coordinate in tangentTarget)
+                        {
+                            accessorTargetTangents.bytesList.AddRange(BitConverter.GetBytes(coordinate));
+                        }
+                    }
+                    accessorTargetTangents.count = babylonSubMesh.verticesCount;
+                }
 
                 gltfMorphTargets.Add(gltfMorphTarget);
             }

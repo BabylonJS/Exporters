@@ -12,5 +12,6 @@
         public bool autoSave3dsMaxFile = false;
         public bool exportTangents = true;
         public string txtQuality = "100";
+        public bool mergeAOwithMR = true;
     }
 }

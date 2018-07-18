@@ -31,11 +31,11 @@ namespace Max2Babylon
 
             if (babylonStandardMaterial.specularTexture != null)
             {
-                _StandText.specularPath = babylonStandardMaterial.specularTexture.originalPath;
+                _StandText.specularName = babylonStandardMaterial.specularTexture.name;
             }
             else
             {
-                _StandText.specularPath = "none";
+                _StandText.specularName = "none";
             }
 
             if ((babylonStandardMaterial.diffuseTexture == null || babylonStandardMaterial.diffuseTexture.hasAlpha == false) && babylonStandardMaterial.opacityTexture != null)
@@ -176,7 +176,7 @@ namespace Max2Babylon
         {
             public string diffusePath;
             public string opacityPath;
-            public string specularPath;
+            public string specularName;
             public float[] diffuse;
             public float opacity;
             public float[] specular;
@@ -184,7 +184,7 @@ namespace Max2Babylon
 
             public bool Equals(TexturesPaths textpaths)
             {
-                if((this.diffusePath == textpaths.diffusePath) && (this.opacityPath == textpaths.opacityPath) && (this.specularPath == textpaths.specularPath) && (this.diffuse.SequenceEqual(textpaths.diffuse)) && (this.opacity == textpaths.opacity) && (this.specular.SequenceEqual(textpaths.specular)) && (this.glossiness == textpaths.glossiness))
+                if((this.diffusePath == textpaths.diffusePath) && (this.opacityPath == textpaths.opacityPath) && (this.specularName == textpaths.specularName) && (this.diffuse.SequenceEqual(textpaths.diffuse)) && (this.opacity == textpaths.opacity) && (this.specular.SequenceEqual(textpaths.specular)) && (this.glossiness == textpaths.glossiness))
                 {
                     return true;
                 }

@@ -771,85 +771,79 @@ namespace Max2Babylon
 
             if (skin != null)
             {
-                float weight0 = 0;
-                float weight1 = 0;
-                float weight2 = 0;
-                float weight3 = 0;
-                int bone0 = bonesCount;
-                int bone1 = bonesCount;
-                int bone2 = bonesCount;
-                int bone3 = bonesCount;
+                float[] weight = new float[4] { 0, 0, 0, 0 };
+                int[] bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
+                
+                int currentVtxBone = 0;
+                int currentSkinBone = 0;
 
-                if (nbBones > 0)
+                // process skin bones until we have 4 bones for this vertex or we run out of skin bones
+                for (currentSkinBone = 0; currentSkinBone < nbBones && currentVtxBone < 4; ++currentSkinBone)
                 {
-                    bone0 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 0).NodeID);
-                    weight0 = skin.GetWeight(vertexIndex, 0);
+                    float boneWeight = skin.GetWeight(vertexIndex, currentSkinBone);
+                    if (boneWeight <= 0)
+                        continue;
+
+                    bone[currentVtxBone] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                    weight[currentVtxBone] = skin.GetWeight(vertexIndex, currentSkinBone);
+                    ++currentVtxBone;
                 }
 
-                if (nbBones > 1)
+                // if we didnt have any bones with a weight > 0
+                if (currentVtxBone == 0)
                 {
-                    bone1 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 1).NodeID);
-                    weight1 = skin.GetWeight(vertexIndex, 1);
+                    weight[0] = 1.0f;
+                    bone[0] = bonesCount;
                 }
 
-                if (nbBones > 2)
+                vertex.Weights = Loader.Global.Point4.Create(weight);
+                vertex.BonesIndices = (bone[3] << 24) | (bone[2] << 16) | (bone[1] << 8) | bone[0];
+
+                if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
-                    bone2 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 2).NodeID);
-                    weight2 = skin.GetWeight(vertexIndex, 2);
-                }
+                    weight = new float[4] { 0, 0, 0, 0 };
+                    bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
 
-                if (nbBones > 3)
-                {
-                    bone3 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 3).NodeID);
-                    weight3 = skin.GetWeight(vertexIndex, 3);
-                }
-
-                if (nbBones == 0)
-                {
-                    weight0 = 1.0f;
-                    bone0 = bonesCount;
-                }
-
-                vertex.Weights = Loader.Global.Point4.Create(weight0, weight1, weight2, weight3);
-                vertex.BonesIndices = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
-
-                if (nbBones > 4)
-                {
-                    bone0 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 4).NodeID);
-                    weight0 = skin.GetWeight(vertexIndex, 4);
-
-                    weight1 = 0;
-                    weight2 = 0;
-                    weight3 = 0;
-
-                    if (nbBones > 5)
+                    // process remaining skin bones until we have a total of 8 bones for this vertex or we run out of skin bones
+                    for (; currentSkinBone < nbBones && currentVtxBone < 8; ++currentSkinBone)
                     {
-                        bone1 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 5).NodeID);
-                        weight1 = skin.GetWeight(vertexIndex, 5);
+                        float boneWeight = skin.GetWeight(vertexIndex, currentSkinBone);
+                        if (boneWeight <= 0)
+                            continue;
+
+                        if (isGltfExported)
+                        {
+                            RaiseError("Too many bone influences per vertex for vertexIndex: " + vertexIndex + ". glTF only supports up to 4 bone influences per vertex.", 2);
+                            break;
+                        }
+
+                        bone[currentVtxBone-4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                        weight[currentVtxBone-4] = skin.GetWeight(vertexIndex, currentSkinBone);
+                        ++currentVtxBone;
                     }
 
-                    if (nbBones > 6)
+                    // if we have any extra bone weights
+                    if (currentVtxBone > 4)
                     {
-                        bone2 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 6).NodeID);
-                        weight2 = skin.GetWeight(vertexIndex, 6);
-                    }
+                        vertex.WeightsExtra = Loader.Global.Point4.Create(weight);
+                        vertex.BonesIndicesExtra = (bone[3] << 24) | (bone[2] << 16) | (bone[1] << 8) | bone[0];
 
-                    if (nbBones > 7)
-                    {
-                        bone3 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 7).NodeID);
-                        weight3 = skin.GetWeight(vertexIndex, 7);
-                    }
-
-                    vertex.WeightsExtra = Loader.Global.Point4.Create(weight0, weight1, weight2, weight3);
-                    vertex.BonesIndicesExtra = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
-
-                    if (nbBones > 8)
-                    {
-                        RaiseError("Too many bones influences per vertex: " + nbBones + ". Babylon.js only support 8 bones influences per vertex.", 2);
+                        if (currentSkinBone < nbBones)
+                        {
+                            // if we have more skin bones left, this means we have used up all our bones for this vertex
+                            // check if any of the remaining bones has a weight > 0
+                            for (; currentSkinBone < nbBones; ++currentSkinBone)
+                            {
+                                float boneWeight = skin.GetWeight(vertexIndex, currentSkinBone);
+                                if (boneWeight <= 0)
+                                    continue;
+                                RaiseError("Too many bone influences per vertex for vertexIndex: "+ vertexIndex + ". Babylon.js only supports up to 8 bone influences per vertex.", 2);
+                                break;
+                            }
+                        }
                     }
                 }
-
             }
 
             if (verticesAlreadyExported != null)

@@ -41,6 +41,116 @@ namespace Max2Babylon
             return ExportTexture(texMap, babylonScene, amount, allowCube, forceAlpha);
         }
 
+        private BabylonTexture ExportSpecularTexture(IIGameMaterial materialNode, float[] specularColor, BabylonScene babylonScene)
+        {
+            ITexmap specularColorTexMap = _getTexMap(materialNode, 2);
+            ITexmap specularLevelTexMap = _getTexMap(materialNode, 3);
+
+            // --- Babylon texture ---
+
+            var specularColorTexture = _getBitmapTex(specularColorTexMap);
+            var specularLevelTexture = _getBitmapTex(specularLevelTexMap);
+
+            if (specularLevelTexture == null)
+            {
+                // Copy specular color image
+                // Assume specular color texture is already pre-multiplied by a global specular level value
+                // So do not use global specular level
+                return ExportTexture(specularColorTexture, babylonScene);
+            }
+
+            // Use one as a reference for UVs parameters
+            var texture = specularColorTexture != null ? specularColorTexture : specularLevelTexture;
+            if (texture == null)
+            {
+                return null;
+            }
+
+            RaiseMessage("Multiply specular color and level textures", 2);
+
+            string nameText = null;
+
+            nameText = (specularColorTexture != null ? Path.GetFileNameWithoutExtension(specularColorTexture.Map.FullFilePath) : ColorToStringName(specularColor)) +
+                        Path.GetFileNameWithoutExtension(specularLevelTexture.Map.FullFilePath) + "_specularColor";
+
+            var babylonTexture = new BabylonTexture
+            {
+                name = nameText+".jpg" // TODO - unsafe name, may conflict with another texture name
+            };
+
+            // Level
+            babylonTexture.level = 1.0f;
+
+            // UVs
+            var uvGen = _exportUV(texture.UVGen, babylonTexture);
+
+            // Is cube
+            _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
+
+
+            // --- Multiply specular color and level maps ---
+
+            // Alpha
+            babylonTexture.hasAlpha = false;
+            babylonTexture.getAlphaFromRGB = false;
+
+            if (exportParameters.copyTexturesToOutput)
+            {
+                // Load bitmaps
+                var specularColorBitmap = _loadTexture(specularColorTexMap);
+                var specularLevelBitmap = _loadTexture(specularLevelTexMap);
+
+                if (specularLevelBitmap == null)
+                {
+                    // Copy specular color image
+                    RaiseError("Failed to load specular level texture. Specular color is exported alone.", 3);
+                    return ExportTexture(specularColorTexture, babylonScene);
+                }
+
+                // Retreive dimensions
+                int width = 0;
+                int height = 0;
+                var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, specularColorBitmap, specularLevelBitmap);
+                if (!haveSameDimensions)
+                {
+                    RaiseError("Specular color and specular level maps should have same dimensions", 3);
+                }
+
+                // Create pre-multiplied specular color map
+                var _specularColor = Color.FromArgb(
+                    (int)(specularColor[0] * 255),
+                    (int)(specularColor[1] * 255),
+                    (int)(specularColor[2] * 255));
+                Bitmap specularColorPreMultipliedBitmap = new Bitmap(width, height);
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        var specularColorAtPixel = specularColorBitmap != null ? specularColorBitmap.GetPixel(x, y) : _specularColor;
+                        var specularLevelAtPixel = specularLevelBitmap.GetPixel(x, y);
+
+                        var specularColorPreMultipliedAtPixel = specularColorAtPixel.multiply(specularLevelAtPixel);
+
+                        specularColorPreMultipliedBitmap.SetPixel(x, y, specularColorPreMultipliedAtPixel);
+                    }
+                }
+
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
+                    SaveBitmap(specularColorPreMultipliedBitmap, babylonScene.OutputPath, babylonTexture.name, ImageFormat.Jpeg);
+                }
+                else
+                {
+                    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = specularColorPreMultipliedBitmap;
+                }
+            }
+
+            return babylonTexture;
+        }
+
         private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, int index, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false)
         {
             var texMap = _getTexMap(materialNode, index);
@@ -90,8 +200,8 @@ namespace Max2Babylon
 
             string nameText = null;
 
-            nameText = (baseColorTexture != null ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) : "") +
-                        (alphaTexture != null ? Path.GetFileNameWithoutExtension(alphaTexture.Map.FullFilePath) : "") +
+            nameText = (baseColorTexture != null ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) : ColorToStringName(baseColor)) +
+                        (alphaTexture != null ? Path.GetFileNameWithoutExtension(alphaTexture.Map.FullFilePath) : (""+ (int) (alpha * 255))) +
                         (alphaTexture == null && baseColorTexture == null ? materialName : "") + "_baseColor";
 
             var babylonTexture = new BabylonTexture
@@ -207,7 +317,7 @@ namespace Max2Babylon
         {
             ITexmap metallicTexMap = _getTexMap(materialNode, 5);
             ITexmap roughnessTexMap = _getTexMap(materialNode, 4);
-            ITexmap ambientOcclusionTexMap = _getTexMap(materialNode, 6);
+            ITexmap ambientOcclusionTexMap = exportParameters.mergeAOwithMR ? _getTexMap(materialNode, 6) : null;
 
             // --- Babylon texture ---
 
@@ -227,8 +337,8 @@ namespace Max2Babylon
             var babylonTexture = new BabylonTexture
             {
                 name = (ambientOcclusionTexMap != null ? Path.GetFileNameWithoutExtension(ambientOcclusionTexture.Map.FileName) : "") +
-                       (roughnessTexMap != null ? Path.GetFileNameWithoutExtension(roughnessTexture.Map.FileName) : "") +
-                       (metallicTexMap != null ? Path.GetFileNameWithoutExtension(metallicTexture.Map.FileName) : "") + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                       (roughnessTexMap != null ? Path.GetFileNameWithoutExtension(roughnessTexture.Map.FileName) : ("" + (int)(roughness * 255))) +
+                       (metallicTexMap != null ? Path.GetFileNameWithoutExtension(metallicTexture.Map.FileName) : ("" + (int)(metallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
 
             // UVs
@@ -749,7 +859,7 @@ namespace Max2Babylon
             {
                 try
                 {
-                    switch (Path.GetExtension(absolutePath))
+                    switch (Path.GetExtension(absolutePath).ToLower())
                     {
                         case ".dds":
                             // External library GDImageLibrary.dll + TQ.Texture.dll
@@ -1021,6 +1131,16 @@ namespace Max2Babylon
                 }
             }
             return null;
+        }
+
+        private string ColorToStringName(Color color)
+        {
+            return "" + color.R + color.G + color.B + color.A;
+        }
+
+        private string ColorToStringName(float[] color)
+        {
+            return "" + (int)(color[0] * 255) + (int)(color[1] * 255) + (int)(color[2] * 255);
         }
     }
 }

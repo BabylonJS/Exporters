@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -110,13 +111,12 @@ namespace BabylonExport.Entities
         [DataMember]
         public object metadata { get; set; }
 
-        [DataMember]
-        public string tags { get; set; }
-
         [DataMember(EmitDefaultValue = false)]
         public int? morphTargetManagerId { get; set; }
 
         public bool isDummy = false;
+
+        public List<VertexData> VertexDatas { get; set; } = new List<VertexData>();
 
         public BabylonMesh()
         {
@@ -137,5 +137,24 @@ namespace BabylonExport.Entities
 
             numBoneInfluencers = 4;
         }
+    }
+
+    /// <summary>
+    /// Store the data of the vertex used to extract the geometry.
+    /// It used by the morph target in order to have the same vertex order between the mesh and the target.
+    /// </summary>
+    public class VertexData
+    {
+        public int polygonId { get; set; }
+        public int vertexIndexGlobal { get; set; }
+        public int vertexIndexLocal { get; set; }
+
+        public VertexData(int _polygonId, int _vertexIndexGlobal, int _vertexIndexLocal)
+        {
+            polygonId = _polygonId;
+            vertexIndexGlobal = _vertexIndexGlobal;
+            vertexIndexLocal = _vertexIndexLocal;
+        }
+
     }
 }

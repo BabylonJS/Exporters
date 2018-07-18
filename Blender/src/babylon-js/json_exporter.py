@@ -83,7 +83,7 @@ class JsonExporter:
             elif (scene.exportScope == 'VISIBLE'):
                 scanObjects = list(filter(
                     lambda o: self.isInSelectedLayer(o, scene),
-                    bpy.context.visible_objects
+                    scene.objects
                 ))
 
             # Scene level sound

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ellipsoidControl = new Max2Babylon.Vector3Control();
             this.label3 = new System.Windows.Forms.Label();
             this.chkGravity = new System.Windows.Forms.CheckBox();
             this.chkCollisions = new System.Windows.Forms.CheckBox();
@@ -52,6 +51,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.cbCameraType = new System.Windows.Forms.ComboBox();
             this.chkNoExport = new System.Windows.Forms.CheckBox();
+            this.tagLabel = new System.Windows.Forms.Label();
+            this.tagInput = new System.Windows.Forms.TextBox();
+            this.ellipsoidControl = new Max2Babylon.Vector3Control();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupInertia)).BeginInit();
@@ -73,19 +75,9 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 119);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(319, 138);
-            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Collisions";
-            // 
-            // ellipsoidControl
-            // 
-            this.ellipsoidControl.Location = new System.Drawing.Point(21, 95);
-            this.ellipsoidControl.Name = "ellipsoidControl";
-            this.ellipsoidControl.Size = new System.Drawing.Size(294, 28);
-            this.ellipsoidControl.TabIndex = 3;
-            this.ellipsoidControl.X = 0F;
-            this.ellipsoidControl.Y = 0F;
-            this.ellipsoidControl.Z = 0F;
             // 
             // label3
             // 
@@ -93,7 +85,7 @@
             this.label3.Location = new System.Drawing.Point(18, 79);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(48, 13);
-            this.label3.TabIndex = 2;
+            this.label3.TabIndex = 13;
             this.label3.Text = "Ellipsoid:";
             // 
             // chkGravity
@@ -102,7 +94,7 @@
             this.chkGravity.Location = new System.Drawing.Point(21, 51);
             this.chkGravity.Name = "chkGravity";
             this.chkGravity.Size = new System.Drawing.Size(86, 17);
-            this.chkGravity.TabIndex = 1;
+            this.chkGravity.TabIndex = 12;
             this.chkGravity.Text = "Apply gravity";
             this.chkGravity.ThreeState = true;
             this.chkGravity.UseVisualStyleBackColor = true;
@@ -113,7 +105,7 @@
             this.chkCollisions.Location = new System.Drawing.Point(21, 28);
             this.chkCollisions.Name = "chkCollisions";
             this.chkCollisions.Size = new System.Drawing.Size(102, 17);
-            this.chkCollisions.TabIndex = 0;
+            this.chkCollisions.TabIndex = 11;
             this.chkCollisions.Text = "Check collisions";
             this.chkCollisions.ThreeState = true;
             this.chkCollisions.UseVisualStyleBackColor = true;
@@ -126,7 +118,7 @@
             this.butOK.Location = new System.Drawing.Point(93, 578);
             this.butOK.Name = "butOK";
             this.butOK.Size = new System.Drawing.Size(75, 23);
-            this.butOK.TabIndex = 1;
+            this.butOK.TabIndex = 100;
             this.butOK.Text = "OK";
             this.butOK.UseVisualStyleBackColor = true;
             this.butOK.Click += new System.EventHandler(this.butOK_Click);
@@ -139,7 +131,7 @@
             this.butCancel.Location = new System.Drawing.Point(174, 578);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(75, 23);
-            this.butCancel.TabIndex = 2;
+            this.butCancel.TabIndex = 101;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
             // 
@@ -153,7 +145,7 @@
             this.groupBox2.Location = new System.Drawing.Point(12, 263);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(319, 140);
-            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Control";
             // 
@@ -163,7 +155,7 @@
             this.label2.Location = new System.Drawing.Point(21, 81);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(36, 13);
-            this.label2.TabIndex = 3;
+            this.label2.TabIndex = 23;
             this.label2.Text = "Inertia";
             // 
             // nupInertia
@@ -172,7 +164,7 @@
             this.nupInertia.Location = new System.Drawing.Point(24, 103);
             this.nupInertia.Name = "nupInertia";
             this.nupInertia.Size = new System.Drawing.Size(120, 20);
-            this.nupInertia.TabIndex = 2;
+            this.nupInertia.TabIndex = 24;
             this.nupInertia.Value = new decimal(new int[] {
             9,
             0,
@@ -185,7 +177,7 @@
             this.label1.Location = new System.Drawing.Point(21, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 13);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 21;
             this.label1.Text = "Speed:";
             // 
             // nupSpeed
@@ -194,7 +186,7 @@
             this.nupSpeed.Location = new System.Drawing.Point(24, 50);
             this.nupSpeed.Name = "nupSpeed";
             this.nupSpeed.Size = new System.Drawing.Size(120, 20);
-            this.nupSpeed.TabIndex = 0;
+            this.nupSpeed.TabIndex = 22;
             this.nupSpeed.Value = new decimal(new int[] {
             1,
             0,
@@ -209,7 +201,7 @@
             this.groupBox3.Location = new System.Drawing.Point(12, 409);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(319, 156);
-            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabIndex = 30;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Animations";
             // 
@@ -225,7 +217,7 @@
             this.grpAutoAnimate.Location = new System.Drawing.Point(21, 51);
             this.grpAutoAnimate.Name = "grpAutoAnimate";
             this.grpAutoAnimate.Size = new System.Drawing.Size(292, 99);
-            this.grpAutoAnimate.TabIndex = 3;
+            this.grpAutoAnimate.TabIndex = 32;
             this.grpAutoAnimate.TabStop = false;
             // 
             // chkLoop
@@ -235,7 +227,7 @@
             this.chkLoop.Location = new System.Drawing.Point(9, 66);
             this.chkLoop.Name = "chkLoop";
             this.chkLoop.Size = new System.Drawing.Size(47, 17);
-            this.chkLoop.TabIndex = 5;
+            this.chkLoop.TabIndex = 37;
             this.chkLoop.Text = "Loop";
             this.chkLoop.ThreeState = true;
             this.chkLoop.UseVisualStyleBackColor = true;
@@ -250,7 +242,7 @@
             0});
             this.nupTo.Name = "nupTo";
             this.nupTo.Size = new System.Drawing.Size(120, 20);
-            this.nupTo.TabIndex = 3;
+            this.nupTo.TabIndex = 36;
             // 
             // label4
             // 
@@ -258,7 +250,7 @@
             this.label4.Location = new System.Drawing.Point(6, 42);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(23, 13);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 35;
             this.label4.Text = "To:";
             // 
             // nupFrom
@@ -271,7 +263,7 @@
             0});
             this.nupFrom.Name = "nupFrom";
             this.nupFrom.Size = new System.Drawing.Size(120, 20);
-            this.nupFrom.TabIndex = 1;
+            this.nupFrom.TabIndex = 34;
             // 
             // label5
             // 
@@ -279,7 +271,7 @@
             this.label5.Location = new System.Drawing.Point(6, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(33, 13);
-            this.label5.TabIndex = 2;
+            this.label5.TabIndex = 33;
             this.label5.Text = "From:";
             // 
             // chkAutoAnimate
@@ -288,7 +280,7 @@
             this.chkAutoAnimate.Location = new System.Drawing.Point(21, 28);
             this.chkAutoAnimate.Name = "chkAutoAnimate";
             this.chkAutoAnimate.Size = new System.Drawing.Size(88, 17);
-            this.chkAutoAnimate.TabIndex = 0;
+            this.chkAutoAnimate.TabIndex = 31;
             this.chkAutoAnimate.Text = "Auto animate";
             this.chkAutoAnimate.ThreeState = true;
             this.chkAutoAnimate.UseVisualStyleBackColor = true;
@@ -296,6 +288,8 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.tagInput);
+            this.groupBox4.Controls.Add(this.tagLabel);
             this.groupBox4.Controls.Add(this.label6);
             this.groupBox4.Controls.Add(this.cbCameraType);
             this.groupBox4.Controls.Add(this.chkNoExport);
@@ -303,7 +297,7 @@
             this.groupBox4.Location = new System.Drawing.Point(12, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(319, 101);
-            this.groupBox4.TabIndex = 6;
+            this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Misc.";
             // 
@@ -313,7 +307,7 @@
             this.label6.Location = new System.Drawing.Point(16, 57);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(34, 13);
-            this.label6.TabIndex = 6;
+            this.label6.TabIndex = 4;
             this.label6.Text = "Type:";
             // 
             // cbCameraType
@@ -344,10 +338,36 @@
             this.chkNoExport.Location = new System.Drawing.Point(21, 28);
             this.chkNoExport.Name = "chkNoExport";
             this.chkNoExport.Size = new System.Drawing.Size(87, 17);
-            this.chkNoExport.TabIndex = 4;
+            this.chkNoExport.TabIndex = 1;
             this.chkNoExport.Text = "Do not export";
             this.chkNoExport.ThreeState = true;
             this.chkNoExport.UseVisualStyleBackColor = true;
+            // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(159, 28);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.TabIndex = 2;
+            this.tagLabel.Text = "Tag:";
+            // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(194, 25);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.TabIndex = 3;
+            // 
+            // ellipsoidControl
+            // 
+            this.ellipsoidControl.Location = new System.Drawing.Point(21, 95);
+            this.ellipsoidControl.Name = "ellipsoidControl";
+            this.ellipsoidControl.Size = new System.Drawing.Size(294, 28);
+            this.ellipsoidControl.TabIndex = 14;
+            this.ellipsoidControl.X = 0F;
+            this.ellipsoidControl.Y = 0F;
+            this.ellipsoidControl.Z = 0F;
             // 
             // CameraPropertiesForm
             // 
@@ -411,5 +431,7 @@
         private System.Windows.Forms.CheckBox chkNoExport;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox cbCameraType;
+        private System.Windows.Forms.TextBox tagInput;
+        private System.Windows.Forms.Label tagLabel;
     }
 }

@@ -48,9 +48,9 @@ namespace Max2Babylon
                                     break;
                                 case PropType.FloatProp:
                                     float propertyFloat = 0;
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0, true)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
                                     RaiseVerbose("propertyFloat=" + propertyFloat, 4);
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0, false)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
                                     RaiseVerbose("propertyFloat=" + propertyFloat, 4);
                                     break;
                                 case PropType.Point3Prop:
@@ -140,6 +140,7 @@ namespace Max2Babylon
             else if (stdMat != null)
             {
                 var isSelfIllumColor = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false);
+                var maxSpecularColor = materialNode.MaxMaterial.GetSpecular(0, false).ToArray();
 
                 var babylonMaterial = new BabylonStandardMaterial()
                 {
@@ -148,7 +149,7 @@ namespace Max2Babylon
                     id = id,
                     ambient = materialNode.MaxMaterial.GetAmbient(0, false).ToArray(),
                     diffuse = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray(),
-                    specular = materialNode.MaxMaterial.GetSpecular(0, false).Scale(materialNode.MaxMaterial.GetShinStr(0, false)),
+                    specular = maxSpecularColor.Multiply(materialNode.MaxMaterial.GetShinStr(0, false)),
                     specularPower = materialNode.MaxMaterial.GetShininess(0, false) * 256,
                     emissive =
                         isSelfIllumColor
@@ -164,7 +165,7 @@ namespace Max2Babylon
                 babylonMaterial.linkEmissiveWithDiffuse = !isSelfIllumColor;
                 // useEmissiveAsIllumination attribute tells the Babylon engine to use pre-multiplied emissive as illumination
                 babylonMaterial.useEmissiveAsIllumination = isSelfIllumColor;
-
+                
                 // Store the emissive value (before multiplication) for gltf
                 babylonMaterial.selfIllum = materialNode.MaxMaterial.GetSelfIllum(0, false);
 
@@ -175,8 +176,9 @@ namespace Max2Babylon
                 BabylonFresnelParameters fresnelParameters;
 
                 babylonMaterial.ambientTexture = ExportTexture(stdMat, 0, out fresnelParameters, babylonScene);                // Ambient
-
-                babylonMaterial.specularTexture = ExportTexture(stdMat, 2, out fresnelParameters, babylonScene);               // Specular
+                
+                babylonMaterial.specularTexture = ExportSpecularTexture(materialNode, maxSpecularColor, babylonScene);
+                
                 babylonMaterial.emissiveTexture = ExportTexture(stdMat, 5, out fresnelParameters, babylonScene);               // Emissive
                 if (fresnelParameters != null)
                 {
@@ -307,7 +309,7 @@ namespace Max2Babylon
 
                     if (sourcePathMetallic == sourcePathRoughness)
                     {
-                        if (ambientOcclusionTexmap != null)
+                        if (ambientOcclusionTexmap != null && exportParameters.mergeAOwithMR)
                         {
                             string sourcePathAmbientOcclusion = getSourcePath(ambientOcclusionTexmap);
                             if (sourcePathMetallic == sourcePathAmbientOcclusion)
@@ -341,7 +343,14 @@ namespace Max2Babylon
 
                         if (ambientOcclusionTexmap != null)
                         {
-                            babylonMaterial.occlusionTexture = ormTexture;
+                            if (exportParameters.mergeAOwithMR)
+                            {
+                                babylonMaterial.occlusionTexture = ormTexture;
+                            }
+                            else
+                            {
+                                babylonMaterial.occlusionTexture = ExportPBRTexture(materialNode, 6, babylonScene);
+                            }
                         }
                     }
                     else if (ambientOcclusionTexmap != null)
