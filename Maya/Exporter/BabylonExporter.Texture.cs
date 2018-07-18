@@ -119,6 +119,7 @@ namespace Maya2Babylon
             return babylonTexture;
         }
 
+        /*
         private BabylonTexture ExportBaseColorAlphaTexture(MFnDependencyNode materialDependencyNode, bool useColorMap, bool useOpacityMap, float[] baseColor, float alpha, BabylonScene babylonScene)
         {
             MFnDependencyNode textureDependencyNode = getTextureDependencyNode(materialDependencyNode, "TEX_color_map");
@@ -243,6 +244,7 @@ namespace Maya2Babylon
 
             return babylonTexture;
         }
+        */
         
         private BabylonTexture ExportORMTexture(BabylonScene babylonScene, MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, MFnDependencyNode ambientOcclusionTextureDependencyNode, float defaultMetallic, float defaultRoughness)
         {
@@ -270,8 +272,8 @@ namespace Maya2Babylon
             var babylonTexture = new BabylonTexture
             {
                 name = (ambientOcclusionTextureDependencyNode != null ? ambientOcclusionTextureDependencyNode.name : "") +
-                       (metallicTextureDependencyNode != null ? metallicTextureDependencyNode.name : "") +
-                       (roughnessTextureDependencyNode != null ? roughnessTextureDependencyNode.name : "") + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                       (roughnessTextureDependencyNode != null ? roughnessTextureDependencyNode.name : ("" + (int)(defaultRoughness * 255))) +
+                       (metallicTextureDependencyNode != null ? metallicTextureDependencyNode.name : ("" + (int)(defaultMetallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
 
             // UVs
@@ -524,6 +526,9 @@ namespace Maya2Babylon
                 // TODO - What is adress mode when not wrap nor mirror?
                 babylonTexture.wrapV = BabylonTexture.AddressMode.CLAMP_ADDRESSMODE;
             }
+
+            // Animation
+            babylonTexture.animations = GetTextureAnimations(textureDependencyNode).ToArray();
         }
 
         private void _exportIsCube(string absolutePath, BabylonTexture babylonTexture, bool allowCube)
@@ -734,7 +739,7 @@ namespace Maya2Babylon
             {
                 try
                 {
-                    switch (Path.GetExtension(absolutePath))
+                    switch (Path.GetExtension(absolutePath).ToLower())
                     {
                         case ".dds":
                             // External library GDImageLibrary.dll + TQ.Texture.dll

@@ -490,21 +490,21 @@ namespace Max2Babylon
             node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, new byte[] { 1 });
         }
 
+        public static IDictionary<IAnimatable, Guid> guids = new Dictionary<IAnimatable, Guid>();
         public static Guid GetGuid(this IAnimatable node)
         {
-            var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
             Guid uid;
 
-            if (uidData != null)
+            if (guids.ContainsKey(node))
             {
-                uid = new Guid(uidData.Data);
+                uid = guids[node];
             }
             else
             {
                 uid = Guid.NewGuid();
-                node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
+                guids[node] = uid;
             }
-
+            
             return uid;
         }
 
@@ -843,6 +843,14 @@ namespace Max2Babylon
         {
             var state = node.GetStringProperty(propertyName, defaultValue);
             textBox.Text = state;
+        }
+
+        public static void PrepareTextBox(TextBox textBox, List<IINode> nodes, string propertyName, string defaultValue = "")
+        {
+            foreach(IINode node in nodes)
+            {
+                PrepareTextBox(textBox, node, propertyName, defaultValue);
+            }
         }
 
         public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, string defaultValue)

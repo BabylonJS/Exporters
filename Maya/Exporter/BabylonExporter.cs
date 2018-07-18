@@ -36,7 +36,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.2.7";
+        private string exporterVersion = "1.2.12";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
@@ -181,10 +181,16 @@ namespace Maya2Babylon
             PrintDAG(true);
             PrintDAG(false);
 
+            // Store the current frame. It can be change to find a proper one for the node/bone export
+            double currentTime = Loader.GetCurrentTime();
+
             // --------------------
             // ------ Nodes -------
             // --------------------
             RaiseMessage("Exporting nodes");
+
+            // It makes each morph target manager export starts from id = 0.
+            BabylonMorphTargetManager.Reset();
 
             // Clear materials
             referencedMaterials.Clear();
@@ -377,6 +383,9 @@ namespace Maya2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
+
+            // set back the frame
+            Loader.SetCurrentTime(currentTime);
 
             // Output
             babylonScene.Prepare(false, false);

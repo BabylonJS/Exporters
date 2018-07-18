@@ -30,10 +30,9 @@ namespace Max2Babylon
 
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
-        private bool isBabylonExported;
-        private bool isGLTFExported;
+        private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.12";
+        private string exporterVersion = "1.2.18";
 
         void ReportProgressChanged(int progress)
         {
@@ -162,7 +161,7 @@ namespace Max2Babylon
 
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
-            isGLTFExported = outputFormat == "gltf" || outputFormat == "glb";
+            isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
 
             // Save scene
             if (exportParameters.autoSave3dsMaxFile)
@@ -421,7 +420,7 @@ namespace Max2Babylon
             ReportProgressChanged(100);
 
             // Export glTF
-            if (isGLTFExported)
+            if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
                 ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
@@ -466,6 +465,8 @@ namespace Max2Babylon
             
             if (babylonNode != null)
             {
+                babylonNode.tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
+                
                 // Export its children
                 for (int i = 0; i < maxGameNode.ChildCount; i++)
                 {

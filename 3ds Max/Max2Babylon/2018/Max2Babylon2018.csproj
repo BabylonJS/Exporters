@@ -350,6 +350,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
+    <None Include="Resources\Logo_Exporter_v4.jpg" />
   </ItemGroup>
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />

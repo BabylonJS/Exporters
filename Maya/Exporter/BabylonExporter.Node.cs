@@ -45,7 +45,10 @@ namespace Maya2Babylon
             {
                 RaiseVerbose("BabylonExporter.Node | Hierarchy", 2);
 
-                MObject parentMObject = mFnTransform.parent(0);
+                var mDagPath = new MDagPath(mFnTransform.dagPath);
+                mDagPath.pop();
+
+                MObject parentMObject = mDagPath.node;
                 // Children of World node don't have parent in Babylon
                 if (parentMObject.apiType != MFn.Type.kWorld)
                 {
