@@ -85,14 +85,6 @@ namespace Max2Babylon
             {
                 babylonCamera.lockedTargetId = target.MaxNode.GetGuid().ToString();
             }
-            else
-            {
-                // TODO - Check if should be local or world
-                var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
-                vDir = vDir.Add(position);
-                //babylonCamera.target = new[] { vDir.X, vDir.Y, vDir.Z };
-            }
 
             // Animations
             var animations = new List<BabylonAnimation>();
@@ -102,26 +94,17 @@ namespace Max2Babylon
             if (target == null)
             {
                 // Export rotation animation
-                //GenerateRotationAnimation(cameraNode, animations);
-
-                ExportVector3Animation("target", animations, key =>
-                {
-                    var localMatrixAnimTarget = cameraNode.GetLocalTM( key);
-                    var positionCam = localMatrixAnimTarget.Translation;
-                    var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                    vDir = localMatrixAnimTarget.ExtractMatrix3().VectorTransform(vDir).Normalize;
-                    vDir = vDir.Add(positionCam);
-                    return new[] { vDir.X, vDir.Y, vDir.Z };
-
-                });
+                GenerateRotationAnimation(cameraNode, animations);
             }
-
-            // Animation temporary stored for gltf but not exported for babylon
-            // TODO - Will cause an issue when externalizing the glTF export process
-            var extraAnimations = new List<BabylonAnimation>();
-            // Do not check if node rotation properties are animated
-            GenerateRotationAnimation(cameraNode, extraAnimations, true);
-            babylonCamera.extraAnimations = extraAnimations;
+            else
+            {
+                // Animation temporary stored for gltf but not exported for babylon
+                // TODO - Will cause an issue when externalizing the glTF export process
+                var extraAnimations = new List<BabylonAnimation>();
+                // Do not check if node rotation properties are animated
+                GenerateRotationAnimation(cameraNode, extraAnimations, true);
+                babylonCamera.extraAnimations = extraAnimations;
+            }
 
             ExportFloatAnimation("fov", animations, key => new[] { Tools.ConvertFov((gameCamera.MaxObject as ICameraObject).GetFOV(key, Tools.Forever)) });
 
