@@ -62,22 +62,7 @@ namespace Max2Babylon
             babylonCamera.ellipsoid = cameraNode.MaxNode.GetVector3Property("babylonjs_ellipsoid");
 
             // Position / rotation
-            var localMatrix = cameraNode.GetLocalTM(0);
-
-            var position = localMatrix.Translation;
-            var rotation = localMatrix.Rotation;
-
-            babylonCamera.position = new[] { position.X, position.Y, position.Z };
-
-            var rotationQuaternion = new BabylonQuaternion { X = rotation.X, Y = rotation.Y, Z = rotation.Z, W = -rotation.W };
-            if (ExportQuaternionsInsteadOfEulers)
-            {
-                babylonCamera.rotationQuaternion = rotationQuaternion.ToArray();
-            }
-            else
-            {
-                babylonCamera.rotation = rotationQuaternion.toEulerAngles().ToArray();
-            }
+            exportTransform(babylonCamera, cameraNode);
 
             // Target
             var target = gameCamera.CameraTarget;

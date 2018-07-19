@@ -33,6 +33,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public string type { get; set; }
 
+        override public float[] scaling { get; set; }
+
         [DataMember]
         override public float[] rotation { get; set; }
 
