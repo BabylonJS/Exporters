@@ -255,9 +255,10 @@ namespace Max2Babylon
             };
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
 
+
             // In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
             // In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
-            if(isBabylonExported && babylonScene.CamerasList.Count > 0)
+            if (isBabylonExported && babylonScene.CamerasList.Count > 0)
             {
                 RaiseMessage("Fix camera children rotation and position", 1);
                 for (int index = 0; index < babylonScene.CamerasList.Count; index++)
@@ -279,11 +280,9 @@ namespace Max2Babylon
                         }
                         if (camera.rotationQuaternion != null)
                         {
-                            BabylonQuaternion rotationQuaternion = FixQuaternion(camera, angle);
+                            BabylonQuaternion rotationQuaternion = FixCameraQuaternion(camera, angle);
 
-                            RaiseWarning($"{camera.name}: {string.Join(" ", camera.rotationQuaternion)}");
                             camera.rotationQuaternion = rotationQuaternion.ToArray();
-                            RaiseWarning($"{camera.name}: {string.Join(" ", camera.rotationQuaternion)}");
                             camera.rotation = rotationQuaternion.toEulerAngles().ToArray();
                         }
 
@@ -294,7 +293,7 @@ namespace Max2Babylon
                         {
                             foreach(BabylonAnimationKey key in animationRotationQuaternion.keys)
                             {
-                                key.values = FixQuaternion(key.values, angle);
+                                key.values = FixCameraQuaternion(key.values, angle);
                             }
                         }
 
@@ -309,8 +308,8 @@ namespace Max2Babylon
                             // Add a rotation of PI/2 axis X in direct direction
                             if (mesh.rotationQuaternion != null)
                             {
-                                // Rotation around the axis X of PI / 2 in the direct direction
-                                BabylonQuaternion quaternion = FixQuaternion(mesh, angle);
+                                // Rotation around the axis X of -PI / 2 in the direct direction
+                                BabylonQuaternion quaternion = FixChildQuaternion(mesh, angle);
 
                                 mesh.rotationQuaternion = quaternion.ToArray();
                             }
@@ -338,7 +337,7 @@ namespace Max2Babylon
                             {
                                 foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
                                 {
-                                    key.values = FixQuaternion(key.values, angle);
+                                    key.values = FixChildQuaternion(key.values, angle);
                                 }
                             }
                         }
@@ -694,7 +693,7 @@ namespace Max2Babylon
 
 
 
-        private BabylonQuaternion FixQuaternion(BabylonNode node, double angle)
+        private BabylonQuaternion FixCameraQuaternion(BabylonNode node, double angle)
         {
             BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle/2), 0, 0, (float)Math.Cos(angle/2));
             BabylonQuaternion quaternion = new BabylonQuaternion(node.rotationQuaternion[0], node.rotationQuaternion[1], node.rotationQuaternion[2], node.rotationQuaternion[3]);
@@ -703,7 +702,7 @@ namespace Max2Babylon
             return rotationQuaternion;
         }
 
-        private float[] FixQuaternion(float[] q, double angle)
+        private float[] FixCameraQuaternion(float[] q, double angle)
         {
             BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
             BabylonQuaternion quaternion = new BabylonQuaternion(q[0], q[1], q[2], q[3]);
@@ -711,5 +710,24 @@ namespace Max2Babylon
 
             return rotationQuaternion.ToArray();
         }
+
+        private BabylonQuaternion FixChildQuaternion(BabylonNode node, double angle)
+        {
+            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
+            BabylonQuaternion quaternion = new BabylonQuaternion(node.rotationQuaternion[0], node.rotationQuaternion[1], node.rotationQuaternion[2], node.rotationQuaternion[3]);
+            BabylonQuaternion rotationQuaternion = qFix.MultiplyWith(quaternion);
+
+            return rotationQuaternion;
+        }
+
+        private float[] FixChildQuaternion(float[] q, double angle)
+        {
+            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
+            BabylonQuaternion quaternion = new BabylonQuaternion(q[0], q[1], q[2], q[3]);
+            BabylonQuaternion rotationQuaternion = qFix.MultiplyWith(quaternion);
+
+            return rotationQuaternion.ToArray();
+        }
+
     }
 }
