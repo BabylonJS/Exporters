@@ -1,5 +1,6 @@
 ﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace Max2Babylon
@@ -107,5 +108,137 @@ namespace Max2Babylon
 
             return babylonCamera;
         }
+
+
+
+
+        /// <summary>
+        /// In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
+        /// In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
+        /// So to correct this difference, this function apply a rotation to the camera and its first children.
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="babylonScene">Use the exported babylon scene to get the final hierarchy</param>
+        private void FixCamera(ref BabylonCamera camera, ref BabylonScene babylonScene)
+        {
+            string id = camera.id;
+            IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(id));
+
+            RaiseMessage($"{camera.name}", 2);
+
+            if (camera.target == null)
+            {
+
+                // fix the vue
+                // Rotation around the axis X of PI / 2 in the indirect direction
+                double angle = Math.PI / 2;
+                if (camera.rotation != null)
+                {
+                    camera.rotation[0] += (float)angle;
+                }
+                if (camera.rotationQuaternion != null)
+                {
+                    BabylonQuaternion rotationQuaternion = FixCameraQuaternion(camera, angle);
+
+                    camera.rotationQuaternion = rotationQuaternion.ToArray();
+                    camera.rotation = rotationQuaternion.toEulerAngles().ToArray();
+                }
+
+                // animation
+                List<BabylonAnimation> animations = new List<BabylonAnimation>(camera.animations);
+                BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                if (animationRotationQuaternion != null)
+                {
+                    foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                    {
+                        key.values = FixCameraQuaternion(key.values, angle);
+                    }
+                }
+
+                // fix direct children
+                // Rotation around the axis X of -PI / 2 in the direct direction
+                angle = -Math.PI / 2;
+                foreach (var mesh in meshes)
+                {
+                    RaiseMessage($"{mesh.name}", 3);
+                    mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
+
+                    // Add a rotation of PI/2 axis X in direct direction
+                    if (mesh.rotationQuaternion != null)
+                    {
+                        // Rotation around the axis X of -PI / 2 in the direct direction
+                        BabylonQuaternion quaternion = FixChildQuaternion(mesh, angle);
+
+                        mesh.rotationQuaternion = quaternion.ToArray();
+                    }
+                    if (mesh.rotation != null)
+                    {
+                        mesh.rotation[0] += (float)angle;
+                    }
+
+
+                    // Animations
+                    animations = new List<BabylonAnimation>(mesh.animations);
+                    // Position
+                    BabylonAnimation animationPosition = animations.Find(animation => animation.property.Equals("position"));
+                    if (animationPosition != null)
+                    {
+                        foreach (BabylonAnimationKey key in animationPosition.keys)
+                        {
+                            key.values = new float[] { key.values[0], key.values[2], -key.values[1] };
+                        }
+                    }
+
+                    // Rotation
+                    animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                    if (animationRotationQuaternion != null)
+                    {
+                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                        {
+                            key.values = FixChildQuaternion(key.values, angle);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        private BabylonQuaternion FixCameraQuaternion(BabylonNode node, double angle)
+        {
+            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
+            BabylonQuaternion quaternion = new BabylonQuaternion(node.rotationQuaternion[0], node.rotationQuaternion[1], node.rotationQuaternion[2], node.rotationQuaternion[3]);
+            BabylonQuaternion rotationQuaternion = quaternion.MultiplyWith(qFix);
+
+            return rotationQuaternion;
+        }
+
+        private float[] FixCameraQuaternion(float[] q, double angle)
+        {
+            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
+            BabylonQuaternion quaternion = new BabylonQuaternion(q[0], q[1], q[2], q[3]);
+            BabylonQuaternion rotationQuaternion = quaternion.MultiplyWith(qFix);
+
+            return rotationQuaternion.ToArray();
+        }
+
+        private BabylonQuaternion FixChildQuaternion(BabylonNode node, double angle)
+        {
+            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
+            BabylonQuaternion quaternion = new BabylonQuaternion(node.rotationQuaternion[0], node.rotationQuaternion[1], node.rotationQuaternion[2], node.rotationQuaternion[3]);
+            BabylonQuaternion rotationQuaternion = qFix.MultiplyWith(quaternion);
+
+            return rotationQuaternion;
+        }
+
+        private float[] FixChildQuaternion(float[] q, double angle)
+        {
+            BabylonQuaternion qFix = new BabylonQuaternion((float)Math.Sin(angle / 2), 0, 0, (float)Math.Cos(angle / 2));
+            BabylonQuaternion quaternion = new BabylonQuaternion(q[0], q[1], q[2], q[3]);
+            BabylonQuaternion rotationQuaternion = qFix.MultiplyWith(quaternion);
+
+            return rotationQuaternion.ToArray();
+        }
+
     }
 }
