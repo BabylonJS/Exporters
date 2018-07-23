@@ -259,7 +259,7 @@ namespace Max2Babylon
             // In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
             // In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
             // In glTF the default camera look to the horizon (in the +Z direction for glTF reference)
-            RaiseVerbose("Update camera children rotation and position", 1);
+            RaiseMessage("Update camera rotation and position", 1);
             for (int index = 0; index < babylonScene.CamerasList.Count; index++)
             {
                 BabylonCamera camera = babylonScene.CamerasList[index];

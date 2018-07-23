@@ -124,7 +124,7 @@ namespace Max2Babylon
             string id = camera.id;
             IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(id));
 
-            RaiseVerbose($"{camera.name}", 2);
+            RaiseMessage($"{camera.name}", 2);
 
             if (camera.target == null)
             {
@@ -151,6 +151,21 @@ namespace Max2Babylon
                     foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
                     {
                         key.values = FixCameraQuaternion(key.values, angle);
+                    }
+                }
+                else   // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+                {
+                    if (camera.extraAnimations != null)
+                    {
+                        List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(camera.extraAnimations);
+                        animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                        if (animationRotationQuaternion != null)
+                        {
+                            foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                            {
+                                key.values = FixCameraQuaternion(key.values, angle);
+                            }
+                        }
                     }
                 }
 
