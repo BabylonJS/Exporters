@@ -124,11 +124,10 @@ namespace Max2Babylon
             string id = camera.id;
             IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(id));
 
-            RaiseMessage($"{camera.name}", 2);
+            RaiseVerbose($"{camera.name}", 2);
 
             if (camera.target == null)
             {
-
                 // fix the vue
                 // Rotation around the axis X of PI / 2 in the indirect direction
                 double angle = Math.PI / 2;
@@ -160,7 +159,7 @@ namespace Max2Babylon
                 angle = -Math.PI / 2;
                 foreach (var mesh in meshes)
                 {
-                    RaiseMessage($"{mesh.name}", 3);
+                    RaiseVerbose($"{mesh.name}", 3);
                     mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
 
                     // Add a rotation of PI/2 axis X in direct direction
