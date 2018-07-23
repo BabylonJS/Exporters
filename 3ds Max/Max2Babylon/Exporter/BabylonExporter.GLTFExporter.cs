@@ -308,6 +308,16 @@ namespace Max2Babylon
 
                 CheckCancelled();
 
+                // export its tag
+                if(babylonNode.tag != "")
+                {
+                    if (gltfNode.extras == null)
+                    {
+                        gltfNode.extras = new Dictionary<string, object>();
+                    }
+                    gltfNode.extras["tag"] = babylonNode.tag;
+                }
+
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
                 babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));
