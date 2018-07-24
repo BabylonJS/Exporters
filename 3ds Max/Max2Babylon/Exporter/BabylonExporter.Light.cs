@@ -50,7 +50,6 @@ namespace Max2Babylon
             }
 
             // Type
-
             var maxLight = (lightNode.MaxNode.ObjectRef as ILightObject);
             var lightState = Loader.Global.LightState.Create();
             maxLight.EvalLightState(0, Tools.Forever, lightState);
