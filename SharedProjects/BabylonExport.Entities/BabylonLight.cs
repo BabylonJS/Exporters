@@ -5,6 +5,11 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonLight : BabylonNode
     {
+        public enum Type
+        {
+            Point, Directional, Spot, Hemispheric
+        }
+
         [DataMember]
         public float[] direction { get; set; }
 
