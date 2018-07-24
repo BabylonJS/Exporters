@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.19";
+        private string exporterVersion = "1.2.20";
 
         void ReportProgressChanged(int progress)
         {
@@ -254,6 +254,17 @@ namespace Max2Babylon
                 CheckCancelled();
             };
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
+
+
+            // In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
+            // In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
+            // In glTF the default camera look to the horizon (in the +Z direction for glTF reference)
+            RaiseMessage("Update camera rotation and position", 1);
+            for (int index = 0; index < babylonScene.CamerasList.Count; index++)
+            {
+                BabylonCamera camera = babylonScene.CamerasList[index];
+                FixCamera(ref camera, ref babylonScene);
+            }
 
             // Main camera
             BabylonCamera babylonMainCamera = null;

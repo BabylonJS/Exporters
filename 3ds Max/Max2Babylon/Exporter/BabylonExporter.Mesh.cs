@@ -883,7 +883,7 @@ namespace Max2Babylon
             }
         }
 
-        private void exportTransform(BabylonAbstractMesh babylonAbstractMesh, IIGameNode maxGameNode)
+        private void exportTransform(BabylonNode babylonAbstractMesh, IIGameNode maxGameNode)
         {
             // Position / rotation / scaling
             var localTM = maxGameNode.GetLocalTM(0);
