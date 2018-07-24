@@ -309,7 +309,7 @@ namespace Max2Babylon
                 CheckCancelled();
 
                 // export its tag
-                if(babylonNode.tag != "")
+                if(babylonNode.tag != null && babylonNode.tag != "")
                 {
                     if (gltfNode.extras == null)
                     {

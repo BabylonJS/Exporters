@@ -62,7 +62,7 @@ namespace BabylonExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public string activeCameraID { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public BabylonLight[] lights { get; set; }
 
         [DataMember]
