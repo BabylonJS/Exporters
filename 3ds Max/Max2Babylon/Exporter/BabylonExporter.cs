@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.20";
+        private string exporterVersion = "1.2.21";
 
         void ReportProgressChanged(int progress)
         {
