@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.20";
+        private string exporterVersion = "1.2.21";
 
         void ReportProgressChanged(int progress)
         {
@@ -293,7 +293,8 @@ namespace Max2Babylon
             }
 
             // Default light
-            if (babylonScene.LightsList.Count == 0)
+            bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
+            if (addDefaultLight && babylonScene.LightsList.Count == 0)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default hemispheric light was added for your convenience", 1);
@@ -458,8 +459,12 @@ namespace Max2Babylon
             
             if (babylonNode != null)
             {
-                babylonNode.tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
-                
+                string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
+                if (tag != "")
+                {
+                    babylonNode.tag = tag;
+                }
+
                 // Export its children
                 for (int i = 0; i < maxGameNode.ChildCount; i++)
                 {
