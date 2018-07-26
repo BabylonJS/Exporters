@@ -168,6 +168,32 @@ namespace Max2Babylon
             // Filter animations to only keep TRS ones
             babylonAnimations = babylonAnimations.FindAll(babylonAnimation => _getTargetPath(babylonAnimation.property) != null);
 
+            // Optimize animations to only keep ones animated between start and end frames
+            var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
+            if (optimizeAnimations)
+            {
+                List<BabylonAnimation> babylonAnimationsOptimized = new List<BabylonAnimation>();
+                foreach (BabylonAnimation babylonAnimation in babylonAnimations)
+                {
+                    // Filter animation keys to only keep frames between start and end
+                    List<BabylonAnimationKey> keysInRangeFull = babylonAnimation.keysFull.FindAll(babylonAnimationKey => babylonAnimationKey.frame >= startFrame && babylonAnimationKey.frame <= endFrame);
+
+                    // Optimization process always keeps first and last frames
+                    OptimizeAnimations(keysInRangeFull, true);
+
+                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    {
+                        // Override animation keys
+                        babylonAnimation.keys = keysInRangeFull.ToArray();
+
+                        babylonAnimationsOptimized.Add(babylonAnimation);
+                    }
+                }
+
+                // From now, use optimized animations instead
+                babylonAnimations = babylonAnimationsOptimized;
+            }
+
             if (babylonAnimations.Count > 0 || exportNonAnimated)
             {
                 if (babylonAnimations.Count > 0)
