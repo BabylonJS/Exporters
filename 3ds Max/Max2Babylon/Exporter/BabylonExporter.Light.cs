@@ -92,7 +92,6 @@ namespace Max2Babylon
 
             // Position
             var localMatrix = lightNode.GetLocalTM(0);
-
             var position = localMatrix.Translation;
             
             // The position is stored by the dummy parent
@@ -110,10 +109,8 @@ namespace Max2Babylon
                 babylonLight.direction = new[] { direction.X, direction.Y, direction.Z };
             }
             else
-            {
-                var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
-                babylonLight.direction = new[] { vDir.X, vDir.Y, vDir.Z };
+            {   // Without target the default direction is downward and it is updated by the rotation of the parent dummy
+                babylonLight.direction = new[] { 0f, -1f, 0f };
             }
 
             var maxScene = Loader.Core.RootNode;
@@ -177,30 +174,8 @@ namespace Max2Babylon
 
 
             // Animations
-            // Position and rotation animations are stored b the parent
+            // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation.
             var animations = new List<BabylonAnimation>();
-
-            ExportVector3Animation("direction", animations, key =>
-            {
-                var localMatrixAnimDir = lightNode.GetLocalTM(key);
-
-                var positionLight = localMatrixAnimDir.Translation;
-                var lightTarget = gameLight.LightTarget;
-                if (lightTarget != null)
-                {
-                    var targetWm = lightTarget.GetObjectTM(key);
-                    var targetPosition = targetWm.Translation;
-
-                    var direction = targetPosition.Subtract(positionLight).Normalize;
-                    return new[] { direction.X, direction.Y, direction.Z };
-                }
-                else
-                {
-                    var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                    vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
-                    return new[] { vDir.X, vDir.Y, vDir.Z };
-                }
-            });
 
             ExportFloatAnimation("intensity", animations, key => new[] { maxLight.GetIntensity(key, Tools.Forever) });
 
