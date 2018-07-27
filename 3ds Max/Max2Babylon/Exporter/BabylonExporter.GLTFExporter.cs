@@ -487,39 +487,24 @@ namespace Max2Babylon
             gltfNode.translation = babylonNode.position;
 
             // Rotation
-            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)) || type == typeof(BabylonCamera))
+            if (babylonNode.rotationQuaternion != null)
             {
-                if (babylonNode.rotationQuaternion != null)
-                {
-                    gltfNode.rotation = babylonNode.rotationQuaternion;
-                }
-                else
-                {
-                    // Convert rotation vector to quaternion
-                    BabylonVector3 rotationVector3 = new BabylonVector3
-                    {
-                        X = babylonNode.rotation[0],
-                        Y = babylonNode.rotation[1],
-                        Z = babylonNode.rotation[2]
-                    };
-                    gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
-                }
+                gltfNode.rotation = babylonNode.rotationQuaternion;
             }
-            else // Light
+            else
             {
-                gltfNode.rotation = new float[4] { 0, 0, 0, 1 };
-            }
+                // Convert rotation vector to quaternion
+                BabylonVector3 rotationVector3 = new BabylonVector3
+                {
+                    X = babylonNode.rotation[0],
+                    Y = babylonNode.rotation[1],
+                    Z = babylonNode.rotation[2]
+                };
+                gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
+                }
 
             // Scale
-            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
-            {
-                gltfNode.scale = babylonNode.scaling;
-            }
-            else // Camera and light
-            {
-                gltfNode.scale = new float[3] { 1, 1, 1 };
-
-            }
+            gltfNode.scale = babylonNode.scaling;
 
             // Switch coordinate system at object level
             gltfNode.translation[2] *= -1;
