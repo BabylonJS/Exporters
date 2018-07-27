@@ -109,7 +109,6 @@ namespace Max2Babylon
                 // The position is stored by the dummy parent and the default direction is downward and it is updated by the rotation of the parent dummy
                 babylonLight.position = new[] { 0f, 0f, 0f };
                 babylonLight.direction = new[] { 0f, -1f, 0f };
-
             }
             else
             {
@@ -137,6 +136,17 @@ namespace Max2Babylon
                     babylonLight.direction = new[] { vDir.X, vDir.Y, vDir.Z };
                 }
             }
+
+            // The HemisphericLight simulates the ambient environment light, so the passed direction is the light reflection direction, not the incoming direction.
+            // So we need the opposite direction
+            if (babylonLight.type == 3)
+            {
+                for(int index = 0; index < 3; index++)
+                {
+                    babylonLight.direction[index] *= -1;
+                }
+            }
+
 
             var maxScene = Loader.Core.RootNode;
 
@@ -227,7 +237,10 @@ namespace Max2Babylon
                     {
                         var vDir = Loader.Global.Point3.Create(0, -1, 0);
                         vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
-                        return new[] { vDir.X, vDir.Y, vDir.Z };
+
+                        // The HemisphericLight (type == 3) simulates the ambient environment light, so the passed direction is the light reflection direction, not the incoming direction.
+                        // So we need the opposite direction
+                        return babylonLight.type != 3 ? new[] { vDir.X, vDir.Y, vDir.Z } : new[] { -vDir.X, -vDir.Y, -vDir.Z };
                     }
                 });
 
