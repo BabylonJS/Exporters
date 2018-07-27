@@ -37,20 +37,33 @@ namespace Max2Babylon
                 return null;
             }
 
-            // To preserve the position/rotation and the hierarchy, we create a dummy that will contains as direct children the light and the light children
-            // The light will have no children. The dummy will contains the position and rotation animations.
-            BabylonNode dummy = ExportDummy(scene, lightNode, babylonScene);
-            dummy.name = "_" + dummy.name + "_";
-
-
             var gameLight = lightNode.IGameObject.AsGameLight();
             var initialized = gameLight.InitializeData;
             var babylonLight = new BabylonLight();
 
             RaiseMessage(lightNode.Name, 1);
             babylonLight.name = lightNode.Name;
-            babylonLight.id = Guid.NewGuid().ToString();
-            babylonLight.parentId = dummy.id;
+
+            // If the light has a children and the export is to babylon, add a dummy
+            // To preserve the position/rotation and the hierarchy, we create a dummy that will contains as direct children the light and the light children
+            // The light will have no children. The dummy will contains the position and rotation animations.
+            bool createDummy = isBabylonExported && (lightNode.ChildCount > 0);
+            BabylonNode dummy = null;
+            if (createDummy)
+            {
+                dummy = ExportDummy(scene, lightNode, babylonScene);
+                dummy.name = "_" + dummy.name + "_";
+                babylonLight.id = Guid.NewGuid().ToString();
+                babylonLight.parentId = dummy.id;
+            }
+            else
+            {
+                babylonLight.id = lightNode.MaxNode.GetGuid().ToString();
+                if (lightNode.NodeParent != null)
+                {
+                    babylonLight.parentId = lightNode.NodeParent.MaxNode.GetGuid().ToString();
+                }
+            }
 
             // Type
             var maxLight = (lightNode.MaxNode.ObjectRef as ILightObject);
@@ -90,27 +103,39 @@ namespace Max2Babylon
                 }
             }
 
-            // Position
-            var localMatrix = lightNode.GetLocalTM(0);
-            var position = localMatrix.Translation;
-            
-            // The position is stored by the dummy parent
-            babylonLight.position = new[] { 0f, 0f, 0f };
-
-
-            // Direction
-            var target = gameLight.LightTarget;
-            if (target != null)
+            // Position / rotation / scaling
+            if (createDummy)
             {
-                var targetWm = target.GetObjectTM(0);
-                var targetPosition = targetWm.Translation;
+                // The position is stored by the dummy parent and the default direction is downward and it is updated by the rotation of the parent dummy
+                babylonLight.position = new[] { 0f, 0f, 0f };
+                babylonLight.direction = new[] { 0f, -1f, 0f };
 
-                var direction = targetPosition.Subtract(position).Normalize;
-                babylonLight.direction = new[] { direction.X, direction.Y, direction.Z };
             }
             else
-            {   // Without target the default direction is downward and it is updated by the rotation of the parent dummy
-                babylonLight.direction = new[] { 0f, -1f, 0f };
+            {
+                exportTransform(babylonLight, lightNode);
+                
+                // Position
+                var localMatrix = lightNode.GetLocalTM(0);
+                var position = localMatrix.Translation;
+                //babylonLight.position = new[] { position.X, position.Y, position.Z };
+
+                // Direction
+                var target = gameLight.LightTarget;
+                if (target != null)
+                {
+                    var targetWm = target.GetObjectTM(0);
+                    var targetPosition = targetWm.Translation;
+
+                    var direction = targetPosition.Subtract(position).Normalize;
+                    babylonLight.direction = new[] { direction.X, direction.Y, direction.Z };
+                }
+                else
+                {
+                    var vDir = Loader.Global.Point3.Create(0, -1, 0);
+                    vDir = localMatrix.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                    babylonLight.direction = new[] { vDir.X, vDir.Y, vDir.Z };
+                }
             }
 
             var maxScene = Loader.Core.RootNode;
@@ -174,8 +199,45 @@ namespace Max2Babylon
 
 
             // Animations
-            // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation.
             var animations = new List<BabylonAnimation>();
+
+            if(createDummy)
+            {
+                // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation.
+            }
+            else
+            {
+                GeneratePositionAnimation(lightNode, animations);
+
+                ExportVector3Animation("direction", animations, key =>
+                {
+                    var localMatrixAnimDir = lightNode.GetLocalTM(key);
+
+                    var positionLight = localMatrixAnimDir.Translation;
+                    var lightTarget = gameLight.LightTarget;
+                    if (lightTarget != null)
+                    {
+                        var targetWm = lightTarget.GetObjectTM(key);
+                        var targetPosition = targetWm.Translation;
+
+                        var direction = targetPosition.Subtract(positionLight).Normalize;
+                        return new[] { direction.X, direction.Y, direction.Z };
+                    }
+                    else
+                    {
+                        var vDir = Loader.Global.Point3.Create(0, -1, 0);
+                        vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
+                        return new[] { vDir.X, vDir.Y, vDir.Z };
+                    }
+                });
+
+                // Animation temporary stored for gltf but not exported for babylon
+                // TODO - Will cause an issue when externalizing the glTF export process
+                var extraAnimations = new List<BabylonAnimation>();
+                // Do not check if node rotation properties are animated
+                GenerateRotationAnimation(lightNode, extraAnimations, true);
+                babylonLight.extraAnimations = extraAnimations;
+            }
 
             ExportFloatAnimation("intensity", animations, key => new[] { maxLight.GetIntensity(key, Tools.Forever) });
 
@@ -196,7 +258,7 @@ namespace Max2Babylon
 
             babylonScene.LightsList.Add(babylonLight);
 
-            return dummy;
+            return createDummy ? dummy : babylonLight;
         }
     }
 }
