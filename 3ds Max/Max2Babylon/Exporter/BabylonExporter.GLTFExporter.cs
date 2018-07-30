@@ -282,7 +282,6 @@ namespace Max2Babylon
                     if(((BabylonLight)babylonNode).type != 3)
                     {
                         ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
-
                     }
                     else //Ambiant light are attached to the scene. It was previously exported as node to preserve the hierarchy and its children
                     {
