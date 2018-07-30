@@ -117,7 +117,6 @@ namespace Max2Babylon
                 // Position
                 var localMatrix = lightNode.GetLocalTM(0);
                 var position = localMatrix.Translation;
-                //babylonLight.position = new[] { position.X, position.Y, position.Z };
 
                 // Direction
                 var target = gameLight.LightTarget;
@@ -141,10 +140,10 @@ namespace Max2Babylon
             // So we need the opposite direction
             if (babylonLight.type == 3)
             {
-                for(int index = 0; index < 3; index++)
-                {
-                    babylonLight.direction[index] *= -1;
-                }
+                var worldRotation = lightNode.GetWorldTM(0).Rotation;
+                BabylonQuaternion quaternion = new BabylonQuaternion(worldRotation.X, worldRotation.Y, worldRotation.Z, worldRotation.W);
+
+                babylonLight.direction = quaternion.Rotate(new BabylonVector3(0f, 1f, 0f)).ToArray();
             }
 
 
@@ -213,7 +212,18 @@ namespace Max2Babylon
 
             if(createDummy)
             {
-                // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation.
+                // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation except for the HemisphericLight.
+                if (babylonLight.type == 3)
+                {
+                    BabylonVector3 direction = new BabylonVector3(0, 1, 0);
+                    ExportVector3Animation("direction", animations, key =>
+                    {
+                        var worldRotation = lightNode.GetWorldTM(key).Rotation;
+                        BabylonQuaternion quaternion = new BabylonQuaternion(worldRotation.X, worldRotation.Y, worldRotation.Z, worldRotation.W);
+
+                        return quaternion.Rotate(direction).ToArray();
+                    });
+                }
             }
             else
             {
