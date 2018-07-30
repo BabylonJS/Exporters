@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.21";
+        private string exporterVersion = "1.2.22";
 
         void ReportProgressChanged(int progress)
         {
@@ -264,6 +264,18 @@ namespace Max2Babylon
             {
                 BabylonCamera camera = babylonScene.CamerasList[index];
                 FixCamera(ref camera, ref babylonScene);
+            }
+
+            // Light for glTF
+            if (isGltfExported)
+            {
+                RaiseMessage("Update light rotation for glTF export", 1);
+                for(int index = 0; index < babylonScene.LightsList.Count; index++)
+                {
+                    BabylonNode light = babylonScene.LightsList[index];
+                    FixNodeRotation(ref light, ref babylonScene, -Math.PI / 2);
+                }
+
             }
 
             // Main camera
@@ -615,5 +627,114 @@ namespace Max2Babylon
             invertedWorldMatrix.Invert();
             return invertedWorldMatrix;
         }
+
+
+
+
+
+        /// <summary>
+        /// In 3DS Max default element can look in different direction than the same default element in Babylon or in glTF.
+        /// This function correct the node rotation.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="babylonScene"></param>
+        /// <param name="angle"></param>
+        private void FixNodeRotation(ref BabylonNode node, ref BabylonScene babylonScene, double angle)
+        {
+            string id = node.id;
+            IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(id));
+
+            RaiseMessage($"{node.name}", 2);
+
+            // fix the vue
+            // Rotation around the axis X of PI / 2 in the indirect direction for camera
+            // double angle = Math.PI / 2; // for camera
+            // double angle = -Math.PI / 2; // for light
+
+            if (node.rotation != null)
+            {
+                node.rotation[0] += (float)angle;
+            }
+            if (node.rotationQuaternion != null)
+            {
+                BabylonQuaternion rotationQuaternion = FixCameraQuaternion(node, angle);
+
+                node.rotationQuaternion = rotationQuaternion.ToArray();
+                node.rotation = rotationQuaternion.toEulerAngles().ToArray();
+            }
+
+            // animation
+            List<BabylonAnimation> animations = new List<BabylonAnimation>(node.animations);
+            BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+            if (animationRotationQuaternion != null)
+            {
+                foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                {
+                    key.values = FixCameraQuaternion(key.values, angle);
+                }
+            }
+            else   // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+            {
+                if (node.extraAnimations != null)
+                {
+                    List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(node.extraAnimations);
+                    animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                    if (animationRotationQuaternion != null)
+                    {
+                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                        {
+                            key.values = FixCameraQuaternion(key.values, angle);
+                        }
+                    }
+                }
+            }
+
+            // fix direct children
+            // Rotation around the axis X of -PI / 2 in the direct direction for camera children
+            angle = -angle;
+            foreach (var mesh in meshes)
+            {
+                RaiseVerbose($"{mesh.name}", 3);
+                mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
+
+                // Add a rotation of PI/2 axis X in direct direction
+                if (mesh.rotationQuaternion != null)
+                {
+                    // Rotation around the axis X of -PI / 2 in the direct direction
+                    BabylonQuaternion quaternion = FixChildQuaternion(mesh, angle);
+
+                    mesh.rotationQuaternion = quaternion.ToArray();
+                }
+                if (mesh.rotation != null)
+                {
+                    mesh.rotation[0] += (float)angle;
+                }
+
+
+                // Animations
+                animations = new List<BabylonAnimation>(mesh.animations);
+                // Position
+                BabylonAnimation animationPosition = animations.Find(animation => animation.property.Equals("position"));
+                if (animationPosition != null)
+                {
+                    foreach (BabylonAnimationKey key in animationPosition.keys)
+                    {
+                        key.values = new float[] { key.values[0], key.values[2], -key.values[1] };
+                    }
+                }
+
+                // Rotation
+                animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                if (animationRotationQuaternion != null)
+                {
+                    foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                    {
+                        key.values = FixChildQuaternion(key.values, angle);
+                    }
+                }
+            }
+        }
+
+
     }
 }

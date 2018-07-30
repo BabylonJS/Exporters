@@ -173,5 +173,21 @@ namespace BabylonExport.Entities
 
             return result;
         }
+
+
+        public BabylonVector3 Rotate(BabylonVector3 v)
+        {
+            BabylonMatrix m = new BabylonMatrix();
+            toRotationMatrix(m);
+
+            BabylonVector3 result = new BabylonVector3
+            {
+                X = m.m[0] * v.X + m.m[1] * v.Y + m.m[2] * v.Z,
+                Y = m.m[4] * v.X + m.m[5] * v.Y + m.m[6] * v.Z,
+                Z = m.m[8] * v.X + m.m[9] * v.Y + m.m[10] * v.Z
+            };
+
+            return result;
+        }
     }
 }

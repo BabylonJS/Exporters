@@ -427,6 +427,7 @@ namespace Max2Babylon
                 gameNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
                 gameNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
                 gameNode.IGameControl.IsAnimated(IGameControlType.EulerZ) ||
+                (gameNode.IGameObject.IGameType == Autodesk.Max.IGameObject.ObjectTypes.Light && gameNode.IGameObject.AsGameLight().LightTarget != null) || // Light with target are indirectly animated by their target
                 force)
             {
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
