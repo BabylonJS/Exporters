@@ -55,6 +55,11 @@ namespace BabylonExport.Entities
             specular = new[] { 1.0f, 1.0f, 1.0f };
             intensity = 1.0f;
             range = float.MaxValue;
+
+            position = new float[] { 0, 0, 0 };
+            rotation = new float[] { 0, 0, 0 };
+            rotationQuaternion = new float[] { 0, 0, 0, 1 };
+            scaling = new float[] { 1, 1, 1 };
         }
     }
 }
