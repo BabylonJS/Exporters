@@ -75,7 +75,7 @@ class ExporterSettingsPanel(bpy.types.Panel):
     bpy.types.Scene.writeManifestFile = bpy.props.BoolProperty(
         name='Write .manifest file',
         description="Automatically create or update [filename].babylon.manifest for this file",
-        default = False,
+        default = True,
         )
     bpy.types.Scene.currentActionOnly = bpy.props.BoolProperty(
         name='Only Currently Assigned Actions',
