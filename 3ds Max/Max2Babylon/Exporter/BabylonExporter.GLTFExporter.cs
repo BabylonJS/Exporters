@@ -265,26 +265,6 @@ namespace Max2Babylon
         {
             var type = babylonNode.GetType();
 
-            // Ambiant light are attached to the scene
-            if (type == typeof(BabylonLight) && ((BabylonLight)babylonNode).type == 3)
-            {
-                RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
-                // new light in the scene extensions
-                GLTFLight light = new GLTFLight
-                {
-                    light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
-                };
-
-                int sceneIndex = (int)gltf.scene;
-                if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
-                {
-                    RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
-                }
-                gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
-
-                return;
-            }
-
             GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
 
             if (gltfNode != null)
@@ -299,7 +279,26 @@ namespace Max2Babylon
                 }
                 else if (type == typeof(BabylonLight) || type.IsSubclassOf(typeof(BabylonLight)))
                 {
-                    ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
+                    if(((BabylonLight)babylonNode).type != 3)
+                    {
+                        ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
+                    }
+                    else //Ambiant light are attached to the scene. It was previously exported as node to preserve the hierarchy and its children
+                    {
+                        RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
+                        // new light in the scene extensions
+                        GLTFLight light = new GLTFLight
+                        {
+                            light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
+                        };
+
+                        int sceneIndex = (int)gltf.scene;
+                        if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
+                        {
+                            RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
+                        }
+                        gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
+                    }
                 }
                 else
                 {
@@ -307,6 +306,16 @@ namespace Max2Babylon
                 }
 
                 CheckCancelled();
+
+                // export its tag
+                if(babylonNode.tag != null && babylonNode.tag != "")
+                {
+                    if (gltfNode.extras == null)
+                    {
+                        gltfNode.extras = new Dictionary<string, object>();
+                    }
+                    gltfNode.extras["tag"] = babylonNode.tag;
+                }
 
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
@@ -478,39 +487,24 @@ namespace Max2Babylon
             gltfNode.translation = babylonNode.position;
 
             // Rotation
-            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)) || type == typeof(BabylonCamera))
+            if (babylonNode.rotationQuaternion != null)
             {
-                if (babylonNode.rotationQuaternion != null)
-                {
-                    gltfNode.rotation = babylonNode.rotationQuaternion;
-                }
-                else
-                {
-                    // Convert rotation vector to quaternion
-                    BabylonVector3 rotationVector3 = new BabylonVector3
-                    {
-                        X = babylonNode.rotation[0],
-                        Y = babylonNode.rotation[1],
-                        Z = babylonNode.rotation[2]
-                    };
-                    gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
-                }
+                gltfNode.rotation = babylonNode.rotationQuaternion;
             }
-            else // Light
+            else
             {
-                gltfNode.rotation = new float[4] { 0, 0, 0, 1 };
-            }
+                // Convert rotation vector to quaternion
+                BabylonVector3 rotationVector3 = new BabylonVector3
+                {
+                    X = babylonNode.rotation[0],
+                    Y = babylonNode.rotation[1],
+                    Z = babylonNode.rotation[2]
+                };
+                gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
+                }
 
             // Scale
-            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
-            {
-                gltfNode.scale = babylonNode.scaling;
-            }
-            else // Camera and light
-            {
-                gltfNode.scale = new float[3] { 1, 1, 1 };
-
-            }
+            gltfNode.scale = babylonNode.scaling;
 
             // Switch coordinate system at object level
             gltfNode.translation[2] *= -1;

@@ -62,7 +62,7 @@ namespace BabylonExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public string activeCameraID { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public BabylonLight[] lights { get; set; }
 
         [DataMember]
@@ -98,7 +98,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool workerCollisions { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public BabylonMorphTargetManager[] morphTargetManagers { get; set; }
 
         public BabylonVector3 MaxVector { get; set; }

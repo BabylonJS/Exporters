@@ -48,12 +48,15 @@
             this.nupSkyboxBlurLevel = new System.Windows.Forms.NumericUpDown();
             this.lblSkyboxBlurLevel = new System.Windows.Forms.Label();
             this.chkCreateDefaultSkybox = new System.Windows.Forms.CheckBox();
+            this.groupBoxDefaultLight = new System.Windows.Forms.GroupBox();
+            this.chkAddDefaultLight = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupVolume)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupSkyboxBlurLevel)).BeginInit();
+            this.groupBoxDefaultLight.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -92,7 +95,7 @@
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(174, 444);
+            this.butCancel.Location = new System.Drawing.Point(174, 499);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(75, 23);
             this.butCancel.TabIndex = 4;
@@ -104,7 +107,7 @@
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(93, 444);
+            this.butOK.Location = new System.Drawing.Point(93, 499);
             this.butOK.Name = "butOK";
             this.butOK.Size = new System.Drawing.Size(75, 23);
             this.butOK.TabIndex = 3;
@@ -155,7 +158,7 @@
             this.groupBox3.Controls.Add(this.chkLoop);
             this.groupBox3.Controls.Add(this.chkAutoPlay);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox3.Location = new System.Drawing.Point(12, 291);
+            this.groupBox3.Location = new System.Drawing.Point(12, 357);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(319, 136);
             this.groupBox3.TabIndex = 6;
@@ -299,13 +302,36 @@
             this.chkCreateDefaultSkybox.Text = "Create default skybox";
             this.chkCreateDefaultSkybox.UseVisualStyleBackColor = true;
             // 
+            // groupBoxDefaultLight
+            // 
+            this.groupBoxDefaultLight.Controls.Add(this.chkAddDefaultLight);
+            this.groupBoxDefaultLight.Location = new System.Drawing.Point(12, 291);
+            this.groupBoxDefaultLight.Name = "groupBoxDefaultLight";
+            this.groupBoxDefaultLight.Size = new System.Drawing.Size(319, 60);
+            this.groupBoxDefaultLight.TabIndex = 7;
+            this.groupBoxDefaultLight.TabStop = false;
+            this.groupBoxDefaultLight.Text = "Default hemispheric light";
+            // 
+            // chkAddDefaultLight
+            // 
+            this.chkAddDefaultLight.AutoSize = true;
+            this.chkAddDefaultLight.Checked = true;
+            this.chkAddDefaultLight.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAddDefaultLight.Location = new System.Drawing.Point(21, 28);
+            this.chkAddDefaultLight.Name = "chkAddDefaultLight";
+            this.chkAddDefaultLight.Size = new System.Drawing.Size(213, 17);
+            this.chkAddDefaultLight.TabIndex = 0;
+            this.chkAddDefaultLight.Text = "Add a default light, if no light is exported";
+            this.chkAddDefaultLight.UseVisualStyleBackColor = true;
+            // 
             // ScenePropertiesForm
             // 
             this.AcceptButton = this.butOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(343, 479);
+            this.ClientSize = new System.Drawing.Size(343, 534);
+            this.Controls.Add(this.groupBoxDefaultLight);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -327,6 +353,8 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupSkyboxBlurLevel)).EndInit();
+            this.groupBoxDefaultLight.ResumeLayout(false);
+            this.groupBoxDefaultLight.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -353,5 +381,7 @@
         private System.Windows.Forms.CheckBox chkCreateDefaultSkybox;
         private System.Windows.Forms.NumericUpDown nupSkyboxBlurLevel;
         private System.Windows.Forms.Label lblSkyboxBlurLevel;
+        private System.Windows.Forms.GroupBox groupBoxDefaultLight;
+        private System.Windows.Forms.CheckBox chkAddDefaultLight;
     }
 }

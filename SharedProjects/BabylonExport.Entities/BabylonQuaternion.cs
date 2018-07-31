@@ -159,5 +159,35 @@ namespace BabylonExport.Entities
                 var offset = countOffset * 4;
                 return new BabylonQuaternion(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
         }
+
+
+        public BabylonQuaternion MultiplyWith(BabylonQuaternion quaternion)
+        {
+            BabylonQuaternion result = new BabylonQuaternion();
+            // (a + i b + j c + k d)*(e + i f + j g + k h) = a*e - b*f - c*g- d*h + i (b*e + a*f + c*h - d*g) + j (a*g - b*h + c*e + d*f) + k (a*h + b*g - c*f + d*e)
+            // W*q.W - X*q.X - Y*q.Y- Z*q.Z + i (X*q.W + W*q.X + Y*q.Z - Z*q.Y) + j (W*q.Y - X*q.Z + Y*q.W + Z*q.X) + k (W*q.Z + X*q.Y - Y*q.X + Z*q.W)
+            result.W = W * quaternion.W - X * quaternion.X - Y * quaternion.Y - Z * quaternion.Z;
+            result.X = X * quaternion.W + W * quaternion.X + Y * quaternion.Z - Z * quaternion.Y;
+            result.Y = W * quaternion.Y - X * quaternion.Z + Y * quaternion.W + Z * quaternion.X;
+            result.Z = W * quaternion.Z + X * quaternion.Y - Y * quaternion.X + Z * quaternion.W;
+
+            return result;
+        }
+
+
+        public BabylonVector3 Rotate(BabylonVector3 v)
+        {
+            BabylonMatrix m = new BabylonMatrix();
+            toRotationMatrix(m);
+
+            BabylonVector3 result = new BabylonVector3
+            {
+                X = m.m[0] * v.X + m.m[1] * v.Y + m.m[2] * v.Z,
+                Y = m.m[4] * v.X + m.m[5] * v.Y + m.m[6] * v.Z,
+                Z = m.m[8] * v.X + m.m[9] * v.Y + m.m[10] * v.Z
+            };
+
+            return result;
+        }
     }
 }
