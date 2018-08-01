@@ -250,7 +250,7 @@ namespace Maya2Babylon.Forms
                 WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
                 WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
 
-                Process.Start("http://localhost:" + WebServer.Port);
+                Process.Start(WebServer.url);
 
                 WindowState = FormWindowState.Minimized;
             }
