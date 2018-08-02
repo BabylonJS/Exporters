@@ -17,7 +17,7 @@ namespace Maya2Babylon
 
         public const int Port = 45478;
         public const string prefix = "http://localhost:45478/";
-        public const string url = "http://sandbox.babylonjs.com/?assetUrl=http://localhost:45478/test.babylon";
+        public const string url = "http://sandbox.babylonjs.com/?assetUrl=http://localhost:45478/";
 
         public static bool IsSupported { get; private set; }
 
