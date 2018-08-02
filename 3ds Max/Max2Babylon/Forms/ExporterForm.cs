@@ -241,7 +241,7 @@ namespace Max2Babylon
                 WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
                 WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
 
-                Process.Start("http://localhost:" + WebServer.Port);
+                Process.Start(WebServer.url + WebServer.SceneFilename);
 
                 WindowState = FormWindowState.Minimized;
             }
