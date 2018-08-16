@@ -224,7 +224,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                        mat = objectTM.Multiply(parentNode.GetObjectTM(key).Inverse);
+                        mat = node.GetLocalTM(key);
                     }
                     return mat.ToArray();
                 },
