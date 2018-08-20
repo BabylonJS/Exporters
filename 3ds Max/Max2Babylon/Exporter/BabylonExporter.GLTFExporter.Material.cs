@@ -15,6 +15,7 @@ namespace Max2Babylon
 
             RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
+            GLTFMaterial gltfMaterial = null;
             if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
             {
                 var babylonStandardMaterial = babylonMaterial as BabylonStandardMaterial;
@@ -116,7 +117,7 @@ namespace Max2Babylon
                 // --------------------------------
 
                 RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
-                var gltfMaterial = new GLTFMaterial
+                gltfMaterial = new GLTFMaterial
                 {
                     name = name
                 };
@@ -421,7 +422,7 @@ namespace Max2Babylon
                 // --------------------------------
 
                 RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
-                var gltfMaterial = new GLTFMaterial
+                gltfMaterial = new GLTFMaterial
                 {
                     name = name
                 };
@@ -533,6 +534,16 @@ namespace Max2Babylon
             else
             {
                 RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType(), 2);
+            }
+
+            if (gltfMaterial != null && babylonMaterial.isUnlit)
+            {
+                // Add Unlit extension
+                if (gltfMaterial.extensions == null)
+                {
+                    gltfMaterial.extensions = new GLTFExtensions();
+                }
+                gltfMaterial.extensions["KHR_materials_unlit"] = new object();
             }
         }
 
