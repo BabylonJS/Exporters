@@ -22,6 +22,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public int alphaMode { get; set; }
 
+        public bool isUnlit = false;
+
         public BabylonMaterial()
         {
             backFaceCulling = true;
@@ -39,6 +41,7 @@ namespace BabylonExport.Entities
             wireframe = original.wireframe;
             alpha = original.alpha;
             alphaMode = original.alphaMode;
+            isUnlit = original.isUnlit;
         }
     }
 }

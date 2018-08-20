@@ -88,9 +88,9 @@ namespace BabylonExport.Entities
             SetCustomType("BABYLON.StandardMaterial");
             ambient = new[] {1.0f, 1.0f, 1.0f};
             diffuse = new[] { 1.0f, 1.0f, 1.0f };
-            specular = new[] { 1.0f, 1.0f, 1.0f };
+            specular = new[] { 0f, 0f, 0f };
             emissive = new[] { 0f, 0f, 0f };
-            specularPower = 64;
+            specularPower = 25.6f; // 10%
             maxSimultaneousLights = 4;
             useSpecularOverAlpha = true;
             useEmissiveAsIllumination = false;
