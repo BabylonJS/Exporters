@@ -360,40 +360,32 @@ namespace Maya2Babylon
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
                 var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
-                using (Image image = Image.FromFile(path))
+                byte[] imageBytes = File.ReadAllBytes(path);
+
+                // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
+                imageBytes = padChunk(imageBytes, 4, 0x00);
+
+                // BufferView - Image
+                var buffer = gltf.buffer;
+                var bufferViewImage = new GLTFBufferView
                 {
-                    using (MemoryStream m = new MemoryStream())
-                    {
-                        var imageFormat = gltfImage.FileExtension == "jpeg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                        image.Save(m, imageFormat);
-                        byte[] imageBytes = m.ToArray();
-
-                        // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
-                        imageBytes = padChunk(imageBytes, 4, 0x00);
-
-                        // BufferView - Image
-                        var buffer = gltf.buffer;
-                        var bufferViewImage = new GLTFBufferView
-                        {
-                            name = "bufferViewImage",
-                            buffer = buffer.index,
-                            Buffer = buffer,
-                            byteOffset = buffer.byteLength
-                        };
-                        bufferViewImage.index = gltf.BufferViewsList.Count;
-                        gltf.BufferViewsList.Add(bufferViewImage);
-                        imageBufferViews.Add(bufferViewImage);
+                    name = "bufferViewImage",
+                    buffer = buffer.index,
+                    Buffer = buffer,
+                    byteOffset = buffer.byteLength
+                };
+                bufferViewImage.index = gltf.BufferViewsList.Count;
+                gltf.BufferViewsList.Add(bufferViewImage);
+                imageBufferViews.Add(bufferViewImage);
 
 
-                        gltfImage.uri = null;
-                        gltfImage.bufferView = bufferViewImage.index;
-                        gltfImage.mimeType = "image/" + gltfImage.FileExtension;
+                gltfImage.uri = null;
+                gltfImage.bufferView = bufferViewImage.index;
+                gltfImage.mimeType = "image/" + gltfImage.FileExtension;
 
-                        bufferViewImage.bytesList.AddRange(imageBytes);
-                        bufferViewImage.byteLength += imageBytes.Length;
-                        bufferViewImage.Buffer.byteLength += imageBytes.Length;
-                    }
-                }
+                bufferViewImage.bytesList.AddRange(imageBytes);
+                bufferViewImage.byteLength += imageBytes.Length;
+                bufferViewImage.Buffer.byteLength += imageBytes.Length;
             }
             return imageBufferViews;
         }
