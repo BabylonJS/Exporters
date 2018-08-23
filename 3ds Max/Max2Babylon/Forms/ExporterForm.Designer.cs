@@ -359,9 +359,10 @@
             // chkDracoCompression
             // 
             this.chkDracoCompression.AutoSize = true;
+            this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
             this.chkDracoCompression.Name = "chkDracoCompression";
-            this.chkDracoCompression.Size = new System.Drawing.Size(139, 17);
+            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
             this.chkDracoCompression.TabIndex = 18;
             this.chkDracoCompression.Text = "Use Draco compression";
             this.chkDracoCompression.UseVisualStyleBackColor = true;
