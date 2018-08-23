@@ -222,8 +222,6 @@ namespace Maya2Babylon
                     Process gltfPipeline = new Process();
 
                     // Hide the cmd window that show the gltf-pipeline result
-                    //gltfPipeline.StartInfo.UseShellExecute = false;
-                    //gltfPipeline.StartInfo.CreateNoWindow = true;
                     gltfPipeline.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
                     string arg;
@@ -237,18 +235,22 @@ namespace Maya2Babylon
                         string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
                         arg = $" -i {outputGltfFile} -o {outputGltfFile} -d -s";
                     }
-                    //gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
-                    //gltfPipeline.StartInfo.Arguments = arg;
                     gltfPipeline.StartInfo.FileName = "cmd.exe";
                     gltfPipeline.StartInfo.Arguments = " /C gltf-pipeline.cmd " + arg;
 
                     gltfPipeline.Start();
                     gltfPipeline.WaitForExit();
+
+                    // Check the result code: 0 success - 1 error
+                    if(gltfPipeline.ExitCode != 0)
+                    {
+                        throw new Exception();
+                    }
                 }
-                catch (Exception e)
+                catch
                 {
                     RaiseError("gltf-pipeline module not found.", 1);
-                    RaiseError("The exported file wasn't compressed.");
+                    RaiseError("The exported file is not compressed.");
                 }
             }
 
