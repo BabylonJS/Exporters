@@ -839,7 +839,10 @@ namespace Maya2Babylon
 
                         if (validFormats.Contains(imageFormat))
                         {
-                            File.Copy(sourcePath, destPath, true);
+                            if (sourcePath != destPath)
+                            {
+                                File.Copy(sourcePath, destPath, true);
+                            }
                         }
                         else if (invalidFormats.Contains(imageFormat))
                         {
