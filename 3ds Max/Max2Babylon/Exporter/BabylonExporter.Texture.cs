@@ -445,7 +445,7 @@ namespace Max2Babylon
                 {
                     try
                     {
-                        if (File.Exists(sourcePath))
+                        if (File.Exists(sourcePath) && sourcePath != destPath)
                         {
                             File.Copy(sourcePath, destPath, true);
                         }
@@ -986,7 +986,10 @@ namespace Max2Babylon
 
                         if (validFormats.Contains(imageFormat))
                         {
-                            File.Copy(sourcePath, destPath, true);
+                            if (sourcePath != destPath)
+                            {
+                                File.Copy(sourcePath, destPath, true);
+                            }
                         }
                         else if (invalidFormats.Contains(imageFormat))
                         {
