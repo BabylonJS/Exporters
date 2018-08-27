@@ -388,6 +388,104 @@ namespace Max2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
+            else if (isArnoldMaterial(materialNode))
+            {
+                var propertyContainer = materialNode.IPropertyContainer;
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                {
+                    name = name,
+                    id = id,
+                    isUnlit = isUnlit
+                };
+
+                // Alpha
+                babylonMaterial.alpha = 1.0f - propertyContainer.GetFloatProperty(32);
+
+                // Color: base * weight
+                float[] baseColor = propertyContainer.GetPoint3Property(5).ToArray();
+                float baseWeight = propertyContainer.GetFloatProperty(2);
+                babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
+
+                // Metallic & roughness
+                bool invertRoughness = false;
+                babylonMaterial.roughness = propertyContainer.GetFloatProperty(8);
+                babylonMaterial.metallic = propertyContainer.GetFloatProperty(29);
+
+                // Emissive: emission_color * emission
+                float[] emissionColor = propertyContainer.GetPoint3Property(94).ToArray();
+                float emissionWeight = propertyContainer.GetFloatProperty(91);
+                babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+
+                // --- Textures ---
+                /*
+                // 1 - base_color ;  - diffuse_roughness ; 9 - metalness ; 10 - transparent
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+                
+                if (isUnlit == false)
+                {
+                    // Metallic, roughness, ambient occlusion
+                    ITexmap metallicTexmap = _getTexMap(materialNode, 9);
+                    ITexmap roughnessTexmap = _getTexMap(materialNode, 2);
+
+                    // Check if MR or ORM textures are already merged
+                    bool areTexturesAlreadyMerged = false;
+                    if (metallicTexmap != null && roughnessTexmap != null)
+                    {
+                        string sourcePathMetallic = getSourcePath(metallicTexmap);
+                        string sourcePathRoughness = getSourcePath(roughnessTexmap);
+
+                        if (sourcePathMetallic == sourcePathRoughness)
+                        {
+                            // Metallic and roughness are already merged
+                            RaiseVerbose("Metallic and roughness are already merged", 2);
+                            BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            areTexturesAlreadyMerged = true;
+                        }
+                    }
+                    if (areTexturesAlreadyMerged == false)
+                    {
+                        if (metallicTexmap != null || roughnessTexmap != null)
+                        {
+                            // Merge metallic, roughness and ambient occlusion
+                            RaiseVerbose("Merge metallic and roughness", 2);
+                            BabylonTexture ormTexture = ExportORMTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                        }
+                    }
+
+                    var normalMapAmount = propertyContainer.GetFloatProperty(91);
+                    babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
+
+                    babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
+                }
+                */
+                // Constraints
+                if (babylonMaterial.baseTexture != null)
+                {
+                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.alpha = 1.0f;
+                }
+
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+                {
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                }
+
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                }
+
+                if (babylonMaterial.metallicRoughnessTexture != null)
+                {
+                    babylonMaterial.metallic = 1.0f;
+                    babylonMaterial.roughness = 1.0f;
+                }
+
+                // Add the material to the scene
+                babylonScene.MaterialsList.Add(babylonMaterial);
+            }
             else
             {
                 // isMaterialExportable check should prevent this to happen
@@ -409,6 +507,13 @@ namespace Max2Babylon
             return materialNode.MaterialClass.ToLower() == "multi/sub-object" || // English
                      materialNode.MaterialClass.ToLower() == "multi-/unterobjekt" || // German
                      materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
+        }
+
+        public bool isArnoldMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "standard surface" || // English
+            materialNode.MaterialClass.ToLower() == "standard surface" || // German
+            materialNode.MaterialClass.ToLower() == "standard surface"; // French
         }
 
         /// <summary>
@@ -449,6 +554,12 @@ namespace Max2Babylon
 
                 // Physical material
                 if (isPhysicalMaterial(materialNode))
+                {
+                    return null;
+                }
+
+                // Arnold material
+                if (isArnoldMaterial(materialNode))
                 {
                     return null;
                 }
