@@ -51,6 +51,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbCameraType = new System.Windows.Forms.ComboBox();
+            this.tagLabel = new System.Windows.Forms.Label();
+            this.tagInput = new System.Windows.Forms.TextBox();
             this.groupBox3.SuspendLayout();
             this.grpAutoAnimate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupTo)).BeginInit();
@@ -71,7 +73,7 @@
             this.butOK.Location = new System.Drawing.Point(93, 484);
             this.butOK.Name = "butOK";
             this.butOK.Size = new System.Drawing.Size(75, 23);
-            this.butOK.TabIndex = 1;
+            this.butOK.TabIndex = 100;
             this.butOK.Text = "OK";
             this.butOK.UseVisualStyleBackColor = true;
             this.butOK.Click += new System.EventHandler(this.butOK_Click);
@@ -84,7 +86,7 @@
             this.butCancel.Location = new System.Drawing.Point(174, 484);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(75, 23);
-            this.butCancel.TabIndex = 2;
+            this.butCancel.TabIndex = 101;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
             // 
@@ -96,7 +98,7 @@
             this.groupBox3.Location = new System.Drawing.Point(12, 319);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(319, 156);
-            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabIndex = 30;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Animations";
             // 
@@ -112,7 +114,7 @@
             this.grpAutoAnimate.Location = new System.Drawing.Point(21, 51);
             this.grpAutoAnimate.Name = "grpAutoAnimate";
             this.grpAutoAnimate.Size = new System.Drawing.Size(292, 99);
-            this.grpAutoAnimate.TabIndex = 3;
+            this.grpAutoAnimate.TabIndex = 32;
             this.grpAutoAnimate.TabStop = false;
             // 
             // chkLoop
@@ -122,7 +124,7 @@
             this.chkLoop.Location = new System.Drawing.Point(9, 66);
             this.chkLoop.Name = "chkLoop";
             this.chkLoop.Size = new System.Drawing.Size(47, 17);
-            this.chkLoop.TabIndex = 5;
+            this.chkLoop.TabIndex = 37;
             this.chkLoop.Text = "Loop";
             this.chkLoop.ThreeState = true;
             this.chkLoop.UseVisualStyleBackColor = true;
@@ -137,7 +139,7 @@
             0});
             this.nupTo.Name = "nupTo";
             this.nupTo.Size = new System.Drawing.Size(120, 20);
-            this.nupTo.TabIndex = 3;
+            this.nupTo.TabIndex = 36;
             // 
             // label4
             // 
@@ -145,7 +147,7 @@
             this.label4.Location = new System.Drawing.Point(6, 42);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(23, 13);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 35;
             this.label4.Text = "To:";
             // 
             // nupFrom
@@ -158,7 +160,7 @@
             0});
             this.nupFrom.Name = "nupFrom";
             this.nupFrom.Size = new System.Drawing.Size(120, 20);
-            this.nupFrom.TabIndex = 1;
+            this.nupFrom.TabIndex = 34;
             // 
             // label5
             // 
@@ -166,7 +168,7 @@
             this.label5.Location = new System.Drawing.Point(6, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(33, 13);
-            this.label5.TabIndex = 2;
+            this.label5.TabIndex = 33;
             this.label5.Text = "From:";
             // 
             // chkAutoAnimate
@@ -175,7 +177,7 @@
             this.chkAutoAnimate.Location = new System.Drawing.Point(21, 28);
             this.chkAutoAnimate.Name = "chkAutoAnimate";
             this.chkAutoAnimate.Size = new System.Drawing.Size(88, 17);
-            this.chkAutoAnimate.TabIndex = 0;
+            this.chkAutoAnimate.TabIndex = 31;
             this.chkAutoAnimate.Text = "Auto animate";
             this.chkAutoAnimate.ThreeState = true;
             this.chkAutoAnimate.UseVisualStyleBackColor = true;
@@ -183,12 +185,14 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.tagInput);
+            this.groupBox4.Controls.Add(this.tagLabel);
             this.groupBox4.Controls.Add(this.chkNoExport);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox4.Location = new System.Drawing.Point(12, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(319, 59);
-            this.groupBox4.TabIndex = 7;
+            this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Misc.";
             // 
@@ -199,7 +203,7 @@
             this.chkNoExport.Location = new System.Drawing.Point(21, 28);
             this.chkNoExport.Name = "chkNoExport";
             this.chkNoExport.Size = new System.Drawing.Size(87, 17);
-            this.chkNoExport.TabIndex = 4;
+            this.chkNoExport.TabIndex = 1;
             this.chkNoExport.Text = "Do not export";
             this.chkNoExport.ThreeState = true;
             this.chkNoExport.UseVisualStyleBackColor = true;
@@ -216,7 +220,7 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 77);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(319, 236);
-            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Shadows";
             // 
@@ -226,7 +230,7 @@
             this.ckForceBackFaces.Location = new System.Drawing.Point(24, 61);
             this.ckForceBackFaces.Name = "ckForceBackFaces";
             this.ckForceBackFaces.Size = new System.Drawing.Size(135, 17);
-            this.ckForceBackFaces.TabIndex = 14;
+            this.ckForceBackFaces.TabIndex = 13;
             this.ckForceBackFaces.Text = "Force Back Faces only";
             this.ckForceBackFaces.ThreeState = true;
             this.ckForceBackFaces.UseVisualStyleBackColor = true;
@@ -242,7 +246,7 @@
             this.grpBlurInfo.Location = new System.Drawing.Point(18, 144);
             this.grpBlurInfo.Name = "grpBlurInfo";
             this.grpBlurInfo.Size = new System.Drawing.Size(292, 87);
-            this.grpBlurInfo.TabIndex = 13;
+            this.grpBlurInfo.TabIndex = 20;
             this.grpBlurInfo.TabStop = false;
             this.grpBlurInfo.Text = "Blur info";
             // 
@@ -261,7 +265,7 @@
             0});
             this.nupBlurBoxOffset.Name = "nupBlurBoxOffset";
             this.nupBlurBoxOffset.Size = new System.Drawing.Size(120, 20);
-            this.nupBlurBoxOffset.TabIndex = 13;
+            this.nupBlurBoxOffset.TabIndex = 24;
             this.nupBlurBoxOffset.Value = new decimal(new int[] {
             1,
             0,
@@ -274,7 +278,7 @@
             this.label3.Location = new System.Drawing.Point(6, 52);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(77, 13);
-            this.label3.TabIndex = 14;
+            this.label3.TabIndex = 23;
             this.label3.Text = "Blur box offset:";
             // 
             // nupBlurScale
@@ -292,7 +296,7 @@
             0});
             this.nupBlurScale.Name = "nupBlurScale";
             this.nupBlurScale.Size = new System.Drawing.Size(120, 20);
-            this.nupBlurScale.TabIndex = 11;
+            this.nupBlurScale.TabIndex = 22;
             this.nupBlurScale.Value = new decimal(new int[] {
             1,
             0,
@@ -305,7 +309,7 @@
             this.label2.Location = new System.Drawing.Point(6, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
-            this.label2.TabIndex = 12;
+            this.label2.TabIndex = 21;
             this.label2.Text = "Blur scale:";
             // 
             // nupBias
@@ -319,7 +323,7 @@
             0});
             this.nupBias.Name = "nupBias";
             this.nupBias.Size = new System.Drawing.Size(120, 20);
-            this.nupBias.TabIndex = 9;
+            this.nupBias.TabIndex = 12;
             // 
             // label6
             // 
@@ -327,7 +331,7 @@
             this.label6.Location = new System.Drawing.Point(18, 91);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(34, 13);
-            this.label6.TabIndex = 8;
+            this.label6.TabIndex = 14;
             this.label6.Text = "Type:";
             // 
             // label1
@@ -336,7 +340,7 @@
             this.label1.Location = new System.Drawing.Point(21, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(30, 13);
-            this.label1.TabIndex = 10;
+            this.label1.TabIndex = 11;
             this.label1.Text = "Bias:";
             // 
             // cbCameraType
@@ -351,8 +355,24 @@
             this.cbCameraType.Location = new System.Drawing.Point(21, 108);
             this.cbCameraType.Name = "cbCameraType";
             this.cbCameraType.Size = new System.Drawing.Size(289, 21);
-            this.cbCameraType.TabIndex = 7;
+            this.cbCameraType.TabIndex = 15;
             this.cbCameraType.SelectedIndexChanged += new System.EventHandler(this.cbCameraType_SelectedIndexChanged);
+            // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(159, 28);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.TabIndex = 2;
+            this.tagLabel.Text = "Tag:";
+            // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(194, 25);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.TabIndex = 3;
             // 
             // LightPropertiesForm
             // 
@@ -415,5 +435,7 @@
         private System.Windows.Forms.NumericUpDown nupBlurBoxOffset;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox ckForceBackFaces;
+        private System.Windows.Forms.Label tagLabel;
+        private System.Windows.Forms.TextBox tagInput;
     }
 }

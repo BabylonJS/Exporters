@@ -58,6 +58,9 @@ namespace GLTFExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public GLTFSkin[] skins { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public GLTFExtensions extensions { get; set; }
+
         public string OutputFolder { get; private set; }
         public string OutputFile { get; private set; }
 
@@ -73,6 +76,7 @@ namespace GLTFExport.Entities
         public List<GLTFSampler> SamplersList { get; private set; }
         public List<GLTFAnimation> AnimationsList { get; private set; }
         public List<GLTFSkin> SkinsList { get; private set; }
+
 
         public GLTFBuffer buffer;
         public GLTFBufferView bufferViewScalar;
@@ -103,6 +107,9 @@ namespace GLTFExport.Entities
             SamplersList = new List<GLTFSampler>();
             AnimationsList = new List<GLTFAnimation>();
             SkinsList = new List<GLTFSkin>();
+            extensionsUsed = new List<string>();
+            extensionsRequired = new List<string>();
+            extensions = new GLTFExtensions();
         }
 
         public void Prepare()
@@ -179,6 +186,10 @@ namespace GLTFExport.Entities
             if (extensionsRequired != null && extensionsRequired.Count == 0)
             {
                 extensionsRequired = null;
+            }
+            if (extensions != null && extensions.Count == 0)
+            {
+                extensions = null;
             }
         }
     }

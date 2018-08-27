@@ -1,54 +1,90 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using System.Collections.Generic;
 
 namespace Maya2Babylon
 {
-    partial class BabylonExporter
+    internal partial class BabylonExporter
     {
-        private GLTFNode ExportLight(BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode)
+        public const string KHR_lights = "KHR_lights";  // Name of the extension
+
+
+        /// <summary>
+        /// Add the light the global extensions
+        /// </summary>
+        /// <param name="gltf">The gltf data</param>
+        /// <param name="babylonLight">The light to export</param>
+        /// <returns>the index of the light</returns>
+        private int AddLightExtension(ref GLTF gltf, BabylonLight babylonLight)
         {
-            RaiseMessage("GLTFExporter.Light | ExportLight babylonLight.name=" + babylonLight.name, 1);
-
-            // --------------------------
-            // ---------- Node ----------
-            // --------------------------
-
-            RaiseMessage("GLTFExporter.Light | Node", 2);
-            // Node
-            var gltfNode = new GLTFNode();
-            gltfNode.name = babylonLight.name;
-            gltfNode.index = gltf.NodesList.Count;
-            gltf.NodesList.Add(gltfNode);
-
-            // Hierarchy
-            if (gltfParentNode != null)
+            if (gltf.extensionsUsed.Contains(KHR_lights) == false)
             {
-                RaiseMessage("GLTFExporter.Light | Add " + babylonLight.name + " as child to " + gltfParentNode.name, 3);
-                gltfParentNode.ChildrenList.Add(gltfNode.index);
-                gltfNode.parent = gltfParentNode;
+                gltf.extensionsUsed.Add(KHR_lights);
+            }
+
+            // new light in the gltf extensions
+            GLTFLight light = new GLTFLight
+            {
+                color = babylonLight.diffuse,
+                type = ((GLTFLight.LightType)babylonLight.type).ToString(),
+                intensity = babylonLight.intensity,
+            };
+
+            switch (babylonLight.type)
+            {
+                case (0): // point
+                    light.type = GLTFLight.LightType.point.ToString();
+                    light.range = babylonLight.range;
+                    break;
+                case (1): // directional
+                    light.type = GLTFLight.LightType.directional.ToString();
+                    break;
+                case (2): // spot
+                    light.type = GLTFLight.LightType.spot.ToString();
+                    light.range = babylonLight.range;
+                    light.spot = new GLTFLight.Spot
+                    {
+                        //innerConeAngle = 0, Babylon doesn't support the innerConeAngle
+                        outerConeAngle = babylonLight.angle
+                    };
+                    break;
+                case (3): // ambient
+                    light.type = GLTFLight.LightType.ambient.ToString();
+                    break;
+            }
+
+            Dictionary<string, List<GLTFLight>> KHR_lightsExtension;
+            if (gltf.extensions.ContainsKey(KHR_lights))
+            {
+                KHR_lightsExtension = (Dictionary<string, List<GLTFLight>>)gltf.extensions[KHR_lights];
+                KHR_lightsExtension["lights"].Add(light);
             }
             else
             {
-                // It's a root node
-                // Only root nodes are listed in a gltf scene
-                RaiseMessage("GLTFExporter.Light | Add " + babylonLight.name + " as root node to scene", 3);
-                gltf.scenes[0].NodesList.Add(gltfNode.index);
+                KHR_lightsExtension = new Dictionary<string, List<GLTFLight>>();
+                KHR_lightsExtension["lights"] = new List<GLTFLight>();
+                KHR_lightsExtension["lights"].Add(light);
+                gltf.extensions[KHR_lights] = KHR_lightsExtension;
             }
 
-            // Transform
-            gltfNode.translation = babylonLight.position;
-            // No rotation defined for babylon light. Use identity instead.
-            gltfNode.rotation = new float[4] { 0, 0, 0, 1 };
-            // No scaling defined for babylon light. Use identity instead.
-            gltfNode.scale = new float[3] { 1, 1, 1 };
+            return KHR_lightsExtension["lights"].Count - 1; // the index of the light
+        }
 
-            // Switch coordinate system at object level
-            gltfNode.translation[2] *= -1;
-            gltfNode.rotation[0] *= -1;
-            gltfNode.rotation[1] *= -1;
+        private GLTFNode ExportLight(ref GLTFNode gltfNode, BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
+        {
+            RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
 
-            // TODO - Animations
-            //ExportNodeAnimation(babylonLight, gltf, gltfNode);
+            // new light in the node extensions
+            GLTFLight light = new GLTFLight
+            {
+                light = AddLightExtension(ref gltf, babylonLight)
+            };
+
+            if (gltfNode.extensions == null)
+            {
+                gltfNode.extensions = new GLTFExtensions();
+            }
+            gltfNode.extensions[KHR_lights] = light;
 
             return gltfNode;
         }

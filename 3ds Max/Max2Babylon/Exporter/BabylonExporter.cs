@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 
@@ -20,21 +19,18 @@ namespace Max2Babylon
         public event Action<string, Color, int, bool> OnMessage;
         public event Action<string, int> OnError;
 
-        public bool AutoSave3dsMaxFile { get; set; }
-        public bool ExportHiddenObjects { get; set; }
-        public bool IsCancelled { get; set; }
+        public Form callerForm;
 
-        public bool CopyTexturesToOutput { get; set; }
+        public ExportParameters exportParameters;
+        public bool IsCancelled { get; set; }
 
         public string MaxSceneFileName { get; set; }
 
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
-        private bool isBabylonExported;
+        private bool isBabylonExported, isGltfExported;
 
-        private bool _onlySelected;
-
-        private string exporterVersion = "1.0.3";
+        private string exporterVersion = "1.2.30";
 
         void ReportProgressChanged(int progress)
         {
@@ -87,29 +83,49 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
-
-        public async Task ExportAsync(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, Form callerForm, string scaleFactor)
+        
+        public void Export(ExportParameters exportParameters)
         {
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
+            string scaleFactor = exportParameters.scaleFactor;
             try
             {
                 scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                 scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                 scaleFactorFloat = float.Parse(scaleFactor);
             }
-            catch (Exception e)
+            catch
             {
                 RaiseError("Scale factor is not a valid number.");
                 return;
             }
+
+            long quality = 0L;
+            string txtQuality = exportParameters.txtQuality;
+            try
+            {
+                quality = long.Parse(txtQuality);
+
+                if(quality < 0 || quality > 100)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
+                RaiseError("This parameter set the quality of jpg compression.");
+                return;
+            }
+
+            this.exportParameters = exportParameters;
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
             gameScene.InitialiseIGame(false);
-            this._onlySelected = onlySelected;
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
@@ -117,6 +133,9 @@ namespace Max2Babylon
             IsCancelled = false;
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
+
+            string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
+            string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -138,10 +157,12 @@ namespace Max2Babylon
             var watch = new Stopwatch();
             watch.Start();
 
+            string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
+            isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
 
             // Save scene
-            if (AutoSave3dsMaxFile)
+            if (exportParameters.autoSave3dsMaxFile)
             {
                 RaiseMessage("Saving 3ds max file");
                 var forceSave = Loader.Core.FileSave;
@@ -234,6 +255,29 @@ namespace Max2Babylon
             };
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
 
+
+            // In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
+            // In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
+            // In glTF the default camera look to the horizon (in the +Z direction for glTF reference)
+            RaiseMessage("Update camera rotation and position", 1);
+            for (int index = 0; index < babylonScene.CamerasList.Count; index++)
+            {
+                BabylonCamera camera = babylonScene.CamerasList[index];
+                FixCamera(ref camera, ref babylonScene);
+            }
+
+            // Light for glTF
+            if (isGltfExported)
+            {
+                RaiseMessage("Update light rotation for glTF export", 1);
+                for(int index = 0; index < babylonScene.LightsList.Count; index++)
+                {
+                    BabylonNode light = babylonScene.LightsList[index];
+                    FixNodeRotation(ref light, ref babylonScene, -Math.PI / 2);
+                }
+
+            }
+
             // Main camera
             BabylonCamera babylonMainCamera = null;
             ICameraObject maxMainCameraObject = null;
@@ -261,7 +305,8 @@ namespace Max2Babylon
             }
 
             // Default light
-            if (babylonScene.LightsList.Count == 0)
+            bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
+            if (addDefaultLight && babylonScene.LightsList.Count == 0)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default hemispheric light was added for your convenience", 1);
@@ -354,22 +399,19 @@ namespace Max2Babylon
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-
-                await Task.Run(() =>
+                
+                using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
-                    using (var jsonWriter = new JsonTextWriterOptimized(sw))
-                    {
-                        jsonWriter.Formatting = Formatting.None;
-                        jsonSerializer.Serialize(jsonWriter, babylonScene);
-                    }
-                    File.WriteAllText(outputFile, sb.ToString());
+                    jsonWriter.Formatting = Formatting.None;
+                    jsonSerializer.Serialize(jsonWriter, babylonScene);
+                }
+                File.WriteAllText(outputFile, sb.ToString());
 
-                    if (generateManifest)
-                    {
-                        File.WriteAllText(outputFile + ".manifest",
-                            "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
-                    }
-                });
+                if (exportParameters.generateManifest)
+                {
+                    File.WriteAllText(outputFile + ".manifest",
+                        "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
+                }
 
                 // Binary
                 if (outputFormat == "binary babylon")
@@ -384,7 +426,7 @@ namespace Max2Babylon
             ReportProgressChanged(100);
 
             // Export glTF
-            if (outputFormat == "gltf" || outputFormat == "glb")
+            if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
                 ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
@@ -429,6 +471,12 @@ namespace Max2Babylon
             
             if (babylonNode != null)
             {
+                string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
+                if (tag != "")
+                {
+                    babylonNode.tag = tag;
+                }
+
                 // Export its children
                 for (int i = 0; i < maxGameNode.ChildCount; i++)
                 {
@@ -436,6 +484,8 @@ namespace Max2Babylon
                     exportNodeRec(descendant, babylonScene, maxGameScene);
                 }
             }
+
+
         }
 
         /// <summary>
@@ -454,6 +504,9 @@ namespace Max2Babylon
                     break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Light:
                     isRelevantToExport = IsLightExportable(maxGameNode);
+                    break;
+                case Autodesk.Max.IGameObject.ObjectTypes.Helper:
+                    isRelevantToExport = IsNodeExportable(maxGameNode);
                     break;
                 default:
                     isRelevantToExport = false;
@@ -520,6 +573,7 @@ namespace Max2Babylon
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Mesh);
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Light);
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Camera);
+            addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Helper);
 
             return maxGameNodes;
         }
@@ -553,12 +607,12 @@ namespace Max2Babylon
                 return false;
             }
 
-            if (_onlySelected && !gameNode.MaxNode.Selected)
+            if (exportParameters.exportOnlySelected && !gameNode.MaxNode.Selected)
             {
                 return false;
             }
 
-            if (!ExportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
+            if (!exportParameters.exportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
             {
                 return false;
             }
@@ -573,5 +627,114 @@ namespace Max2Babylon
             invertedWorldMatrix.Invert();
             return invertedWorldMatrix;
         }
+
+
+
+
+
+        /// <summary>
+        /// In 3DS Max default element can look in different direction than the same default element in Babylon or in glTF.
+        /// This function correct the node rotation.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="babylonScene"></param>
+        /// <param name="angle"></param>
+        private void FixNodeRotation(ref BabylonNode node, ref BabylonScene babylonScene, double angle)
+        {
+            string id = node.id;
+            IList<BabylonMesh> meshes = babylonScene.MeshesList.FindAll(mesh => mesh.parentId == null ? false : mesh.parentId.Equals(id));
+
+            RaiseMessage($"{node.name}", 2);
+
+            // fix the vue
+            // Rotation around the axis X of PI / 2 in the indirect direction for camera
+            // double angle = Math.PI / 2; // for camera
+            // double angle = -Math.PI / 2; // for light
+
+            if (node.rotation != null)
+            {
+                node.rotation[0] += (float)angle;
+            }
+            if (node.rotationQuaternion != null)
+            {
+                BabylonQuaternion rotationQuaternion = FixCameraQuaternion(node, angle);
+
+                node.rotationQuaternion = rotationQuaternion.ToArray();
+                node.rotation = rotationQuaternion.toEulerAngles().ToArray();
+            }
+
+            // animation
+            List<BabylonAnimation> animations = new List<BabylonAnimation>(node.animations);
+            BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+            if (animationRotationQuaternion != null)
+            {
+                foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                {
+                    key.values = FixCameraQuaternion(key.values, angle);
+                }
+            }
+            else   // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+            {
+                if (node.extraAnimations != null)
+                {
+                    List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(node.extraAnimations);
+                    animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                    if (animationRotationQuaternion != null)
+                    {
+                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                        {
+                            key.values = FixCameraQuaternion(key.values, angle);
+                        }
+                    }
+                }
+            }
+
+            // fix direct children
+            // Rotation around the axis X of -PI / 2 in the direct direction for camera children
+            angle = -angle;
+            foreach (var mesh in meshes)
+            {
+                RaiseVerbose($"{mesh.name}", 3);
+                mesh.position = new float[] { mesh.position[0], mesh.position[2], -mesh.position[1] };
+
+                // Add a rotation of PI/2 axis X in direct direction
+                if (mesh.rotationQuaternion != null)
+                {
+                    // Rotation around the axis X of -PI / 2 in the direct direction
+                    BabylonQuaternion quaternion = FixChildQuaternion(mesh, angle);
+
+                    mesh.rotationQuaternion = quaternion.ToArray();
+                }
+                if (mesh.rotation != null)
+                {
+                    mesh.rotation[0] += (float)angle;
+                }
+
+
+                // Animations
+                animations = new List<BabylonAnimation>(mesh.animations);
+                // Position
+                BabylonAnimation animationPosition = animations.Find(animation => animation.property.Equals("position"));
+                if (animationPosition != null)
+                {
+                    foreach (BabylonAnimationKey key in animationPosition.keys)
+                    {
+                        key.values = new float[] { key.values[0], key.values[2], -key.values[1] };
+                    }
+                }
+
+                // Rotation
+                animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                if (animationRotationQuaternion != null)
+                {
+                    foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                    {
+                        key.values = FixChildQuaternion(key.values, angle);
+                    }
+                }
+            }
+        }
+
+
     }
 }

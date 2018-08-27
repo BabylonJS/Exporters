@@ -41,6 +41,8 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkLoop, cameras, "babylonjs_autoanimateloop");
             Tools.PrepareNumericUpDown(nupFrom, cameras, "babylonjs_autoanimate_from");
             Tools.PrepareNumericUpDown(nupTo, cameras, "babylonjs_autoanimate_to", 100.0f);
+
+            Tools.PrepareTextBox(tagInput, cameras, "babylonjs_tag");
         }
 
         private void butOK_Click(object sender, EventArgs e)
@@ -60,6 +62,8 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkLoop, cameras, "babylonjs_autoanimateloop");
             Tools.UpdateNumericUpDown(nupFrom, cameras, "babylonjs_autoanimate_from");
             Tools.UpdateNumericUpDown(nupTo, cameras, "babylonjs_autoanimate_to");
+
+            Tools.UpdateTextBox(tagInput, cameras, "babylonjs_tag");
         }
 
         private void chkAutoAnimate_CheckedChanged(object sender, EventArgs e)

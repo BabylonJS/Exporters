@@ -1,4 +1,5 @@
 ﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMayaAnim;
 using BabylonExport.Entities;
 using MayaBabylon;
 using System;
@@ -9,6 +10,12 @@ namespace Maya2Babylon
 {
     internal partial class BabylonExporter
     {
+        private MFnSkinCluster mFnSkinCluster;          // the skin cluster of the mesh/vertices
+        private MFnTransform mFnTransform;              // the transform of the mesh
+        private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
+        private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
+        private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
+
         /// <summary>
         /// 
         /// </summary>
@@ -18,7 +25,7 @@ namespace Maya2Babylon
         private BabylonNode ExportDummy(MDagPath mDagPath, BabylonScene babylonScene)
         {
             RaiseMessage(mDagPath.partialPathName, 1);
-
+            
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
 
             Print(mFnTransform, 2, "Print ExportDummy mFnTransform");
@@ -29,8 +36,8 @@ namespace Maya2Babylon
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
-            // TODO - Animations
-            //exportAnimation(babylonMesh, meshNode);
+            // Animations
+            ExportNodeAnimation(babylonMesh, mFnTransform);
 
             babylonScene.MeshesList.Add(babylonMesh);
 
@@ -48,10 +55,12 @@ namespace Maya2Babylon
             RaiseMessage(mDagPath.partialPathName, 1);
 
             // Transform above mesh
-            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+            mFnTransform = new MFnTransform(mDagPath);
 
             // Mesh direct child of the transform
-            MFnMesh mFnMesh = null;
+            // TODO get the original one rather than the modified?
+            MFnMesh mFnMesh = null;         // Shape of the mesh displayed by maya when the export begins. It contains the material, skin, blendShape information.
+            MFnMesh meshShapeOrig = null;   // Original shape of the mesh
             for (uint i = 0; i < mFnTransform.childCount; i++)
             {
                 MObject childObject = mFnTransform.child(i);
@@ -62,8 +71,15 @@ namespace Maya2Babylon
                     {
                         mFnMesh = _mFnMesh;
                     }
+                    else
+                    {
+                        meshShapeOrig = _mFnMesh;
+                    }
                 }
             }
+
+            bool hasMorphTarget = hasBlendShape(mFnMesh.objectProperty);
+
             if (mFnMesh == null)
             {
                 RaiseError("No mesh found has child of " + mDagPath.fullPathName);
@@ -200,23 +216,50 @@ namespace Maya2Babylon
 
             #endregion
 
-
             if (IsMeshExportable(mFnMesh, mDagPath) == false)
             {
                 return null;
             }
 
-            var babylonMesh = new BabylonMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+            var babylonMesh = new BabylonMesh{
+                                        name = mFnTransform.name,
+                                        id = mFnTransform.uuid().asString(),
+                                        visibility = Loader.GetVisibility(mFnTransform.fullPathName)
+                                    };
+            
+            // Instance
+            // For a mesh with instances, we distinguish between master and instance meshes:
+            //      - a master mesh stores all the info of the mesh (transform, hierarchy, animations + vertices, indices, materials, bones...)
+            //      - an instance mesh only stores the info of the node (transform, hierarchy, animations)
+
+            // Check if this mesh has already been exported as a master mesh
+            BabylonMesh babylonMasterMesh = GetMasterMesh(mFnMesh, babylonMesh);
+            if (babylonMasterMesh != null)
+            {
+                RaiseMessage($"The master mesh {babylonMasterMesh.name} was already exported. This one will be exported as an instance.",2);
+
+                // Export this node as instance
+                var babylonInstanceMesh = new BabylonAbstractMesh { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+
+                //// Add instance to master mesh
+                List<BabylonAbstractMesh> instances = babylonMasterMesh.instances != null ? babylonMasterMesh.instances.ToList() : new List<BabylonAbstractMesh>();
+                instances.Add(babylonInstanceMesh);
+                babylonMasterMesh.instances = instances.ToArray();
+
+                // Export transform / hierarchy / animations
+                ExportNode(babylonInstanceMesh, mFnTransform, babylonScene);
+
+                // Animations
+                ExportNodeAnimation(babylonInstanceMesh, mFnTransform);
+
+                return babylonInstanceMesh;
+            }
 
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
             // Misc.
             // TODO - Retreive from Maya
-            // TODO - What is the difference between isVisible and visibility?
-            // TODO - Fix fatal error: Attempting to save in C:/Users/Fabrice/AppData/Local/Temp/Fabrice.20171205.1613.ma
-            //babylonMesh.isVisible = mDagPath.isVisible;
-            //babylonMesh.visibility = meshNode.MaxNode.GetVisibility(0, Tools.Forever);
             //babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows == 1;
             //babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics == 1;
 
@@ -234,6 +277,9 @@ namespace Maya2Babylon
             {
                 RaiseWarning($"Mesh {babylonMesh.name} has more than 65536 vertices which means that it will require specific WebGL extension to be rendered. This may impact portability of your scene on low end devices.", 2);
             }
+
+            // Animations
+            ExportNodeAnimation(babylonMesh, mFnTransform);
 
             // Material
             MObjectArray shaders = new MObjectArray();
@@ -292,7 +338,78 @@ namespace Maya2Babylon
                 isUVExportSuccess[indexUVSet] = true;
             }
 
-            bool isTangentExportSuccess = true;
+            // skin
+            if(_exportSkin)
+            {
+                mFnSkinCluster = getMFnSkinCluster(mFnMesh);
+            }
+            int maxNbBones = 0;
+            if (mFnSkinCluster != null)
+            {
+                RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
+                Print(mFnSkinCluster, 3, $"Print {mFnSkinCluster.name}");
+
+                // Get the bones dictionary<name, index> => it represents all the bones in the skeleton
+                indexByNodeName = GetIndexByFullPathNameDictionary(mFnSkinCluster);
+
+                // Get the joint names that influence this mesh
+                allMayaInfluenceNames = GetBoneFullPathName(mFnSkinCluster, mFnTransform);
+
+                // Get the max number of joints acting on a vertex
+                int maxNumInfluences = GetMaxInfluence(mFnSkinCluster, mFnTransform, mFnMesh);
+
+                RaiseMessage($"Max influences : {maxNumInfluences}",2);
+                if (maxNumInfluences > 8)
+                {
+                    RaiseWarning($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
+                    RaiseWarning("The result may not be as expected.",2);
+                }
+                maxNbBones = Math.Min(maxNumInfluences, 8);
+
+                if (indexByNodeName != null && allMayaInfluenceNames != null)
+                {
+                    int skeletonId = babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
+
+                    // Bones with zero scale damage the mesh geometry export
+                    // So you need to fid a frame were those bones have a higher scale
+                    if (frameBySkeletonID.ContainsKey(skeletonId))
+                    {
+                        double frame = frameBySkeletonID[skeletonId];
+                        RaiseVerbose($"Export the mesh at the same frame as its skeleton {frame}");
+                    }
+                    else
+                    {
+                        List<MObject> bones = GetRevelantNodes(mFnSkinCluster);
+                        double currentFrame = Loader.GetCurrentTime();
+                        frameBySkeletonID[skeletonId] = currentFrame;
+
+                        if (HasNonZeroScale(bones, currentFrame))
+                        {
+                            RaiseVerbose($"Export the mesh at the current frame {currentFrame}", 2);
+                        }
+                        else
+                        {   // There is at least one bone in the skeleton that has a zero scale
+                            IList<double> validFrames = GetValidFrames(mFnSkinCluster);
+                            if(validFrames.Count > 0)
+                            {
+                                RaiseVerbose($"Export the mesh at the frame {validFrames[0]}", 2);
+                                Loader.SetCurrentTime(validFrames[0]);
+                                frameBySkeletonID[skeletonId] = validFrames[0];
+                            }
+                            else
+                            {
+                                RaiseError($"No valid frame found for the mesh export. The bone scales are too close to zero.", 2);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    mFnSkinCluster = null;
+                }
+            }
+            // Export tangents if option is checked and mesh have tangents
+            bool isTangentExportSuccess = _exportTangents;
 
             // TODO - color, alpha
             //var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
@@ -304,7 +421,13 @@ namespace Maya2Babylon
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
-            ExtractGeometry(mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
+
+            if (hasMorphTarget) // Remove the morph influence to extract the original geometry
+            {
+                setEnvelopesToZeros(mFnMesh.objectProperty);
+            }
+
+            ExtractGeometry(babylonMesh, mFnMesh, vertices, indices, subMeshes, uvSetNames, ref isUVExportSuccess, ref isTangentExportSuccess, optimizeVertices);
 
             if (vertices.Count >= 65536)
             {
@@ -331,6 +454,29 @@ namespace Maya2Babylon
             // Buffers
             babylonMesh.positions = vertices.SelectMany(v => v.Position).ToArray();
             babylonMesh.normals = vertices.SelectMany(v => v.Normal).ToArray();
+
+            // Check that the positions of the vertices are different, otherwise raise a warning
+            float[] firstPosition = vertices[0].Position;
+            bool allEqual = vertices.All(v => v.Position.IsEqualTo(firstPosition, 0.001f));
+            if (allEqual)
+            {
+                RaiseWarning("All the vertices share the same position. Is the mesh invisible? The result may not be as expected.", 2);
+            }
+
+            // export the skin
+            if (mFnSkinCluster != null)
+            {
+                babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
+                babylonMesh.matricesIndices = vertices.Select(v => v.BonesIndices).ToArray();
+
+                babylonMesh.numBoneInfluencers = maxNbBones;
+                if (maxNbBones > 4)
+                {
+                    babylonMesh.matricesWeightsExtra = vertices.SelectMany(v => v.WeightsExtra != null ? v.WeightsExtra.ToArray() : new[] { 0.0f, 0.0f, 0.0f, 0.0f }).ToArray();
+                    babylonMesh.matricesIndicesExtra = vertices.Select(v => v.BonesIndicesExtra).ToArray();
+                }
+            }
+
             // Tangent
             if (isTangentExportSuccess)
             {
@@ -359,6 +505,44 @@ namespace Maya2Babylon
             babylonMesh.indices = indices.ToArray();
 
 
+            // ------------------------
+            // ---- Morph targets -----
+            // ------------------------
+            if (hasMorphTarget)
+            {
+                restoreEnvelopes(mFnMesh.objectProperty);
+                
+                // Maya blend shape influencing the mesh
+                RaiseMessage("Morph target", 2);
+                IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh.objectProperty);
+
+                if (_exportSkin && mFnSkinCluster != null)
+                {
+                    RaiseWarning("A mesh with both skin and morph target is not fully supported.", 3);
+                }
+
+                if(blendShapeDeformers.Count > 1)
+                {
+                    RaiseWarning($"There are {blendShapeDeformers.Count} blend shapes. The exporter currently support one. So all blend shapes will be exported as one.", 3);
+                }
+
+                // Morph Target Manager
+                BabylonMorphTargetManager babylonMorphTargetManager = new BabylonMorphTargetManager();
+                babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
+                babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
+
+                IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(babylonMesh, mFnMesh.objectProperty);
+                babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
+
+                if (babylonMorphTargets.Count > 7)
+                {
+                    RaiseWarning($"There are {babylonMorphTargets.Count} morph targets.", 3);
+                    RaiseWarning($"Please be aware that most of the browsers are limited to 16 attributes per mesh. Adding a single morph target to a mesh add 2 new attributes (position + normal). This could quickly go beyond the max attributes limitation.", 3);
+                }
+            }
+
+
+
             babylonScene.MeshesList.Add(babylonMesh);
             RaiseMessage("BabylonExporter.Mesh | done", 2);
 
@@ -376,7 +560,7 @@ namespace Maya2Babylon
         /// <param name="uvSetNames"></param>
         /// <param name="isUVExportSuccess"></param>
         /// <param name="optimizeVertices"></param>
-        private void ExtractGeometry(MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess, bool optimizeVertices)
+        private void ExtractGeometry(BabylonMesh babylonMesh, MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess, bool optimizeVertices)
         {
             List<GlobalVertex>[] verticesAlreadyExported = null;
 
@@ -405,7 +589,7 @@ namespace Maya2Babylon
                 var minVertexIndexSubMesh = int.MaxValue;
                 var maxVertexIndexSubMesh = int.MinValue;
                 var subMesh = new BabylonSubMesh { indexStart = indices.Count, materialIndex = indexShader };
-                
+
                 // For each polygon of this mesh
                 for (int polygonId = 0; polygonId < faceMatIndices.Count; polygonId++)
                 {
@@ -468,6 +652,9 @@ namespace Maya2Babylon
                                         vertex.CurrentIndex = vertices.Count;
                                         verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
                                         vertices.Add(vertex);
+
+                                        // Store vertex data
+                                        babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
                                     }
                                 }
                                 else
@@ -477,12 +664,19 @@ namespace Maya2Babylon
                                     vertex.CurrentIndex = vertices.Count;
                                     verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
                                     vertices.Add(vertex);
+
+                                    // Store vertex data
+                                    babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
+
                                 }
                             }
                             else
                             {
                                 vertex.CurrentIndex = vertices.Count;
                                 vertices.Add(vertex);
+
+                                // Store vertex data
+                                babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
                             }
 
                             indices.Add(vertex.CurrentIndex);
@@ -551,7 +745,7 @@ namespace Maya2Babylon
                     // Invert W to switch to left handed system
                     vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
                 }
-                catch (Exception e)
+                catch
                 {
                     // Exception raised when mesh don't have tangents
                     isTangentExportSuccess = false;
@@ -593,7 +787,7 @@ namespace Maya2Babylon
                     mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
                     vertex.UV = new float[] { u, v };
                 }
-                catch (Exception e)
+                catch
                 {
                     // An exception is raised when a vertex isn't mapped to an UV coordinate
                     isUVExportSuccess[indexUVSet] = false;
@@ -608,13 +802,127 @@ namespace Maya2Babylon
                     mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
                     vertex.UV2 = new float[] { u, v };
                 }
-                catch (Exception e)
+                catch
                 {
                     // An exception is raised when a vertex isn't mapped to an UV coordinate
                     isUVExportSuccess[indexUVSet] = false;
                 }
             }
 
+            // skin
+            if (mFnSkinCluster != null)
+            {
+                // Filter null weights
+                Dictionary<int, double> weightByInfluenceIndex = new Dictionary<int, double>(); // contains the influence indices with weight > 0
+
+                // Export Weights and BonesIndices for the vertex
+                // Get the weight values of all the influences for this vertex
+                allMayaInfluenceWeights = new MDoubleArray();
+                MGlobal.executeCommand($"skinPercent -query -value {mFnSkinCluster.name} {mFnTransform.name}.vtx[{vertexIndexGlobal}]",
+                                        allMayaInfluenceWeights);
+                allMayaInfluenceWeights.get(out double[] allInfluenceWeights);
+
+                for (int influenceIndex = 0; influenceIndex < allInfluenceWeights.Length; influenceIndex++)
+                {
+                    double weight = allInfluenceWeights[influenceIndex];
+
+                    if (weight > 0)
+                    {
+                        try
+                        {
+                            // add indice and weight in the local lists
+                            weightByInfluenceIndex.Add(indexByNodeName[allMayaInfluenceNames[influenceIndex]], weight);
+                        }
+                        catch (Exception e)
+                        {
+                            RaiseError(e.Message, 2);
+                            RaiseError(e.StackTrace, 3);
+                        }
+                    }
+                }
+
+                // normalize weights => Sum weights == 1
+                Normalize(ref weightByInfluenceIndex);
+
+                // decreasing sort
+                OrderByDescending(ref weightByInfluenceIndex);
+
+                int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
+                float weight0 = 0;
+                float weight1 = 0;
+                float weight2 = 0;
+                float weight3 = 0;
+                int bone0 = bonesCount;
+                int bone1 = bonesCount;
+                int bone2 = bonesCount;
+                int bone3 = bonesCount;
+                int nbBones = weightByInfluenceIndex.Count; // number of bones/influences for this vertex
+
+                if (nbBones == 0)
+                {
+                    weight0 = 1.0f;
+                    bone0 = bonesCount;
+                }
+
+                if (nbBones > 0)
+                {
+                    bone0 = weightByInfluenceIndex.ElementAt(0).Key;
+                    weight0 = (float)weightByInfluenceIndex.ElementAt(0).Value;
+
+                    if (nbBones > 1)
+                    {
+                        bone1 = weightByInfluenceIndex.ElementAt(1).Key;
+                        weight1 = (float)weightByInfluenceIndex.ElementAt(1).Value;
+
+                        if (nbBones > 2)
+                        {
+                            bone2 = weightByInfluenceIndex.ElementAt(2).Key;
+                            weight2 = (float)weightByInfluenceIndex.ElementAt(2).Value;
+
+                            if (nbBones > 3)
+                            {
+                                bone3 = weightByInfluenceIndex.ElementAt(3).Key;
+                                weight3 = (float)weightByInfluenceIndex.ElementAt(3).Value;
+                            }
+                        }
+                    }
+                }
+
+                float[] weights = { weight0, weight1, weight2, weight3 };
+                vertex.Weights = weights;
+                vertex.BonesIndices = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+
+                if (nbBones > 4)
+                {
+                    bone0 = weightByInfluenceIndex.ElementAt(4).Key;
+                    weight0 = (float)weightByInfluenceIndex.ElementAt(4).Value;
+                    weight1 = 0;
+                    weight2 = 0;
+                    weight3 = 0;
+
+                    if (nbBones > 5)
+                    {
+                        bone1 = weightByInfluenceIndex.ElementAt(5).Key;
+                        weight1 = (float)weightByInfluenceIndex.ElementAt(4).Value;
+
+                        if (nbBones > 6)
+                        {
+                            bone2 = weightByInfluenceIndex.ElementAt(6).Key;
+                            weight2 = (float)weightByInfluenceIndex.ElementAt(4).Value;
+
+                            if (nbBones > 7)
+                            {
+                                bone3 = weightByInfluenceIndex.ElementAt(7).Key;
+                                weight3 = (float)weightByInfluenceIndex.ElementAt(7).Value;
+                            }
+                        }
+                    }
+
+                    float[] weightsExtra = { weight0, weight1, weight2, weight3 };
+                    vertex.WeightsExtra = weightsExtra;
+                    vertex.BonesIndicesExtra = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+                }
+            }
             return vertex;
         }
         
@@ -660,6 +968,314 @@ namespace Maya2Babylon
         private bool IsMeshExportable(MFnDagNode mFnDagNode, MDagPath mDagPath)
         {
             return IsNodeExportable(mFnDagNode, mDagPath);
+        }
+
+        private MFnSkinCluster getMFnSkinCluster(MFnMesh mFnMesh)
+        {
+            MFnSkinCluster mFnSkinCluster = null;
+
+            MPlugArray connections = new MPlugArray();
+            mFnMesh.getConnections(connections);
+            foreach (MPlug connection in connections)
+            {
+                MObject source = connection.source.node;
+                if (source != null)
+                {
+                    if (source.hasFn(MFn.Type.kSkinClusterFilter))
+                    {
+                        mFnSkinCluster = new MFnSkinCluster(source);
+                    }
+
+                    if ((mFnSkinCluster == null) && (source.hasFn(MFn.Type.kSet) || source.hasFn(MFn.Type.kPolyNormalPerVertex)))
+                    {
+                        mFnSkinCluster = getMFnSkinCluster(source);
+                    }
+                }
+            }
+
+            return mFnSkinCluster;
+        }
+
+        private MFnSkinCluster getMFnSkinCluster(MObject mObject)
+        {
+            MFnSkinCluster mFnSkinCluster = null;
+
+            MFnDependencyNode mFnDependencyNode = new MFnDependencyNode(mObject);
+            MPlugArray connections = new MPlugArray();
+            mFnDependencyNode.getConnections(connections);
+            for (int index = 0; index < connections.Count && mFnSkinCluster == null; index++)
+            {
+                MObject source = connections[index].source.node;
+                if (source != null && source.hasFn(MFn.Type.kSkinClusterFilter))
+                {
+                    mFnSkinCluster = new MFnSkinCluster(source);
+                }
+            }
+
+            return mFnSkinCluster;
+        }
+
+
+        /// <summary>
+        /// Instances manager
+        /// </summary>
+        private List<MFnMesh> exportedMFnMesh = new List<MFnMesh>();
+        private List<BabylonMesh> exportedMasterBabylonMesh = new List<BabylonMesh>();
+        private BabylonMesh GetMasterMesh(MFnMesh mFnMesh, BabylonMesh babylonMesh)
+        {
+            BabylonMesh babylonMasterMesh = null;
+            int index = exportedMFnMesh.FindIndex(mesh => mesh.fullPathName.Equals(mFnMesh.fullPathName));
+
+            if(index == -1)
+            {
+                exportedMFnMesh.Add(mFnMesh);
+                exportedMasterBabylonMesh.Add(babylonMesh);
+            }
+            else
+            {
+                babylonMasterMesh = exportedMasterBabylonMesh[index];
+            }
+
+            return babylonMasterMesh;
+        }
+
+
+        /// <summary>
+        /// Check if a Maya object is link to a blend shape by counting its connections to it. 
+        /// </summary>
+        /// <param name="mObject"></param>
+        /// <returns>
+        /// True, if there at least one connection to a blend shape
+        /// False, otherwise
+        /// </returns>
+        private bool hasBlendShape(MObject mObject)
+        {
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
+            return blendShapeDeformers.Count > 0;
+        }
+
+
+        /// <summary>
+        /// Search the blend shapes through the connections of the Maya object
+        /// </summary>
+        /// <param name="mObject"></param>
+        /// <returns>A list with all blend shape linked to the object</returns>
+        private IDictionary<MObject, IList<MFnBlendShapeDeformer>> blendShapeByMObject = new Dictionary<MObject, IList<MFnBlendShapeDeformer>>();
+        private IList<MFnBlendShapeDeformer> GetBlendShape(MObject mObject)
+        {
+            var pair =  blendShapeByMObject.FirstOrDefault(item => item.Key.equalEqual(mObject));
+            if (! pair.Equals(default(KeyValuePair<MObject, IList<MFnBlendShapeDeformer>>)))
+            {
+                return pair.Value;
+            }
+
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShapeSub(mObject);
+            
+            // uniqueness
+            IList <MFnBlendShapeDeformer> uniqBlendShapeDeformers = new List<MFnBlendShapeDeformer>();
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
+            {
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+
+                if (uniqBlendShapeDeformers.Count(item => item.name.Equals(blendShapeDeformer.name)) == 0)
+                {
+                    uniqBlendShapeDeformers.Add(blendShapeDeformer);
+                }
+            }
+
+            blendShapeByMObject[mObject] = uniqBlendShapeDeformers;
+            return uniqBlendShapeDeformers;
+        }
+
+
+        private IList<MFnBlendShapeDeformer> GetBlendShapeSub(MObject mObject)
+        {
+            List<MFnBlendShapeDeformer> blendShapeDeformers = new List<MFnBlendShapeDeformer>();
+
+            MFnDependencyNode dependencyNode = new MFnDependencyNode(mObject);
+            MPlugArray connections = new MPlugArray();
+            dependencyNode.getConnections(connections);
+            foreach (MPlug connection in connections)
+            {
+                MObject source = connection.source.node;
+                if (source != null)
+                {
+                    if (source.hasFn(MFn.Type.kSet))
+                    {
+                        blendShapeDeformers.AddRange(GetBlendShapeSub(source));
+                    }
+
+                    if (source.hasFn(MFn.Type.kBlendShape))
+                    {
+                        MFnBlendShapeDeformer blendShapeDeformer = new MFnBlendShapeDeformer(source);
+                        blendShapeDeformers.Add(blendShapeDeformer);
+                    }
+                }
+            }
+
+            return blendShapeDeformers;
+        }
+
+
+
+        /// <summary>
+        /// Convert a Maya blendShape influencing a Maya object into a BabylonMorphTarget list
+        /// </summary>
+        /// <param name="baseObject">The Maya object influenced by the blendShapes</param>
+        /// <param name="blendShapeDeformers">List of Maya blendShape. Use GetBlendShape function to get the right one.</param>
+        /// <returns>BabylonMorphTarget list</returns>
+        private IList<BabylonMorphTarget> GetMorphTargets(BabylonMesh babylonMesh, MObject baseObject)
+        {
+            // Morph Targets
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(baseObject);
+            IList <BabylonMorphTarget> babylonMorphTargets = new List<BabylonMorphTarget>();
+
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
+            {
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+
+                float envelope = blendShapeDeformer.envelope;
+
+                MIntArray weightIndexList = new MIntArray();    // list of weight. For each weight, there are multiple targets
+                blendShapeDeformer.weightIndexList(weightIndexList);
+
+
+                for (int i = 0; i < weightIndexList.Count; i++)
+                {
+                    int weightIndex = weightIndexList[i];
+                    float weight = blendShapeDeformer.weight((uint)weightIndex);
+
+                    MObjectArray targets = new MObjectArray();  // the targets for the given weight
+                    blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
+
+                    for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
+                    {
+                        MObject target = targets[targetIndex];
+                        MFnMesh targetMesh = new MFnMesh(target);
+
+                        BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
+                        {
+                            name = $"{blendShapeDeformer.name}_{targetMesh.name}",
+                            influence = envelope * weight
+                        };
+                        babylonMorphTargets.Add(babylonMorphTarget);
+
+                        // Target geometry
+                        var targetVertices = new List<GlobalVertex>();
+                        var uvSetNames = new MStringArray();
+                        bool[] isUVExportSuccess = { false, false };
+                        bool isTangentExportSuccess = _exportTangents;
+                        bool optimizeVertices = _optimizeVertices;
+
+                        List<VertexData> vertexDatas = babylonMesh.VertexDatas;
+                        for(int vertexIndex = 0; vertexIndex < vertexDatas.Count; vertexIndex++)
+                        {
+                            VertexData vertexData = vertexDatas[vertexIndex];
+
+                            MPoint position = new MPoint();
+                            targetMesh.getPoint(vertexData.vertexIndexGlobal, position);
+                            MVector normal = new MVector();
+                            targetMesh.getFaceVertexNormal(vertexData.polygonId, vertexData.vertexIndexGlobal, normal);
+
+                            // Switch coordinate system at object level
+                            position.z *= -1;
+                            normal.z *= -1;
+
+                            GlobalVertex vertex = new GlobalVertex
+                            {
+                                BaseIndex = vertexData.vertexIndexGlobal,
+                                Position = position.toArray(),
+                                Normal = normal.toArray()
+                            };
+
+                            if (isTangentExportSuccess)
+                            {
+                                try
+                                {
+                                    MVector tangent = new MVector();
+                                    targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
+
+                                    // Switch coordinate system at object level
+                                    tangent.z *= -1;
+
+                                    int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
+                                    bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
+
+                                    // Invert W to switch to left handed system
+                                    vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                }
+                                catch
+                                {
+                                    // Exception raised when mesh don't have tangents
+                                    isTangentExportSuccess = false;
+                                }
+                            }
+
+                            targetVertices.Add(vertex);
+                        }
+
+                        babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
+                        babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
+
+                        // Tangent
+                        if (!isBabylonExported && isTangentExportSuccess)
+                        {
+                            babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
+                        }
+
+                        // Animation
+                        babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                    }
+
+                }
+            }
+
+            return babylonMorphTargets;
+        }
+
+
+
+        /// <summary>
+        /// Set the blend shape envelope to 0.
+        /// </summary>
+        /// <param name="mObject"></param>
+        private IDictionary<MObject, IList<float>> envelopeByObject = new Dictionary<MObject, IList<float>>();
+        private void setEnvelopesToZeros(MObject mObject)
+        {
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
+            IList<float> envelopes = new List<float>();
+
+            for (int index = 0; index < blendShapeDeformers.Count; index++)
+            {
+                MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+
+                envelopes.Add( blendShapeDeformer.envelope);
+
+                blendShapeDeformer.envelope = 0f;
+            }
+
+            envelopeByObject[mObject] = envelopes;
+        }
+
+        /// <summary>
+        /// Restore the blend shape envelope to its previous value (before the setEnvelopesToZeros call)
+        /// </summary>
+        /// <param name="mObject"></param>
+        private void restoreEnvelopes(MObject mObject)
+        {
+            try
+            {
+                IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
+                IList<float> envelopes = envelopeByObject.First(item => item.Key.equalEqual(mObject)).Value;
+
+                for(int index = 0; index < blendShapeDeformers.Count; index++)
+                {
+                    MFnBlendShapeDeformer blendShapeDeformer = blendShapeDeformers[index];
+                    float envelope = envelopes[index];
+                    blendShapeDeformer.envelope = envelope;
+                }
+            }
+            catch { }
         }
     }
 }

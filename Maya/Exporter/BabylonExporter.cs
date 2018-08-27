@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Maya2Babylon
@@ -17,10 +16,14 @@ namespace Maya2Babylon
         private bool _onlySelected;
         private bool _exportHiddenObjects;
         private bool _optimizeVertices;
+        private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
         private bool ExportQuaternionsInsteadOfEulers { get; set; }
         private bool isBabylonExported;
+        private bool _exportSkin;
+        private long _quality;
+        private bool _dracoCompression;
 
         public bool IsCancelled { get; set; }
 
@@ -33,11 +36,21 @@ namespace Maya2Babylon
         /// Those cameras are always ignored when exporting (ie even when exporting hidden objects)
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
-        
-        private string exporterVersion = "1.0.6";
 
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest, bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput, bool optimizeVertices, string scaleFactor)
+        private string exporterVersion = "1.2.16";
+
+        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
+                            bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression)
         {
+            // Check if the animation is running
+            MGlobal.executeCommand("play -q - state", out int isPlayed);
+            if(isPlayed == 1)
+            {
+                RaiseError("Stop the animation before exporting.");
+                return;
+            }
+
             // Check input text is valid
             var scaleFactorFloat = 1.0f;
             try
@@ -46,9 +59,25 @@ namespace Maya2Babylon
                 scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                 scaleFactorFloat = float.Parse(scaleFactor);
             }
-            catch(Exception e)
+            catch
             {
                 RaiseError("Scale factor is not a valid number.");
+                return;
+            }
+
+            try
+            {
+                _quality = long.Parse(quality);
+
+                if (_quality < 0 || _quality > 100)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
+                RaiseError("This parameter set the quality of jpg compression.");
                 return;
             }
 
@@ -60,8 +89,11 @@ namespace Maya2Babylon
             _onlySelected = onlySelected;
             _exportHiddenObjects = exportHiddenObjects;
             _optimizeVertices = optimizeVertices;
+            _exportTangents = exportTangents;
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
+            _exportSkin = exportSkin;
+            _dracoCompression = dracoCompression;
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -151,10 +183,16 @@ namespace Maya2Babylon
             PrintDAG(true);
             PrintDAG(false);
 
+            // Store the current frame. It can be change to find a proper one for the node/bone export
+            double currentTime = Loader.GetCurrentTime();
+
             // --------------------
             // ------ Nodes -------
             // --------------------
             RaiseMessage("Exporting nodes");
+
+            // It makes each morph target manager export starts from id = 0.
+            BabylonMorphTargetManager.Reset();
 
             // Clear materials
             referencedMaterials.Clear();
@@ -168,7 +206,7 @@ namespace Maya2Babylon
                 MDagPath mDagPath = new MDagPath();
                 dagIterator.getPath(mDagPath);
                 
-                // Check if one of its descendant (direct or not) is a mesh/camera/light
+                // Check if one of its descendant (direct or not) is a mesh/camera/light/locator
                 if (isNodeRelevantToExportRec(mDagPath)
                     // Ensure it's not one of the default cameras used as viewports in Maya
                     && defaultCameraNames.Contains(mDagPath.partialPathName) == false)
@@ -334,6 +372,23 @@ namespace Maya2Babylon
             UpdateMeshesMaterialId(babylonScene);
             RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
 
+
+            // Export skeletons
+            if (_exportSkin && skins.Count > 0)
+            {
+                progressSkin = 0;
+                progressSkinStep = 100 / skins.Count;
+                ReportProgressChanged(progressSkin);
+                RaiseMessage("Exporting skeletons");
+                foreach (var skin in skins)
+                {
+                    ExportSkin(skin, babylonScene);
+                }
+            }
+
+            // set back the frame
+            Loader.SetCurrentTime(currentTime);
+
             // Output
             babylonScene.Prepare(false, false);
             if (isBabylonExported)
@@ -364,7 +419,7 @@ namespace Maya2Babylon
         }
 
         /// <summary>
-        /// Return true if node descendant hierarchy has any exportable Mesh, Camera or Light
+        /// Return true if node descendant hierarchy has any exportable Mesh, Camera, Light or Locator
         /// </summary>
         private bool isNodeRelevantToExportRec(MDagPath mDagPathRoot)
         {
@@ -432,8 +487,8 @@ namespace Maya2Babylon
                     return MFn.Type.kLight;
                 }
 
-                // Target of target camera is both a locator and a lookAt
-                if (mDagPath.hasFn(MFn.Type.kLocator) && mDagPath.hasFn(MFn.Type.kLookAt) && IsNodeExportable(nodeObject, mDagPath))
+                // Locators
+                if (mDagPath.hasFn(MFn.Type.kLocator) && IsNodeExportable(nodeObject, mDagPath))
                 {
                     return MFn.Type.kLocator;
                 }
@@ -446,9 +501,13 @@ namespace Maya2Babylon
         /// 
         /// </summary>
         /// <param name="isFull">If true all nodes are printed, otherwise only relevant ones</param>
-        private void PrintDAG(bool isFull)
+        private void PrintDAG(bool isFull, MObject root = null)
         {
             var dagIterator = new MItDag(MItDag.TraversalType.kDepthFirst);
+            if (root != null)
+            {
+                dagIterator.reset(root);
+            }
             RaiseMessage("DAG: " + (isFull ? "full" : "relevant"));
             while (!dagIterator.isDone)
             {

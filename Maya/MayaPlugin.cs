@@ -1,10 +1,12 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using Maya2Babylon.Forms;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 [assembly: MPxCommandClass(typeof(Maya2Babylon.toBabylon), "toBabylon")]
 [assembly: ExtensionPlugin(typeof(Maya2Babylon.MayaPlugin), "Any")]
+[assembly: MPxCommandClass(typeof(Maya2Babylon.AnimationGroups), "AnimationGroups")]
 
 namespace Maya2Babylon
 {
@@ -21,6 +23,7 @@ namespace Maya2Babylon
             MenuPath = MGlobal.executeCommandStringResult($@"menu - parent MayaWindow - label ""Babylon"";");
             // Add item to this menu
             MGlobal.executeCommand($@"menuItem - label ""Babylon File Exporter..."" - command ""toBabylon"";");
+            MGlobal.executeCommand($@"menuItem - label ""Animation groups"" - command ""AnimationGroups"";");
 
             MGlobal.displayInfo("Babylon plug-in initialized");
             return true;
@@ -74,6 +77,32 @@ namespace Maya2Babylon
                 form = null;
             }
             return true;
+        }
+    }
+
+    /// <summary>
+    /// For the animation groups form
+    /// </summary>
+    public class AnimationGroups : MPxCommand, IMPxCommand
+    {
+        public static AnimationForm animationForm = null;
+
+        public override void doIt(MArgList args)
+        {
+            if (animationForm == null)
+            {
+                animationForm = new AnimationForm();
+                animationForm.On_animationFormClosed += On_animationFormClosed;
+            }
+
+            animationForm.Show();
+            animationForm.BringToFront();
+            animationForm.WindowState = FormWindowState.Normal;
+        }
+
+        private void On_animationFormClosed()
+        {
+            animationForm = null;
         }
     }
 }

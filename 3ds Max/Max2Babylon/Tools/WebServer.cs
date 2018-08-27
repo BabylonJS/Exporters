@@ -9,103 +9,13 @@ namespace Max2Babylon
 {
     public static class WebServer
     {
+
         private static readonly HttpListener listener;
         private static Task runningTask;
 
-        const string HtmlResponseText = @"
-<!doctype html>
-<html>
-
-<head>
-    <title>Babylon.js</title>
-    <script type='text/javascript' src='https://preview.babylonjs.com/oimo.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/cannon.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/babylon.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/loaders/babylon.glTFFileLoader.js'></script>
-    <script type='text/javascript' src='https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js'></script>
-    <style type='text/css'>
-        html, body, canvas {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        #debugLayerButton {
-            position: absolute;
-            border: white solid 1px;
-            background: rgba(128, 128, 128, 0.3);
-            color: white;
-            left: 50%;
-            width: 100px;
-            margin-left:-50px;
-            bottom: 10px;
-        }
-    </style>
-</head>
-
-<body>
-    <canvas id='canvas'></canvas>
-    <button id='debugLayerButton'>Debug layer</button>
-    <script type='text/javascript'>
-        var canvas = document.getElementById('canvas');
-        var engine = new BABYLON.Engine(canvas, true);
-       
-        BABYLON.SceneLoader.Load('', '###SCENE###', engine, function (newScene) {
-
-            // Attach camera to canvas inputs
-            if (!newScene.activeCamera || newScene.lights.length === 0) {
-                newScene.createDefaultCameraOrLight(true);
-                // Enable camera's behaviors
-                newScene.activeCamera.useFramingBehavior = true;
-
-                var framingBehavior = newScene.activeCamera.getBehaviorByName('Framing');
-                framingBehavior.framingTime = 0;
-                framingBehavior.elevationReturnTime = -1;
-
-                if (newScene.meshes.length) {
-                    var worldExtends = newScene.getWorldExtends();
-                    newScene.activeCamera.lowerRadiusLimit = null;
-                    framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
-                }
-
-                newScene.activeCamera.pinchPrecision = 200 / newScene.activeCamera.radius;
-                newScene.activeCamera.upperRadiusLimit = 5 * newScene.activeCamera.radius;
-
-                newScene.activeCamera.wheelDeltaPercentage = 0.01;
-                newScene.activeCamera.pinchDeltaPercentage = 0.01;
-            }
-
-            newScene.activeCamera.attachControl(canvas);
-
-            var keyboard = newScene.activeCamera.inputs.attached.keyboard;
-            keyboard.keysUp.push(87);
-            keyboard.keysDown.push(83);
-            keyboard.keysLeft.push(65);
-            keyboard.keysRight.push(68);
-
-            engine.runRenderLoop(function() {
-                newScene.render();
-            });
-
-            window.addEventListener('resize', function () {
-                engine.resize();
-            });
-
-            document.getElementById('debugLayerButton').addEventListener('click', function () {
-                if (newScene.debugLayer.isVisible()) {
-                    newScene.debugLayer.hide();
-                } else {
-                    newScene.debugLayer.show();
-                }
-            });
-        });
-    </script>
-</body>
-</html>";
-
         public const int Port = 45478;
+        public const string prefix = "http://localhost:45478/";
+        public const string url = "http://sandbox.babylonjs.com/?assetUrl=http://localhost:45478/";
 
         public static bool IsSupported { get; private set; }
 
@@ -121,7 +31,7 @@ namespace Max2Babylon
                     return;
                 }
 
-                listener.Prefixes.Add("http://localhost:" + Port + "/");
+                listener.Prefixes.Add(prefix);
                 listener.Start();
 
 
@@ -149,37 +59,29 @@ namespace Max2Babylon
                     var url = request.Url;
 
                     context.Response.AddHeader("Cache-Control", "no-cache");
-                    if (string.IsNullOrEmpty(url.LocalPath) || url.LocalPath == "/")
-                    {
+                    context.Response.AppendHeader("Access-Control-Allow-Origin", "*");  // Allow CROS
 
-                        var responseText = HtmlResponseText.Replace("###SCENE###", SceneFilename+"?once="+r.Next());
-                        WriteResponse(context, responseText);
-                    }
-                    else
+                    try
                     {
-                        try
+                        var path = Path.Combine(SceneFolder, HttpUtility.UrlDecode(url.PathAndQuery.Substring(1)));
+                        var questionMarkIndex = path.IndexOf("?");
+                        if (questionMarkIndex != -1)
                         {
-                            var path = Path.Combine(SceneFolder, HttpUtility.UrlDecode(url.PathAndQuery.Substring(1)));
-                            var questionMarkIndex = path.IndexOf("?");
-                            if (questionMarkIndex != -1)
-                            {
-                                path = path.Substring(0, questionMarkIndex);
-                            }
-                            var hashIndex = path.IndexOf("#");
-                            if (hashIndex != -1)
-                            {
-                                path = path.Substring(0, hashIndex);
-                            }
-                            var buffer = File.ReadAllBytes(path);
-                            WriteResponse(context, buffer);
+                            path = path.Substring(0, questionMarkIndex);
                         }
-                        catch
+                        var hashIndex = path.IndexOf("#");
+                        if (hashIndex != -1)
                         {
-                            context.Response.StatusCode = 404;
-                            context.Response.Close();
+                            path = path.Substring(0, hashIndex);
                         }
+                        var buffer = File.ReadAllBytes(path);
+                        WriteResponse(context, buffer);
                     }
-
+                    catch
+                    {
+                        context.Response.StatusCode = 404;
+                        context.Response.Close();
+                    }
                 }
             }
             catch

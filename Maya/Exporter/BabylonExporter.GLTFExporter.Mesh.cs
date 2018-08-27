@@ -16,7 +16,7 @@ namespace Maya2Babylon
             // --- Mesh from babylon ----
             // --------------------------
 
-            if (babylonMesh.positions == null)
+            if (babylonMesh.positions == null || babylonMesh.positions.Length == 0)
             {
                 RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
                 return null;
@@ -30,12 +30,14 @@ namespace Maya2Babylon
             bool hasUV2 = babylonMesh.uvs2 != null && babylonMesh.uvs2.Length > 0;
             bool hasColor = babylonMesh.colors != null && babylonMesh.colors.Length > 0;
             bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
+            bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
 
             RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
             RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
             RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
             RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -371,6 +373,11 @@ namespace Maya2Babylon
                     accessorWeights.count = globalVerticesSubMesh.Count;
                 }
 
+                if (hasBonesExtra)
+                {
+                    RaiseWarning("Too many bones influences per vertex. glTF only support up to 4 bones influences per vertex. The result may not be as expected.", 3);
+                }
+
                 // Morph targets positions and normals
                 if (babylonMorphTargetManager != null)
                 {
@@ -497,7 +504,41 @@ namespace Maya2Babylon
                     accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
 
-                // TODO - Tangents
+                // Tangents
+                if (babylonMorphTarget.tangents != null)
+                {
+                    var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
+                        "accessorTargetTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC3
+                    );
+                    gltfMorphTarget.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTargetTangents.index);
+                    // Populate accessor
+                    // Note that the w component for handedness is omitted when targeting TANGENT data since handedness cannot be displaced.
+                    int nbComponents = 4; // Vector4
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
+                    for (int indexTangent = startIndex; indexTangent < endIndex; indexTangent += 4)
+                    {
+                        var tangentTarget = Tools.SubArray(babylonMorphTarget.tangents, indexTangent, 3);
+
+                        // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
+                        var tangentMesh = Tools.SubArray(babylonMesh.tangents, indexTangent, 3);
+                        for (int indexCoordinate = 0; indexCoordinate < tangentTarget.Length; indexCoordinate++)
+                        {
+                            tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
+                        }
+
+                        // Store values as bytes
+                        foreach (var coordinate in tangentTarget)
+                        {
+                            accessorTargetTangents.bytesList.AddRange(BitConverter.GetBytes(coordinate));
+                        }
+                    }
+                    accessorTargetTangents.count = babylonSubMesh.verticesCount;
+                }
 
                 gltfMorphTargets.Add(gltfMorphTarget);
             }

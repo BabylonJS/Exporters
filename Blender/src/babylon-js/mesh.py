@@ -61,6 +61,12 @@ class Mesh(FCurveAnimatable):
         self.layer = getLayer(object) # used only for lights with 'This Layer Only' checked, not exported
         self.tags = object.data.tags
 
+        # Constraints
+        for constraint in object.constraints:
+            if constraint.type == 'TRACK_TO':
+                self.lockedTargetId = constraint.target.name # does not support; 'to', 'up', 'space' or 'influence'
+                break
+
         # hasSkeleton detection & skeletonID determination
         self.hasSkeleton = False
         objArmature = None      # if there's an armature, this will be the one!
@@ -641,6 +647,12 @@ class Mesh(FCurveAnimatable):
 
         write_array(file_handler, 'indices', self.indices)
 
+        # Constraint
+        if hasattr(self, 'lockedTargetId'):
+            file_handler.write('\n,"metadata":{')
+            write_string(file_handler, 'lookAt', self.lockedTargetId, True)
+            file_handler.write('}')
+
         # Sub meshes
         file_handler.write('\n,"subMeshes":[')
         first = True
@@ -698,6 +710,7 @@ class MeshInstance:
             self.rotationQuaternion = rotationQuaternion
         self.scaling = instancedMesh.scaling
         self.freezeWorldMatrix = instancedMesh.freezeWorldMatrix
+        self.tags = instancedMesh.tags
         
         if hasattr(instancedMesh, 'physicsImpostor'):
             self.physicsImpostor = instancedMesh.physicsImpostor
@@ -718,6 +731,7 @@ class MeshInstance:
         write_vector(file_handler, 'scaling', self.scaling)
         # freeze World Matrix currently ignored for instances
         write_bool(file_handler, 'freezeWorldMatrix', self.freezeWorldMatrix)
+        write_string(file_handler, 'tags', self.tags)
 
         if hasattr(self, 'physicsImpostor'):
             write_int(file_handler, 'physicsImpostor', self.physicsImpostor)
