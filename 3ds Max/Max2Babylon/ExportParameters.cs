@@ -13,5 +13,6 @@
         public bool exportTangents = true;
         public string txtQuality = "100";
         public bool mergeAOwithMR = true;
+        public bool dracoCompression = false;
     }
 }
