@@ -1,8 +1,8 @@
 bl_info = {
     'name': 'Babylon.js',
     'author': 'David Catuhe, Jeff Palmer',
-    'version': (5, 6, 4),
-    'blender': (2, 76, 0),
+    'version': (6, 0, -1),
+    'blender': (2, 80, 0),
     'location': 'File > Export > Babylon.js (.babylon)',
     'description': 'Export Babylon.js scenes (.babylon)',
     'wiki_url': 'https://github.com/BabylonJS/Babylon.js/tree/master/Exporters/Blender',
@@ -46,31 +46,12 @@ else:
 import bpy
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 #===============================================================================
-def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_export.append(menu_func)
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
-
-# Registration the calling of the INFO_MT_file_export file selector
-def menu_func(self, context):
-    from .package_level import get_title
-    # the info for get_title is in this file, but getting it the same way as others
-    self.layout.operator(JsonMain.bl_idname, get_title())
-
-if __name__ == '__main__':
-    unregister()
-    register()
-#===============================================================================
 class JsonMain(bpy.types.Operator, ExportHelper):
     bl_idname = 'export.bjs'
     bl_label = 'Export Babylon.js scene' # used on the label of the actual 'save' button
     bl_options = {'REGISTER', 'UNDO'}
     filename_ext = '.babylon'            # used as the extension on file selector
 
-    filepath = bpy.props.StringProperty(subtype = 'FILE_PATH') # assigned once the file selector returns
     filter_glob = bpy.props.StringProperty(name='.babylon',default='*.babylon', options={'HIDDEN'})
 
     def execute(self, context):
@@ -82,7 +63,7 @@ class JsonMain(bpy.types.Operator, ExportHelper):
             return {'FINISHED'}
 
         exporter = JsonExporter()
-        exporter.execute(context, self.filepath)
+        exporter.execute(context, self.properties.filepath)
 
         if (exporter.fatalError):
             self.report({'ERROR'}, exporter.fatalError)
@@ -97,3 +78,37 @@ class JsonMain(bpy.types.Operator, ExportHelper):
             text='Find export settings in the properties panel',
             icon='INFO'
         )
+#===============================================================================
+# The list of classes which sub-class a Blender class, which needs to be registered
+classes = (
+    JsonMain,    
+    camera.CameraPanel,    
+    exporter_settings_panel.ExporterSettingsPanel,
+    light_shadow.LightPanel,
+    mesh.MeshPanel,
+    world.WorldPanel
+)
+
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+            
+    bpy.types.INFO_MT_file_export.append(menu_func)
+
+def unregister():
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+        
+    bpy.types.INFO_MT_file_export.remove(menu_func)
+
+# Registration the calling of the INFO_MT_file_export file selector
+def menu_func(self, context):
+    from .package_level import get_title
+    # the info for get_title is in this file, but getting it the same way as others
+    self.layout.operator(JsonMain.bl_idname, get_title())
+
+if __name__ == '__main__':
+    unregister()
+    register()

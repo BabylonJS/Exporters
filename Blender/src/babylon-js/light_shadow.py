@@ -158,12 +158,12 @@ class ShadowGenerator:
         file_handler.write(']')
         file_handler.write('}')
 #===============================================================================
-bpy.types.Lamp.autoAnimate = bpy.props.BoolProperty(
+bpy.types.Light.autoAnimate = bpy.props.BoolProperty(
     name='Auto launch animations',
     description='',
     default = False
 )
-bpy.types.Lamp.shadowMap = bpy.props.EnumProperty(
+bpy.types.Light.shadowMap = bpy.props.EnumProperty(
     name='Shadow Map',
     description='',
     items = ((NO_SHADOWS           , 'None'         , 'No Shadow Maps'),
@@ -175,29 +175,29 @@ bpy.types.Lamp.shadowMap = bpy.props.EnumProperty(
     default = NO_SHADOWS
 )
 
-bpy.types.Lamp.shadowMapSize = bpy.props.IntProperty(
+bpy.types.Light.shadowMapSize = bpy.props.IntProperty(
     name='Shadow Map Size',
     description='',
     default = 512
 )
-bpy.types.Lamp.shadowBias = bpy.props.FloatProperty(
+bpy.types.Light.shadowBias = bpy.props.FloatProperty(
     name='Shadow Bias',
     description='',
     default = 0.00005
 )
 
-bpy.types.Lamp.shadowBlurScale = bpy.props.IntProperty(
+bpy.types.Light.shadowBlurScale = bpy.props.IntProperty(
     name='Blur Scale',
     description='Setting when using a Blur Variance shadow map',
     default = 2
 )
 
-bpy.types.Lamp.shadowBlurBoxOffset = bpy.props.IntProperty(
+bpy.types.Light.shadowBlurBoxOffset = bpy.props.IntProperty(
     name='Blur Box Offset',
     description='Setting when using a Blur Variance shadow map',
     default = 0
 )
-bpy.types.Lamp.shadowDarkness = bpy.props.FloatProperty(
+bpy.types.Light.shadowDarkness = bpy.props.FloatProperty(
     name='Shadow Darkness',
     description='Shadow Darkness',
     default = 0,
