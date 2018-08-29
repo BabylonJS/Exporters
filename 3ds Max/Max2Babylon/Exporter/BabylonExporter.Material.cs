@@ -286,16 +286,17 @@ namespace Max2Babylon
                 }
 
                 // --- Textures ---
-
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+                // 1 - base color ; 9 - transparancy weight
+                ITexmap colorTexmap = _getTexMap(materialNode, 1);
+                ITexmap alphaTexmap = _getTexMap(materialNode, 9);
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
 
                 if (isUnlit == false)
                 {
                     // Metallic, roughness, ambient occlusion
                     ITexmap metallicTexmap = _getTexMap(materialNode, 5);
                     ITexmap roughnessTexmap = _getTexMap(materialNode, 4);
-                    ITexmap ambientOcclusionTexmap = _getTexMap(materialNode, 6); // Use diffuse roughness map as ambient occlusion
-
+                    ITexmap ambientOcclusionTexmap = exportParameters.mergeAOwithMR ? _getTexMap(materialNode, 6) : null; // Use diffuse roughness map as ambient occlusion
                     // Check if MR or ORM textures are already merged
                     bool areTexturesAlreadyMerged = false;
                     if (metallicTexmap != null && roughnessTexmap != null)
@@ -334,7 +335,7 @@ namespace Max2Babylon
                         {
                             // Merge metallic, roughness and ambient occlusion
                             RaiseVerbose("Merge metallic, roughness and ambient occlusion", 2);
-                            BabylonTexture ormTexture = ExportORMTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            BabylonTexture ormTexture = ExportORMTexture(ambientOcclusionTexmap, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
                             babylonMaterial.metallicRoughnessTexture = ormTexture;
 
                             if (ambientOcclusionTexmap != null)
@@ -388,6 +389,104 @@ namespace Max2Babylon
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
+            else if (isArnoldMaterial(materialNode))
+            {
+                var propertyContainer = materialNode.IPropertyContainer;
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                {
+                    name = name,
+                    id = id,
+                    isUnlit = isUnlit
+                };
+
+                // Alpha
+                babylonMaterial.alpha = 1.0f - propertyContainer.GetFloatProperty(32);
+
+                // Color: base * weight
+                float[] baseColor = propertyContainer.GetPoint3Property(5).ToArray();
+                float baseWeight = propertyContainer.GetFloatProperty(2);
+                babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
+
+                // Metallic & roughness
+                bool invertRoughness = false;
+                babylonMaterial.roughness = propertyContainer.GetFloatProperty(17); // specular_roughness
+                babylonMaterial.metallic = propertyContainer.GetFloatProperty(29);
+
+                // Emissive: emission_color * emission
+                float[] emissionColor = propertyContainer.GetPoint3Property(94).ToArray();
+                float emissionWeight = propertyContainer.GetFloatProperty(91);
+                babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+
+                // --- Textures ---
+                // 1 - base_color ; 2 - diffuse_roughness ; 9 - metalness ; 10 - transparent
+                ITexmap colorTexmap = _getTexMap(materialNode, 1);
+                ITexmap alphaTexmap = _getTexMap(materialNode, 10);
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+                
+                if (isUnlit == false)
+                {
+                    // Metallic, roughness, ambient occlusion
+                    ITexmap metallicTexmap = _getTexMap(materialNode, 9);
+                    ITexmap roughnessTexmap = _getTexMap(materialNode, 5);
+                    ITexmap ambientOcclusionTexmap = null;
+
+                    // Check if MR or ORM textures are already merged
+                    bool areTexturesAlreadyMerged = false;
+                    if (metallicTexmap != null && roughnessTexmap != null)
+                    {
+                        string sourcePathMetallic = getSourcePath(metallicTexmap);
+                        string sourcePathRoughness = getSourcePath(roughnessTexmap);
+
+                        if (sourcePathMetallic == sourcePathRoughness)
+                        {
+                            // Metallic and roughness are already merged
+                            RaiseVerbose("Metallic and roughness are already merged", 2);
+                            BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            areTexturesAlreadyMerged = true;
+                        }
+                    }
+                    if (areTexturesAlreadyMerged == false)
+                    {
+                        if (metallicTexmap != null || roughnessTexmap != null)
+                        {
+                            // Merge metallic, roughness and ambient occlusion
+                            RaiseVerbose("Merge metallic and roughness", 2);
+                            BabylonTexture ormTexture = ExportORMTexture(ambientOcclusionTexmap, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                        }
+                    }
+
+                    babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 20, babylonScene);
+                    babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 30, babylonScene);
+                }
+
+                // Constraints
+                if (babylonMaterial.baseTexture != null)
+                {
+                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.alpha = 1.0f;
+                }
+
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+                {
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                }
+
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                }
+
+                if (babylonMaterial.metallicRoughnessTexture != null)
+                {
+                    babylonMaterial.metallic = 1.0f;
+                    babylonMaterial.roughness = 1.0f;
+                }
+
+                // Add the material to the scene
+                babylonScene.MaterialsList.Add(babylonMaterial);
+            }
             else
             {
                 // isMaterialExportable check should prevent this to happen
@@ -409,6 +508,11 @@ namespace Max2Babylon
             return materialNode.MaterialClass.ToLower() == "multi/sub-object" || // English
                      materialNode.MaterialClass.ToLower() == "multi-/unterobjekt" || // German
                      materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
+        }
+
+        public bool isArnoldMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
         }
 
         /// <summary>
@@ -449,6 +553,12 @@ namespace Max2Babylon
 
                 // Physical material
                 if (isPhysicalMaterial(materialNode))
+                {
+                    return null;
+                }
+
+                // Arnold material
+                if (isArnoldMaterial(materialNode))
                 {
                     return null;
                 }

@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Max2Babylon
 {
@@ -221,6 +222,44 @@ namespace Max2Babylon
                         gltf.BuffersList[0].bytesList.ForEach(b => writer.Write(b));
                     }
                 };
+            }
+
+            // Draco compression
+            if(exportParameters.dracoCompression)
+            {
+                RaiseMessage("GLTFExporter | Draco compression");
+
+                try
+                {
+                    Process gltfPipeline = new Process();
+
+                    // Hide the cmd window that show the gltf-pipeline result
+                    //gltfPipeline.StartInfo.UseShellExecute = false;
+                    //gltfPipeline.StartInfo.CreateNoWindow = true;
+                    gltfPipeline.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                    string arg;
+                    if (generateBinary)
+                    {
+                        string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
+                        arg = $" -i {outputGlbFile} -o {outputGlbFile} -d";
+                    }
+                    else
+                    {
+                        string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
+                        arg = $" -i {outputGltfFile} -o {outputGltfFile} -d -s";
+                    }
+                    gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
+                    gltfPipeline.StartInfo.Arguments = arg;
+
+                    gltfPipeline.Start();
+                    gltfPipeline.WaitForExit();
+                }
+                catch
+                {
+                    RaiseError("gltf-pipeline module not found.", 1);
+                    RaiseError("The exported file wasn't compressed.");
+                }
             }
 
             ReportProgressChanged(100);
