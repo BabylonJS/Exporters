@@ -20,12 +20,5 @@ namespace BabylonExport.Entities
 
         // Identifier shared between a mesh and its instances
         public int idGroupInstance;
-
-        public BabylonAbstractMesh()
-        {
-            position = new[] { 0f, 0f, 0f };
-            rotation = new[] { 0f, 0f, 0f };
-            scaling = new[] { 1f, 1f, 1f };
-        }
     }
 }

@@ -900,20 +900,17 @@ namespace Max2Babylon
 
             if (ExportQuaternionsInsteadOfEulers)
             {
-                babylonAbstractMesh.rotationQuaternion = q_babylon.ToArray();
+                // normalize quaternion
+                var q = q_babylon;
+                float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+                babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             }
             else
             {
                 babylonAbstractMesh.rotation = q_babylon.toEulerAngles().ToArray();
             }
-
-            // normalize quaternion
-            var q = q_babylon;
-            float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
-            babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             babylonAbstractMesh.scaling = new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
             babylonAbstractMesh.position = new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
-
         }
 
         private void exportAnimation(BabylonNode babylonNode, IIGameNode maxGameNode)
