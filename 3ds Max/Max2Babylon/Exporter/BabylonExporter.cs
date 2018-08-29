@@ -30,7 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
 
-        private string exporterVersion = "1.2.28";
+        private string exporterVersion = "1.2.29";
 
         void ReportProgressChanged(int progress)
         {
@@ -244,6 +244,7 @@ namespace Max2Babylon
             var progression = 10.0f;
             ReportProgressChanged((int)progression);
             referencedMaterials.Clear();
+            Tools.guids.Clear();
             // Reseting is optionnal. It makes each morph target manager export starts from id = 0.
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)

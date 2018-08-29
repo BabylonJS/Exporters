@@ -496,21 +496,45 @@ namespace Max2Babylon
             node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, new byte[] { 1 });
         }
 
-        public static IDictionary<IAnimatable, Guid> guids = new Dictionary<IAnimatable, Guid>();
+        public static IDictionary<Guid, IAnimatable> guids = new Dictionary<Guid, IAnimatable>();
+
         public static Guid GetGuid(this IAnimatable node)
         {
+            var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
             Guid uid;
 
-            if (guids.ContainsKey(node))
+            // If current node already has an uid
+            if (uidData != null)
             {
-                uid = guids[node];
+                uid = new Guid(uidData.Data);
+
+                if (guids.ContainsKey(uid))
+                {
+                    // If the uid is already used by another node
+                    if (guids[uid] != node)
+                    {
+                        // Create a new uid for current node
+                        uid = CreateGuid(node);
+                    }
+                }
+                else
+                {
+                    guids.Add(uid, node);
+                }
             }
             else
             {
-                uid = Guid.NewGuid();
-                guids[node] = uid;
+                uid = CreateGuid(node);
             }
-            
+
+            return uid;
+        }
+
+        private static Guid CreateGuid(this IAnimatable node)
+        {
+            Guid uid = Guid.NewGuid();
+            guids.Add(uid, node);
+            node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
             return uid;
         }
 
