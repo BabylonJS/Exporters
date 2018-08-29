@@ -123,10 +123,6 @@ namespace BabylonExport.Entities
             isEnabled = true;
             isVisible = true;
 
-            position = new[] { 0f, 0f, 0f };
-            rotation = new[] { 0f, 0f, 0f };
-            scaling = new[] { 1f, 1f, 1f };
-
             billboardMode = 0;
 
             visibility = 1.0f;
