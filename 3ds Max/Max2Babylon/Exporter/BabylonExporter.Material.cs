@@ -418,19 +418,18 @@ namespace Max2Babylon
                 babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
 
                 // --- Textures ---
-                // 1 - base_color ; 2 - diffuse_roughness ; 9 - metalness ; 10 - transparent
+                // 1 - base_color ; 5 - diffuse_roughness ; 9 - metalness ; 10 - transparent
                 ITexmap colorTexmap = _getTexMap(materialNode, 1);
                 ITexmap alphaTexmap = _getTexMap(materialNode, 10);
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
                 
                 if (isUnlit == false)
                 {
-                    // Metallic, roughness, ambient occlusion
+                    // Metallic, roughness
                     ITexmap metallicTexmap = _getTexMap(materialNode, 9);
                     ITexmap roughnessTexmap = _getTexMap(materialNode, 5);
-                    ITexmap ambientOcclusionTexmap = null;
 
-                    // Check if MR or ORM textures are already merged
+                    // Check if MR textures are already merged
                     bool areTexturesAlreadyMerged = false;
                     if (metallicTexmap != null && roughnessTexmap != null)
                     {
@@ -443,6 +442,8 @@ namespace Max2Babylon
                             RaiseVerbose("Metallic and roughness are already merged", 2);
                             BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
                             babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            // The already merged map is assumed to contain Ambient Occlusion in R channel
+                            babylonMaterial.occlusionTexture = ormTexture;
                             areTexturesAlreadyMerged = true;
                         }
                     }
@@ -450,9 +451,9 @@ namespace Max2Babylon
                     {
                         if (metallicTexmap != null || roughnessTexmap != null)
                         {
-                            // Merge metallic, roughness and ambient occlusion
+                            // Merge metallic, roughness
                             RaiseVerbose("Merge metallic and roughness", 2);
-                            BabylonTexture ormTexture = ExportORMTexture(ambientOcclusionTexmap, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            BabylonTexture ormTexture = ExportORMTexture(null, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
                             babylonMaterial.metallicRoughnessTexture = ormTexture;
                         }
                     }
