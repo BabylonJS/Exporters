@@ -511,7 +511,7 @@ namespace Max2Babylon
                 if (guids.ContainsKey(uid))
                 {
                     // If the uid is already used by another node
-                    if (guids[uid] != node)
+                    if (guids[uid].Equals(node as IInterfaceServer) == false)
                     {
                         // Create a new uid for current node
                         uid = CreateGuid(node);
