@@ -19,7 +19,7 @@ namespace Max2Babylon
         /// </summary>
         BabylonExportActionItem babylonExportActionItem;
 
-#if MAX2018
+#if MAX2018 || MAX2019
         GlobalDelegates.Delegate5 m_SystemStartupDelegate;
 #endif
 
@@ -82,7 +82,7 @@ namespace Max2Babylon
                 actionManager.ActivateActionTable(actionCallback as ActionCallback, idActionTable);
 
                 // Set up menus
-#if MAX2018
+#if MAX2018 || MAX2019
                 var global = GlobalInterface.Instance;
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
