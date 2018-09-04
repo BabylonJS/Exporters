@@ -174,12 +174,14 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2018
+#if MAX2019
+                version = "2019",
+#elif MAX2018
                 version = "2018",
 #elif MAX2017
                 version = "2017",
 #else
-                version = Loader.Core.ProductVersion.ToString(),
+               version = Loader.Core.ProductVersion.ToString(),
 #endif
                 exporter_version = exporterVersion,
                 file = outputFileName
@@ -590,7 +592,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var item = tab[i];
 #else
                     var item = tab[new IntPtr(i)];

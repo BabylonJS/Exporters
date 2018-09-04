@@ -47,7 +47,7 @@ namespace Max2Babylon
 
             foreach (var meshNode in Loader.Core.RootNode.NodesListBySuperClass(SClass_ID.Geomobject))
             {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                 if (meshNode.CastShadows)
 #else
                 if (meshNode.CastShadows == 1)
