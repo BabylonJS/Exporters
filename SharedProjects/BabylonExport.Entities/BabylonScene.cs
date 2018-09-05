@@ -101,6 +101,9 @@ namespace BabylonExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public BabylonMorphTargetManager[] morphTargetManagers { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public IList<BabylonAnimationGroup> animationGroups { get; set; }
+
         public BabylonVector3 MaxVector { get; set; }
         public BabylonVector3 MinVector { get; set; }
 
