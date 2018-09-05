@@ -2,11 +2,105 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        private IList<BabylonAnimationGroup> ExportAnimationGroups(BabylonScene babylonScene)
+        {
+            IList<BabylonAnimationGroup> animationGroups = new List<BabylonAnimationGroup>();
+
+            // Retrieve and parse animation group data
+            AnimationGroupList animationList = InitAnimationGroups();
+
+            foreach (AnimationGroup animGroup in animationList)
+            {
+                RaiseMessage("Exporter.animationGroups | " + animGroup.Name, 1);
+
+                BabylonAnimationGroup animationGroup = new BabylonAnimationGroup
+                {
+                    name = animGroup.Name,
+                    from = animGroup.FrameStart,
+                    to = animGroup.FrameEnd,
+                    targetedAnimations = new List<BabylonTargetedAnimation>()
+                };
+                animationGroups.Add(animationGroup);
+
+                // add animations of each nodes contained in the animGroup
+                foreach(uint nodeHandle in animGroup.NodeHandles)
+                {
+                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+
+                    // node could have been deleted, silently ignore it
+                    if (maxNode == null)
+                        continue;
+
+                    string id = maxNode.GetGuid().ToString();
+
+
+                    // Node
+                    BabylonNode node = babylonScene.MeshesList.FirstOrDefault(m => m.id == id);
+                    if (node == null)
+                        node = babylonScene.CamerasList.FirstOrDefault(c => c.id == id);
+                    if (node == null)
+                        node = babylonScene.LightsList.FirstOrDefault(l => l.id == id);
+
+                    if(node != null)
+                    {
+                        IList<BabylonAnimation> animations = GetSubAnimations(node, animationGroup.from, animationGroup.to);
+                        foreach (BabylonAnimation animation in animations)
+                        {
+                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            {
+                                animation = animation,
+                                targetId = id
+                            };
+
+                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                        }
+                    }
+
+                    // Bone
+
+                }
+            }
+
+            return animationGroups;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonNode babylonNode, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            foreach(BabylonAnimation nodeAnimation in babylonNode.animations)
+            {
+                // clone the animation
+                BabylonAnimation animation = (BabylonAnimation)nodeAnimation.Clone();
+
+                // Select usefull keys
+                var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+                // Optimize these keys
+                var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
+                if (optimizeAnimations)
+                {
+                    OptimizeAnimations(keys, true);
+                }
+
+                // 
+                if (IsAnimationKeysRelevant(keys))
+                {
+                    animation.keys = keys.ToArray();
+                    subAnimations.Add(animation);
+                }
+            }
+
+            return subAnimations;
+        }
+
+
         private static bool ExportBabylonKeys(List<BabylonAnimationKey> keys, string property, List<BabylonAnimation> animations, BabylonAnimation.DataType dataType, BabylonAnimation.LoopBehavior loopBehavior)
         {
             if (keys.Count == 0)
