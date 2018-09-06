@@ -399,15 +399,13 @@ namespace Maya2Babylon
                 // if there is animationGroup, then remove animations from nodes
                 if (babylonScene.animationGroups.Count > 0)
                 {
-                    foreach (BabylonNode node in babylonScene.MeshesList)
-                    {
-                        node.animations = null;
-                    }
-                    foreach (BabylonNode node in babylonScene.LightsList)
-                    {
-                        node.animations = null;
-                    }
-                    foreach (BabylonNode node in babylonScene.CamerasList)
+                    // add animations of each nodes in the animGroup
+                    List<BabylonNode> babylonNodes = new List<BabylonNode>();
+                    babylonNodes.AddRange(babylonScene.MeshesList);
+                    babylonNodes.AddRange(babylonScene.CamerasList);
+                    babylonNodes.AddRange(babylonScene.LightsList);
+
+                    foreach (BabylonNode node in babylonNodes)
                     {
                         node.animations = null;
                     }
