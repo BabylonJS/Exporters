@@ -199,6 +199,11 @@ namespace BabylonExport.Entities
             {
                 activeCameraID = CamerasList[0].id;
             }
+
+            if(animationGroups != null && animationGroups.Count == 0)
+            {
+                animationGroups = null;
+            }
         }
     }
 }
