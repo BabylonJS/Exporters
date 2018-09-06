@@ -37,15 +37,18 @@ namespace Max2Babylon
                     if (maxNode == null)
                         continue;
 
-                    string id = maxNode.GetGuid().ToString();
+
+                    // Helpers can be exported as dummies and as bones
+                    string nodeId = maxNode.GetGuid().ToString();
+                    string boneId = maxNode.GetGuid().ToString()+"-bone";   // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
 
 
                     // Node
-                    BabylonNode node = babylonScene.MeshesList.FirstOrDefault(m => m.id == id);
+                    BabylonNode node = babylonScene.MeshesList.FirstOrDefault(m => m.id == nodeId);
                     if (node == null)
-                        node = babylonScene.CamerasList.FirstOrDefault(c => c.id == id);
+                        node = babylonScene.CamerasList.FirstOrDefault(c => c.id == nodeId);
                     if (node == null)
-                        node = babylonScene.LightsList.FirstOrDefault(l => l.id == id);
+                        node = babylonScene.LightsList.FirstOrDefault(l => l.id == nodeId);
 
                     if(node != null)
                     {
@@ -55,15 +58,37 @@ namespace Max2Babylon
                             BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
                             {
                                 animation = animation,
-                                targetId = id
+                                targetId = nodeId
                             };
 
                             animationGroup.targetedAnimations.Add(targetedAnimation);
                         }
                     }
 
-                    // Bone
+                    // bone
+                    BabylonBone bone = null;
+                    int index = 0;
+                    while(index < babylonScene.SkeletonsList.Count && bone == null)
+                    {
+                        BabylonSkeleton skel = babylonScene.SkeletonsList[index];
+                        bone = skel.bones.FirstOrDefault(b => b.id == boneId);
+                        index++;
+                    }
 
+                    if(bone != null && bone.animation != null)
+                    {
+                        IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
+                        foreach (BabylonAnimation animation in animations)
+                        {
+                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            {
+                                animation = animation,
+                                targetId = boneId
+                            };
+
+                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                        }
+                    }
                 }
             }
 
@@ -74,7 +99,7 @@ namespace Max2Babylon
         {
             IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
 
-            foreach(BabylonAnimation nodeAnimation in babylonNode.animations)
+            foreach (BabylonAnimation nodeAnimation in babylonNode.animations)
             {
                 // clone the animation
                 BabylonAnimation animation = (BabylonAnimation)nodeAnimation.Clone();
@@ -83,7 +108,6 @@ namespace Max2Babylon
                 var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
                 // Optimize these keys
-                var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
                 if (optimizeAnimations)
                 {
                     OptimizeAnimations(keys, true);
@@ -95,6 +119,33 @@ namespace Max2Babylon
                     animation.keys = keys.ToArray();
                     subAnimations.Add(animation);
                 }
+            }
+
+            return subAnimations;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonBone babylonBone, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            // clone the animation
+            BabylonAnimation animation = (BabylonAnimation)babylonBone.animation.Clone();
+
+            // Select usefull keys
+            var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+            // Optimize these keys
+            var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
+            if (optimizeAnimations)
+            {
+                OptimizeAnimations(keys, true);
+            }
+
+            // 
+            if (IsAnimationKeysRelevant(keys))
+            {
+                animation.keys = keys.ToArray();
+                subAnimations.Add(animation);
             }
 
             return subAnimations;
