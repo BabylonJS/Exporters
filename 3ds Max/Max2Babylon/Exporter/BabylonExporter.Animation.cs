@@ -135,7 +135,6 @@ namespace Max2Babylon
             var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
             // Optimize these keys
-            var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, true);

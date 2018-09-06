@@ -389,6 +389,39 @@ namespace Maya2Babylon
             // set back the frame
             Loader.SetCurrentTime(currentTime);
 
+            // Animation group
+            if (isBabylonExported)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+                // if there is animationGroup, then remove animations from nodes
+                if (babylonScene.animationGroups.Count > 0)
+                {
+                    foreach (BabylonNode node in babylonScene.MeshesList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonNode node in babylonScene.LightsList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonNode node in babylonScene.CamerasList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+            }
+
+
             // Output
             babylonScene.Prepare(false, false);
             if (isBabylonExported)

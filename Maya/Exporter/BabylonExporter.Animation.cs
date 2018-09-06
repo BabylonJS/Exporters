@@ -724,5 +724,125 @@ namespace Maya2Babylon
 
             return animations;
         }
+
+
+        private IList<BabylonAnimationGroup> ExportAnimationGroups(BabylonScene babylonScene)
+        {
+            IList<BabylonAnimationGroup> animationGroups = new List<BabylonAnimationGroup>();
+
+            // Retrieve and parse animation group data
+            AnimationGroupList animationList = InitAnimationGroups();
+
+            foreach (AnimationGroup animGroup in animationList)
+            {
+                RaiseMessage("Exporter.animationGroups | " + animGroup.Name, 1);
+
+                BabylonAnimationGroup animationGroup = new BabylonAnimationGroup
+                {
+                    name = animGroup.Name,
+                    from = animGroup.FrameStart,
+                    to = animGroup.FrameEnd,
+                    targetedAnimations = new List<BabylonTargetedAnimation>()
+                };
+                animationGroups.Add(animationGroup);
+
+                // add animations of each nodes in the animGroup
+                List<BabylonNode> nodes = new List<BabylonNode>();
+                nodes.AddRange(babylonScene.MeshesList);
+                nodes.AddRange(babylonScene.CamerasList);
+                nodes.AddRange(babylonScene.LightsList);
+
+                foreach (BabylonNode node in nodes)
+                {
+                    if (node.animations != null)
+                    {
+                        IList<BabylonAnimation> animations = GetSubAnimations(node, animationGroup.from, animationGroup.to);
+                        foreach (BabylonAnimation animation in animations)
+                        {
+                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            {
+                                animation = animation,
+                                targetId = node.id
+                            };
+
+                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                        }
+                    }
+                }
+
+
+                foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                {
+                    foreach (BabylonBone bone in skel.bones)
+                    {
+                        if (bone.animation != null)
+                        {
+                            IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
+                            foreach (BabylonAnimation animation in animations)
+                            {
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = bone.id
+                                };
+
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return animationGroups;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonNode babylonNode, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            foreach (BabylonAnimation nodeAnimation in babylonNode.animations)
+            {
+                // clone the animation
+                BabylonAnimation animation = (BabylonAnimation)nodeAnimation.Clone();
+
+                // Select usefull keys
+                var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+                // Optimize these keys
+                OptimizeAnimations(keys, true);
+
+                // 
+                if (IsAnimationKeysRelevant(keys))
+                {
+                    animation.keys = keys.ToArray();
+                    subAnimations.Add(animation);
+                }
+            }
+
+            return subAnimations;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonBone babylonBone, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            // clone the animation
+            BabylonAnimation animation = (BabylonAnimation)babylonBone.animation.Clone();
+
+            // Select usefull keys
+            var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+            // Optimize these keys
+            OptimizeAnimations(keys, false);
+
+            // 
+            if (IsAnimationKeysRelevant(keys))
+            {
+                animation.keys = keys.ToArray();
+                subAnimations.Add(animation);
+            }
+
+            return subAnimations;
+        }
     }
 }
