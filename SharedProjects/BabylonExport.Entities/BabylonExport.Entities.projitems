@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAbstractMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonActions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimationGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimationKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonBone.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonCamera.cs" />
