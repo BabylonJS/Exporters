@@ -745,7 +745,6 @@ namespace Maya2Babylon
                     to = animGroup.FrameEnd,
                     targetedAnimations = new List<BabylonTargetedAnimation>()
                 };
-                animationGroups.Add(animationGroup);
 
                 // add animations of each nodes in the animGroup
                 List<BabylonNode> nodes = new List<BabylonNode>();
@@ -811,6 +810,11 @@ namespace Maya2Babylon
                             animationGroup.targetedAnimations.Add(targetedAnimation);
                         }
                     }
+                }
+
+                if(animationGroup.targetedAnimations.Count > 0)
+                {
+                    animationGroups.Add(animationGroup);
                 }
             }
 
@@ -892,7 +896,7 @@ namespace Maya2Babylon
         {
             BabylonAnimation animation = new BabylonAnimation
             {
-                name = "position animation",
+                name = "_matrix animation",
                 property = "_matrix",
                 dataType = 3,
                 loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
