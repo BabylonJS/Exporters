@@ -265,6 +265,12 @@ namespace Max2Babylon
                 var mtl = meshNode.NodeMaterial;
                 var multiMatsCount = 1;
 
+                while (mtl != null && isShellMaterial(mtl))
+                {
+                    // Retrieve the baked material from the shell material. The shell material is a passthrough to is baked material.
+                    mtl = GetBakedMaterialFromShellMaterial(mtl);
+                }
+
                 if (mtl != null)
                 {
                     IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);

@@ -516,6 +516,11 @@ namespace Max2Babylon
             return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
         }
 
+        public bool isShellMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "shell material";    // English
+        }
+
         /// <summary>
         /// Return null if the material is supported.
         /// Otherwise return the unsupported material (himself or one of its sub-materials)
@@ -524,6 +529,17 @@ namespace Max2Babylon
         /// <returns></returns>
         public IIGameMaterial isMaterialSupported(IIGameMaterial materialNode)
         {
+            // Shell material
+            if (isShellMaterial(materialNode))
+            {
+                var bakedMaterial = GetBakedMaterialFromShellMaterial(materialNode);
+                if(bakedMaterial == null)
+                {
+                    return materialNode;
+                }
+                return isMaterialSupported(bakedMaterial);
+            }
+
             if (materialNode.SubMaterialCount > 0)
             {
                 // Check sub materials recursively
@@ -566,6 +582,36 @@ namespace Max2Babylon
             }
             return materialNode;
         }
+
+
+        private IIGameMaterial GetBakedMaterialFromShellMaterial(IIGameMaterial materialNode)
+        {
+            if (isShellMaterial(materialNode))
+            {
+                // Shell Materail Parameters
+                // Original Material not exported => only for the offline rendering in 3DS Max
+                // Baked Material => used for the export
+                IMtl bakedMtl = materialNode.IPropertyContainer.GetProperty(1).MaxParamBlock2.GetMtl(3, 0, 0);
+
+                if(bakedMtl != null)
+                {
+                    Guid guid = bakedMtl.GetGuid();
+
+                    for (int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
+                    {
+                        IIGameMaterial subMaterialNode = materialNode.GetSubMaterial(indexSubMaterial);
+                        if (guid.Equals(subMaterialNode.MaxMaterial.GetGuid()))
+                        {
+                            return subMaterialNode;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
 
         // -------------------------
         // --------- Utils ---------
