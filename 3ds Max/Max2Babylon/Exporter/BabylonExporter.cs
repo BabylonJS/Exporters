@@ -30,6 +30,7 @@ namespace Max2Babylon
 
         private bool isBabylonExported, isGltfExported;
         private bool optimizeAnimations;
+        private bool exportNonAnimated;
 
         private string exporterVersion = "1.2.33";
 
@@ -164,6 +165,7 @@ namespace Max2Babylon
 
             // Get scene parameters
             optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
+            exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             // Save scene
             if (exportParameters.autoSave3dsMaxFile)
