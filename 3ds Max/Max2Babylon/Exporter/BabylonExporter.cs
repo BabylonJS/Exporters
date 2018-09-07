@@ -29,8 +29,10 @@ namespace Max2Babylon
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
         private bool isBabylonExported, isGltfExported;
+        private bool optimizeAnimations;
+        private bool exportNonAnimated;
 
-        private string exporterVersion = "1.2.33";
+        private string exporterVersion = "1.2.34";
 
         void ReportProgressChanged(int progress)
         {
@@ -160,6 +162,10 @@ namespace Max2Babylon
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
+
+            // Get scene parameters
+            optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
+            exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             // Save scene
             if (exportParameters.autoSave3dsMaxFile)
@@ -390,6 +396,39 @@ namespace Max2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
+
+            // Animation group
+            if (isBabylonExported)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+                // if there is animationGroup, then remove animations from nodes
+                if (babylonScene.animationGroups.Count > 0)
+                {
+                    foreach (BabylonNode node in babylonScene.MeshesList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonNode node in babylonScene.LightsList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonNode node in babylonScene.CamerasList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+            }
+
 
             // Output
             babylonScene.Prepare(false, false);
