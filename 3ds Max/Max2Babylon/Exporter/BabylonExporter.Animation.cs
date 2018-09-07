@@ -26,7 +26,6 @@ namespace Max2Babylon
                     to = animGroup.FrameEnd,
                     targetedAnimations = new List<BabylonTargetedAnimation>()
                 };
-                animationGroups.Add(animationGroup);
 
                 // add animations of each nodes contained in the animGroup
                 foreach(uint nodeHandle in animGroup.NodeHandles)
@@ -52,13 +51,26 @@ namespace Max2Babylon
 
                     if(node != null)
                     {
-                        IList<BabylonAnimation> animations = GetSubAnimations(node, animationGroup.from, animationGroup.to);
-                        foreach (BabylonAnimation animation in animations)
+                        if (node.animations != null && node.animations.Length != 0)
+                        {
+                            IList<BabylonAnimation> animations = GetSubAnimations(node, animationGroup.from, animationGroup.to);
+                            foreach (BabylonAnimation animation in animations)
+                            {
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = nodeId
+                                };
+
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
+                        }
+                        else if (exportNonAnimated)
                         {
                             BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
                             {
-                                animation = animation,
-                                targetId = nodeId
+                                animation = CreatePositionAnimation(animationGroup.from, animationGroup.to, node.position),
+                                targetId = node.id
                             };
 
                             animationGroup.targetedAnimations.Add(targetedAnimation);
@@ -75,20 +87,38 @@ namespace Max2Babylon
                         index++;
                     }
 
-                    if(bone != null && bone.animation != null)
+                    if(bone != null)
                     {
-                        IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
-                        foreach (BabylonAnimation animation in animations)
+                        if (bone.animation != null)
+                        {
+                            IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
+                            foreach (BabylonAnimation animation in animations)
+                            {
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = boneId
+                                };
+
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
+                        }
+                        else if (exportNonAnimated)
                         {
                             BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
                             {
-                                animation = animation,
-                                targetId = boneId
+                                animation = CreateMatrixAnimation(animationGroup.from, animationGroup.to, bone.matrix),
+                                targetId = bone.id
                             };
 
                             animationGroup.targetedAnimations.Add(targetedAnimation);
                         }
                     }
+                }
+
+                if (animationGroup.targetedAnimations.Count > 0)
+                {
+                    animationGroups.Add(animationGroup);
                 }
             }
 
@@ -114,11 +144,8 @@ namespace Max2Babylon
                 }
 
                 // 
-                if (IsAnimationKeysRelevant(keys))
-                {
-                    animation.keys = keys.ToArray();
-                    subAnimations.Add(animation);
-                }
+                animation.keys = keys.ToArray();
+                subAnimations.Add(animation);
             }
 
             return subAnimations;
@@ -141,13 +168,65 @@ namespace Max2Babylon
             }
 
             // 
-            if (IsAnimationKeysRelevant(keys))
-            {
-                animation.keys = keys.ToArray();
-                subAnimations.Add(animation);
-            }
+            animation.keys = keys.ToArray();
+            subAnimations.Add(animation);
 
             return subAnimations;
+        }
+        private BabylonAnimation CreatePositionAnimation(float from, float to, float[] position)
+        {
+            BabylonAnimation animation = new BabylonAnimation
+            {
+                name = "position animation",
+                property = "position",
+                dataType = 1,
+                loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                framePerSecond = Loader.Global.FrameRate,
+                keysFull = new List<BabylonAnimationKey>()
+            };
+
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)from,
+                values = position
+            });
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)to,
+                values = position
+            });
+
+            animation.keys = animation.keysFull.ToArray();
+
+            return animation;
+        }
+
+        private BabylonAnimation CreateMatrixAnimation(float from, float to, float[] matrix)
+        {
+            BabylonAnimation animation = new BabylonAnimation
+            {
+                name = "_matrix animation",
+                property = "_matrix",
+                dataType = 3,
+                loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                framePerSecond = Loader.Global.FrameRate,
+                keysFull = new List<BabylonAnimationKey>()
+            };
+
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)from,
+                values = matrix
+            });
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)from,
+                values = matrix
+            });
+
+            animation.keys = animation.keysFull.ToArray();
+
+            return animation;
         }
 
 
