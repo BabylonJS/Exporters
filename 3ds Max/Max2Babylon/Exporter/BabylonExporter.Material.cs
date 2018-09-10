@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
@@ -13,6 +14,12 @@ namespace Max2Babylon
         {
             var name = materialNode.MaterialName;
             var id = materialNode.MaxMaterial.GetGuid().ToString();
+
+            // Check if the material was already exported. The material id is unique.
+            if (babylonScene.MaterialsList.FirstOrDefault(m => m.id == id) != null)
+            {
+                return;
+            }
 
             RaiseMessage(name, 1);
 
@@ -518,7 +525,9 @@ namespace Max2Babylon
 
         public bool isShellMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "shell material";    // English
+            return materialNode.MaterialClass.ToLower() == "shell material" ||    // English
+                    materialNode.MaterialClass.ToLower() == "hüllenmaterial" ||   // German
+                    materialNode.MaterialClass.ToLower() == "matériau coque";   // French
         }
 
         /// <summary>
@@ -588,7 +597,7 @@ namespace Max2Babylon
         {
             if (isShellMaterial(materialNode))
             {
-                // Shell Materail Parameters
+                // Shell Material Parameters
                 // Original Material not exported => only for the offline rendering in 3DS Max
                 // Baked Material => used for the export
                 IMtl bakedMtl = materialNode.IPropertyContainer.GetProperty(1).MaxParamBlock2.GetMtl(3, 0, 0);
