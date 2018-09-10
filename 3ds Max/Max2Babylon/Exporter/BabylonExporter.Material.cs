@@ -520,7 +520,9 @@ namespace Max2Babylon
 
         public bool isDirectXShaderMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "directx shader";    // English
+            return materialNode.MaterialClass.ToLower() == "directx shader" ||    // English
+                    materialNode.MaterialClass.ToLower() == "directx-shader" ||   // German
+                    materialNode.MaterialClass.ToLower() == "ombrage directx";   // French
         }
 
         public bool isArnoldMaterial(IIGameMaterial materialNode)
