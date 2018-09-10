@@ -58,7 +58,7 @@ namespace Max2Babylon
                 while (babylonMasterMesh == null &&
                        index < tabs.Count)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var tab = tabs[index];
 #else
                     var tab = tabs[new IntPtr(index)];
@@ -162,7 +162,7 @@ namespace Max2Babylon
             }
 
             // Misc.
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
             babylonMesh.isVisible = meshNode.MaxNode.Renderable;
             babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows;
             babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics;
@@ -307,7 +307,7 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var channelNum = mappingChannels[i];
 #else
                     var channelNum = mappingChannels[new IntPtr(i)];
@@ -577,7 +577,7 @@ namespace Max2Babylon
                         if (storeFaceIndexes)
                         {
                             // Retreive face
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                             face = materialFaces[j];
 #else
                             face = materialFaces[new IntPtr(j)];

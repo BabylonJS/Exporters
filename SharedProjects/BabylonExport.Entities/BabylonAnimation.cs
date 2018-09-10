@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
     [DataContract]
-    public class BabylonAnimation
+    public class BabylonAnimation : ICloneable
     {
         [DataMember]
         public string name { get; set; }
@@ -52,6 +54,22 @@ namespace BabylonExport.Entities
         {
             enableBlending = false;
             blendingSpeed = 0.01f;
+        }
+
+        public object Clone()
+        {
+            return new BabylonAnimation
+            {
+                name = name,
+                property = property,
+                dataType = dataType,
+                enableBlending = enableBlending,
+                blendingSpeed = blendingSpeed,
+                loopBehavior = loopBehavior,
+                framePerSecond = framePerSecond,
+                keys = (BabylonAnimationKey[])keys.Clone(),
+                keysFull = new List<BabylonAnimationKey>(keysFull.Select(k => (BabylonAnimationKey)k.Clone()))
+            };
         }
     }
 }
