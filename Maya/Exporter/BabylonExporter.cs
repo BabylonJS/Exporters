@@ -39,7 +39,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.2.16";
+        private string exporterVersion = "1.2.17";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
@@ -393,6 +393,37 @@ namespace Maya2Babylon
 
             // set back the frame
             Loader.SetCurrentTime(currentTime);
+
+            // Animation group
+            if (isBabylonExported)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+                // if there is animationGroup, then remove animations from nodes
+                if (babylonScene.animationGroups.Count > 0)
+                {
+                    // add animations of each nodes in the animGroup
+                    List<BabylonNode> babylonNodes = new List<BabylonNode>();
+                    babylonNodes.AddRange(babylonScene.MeshesList);
+                    babylonNodes.AddRange(babylonScene.CamerasList);
+                    babylonNodes.AddRange(babylonScene.LightsList);
+
+                    foreach (BabylonNode node in babylonNodes)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+            }
+
 
             // Output
             babylonScene.Prepare(false, false);
