@@ -42,6 +42,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkExportMorphNormal = new System.Windows.Forms.CheckBox();
+            this.chkExportMorphTangent = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
             this.labelQuality = new System.Windows.Forms.Label();
             this.chkExportSkin = new System.Windows.Forms.CheckBox();
@@ -56,7 +60,6 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
-            this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -67,7 +70,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(211, 205);
+            this.butExport.Location = new System.Drawing.Point(211, 267);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 100;
@@ -116,7 +119,7 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 526);
+            this.progressBar.Location = new System.Drawing.Point(12, 681);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(638, 23);
             this.progressBar.TabIndex = 103;
@@ -126,9 +129,9 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(12, 238);
+            this.treeView.Location = new System.Drawing.Point(12, 300);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 282);
+            this.treeView.Size = new System.Drawing.Size(810, 375);
             this.treeView.TabIndex = 102;
             // 
             // butCancel
@@ -136,7 +139,7 @@
             this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCancel.Enabled = false;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(656, 526);
+            this.butCancel.Location = new System.Drawing.Point(656, 681);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(80, 23);
             this.butCancel.TabIndex = 104;
@@ -192,6 +195,9 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkExportMorphNormal);
+            this.groupBox1.Controls.Add(this.chkExportMorphTangent);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.chkDracoCompression);
             this.groupBox1.Controls.Add(this.txtQuality);
             this.groupBox1.Controls.Add(this.labelQuality);
@@ -213,9 +219,54 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(450, 193);
+            this.groupBox1.Size = new System.Drawing.Size(450, 235);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            // 
+            // chkExportMorphNormal
+            // 
+            this.chkExportMorphNormal.AutoSize = true;
+            this.chkExportMorphNormal.Checked = true;
+            this.chkExportMorphNormal.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportMorphNormal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMorphNormal.Location = new System.Drawing.Point(18, 209);
+            this.chkExportMorphNormal.Name = "chkExportMorphNormal";
+            this.chkExportMorphNormal.Size = new System.Drawing.Size(87, 17);
+            this.chkExportMorphNormal.TabIndex = 21;
+            this.chkExportMorphNormal.Text = "Export normal";
+            this.chkExportMorphNormal.UseVisualStyleBackColor = true;
+            this.chkExportMorphNormal.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // chkExportMorphTangent
+            // 
+            this.chkExportMorphTangent.AutoSize = true;
+            this.chkExportMorphTangent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMorphTangent.Location = new System.Drawing.Point(166, 209);
+            this.chkExportMorphTangent.Name = "chkExportMorphTangent";
+            this.chkExportMorphTangent.Size = new System.Drawing.Size(92, 17);
+            this.chkExportMorphTangent.TabIndex = 22;
+            this.chkExportMorphTangent.Text = "Export tangent";
+            this.chkExportMorphTangent.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 193);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(108, 13);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "MorphTarget options:";
+            // 
+            // chkDracoCompression
+            // 
+            this.chkDracoCompression.AutoSize = true;
+            this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
+            this.chkDracoCompression.Name = "chkDracoCompression";
+            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
+            this.chkDracoCompression.TabIndex = 18;
+            this.chkDracoCompression.Text = "Use Draco compression";
+            this.chkDracoCompression.UseVisualStyleBackColor = true;
             // 
             // txtQuality
             // 
@@ -353,7 +404,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(414, 205);
+            this.butExportAndRun.Location = new System.Drawing.Point(413, 267);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 101;
@@ -365,24 +416,13 @@
             // 
             this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butClose.Location = new System.Drawing.Point(742, 526);
+            this.butClose.Location = new System.Drawing.Point(742, 681);
             this.butClose.Name = "butClose";
             this.butClose.Size = new System.Drawing.Size(80, 23);
             this.butClose.TabIndex = 105;
             this.butClose.Text = "Close";
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
-            // 
-            // chkDracoCompression
-            // 
-            this.chkDracoCompression.AutoSize = true;
-            this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
-            this.chkDracoCompression.Name = "chkDracoCompression";
-            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
-            this.chkDracoCompression.TabIndex = 18;
-            this.chkDracoCompression.Text = "Use Draco compression";
-            this.chkDracoCompression.UseVisualStyleBackColor = true;
             // 
             // toolTipDracoCompression
             // 
@@ -392,7 +432,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 561);
+            this.ClientSize = new System.Drawing.Size(834, 716);
             this.Controls.Add(this.butExportAndRun);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox2);
@@ -448,5 +488,8 @@
         private System.Windows.Forms.Label labelQuality;
         private System.Windows.Forms.CheckBox chkDracoCompression;
         private System.Windows.Forms.ToolTip toolTipDracoCompression;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox chkExportMorphNormal;
+        private System.Windows.Forms.CheckBox chkExportMorphTangent;
     }
 }
