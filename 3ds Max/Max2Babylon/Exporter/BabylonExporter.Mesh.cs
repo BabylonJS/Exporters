@@ -434,6 +434,8 @@ namespace Max2Babylon
                 {
                     RaiseMessage("Export morph targets", 2);
 
+                    var rawScene = Loader.Core.RootNode;
+
                     // Morph Target Manager
                     var babylonMorphTargetManager = new BabylonMorphTargetManager();
                     babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
@@ -465,10 +467,14 @@ namespace Max2Babylon
                                 // Target geometry
                                 var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
-                                babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
 
+                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                                {
+                                    babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
+                                }
+                               
                                 // Tangent
-                                if (exportParameters.exportTangents)
+                                if (exportParameters.exportTangents && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents"))
                                 {
                                     babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                                 }

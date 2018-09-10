@@ -422,6 +422,7 @@ namespace Max2Babylon
         private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonSubMesh babylonSubMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive)
         {
             var gltfMorphTargets = new List<GLTFMorphTarget>();
+            var rawScene = Loader.Core.RootNode;
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
             {
                 var gltfMorphTarget = new GLTFMorphTarget();
@@ -454,6 +455,8 @@ namespace Max2Babylon
                             positionTarget[indexCoordinate] = positionTarget[indexCoordinate] - positionMesh[indexCoordinate];
                         }
 
+                        positionTarget[2] *= -1;
+
                         // Store values as bytes
                         foreach (var coordinate in positionTarget)
                         {
@@ -466,7 +469,7 @@ namespace Max2Babylon
                 }
 
                 // Normals
-                if (babylonMorphTarget.normals != null)
+                if (babylonMorphTarget.normals != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
                 {
                     var accessorTargetNormals = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -491,6 +494,8 @@ namespace Max2Babylon
                             normalTarget[indexCoordinate] = normalTarget[indexCoordinate] - normalMesh[indexCoordinate];
                         }
 
+                        normalTarget[2] *= -1;
+
                         // Store values as bytes
                         foreach (var coordinate in normalTarget)
                         {
@@ -501,7 +506,7 @@ namespace Max2Babylon
                 }
 
                 // Tangents
-                if(babylonMorphTarget.tangents != null)
+                if(babylonMorphTarget.tangents != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents") && exportParameters.exportTangents)
                 {
                     var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -526,6 +531,8 @@ namespace Max2Babylon
                         {
                             tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
                         }
+
+                        tangentTarget[2] *= -1;
 
                         // Store values as bytes
                         foreach (var coordinate in tangentTarget)
