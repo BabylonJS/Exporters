@@ -265,11 +265,20 @@ namespace Max2Babylon
                 var mtl = meshNode.NodeMaterial;
                 var multiMatsCount = 1;
 
-
-                // In DirectXShader material, only the render material is exported
-                while (mtl != null && isDirectXShaderMaterial(mtl))
+                // The DirectXShader material is a passthrough to its render material.
+                // The shell material is a passthrough to its baked material.
+                while (mtl != null && (isShellMaterial(mtl) || isDirectXShaderMaterial(mtl)))
                 {
-                    mtl = GetRenderMaterialFromDirectXShader(mtl);
+                    if(isShellMaterial(mtl))
+                    {
+                        // Retrieve the baked material from the shell material.
+                        mtl = GetBakedMaterialFromShellMaterial(mtl);
+                    }
+                    else // isDirectXShaderMaterial(mtl)
+                    {
+                        // Retrieve the render material from the directX shader
+                        mtl = GetRenderMaterialFromDirectXShader(mtl);
+                    }
                 }
 
                 if (mtl != null)
