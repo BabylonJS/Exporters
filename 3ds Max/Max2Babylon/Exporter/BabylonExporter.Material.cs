@@ -518,6 +518,13 @@ namespace Max2Babylon
                      materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
         }
 
+        public bool isDirectXShaderMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "directx shader" ||    // English
+                    materialNode.MaterialClass.ToLower() == "directx-shader" ||   // German
+                    materialNode.MaterialClass.ToLower() == "ombrage directx";   // French
+        }
+
         public bool isArnoldMaterial(IIGameMaterial materialNode)
         {
             return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
@@ -588,10 +595,32 @@ namespace Max2Babylon
                 {
                     return null;
                 }
+
+                // DirectX Shader
+                if (isDirectXShaderMaterial(materialNode))
+                {
+                    return isMaterialSupported(GetRenderMaterialFromDirectXShader(materialNode));
+                }
             }
             return materialNode;
         }
 
+        private IIGameMaterial GetRenderMaterialFromDirectXShader(IIGameMaterial materialNode)
+        {
+            IIGameMaterial renderMaterial = null;
+
+            if (isDirectXShaderMaterial(materialNode))
+            {
+                var gameScene = Loader.Global.IGameInterface;
+                IMtl renderMtl = materialNode.IPropertyContainer.GetProperty(35).MaxParamBlock2.GetMtl(4, 0, 0);
+                if(renderMtl != null)
+                {
+                    renderMaterial = gameScene.GetIGameMaterial(renderMtl);
+                }
+            }
+
+            return renderMaterial;
+        }
 
         private IIGameMaterial GetBakedMaterialFromShellMaterial(IIGameMaterial materialNode)
         {
@@ -619,8 +648,6 @@ namespace Max2Babylon
 
             return null;
         }
-
-
 
         // -------------------------
         // --------- Utils ---------
