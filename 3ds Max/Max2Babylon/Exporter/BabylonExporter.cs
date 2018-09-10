@@ -29,8 +29,10 @@ namespace Max2Babylon
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
         private bool isBabylonExported, isGltfExported;
+        private bool optimizeAnimations;
+        private bool exportNonAnimated;
 
-        private string exporterVersion = "1.2.33";
+        private string exporterVersion = "1.2.34";
 
         void ReportProgressChanged(int progress)
         {
@@ -161,6 +163,10 @@ namespace Max2Babylon
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
 
+            // Get scene parameters
+            optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
+            exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
+
             // Save scene
             if (exportParameters.autoSave3dsMaxFile)
             {
@@ -174,12 +180,14 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2018
+#if MAX2019
+                version = "2019",
+#elif MAX2018
                 version = "2018",
 #elif MAX2017
                 version = "2017",
 #else
-                version = Loader.Core.ProductVersion.ToString(),
+               version = Loader.Core.ProductVersion.ToString(),
 #endif
                 exporter_version = exporterVersion,
                 file = outputFileName
@@ -389,6 +397,39 @@ namespace Max2Babylon
                 }
             }
 
+            // Animation group
+            if (isBabylonExported)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+                // if there is animationGroup, then remove animations from nodes
+                if (babylonScene.animationGroups.Count > 0)
+                {
+                    foreach (BabylonNode node in babylonScene.MeshesList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonNode node in babylonScene.LightsList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonNode node in babylonScene.CamerasList)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+            }
+
+
             // Output
             babylonScene.Prepare(false, false);
             if (isBabylonExported)
@@ -590,7 +631,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var item = tab[i];
 #else
                     var item = tab[new IntPtr(i)];
