@@ -265,6 +265,13 @@ namespace Max2Babylon
                 var mtl = meshNode.NodeMaterial;
                 var multiMatsCount = 1;
 
+
+                // In DirectXShader material, only the render material is exported
+                while (mtl != null && isDirectXShaderMaterial(mtl))
+                {
+                    mtl = GetRenderMaterialFromDirectXShader(mtl);
+                }
+
                 if (mtl != null)
                 {
                     IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
