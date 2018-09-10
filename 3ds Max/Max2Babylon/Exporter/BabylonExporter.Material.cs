@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
@@ -13,6 +14,12 @@ namespace Max2Babylon
         {
             var name = materialNode.MaterialName;
             var id = materialNode.MaxMaterial.GetGuid().ToString();
+
+            // Check if the material was already exported. The material id is unique.
+            if (babylonScene.MaterialsList.FirstOrDefault(m => m.id == id) != null)
+            {
+                return;
+            }
 
             RaiseMessage(name, 1);
 
@@ -521,6 +528,13 @@ namespace Max2Babylon
             return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
         }
 
+        public bool isShellMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "shell material" ||    // English
+                    materialNode.MaterialClass.ToLower() == "hüllenmaterial" ||   // German
+                    materialNode.MaterialClass.ToLower() == "matériau coque";   // French
+        }
+
         /// <summary>
         /// Return null if the material is supported.
         /// Otherwise return the unsupported material (himself or one of its sub-materials)
@@ -529,6 +543,17 @@ namespace Max2Babylon
         /// <returns></returns>
         public IIGameMaterial isMaterialSupported(IIGameMaterial materialNode)
         {
+            // Shell material
+            if (isShellMaterial(materialNode))
+            {
+                var bakedMaterial = GetBakedMaterialFromShellMaterial(materialNode);
+                if(bakedMaterial == null)
+                {
+                    return materialNode;
+                }
+                return isMaterialSupported(bakedMaterial);
+            }
+
             if (materialNode.SubMaterialCount > 0)
             {
                 // Check sub materials recursively
@@ -593,6 +618,33 @@ namespace Max2Babylon
             }
 
             return renderMaterial;
+        }
+
+        private IIGameMaterial GetBakedMaterialFromShellMaterial(IIGameMaterial materialNode)
+        {
+            if (isShellMaterial(materialNode))
+            {
+                // Shell Material Parameters
+                // Original Material not exported => only for the offline rendering in 3DS Max
+                // Baked Material => used for the export
+                IMtl bakedMtl = materialNode.IPropertyContainer.GetProperty(1).MaxParamBlock2.GetMtl(3, 0, 0);
+
+                if(bakedMtl != null)
+                {
+                    Guid guid = bakedMtl.GetGuid();
+
+                    for (int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
+                    {
+                        IIGameMaterial subMaterialNode = materialNode.GetSubMaterial(indexSubMaterial);
+                        if (guid.Equals(subMaterialNode.MaxMaterial.GetGuid()))
+                        {
+                            return subMaterialNode;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         // -------------------------
