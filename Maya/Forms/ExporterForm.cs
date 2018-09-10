@@ -335,10 +335,17 @@ namespace Maya2Babylon.Forms
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void chkExportTangents_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!chkExportTangents.Checked)
+            {
+                chkExportMorphTangent.Enabled = false;
+                chkExportMorphTangent.Checked = false;
+            }
+            else
+            {
+                chkExportMorphTangent.Enabled = true;
+            }
         }
-
     }
 }

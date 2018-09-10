@@ -235,7 +235,6 @@
             this.chkExportMorphNormal.TabIndex = 21;
             this.chkExportMorphNormal.Text = "Export normal";
             this.chkExportMorphNormal.UseVisualStyleBackColor = true;
-            this.chkExportMorphNormal.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // chkExportMorphTangent
             // 
@@ -311,6 +310,7 @@
             this.chkExportTangents.TabIndex = 17;
             this.chkExportTangents.Text = "Export tangents";
             this.chkExportTangents.UseVisualStyleBackColor = true;
+            this.chkExportTangents.CheckedChanged += new System.EventHandler(this.chkExportTangents_CheckedChanged);
             // 
             // label4
             // 
