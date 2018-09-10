@@ -468,7 +468,7 @@ namespace Max2Babylon
                                 }
                                
                                 // Tangent
-                                if (exportParameters.exportTangents && rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                                if (exportParameters.exportTangents && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents"))
                                 {
                                     babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                                 }

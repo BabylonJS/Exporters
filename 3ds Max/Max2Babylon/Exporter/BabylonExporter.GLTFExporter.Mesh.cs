@@ -506,7 +506,7 @@ namespace Max2Babylon
                 }
 
                 // Tangents
-                if(babylonMorphTarget.tangents != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents"))
+                if(babylonMorphTarget.tangents != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents") && exportParameters.exportTangents)
                 {
                     var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
