@@ -24,6 +24,8 @@ namespace Maya2Babylon
         private bool _exportSkin;
         private long _quality;
         private bool _dracoCompression;
+        private bool _exportMorphNormal;
+        private bool _exportMorphTangent;
 
         public bool IsCancelled { get; set; }
 
@@ -41,7 +43,8 @@ namespace Maya2Babylon
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
-                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression)
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression,
+                            bool exportMorphNormal, bool exportMorphTangent)
         {
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
@@ -94,6 +97,8 @@ namespace Maya2Babylon
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             _exportSkin = exportSkin;
             _dracoCompression = dracoCompression;
+            _exportMorphNormal = exportMorphNormal;
+            _exportMorphTangent = exportMorphTangent;
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))

@@ -160,7 +160,7 @@ namespace Maya2Babylon.Forms
                 exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked,
                                 chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked,
                                 chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked,
-                                txtQuality.Text, chkDracoCompression.Checked);
+                                txtQuality.Text, chkDracoCompression.Checked, chkExportMorphNormal.Checked, chkExportMorphTangent.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -334,5 +334,11 @@ namespace Maya2Babylon.Forms
                 IsShown = false;
             }
         }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

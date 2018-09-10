@@ -450,6 +450,7 @@ namespace Maya2Babylon
                     for (int indexPosition = startIndex; indexPosition < endIndex; indexPosition += 3)
                     {
                         var positionTarget = Tools.SubArray(babylonMorphTarget.positions, indexPosition, 3);
+                        
 
                         // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
                         var positionMesh = Tools.SubArray(babylonMesh.positions, indexPosition, 3);
@@ -457,7 +458,7 @@ namespace Maya2Babylon
                         {
                             positionTarget[indexCoordinate] = positionTarget[indexCoordinate] - positionMesh[indexCoordinate];
                         }
-
+                        positionTarget[2] *= -1;
                         // Store values as bytes
                         foreach (var coordinate in positionTarget)
                         {
@@ -470,7 +471,7 @@ namespace Maya2Babylon
                 }
 
                 // Normals
-                if (babylonMorphTarget.normals != null)
+                if ((babylonMorphTarget.normals != null) && _exportMorphNormal)
                 {
                     var accessorTargetNormals = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -494,7 +495,7 @@ namespace Maya2Babylon
                         {
                             normalTarget[indexCoordinate] = normalTarget[indexCoordinate] - normalMesh[indexCoordinate];
                         }
-
+                        normalTarget[2] *= -1;
                         // Store values as bytes
                         foreach (var coordinate in normalTarget)
                         {
@@ -505,7 +506,7 @@ namespace Maya2Babylon
                 }
 
                 // Tangents
-                if (babylonMorphTarget.tangents != null)
+                if ((babylonMorphTarget.tangents != null) && _exportMorphTangent)
                 {
                     var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -530,7 +531,7 @@ namespace Maya2Babylon
                         {
                             tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
                         }
-
+                        tangentTarget[2] *= -1;
                         // Store values as bytes
                         foreach (var coordinate in tangentTarget)
                         {
@@ -539,7 +540,6 @@ namespace Maya2Babylon
                     }
                     accessorTargetTangents.count = babylonSubMesh.verticesCount;
                 }
-
                 gltfMorphTargets.Add(gltfMorphTarget);
             }
             if (gltfMorphTargets.Count > 0)

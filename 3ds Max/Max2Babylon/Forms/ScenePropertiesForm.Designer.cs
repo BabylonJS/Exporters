@@ -50,6 +50,9 @@
             this.chkCreateDefaultSkybox = new System.Windows.Forms.CheckBox();
             this.groupBoxDefaultLight = new System.Windows.Forms.GroupBox();
             this.chkAddDefaultLight = new System.Windows.Forms.CheckBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.chkMorphExportTangent = new System.Windows.Forms.CheckBox();
+            this.ckkMorphExportNormals = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -57,6 +60,7 @@
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupSkyboxBlurLevel)).BeginInit();
             this.groupBoxDefaultLight.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -95,7 +99,7 @@
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(174, 499);
+            this.butCancel.Location = new System.Drawing.Point(174, 569);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(75, 23);
             this.butCancel.TabIndex = 4;
@@ -107,7 +111,7 @@
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(93, 499);
+            this.butOK.Location = new System.Drawing.Point(93, 569);
             this.butOK.Name = "butOK";
             this.butOK.Size = new System.Drawing.Size(75, 23);
             this.butOK.TabIndex = 3;
@@ -324,13 +328,50 @@
             this.chkAddDefaultLight.Text = "Add a default light, if no light is exported";
             this.chkAddDefaultLight.UseVisualStyleBackColor = true;
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.chkMorphExportTangent);
+            this.groupBox5.Controls.Add(this.ckkMorphExportNormals);
+            this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox5.Location = new System.Drawing.Point(12, 499);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(319, 61);
+            this.groupBox5.TabIndex = 11;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "MorphTarget options";
+            // 
+            // chkMorphExportTangent
+            // 
+            this.chkMorphExportTangent.AutoSize = true;
+            this.chkMorphExportTangent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkMorphExportTangent.Location = new System.Drawing.Point(187, 30);
+            this.chkMorphExportTangent.Name = "chkMorphExportTangent";
+            this.chkMorphExportTangent.Size = new System.Drawing.Size(97, 17);
+            this.chkMorphExportTangent.TabIndex = 4;
+            this.chkMorphExportTangent.Text = "Export tangents";
+            this.chkMorphExportTangent.UseVisualStyleBackColor = true;
+            // 
+            // ckkMorphExportNormals
+            // 
+            this.ckkMorphExportNormals.AutoSize = true;
+            this.ckkMorphExportNormals.Checked = true;
+            this.ckkMorphExportNormals.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckkMorphExportNormals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ckkMorphExportNormals.Location = new System.Drawing.Point(21, 30);
+            this.ckkMorphExportNormals.Name = "ckkMorphExportNormals";
+            this.ckkMorphExportNormals.Size = new System.Drawing.Size(92, 17);
+            this.ckkMorphExportNormals.TabIndex = 3;
+            this.ckkMorphExportNormals.Text = "Export normals";
+            this.ckkMorphExportNormals.UseVisualStyleBackColor = true;
+            // 
             // ScenePropertiesForm
             // 
             this.AcceptButton = this.butOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(343, 534);
+            this.ClientSize = new System.Drawing.Size(343, 604);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBoxDefaultLight);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -355,6 +396,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nupSkyboxBlurLevel)).EndInit();
             this.groupBoxDefaultLight.ResumeLayout(false);
             this.groupBoxDefaultLight.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -383,5 +426,8 @@
         private System.Windows.Forms.Label lblSkyboxBlurLevel;
         private System.Windows.Forms.GroupBox groupBoxDefaultLight;
         private System.Windows.Forms.CheckBox chkAddDefaultLight;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.CheckBox chkMorphExportTangent;
+        private System.Windows.Forms.CheckBox ckkMorphExportNormals;
     }
 }
