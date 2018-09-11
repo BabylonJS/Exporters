@@ -87,11 +87,36 @@ namespace Max2Babylon
                         name = meshNode.Name,
                         pickable = meshNode.MaxNode.GetBoolProperty("babylonjs_checkpickable"),
                         checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions"),
-                        showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox")
+                        showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox"),
+                        showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox"),
+                        alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000)
                     };
 
-                    //babylonMesh.showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox");
-                    //babylonMesh.alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000);
+                    // Physics
+                    var impostorText = meshNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");
+
+                    if (impostorText != "None")
+                    {
+                        switch (impostorText)
+                        {
+                            case "Sphere":
+                                babylonInstanceMesh.physicsImpostor = 1;
+                                break;
+                            case "Box":
+                                babylonInstanceMesh.physicsImpostor = 2;
+                                break;
+                            case "Plane":
+                                babylonInstanceMesh.physicsImpostor = 3;
+                                break;
+                            default:
+                                babylonInstanceMesh.physicsImpostor = 0;
+                                break;
+                        }
+
+                        babylonInstanceMesh.physicsMass = meshNode.MaxNode.GetFloatProperty("babylonjs_mass");
+                        babylonInstanceMesh.physicsFriction = meshNode.MaxNode.GetFloatProperty("babylonjs_friction", 0.2f);
+                        babylonInstanceMesh.physicsRestitution = meshNode.MaxNode.GetFloatProperty("babylonjs_restitution", 0.2f);
+                    }
 
 
                     // Add instance to master mesh

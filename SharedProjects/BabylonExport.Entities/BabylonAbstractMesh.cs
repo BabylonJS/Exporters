@@ -26,6 +26,24 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool showBoundingBox { get; set; }
 
+        [DataMember]
+        public bool showSubMeshesBoundingBox { get; set; }
+
+        [DataMember]
+        public int alphaIndex { get; set; }
+
+        [DataMember]
+        public int physicsImpostor { get; set; }
+
+        [DataMember]
+        public float physicsMass { get; set; }
+
+        [DataMember]
+        public float physicsFriction { get; set; }
+
+        [DataMember]
+        public float physicsRestitution { get; set; }
+
         // Identifier shared between a mesh and its instances
         public int idGroupInstance;
     }
