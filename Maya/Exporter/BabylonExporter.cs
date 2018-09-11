@@ -19,7 +19,7 @@ namespace Maya2Babylon
         private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
-        private bool ExportQuaternionsInsteadOfEulers { get; set; }
+        private bool ExportQuaternionsInsteadOfEulers { get; set; } = true;
         private bool isBabylonExported;
         private bool _exportSkin;
         private long _quality;
@@ -341,6 +341,15 @@ namespace Maya2Babylon
                 rootNode.isDummy = true;
                 float rootNodeScale = 1.0f / scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                if (ExportQuaternionsInsteadOfEulers)
+                {
+                    rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
+                }
+                else
+                {
+                    rootNode.rotation = new float[] { 0, 0, 0 };
+                }
 
                 // Update all top nodes
                 var babylonNodes = new List<BabylonNode>();
