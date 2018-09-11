@@ -123,6 +123,8 @@ namespace BabylonExport.Entities
             pickable = true;
 
             numBoneInfluencers = 4;
+
+            position = new float[] { 0, 0, 0 };
         }
     }
 
