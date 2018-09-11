@@ -81,7 +81,18 @@ namespace Max2Babylon
 
                     meshNode.MaxNode.MarkAsInstance();
 
-                    var babylonInstanceMesh = new BabylonAbstractMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
+                    var babylonInstanceMesh = new BabylonAbstractMesh
+                    {
+                        id = meshNode.MaxNode.GetGuid().ToString(),
+                        name = meshNode.Name,
+                        pickable = meshNode.MaxNode.GetBoolProperty("babylonjs_checkpickable"),
+                        checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions"),
+                        showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox")
+                    };
+
+                    //babylonMesh.showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox");
+                    //babylonMesh.alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000);
+
 
                     // Add instance to master mesh
                     List<BabylonAbstractMesh> list = babylonMasterMesh.instances != null ? babylonMasterMesh.instances.ToList() : new List<BabylonAbstractMesh>();

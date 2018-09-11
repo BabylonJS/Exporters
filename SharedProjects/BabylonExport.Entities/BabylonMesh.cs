@@ -15,10 +15,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool isVisible { get; set; }
 
-        [DataMember]
-        public bool pickable { get; set; }
-
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public float[] pivotMatrix { get; set; }
 
         [DataMember]
@@ -58,9 +55,6 @@ namespace BabylonExport.Entities
         public int[] indices { get; set; }
 
         [DataMember]
-        public bool checkCollisions { get; set; }
-
-        [DataMember]
         public bool receiveShadows { get; set; }    
     
         [DataMember]
@@ -83,9 +77,6 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public int numBoneInfluencers { get; set; }
-
-        [DataMember]
-        public bool showBoundingBox { get; set; }
 
         [DataMember]
         public bool showSubMeshesBoundingBox { get; set; }
