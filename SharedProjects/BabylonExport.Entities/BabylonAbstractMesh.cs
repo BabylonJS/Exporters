@@ -5,7 +5,6 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonAbstractMesh: BabylonNode
     {
-        
         [DataMember]
         override public float[] rotation { get; set; }
 
@@ -17,6 +16,15 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonActions actions { get; set; }
+
+        [DataMember]
+        public bool checkCollisions { get; set; }
+
+        [DataMember]
+        public bool pickable { get; set; }
+
+        [DataMember]
+        public bool showBoundingBox { get; set; }
 
         // Identifier shared between a mesh and its instances
         public int idGroupInstance;
