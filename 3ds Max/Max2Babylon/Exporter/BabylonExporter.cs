@@ -32,7 +32,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.2.37";
+        private string exporterVersion = "1.2.38";
 
         void ReportProgressChanged(int progress)
         {
@@ -335,6 +335,15 @@ namespace Max2Babylon
                 rootNode.isDummy = true;
                 float rootNodeScale = 1.0f / scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                if (ExportQuaternionsInsteadOfEulers)
+                {
+                    rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
+                }
+                else
+                {
+                    rootNode.rotation = new float[] { 0, 0, 0 };
+                }
 
                 // Update all top nodes
                 var babylonNodes = new List<BabylonNode>();
