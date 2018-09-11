@@ -19,7 +19,7 @@ namespace Maya2Babylon
         private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
-        private bool ExportQuaternionsInsteadOfEulers { get; set; }
+        private bool ExportQuaternionsInsteadOfEulers { get; set; } = true;
         private bool isBabylonExported;
         private bool _exportSkin;
         private long _quality;
@@ -39,7 +39,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.2.18";
+        private string exporterVersion = "1.2.19";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
@@ -341,6 +341,15 @@ namespace Maya2Babylon
                 rootNode.isDummy = true;
                 float rootNodeScale = 1.0f / scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                if (ExportQuaternionsInsteadOfEulers)
+                {
+                    rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
+                }
+                else
+                {
+                    rootNode.rotation = new float[] { 0, 0, 0 };
+                }
 
                 // Update all top nodes
                 var babylonNodes = new List<BabylonNode>();
