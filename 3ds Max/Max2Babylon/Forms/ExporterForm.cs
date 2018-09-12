@@ -335,5 +335,21 @@ namespace Max2Babylon
                 IsShown = false;
             }
         }
+
+        /// <summary>
+        /// Handle the tab navigation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExporterForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Tab)
+            {
+                if (e.Modifiers == Keys.Shift)
+                    ProcessTabKey(false);
+                else
+                    ProcessTabKey(true);
+            }
+        }
     }
 }
