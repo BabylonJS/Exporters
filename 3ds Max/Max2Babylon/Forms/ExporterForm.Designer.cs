@@ -42,6 +42,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
             this.labelQuality = new System.Windows.Forms.Label();
@@ -55,7 +56,6 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
-            this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -73,6 +73,7 @@
             this.butExport.Text = "Export";
             this.butExport.UseVisualStyleBackColor = true;
             this.butExport.Click += new System.EventHandler(this.butExport_Click);
+            this.butExport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label1
             // 
@@ -92,6 +93,7 @@
             this.txtFilename.Size = new System.Drawing.Size(377, 20);
             this.txtFilename.TabIndex = 2;
             this.txtFilename.TextChanged += new System.EventHandler(this.txtFilename_TextChanged);
+            this.txtFilename.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butBrowse
             // 
@@ -104,6 +106,7 @@
             this.butBrowse.Text = "...";
             this.butBrowse.UseVisualStyleBackColor = true;
             this.butBrowse.Click += new System.EventHandler(this.butBrowse_Click);
+            this.butBrowse.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // saveFileDialog
             // 
@@ -129,6 +132,7 @@
             this.treeView.Name = "treeView";
             this.treeView.Size = new System.Drawing.Size(810, 285);
             this.treeView.TabIndex = 103;
+            this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butCancel
             // 
@@ -142,6 +146,7 @@
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
             this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+            this.butCancel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // pictureBox2
             // 
@@ -164,6 +169,7 @@
             this.chkManifest.TabIndex = 14;
             this.chkManifest.Text = "Generate .manifest";
             this.chkManifest.UseVisualStyleBackColor = true;
+            this.chkManifest.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label2
             // 
@@ -184,6 +190,7 @@
             this.chkCopyTextures.TabIndex = 11;
             this.chkCopyTextures.Text = "Copy textures to output";
             this.chkCopyTextures.UseVisualStyleBackColor = true;
+            this.chkCopyTextures.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // groupBox1
             // 
@@ -213,6 +220,18 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
+            // chkDracoCompression
+            // 
+            this.chkDracoCompression.AutoSize = true;
+            this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
+            this.chkDracoCompression.Name = "chkDracoCompression";
+            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
+            this.chkDracoCompression.TabIndex = 18;
+            this.chkDracoCompression.Text = "Use Draco compression";
+            this.chkDracoCompression.UseVisualStyleBackColor = true;
+            this.chkDracoCompression.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
+            // 
             // chkMergeAOwithMR
             // 
             this.chkMergeAOwithMR.AutoSize = true;
@@ -225,6 +244,7 @@
             this.chkMergeAOwithMR.TabIndex = 17;
             this.chkMergeAOwithMR.Text = "Merge AO map";
             this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
+            this.chkMergeAOwithMR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // txtQuality
             // 
@@ -234,6 +254,7 @@
             this.txtQuality.TabIndex = 9;
             this.txtQuality.Text = "100";
             this.txtQuality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtQuality.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // labelQuality
             // 
@@ -256,6 +277,7 @@
             this.chkExportTangents.TabIndex = 16;
             this.chkExportTangents.Text = "Export tangents";
             this.chkExportTangents.UseVisualStyleBackColor = true;
+            this.chkExportTangents.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label4
             // 
@@ -274,6 +296,7 @@
             this.txtScaleFactor.TabIndex = 7;
             this.txtScaleFactor.Text = "1";
             this.txtScaleFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtScaleFactor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label3
             // 
@@ -297,6 +320,7 @@
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 5;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
+            this.comboOutputFormat.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkOnlySelected
             // 
@@ -308,6 +332,7 @@
             this.chkOnlySelected.TabIndex = 13;
             this.chkOnlySelected.Text = "Export only selected";
             this.chkOnlySelected.UseVisualStyleBackColor = true;
+            this.chkOnlySelected.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkAutoSave
             // 
@@ -319,6 +344,7 @@
             this.chkAutoSave.TabIndex = 15;
             this.chkAutoSave.Text = "Auto save 3ds Max file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
+            this.chkAutoSave.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkHidden
             // 
@@ -330,6 +356,7 @@
             this.chkHidden.TabIndex = 12;
             this.chkHidden.Text = "Export hidden objects";
             this.chkHidden.UseVisualStyleBackColor = true;
+            this.chkHidden.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butExportAndRun
             // 
@@ -343,6 +370,7 @@
             this.butExportAndRun.Text = "Export && Run";
             this.butExportAndRun.UseVisualStyleBackColor = true;
             this.butExportAndRun.Click += new System.EventHandler(this.butExportAndRun_Click);
+            this.butExportAndRun.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butClose
             // 
@@ -355,17 +383,7 @@
             this.butClose.Text = "Close";
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
-            // 
-            // chkDracoCompression
-            // 
-            this.chkDracoCompression.AutoSize = true;
-            this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
-            this.chkDracoCompression.Name = "chkDracoCompression";
-            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
-            this.chkDracoCompression.TabIndex = 18;
-            this.chkDracoCompression.Text = "Use Draco compression";
-            this.chkDracoCompression.UseVisualStyleBackColor = true;
+            this.butClose.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // toolTipDracoCompression
             // 
@@ -393,6 +411,7 @@
             this.Deactivate += new System.EventHandler(this.ExporterForm_Deactivate);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExporterForm_FormClosed);
             this.Load += new System.EventHandler(this.ExporterForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
