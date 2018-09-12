@@ -13,6 +13,18 @@ namespace Maya2Babylon.Forms
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
 
+        const string chkCopyTexturesProperty = "babylonjs_copyTextures";
+        const string chkHiddenProperty = "babylonjs_exportHidden";
+        const string chkOnlySelectedProperty = "babylonjs_exportOnlySelected";
+        const string chkManifestProperty = "babylonjs_generateManifest";
+        const string chkAutoSaveProperty = "babylonjs_autoSave";
+        const string chkOptimizeVerticesProperty = "babylonjs_optimizeVertices";
+        const string chkExportTangentsProperty = "babylonjs_exportTangents";
+        const string chkDracoCompressionProperty = "babylonjs_dracoCompression";
+        const string chkExportSkinProperty = "babylonjs_exportSkin";
+        const string chkExportMorphNormalProperty = "babylonjs_exportMorphNormal";
+        const string chkExportMorphTangentProperty = "babylonjs_exportMorphTangent";
+
         TreeNode currentNode;
         int currentRank;
 
@@ -45,12 +57,18 @@ namespace Maya2Babylon.Forms
         {
             comboOutputFormat.SelectedIndex = 0;
 
+            chkCopyTextures.Checked = Loader.GetBoolProperty(chkCopyTexturesProperty, true);
+            chkHidden.Checked = Loader.GetBoolProperty(chkHiddenProperty, false);
+            chkOnlySelected.Checked = Loader.GetBoolProperty(chkOnlySelectedProperty, false);
+            chkManifest.Checked = Loader.GetBoolProperty(chkManifestProperty, false);
+            chkAutoSave.Checked = Loader.GetBoolProperty(chkAutoSaveProperty, false);
+            chkOptimizeVertices.Checked = Loader.GetBoolProperty(chkOptimizeVerticesProperty, true);
+            chkExportTangents.Checked = Loader.GetBoolProperty(chkExportTangentsProperty, true);
+            //chkDracoCompression.Checked = Loader.GetBoolProperty(chkDracoCompressionProperty, false);
+            chkExportSkin.Checked = Loader.GetBoolProperty(chkExportSkinProperty, true);
+            chkExportMorphNormal.Checked = Loader.GetBoolProperty(chkExportMorphNormalProperty, true);
+            chkExportMorphTangent.Checked = Loader.GetBoolProperty(chkExportMorphTangentProperty, false);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
-            Tools.PrepareCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
-            Tools.PrepareCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures", 1);
-            Tools.PrepareCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
-            Tools.PrepareCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave", 1);
-            Tools.PrepareCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
         }
 
@@ -69,12 +87,19 @@ namespace Maya2Babylon.Forms
 
         private async Task<bool> DoExport()
         {
-            /*Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
-            Tools.UpdateCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures");
-            Tools.UpdateCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
-            Tools.UpdateCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave");
-            Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
-            Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
+            Loader.SetBoolProperty(chkCopyTexturesProperty, chkCopyTextures.Checked);
+            Loader.SetBoolProperty(chkHiddenProperty, chkHidden.Checked);
+            Loader.SetBoolProperty(chkOnlySelectedProperty, chkOnlySelected.Checked);
+            Loader.SetBoolProperty(chkManifestProperty, chkManifest.Checked);
+            Loader.SetBoolProperty(chkAutoSaveProperty, chkAutoSave.Checked);
+            Loader.SetBoolProperty(chkOptimizeVerticesProperty, chkOptimizeVertices.Checked);
+            Loader.SetBoolProperty(chkExportTangentsProperty, chkExportTangents.Checked);
+            //Loader.SetBoolProperty(chkDracoCompressionProperty, chkDracoCompression.Checked);
+            Loader.SetBoolProperty(chkExportSkinProperty, chkExportSkin.Checked);
+            Loader.SetBoolProperty(chkExportMorphNormalProperty, chkExportMorphNormal.Checked);
+            Loader.SetBoolProperty(chkExportMorphTangentProperty, chkExportMorphTangent.Checked);
+
+            /*Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);*/
 
