@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.butExport = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFilename = new System.Windows.Forms.TextBox();
@@ -41,6 +42,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
             this.labelQuality = new System.Windows.Forms.Label();
@@ -54,6 +56,7 @@
             this.chkHidden = new System.Windows.Forms.CheckBox();
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
+            this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -66,10 +69,11 @@
             this.butExport.Location = new System.Drawing.Point(211, 202);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
-            this.butExport.TabIndex = 0;
+            this.butExport.TabIndex = 100;
             this.butExport.Text = "Export";
             this.butExport.UseVisualStyleBackColor = true;
             this.butExport.Click += new System.EventHandler(this.butExport_Click);
+            this.butExport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label1
             // 
@@ -77,7 +81,7 @@
             this.label1.Location = new System.Drawing.Point(6, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
-            this.label1.TabIndex = 2;
+            this.label1.TabIndex = 1;
             this.label1.Text = "File name:";
             // 
             // txtFilename
@@ -87,8 +91,9 @@
             this.txtFilename.Location = new System.Drawing.Point(18, 34);
             this.txtFilename.Name = "txtFilename";
             this.txtFilename.Size = new System.Drawing.Size(377, 20);
-            this.txtFilename.TabIndex = 3;
+            this.txtFilename.TabIndex = 2;
             this.txtFilename.TextChanged += new System.EventHandler(this.txtFilename_TextChanged);
+            this.txtFilename.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butBrowse
             // 
@@ -97,10 +102,11 @@
             this.butBrowse.Location = new System.Drawing.Point(401, 32);
             this.butBrowse.Name = "butBrowse";
             this.butBrowse.Size = new System.Drawing.Size(43, 23);
-            this.butBrowse.TabIndex = 4;
+            this.butBrowse.TabIndex = 3;
             this.butBrowse.Text = "...";
             this.butBrowse.UseVisualStyleBackColor = true;
             this.butBrowse.Click += new System.EventHandler(this.butBrowse_Click);
+            this.butBrowse.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // saveFileDialog
             // 
@@ -115,7 +121,7 @@
             this.progressBar.Location = new System.Drawing.Point(12, 526);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(638, 23);
-            this.progressBar.TabIndex = 5;
+            this.progressBar.TabIndex = 104;
             // 
             // treeView
             // 
@@ -125,7 +131,8 @@
             this.treeView.Location = new System.Drawing.Point(12, 235);
             this.treeView.Name = "treeView";
             this.treeView.Size = new System.Drawing.Size(810, 285);
-            this.treeView.TabIndex = 6;
+            this.treeView.TabIndex = 103;
+            this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butCancel
             // 
@@ -135,10 +142,11 @@
             this.butCancel.Location = new System.Drawing.Point(656, 526);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(80, 23);
-            this.butCancel.TabIndex = 7;
+            this.butCancel.TabIndex = 105;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
             this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+            this.butCancel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // pictureBox2
             // 
@@ -158,9 +166,10 @@
             this.chkManifest.Location = new System.Drawing.Point(18, 140);
             this.chkManifest.Name = "chkManifest";
             this.chkManifest.Size = new System.Drawing.Size(112, 17);
-            this.chkManifest.TabIndex = 2;
+            this.chkManifest.TabIndex = 14;
             this.chkManifest.Text = "Generate .manifest";
             this.chkManifest.UseVisualStyleBackColor = true;
+            this.chkManifest.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label2
             // 
@@ -168,7 +177,7 @@
             this.label2.Location = new System.Drawing.Point(6, 98);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(46, 13);
-            this.label2.TabIndex = 11;
+            this.label2.TabIndex = 10;
             this.label2.Text = "Options:";
             // 
             // chkCopyTextures
@@ -178,14 +187,16 @@
             this.chkCopyTextures.Location = new System.Drawing.Point(18, 117);
             this.chkCopyTextures.Name = "chkCopyTextures";
             this.chkCopyTextures.Size = new System.Drawing.Size(132, 17);
-            this.chkCopyTextures.TabIndex = 12;
+            this.chkCopyTextures.TabIndex = 11;
             this.chkCopyTextures.Text = "Copy textures to output";
             this.chkCopyTextures.UseVisualStyleBackColor = true;
+            this.chkCopyTextures.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkDracoCompression);
             this.groupBox1.Controls.Add(this.chkMergeAOwithMR);
             this.groupBox1.Controls.Add(this.txtQuality);
             this.groupBox1.Controls.Add(this.labelQuality);
@@ -206,9 +217,20 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(450, 190);
-            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // chkDracoCompression
+            // 
+            this.chkDracoCompression.AutoSize = true;
+            this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
+            this.chkDracoCompression.Name = "chkDracoCompression";
+            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
+            this.chkDracoCompression.TabIndex = 18;
+            this.chkDracoCompression.Text = "Use Draco compression";
+            this.chkDracoCompression.UseVisualStyleBackColor = true;
+            this.chkDracoCompression.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkMergeAOwithMR
             // 
@@ -219,18 +241,20 @@
             this.chkMergeAOwithMR.Location = new System.Drawing.Point(18, 163);
             this.chkMergeAOwithMR.Name = "chkMergeAOwithMR";
             this.chkMergeAOwithMR.Size = new System.Drawing.Size(94, 17);
-            this.chkMergeAOwithMR.TabIndex = 25;
+            this.chkMergeAOwithMR.TabIndex = 17;
             this.chkMergeAOwithMR.Text = "Merge AO map";
             this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
+            this.chkMergeAOwithMR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // txtQuality
             // 
             this.txtQuality.Location = new System.Drawing.Point(401, 90);
             this.txtQuality.Name = "txtQuality";
             this.txtQuality.Size = new System.Drawing.Size(43, 20);
-            this.txtQuality.TabIndex = 24;
+            this.txtQuality.TabIndex = 9;
             this.txtQuality.Text = "100";
             this.txtQuality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtQuality.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // labelQuality
             // 
@@ -238,7 +262,7 @@
             this.labelQuality.Location = new System.Drawing.Point(317, 93);
             this.labelQuality.Name = "labelQuality";
             this.labelQuality.Size = new System.Drawing.Size(79, 13);
-            this.labelQuality.TabIndex = 23;
+            this.labelQuality.TabIndex = 8;
             this.labelQuality.Text = "Texture quality:";
             // 
             // chkExportTangents
@@ -250,9 +274,10 @@
             this.chkExportTangents.Location = new System.Drawing.Point(320, 140);
             this.chkExportTangents.Name = "chkExportTangents";
             this.chkExportTangents.Size = new System.Drawing.Size(97, 17);
-            this.chkExportTangents.TabIndex = 21;
+            this.chkExportTangents.TabIndex = 16;
             this.chkExportTangents.Text = "Export tangents";
             this.chkExportTangents.UseVisualStyleBackColor = true;
+            this.chkExportTangents.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label4
             // 
@@ -260,7 +285,7 @@
             this.label4.Location = new System.Drawing.Point(329, 69);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(67, 13);
-            this.label4.TabIndex = 20;
+            this.label4.TabIndex = 6;
             this.label4.Text = "Scale factor:";
             // 
             // txtScaleFactor
@@ -268,10 +293,10 @@
             this.txtScaleFactor.Location = new System.Drawing.Point(402, 66);
             this.txtScaleFactor.Name = "txtScaleFactor";
             this.txtScaleFactor.Size = new System.Drawing.Size(42, 20);
-            this.txtScaleFactor.TabIndex = 19;
+            this.txtScaleFactor.TabIndex = 7;
             this.txtScaleFactor.Text = "1";
             this.txtScaleFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtScaleFactor.TextChanged += new System.EventHandler(this.txtScaleFactor_TextChanged);
+            this.txtScaleFactor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // label3
             // 
@@ -279,9 +304,8 @@
             this.label3.Location = new System.Drawing.Point(6, 69);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(74, 13);
-            this.label3.TabIndex = 16;
+            this.label3.TabIndex = 4;
             this.label3.Text = "Output format:";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // comboOutputFormat
             // 
@@ -294,8 +318,9 @@
             this.comboOutputFormat.Location = new System.Drawing.Point(86, 66);
             this.comboOutputFormat.Name = "comboOutputFormat";
             this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
-            this.comboOutputFormat.TabIndex = 0;
+            this.comboOutputFormat.TabIndex = 5;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
+            this.comboOutputFormat.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkOnlySelected
             // 
@@ -304,9 +329,10 @@
             this.chkOnlySelected.Location = new System.Drawing.Point(320, 117);
             this.chkOnlySelected.Name = "chkOnlySelected";
             this.chkOnlySelected.Size = new System.Drawing.Size(118, 17);
-            this.chkOnlySelected.TabIndex = 15;
+            this.chkOnlySelected.TabIndex = 13;
             this.chkOnlySelected.Text = "Export only selected";
             this.chkOnlySelected.UseVisualStyleBackColor = true;
+            this.chkOnlySelected.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkAutoSave
             // 
@@ -315,9 +341,10 @@
             this.chkAutoSave.Location = new System.Drawing.Point(166, 140);
             this.chkAutoSave.Name = "chkAutoSave";
             this.chkAutoSave.Size = new System.Drawing.Size(130, 17);
-            this.chkAutoSave.TabIndex = 14;
+            this.chkAutoSave.TabIndex = 15;
             this.chkAutoSave.Text = "Auto save 3ds Max file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
+            this.chkAutoSave.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkHidden
             // 
@@ -326,9 +353,10 @@
             this.chkHidden.Location = new System.Drawing.Point(166, 117);
             this.chkHidden.Name = "chkHidden";
             this.chkHidden.Size = new System.Drawing.Size(125, 17);
-            this.chkHidden.TabIndex = 13;
+            this.chkHidden.TabIndex = 12;
             this.chkHidden.Text = "Export hidden objects";
             this.chkHidden.UseVisualStyleBackColor = true;
+            this.chkHidden.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butExportAndRun
             // 
@@ -338,10 +366,11 @@
             this.butExportAndRun.Location = new System.Drawing.Point(414, 202);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
-            this.butExportAndRun.TabIndex = 14;
+            this.butExportAndRun.TabIndex = 102;
             this.butExportAndRun.Text = "Export && Run";
             this.butExportAndRun.UseVisualStyleBackColor = true;
             this.butExportAndRun.Click += new System.EventHandler(this.butExportAndRun_Click);
+            this.butExportAndRun.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // butClose
             // 
@@ -350,10 +379,15 @@
             this.butClose.Location = new System.Drawing.Point(742, 526);
             this.butClose.Name = "butClose";
             this.butClose.Size = new System.Drawing.Size(80, 23);
-            this.butClose.TabIndex = 7;
+            this.butClose.TabIndex = 106;
             this.butClose.Text = "Close";
             this.butClose.UseVisualStyleBackColor = true;
             this.butClose.Click += new System.EventHandler(this.butClose_Click);
+            this.butClose.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
+            // 
+            // toolTipDracoCompression
+            // 
+            this.toolTipDracoCompression.ShowAlways = true;
             // 
             // ExporterForm
             // 
@@ -377,6 +411,7 @@
             this.Deactivate += new System.EventHandler(this.ExporterForm_Deactivate);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExporterForm_FormClosed);
             this.Load += new System.EventHandler(this.ExporterForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -412,5 +447,7 @@
         private System.Windows.Forms.Label labelQuality;
         private System.Windows.Forms.TextBox txtQuality;
         private System.Windows.Forms.CheckBox chkMergeAOwithMR;
+        private System.Windows.Forms.CheckBox chkDracoCompression;
+        private System.Windows.Forms.ToolTip toolTipDracoCompression;
     }
 }

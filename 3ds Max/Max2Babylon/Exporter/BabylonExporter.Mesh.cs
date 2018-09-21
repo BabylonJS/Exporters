@@ -58,7 +58,7 @@ namespace Max2Babylon
                 while (babylonMasterMesh == null &&
                        index < tabs.Count)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var tab = tabs[index];
 #else
                     var tab = tabs[new IntPtr(index)];
@@ -81,7 +81,43 @@ namespace Max2Babylon
 
                     meshNode.MaxNode.MarkAsInstance();
 
-                    var babylonInstanceMesh = new BabylonAbstractMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
+                    var babylonInstanceMesh = new BabylonAbstractMesh
+                    {
+                        id = meshNode.MaxNode.GetGuid().ToString(),
+                        name = meshNode.Name,
+                        pickable = meshNode.MaxNode.GetBoolProperty("babylonjs_checkpickable"),
+                        checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions"),
+                        showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox"),
+                        showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox"),
+                        alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000)
+                    };
+
+                    // Physics
+                    var impostorText = meshNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");
+
+                    if (impostorText != "None")
+                    {
+                        switch (impostorText)
+                        {
+                            case "Sphere":
+                                babylonInstanceMesh.physicsImpostor = 1;
+                                break;
+                            case "Box":
+                                babylonInstanceMesh.physicsImpostor = 2;
+                                break;
+                            case "Plane":
+                                babylonInstanceMesh.physicsImpostor = 3;
+                                break;
+                            default:
+                                babylonInstanceMesh.physicsImpostor = 0;
+                                break;
+                        }
+
+                        babylonInstanceMesh.physicsMass = meshNode.MaxNode.GetFloatProperty("babylonjs_mass");
+                        babylonInstanceMesh.physicsFriction = meshNode.MaxNode.GetFloatProperty("babylonjs_friction", 0.2f);
+                        babylonInstanceMesh.physicsRestitution = meshNode.MaxNode.GetFloatProperty("babylonjs_restitution", 0.2f);
+                    }
+
 
                     // Add instance to master mesh
                     List<BabylonAbstractMesh> list = babylonMasterMesh.instances != null ? babylonMasterMesh.instances.ToList() : new List<BabylonAbstractMesh>();
@@ -162,7 +198,7 @@ namespace Max2Babylon
             }
 
             // Misc.
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
             babylonMesh.isVisible = meshNode.MaxNode.Renderable;
             babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows;
             babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics;
@@ -265,6 +301,22 @@ namespace Max2Babylon
                 var mtl = meshNode.NodeMaterial;
                 var multiMatsCount = 1;
 
+                // The DirectXShader material is a passthrough to its render material.
+                // The shell material is a passthrough to its baked material.
+                while (mtl != null && (isShellMaterial(mtl) || isDirectXShaderMaterial(mtl)))
+                {
+                    if(isShellMaterial(mtl))
+                    {
+                        // Retrieve the baked material from the shell material.
+                        mtl = GetBakedMaterialFromShellMaterial(mtl);
+                    }
+                    else // isDirectXShaderMaterial(mtl)
+                    {
+                        // Retrieve the render material from the directX shader
+                        mtl = GetRenderMaterialFromDirectXShader(mtl);
+                    }
+                }
+
                 if (mtl != null)
                 {
                     IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
@@ -301,7 +353,7 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var channelNum = mappingChannels[i];
 #else
                     var channelNum = mappingChannels[new IntPtr(i)];
@@ -428,6 +480,8 @@ namespace Max2Babylon
                 {
                     RaiseMessage("Export morph targets", 2);
 
+                    var rawScene = Loader.Core.RootNode;
+
                     // Morph Target Manager
                     var babylonMorphTargetManager = new BabylonMorphTargetManager();
                     babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
@@ -459,10 +513,14 @@ namespace Max2Babylon
                                 // Target geometry
                                 var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
-                                babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
 
+                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                                {
+                                    babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
+                                }
+                               
                                 // Tangent
-                                if (exportParameters.exportTangents)
+                                if (exportParameters.exportTangents && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents"))
                                 {
                                     babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                                 }
@@ -571,7 +629,7 @@ namespace Max2Babylon
                         if (storeFaceIndexes)
                         {
                             // Retreive face
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                             face = materialFaces[j];
 #else
                             face = materialFaces[new IntPtr(j)];
@@ -900,20 +958,17 @@ namespace Max2Babylon
 
             if (ExportQuaternionsInsteadOfEulers)
             {
-                babylonAbstractMesh.rotationQuaternion = q_babylon.ToArray();
+                // normalize quaternion
+                var q = q_babylon;
+                float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+                babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             }
             else
             {
                 babylonAbstractMesh.rotation = q_babylon.toEulerAngles().ToArray();
             }
-
-            // normalize quaternion
-            var q = q_babylon;
-            float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
-            babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             babylonAbstractMesh.scaling = new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
             babylonAbstractMesh.position = new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
-
         }
 
         private void exportAnimation(BabylonNode babylonNode, IIGameNode maxGameNode)

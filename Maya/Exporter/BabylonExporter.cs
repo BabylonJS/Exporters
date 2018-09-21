@@ -19,10 +19,13 @@ namespace Maya2Babylon
         private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
-        private bool ExportQuaternionsInsteadOfEulers { get; set; }
+        private bool ExportQuaternionsInsteadOfEulers { get; set; } = true;
         private bool isBabylonExported;
         private bool _exportSkin;
         private long _quality;
+        private bool _dracoCompression;
+        private bool _exportMorphNormal;
+        private bool _exportMorphTangent;
 
         public bool IsCancelled { get; set; }
 
@@ -36,11 +39,12 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.2.12";
+        private string exporterVersion = "1.2.21";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
-                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality)
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression,
+                            bool exportMorphNormal, bool exportMorphTangent)
         {
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
@@ -92,6 +96,9 @@ namespace Maya2Babylon
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             _exportSkin = exportSkin;
+            _dracoCompression = dracoCompression;
+            _exportMorphNormal = exportMorphNormal;
+            _exportMorphTangent = exportMorphTangent;
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
@@ -335,6 +342,15 @@ namespace Maya2Babylon
                 float rootNodeScale = 1.0f / scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
 
+                if (ExportQuaternionsInsteadOfEulers)
+                {
+                    rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
+                }
+                else
+                {
+                    rootNode.rotation = new float[] { 0, 0, 0 };
+                }
+
                 // Update all top nodes
                 var babylonNodes = new List<BabylonNode>();
                 babylonNodes.AddRange(babylonScene.MeshesList);
@@ -386,6 +402,37 @@ namespace Maya2Babylon
 
             // set back the frame
             Loader.SetCurrentTime(currentTime);
+
+            // Animation group
+            if (isBabylonExported)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+                // if there is animationGroup, then remove animations from nodes
+                if (babylonScene.animationGroups.Count > 0)
+                {
+                    // add animations of each nodes in the animGroup
+                    List<BabylonNode> babylonNodes = new List<BabylonNode>();
+                    babylonNodes.AddRange(babylonScene.MeshesList);
+                    babylonNodes.AddRange(babylonScene.CamerasList);
+                    babylonNodes.AddRange(babylonScene.LightsList);
+
+                    foreach (BabylonNode node in babylonNodes)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+            }
+
 
             // Output
             babylonScene.Prepare(false, false);
