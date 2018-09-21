@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Maya2Babylon
 {
@@ -211,6 +212,48 @@ namespace Maya2Babylon
                 };
             }
 
+            // Draco compression
+            if (_dracoCompression)
+            {
+                RaiseMessage("GLTFExporter | Draco compression");
+
+                try
+                {
+                    Process gltfPipeline = new Process();
+
+                    // Hide the cmd window that show the gltf-pipeline result
+                    gltfPipeline.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                    string arg;
+                    if (generateBinary)
+                    {
+                        string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
+                        arg = $" -i {outputGlbFile} -o {outputGlbFile} -d";
+                    }
+                    else
+                    {
+                        string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
+                        arg = $" -i {outputGltfFile} -o {outputGltfFile} -d -s";
+                    }
+                    gltfPipeline.StartInfo.FileName = "cmd.exe";
+                    gltfPipeline.StartInfo.Arguments = " /C gltf-pipeline.cmd " + arg;
+
+                    gltfPipeline.Start();
+                    gltfPipeline.WaitForExit();
+
+                    // Check the result code: 0 success - 1 error
+                    if(gltfPipeline.ExitCode != 0)
+                    {
+                        throw new Exception();
+                    }
+                }
+                catch
+                {
+                    RaiseError("gltf-pipeline module not found.", 1);
+                    RaiseError("The exported file is not compressed.");
+                }
+            }
+
             ReportProgressChanged(100);
         }
 
@@ -360,40 +403,32 @@ namespace Maya2Babylon
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
                 var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
-                using (Image image = Image.FromFile(path))
+                byte[] imageBytes = File.ReadAllBytes(path);
+
+                // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
+                imageBytes = padChunk(imageBytes, 4, 0x00);
+
+                // BufferView - Image
+                var buffer = gltf.buffer;
+                var bufferViewImage = new GLTFBufferView
                 {
-                    using (MemoryStream m = new MemoryStream())
-                    {
-                        var imageFormat = gltfImage.FileExtension == "jpeg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                        image.Save(m, imageFormat);
-                        byte[] imageBytes = m.ToArray();
-
-                        // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
-                        imageBytes = padChunk(imageBytes, 4, 0x00);
-
-                        // BufferView - Image
-                        var buffer = gltf.buffer;
-                        var bufferViewImage = new GLTFBufferView
-                        {
-                            name = "bufferViewImage",
-                            buffer = buffer.index,
-                            Buffer = buffer,
-                            byteOffset = buffer.byteLength
-                        };
-                        bufferViewImage.index = gltf.BufferViewsList.Count;
-                        gltf.BufferViewsList.Add(bufferViewImage);
-                        imageBufferViews.Add(bufferViewImage);
+                    name = "bufferViewImage",
+                    buffer = buffer.index,
+                    Buffer = buffer,
+                    byteOffset = buffer.byteLength
+                };
+                bufferViewImage.index = gltf.BufferViewsList.Count;
+                gltf.BufferViewsList.Add(bufferViewImage);
+                imageBufferViews.Add(bufferViewImage);
 
 
-                        gltfImage.uri = null;
-                        gltfImage.bufferView = bufferViewImage.index;
-                        gltfImage.mimeType = "image/" + gltfImage.FileExtension;
+                gltfImage.uri = null;
+                gltfImage.bufferView = bufferViewImage.index;
+                gltfImage.mimeType = "image/" + gltfImage.FileExtension;
 
-                        bufferViewImage.bytesList.AddRange(imageBytes);
-                        bufferViewImage.byteLength += imageBytes.Length;
-                        bufferViewImage.Buffer.byteLength += imageBytes.Length;
-                    }
-                }
+                bufferViewImage.bytesList.AddRange(imageBytes);
+                bufferViewImage.byteLength += imageBytes.Length;
+                bufferViewImage.Buffer.byteLength += imageBytes.Length;
             }
             return imageBufferViews;
         }

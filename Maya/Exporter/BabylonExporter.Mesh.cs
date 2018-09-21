@@ -534,10 +534,10 @@ namespace Maya2Babylon
                 IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(babylonMesh, mFnMesh.objectProperty);
                 babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
 
-                if (babylonMorphTargets.Count > 7)
+                if (babylonMorphTargets.Count > 5)
                 {
                     RaiseWarning($"There are {babylonMorphTargets.Count} morph targets.", 3);
-                    RaiseWarning($"Please be aware that most of the browsers are limited to 16 attributes per mesh. Adding a single morph target to a mesh add 2 new attributes (position + normal). This could quickly go beyond the max attributes limitation.", 3);
+                    RaiseWarning($"Please be aware that most of the browsers are limited to 16 attributes per mesh. Adding a single morph target to a mesh can add up to 3 new attributes (position + normal + tangent). You can export less attributs by modifying the MorphTarget options.", 3);
                 }
             }
 
@@ -1215,10 +1215,14 @@ namespace Maya2Babylon
                         }
 
                         babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
-                        babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
+
+                        if (_exportMorphNormal)
+                        {
+                            babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
+                        }
 
                         // Tangent
-                        if (!isBabylonExported && isTangentExportSuccess)
+                        if (!isBabylonExported && isTangentExportSuccess && _exportMorphTangent)
                         {
                             babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                         }

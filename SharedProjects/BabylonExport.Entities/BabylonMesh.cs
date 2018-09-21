@@ -15,10 +15,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool isVisible { get; set; }
 
-        [DataMember]
-        public bool pickable { get; set; }
-
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public float[] pivotMatrix { get; set; }
 
         [DataMember]
@@ -58,9 +55,6 @@ namespace BabylonExport.Entities
         public int[] indices { get; set; }
 
         [DataMember]
-        public bool checkCollisions { get; set; }
-
-        [DataMember]
         public bool receiveShadows { get; set; }    
     
         [DataMember]
@@ -85,28 +79,7 @@ namespace BabylonExport.Entities
         public int numBoneInfluencers { get; set; }
 
         [DataMember]
-        public bool showBoundingBox { get; set; }
-
-        [DataMember]
-        public bool showSubMeshesBoundingBox { get; set; }
-
-        [DataMember]
         public bool applyFog { get; set; }
-
-        [DataMember]
-        public int alphaIndex { get; set; }
-
-        [DataMember]
-        public int physicsImpostor { get; set; }
-
-        [DataMember]
-        public float physicsMass { get; set; }
-
-        [DataMember]
-        public float physicsFriction { get; set; }
-
-        [DataMember]
-        public float physicsRestitution { get; set; }
 
         [DataMember]
         public object metadata { get; set; }
@@ -123,10 +96,6 @@ namespace BabylonExport.Entities
             isEnabled = true;
             isVisible = true;
 
-            position = new[] { 0f, 0f, 0f };
-            rotation = new[] { 0f, 0f, 0f };
-            scaling = new[] { 1f, 1f, 1f };
-
             billboardMode = 0;
 
             visibility = 1.0f;
@@ -136,6 +105,8 @@ namespace BabylonExport.Entities
             pickable = true;
 
             numBoneInfluencers = 4;
+
+            position = new float[] { 0, 0, 0 };
         }
     }
 

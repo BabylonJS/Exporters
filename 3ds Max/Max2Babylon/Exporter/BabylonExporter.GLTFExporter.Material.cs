@@ -15,13 +15,14 @@ namespace Max2Babylon
             var id = babylonMaterial.id;
             RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
+            GLTFMaterial gltfMaterial = null;
             IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
             IMtl maxMtl = gameMtl.MaxMaterial;
             
             if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out IMaterialExporter materialExporter)
                 && materialExporter is IGLTFMaterialExporter)
             {
-                GLTFMaterial gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this, gltf, gameMtl, 
+                gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this, gltf, gameMtl, 
                     (string sourcePath, string textureName) => { return TryWriteImage(gltf, sourcePath, textureName); }, 
                     (string message, Color color) => { RaiseMessage(message, color, 2); },
                     (string message) => { RaiseWarning(message, 2); },
@@ -140,7 +141,7 @@ namespace Max2Babylon
                 // --------------------------------
 
                 RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
-                var gltfMaterial = new GLTFMaterial
+                gltfMaterial = new GLTFMaterial
                 {
                     name = name
                 };
@@ -445,7 +446,7 @@ namespace Max2Babylon
                 // --------------------------------
 
                 RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
-                var gltfMaterial = new GLTFMaterial
+                gltfMaterial = new GLTFMaterial
                 {
                     name = name
                 };
@@ -557,6 +558,16 @@ namespace Max2Babylon
             else
             {
                 RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType() + " | Max MaterialClass: " + babylonMaterial.maxGameMaterial.ClassName, 2);
+            }
+
+            if (gltfMaterial != null && babylonMaterial.isUnlit)
+            {
+                // Add Unlit extension
+                if (gltfMaterial.extensions == null)
+                {
+                    gltfMaterial.extensions = new GLTFExtensions();
+                }
+                gltfMaterial.extensions["KHR_materials_unlit"] = new object();
             }
         }
 

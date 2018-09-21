@@ -135,9 +135,9 @@ namespace Maya2Babylon
             MGlobal.executeCommand($"fileInfo -remove \"{property}\"");
         }
 
-        internal static bool GetBoolProperty(string property)
+        internal static bool GetBoolProperty(string property, bool defaultValue = false)
         {
-            bool value = false;
+            bool value = defaultValue;
             MCommandResult result = new MCommandResult();
             MGlobal.executeCommand($"fileInfo -q \"{property}\"", result);
             if (result.resultType == MCommandResult.Type.kStringArray)

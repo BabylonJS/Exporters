@@ -26,6 +26,8 @@ namespace BabylonExport.Entities
 
         public IIGameMaterial maxGameMaterial { get; set; }
 
+        public bool isUnlit = false;
+
         public BabylonMaterial()
         {
             backFaceCulling = true;
@@ -43,6 +45,7 @@ namespace BabylonExport.Entities
             wireframe = original.wireframe;
             alpha = original.alpha;
             alphaMode = original.alphaMode;
+            isUnlit = original.isUnlit;
         }
     }
 }

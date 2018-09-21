@@ -161,11 +161,18 @@ namespace Max2Babylon
             return null;
         }
 
-        private BabylonTexture ExportBaseColorAlphaTexture(IIGameMaterial materialNode, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseColorTexMap"></param>
+        /// <param name="alphaTexMap">Transparency weight map</param>
+        /// <param name="baseColor"></param>
+        /// <param name="alpha"></param>
+        /// <param name="babylonScene"></param>
+        /// <param name="materialName"></param>
+        /// <returns></returns>
+        private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName)
         {
-            ITexmap baseColorTexMap = _getTexMap(materialNode, 1);
-            ITexmap alphaTexMap = _getTexMap(materialNode, 9); // Transparency weight map
-
             // --- Babylon texture ---
 
             var baseColorTexture = _getBitmapTex(baseColorTexMap);
@@ -313,12 +320,8 @@ namespace Max2Babylon
             return babylonTexture;
         }
 
-        private BabylonTexture ExportORMTexture(IIGameMaterial materialNode, float metallic, float roughness, BabylonScene babylonScene, bool invertRoughness)
+        private BabylonTexture ExportORMTexture(ITexmap ambientOcclusionTexMap, ITexmap roughnessTexMap, ITexmap metallicTexMap,  float metallic, float roughness, BabylonScene babylonScene, bool invertRoughness)
         {
-            ITexmap metallicTexMap = _getTexMap(materialNode, 5);
-            ITexmap roughnessTexMap = _getTexMap(materialNode, 4);
-            ITexmap ambientOcclusionTexMap = exportParameters.mergeAOwithMR ? _getTexMap(materialNode, 6) : null;
-
             // --- Babylon texture ---
 
             var metallicTexture = _getBitmapTex(metallicTexMap);
@@ -445,7 +448,7 @@ namespace Max2Babylon
                 {
                     try
                     {
-                        if (File.Exists(sourcePath))
+                        if (File.Exists(sourcePath) && sourcePath != destPath)
                         {
                             File.Copy(sourcePath, destPath, true);
                         }
@@ -986,7 +989,10 @@ namespace Max2Babylon
 
                         if (validFormats.Contains(imageFormat))
                         {
-                            File.Copy(sourcePath, destPath, true);
+                            if (sourcePath != destPath)
+                            {
+                                File.Copy(sourcePath, destPath, true);
+                            }
                         }
                         else if (invalidFormats.Contains(imageFormat))
                         {

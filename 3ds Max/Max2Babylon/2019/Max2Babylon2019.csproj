@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2F49C726-A1F8-40D4-859F-1355949612DC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Max2Babylon</RootNamespace>
+    <AssemblyName>Max2Babylon</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MAX2019</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
+    <DefineConstants>TRACE;MAX2019</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MAX2019</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
+    <DefineConstants>TRACE;MAX2019</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autodesk.Max, Version=21.1.1.1320, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Refs\Autodesk.Max.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GDImageLibrary">
+      <HintPath>..\..\Refs\GDImageLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpDX.3.1.1\lib\net45\SharpDX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpDX.Mathematics.3.1.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TargaImage">
+      <HintPath>..\..\Refs\TargaImage.dll</HintPath>
+    </Reference>
+    <Reference Include="TQ.Texture">
+      <HintPath>..\..\Refs\TQ.Texture.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\BabylonActionCallback.cs">
+      <Link>BabylonActionCallback.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonAnimationActionItem.cs">
+      <Link>BabylonAnimationActionItem.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonExportActionItem.cs">
+      <Link>BabylonExportActionItem.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonPropertiesActionItem.cs">
+      <Link>BabylonPropertiesActionItem.cs</Link>
+    </Compile>
+    <Compile Include="..\Descriptor.cs">
+      <Link>Descriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\AnimationGroup.cs">
+      <Link>Exporter\AnimationGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Animation.cs">
+      <Link>Exporter\BabylonExporter.Animation.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Camera.cs">
+      <Link>Exporter\BabylonExporter.Camera.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.cs">
+      <Link>Exporter\BabylonExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Camera.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.Camera.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Material.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.Material.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Mesh.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.Mesh.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Texture.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.Texture.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Light.cs">
+      <Link>Exporter\BabylonExporter.Light.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Material.cs">
+      <Link>Exporter\BabylonExporter.Material.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Material.Optimiser.cs">
+      <Link>Exporter\BabylonExporter.Material.Optimiser.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Mesh.cs">
+      <Link>Exporter\BabylonExporter.Mesh.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.ShadowGenerator.cs">
+      <Link>Exporter\BabylonExporter.ShadowGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Skeleton.cs">
+      <Link>Exporter\BabylonExporter.Skeleton.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Texture.cs">
+      <Link>Exporter\BabylonExporter.Texture.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\GlobalVertex.cs">
+      <Link>Exporter\GlobalVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\GLTFGlobalVertex.cs">
+      <Link>Exporter\GLTFGlobalVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Light.cs">
+      <Link>Exporter\GLTFGlobalVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\Forms\AnimationForm.cs">
+      <Link>Forms\AnimationForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\AnimationForm.designer.cs">
+      <Link>Forms\AnimationForm.designer.cs</Link>
+      <DependentUpon>AnimationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\AnimationGroupControl.cs">
+      <Link>Forms\AnimationGroupControl.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\Forms\AnimationGroupControl.designer.cs">
+      <Link>Forms\AnimationGroupControl.designer.cs</Link>
+      <DependentUpon>AnimationGroupControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\CameraPropertiesForm.cs">
+      <Link>Forms\CameraPropertiesForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\CameraPropertiesForm.Designer.cs">
+      <Link>Forms\CameraPropertiesForm.Designer.cs</Link>
+      <DependentUpon>CameraPropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\ExporterForm.cs">
+      <Link>Forms\ExporterForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\ExporterForm.Designer.cs">
+      <Link>Forms\ExporterForm.Designer.cs</Link>
+      <DependentUpon>ExporterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\LightPropertiesForm.cs">
+      <Link>Forms\LightPropertiesForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\LightPropertiesForm.Designer.cs">
+      <Link>Forms\LightPropertiesForm.Designer.cs</Link>
+      <DependentUpon>LightPropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\MaxNodeTreeView.cs">
+      <Link>Forms\MaxNodeTreeView.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Forms\MaxNodeTreeView.designer.cs">
+      <Link>Forms\MaxNodeTreeView.designer.cs</Link>
+      <DependentUpon>MaxNodeTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\ObjectPropertiesForm.cs">
+      <Link>Forms\ObjectPropertiesForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\ObjectPropertiesForm.Designer.cs">
+      <Link>Forms\ObjectPropertiesForm.Designer.cs</Link>
+      <DependentUpon>ObjectPropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\ScenePropertiesForm.cs">
+      <Link>Forms\ScenePropertiesForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\ScenePropertiesForm.Designer.cs">
+      <Link>Forms\ScenePropertiesForm.Designer.cs</Link>
+      <DependentUpon>ScenePropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\Forms\Vector3Control.cs">
+      <Link>Forms\Vector3Control.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\Forms\Vector3Control.Designer.cs">
+      <Link>Forms\Vector3Control.Designer.cs</Link>
+      <DependentUpon>Vector3Control.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\GlobalUtility.cs">
+      <Link>GlobalUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\JsonTextWriterBounded.cs">
+      <Link>JsonTextWriterBounded.cs</Link>
+    </Compile>
+    <Compile Include="..\JsonTextWriterOptimized.cs">
+      <Link>JsonTextWriterOptimized.cs</Link>
+    </Compile>
+    <Compile Include="..\Loader.cs">
+      <Link>Loader.cs</Link>
+    </Compile>
+    <Compile Include="..\ExportParameters.cs">
+      <Link>ExportParameters.cs</Link>
+    </Compile>
+    <Compile Include="..\MaxScriptManager.cs">
+      <Link>MaxScriptManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Extensions\ColorExtension.cs">
+      <Link>Extensions\ColorExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\Tools\Tools.cs">
+      <Link>Tools\Tools.cs</Link>
+    </Compile>
+    <Compile Include="..\Tools\VNormal.cs">
+      <Link>Tools\VNormal.cs</Link>
+    </Compile>
+    <Compile Include="..\Tools\WebServer.cs">
+      <Link>Tools\WebServer.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\GLTFBufferService.cs">
+      <Link>Exporter\GLTFBufferService.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Animation.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.Animation.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Skin.cs">
+      <Link>Exporter\BabylonExporter.GLTFExporter.Skin.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.WorldModifiers.cs">
+      <Link>Exporter\BabylonExporter.WorldModifiers.Skin.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Forms\AnimationForm.resx">
+      <Link>Forms\AnimationForm.resx</Link>
+      <DependentUpon>AnimationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\AnimationGroupControl.resx">
+      <Link>Forms\AnimationGroupControl.resx</Link>
+      <DependentUpon>AnimationGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\CameraPropertiesForm.resx">
+      <Link>Forms\CameraPropertiesForm.resx</Link>
+      <DependentUpon>CameraPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\ExporterForm.resx">
+      <Link>Forms\ExporterForm.resx</Link>
+      <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\LightPropertiesForm.resx">
+      <Link>Forms\LightPropertiesForm.resx</Link>
+      <DependentUpon>LightPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\ObjectPropertiesForm.resx">
+      <Link>Forms\ObjectPropertiesForm.resx</Link>
+      <DependentUpon>ObjectPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\ScenePropertiesForm.resx">
+      <Link>Forms\ScenePropertiesForm.resx</Link>
+      <DependentUpon>ScenePropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\Vector3Control.resx">
+      <Link>Forms\Vector3Control.resx</Link>
+      <DependentUpon>Vector3Control.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\MaxNodeTreeView.resx">
+      <Link>Forms\MaxNodeTreeView.resx</Link>
+      <DependentUpon>MaxNodeTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Refs\Autodesk.Max.dll" />
+    <None Include="Resources\Logo_Exporter_v4.jpg" />
+  </ItemGroup>
+  <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
+  <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
+  <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+if not exist "$(SolutionDir)assemblies\2019" mkdir "$(SolutionDir)assemblies\2019"
+del "$(SolutionDir)assemblies\2019\*.dll"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2019\"
+if exist "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\"
+if exist "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -12,6 +12,7 @@ namespace Max2Babylon
     {
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
+        private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
 
         TreeNode currentNode;
         int currentRank;
@@ -21,6 +22,26 @@ namespace Max2Babylon
             InitializeComponent();
 
             this.babylonExportAction = babylonExportAction;
+            
+            // Check if the gltf-pipeline module is installed
+            try
+            {
+                Process gltfPipeline = new Process();
+                gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
+
+                // Hide the cmd window that show the gltf-pipeline result
+                gltfPipeline.StartInfo.UseShellExecute = false;
+                gltfPipeline.StartInfo.CreateNoWindow = true;
+
+                gltfPipeline.Start();
+                gltfPipeline.WaitForExit();
+            }
+            catch
+            {
+                gltfPipelineInstalled = false;
+            }
+
+            groupBox1.MouseMove += groupBox1_MouseMove;
         }
 
         private void ExporterForm_Load(object sender, EventArgs e)
@@ -33,8 +54,16 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
             Tools.PrepareCheckBox(chkExportTangents, Loader.Core.RootNode, "babylonjs_exporttangents");
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");
+            Tools.PrepareTextBox(txtScaleFactor, Loader.Core.RootNode, "babylonjs_txtScaleFactor", "1");
             Tools.PrepareTextBox(txtQuality, Loader.Core.RootNode, "babylonjs_txtCompression", "100");
             Tools.PrepareCheckBox(chkMergeAOwithMR, Loader.Core.RootNode, "babylonjs_mergeAOwithMR", 1);
+            Tools.PrepareCheckBox(chkDracoCompression, Loader.Core.RootNode, "babylonjs_dracoCompression", 0);
+
+            if(comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
+            {
+                chkDracoCompression.Checked = false;
+                chkDracoCompression.Enabled = false;
+            }
         }
 
         private void butBrowse_Click(object sender, EventArgs e)
@@ -59,8 +88,10 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
             Tools.UpdateCheckBox(chkExportTangents, Loader.Core.RootNode, "babylonjs_exporttangents");
             Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
+            Tools.UpdateTextBox(txtScaleFactor, Loader.Core.RootNode, "babylonjs_txtScaleFactor");
             Tools.UpdateTextBox(txtQuality, Loader.Core.RootNode, "babylonjs_txtCompression");
             Tools.UpdateCheckBox(chkMergeAOwithMR, Loader.Core.RootNode, "babylonjs_mergeAOwithMR");
+            Tools.UpdateCheckBox(chkDracoCompression, Loader.Core.RootNode, "babylonjs_dracoCompression");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
@@ -136,7 +167,8 @@ namespace Max2Babylon
                     autoSave3dsMaxFile = chkAutoSave.Checked,
                     exportTangents = chkExportTangents.Checked,
                     txtQuality = txtQuality.Text,
-                    mergeAOwithMR = chkMergeAOwithMR.Checked
+                    mergeAOwithMR = chkMergeAOwithMR.Checked,
+                    dracoCompression = chkDracoCompression.Checked
                 };
 
                 exporter.callerForm = this;
@@ -241,7 +273,7 @@ namespace Max2Babylon
                 WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
                 WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
 
-                Process.Start("http://localhost:" + WebServer.Port);
+                Process.Start(WebServer.url + WebServer.SceneFilename);
 
                 WindowState = FormWindowState.Minimized;
             }
@@ -250,16 +282,6 @@ namespace Max2Babylon
         private void butClose_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void chkGltf_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
         }
 
         private void comboOutputFormat_SelectedIndexChanged(object sender, EventArgs e)
@@ -271,34 +293,63 @@ namespace Max2Babylon
                 case "binary babylon":
                     this.saveFileDialog.DefaultExt = "babylon";
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
+                    chkDracoCompression.Checked = false;
+                    chkDracoCompression.Enabled = false;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
+                    chkDracoCompression.Enabled = gltfPipelineInstalled;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
+                    chkDracoCompression.Enabled = gltfPipelineInstalled;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
         }
 
-        
-
-        private void label3_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Show a toolTip when the mouse is over the chkDracoCompression checkBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        bool IsShown = false;
+        private void groupBox1_MouseMove(object sender, MouseEventArgs e)
         {
+            Control ctrl = groupBox1.GetChildAtPoint(e.Location);
 
+            if (ctrl != null)
+            {
+                if (ctrl == chkDracoCompression && !ctrl.Enabled && !IsShown)
+                {
+                    string tip = "For gltf and glb export only.\nNode.js and gltf-pipeline module are required.";
+                    toolTipDracoCompression.Show(tip, chkDracoCompression, chkDracoCompression.Width / 2, chkDracoCompression.Height / 2);
+                    IsShown = true;
+                }
+            }
+            else
+            {
+                toolTipDracoCompression.Hide(chkDracoCompression);
+                IsShown = false;
+            }
         }
 
-        private void chkOnlySelected_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Handle the tab navigation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExporterForm_KeyDown(object sender, KeyEventArgs e)
         {
-
-        }
-
-        private void txtScaleFactor_TextChanged(object sender, EventArgs e)
-        {
-
+            if (e.KeyCode == Keys.Tab)
+            {
+                if (e.Modifiers == Keys.Shift)
+                    ProcessTabKey(false);
+                else
+                    ProcessTabKey(true);
+            }
         }
     }
 }
