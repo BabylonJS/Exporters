@@ -231,7 +231,7 @@ namespace Max2Babylon
                         GLTFTextureInfo textureInfoBC = new GLTFTextureInfo();
                         GLTFTextureInfo textureInfoMR = new GLTFTextureInfo();
 
-                        if (exportParameters.copyTexturesToOutput)
+                        if (exportParameters.writeTextures)
                         {
                         // Diffuse
                         Bitmap diffuseBitmap = null;

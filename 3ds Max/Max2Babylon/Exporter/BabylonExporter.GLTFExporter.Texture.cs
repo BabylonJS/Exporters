@@ -41,7 +41,7 @@ namespace Max2Babylon
                 var extension = Path.GetExtension(name).ToLower();
 
                 // Write image to output
-                if (exportParameters.copyTexturesToOutput)
+                if (exportParameters.writeTextures)
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
@@ -216,7 +216,7 @@ namespace Max2Babylon
 
             Bitmap emissivePremultipliedBitmap = null;
 
-            if (exportParameters.copyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Emissive
                 Bitmap emissiveBitmap = null;
