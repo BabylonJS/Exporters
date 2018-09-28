@@ -85,7 +85,7 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
-        
+
         public void Export(ExportParameters exportParameters)
         {
             // Check input text is valid
@@ -109,7 +109,7 @@ namespace Max2Babylon
             {
                 quality = long.Parse(txtQuality);
 
-                if(quality < 0 || quality > 100)
+                if (quality < 0 || quality > 100)
                 {
                     throw new Exception();
                 }
@@ -136,6 +136,7 @@ namespace Max2Babylon
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
 
+            string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
             string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
@@ -146,8 +147,10 @@ namespace Max2Babylon
                 ReportProgressChanged(100);
                 return;
             }
+            Directory.CreateDirectory(tempOutputDirectory);
 
-            var outputBabylonDirectory = outputDirectory;
+            //  var outputBabylonDirectory = outputDirectory;
+            var outputBabylonDirectory = tempOutputDirectory;
 
             // Force output file extension to be babylon
             outputFileName = Path.ChangeExtension(outputFileName, "babylon");
@@ -200,7 +203,7 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
-            
+
             if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
             {
                 // Environment texture
@@ -279,7 +282,7 @@ namespace Max2Babylon
             if (isGltfExported)
             {
                 RaiseMessage("Update light rotation for glTF export", 1);
-                for(int index = 0; index < babylonScene.LightsList.Count; index++)
+                for (int index = 0; index < babylonScene.LightsList.Count; index++)
                 {
                     BabylonNode light = babylonScene.LightsList[index];
                     FixNodeRotation(ref light, ref babylonScene, -Math.PI / 2);
@@ -444,13 +447,13 @@ namespace Max2Babylon
             if (isBabylonExported)
             {
                 RaiseMessage("Saving to output file");
-                
+
                 var outputFile = Path.Combine(outputBabylonDirectory, outputFileName);
 
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-                
+
                 using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
                     jsonWriter.Formatting = Formatting.None;
@@ -480,9 +483,43 @@ namespace Max2Babylon
             if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
+                ExportGltf(babylonScene, tempOutputDirectory, outputFileName, generateBinary);
             }
-
+            // Move files to output directory
+            var filePaths = Directory.GetFiles(tempOutputDirectory);
+            if (outputFormat == "glb")
+            {
+                foreach (var file_path in filePaths)
+                {
+                    if (Path.GetExtension(file_path) == ".glb")
+                    {
+                        var file = Path.GetFileName(file_path);
+                        var outputFile = Path.Combine(outputDirectory, file);
+                        if (File.Exists(outputFile))
+                        {
+                            File.Delete(outputFile);
+                        }
+                        File.Move(Path.Combine(tempOutputDirectory, file), outputFile);
+                        break;
+                    }   
+                }
+            }
+            else
+            { 
+                foreach (var filePath in filePaths)
+                {
+                    var file = Path.GetFileName(filePath);
+                    var outputPath = Path.Combine(outputDirectory, file);
+                    var tempFilePath = Path.Combine(tempOutputDirectory, file);
+                    RaiseMessage(tempFilePath + " -> " + outputPath);
+                    if (File.Exists(outputPath))
+                    {
+                        File.Delete(outputPath);
+                    }
+                    File.Move(tempFilePath, outputPath);
+                }
+            }
+            Directory.Delete(tempOutputDirectory, true);
             watch.Stop();
             RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
         }
