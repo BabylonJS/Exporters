@@ -49,6 +49,7 @@ namespace Max2Babylon
             txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.PrepareCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures", 1);
+            Tools.PrepareCheckBox(chkOverwriteTextures, Loader.Core.RootNode, "babylonjs_overwritetextures", 1);
             Tools.PrepareCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
             Tools.PrepareCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave", 1);
             Tools.PrepareCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
@@ -83,6 +84,7 @@ namespace Max2Babylon
         {
             Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.UpdateCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures");
+            Tools.UpdateCheckBox(chkOverwriteTextures, Loader.Core.RootNode, "babylonjs_overwritetextures");
             Tools.UpdateCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
             Tools.UpdateCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave");
             Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
@@ -160,7 +162,8 @@ namespace Max2Babylon
                     outputPath = txtFilename.Text,
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
                     scaleFactor = txtScaleFactor.Text,
-                    copyTexturesToOutput = chkCopyTextures.Checked,
+                    writeTextures = chkCopyTextures.Checked,
+                    overwriteTextures = chkOverwriteTextures.Checked,
                     exportHiddenObjects = chkHidden.Checked,
                     exportOnlySelected = chkOnlySelected.Checked,
                     generateManifest = chkManifest.Checked,
@@ -296,12 +299,14 @@ namespace Max2Babylon
                     chkDracoCompression.Checked = false;
                     chkDracoCompression.Enabled = false;
                     chkCopyTextures.Enabled = true;
+                    chkOverwriteTextures.Enabled = true;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkCopyTextures.Enabled = true;
+                    chkOverwriteTextures.Enabled = true;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
@@ -309,6 +314,8 @@ namespace Max2Babylon
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkCopyTextures.Checked = true;
                     chkCopyTextures.Enabled = false;
+                    chkOverwriteTextures.Checked = true;
+                    chkOverwriteTextures.Enabled = false;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
@@ -354,6 +361,11 @@ namespace Max2Babylon
                 else
                     ProcessTabKey(true);
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

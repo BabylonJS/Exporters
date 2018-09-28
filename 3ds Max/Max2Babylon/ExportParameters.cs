@@ -5,7 +5,7 @@
         public string outputPath;
         public string outputFormat;
         public string scaleFactor = "1";
-        public bool copyTexturesToOutput = true;
+        public bool writeTextures = true;
         public bool overwriteTextures = true;
         public bool exportHiddenObjects = false;
         public bool exportOnlySelected = false;

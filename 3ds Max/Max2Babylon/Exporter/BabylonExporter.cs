@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
@@ -85,7 +86,6 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
-
         public void Export(ExportParameters exportParameters)
         {
             // Check input text is valid
@@ -148,8 +148,7 @@ namespace Max2Babylon
                 return;
             }
             Directory.CreateDirectory(tempOutputDirectory);
-
-            //  var outputBabylonDirectory = outputDirectory;
+            
             var outputBabylonDirectory = tempOutputDirectory;
 
             // Force output file extension to be babylon
@@ -203,7 +202,6 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
-
             if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
             {
                 // Environment texture
@@ -453,7 +451,6 @@ namespace Max2Babylon
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-
                 using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
                     jsonWriter.Formatting = Formatting.None;
@@ -494,12 +491,9 @@ namespace Max2Babylon
                     if (Path.GetExtension(file_path) == ".glb")
                     {
                         var file = Path.GetFileName(file_path);
+                        var tempFilePath = Path.Combine(tempOutputDirectory, file);
                         var outputFile = Path.Combine(outputDirectory, file);
-                        if (File.Exists(outputFile))
-                        {
-                            File.Delete(outputFile);
-                        }
-                        File.Move(Path.Combine(tempOutputDirectory, file), outputFile);
+                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
                         break;
                     }   
                 }
@@ -511,17 +505,47 @@ namespace Max2Babylon
                     var file = Path.GetFileName(filePath);
                     var outputPath = Path.Combine(outputDirectory, file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
-                    RaiseMessage(tempFilePath + " -> " + outputPath);
-                    if (File.Exists(outputPath))
-                    {
-                        File.Delete(outputPath);
-                    }
-                    File.Move(tempFilePath, outputPath);
+                    moveFileToOutputDirectory(tempFilePath, outputPath, exportParameters);
                 }
             }
             Directory.Delete(tempOutputDirectory, true);
             watch.Stop();
             RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
+        }
+
+        private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
+        {
+            string[] textureExtensions = { ".jpg", ".jpeg", ".png" };
+            var fileExtension = Path.GetExtension(sourceFilePath).ToLower();
+            if (textureExtensions.Contains(fileExtension))
+            {
+                if (exportParameters.writeTextures)
+                {
+                    if (File.Exists(targetFilePath))
+                    {
+                        if (exportParameters.overwriteTextures)
+                        {
+                            File.Delete(targetFilePath);
+                            File.Move(sourceFilePath, targetFilePath);
+                            RaiseMessage(sourceFilePath + " -> " + targetFilePath);
+                        }
+                    }
+                    else
+                    {
+                        File.Move(sourceFilePath, targetFilePath);
+                        RaiseMessage(sourceFilePath + " -> " + targetFilePath);
+                    }
+                }
+            }
+            else
+            {
+                if (File.Exists(targetFilePath))
+                {
+                    File.Delete(targetFilePath);
+                }
+                File.Move(sourceFilePath, targetFilePath);
+                RaiseMessage(sourceFilePath + " -> " + targetFilePath);
+            }
         }
 
         private void exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)

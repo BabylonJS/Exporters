@@ -94,7 +94,7 @@ namespace Max2Babylon
             babylonTexture.hasAlpha = false;
             babylonTexture.getAlphaFromRGB = false;
 
-            if (exportParameters.copyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var specularColorBitmap = _loadTexture(specularColorTexMap);
@@ -252,7 +252,7 @@ namespace Max2Babylon
 
             // --- Merge baseColor and alpha maps ---
 
-            if (exportParameters.copyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var baseColorBitmap = _loadTexture(baseColorTexMap);
@@ -358,7 +358,7 @@ namespace Max2Babylon
                 return null;
             }
 
-            if (exportParameters.copyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var metallicBitmap = _loadTexture(metallicTexMap);
@@ -444,7 +444,7 @@ namespace Max2Babylon
             {
                 var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
 
-                if (exportParameters.copyTexturesToOutput)
+                if (exportParameters.writeTextures)
                 {
                     try
                     {
@@ -979,7 +979,7 @@ namespace Max2Babylon
         /// <param name="invalidFormats"></param>
         private void _copyTexture(string sourcePath, string destPath, List<string> validFormats, List<string> invalidFormats)
         {
-            if (exportParameters.copyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 try
                 {

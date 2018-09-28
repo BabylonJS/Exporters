@@ -151,17 +151,12 @@ namespace Max2Babylon
 
                 // Write .bin file
                 string outputBinaryFile = Path.ChangeExtension(outputFile, "bin");
-                RaiseMessage(outputBinaryFile);
                 using (BinaryWriter writer = new BinaryWriter(File.Open(outputBinaryFile, FileMode.Create)))
                 {
                     gltf.BuffersList.ForEach(buffer =>
                     {
                         buffer.bytesList.ForEach(b => writer.Write(b));
                     });
-                }
-                if (!File.Exists(outputBinaryFile))
-                {
-                    RaiseError($"File {outputBinaryFile} was not exported!!");
                 }
             }
             else
@@ -205,7 +200,6 @@ namespace Max2Babylon
                     }
                     length += chunkLengthBin + 8; // 8 = bin chunk header length
                 }
-
 
                 // Write binary file
                 string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
