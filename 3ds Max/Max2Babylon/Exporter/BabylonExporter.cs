@@ -515,9 +515,8 @@ namespace Max2Babylon
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
         {
-            string[] textureExtensions = { ".jpg", ".jpeg", ".png" };
-            var fileExtension = Path.GetExtension(sourceFilePath).ToLower();
-            if (textureExtensions.Contains(fileExtension))
+            var fileExtension = Path.GetExtension(sourceFilePath).Substring(1).ToLower();
+            if (validFormats.Contains(fileExtension))
             {
                 if (exportParameters.writeTextures)
                 {
