@@ -333,11 +333,11 @@ namespace Max2Babylon
                         };
 
                         int sceneIndex = (int)gltf.scene;
-                        if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
+                        if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights_punctuals))
                         {
                             RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
                         }
-                        gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
+                        gltf.scenes[sceneIndex].extensions[KHR_lights_punctuals] = light;
                     }
                 }
                 else
@@ -449,7 +449,6 @@ namespace Max2Babylon
             }
             return imageBufferViews;
         }
-
         private byte[] padChunk(byte[] chunk, int padding, byte trailingChar)
         {
             var chunkModuloPadding = chunk.Length % padding;

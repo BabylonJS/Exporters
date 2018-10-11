@@ -543,6 +543,14 @@ namespace Max2Babylon
                 {
                     gltfMaterial.extensions = new GLTFExtensions();
                 }
+                if (gltf.extensionsUsed == null)
+                {
+                    gltf.extensionsUsed = new System.Collections.Generic.List<string>();
+                }
+                if (!gltf.extensionsUsed.Contains("KHR_materials_unlit"))
+                {
+                    gltf.extensionsUsed.Add("KHR_materials_unlit");
+                } 
                 gltfMaterial.extensions["KHR_materials_unlit"] = new object();
             }
         }
