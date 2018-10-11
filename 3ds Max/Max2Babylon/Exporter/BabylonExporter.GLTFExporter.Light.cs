@@ -6,7 +6,7 @@ namespace Max2Babylon
 {
     internal partial class BabylonExporter
     {
-        public const string KHR_lights = "KHR_lights";  // Name of the extension
+        public const string KHR_lights_punctuals = "KHR_lights_punctual";  // Name of the extension
 
 
         /// <summary>
@@ -17,9 +17,9 @@ namespace Max2Babylon
         /// <returns>the index of the light</returns>
         private int AddLightExtension(ref GLTF gltf, BabylonLight babylonLight)
         {
-            if (gltf.extensionsUsed.Contains(KHR_lights) == false)
+            if (gltf.extensionsUsed.Contains(KHR_lights_punctuals) == false)
             {
-                gltf.extensionsUsed.Add(KHR_lights);
+                gltf.extensionsUsed.Add(KHR_lights_punctuals);
             }
 
             // new light in the gltf extensions
@@ -48,15 +48,12 @@ namespace Max2Babylon
                         outerConeAngle = babylonLight.angle
                     };
                     break;
-                case (3): // ambient
-                    light.type = GLTFLight.LightType.ambient.ToString();
-                    break;
             }
 
             Dictionary<string, List<GLTFLight>> KHR_lightsExtension;
-            if (gltf.extensions.ContainsKey(KHR_lights))
+            if (gltf.extensions.ContainsKey(KHR_lights_punctuals))
             {
-                KHR_lightsExtension = (Dictionary<string, List<GLTFLight>>)gltf.extensions[KHR_lights];
+                KHR_lightsExtension = (Dictionary<string, List<GLTFLight>>)gltf.extensions[KHR_lights_punctuals];
                 KHR_lightsExtension["lights"].Add(light);
             }
             else
@@ -64,7 +61,15 @@ namespace Max2Babylon
                 KHR_lightsExtension = new Dictionary<string, List<GLTFLight>>();
                 KHR_lightsExtension["lights"] = new List<GLTFLight>();
                 KHR_lightsExtension["lights"].Add(light);
-                gltf.extensions[KHR_lights] = KHR_lightsExtension;
+                gltf.extensions[KHR_lights_punctuals] = KHR_lightsExtension;
+                if (gltf.extensionsUsed == null)
+                {
+                    gltf.extensionsUsed = new List<string>();
+                }
+                if (!gltf.extensionsUsed.Contains(KHR_lights_punctuals))
+                {
+                    gltf.extensionsUsed.Add(KHR_lights_punctuals);
+                }
             }
 
             return KHR_lightsExtension["lights"].Count - 1; // the index of the light
@@ -84,7 +89,7 @@ namespace Max2Babylon
             {
                 gltfNode.extensions = new GLTFExtensions();
             }
-            gltfNode.extensions[KHR_lights] = light;
+            gltfNode.extensions[KHR_lights_punctuals] = light;
 
             return gltfNode;
         }
