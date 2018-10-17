@@ -35,6 +35,10 @@ namespace Maya2Babylon
                     name = babylonTexture.name;
                 }
             }
+            if (bitmap == null)
+            {
+                throw new Exception("GLTFExporter.Texture | Bitmap is undefined!");
+            }
 
             return ExportTexture(babylonTexture, gltf, name, () =>
             {
@@ -43,6 +47,7 @@ namespace Maya2Babylon
                 // Write image to output
                 if (CopyTexturesToOutput)
                 {
+                    name = name.Replace(':', '_');
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
                     RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
