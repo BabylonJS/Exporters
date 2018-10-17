@@ -1,7 +1,7 @@
 bl_info = {
     'name': 'Babylon.js',
     'author': 'David Catuhe, Jeff Palmer',
-    'version': (6, 0, -1),
+    'version': (6, 0, -2),
     'blender': (2, 80, 0),
     'location': 'File > Export > Babylon.js (.babylon)',
     'description': 'Export Babylon.js scenes (.babylon)',
@@ -13,6 +13,7 @@ bl_info = {
 if "bpy" in locals():
     print('Reloading .babylon exporter')
     import imp
+    imp.reload(materials)  # directory
     imp.reload(animation)
     imp.reload(armature)
     imp.reload(camera)
@@ -21,13 +22,13 @@ if "bpy" in locals():
     imp.reload(json_exporter)
     imp.reload(light_shadow)
     imp.reload(logger)
-    imp.reload(material)
     imp.reload(mesh)
     imp.reload(package_level)
     imp.reload(shape_key_group)
     imp.reload(sound)
     imp.reload(world)
 else:
+    from . import materials # directory
     from . import animation
     from . import armature
     from . import camera
@@ -36,7 +37,6 @@ else:
     from . import json_exporter
     from . import light_shadow
     from . import logger
-    from . import material
     from . import mesh
     from . import package_level
     from . import shape_key_group
@@ -93,21 +93,22 @@ def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
-            
-    bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
+    #bpy.types.INFO_MT_file_export.append(menu_func)
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
         
-    bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+    #bpy.types.INFO_MT_file_export.remove(menu_func)
 
 # Registration the calling of the INFO_MT_file_export file selector
 def menu_func(self, context):
     from .package_level import get_title
     # the info for get_title is in this file, but getting it the same way as others
-    self.layout.operator(JsonMain.bl_idname, get_title())
+    self.layout.operator(JsonMain.bl_idname, text=get_title())
 
 if __name__ == '__main__':
     unregister()

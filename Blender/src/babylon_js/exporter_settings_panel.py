@@ -94,7 +94,7 @@ class ExporterSettingsPanel(bpy.types.Panel):
 
         scene = context.scene
 
-        layout.label('Export')
+        layout.label(text='Export')
         layout.prop(scene, 'exportScope', expand=True)
         layout.separator()
 

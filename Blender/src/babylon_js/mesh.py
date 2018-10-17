@@ -155,42 +155,39 @@ class Mesh(FCurveAnimatable):
             self.instances = []
 
         # process all of the materials required
-        recipe = BakingRecipe(object)
-        self.billboardMode = BILLBOARDMODE_ALL if recipe.isBillboard else BILLBOARDMODE_NONE
+        #recipe = BakingRecipe(object)
+        self.billboardMode = BILLBOARDMODE_NONE # BILLBOARDMODE_ALL if recipe.isBillboard else BILLBOARDMODE_NONE
 
-        if recipe.needsBaking:
-            if recipe.multipleRenders:
-                Logger.warn('Mixing of Cycles & Blender Render in same mesh not supported.  No materials exported.', 2)
-            else:
-                bakedMat = BakedMaterial(exporter, object, recipe)
-                exporter.materials.append(bakedMat)
-                self.materialId = bakedMat.name
+        #if recipe.needsBaking:
+        #    bakedMat = BakedMaterial(exporter, object, recipe)
+        #    exporter.materials.append(bakedMat)
+        #    self.materialId = bakedMat.name
 
-        else:
-            bjs_material_slots = []
-            for slot in object.material_slots:
+        #else:
+        #    bjs_material_slots = []
+        #    for slot in object.material_slots:
                 # None will be returned when either the first encounter or must be unique due to baked textures
-                material = exporter.getMaterial(slot.name)
-                if (material != None):
-                    Logger.log('registered as also a user of material:  ' + slot.name, 2)
-                else:
-                    material = StdMaterial(slot, exporter, object)
-                    exporter.materials.append(material)
+        #        material = exporter.getMaterial(slot.name)
+        #        if (material != None):
+        #            Logger.log('registered as also a user of material:  ' + slot.name, 2)
+        #        else:
+        #            material = StdMaterial(slot, exporter, object)
+        #            exporter.materials.append(material)
 
-                bjs_material_slots.append(material)
+        #        bjs_material_slots.append(material)
 
-            if len(bjs_material_slots) == 1:
-                self.materialId = bjs_material_slots[0].name
+        #    if len(bjs_material_slots) == 1:
+        #        self.materialId = bjs_material_slots[0].name
 
-            elif len(bjs_material_slots) > 1:
-                multimat = MultiMaterial(bjs_material_slots, len(exporter.multiMaterials), exporter.nameSpace)
-                self.materialId = multimat.name
-                exporter.multiMaterials.append(multimat)
-            else:
-                Logger.warn('No materials have been assigned: ', 2)
+        #    elif len(bjs_material_slots) > 1:
+        #        multimat = MultiMaterial(bjs_material_slots, len(exporter.multiMaterials), exporter.nameSpace)
+        #        self.materialId = multimat.name
+        #        exporter.multiMaterials.append(multimat)
+        #    else:
+        #        Logger.warn('No materials have been assigned: ', 2)
 
-        # Get mesh
-        mesh = object.to_mesh(scene, True, 'PREVIEW')
+        # Get temporary version of mesh with modifiers applied
+        mesh = object.to_mesh(bpy.context.depsgraph, apply_modifiers=True, calc_undeformed=False)
 
         # Triangulate mesh if required
         Mesh.mesh_triangulate(mesh)
@@ -958,7 +955,7 @@ class MeshPanel(bpy.types.Panel):
         row.prop(ob.data, 'maxInfluencers')
         
         box = layout.box()
-        box.label('Materials')
+        box.label(text='Materials')
         box.prop(ob.data, 'materialNameSpace')
         box.prop(ob.data, 'maxSimultaneousLights')
         box.prop(ob.data, 'checkReadyOnlyOnce')

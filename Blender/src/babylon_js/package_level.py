@@ -20,8 +20,10 @@ def format_exporter_version(bl_info = None):
     exporterVersion = bl_info['version']
     if exporterVersion[2] >= 0:
         return str(exporterVersion[0]) + '.' + str(exporterVersion[1]) +  '.' + str(exporterVersion[2])
-    else:
+    elif exporterVersion[2] == -1:
         return str(exporterVersion[0]) + '.' + str(exporterVersion[1]) +  '-beta'
+    else:
+        return str(exporterVersion[0]) + '.' + str(exporterVersion[1]) +  '-alpha'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def blenderMajorMinorVersion():
     # in form of '2.77 (sub 0)'

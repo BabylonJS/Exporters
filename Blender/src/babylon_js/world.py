@@ -20,16 +20,15 @@ class World:
     def __init__(self, scene):
         self.autoClear = True
         world = scene.world
-        if world:
-            self.ambient_color = world.ambient_color
-            self.clear_color   = world.horizon_color
-        else:
-            self.ambient_color = mathutils.Color((0.2, 0.2, 0.3))
-            self.clear_color   = mathutils.Color((0.0, 0.0, 0.0))
+        self.ambient_color = mathutils.Color((0.2, 0.2, 0.3))
+        self.clear_color   = world.color
 
         self.gravity = scene.gravity
+        
+        print("mist: ")
+        print(world.mist_settings)
 
-        if world and world.mist_settings.use_mist:
+        if world.mist_settings.use_mist:
             if world.fogMode == eFOGMODE_LINEAR:
                 self.fogMode = FOGMODE_LINEAR
             elif world.fogMode == eFOGMODE_EXP:
@@ -48,7 +47,7 @@ class World:
     def to_scene_file(self, file_handler, needPhysics):
         write_bool(file_handler, 'autoClear', self.autoClear, True)
         write_color(file_handler, 'clearColor', self.clear_color)
-        write_color(file_handler, 'ambientColor', self.ambient_color)
+#        write_color(file_handler, 'ambientColor', self.ambient_color)
         write_vector(file_handler, 'gravity', self.gravity)
 
         if needPhysics:

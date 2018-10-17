@@ -214,7 +214,7 @@ class LightPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob is not None and isinstance(ob.data, bpy.types.Lamp)
+        return ob is not None and isinstance(ob.data, bpy.types.Light)
 
     def draw(self, context):
         ob = context.object
