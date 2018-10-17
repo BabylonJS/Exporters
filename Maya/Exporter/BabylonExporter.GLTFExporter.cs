@@ -296,27 +296,6 @@ namespace Maya2Babylon
         {
             var type = babylonNode.GetType();
             
-            // Ambiant light are attached to the scene
-            if (type == typeof(BabylonLight) && ((BabylonLight)babylonNode).type == 3)
-            {
-                RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
-                // new light in the scene extensions
-                GLTFLight light = new GLTFLight
-                {
-                    light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
-                };
-
-                int sceneIndex = (int)gltf.scene;
-                if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
-                {
-                    RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
-                }
-                gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
-
-                return;
-            }
-
-
             GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
 
             if (gltfNode != null)
