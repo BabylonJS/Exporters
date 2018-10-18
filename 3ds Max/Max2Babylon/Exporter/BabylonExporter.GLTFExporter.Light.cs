@@ -77,19 +77,27 @@ namespace Max2Babylon
 
         private GLTFNode ExportLight(ref GLTFNode gltfNode, BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
-            RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
-
-            // new light in the node extensions
-            GLTFLight light = new GLTFLight
+            if (babylonLight.type == 3) // ambient light
             {
-                light = AddLightExtension(ref gltf, babylonLight)
-            };
-
-            if (gltfNode.extensions == null)
-            {
-                gltfNode.extensions = new GLTFExtensions();
+                RaiseMessage($"GLTFExporter.Light | Ambient light {babylonLight.name} is not supported in KHR_lights_punctual.");
             }
-            gltfNode.extensions[KHR_lights_punctuals] = light;
+            else
+            {
+                RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
+
+                // new light in the node extensions
+                GLTFLight light = new GLTFLight
+                {
+                    light = AddLightExtension(ref gltf, babylonLight)
+                };
+
+                if (gltfNode.extensions == null)
+                {
+                    gltfNode.extensions = new GLTFExtensions();
+                }
+                gltfNode.extensions[KHR_lights_punctuals] = light;
+            }
+            
 
             return gltfNode;
         }
