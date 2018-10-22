@@ -48,6 +48,9 @@ namespace Max2Babylon
                         outerConeAngle = babylonLight.angle
                     };
                     break;
+                default:
+                    RaiseError($"Unsupported light type {light.type} for glTF");
+                    throw new System.Exception($"Unsupported light type {light.type} for glTF");
             }
 
             Dictionary<string, List<GLTFLight>> KHR_lightsExtension;
@@ -77,27 +80,29 @@ namespace Max2Babylon
 
         private GLTFNode ExportLight(ref GLTFNode gltfNode, BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
-            if (babylonLight.type == 3) // ambient light
-            {
-                RaiseMessage($"GLTFExporter.Light | Ambient light {babylonLight.name} is not supported in KHR_lights_punctual.");
-            }
-            else
-            {
-                RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
-
-                // new light in the node extensions
-                GLTFLight light = new GLTFLight
+            if (exportParameters.enableKHRLightsPunctual)
+            { 
+                if (babylonLight.type == 3) // ambient light
                 {
-                    light = AddLightExtension(ref gltf, babylonLight)
-                };
-
-                if (gltfNode.extensions == null)
-                {
-                    gltfNode.extensions = new GLTFExtensions();
+                    RaiseMessage($"GLTFExporter.Light | Ambient light {babylonLight.name} is not supported in KHR_lights_punctual.");
                 }
-                gltfNode.extensions[KHR_lights_punctuals] = light;
+                else
+                {
+                    RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
+
+                    // new light in the node extensions
+                    GLTFLight light = new GLTFLight
+                    {
+                        light = AddLightExtension(ref gltf, babylonLight)
+                    };
+
+                    if (gltfNode.extensions == null)
+                    {
+                        gltfNode.extensions = new GLTFExtensions();
+                    }
+                    gltfNode.extensions[KHR_lights_punctuals] = light;
+                }
             }
-            
 
             return gltfNode;
         }

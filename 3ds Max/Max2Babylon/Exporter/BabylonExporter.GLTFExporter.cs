@@ -46,8 +46,7 @@ namespace Max2Babylon
             // Asset
             gltf.asset = new GLTFAsset
             {
-                version = "2.0",
-                copyright = "2018 (c) BabylonJS"
+                version = "2.0"
                 // no minVersion
             };
 
@@ -322,22 +321,6 @@ namespace Max2Babylon
                     if(((BabylonLight)babylonNode).type != 3)
                     {
                         ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
-                    }
-                    else //Ambiant light are attached to the scene. It was previously exported as node to preserve the hierarchy and its children
-                    {
-                        RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
-                        // new light in the scene extensions
-                        GLTFLight light = new GLTFLight
-                        {
-                            light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
-                        };
-
-                        int sceneIndex = (int)gltf.scene;
-                        if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights_punctuals))
-                        {
-                            RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
-                        }
-                        gltf.scenes[sceneIndex].extensions[KHR_lights_punctuals] = light;
                     }
                 }
                 else

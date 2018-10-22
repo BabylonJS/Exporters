@@ -42,6 +42,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkCopyTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkOverwriteTextures = new System.Windows.Forms.CheckBox();
             this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
@@ -57,7 +58,7 @@
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
-            this.chkOverwriteTextures = new System.Windows.Forms.CheckBox();
+            this.chkKHRLightsPunctual = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -67,7 +68,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(316, 311);
+            this.butExport.Location = new System.Drawing.Point(314, 347);
             this.butExport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(296, 42);
@@ -134,10 +135,10 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(18, 362);
+            this.treeView.Location = new System.Drawing.Point(18, 408);
             this.treeView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(1213, 436);
+            this.treeView.Size = new System.Drawing.Size(1213, 390);
             this.treeView.TabIndex = 103;
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
@@ -163,7 +164,7 @@
             this.pictureBox2.Location = new System.Drawing.Point(702, 18);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(531, 283);
+            this.pictureBox2.Size = new System.Drawing.Size(531, 319);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
@@ -210,6 +211,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkKHRLightsPunctual);
             this.groupBox1.Controls.Add(this.chkOverwriteTextures);
             this.groupBox1.Controls.Add(this.chkDracoCompression);
             this.groupBox1.Controls.Add(this.chkMergeAOwithMR);
@@ -233,9 +235,24 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox1.Size = new System.Drawing.Size(675, 292);
+            this.groupBox1.Size = new System.Drawing.Size(675, 328);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            // 
+            // chkOverwriteTextures
+            // 
+            this.chkOverwriteTextures.AutoSize = true;
+            this.chkOverwriteTextures.Checked = true;
+            this.chkOverwriteTextures.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkOverwriteTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkOverwriteTextures.Location = new System.Drawing.Point(27, 217);
+            this.chkOverwriteTextures.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkOverwriteTextures.Name = "chkOverwriteTextures";
+            this.chkOverwriteTextures.Size = new System.Drawing.Size(161, 24);
+            this.chkOverwriteTextures.TabIndex = 19;
+            this.chkOverwriteTextures.Text = "Overwrite Textures";
+            this.chkOverwriteTextures.UseVisualStyleBackColor = true;
+            this.chkOverwriteTextures.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // chkDracoCompression
             // 
@@ -392,7 +409,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(621, 311);
+            this.butExportAndRun.Location = new System.Drawing.Point(619, 347);
             this.butExportAndRun.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(296, 42);
@@ -420,20 +437,18 @@
             // 
             this.toolTipDracoCompression.ShowAlways = true;
             // 
-            // chkOverwriteTextures
+            // chkKHR_lights_punctual
             // 
-            this.chkOverwriteTextures.AutoSize = true;
-            this.chkOverwriteTextures.Checked = true;
-            this.chkOverwriteTextures.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkOverwriteTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkOverwriteTextures.Location = new System.Drawing.Point(27, 217);
-            this.chkOverwriteTextures.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkOverwriteTextures.Name = "chkOverwriteTextures";
-            this.chkOverwriteTextures.Size = new System.Drawing.Size(161, 24);
-            this.chkOverwriteTextures.TabIndex = 19;
-            this.chkOverwriteTextures.Text = "Overwrite Textures";
-            this.chkOverwriteTextures.UseVisualStyleBackColor = true;
-            this.chkOverwriteTextures.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.chkKHRLightsPunctual.AutoSize = true;
+            this.chkKHRLightsPunctual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkKHRLightsPunctual.Location = new System.Drawing.Point(27, 294);
+            this.chkKHRLightsPunctual.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkKHRLightsPunctual.Name = "chkKHR_lights_punctual";
+            this.chkKHRLightsPunctual.Size = new System.Drawing.Size(180, 24);
+            this.chkKHRLightsPunctual.TabIndex = 20;
+            this.chkKHRLightsPunctual.Text = "KHR_lights_punctual";
+            this.chkKHRLightsPunctual.UseVisualStyleBackColor = true;
+            this.chkKHRLightsPunctual.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
             // 
             // ExporterForm
             // 
@@ -497,5 +512,6 @@
         private System.Windows.Forms.CheckBox chkDracoCompression;
         private System.Windows.Forms.ToolTip toolTipDracoCompression;
         private System.Windows.Forms.CheckBox chkOverwriteTextures;
+        private System.Windows.Forms.CheckBox chkKHRLightsPunctual;
     }
 }
