@@ -59,8 +59,9 @@ namespace Max2Babylon
             Tools.PrepareTextBox(txtQuality, Loader.Core.RootNode, "babylonjs_txtCompression", "100");
             Tools.PrepareCheckBox(chkMergeAOwithMR, Loader.Core.RootNode, "babylonjs_mergeAOwithMR", 1);
             Tools.PrepareCheckBox(chkDracoCompression, Loader.Core.RootNode, "babylonjs_dracoCompression", 0);
+            Tools.PrepareCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khr_lights_punctual");
 
-            if(comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
+            if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
                 chkDracoCompression.Checked = false;
                 chkDracoCompression.Enabled = false;
@@ -171,7 +172,8 @@ namespace Max2Babylon
                     exportTangents = chkExportTangents.Checked,
                     txtQuality = txtQuality.Text,
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
-                    dracoCompression = chkDracoCompression.Checked
+                    dracoCompression = chkDracoCompression.Checked,
+                    enableKHRLightsPunctual =chkKHRLightsPunctual.Checked
                 };
 
                 exporter.callerForm = this;
@@ -364,6 +366,11 @@ namespace Max2Babylon
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
         {
 
         }
