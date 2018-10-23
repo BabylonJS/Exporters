@@ -11,3 +11,7 @@
 **Implemented changes:**
 - Added checkbox to toggle KHR_lights_punctual in exporter
 - Remove copyright from glTF files
+
+## v1.3.4
+**Fixed bugs:**
+- Fixed a bug in exporting occlusion textures without enabling the mergeAO flag
