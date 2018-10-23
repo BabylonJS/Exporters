@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.3";
+        private string exporterVersion = "1.3.4";
 
         void ReportProgressChanged(int progress)
         {

@@ -303,7 +303,8 @@ namespace Max2Babylon
                     // Metallic, roughness, ambient occlusion
                     ITexmap metallicTexmap = _getTexMap(materialNode, 5);
                     ITexmap roughnessTexmap = _getTexMap(materialNode, 4);
-                    ITexmap ambientOcclusionTexmap = exportParameters.mergeAOwithMR ? _getTexMap(materialNode, 6) : null; // Use diffuse roughness map as ambient occlusion
+                    ITexmap ambientOcclusionTexmap = _getTexMap(materialNode, 6); // Use diffuse roughness map as ambient occlusion
+
                     // Check if MR or ORM textures are already merged
                     bool areTexturesAlreadyMerged = false;
                     if (metallicTexmap != null && roughnessTexmap != null)
@@ -341,8 +342,8 @@ namespace Max2Babylon
                         if (metallicTexmap != null || roughnessTexmap != null)
                         {
                             // Merge metallic, roughness and ambient occlusion
-                            RaiseVerbose("Merge metallic, roughness and ambient occlusion", 2);
-                            BabylonTexture ormTexture = ExportORMTexture(ambientOcclusionTexmap, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            RaiseVerbose("Merge metallic and roughness (and ambient occlusion if `mergeAOwithMR` is enabled)", 2);
+                            BabylonTexture ormTexture = ExportORMTexture(exportParameters.mergeAOwithMR ? ambientOcclusionTexmap : null, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
                             babylonMaterial.metallicRoughnessTexture = ormTexture;
 
                             if (ambientOcclusionTexmap != null)
@@ -363,6 +364,11 @@ namespace Max2Babylon
                             RaiseVerbose("Simply export occlusion texture", 2);
                             babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
                         }
+                    }
+                    if (ambientOcclusionTexmap != null && !exportParameters.mergeAOwithMR && babylonMaterial.occlusionTexture == null)
+                    {
+                        RaiseVerbose("Exporting occlusion texture without merging with metallic roughness", 2);
+                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
                     }
 
                     var normalMapAmount = propertyContainer.GetFloatProperty(91);
