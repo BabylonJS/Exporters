@@ -16,5 +16,6 @@
         public bool mergeAOwithMR = true;
         public bool dracoCompression = false;
         public bool enableKHRLightsPunctual = false;
+        public bool enableKHRTextureTransform = false;
     }
 }
