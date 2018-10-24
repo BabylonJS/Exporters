@@ -15,3 +15,8 @@
 ## v1.3.4
 **Fixed bugs:**
 - Fixed a bug in exporting occlusion textures without enabling the mergeAO flag
+
+## v1.3.5
+**Implemented changes:**
+- KHR_texture_transform is now disabled by default but can be enabled with a checkbox in the exporter interface
+- KHR_texture_transform is now implemented as a used and required extension in the glTF file
