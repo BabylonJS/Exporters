@@ -39,7 +39,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.2.21";
+        private string exporterVersion = "1.2.24";
 
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
@@ -339,7 +339,7 @@ namespace Maya2Babylon
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };
                 rootNode.isDummy = true;
-                float rootNodeScale = 1.0f / scaleFactorFloat;
+                float rootNodeScale = scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
 
                 if (ExportQuaternionsInsteadOfEulers)
