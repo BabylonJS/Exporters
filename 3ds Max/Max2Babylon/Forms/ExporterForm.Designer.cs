@@ -60,6 +60,7 @@
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
+            this.chkKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -193,7 +194,7 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Options:";
             // 
-            // chkCopyTextures
+            // chkWriteTextures
             // 
             this.chkWriteTextures.AutoSize = true;
             this.chkWriteTextures.Checked = true;
@@ -201,7 +202,7 @@
             this.chkWriteTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkWriteTextures.Location = new System.Drawing.Point(27, 180);
             this.chkWriteTextures.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkWriteTextures.Name = "chkCopyTextures";
+            this.chkWriteTextures.Name = "chkWriteTextures";
             this.chkWriteTextures.Size = new System.Drawing.Size(132, 24);
             this.chkWriteTextures.TabIndex = 11;
             this.chkWriteTextures.Text = "Write Textures";
@@ -212,6 +213,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkKHRMaterialsUnlit);
             this.groupBox1.Controls.Add(this.chkKHRTextureTransform);
             this.groupBox1.Controls.Add(this.chkKHRLightsPunctual);
             this.groupBox1.Controls.Add(this.chkOverwriteTextures);
@@ -465,6 +467,19 @@
             // 
             this.toolTipDracoCompression.ShowAlways = true;
             // 
+            // chkKHRMaterialsUnlit
+            // 
+            this.chkKHRMaterialsUnlit.AutoSize = true;
+            this.chkKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(476, 285);
+            this.chkKHRMaterialsUnlit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkKHRMaterialsUnlit.Name = "chkKHRMaterialsUnlit";
+            this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(175, 24);
+            this.chkKHRMaterialsUnlit.TabIndex = 22;
+            this.chkKHRMaterialsUnlit.Text = "KHR_materials_unlit";
+            this.chkKHRMaterialsUnlit.UseVisualStyleBackColor = true;
+            this.chkKHRMaterialsUnlit.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -529,5 +544,6 @@
         private System.Windows.Forms.CheckBox chkOverwriteTextures;
         private System.Windows.Forms.CheckBox chkKHRLightsPunctual;
         private System.Windows.Forms.CheckBox chkKHRTextureTransform;
+        private System.Windows.Forms.CheckBox chkKHRMaterialsUnlit;
     }
 }
