@@ -539,19 +539,26 @@ namespace Max2Babylon
             if (gltfMaterial != null && babylonMaterial.isUnlit)
             {
                 // Add Unlit extension
-                if (gltfMaterial.extensions == null)
+                if (!exportParameters.enableKHRMaterialsUnlit)
                 {
-                    gltfMaterial.extensions = new GLTFExtensions();
+                    RaiseWarning("GLTFExporter.Material | KHR_materials_unlit has not been enabled for export!", 2);
                 }
-                if (gltf.extensionsUsed == null)
+                else
                 {
-                    gltf.extensionsUsed = new System.Collections.Generic.List<string>();
+                    if (gltfMaterial.extensions == null)
+                    {
+                        gltfMaterial.extensions = new GLTFExtensions();
+                    }
+                    if (gltf.extensionsUsed == null)
+                    {
+                        gltf.extensionsUsed = new System.Collections.Generic.List<string>();
+                    }
+                    if (!gltf.extensionsUsed.Contains("KHR_materials_unlit"))
+                    {
+                        gltf.extensionsUsed.Add("KHR_materials_unlit");
+                    }
+                    gltfMaterial.extensions["KHR_materials_unlit"] = new object();
                 }
-                if (!gltf.extensionsUsed.Contains("KHR_materials_unlit"))
-                {
-                    gltf.extensionsUsed.Add("KHR_materials_unlit");
-                } 
-                gltfMaterial.extensions["KHR_materials_unlit"] = new object();
             }
         }
 

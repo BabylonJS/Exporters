@@ -59,7 +59,9 @@ namespace Max2Babylon
             Tools.PrepareTextBox(txtQuality, Loader.Core.RootNode, "babylonjs_txtCompression", "100");
             Tools.PrepareCheckBox(chkMergeAOwithMR, Loader.Core.RootNode, "babylonjs_mergeAOwithMR", 1);
             Tools.PrepareCheckBox(chkDracoCompression, Loader.Core.RootNode, "babylonjs_dracoCompression", 0);
-            Tools.PrepareCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khr_lights_punctual");
+            Tools.PrepareCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
+            Tools.PrepareCheckBox(chkKHRTextureTransform, Loader.Core.RootNode, "babylonjs_khrTextureTransform");
+            Tools.PrepareCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
@@ -97,6 +99,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkDracoCompression, Loader.Core.RootNode, "babylonjs_dracoCompression");
             Tools.UpdateCheckBox(chkKHRTextureTransform, Loader.Core.RootNode, "babylonjs_khrTextureTransform");
             Tools.UpdateCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
+            Tools.UpdateCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
@@ -176,7 +179,8 @@ namespace Max2Babylon
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
                     dracoCompression = chkDracoCompression.Checked,
                     enableKHRLightsPunctual =chkKHRLightsPunctual.Checked,
-                    enableKHRTextureTransform = chkKHRTextureTransform.Checked
+                    enableKHRTextureTransform = chkKHRTextureTransform.Checked,
+                    enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked
                 };
 
                 exporter.callerForm = this;
@@ -379,6 +383,11 @@ namespace Max2Babylon
         }
 
         private void chkKHRTextureTransform_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged_2(object sender, EventArgs e)
         {
 
         }

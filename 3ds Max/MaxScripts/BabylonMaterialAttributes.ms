@@ -5,10 +5,12 @@ version:0
 	Parameters main rollout:params
 	(
 		'babylonUnlit' Type:#BOOLEAN UI:'babylonUnlit' Default:False
+		'babylonAlphaTest' Type:#BOOLEAN UI:'babylonAlphaTest' Default:False
 	)
 	Rollout Params "Babylon Attributes"
 	(
 		checkbox 'babylonUnlit' "Unlit" Width:70 Height:15 Align:#Left Offset:[0,0] Type:#BOOLEAN
+		checkbox 'babylonAlphaTest' "Alpha Test" Width:70 Height:15 Align:#Left Offset:[0,0] Type:#BOOLEAN
 	)
 )
 
@@ -25,7 +27,7 @@ for mat in scenematerials do
 		(
 			if def.name == #Babylon_Attributes then
 			(
-				alreadyAdded = true;
+				alreadyAdded = true;	
 			)
 		)
 		
@@ -34,5 +36,9 @@ for mat in scenematerials do
 		(
 			CustAttributes.add mat CAT_DEF;
 		)
+	)
+	else
+	(
+		CustAttributes.add mat CAT_DEF;
 	)
 )
