@@ -17,5 +17,6 @@
         public bool dracoCompression = false;
         public bool enableKHRLightsPunctual = false;
         public bool enableKHRTextureTransform = false;
+        public bool enableKHRMaterialsUnlit = false;
     }
 }
