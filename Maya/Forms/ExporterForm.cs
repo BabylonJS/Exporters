@@ -24,6 +24,8 @@ namespace Maya2Babylon.Forms
         const string chkExportSkinProperty = "babylonjs_exportSkin";
         const string chkExportMorphNormalProperty = "babylonjs_exportMorphNormal";
         const string chkExportMorphTangentProperty = "babylonjs_exportMorphTangent";
+        const string chkExportKHRTextureTransformProperty = "babylonjs_exportKHRTextureTransform";
+        const string chkExportKHRLightsPunctualProperty = "babylonjs_exportKHRLightsPunctual";
 
         TreeNode currentNode;
         int currentRank;
@@ -68,6 +70,8 @@ namespace Maya2Babylon.Forms
             chkExportSkin.Checked = Loader.GetBoolProperty(chkExportSkinProperty, true);
             chkExportMorphNormal.Checked = Loader.GetBoolProperty(chkExportMorphNormalProperty, true);
             chkExportMorphTangent.Checked = Loader.GetBoolProperty(chkExportMorphTangentProperty, false);
+            chkExportKHRLightsPunctual.Checked = Loader.GetBoolProperty(chkExportKHRTextureTransformProperty, false);
+            chkExportKHRTextureTransform.Checked = Loader.GetBoolProperty(chkExportKHRLightsPunctualProperty, false);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
         }
@@ -98,6 +102,8 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkExportSkinProperty, chkExportSkin.Checked);
             Loader.SetBoolProperty(chkExportMorphNormalProperty, chkExportMorphNormal.Checked);
             Loader.SetBoolProperty(chkExportMorphTangentProperty, chkExportMorphTangent.Checked);
+            Loader.SetBoolProperty(chkExportKHRLightsPunctualProperty, chkExportKHRLightsPunctual.Checked);
+            Loader.SetBoolProperty(chkExportKHRTextureTransformProperty, chkExportKHRTextureTransform.Checked);
 
             /*Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
@@ -182,10 +188,11 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked,
-                                chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked,
-                                chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked,
-                                txtQuality.Text, chkDracoCompression.Checked, chkExportMorphNormal.Checked, chkExportMorphTangent.Checked);
+                exporter.Export(outputDirectory: directoryName, outputFileName: fileName, outputFormat: comboOutputFormat.SelectedItem.ToString(), generateManifest: chkManifest.Checked,
+                                onlySelected: chkOnlySelected.Checked, autoSaveMayaFile: chkAutoSave.Checked, exportHiddenObjects: chkHidden.Checked, copyTexturesToOutput: chkCopyTextures.Checked,
+                                optimizeVertices: chkOptimizeVertices.Checked, exportTangents: chkExportTangents.Checked, scaleFactor: txtScaleFactor.Text, exportSkin: chkExportSkin.Checked,
+                                quality: txtQuality.Text, dracoCompression: chkDracoCompression.Checked, exportMorphNormal: chkExportMorphNormal.Checked, exportMorphTangent: chkExportMorphTangent.Checked, 
+                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -194,7 +201,7 @@ namespace Maya2Babylon.Forms
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
+                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
 
                 currentNode.EnsureVisible();
                 progressBar.Value = 0;
@@ -371,6 +378,11 @@ namespace Maya2Babylon.Forms
             {
                 chkExportMorphTangent.Enabled = true;
             }
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -187,7 +187,7 @@ namespace Maya2Babylon
                         var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
                         if (indexMaterial == -1)
                         {
-                            // Store material for exportation
+                            // Store material for export
                             indexMaterial = babylonMaterialsToExport.Count;
                             babylonMaterialsToExport.Add(babylonMaterial);
                         }

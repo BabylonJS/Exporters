@@ -12,3 +12,10 @@
 ## v1.2.24
 **Implemented changes:**
 - Change scale factor to use scale directly instead of 1/scale
+
+## v1.2.25
+**Implemented changes:**
+- KHR_texture_transform and KHR_lights_punctual are now toggable
+from the export interface
+- KHR_texture_transform is set to required on export
+- Copywrite has been removed from the exported glTF file

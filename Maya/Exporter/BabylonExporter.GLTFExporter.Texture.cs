@@ -189,7 +189,15 @@ namespace Maya2Babylon
             // Add texture extension
             if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
             {
-                AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+                if (!_exportKHRTextureTransform)
+                {
+                    RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled so textures may appear incorrect on export!", 3);
+                }
+                else
+                {
+                    AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+                }
+                
             }
 
             // Add the texture in the dictionary 
@@ -366,17 +374,21 @@ namespace Maya2Babylon
             _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
         }
 
-
         /// <summary>
         /// Add the KHR_texture_transform to the glTF file
         /// </summary>
         /// <param name="gltf"></param>
-        /// <param name="babylonMaterial"></param>
+        /// <param name="babylonMaterial">Babylon.js Material</param>
+        /// <param name="babylonTexture">Babylon.js Texture</param>
         private void AddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
         {
-            if (gltf.extensionsUsed.Contains(KHR_texture_transform) == false)
+            if (!gltf.extensionsUsed.Contains(KHR_texture_transform))
             {
                 gltf.extensionsUsed.Add(KHR_texture_transform);
+            }
+            if (!gltf.extensionsRequired.Contains(KHR_texture_transform))
+            {
+                gltf.extensionsRequired.Add(KHR_texture_transform);
             }
 
             float angle = babylonTexture.wAng;
