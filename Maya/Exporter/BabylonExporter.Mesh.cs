@@ -79,6 +79,14 @@ namespace Maya2Babylon
             }
 
             bool hasMorphTarget = hasBlendShape(mFnMesh.objectProperty);
+            if (!hasMorphTarget)
+            {
+                RaiseMessage("no morph targets", 2);
+            }
+            else
+            {
+                RaiseMessage("morph targets", 2);
+            }
 
             if (mFnMesh == null)
             {
@@ -1156,7 +1164,8 @@ namespace Maya2Babylon
                         BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
                         {
                             name = $"{blendShapeDeformer.name}_{targetMesh.name}",
-                            influence = envelope * weight
+                            influence = envelope * weight,
+                            id = Guid.NewGuid().ToString()
                         };
                         babylonMorphTargets.Add(babylonMorphTarget);
 

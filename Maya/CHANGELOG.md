@@ -19,3 +19,7 @@
 from the export interface
 - KHR_texture_transform is set to required on export
 - Copywrite has been removed from the exported glTF file
+
+## v1.2.26
+**Implemented changes:**
+- morph target animations are now included in animation groups when created during export 

@@ -8,6 +8,9 @@ namespace BabylonExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public string name { get; set; }
 
+        [DataMember]
+        public string id { get; set; }
+
         [DataMember(IsRequired = true)]
         public float influence { get; set; }
 

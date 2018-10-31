@@ -102,7 +102,7 @@ namespace Maya2Babylon
 
             var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
 
-            // Retreive indices from babylon mesh
+            // Retrieve indices from babylon mesh
             List<int> babylonIndices = babylonMesh.indices.ToList();
 
             // --------------------------
