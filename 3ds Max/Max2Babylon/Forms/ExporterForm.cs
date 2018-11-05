@@ -62,6 +62,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
             Tools.PrepareCheckBox(chkKHRTextureTransform, Loader.Core.RootNode, "babylonjs_khrTextureTransform");
             Tools.PrepareCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
+            Tools.PrepareCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials", 1);
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
@@ -100,6 +101,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkKHRTextureTransform, Loader.Core.RootNode, "babylonjs_khrTextureTransform");
             Tools.UpdateCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
             Tools.UpdateCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
+            Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
@@ -180,7 +182,8 @@ namespace Max2Babylon
                     dracoCompression = chkDracoCompression.Checked,
                     enableKHRLightsPunctual =chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
-                    enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked
+                    enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
+                    exportMaterials = chkExportMaterials.Checked
                 };
 
                 exporter.callerForm = this;
@@ -388,6 +391,11 @@ namespace Max2Babylon
         }
 
         private void checkBox1_CheckedChanged_2(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkExportMaterials_CheckedChanged(object sender, EventArgs e)
         {
 
         }
