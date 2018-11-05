@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.6";
+        private string exporterVersion = "1.3.7";
 
         void ReportProgressChanged(int progress)
         {
@@ -364,14 +364,21 @@ namespace Max2Babylon
             }
 
             // Materials
-            RaiseMessage("Exporting materials");
-            var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
-            foreach (var mat in matsToExport)
+            if (exportParameters.exportMaterials)
             {
-                ExportMaterial(mat, babylonScene);
-                CheckCancelled();
+                RaiseMessage("Exporting materials");
+                var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
+                foreach (var mat in matsToExport)
+                {
+                    ExportMaterial(mat, babylonScene);
+                    CheckCancelled();
+                }
+                RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
             }
-            RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
+            else
+            {
+                RaiseMessage("Skipping material export.");
+            }
 
             // Fog
             for (var index = 0; index < Loader.Core.NumAtmospheric; index++)

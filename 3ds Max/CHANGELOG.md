@@ -25,3 +25,7 @@
 **Implemented changes:**
 - KHR_materials_unlit can now be toggled from the exporter iterface
 - Alpha Test can now be enabled by setting "babylonAlphaTest" as a boolean custom attribute on a material
+
+## v1.3.7
+**Implemented changes:**
+- Added option to not export materials (https://github.com/BabylonJS/Exporters/issues/362)
