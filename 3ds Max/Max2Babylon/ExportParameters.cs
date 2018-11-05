@@ -8,6 +8,7 @@
         public bool writeTextures = true;
         public bool overwriteTextures = true;
         public bool exportHiddenObjects = false;
+        public bool exportMaterials = true;
         public bool exportOnlySelected = false;
         public bool generateManifest = false;
         public bool autoSave3dsMaxFile = false;
