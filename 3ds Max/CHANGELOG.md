@@ -29,3 +29,7 @@
 ## v1.3.7
 **Implemented changes:**
 - Added option to not export materials (https://github.com/BabylonJS/Exporters/issues/362)
+
+## v1.3.8
+**Fixed bugs:**
+- Fixed normals for models that contain offset transforms (https://github.com/BabylonJS/Exporters/issues/360)
