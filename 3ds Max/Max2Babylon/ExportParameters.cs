@@ -16,6 +16,8 @@
         public string txtQuality = "100";
         public bool mergeAOwithMR = true;
         public bool dracoCompression = false;
+        public bool addDefaultLight = true;
+        public bool cesium = false;
         public bool enableKHRLightsPunctual = false;
         public bool enableKHRTextureTransform = false;
         public bool enableKHRMaterialsUnlit = false;

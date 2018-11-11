@@ -63,12 +63,21 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkKHRTextureTransform, Loader.Core.RootNode, "babylonjs_khrTextureTransform");
             Tools.PrepareCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.PrepareCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials", 1);
+            Tools.PrepareCheckBox(chkAddDefaultLight, Loader.Core.RootNode, "babylonjs_defaultLight", 1);
+            Tools.PrepareCheckBox(chkCesium, Loader.Core.RootNode, "babylonjs_cesium", 0);
 
+            
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
                 chkDracoCompression.Checked = false;
                 chkDracoCompression.Enabled = false;
             }
+            if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon")
+            {
+                chkCesium.Checked = false;
+                chkCesium.Enabled = false;
+            }
+            
         }
 
         private void butBrowse_Click(object sender, EventArgs e)
@@ -102,6 +111,8 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
             Tools.UpdateCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
+            Tools.UpdateCheckBox(chkAddDefaultLight, Loader.Core.RootNode, "babylonjs_defaultLight");
+            Tools.UpdateCheckBox(chkCesium, Loader.Core.RootNode, "babylonjs_cesium");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
@@ -183,8 +194,10 @@ namespace Max2Babylon
                     enableKHRLightsPunctual =chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
-                    exportMaterials = chkExportMaterials.Checked
-                };
+                    exportMaterials = chkExportMaterials.Checked,
+                    addDefaultLight = chkAddDefaultLight.Checked,
+                    cesium = chkCesium.Checked
+            };
 
                 exporter.callerForm = this;
 
@@ -310,6 +323,8 @@ namespace Max2Babylon
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
                     chkDracoCompression.Checked = false;
                     chkDracoCompression.Enabled = false;
+                    chkCesium.Checked = false;
+                    chkCesium.Enabled = false;
                     chkWriteTextures.Enabled = true;
                     chkOverwriteTextures.Enabled = true;
                     break;
@@ -317,6 +332,7 @@ namespace Max2Babylon
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
+                    chkCesium.Enabled = true;
                     chkWriteTextures.Enabled = true;
                     chkOverwriteTextures.Enabled = true;
                     break;
@@ -324,6 +340,7 @@ namespace Max2Babylon
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
+                    chkCesium.Enabled = true;
                     chkWriteTextures.Checked = true;
                     chkWriteTextures.Enabled = false;
                     chkOverwriteTextures.Checked = true;
@@ -351,10 +368,17 @@ namespace Max2Babylon
                     toolTipDracoCompression.Show(tip, chkDracoCompression, chkDracoCompression.Width / 2, chkDracoCompression.Height / 2);
                     IsShown = true;
                 }
+                if (ctrl == chkCesium && !ctrl.Enabled && !IsShown)
+                {
+                    string tip = "For gltf and glb export only.\nAdapt models with negative\nscale for bug in Cesium.";
+                    toolTipCesium.Show(tip, chkCesium, chkCesium.Width / 2, chkCesium.Height / 2);
+                    IsShown = true;
+                }
             }
             else
             {
                 toolTipDracoCompression.Hide(chkDracoCompression);
+                toolTipCesium.Hide(chkCesium);
                 IsShown = false;
             }
         }

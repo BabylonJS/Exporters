@@ -313,10 +313,10 @@ namespace Max2Babylon
             {
                 RaiseMessage(string.Format("Total cameras: {0}", babylonScene.CamerasList.Count), Color.Gray, 1);
             }
-
+            
             // Default light
             bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
-            if (addDefaultLight && babylonScene.LightsList.Count == 0)
+            if (addDefaultLight && babylonScene.LightsList.Count == 0 && exportParameters.addDefaultLight)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default hemispheric light was added for your convenience", 1);
