@@ -151,6 +151,9 @@
     <Compile Include="..\Exporter\BabylonExporter.Material.cs">
       <Link>Exporter\BabylonExporter.Material.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Material.Optimiser.cs">
+      <Link>Exporter\BabylonExporter.Material.Optimiser.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Mesh.cs">
       <Link>Exporter\BabylonExporter.Mesh.cs</Link>
     </Compile>
@@ -167,6 +170,9 @@
       <Link>Exporter\GlobalVertex.cs</Link>
     </Compile>
     <Compile Include="..\Exporter\GLTFGlobalVertex.cs">
+      <Link>Exporter\GLTFGlobalVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Light.cs">
       <Link>Exporter\GLTFGlobalVertex.cs</Link>
     </Compile>
     <Compile Include="..\Forms\AnimationForm.cs">
@@ -341,6 +347,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
+    <None Include="Resources\Logo_Exporter_v4.jpg" />
   </ItemGroup>
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />

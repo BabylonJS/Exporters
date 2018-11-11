@@ -33,6 +33,11 @@ namespace Maya2Babylon
             return result;
         }
 
+        public static int RoundToInt(float f)
+        {
+            return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
+        }
+
         public static T[] SubArrayFromEntity<T>(T[] array, int startEntityIndex, int count)
         {
             return SubArray(array, startEntityIndex * count, count);
@@ -102,7 +107,7 @@ namespace Maya2Babylon
             return res;
         }
 
-        public static bool IsEqualTo(this float[] value, float[] other)
+        public static bool IsEqualTo(this float[] value, float[] other, float Epsilon = Epsilon)
         {
             if (value.Length != other.Length)
             {

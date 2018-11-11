@@ -19,11 +19,7 @@ namespace Max2Babylon
         private BabylonNode ExportDummy(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
             RaiseMessage(meshNode.Name, 1);
-
-            var gameMesh = meshNode.IGameObject.AsGameMesh();
-            bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
-                                                        // translated into a property because it has no parameters
-
+            
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
             babylonMesh.isDummy = true;
 
@@ -62,7 +58,7 @@ namespace Max2Babylon
                 while (babylonMasterMesh == null &&
                        index < tabs.Count)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var tab = tabs[index];
 #else
                     var tab = tabs[new IntPtr(index)];
@@ -85,7 +81,43 @@ namespace Max2Babylon
 
                     meshNode.MaxNode.MarkAsInstance();
 
-                    var babylonInstanceMesh = new BabylonAbstractMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
+                    var babylonInstanceMesh = new BabylonAbstractMesh
+                    {
+                        id = meshNode.MaxNode.GetGuid().ToString(),
+                        name = meshNode.Name,
+                        pickable = meshNode.MaxNode.GetBoolProperty("babylonjs_checkpickable"),
+                        checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions"),
+                        showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox"),
+                        showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox"),
+                        alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000)
+                    };
+
+                    // Physics
+                    var impostorText = meshNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");
+
+                    if (impostorText != "None")
+                    {
+                        switch (impostorText)
+                        {
+                            case "Sphere":
+                                babylonInstanceMesh.physicsImpostor = 1;
+                                break;
+                            case "Box":
+                                babylonInstanceMesh.physicsImpostor = 2;
+                                break;
+                            case "Plane":
+                                babylonInstanceMesh.physicsImpostor = 3;
+                                break;
+                            default:
+                                babylonInstanceMesh.physicsImpostor = 0;
+                                break;
+                        }
+
+                        babylonInstanceMesh.physicsMass = meshNode.MaxNode.GetFloatProperty("babylonjs_mass");
+                        babylonInstanceMesh.physicsFriction = meshNode.MaxNode.GetFloatProperty("babylonjs_friction", 0.2f);
+                        babylonInstanceMesh.physicsRestitution = meshNode.MaxNode.GetFloatProperty("babylonjs_restitution", 0.2f);
+                    }
+
 
                     // Add instance to master mesh
                     List<BabylonAbstractMesh> list = babylonMasterMesh.instances != null ? babylonMasterMesh.instances.ToList() : new List<BabylonAbstractMesh>();
@@ -103,8 +135,16 @@ namespace Max2Babylon
             }
 
             var gameMesh = meshNode.IGameObject.AsGameMesh();
-            bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
-                                                        // translated into a property because it has no parameters
+            try
+            {
+                bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
+                                                            // translated into a property because it has no parameters
+            }
+            catch (Exception e)
+            {
+                RaiseWarning($"Mesh {meshNode.Name} failed to initialize. Mesh is exported as dummy.", 2);
+                return ExportDummy(scene, meshNode, babylonScene);
+            }
 
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
 
@@ -158,7 +198,7 @@ namespace Max2Babylon
             }
 
             // Misc.
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
             babylonMesh.isVisible = meshNode.MaxNode.Renderable;
             babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows;
             babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics;
@@ -261,6 +301,22 @@ namespace Max2Babylon
                 var mtl = meshNode.NodeMaterial;
                 var multiMatsCount = 1;
 
+                // The DirectXShader material is a passthrough to its render material.
+                // The shell material is a passthrough to its baked material.
+                while (mtl != null && (isShellMaterial(mtl) || isDirectXShaderMaterial(mtl)))
+                {
+                    if(isShellMaterial(mtl))
+                    {
+                        // Retrieve the baked material from the shell material.
+                        mtl = GetBakedMaterialFromShellMaterial(mtl);
+                    }
+                    else // isDirectXShaderMaterial(mtl)
+                    {
+                        // Retrieve the render material from the directX shader
+                        mtl = GetRenderMaterialFromDirectXShader(mtl);
+                    }
+                }
+
                 if (mtl != null)
                 {
                     IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
@@ -297,7 +353,7 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                     var channelNum = mappingChannels[i];
 #else
                     var channelNum = mappingChannels[new IntPtr(i)];
@@ -424,6 +480,8 @@ namespace Max2Babylon
                 {
                     RaiseMessage("Export morph targets", 2);
 
+                    var rawScene = Loader.Core.RootNode;
+
                     // Morph Target Manager
                     var babylonMorphTargetManager = new BabylonMorphTargetManager();
                     babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
@@ -455,10 +513,14 @@ namespace Max2Babylon
                                 // Target geometry
                                 var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
-                                babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
 
+                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                                {
+                                    babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
+                                }
+                               
                                 // Tangent
-                                if (exportParameters.exportTangents)
+                                if (exportParameters.exportTangents && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents"))
                                 {
                                     babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                                 }
@@ -555,7 +617,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(meshNode, skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
                 else
@@ -567,7 +629,7 @@ namespace Max2Babylon
                         if (storeFaceIndexes)
                         {
                             // Retreive face
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                             face = materialFaces[j];
 #else
                             face = materialFaces[new IntPtr(j)];
@@ -580,7 +642,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(meshNode, skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
 
@@ -598,7 +660,7 @@ namespace Max2Babylon
             }
         }
 
-        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
+        private void ExtractFace(IIGameNode meshNode, IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
@@ -610,16 +672,16 @@ namespace Max2Babylon
             if (invertedWorldMatrix.Parity)
             {
                 // flipped case: reverse winding order
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                a = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
             else
             {
                 // normal case
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                a = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(meshNode, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
 
             indices.Add(a);
@@ -662,7 +724,7 @@ namespace Max2Babylon
         }
 
 
-        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
+        int CreateGlobalVertex(IIGameNode meshNode, IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
 
@@ -687,10 +749,32 @@ namespace Max2Babylon
 
             // Convert position and normal to local space
             vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
+
             vertex.Normal = invertedWorldMatrix.VectorTransform(vertex.Normal);
+            // 1. scale normals with node scales
             var nodeScaling = BabylonVector3.FromArray(babylonAbstractMesh.scaling);
-            vertex.Normal = vertex.Normal.Multiply(Loader.Global.Point3.Create(nodeScaling.X, nodeScaling.Y, nodeScaling.Z));
-            vertex.Normal = vertex.Normal.Normalize;
+            vertex.Normal = vertex.Normal.Multiply(Loader.Global.Point3.Create(Math.Abs(nodeScaling.X), Math.Abs(nodeScaling.Y), Math.Abs(nodeScaling.Z)));
+
+            // 2. scale normals with objectOffsetScales (unrotate by objectOffsetRot, then scale, then rotate again)
+            // note: LH coordinate system => flip y and z
+            var objOffsetScale = Loader.Global.Point3.Create(meshNode.MaxNode.ObjOffsetScale.S);
+            var scaleX = Math.Abs(objOffsetScale.X);
+            var scaleY = Math.Abs(objOffsetScale.Y);
+            var scaleZ = Math.Abs(objOffsetScale.Z);
+            var objOffsetScaleFlipYZInv = Loader.Global.Point3.Create(1/scaleX, 1/scaleZ, 1/scaleY);
+
+            var objOffsetQuat = meshNode.MaxNode.ObjOffsetRot;
+            var qFlippedYZ = objOffsetQuat;
+            var tmpSwap = objOffsetQuat.Y;
+            qFlippedYZ.Y = objOffsetQuat.Z;
+            qFlippedYZ.Z = tmpSwap;
+
+            var nUnrotated = RotateVectorByQuaternion(vertex.Normal, qFlippedYZ);
+            var nUnrotatedScaled = nUnrotated.Multiply(objOffsetScaleFlipYZInv);
+            nUnrotatedScaled = nUnrotatedScaled.Normalize;
+            var nRerotatedScaled = RotateVectorByQuaternion(nUnrotatedScaled, qFlippedYZ.Conjugate);
+
+            vertex.Normal = nRerotatedScaled;
 
             if (hasUV)
             {
@@ -745,85 +829,79 @@ namespace Max2Babylon
 
             if (skin != null)
             {
-                float weight0 = 0;
-                float weight1 = 0;
-                float weight2 = 0;
-                float weight3 = 0;
-                int bone0 = bonesCount;
-                int bone1 = bonesCount;
-                int bone2 = bonesCount;
-                int bone3 = bonesCount;
+                float[] weight = new float[4] { 0, 0, 0, 0 };
+                int[] bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
+                
+                int currentVtxBone = 0;
+                int currentSkinBone = 0;
 
-                if (nbBones > 0)
+                // process skin bones until we have 4 bones for this vertex or we run out of skin bones
+                for (currentSkinBone = 0; currentSkinBone < nbBones && currentVtxBone < 4; ++currentSkinBone)
                 {
-                    bone0 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 0).NodeID);
-                    weight0 = skin.GetWeight(vertexIndex, 0);
+                    float boneWeight = skin.GetWeight(vertexIndex, currentSkinBone);
+                    if (boneWeight <= 0)
+                        continue;
+
+                    bone[currentVtxBone] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                    weight[currentVtxBone] = skin.GetWeight(vertexIndex, currentSkinBone);
+                    ++currentVtxBone;
                 }
 
-                if (nbBones > 1)
+                // if we didnt have any bones with a weight > 0
+                if (currentVtxBone == 0)
                 {
-                    bone1 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 1).NodeID);
-                    weight1 = skin.GetWeight(vertexIndex, 1);
+                    weight[0] = 1.0f;
+                    bone[0] = bonesCount;
                 }
 
-                if (nbBones > 2)
+                vertex.Weights = Loader.Global.Point4.Create(weight);
+                vertex.BonesIndices = (bone[3] << 24) | (bone[2] << 16) | (bone[1] << 8) | bone[0];
+
+                if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
-                    bone2 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 2).NodeID);
-                    weight2 = skin.GetWeight(vertexIndex, 2);
-                }
+                    weight = new float[4] { 0, 0, 0, 0 };
+                    bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
 
-                if (nbBones > 3)
-                {
-                    bone3 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 3).NodeID);
-                    weight3 = skin.GetWeight(vertexIndex, 3);
-                }
-
-                if (nbBones == 0)
-                {
-                    weight0 = 1.0f;
-                    bone0 = bonesCount;
-                }
-
-                vertex.Weights = Loader.Global.Point4.Create(weight0, weight1, weight2, weight3);
-                vertex.BonesIndices = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
-
-                if (nbBones > 4)
-                {
-                    bone0 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 4).NodeID);
-                    weight0 = skin.GetWeight(vertexIndex, 4);
-
-                    weight1 = 0;
-                    weight2 = 0;
-                    weight3 = 0;
-
-                    if (nbBones > 5)
+                    // process remaining skin bones until we have a total of 8 bones for this vertex or we run out of skin bones
+                    for (; currentSkinBone < nbBones && currentVtxBone < 8; ++currentSkinBone)
                     {
-                        bone1 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 5).NodeID);
-                        weight1 = skin.GetWeight(vertexIndex, 5);
+                        float boneWeight = skin.GetWeight(vertexIndex, currentSkinBone);
+                        if (boneWeight <= 0)
+                            continue;
+
+                        if (isGltfExported)
+                        {
+                            RaiseError("Too many bone influences per vertex for vertexIndex: " + vertexIndex + ". glTF only supports up to 4 bone influences per vertex.", 2);
+                            break;
+                        }
+
+                        bone[currentVtxBone-4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                        weight[currentVtxBone-4] = skin.GetWeight(vertexIndex, currentSkinBone);
+                        ++currentVtxBone;
                     }
 
-                    if (nbBones > 6)
+                    // if we have any extra bone weights
+                    if (currentVtxBone > 4)
                     {
-                        bone2 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 6).NodeID);
-                        weight2 = skin.GetWeight(vertexIndex, 6);
-                    }
+                        vertex.WeightsExtra = Loader.Global.Point4.Create(weight);
+                        vertex.BonesIndicesExtra = (bone[3] << 24) | (bone[2] << 16) | (bone[1] << 8) | bone[0];
 
-                    if (nbBones > 7)
-                    {
-                        bone3 = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, 7).NodeID);
-                        weight3 = skin.GetWeight(vertexIndex, 7);
-                    }
-
-                    vertex.WeightsExtra = Loader.Global.Point4.Create(weight0, weight1, weight2, weight3);
-                    vertex.BonesIndicesExtra = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
-
-                    if (nbBones > 8)
-                    {
-                        RaiseError("Too many bones influences per vertex: " + nbBones + ". Babylon.js only support 8 bones influences per vertex.", 2);
+                        if (currentSkinBone < nbBones)
+                        {
+                            // if we have more skin bones left, this means we have used up all our bones for this vertex
+                            // check if any of the remaining bones has a weight > 0
+                            for (; currentSkinBone < nbBones; ++currentSkinBone)
+                            {
+                                float boneWeight = skin.GetWeight(vertexIndex, currentSkinBone);
+                                if (boneWeight <= 0)
+                                    continue;
+                                RaiseError("Too many bone influences per vertex for vertexIndex: "+ vertexIndex + ". Babylon.js only supports up to 8 bone influences per vertex.", 2);
+                                break;
+                            }
+                        }
                     }
                 }
-
             }
 
             if (verticesAlreadyExported != null)
@@ -863,7 +941,7 @@ namespace Max2Babylon
             }
         }
 
-        private void exportTransform(BabylonAbstractMesh babylonAbstractMesh, IIGameNode maxGameNode)
+        private void exportTransform(BabylonNode babylonAbstractMesh, IIGameNode maxGameNode)
         {
             // Position / rotation / scaling
             var localTM = maxGameNode.GetLocalTM(0);
@@ -880,20 +958,17 @@ namespace Max2Babylon
 
             if (ExportQuaternionsInsteadOfEulers)
             {
-                babylonAbstractMesh.rotationQuaternion = q_babylon.ToArray();
+                // normalize quaternion
+                var q = q_babylon;
+                float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+                babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             }
             else
             {
                 babylonAbstractMesh.rotation = q_babylon.toEulerAngles().ToArray();
             }
-
-            // normalize quaternion
-            var q = q_babylon;
-            float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
-            babylonAbstractMesh.rotationQuaternion = new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
             babylonAbstractMesh.scaling = new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
             babylonAbstractMesh.position = new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
-
         }
 
         private void exportAnimation(BabylonNode babylonNode, IIGameNode maxGameNode)
@@ -954,5 +1029,41 @@ namespace Max2Babylon
 
             return w;
         }
+
+        /// <summary>
+        /// rotate vector with quaternion
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="q"></param>
+        /// <returns>
+        /// the rotated vector
+        /// </returns>
+        private IPoint3 RotateVectorByQuaternion(IPoint3 v, IQuat q)
+        {
+            var qx = q.X; var qy = q.Y; var qz = q.Z; var qw = q.W;
+
+            // compute rotation matrix from q
+            // see: https://www.mathworks.com/help/aerotbx/ug/quatrotate.html
+
+            var m11 = 1 - 2 * qy * qy - 2 * qz * qz;
+            var m12 = 2 * (qx * qy + qw * qz);
+            var m13 = 2 * (qx * qz - qw * qy);
+
+            var m21 = 2 * (qx * qy - qw * qz);
+            var m22 = 1 - 2 * qx * qx - 2 * qz * qz;
+            var m23 = 2 * (qy * qz + qw * qx);
+
+            var m31 = 2 * (qx * qz + qw * qy);
+            var m32 = 2 * (qy * qz - qw * qx);
+            var m33 = 1 - 2 * qx * qx - 2 * qy * qy;
+
+            // matrix multiplication
+            var vx_rot = m11 * v.X + m12 * v.Y + m13 * v.Z;
+            var vy_rot = m21 * v.X + m22 * v.Y + m23 * v.Z;
+            var vz_rot = m31 * v.X + m32 * v.Y + m33 * v.Z;
+
+            return Loader.Global.Point3.Create(vx_rot, vy_rot, vz_rot);
+        }
+
     }
 }

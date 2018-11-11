@@ -85,7 +85,7 @@ namespace Maya2Babylon
             // When fileHasAlpha = true:
             // - texture's format has alpha (png, tif, tga...)
             // - and at least one pixel has an alpha value < 255
-            babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBoolProperty;
+            babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBool();
 
             // UVs
             _exportUV(textureDependencyNode, babylonTexture, textureModifiers, updateCoordinatesMode);
@@ -119,6 +119,7 @@ namespace Maya2Babylon
             return babylonTexture;
         }
 
+        /*
         private BabylonTexture ExportBaseColorAlphaTexture(MFnDependencyNode materialDependencyNode, bool useColorMap, bool useOpacityMap, float[] baseColor, float alpha, BabylonScene babylonScene)
         {
             MFnDependencyNode textureDependencyNode = getTextureDependencyNode(materialDependencyNode, "TEX_color_map");
@@ -243,123 +244,25 @@ namespace Maya2Babylon
 
             return babylonTexture;
         }
-
-        private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode materialDependencyNode, bool useMetallicMap, bool useRoughnessMap, BabylonScene babylonScene, string materialName)
-        {
-            MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
-            MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
-
-            if (metallicTextureDependencyNode != null && roughnessTextureDependencyNode != null)
-            {
-                string sourcePathMetallic = getSourcePathFromFileTexture(metallicTextureDependencyNode);
-                string sourcePathRoughness = getSourcePathFromFileTexture(roughnessTextureDependencyNode);
-
-                if (sourcePathMetallic == sourcePathRoughness)
-                {
-                    return ExportMRTextureAlreadyMerge(metallicTextureDependencyNode, babylonScene);
-                }
-                else
-                {
-                    return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
-                }
-            }
-            else
-            {
-                return ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, materialName);
-            }
-        }
-
-        private BabylonTexture ExportMRTextureAlreadyMerge(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, List<MFnDependencyNode> textureModifiers = null, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
-        {
-            if (textureDependencyNode == null)
-            {
-                return null;
-            }
-
-            Print(textureDependencyNode, logRankTexture, "Print ExportMRTexture textureDependencyNode");
-
-            // Retreive texture file path
-            string sourcePath = getSourcePathFromFileTexture(textureDependencyNode);
-            if (sourcePath == null)
-            {
-                RaiseError("Texture path is not a valid string.", logRankTexture + 1);
-                return null;
-            }
-            if (sourcePath == "")
-            {
-                RaiseError("Texture path is missing.", logRankTexture + 1);
-                return null;
-            }
-
-            // Check format
-            var validImageFormat = GetValidImageFormat(Path.GetExtension(sourcePath));
-            if (validImageFormat == null)
-            {
-                // Image format is not supported by the exporter
-                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
-                return null;
-            }
-            RaiseVerbose("validImageFormat=" + validImageFormat, logRankTexture + 1);
-
-            var babylonTexture = new BabylonTexture
-            {
-                name = Path.GetFileNameWithoutExtension(sourcePath) + "." + validImageFormat
-            };
-
-            // Level
-            babylonTexture.level = amount;
-
-            // Alpha
-            babylonTexture.hasAlpha = false;
-            babylonTexture.getAlphaFromRGB = false;
-
-            // UVs
-            _exportUV(textureDependencyNode, babylonTexture);
-
-            // TODO - Animations
-
-            // Copy texture to output
-            if (isBabylonExported)
-            {
-                var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-
-                if (textureModifiers == null || textureModifiers.FindAll(textureModifier => textureModifier.objectProperty.hasFn(MFn.Type.kReverse)).Count % 2 == 0)
-                {
-                    CopyTexture(sourcePath, destPath);
-                }
-                else
-                {
-                    // TODO - Reverse texture
-                    CopyTexture(sourcePath, destPath);
-                }
-
-                // Is cube
-                _exportIsCube(Path.Combine(babylonScene.OutputPath, babylonTexture.name), babylonTexture, allowCube);
-            }
-            else
-            {
-                babylonTexture.originalPath = sourcePath;
-                babylonTexture.isCube = false;
-            }
-
-            return babylonTexture;
-        }
-
-
-
-        private BabylonTexture ExportMetallicRoughnessTexture(MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName, float defaultMetallic = 1.0f, float defaultRoughness = 1.0f)
+        */
+        
+        private BabylonTexture ExportORMTexture(BabylonScene babylonScene, MFnDependencyNode metallicTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, MFnDependencyNode ambientOcclusionTextureDependencyNode, float defaultMetallic, float defaultRoughness)
         {
             // Prints
             if (metallicTextureDependencyNode != null)
             {
-                Print(metallicTextureDependencyNode, logRankTexture, "Print ExportMetallicRoughnessTexture metallicTextureDependencyNode");
+                Print(metallicTextureDependencyNode, logRankTexture, "Print ExportORMTexture metallicTextureDependencyNode");
             }
             if (roughnessTextureDependencyNode != null)
             {
-                Print(roughnessTextureDependencyNode, logRankTexture, "Print ExportMetallicRoughnessTexture roughnessTextureDependencyNode");
+                Print(roughnessTextureDependencyNode, logRankTexture, "Print ExportORMTexture roughnessTextureDependencyNode");
+            }
+            if (ambientOcclusionTextureDependencyNode != null)
+            {
+                Print(ambientOcclusionTextureDependencyNode, logRankTexture, "Print ExportORMTexture ambientOcclusionTextureDependencyNode");
             }
 
-            // Use one as a reference for UVs parameters
+            // Use metallic or roughness texture as a reference for UVs parameters
             var textureDependencyNode = metallicTextureDependencyNode != null ? metallicTextureDependencyNode : roughnessTextureDependencyNode;
             if (textureDependencyNode == null)
             {
@@ -368,15 +271,10 @@ namespace Maya2Babylon
 
             var babylonTexture = new BabylonTexture
             {
-                name = materialName + "_metallicRoughness" + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                name = (ambientOcclusionTextureDependencyNode != null ? ambientOcclusionTextureDependencyNode.name : "") +
+                       (roughnessTextureDependencyNode != null ? roughnessTextureDependencyNode.name : ("" + (int)(defaultRoughness * 255))) +
+                       (metallicTextureDependencyNode != null ? metallicTextureDependencyNode.name : ("" + (int)(defaultMetallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
-
-            // Level
-            babylonTexture.level = 1.0f;
-
-            // No alpha
-            babylonTexture.hasAlpha = false;
-            babylonTexture.getAlphaFromRGB = false;
 
             // UVs
             _exportUV(textureDependencyNode, babylonTexture);
@@ -395,63 +293,34 @@ namespace Maya2Babylon
             _exportIsCube(sourcePath, babylonTexture, false);
 
 
-            // --- Merge metallic and roughness maps ---
-
-            
-
+            // --- Merge metallic, roughness, ambient occlusion maps ---
             if (CopyTexturesToOutput)
             {
                 // Load bitmaps
                 var metallicBitmap = LoadTexture(metallicTextureDependencyNode);
                 var roughnessBitmap = LoadTexture(roughnessTextureDependencyNode);
+                var ambientOcclusionBitmap = LoadTexture(ambientOcclusionTextureDependencyNode);
 
-                // Retreive dimensions
-                int width = 0;
-                int height = 0;
-                var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, metallicBitmap, roughnessBitmap);
-                if (!haveSameDimensions)
-                {
-                    RaiseError("Metallic and roughness maps should have same dimensions", logRankTexture + 1);
-                }
-
-                float _defaultMetallic = defaultMetallic * 255.0f;
-                float _defaultRoughness = defaultRoughness * 255.0f;
-
-                // Create metallic+roughness map
-                Bitmap metallicRoughnessBitmap = new Bitmap(width, height);
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var _metallic = metallicBitmap != null ? metallicBitmap.GetPixel(x, y).B : _defaultMetallic;
-                        var _roughness = roughnessBitmap != null ? roughnessBitmap.GetPixel(x, y).G : _defaultRoughness;
-
-                        // The metalness values are sampled from the B channel.
-                        // The roughness values are sampled from the G channel.
-                        // These values are linear. If other channels are present (R or A), they are ignored for metallic-roughness calculations.
-                        Color colorMetallicRoughness = Color.FromArgb(
-                            0,
-                            (int)_roughness,
-                            (int)_metallic
-                        );
-                        metallicRoughnessBitmap.SetPixel(x, y, colorMetallicRoughness);
-                    }
-                }
-
+                // Merge bitmaps
+                // The occlusion values are sampled from the R channel.
+                // The roughness values are sampled from the G channel.
+                // The metalness values are sampled from the B channel.
+                Bitmap[] bitmaps = new Bitmap[] { ambientOcclusionBitmap, roughnessBitmap, metallicBitmap, null };
+                int[] defaultValues = new int[] { 0, (int)(defaultRoughness * 255), (int)(defaultMetallic * 255), 0 };
+                Bitmap ormBitmap = MergeBitmaps(bitmaps, defaultValues, ambientOcclusionBitmap != null ? "Occlusion, metallic and roughness" : "Metallic and roughness");
+                
                 // Write bitmap
                 if (isBabylonExported)
                 {
                     RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
-                    SaveBitmap(metallicRoughnessBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    SaveBitmap(ormBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
                 else
                 {
                     // Store created bitmap for further use in gltf export
-                    babylonTexture.bitmap = metallicRoughnessBitmap;
+                    babylonTexture.bitmap = ormBitmap;
                 }
             }
-
-
 
             return babylonTexture;
         }
@@ -512,30 +381,10 @@ namespace Maya2Babylon
                 var baseColorBitmap = LoadTexture(baseColorTextureDependencyNode);
                 var opacityBitmap = LoadTexture(opacityTextureDependencyNode);
 
-                // Retreive dimensions
-                int width = 0;
-                int height = 0;
-                var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, baseColorBitmap, opacityBitmap);
-                if (!haveSameDimensions)
-                {
-                    RaiseError("Base color and opacity maps should have same dimensions", logRankTexture + 1);
-                }
-
-                int _defaultOpacity = (int) (defaultOpacity * 255.0f);
-                
-                // Create baseColor+alpha map
-                Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var _baseColor = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : defaultBaseColor;
-                        int _opacity = opacityBitmap != null ? opacityBitmap.GetPixel(x, y).G : _defaultOpacity;
-
-                        Color colorBaseColorAlpha = Color.FromArgb(_opacity, _baseColor);
-                        baseColorAlphaBitmap.SetPixel(x, y, colorBaseColorAlpha);
-                    }
-                }
+                // Merge bitmaps
+                Bitmap[] bitmaps = new Bitmap[] { baseColorBitmap, baseColorBitmap, baseColorBitmap, opacityBitmap };
+                int[] defaultValues = new int[] { defaultBaseColor.R, defaultBaseColor.G, defaultBaseColor.B, (int)(defaultOpacity * 255) };
+                Bitmap baseColorAlphaBitmap = MergeBitmaps(bitmaps, defaultValues, "Base color and opacity");
 
                 // Write bitmap
                 if (isBabylonExported)
@@ -624,11 +473,12 @@ namespace Maya2Babylon
 
             // For more information about UV
             // see http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-94070C7E-C550-42FD-AFC9-FBE82B173B1D
-            babylonTexture.uOffset = textureDependencyNode.findPlug("offsetU").asFloatProperty;
-            babylonTexture.vOffset = textureDependencyNode.findPlug("offsetV").asFloatProperty;
+            babylonTexture.uOffset = textureDependencyNode.findPlug("offsetU").asFloat();
+                ;
+            babylonTexture.vOffset = textureDependencyNode.findPlug("offsetV").asFloat();
             
-            babylonTexture.uScale = textureDependencyNode.findPlug("repeatU").asFloatProperty;
-            babylonTexture.vScale = textureDependencyNode.findPlug("repeatV").asFloatProperty;
+            babylonTexture.uScale = textureDependencyNode.findPlug("repeatU").asFloat();
+            babylonTexture.vScale = textureDependencyNode.findPlug("repeatV").asFloat();
             
             if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
@@ -638,15 +488,21 @@ namespace Maya2Babylon
             // Maya only has a W rotation
             babylonTexture.uAng = 0;
             babylonTexture.vAng = 0;
-            babylonTexture.wAng = textureDependencyNode.findPlug("rotateFrame").asFloatProperty;
+            babylonTexture.wAng = textureDependencyNode.findPlug("rotateFrame").asFloat();
+
+            // TODO - rotation and scale
+            if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
+            {
+                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", logRankTexture + 1);
+            }
 
             // Adress mode U
             // TODO - What is adress mode when both wrap and mirror?
-            if (textureDependencyNode.findPlug("mirrorU").asBoolProperty)
+            if (textureDependencyNode.findPlug("mirrorU").asBool())
             {
                 babylonTexture.wrapU = BabylonTexture.AddressMode.MIRROR_ADDRESSMODE;
             }
-            else if (textureDependencyNode.findPlug("wrapU").asBoolProperty)
+            else if (textureDependencyNode.findPlug("wrapU").asBool())
             {
                 babylonTexture.wrapU = BabylonTexture.AddressMode.WRAP_ADDRESSMODE;
             }
@@ -658,11 +514,11 @@ namespace Maya2Babylon
 
             // Adress mode V
             // TODO - What is adress mode when both wrap and mirror?
-            if (textureDependencyNode.findPlug("mirrorV").asBoolProperty)
+            if (textureDependencyNode.findPlug("mirrorV").asBool())
             {
                 babylonTexture.wrapV = BabylonTexture.AddressMode.MIRROR_ADDRESSMODE;
             }
-            else if (textureDependencyNode.findPlug("wrapV").asBoolProperty)
+            else if (textureDependencyNode.findPlug("wrapV").asBool())
             {
                 babylonTexture.wrapV = BabylonTexture.AddressMode.WRAP_ADDRESSMODE;
             }
@@ -671,6 +527,9 @@ namespace Maya2Babylon
                 // TODO - What is adress mode when not wrap nor mirror?
                 babylonTexture.wrapV = BabylonTexture.AddressMode.CLAMP_ADDRESSMODE;
             }
+
+            // Animation
+            babylonTexture.animations = GetTextureAnimations(textureDependencyNode).ToArray();
         }
 
         private void _exportIsCube(string absolutePath, BabylonTexture babylonTexture, bool allowCube)
@@ -765,7 +624,7 @@ namespace Maya2Babylon
                 RaiseError("Texture path is missing.", logRankTexture + 1);
                 return null;
             }
-            string sourcePath = fileTextureNamePlug.asStringProperty;
+            string sourcePath = fileTextureNamePlug.asString();
             return sourcePath;
         }
 
@@ -881,7 +740,7 @@ namespace Maya2Babylon
             {
                 try
                 {
-                    switch (Path.GetExtension(absolutePath))
+                    switch (Path.GetExtension(absolutePath).ToLower())
                     {
                         case ".dds":
                             // External library GDImageLibrary.dll + TQ.Texture.dll
@@ -981,7 +840,10 @@ namespace Maya2Babylon
 
                         if (validFormats.Contains(imageFormat))
                         {
-                            File.Copy(sourcePath, destPath, true);
+                            if (sourcePath != destPath)
+                            {
+                                File.Copy(sourcePath, destPath, true);
+                            }
                         }
                         else if (invalidFormats.Contains(imageFormat))
                         {
@@ -1088,7 +950,7 @@ namespace Maya2Babylon
                 {
                     // Create an Encoder object based on the GUID for the Quality parameter category
                     EncoderParameters encoderParameters = new EncoderParameters(1);
-                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, 100L);
+                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, _quality);
                     encoderParameters.Param[0] = encoderQualityParameter;
 
                     bitmap.Save(fs, encoder, encoderParameters);
@@ -1125,6 +987,41 @@ namespace Maya2Babylon
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Merge bitmaps into a single bitmap. Each channel has an associated bitmap to retreive data from.
+        /// </summary>
+        /// <param name="bitmaps">R, G, B, A bitmaps to merge</param>
+        /// <param name="defaultValues">Default R, G, B, A values if related bitmap is null. Base 255.</param>
+        /// <param name="sizeErrorMessage">Map names to display when maps don't have same size</param>
+        /// <returns></returns>
+        private Bitmap MergeBitmaps(Bitmap[] bitmaps, int[] defaultValues, string sizeErrorMessage)
+        {
+            // Retreive dimensions
+            int width = 0;
+            int height = 0;
+            var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, bitmaps);
+            if (!haveSameDimensions)
+            {
+                RaiseError(sizeErrorMessage + " maps should have same dimensions", logRankTexture + 1);
+            }
+
+            // Create merged bitmap
+            Bitmap mergedBitmap = new Bitmap(width, height);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var r = bitmaps[0] != null ? bitmaps[0].GetPixel(x, y).R : defaultValues[0];
+                    var g = bitmaps[1] != null ? bitmaps[1].GetPixel(x, y).G : defaultValues[1];
+                    var b = bitmaps[2] != null ? bitmaps[2].GetPixel(x, y).B : defaultValues[2];
+                    var a = bitmaps[3] != null ? bitmaps[3].GetPixel(x, y).A : defaultValues[3];
+                    mergedBitmap.SetPixel(x, y, Color.FromArgb(a, r, g, b));
+                }
+            }
+
+            return mergedBitmap;
         }
     }
 }

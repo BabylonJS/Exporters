@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class MaterialDuplicationData
 {
-    public List<BabylonMesh> meshesOpaque;
-    public List<BabylonMesh> meshesTransparent;
+    public List<BabylonMesh> meshesOpaque = new List<BabylonMesh>();
+    public List<BabylonMesh> meshesTransparent = new List<BabylonMesh>();
     public int nbMeshesOpaqueMulti;
     public int nbMeshesTransparentMulti;
 

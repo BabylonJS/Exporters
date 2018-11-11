@@ -19,9 +19,15 @@ namespace Maya2Babylon
         private bool _exportTangents;
         private bool ExportHiddenObjects { get; set; }
         private bool CopyTexturesToOutput { get; set; }
-        private bool ExportQuaternionsInsteadOfEulers { get; set; }
+        private bool ExportQuaternionsInsteadOfEulers { get; set; } = true;
         private bool isBabylonExported;
         private bool _exportSkin;
+        private long _quality;
+        private bool _dracoCompression;
+        private bool _exportMorphNormal;
+        private bool _exportMorphTangent;
+        private bool _exportKHRLightsPunctual;
+        private bool _exportKHRTextureTransform;
 
         public bool IsCancelled { get; set; }
 
@@ -35,11 +41,33 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        private string exporterVersion = "1.1.9";
+        private string exporterVersion = "1.2.26";
 
+        /// <summary>
+        /// Export to file
+        /// </summary>
+        /// <param name="outputDirectory">The directory to store the generated files</param>
+        /// <param name="outputFileName">The filename to use for the generated files</param>
+        /// <param name="outputFormat">The format to use for the generated files</param>
+        /// <param name="generateManifest">Specifies if a manifest file should be generated</param>
+        /// <param name="onlySelected">Specifies if only the selected objects should be exported</param>
+        /// <param name="autoSaveMayaFile">Specifies if the Maya scene should be auto-saved</param>
+        /// <param name="exportHiddenObjects">Specifies if hidden objects should be exported</param>
+        /// <param name="copyTexturesToOutput">Specifies if textures should be copied to the output directory</param>
+        /// <param name="optimizeVertices">Specifies if vertices should be optimized on export</param>
+        /// <param name="exportTangents">Specifies if tangents should be exported</param>
+        /// <param name="scaleFactor">Scales the scene by this factor</param>
+        /// <param name="exportSkin">Specifies if skins should be exported</param>
+        /// <param name="quality">The texture quality</param>
+        /// <param name="dracoCompression">Specifies if draco compression should be used</param>
+        /// <param name="exportMorphNormal">Specifies if normals should be exported for morph targets</param>
+        /// <param name="exportMorphTangent">Specifies if tangents should be exported for morph targets</param>
+        /// <param name="exportKHRLightsPunctual">Specifies if the KHR_lights_punctual extension should be enabled</param>
+        /// <param name="exportKHRTextureTransform">Specifies if the KHR_texture_transform extension should be enabled</param>
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
-                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin)
+                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression,
+                            bool exportMorphNormal, bool exportMorphTangent, bool exportKHRLightsPunctual, bool exportKHRTextureTransform)
         {
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
@@ -63,7 +91,23 @@ namespace Maya2Babylon
                 return;
             }
 
-            RaiseMessage("Exportation started", Color.Blue);
+            try
+            {
+                _quality = long.Parse(quality);
+
+                if (_quality < 0 || _quality > 100)
+                {
+                    throw new Exception();
+                }
+            }
+            catch
+            {
+                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
+                RaiseError("This parameter set the quality of jpg compression.");
+                return;
+            }
+
+            RaiseMessage("Export started", Color.Blue);
             var progression = 0.0f;
             ReportProgressChanged(progression);
 
@@ -75,11 +119,17 @@ namespace Maya2Babylon
             CopyTexturesToOutput = copyTexturesToOutput;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             _exportSkin = exportSkin;
+            _dracoCompression = dracoCompression;
+            _exportMorphNormal = exportMorphNormal;
+            _exportMorphTangent = exportMorphTangent;
+            _exportKHRLightsPunctual = exportKHRLightsPunctual;
+            _exportKHRTextureTransform = exportKHRTextureTransform;
+            
 
             // Check directory exists
             if (!Directory.Exists(outputDirectory))
             {
-                RaiseError("Exportation stopped: Output folder does not exist");
+                RaiseError("Export stopped: Output folder does not exist");
                 ReportProgressChanged(100);
                 return;
             }
@@ -164,10 +214,16 @@ namespace Maya2Babylon
             PrintDAG(true);
             PrintDAG(false);
 
+            // Store the current frame. It can be change to find a proper one for the node/bone export
+            double currentTime = Loader.GetCurrentTime();
+
             // --------------------
             // ------ Nodes -------
             // --------------------
             RaiseMessage("Exporting nodes");
+
+            // It makes each morph target manager export starts from id = 0.
+            BabylonMorphTargetManager.Reset();
 
             // Clear materials
             referencedMaterials.Clear();
@@ -309,8 +365,17 @@ namespace Maya2Babylon
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };
                 rootNode.isDummy = true;
-                float rootNodeScale = 1.0f / scaleFactorFloat;
+                float rootNodeScale = scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+                if (ExportQuaternionsInsteadOfEulers)
+                {
+                    rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
+                }
+                else
+                {
+                    rootNode.rotation = new float[] { 0, 0, 0 };
+                }
 
                 // Update all top nodes
                 var babylonNodes = new List<BabylonNode>();
@@ -361,6 +426,40 @@ namespace Maya2Babylon
                 }
             }
 
+            // set back the frame
+            Loader.SetCurrentTime(currentTime);
+
+            // Animation group
+            if (isBabylonExported)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+                // if there is animationGroup, then remove animations from nodes
+                if (babylonScene.animationGroups.Count > 0)
+                {
+                    // add animations of each nodes in the animGroup
+                    List<BabylonNode> babylonNodes = new List<BabylonNode>();
+                    babylonNodes.AddRange(babylonScene.MeshesList);
+                    babylonNodes.AddRange(babylonScene.CamerasList);
+                    babylonNodes.AddRange(babylonScene.LightsList);
+
+                    foreach (BabylonNode node in babylonNodes)
+                    {
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+            }
+
+
             // Output
             babylonScene.Prepare(false, false);
             if (isBabylonExported)
@@ -378,7 +477,7 @@ namespace Maya2Babylon
             }
 
             watch.Stop();
-            RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
+            RaiseMessage(string.Format("Export done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
         }
 
         void CheckCancelled()

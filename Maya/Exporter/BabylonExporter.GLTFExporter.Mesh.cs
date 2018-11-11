@@ -16,7 +16,7 @@ namespace Maya2Babylon
             // --- Mesh from babylon ----
             // --------------------------
 
-            if (babylonMesh.positions == null)
+            if (babylonMesh.positions == null || babylonMesh.positions.Length == 0)
             {
                 RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
                 return null;
@@ -102,7 +102,7 @@ namespace Maya2Babylon
 
             var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
 
-            // Retreive indices from babylon mesh
+            // Retrieve indices from babylon mesh
             List<int> babylonIndices = babylonMesh.indices.ToList();
 
             // --------------------------
@@ -187,7 +187,7 @@ namespace Maya2Babylon
                         var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
                         if (indexMaterial == -1)
                         {
-                            // Store material for exportation
+                            // Store material for export
                             indexMaterial = babylonMaterialsToExport.Count;
                             babylonMaterialsToExport.Add(babylonMaterial);
                         }
@@ -450,6 +450,7 @@ namespace Maya2Babylon
                     for (int indexPosition = startIndex; indexPosition < endIndex; indexPosition += 3)
                     {
                         var positionTarget = Tools.SubArray(babylonMorphTarget.positions, indexPosition, 3);
+                        
 
                         // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
                         var positionMesh = Tools.SubArray(babylonMesh.positions, indexPosition, 3);
@@ -457,7 +458,7 @@ namespace Maya2Babylon
                         {
                             positionTarget[indexCoordinate] = positionTarget[indexCoordinate] - positionMesh[indexCoordinate];
                         }
-
+                        positionTarget[2] *= -1;
                         // Store values as bytes
                         foreach (var coordinate in positionTarget)
                         {
@@ -470,7 +471,7 @@ namespace Maya2Babylon
                 }
 
                 // Normals
-                if (babylonMorphTarget.normals != null)
+                if ((babylonMorphTarget.normals != null) && _exportMorphNormal)
                 {
                     var accessorTargetNormals = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -494,7 +495,7 @@ namespace Maya2Babylon
                         {
                             normalTarget[indexCoordinate] = normalTarget[indexCoordinate] - normalMesh[indexCoordinate];
                         }
-
+                        normalTarget[2] *= -1;
                         // Store values as bytes
                         foreach (var coordinate in normalTarget)
                         {
@@ -504,8 +505,41 @@ namespace Maya2Babylon
                     accessorTargetNormals.count = babylonSubMesh.verticesCount;
                 }
 
-                // TODO - Tangents
+                // Tangents
+                if ((babylonMorphTarget.tangents != null) && _exportMorphTangent)
+                {
+                    var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
+                        gltf,
+                        GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
+                        "accessorTargetTangents",
+                        GLTFAccessor.ComponentType.FLOAT,
+                        GLTFAccessor.TypeEnum.VEC3
+                    );
+                    gltfMorphTarget.Add(GLTFMeshPrimitive.Attribute.TANGENT.ToString(), accessorTargetTangents.index);
+                    // Populate accessor
+                    // Note that the w component for handedness is omitted when targeting TANGENT data since handedness cannot be displaced.
+                    int nbComponents = 4; // Vector4
+                    int startIndex = babylonSubMesh.verticesStart * nbComponents;
+                    int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
+                    for (int indexTangent = startIndex; indexTangent < endIndex; indexTangent += 4)
+                    {
+                        var tangentTarget = Tools.SubArray(babylonMorphTarget.tangents, indexTangent, 3);
 
+                        // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
+                        var tangentMesh = Tools.SubArray(babylonMesh.tangents, indexTangent, 3);
+                        for (int indexCoordinate = 0; indexCoordinate < tangentTarget.Length; indexCoordinate++)
+                        {
+                            tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
+                        }
+                        tangentTarget[2] *= -1;
+                        // Store values as bytes
+                        foreach (var coordinate in tangentTarget)
+                        {
+                            accessorTargetTangents.bytesList.AddRange(BitConverter.GetBytes(coordinate));
+                        }
+                    }
+                    accessorTargetTangents.count = babylonSubMesh.verticesCount;
+                }
                 gltfMorphTargets.Add(gltfMorphTarget);
             }
             if (gltfMorphTargets.Count > 0)

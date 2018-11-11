@@ -93,44 +93,74 @@ namespace Max2Babylon
 
         #region IIPropertyContainer
 
-        public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
+        public static string GetStringProperty(this IIGameProperty property)
         {
             string value = "";
-            propertyContainer.GetProperty(indexProperty).GetPropertyValue(ref value, 0);
+            property.GetPropertyValue(ref value, 0);
             return value;
+        }
+
+        public static int GetIntValue(this IIGameProperty property)
+        {
+            int value = 0;
+            property.GetPropertyValue(ref value, 0);
+            return value;
+        }
+
+        public static bool GetBoolValue(this IIGameProperty property)
+        {
+            return property.GetIntValue() == 1;
+        }
+
+        public static float GetFloatValue(this IIGameProperty property)
+        {
+            float value = 0.0f;
+            property.GetPropertyValue(ref value, 0, true);
+            return value;
+        }
+
+        public static IPoint3 GetPoint3Property(this IIGameProperty property)
+        {
+            IPoint3 value = Loader.Global.Point3.Create(0, 0, 0);
+            property.GetPropertyValue(value, 0);
+            return value;
+        }
+
+        public static IPoint4 GetPoint4Property(this IIGameProperty property)
+        {
+            IPoint4 value = Loader.Global.Point4.Create(0, 0, 0, 0);
+            property.GetPropertyValue(value, 0);
+            return value;
+        }
+
+        public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
+        {
+            return propertyContainer.GetProperty(indexProperty).GetStringProperty();
         }
 
         public static int GetIntProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {
-            int value = 0;
-            propertyContainer.GetProperty(indexProperty).GetPropertyValue(ref value, 0);
-            return value;
+            return propertyContainer.GetProperty(indexProperty).GetIntValue();
         }
 
         public static bool GetBoolProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {
-            return propertyContainer.GetIntProperty(indexProperty) == 1;
+            return propertyContainer.GetProperty(indexProperty).GetBoolValue();
         }
 
         public static float GetFloatProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {
-            float value = 0.0f;
-            propertyContainer.GetProperty(indexProperty).GetPropertyValue(ref value, 0, true);
-            return value;
+            return propertyContainer.GetProperty(indexProperty).GetFloatValue();
         }
 
         public static IPoint3 GetPoint3Property(this IIPropertyContainer propertyContainer, int indexProperty)
         {
-            IPoint3 value = Loader.Global.Point3.Create(0, 0, 0);
-            propertyContainer.GetProperty(indexProperty).GetPropertyValue(value, 0);
-            return value;
+            return propertyContainer.GetProperty(indexProperty).GetPoint3Property();
         }
 
         public static IPoint4 GetPoint4Property(this IIPropertyContainer propertyContainer, int indexProperty)
         {
-            IPoint4 value = Loader.Global.Point4.Create(0, 0, 0, 0);
-            propertyContainer.GetProperty(indexProperty).GetPropertyValue(value, 0);
-            return value;
+            return propertyContainer.GetProperty(indexProperty).GetPoint4Property();
         }
 
         #endregion
@@ -466,21 +496,45 @@ namespace Max2Babylon
             node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, new byte[] { 1 });
         }
 
+        public static IDictionary<Guid, IAnimatable> guids = new Dictionary<Guid, IAnimatable>();
+
         public static Guid GetGuid(this IAnimatable node)
         {
             var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
             Guid uid;
 
+            // If current node already has an uid
             if (uidData != null)
             {
                 uid = new Guid(uidData.Data);
+
+                if (guids.ContainsKey(uid))
+                {
+                    // If the uid is already used by another node
+                    if (guids[uid].Equals(node as IInterfaceServer) == false)
+                    {
+                        // Create a new uid for current node
+                        uid = CreateGuid(node);
+                    }
+                }
+                else
+                {
+                    guids.Add(uid, node);
+                }
             }
             else
             {
-                uid = Guid.NewGuid();
-                node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
+                uid = CreateGuid(node);
             }
 
+            return uid;
+        }
+
+        private static Guid CreateGuid(this IAnimatable node)
+        {
+            Guid uid = Guid.NewGuid();
+            guids.Add(uid, node);
+            node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
             return uid;
         }
 
@@ -821,6 +875,14 @@ namespace Max2Babylon
             textBox.Text = state;
         }
 
+        public static void PrepareTextBox(TextBox textBox, List<IINode> nodes, string propertyName, string defaultValue = "")
+        {
+            foreach(IINode node in nodes)
+            {
+                PrepareTextBox(textBox, node, propertyName, defaultValue);
+            }
+        }
+
         public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, string defaultValue)
         {
             comboBox.SelectedItem = node.GetStringProperty(propertyName, defaultValue);
@@ -840,6 +902,11 @@ namespace Max2Babylon
             {
                 UpdateCheckBox(checkBox, node, propertyName);
             }
+        }
+
+        public static void UpdateTextBox(TextBox textBox, IINode node, string propertyName)
+        {
+            node.SetUserPropString(propertyName, textBox.Text);
         }
 
         public static void UpdateTextBox(TextBox textBox, List<IINode> nodes, string propertyName)

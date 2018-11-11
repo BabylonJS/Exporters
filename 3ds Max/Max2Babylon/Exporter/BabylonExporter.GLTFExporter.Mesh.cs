@@ -16,7 +16,7 @@ namespace Max2Babylon
             // --- Mesh from babylon ----
             // --------------------------
 
-            if (babylonMesh.positions == null)
+            if (babylonMesh.positions == null || babylonMesh.positions.Length == 0)
             {
                 RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
                 return null;
@@ -374,11 +374,6 @@ namespace Max2Babylon
                     accessorWeights.count = globalVerticesSubMesh.Count;
                 }
 
-                if (hasBonesExtra)
-                {
-                    RaiseWarning("Too many bones influences per vertex. glTF only support up to 4 bones influences per vertex. The result may not be as expected.", 3);
-                }
-
                 // Morph targets positions and normals
                 if (babylonMorphTargetManager != null)
                 {
@@ -427,6 +422,7 @@ namespace Max2Babylon
         private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonSubMesh babylonSubMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive)
         {
             var gltfMorphTargets = new List<GLTFMorphTarget>();
+            var rawScene = Loader.Core.RootNode;
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
             {
                 var gltfMorphTarget = new GLTFMorphTarget();
@@ -459,6 +455,8 @@ namespace Max2Babylon
                             positionTarget[indexCoordinate] = positionTarget[indexCoordinate] - positionMesh[indexCoordinate];
                         }
 
+                        positionTarget[2] *= -1;
+
                         // Store values as bytes
                         foreach (var coordinate in positionTarget)
                         {
@@ -471,7 +469,7 @@ namespace Max2Babylon
                 }
 
                 // Normals
-                if (babylonMorphTarget.normals != null)
+                if (babylonMorphTarget.normals != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
                 {
                     var accessorTargetNormals = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -496,6 +494,8 @@ namespace Max2Babylon
                             normalTarget[indexCoordinate] = normalTarget[indexCoordinate] - normalMesh[indexCoordinate];
                         }
 
+                        normalTarget[2] *= -1;
+
                         // Store values as bytes
                         foreach (var coordinate in normalTarget)
                         {
@@ -506,7 +506,7 @@ namespace Max2Babylon
                 }
 
                 // Tangents
-                if(babylonMorphTarget.tangents != null)
+                if(babylonMorphTarget.tangents != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents") && exportParameters.exportTangents)
                 {
                     var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -531,6 +531,8 @@ namespace Max2Babylon
                         {
                             tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];
                         }
+
+                        tangentTarget[2] *= -1;
 
                         // Store values as bytes
                         foreach (var coordinate in tangentTarget)

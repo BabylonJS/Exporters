@@ -710,6 +710,7 @@ class MeshInstance:
             self.rotationQuaternion = rotationQuaternion
         self.scaling = instancedMesh.scaling
         self.freezeWorldMatrix = instancedMesh.freezeWorldMatrix
+        self.tags = instancedMesh.tags
         
         if hasattr(instancedMesh, 'physicsImpostor'):
             self.physicsImpostor = instancedMesh.physicsImpostor
@@ -730,6 +731,7 @@ class MeshInstance:
         write_vector(file_handler, 'scaling', self.scaling)
         # freeze World Matrix currently ignored for instances
         write_bool(file_handler, 'freezeWorldMatrix', self.freezeWorldMatrix)
+        write_string(file_handler, 'tags', self.tags)
 
         if hasattr(self, 'physicsImpostor'):
             write_int(file_handler, 'physicsImpostor', self.physicsImpostor)

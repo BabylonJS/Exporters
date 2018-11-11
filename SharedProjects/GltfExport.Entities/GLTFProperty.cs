@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace GLTFExport.Entities
 {
@@ -9,6 +10,6 @@ namespace GLTFExport.Entities
         public GLTFExtensions extensions { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public object extras { get; set; }
+        public Dictionary<string, object> extras { get; set; }
     }
 }

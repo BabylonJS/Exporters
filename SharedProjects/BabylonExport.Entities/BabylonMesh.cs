@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -14,10 +15,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool isVisible { get; set; }
 
-        [DataMember]
-        public bool pickable { get; set; }
-
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public float[] pivotMatrix { get; set; }
 
         [DataMember]
@@ -57,9 +55,6 @@ namespace BabylonExport.Entities
         public int[] indices { get; set; }
 
         [DataMember]
-        public bool checkCollisions { get; set; }
-
-        [DataMember]
         public bool receiveShadows { get; set; }    
     
         [DataMember]
@@ -84,48 +79,22 @@ namespace BabylonExport.Entities
         public int numBoneInfluencers { get; set; }
 
         [DataMember]
-        public bool showBoundingBox { get; set; }
-
-        [DataMember]
-        public bool showSubMeshesBoundingBox { get; set; }
-
-        [DataMember]
         public bool applyFog { get; set; }
 
         [DataMember]
-        public int alphaIndex { get; set; }
-
-        [DataMember]
-        public int physicsImpostor { get; set; }
-
-        [DataMember]
-        public float physicsMass { get; set; }
-
-        [DataMember]
-        public float physicsFriction { get; set; }
-
-        [DataMember]
-        public float physicsRestitution { get; set; }
-
-        [DataMember]
         public object metadata { get; set; }
-
-        [DataMember]
-        public string tags { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public int? morphTargetManagerId { get; set; }
 
         public bool isDummy = false;
 
+        public List<VertexData> VertexDatas { get; set; } = new List<VertexData>();
+
         public BabylonMesh()
         {
             isEnabled = true;
             isVisible = true;
-
-            position = new[] { 0f, 0f, 0f };
-            rotation = new[] { 0f, 0f, 0f };
-            scaling = new[] { 1f, 1f, 1f };
 
             billboardMode = 0;
 
@@ -136,6 +105,27 @@ namespace BabylonExport.Entities
             pickable = true;
 
             numBoneInfluencers = 4;
+
+            position = new float[] { 0, 0, 0 };
         }
+    }
+
+    /// <summary>
+    /// Store the data of the vertex used to extract the geometry.
+    /// It used by the morph target in order to have the same vertex order between the mesh and the target.
+    /// </summary>
+    public class VertexData
+    {
+        public int polygonId { get; set; }
+        public int vertexIndexGlobal { get; set; }
+        public int vertexIndexLocal { get; set; }
+
+        public VertexData(int _polygonId, int _vertexIndexGlobal, int _vertexIndexLocal)
+        {
+            polygonId = _polygonId;
+            vertexIndexGlobal = _vertexIndexGlobal;
+            vertexIndexLocal = _vertexIndexLocal;
+        }
+
     }
 }

@@ -5,6 +5,11 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonLight : BabylonNode
     {
+        public enum Type
+        {
+            Point, Directional, Spot, Hemispheric
+        }
+
         [DataMember]
         public float[] direction { get; set; }
 
@@ -44,15 +49,17 @@ namespace BabylonExport.Entities
         [DataMember]
         public object metadata { get; set; }
 
-        [DataMember]
-        public string tags { get; set; }
-
         public BabylonLight()
         {
             diffuse = new[] {1.0f, 1.0f, 1.0f};
             specular = new[] { 1.0f, 1.0f, 1.0f };
             intensity = 1.0f;
             range = float.MaxValue;
+
+            position = new float[] { 0, 0, 0 };
+            rotation = new float[] { 0, 0, 0 };
+            rotationQuaternion = new float[] { 0, 0, 0, 1 };
+            scaling = new float[] { 1, 1, 1 };
         }
     }
 }

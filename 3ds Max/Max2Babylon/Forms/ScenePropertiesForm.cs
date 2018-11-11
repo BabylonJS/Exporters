@@ -21,9 +21,14 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkCreateDefaultSkybox, Loader.Core.RootNode, "babylonjs_createDefaultSkybox");
             Tools.UpdateNumericUpDown(nupSkyboxBlurLevel, new List<IINode> { Loader.Core.RootNode }, "babylonjs_skyboxBlurLevel");
 
+            Tools.UpdateCheckBox(chkAddDefaultLight, Loader.Core.RootNode, "babylonjs_addDefaultLight");
+
             Tools.UpdateCheckBox(chkAutoPlay, Loader.Core.RootNode, "babylonjs_sound_autoplay");
             Tools.UpdateCheckBox(chkLoop, Loader.Core.RootNode, "babylonjs_sound_loop");
             Tools.UpdateNumericUpDown(nupVolume, new List<IINode> { Loader.Core.RootNode }, "babylonjs_sound_volume");
+
+            Tools.UpdateCheckBox(chkMorphExportTangent, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
+            Tools.UpdateCheckBox(ckkMorphExportNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals");
 
             Tools.UpdateTextBox(txtSound, new List<IINode> { Loader.Core.RootNode }, "babylonjs_sound_filename");
         }
@@ -37,9 +42,14 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkCreateDefaultSkybox, Loader.Core.RootNode, "babylonjs_createDefaultSkybox", 1);
             Tools.PrepareNumericUpDown(nupSkyboxBlurLevel, new List<IINode> { Loader.Core.RootNode }, "babylonjs_skyboxBlurLevel", 0.3f);
 
+            Tools.PrepareCheckBox(chkAddDefaultLight, Loader.Core.RootNode, "babylonjs_addDefaultLight", 1);
+
             Tools.PrepareCheckBox(chkAutoPlay, Loader.Core.RootNode, "babylonjs_sound_autoplay", 1);
             Tools.PrepareCheckBox(chkLoop, Loader.Core.RootNode, "babylonjs_sound_loop", 1);
             Tools.PrepareNumericUpDown(nupVolume, new List<IINode>{Loader.Core.RootNode}, "babylonjs_sound_volume", 1.0f);
+
+            Tools.PrepareCheckBox(chkMorphExportTangent, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
+            Tools.PrepareCheckBox(ckkMorphExportNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
 
             Tools.PrepareTextBox(txtSound, Loader.Core.RootNode, "babylonjs_sound_filename");
         }

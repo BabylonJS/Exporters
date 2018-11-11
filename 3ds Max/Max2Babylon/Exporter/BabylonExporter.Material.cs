@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
@@ -13,6 +14,12 @@ namespace Max2Babylon
         {
             var name = materialNode.MaterialName;
             var id = materialNode.MaxMaterial.GetGuid().ToString();
+
+            // Check if the material was already exported. The material id is unique.
+            if (babylonScene.MaterialsList.FirstOrDefault(m => m.id == id) != null)
+            {
+                return;
+            }
 
             RaiseMessage(name, 1);
 
@@ -47,18 +54,18 @@ namespace Max2Babylon
                                     break;
                                 case PropType.FloatProp:
                                     float propertyFloat = 0;
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0, true)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
                                     RaiseVerbose("propertyFloat=" + propertyFloat, 4);
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
+                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0, false)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
                                     RaiseVerbose("propertyFloat=" + propertyFloat, 4);
                                     break;
                                 case PropType.Point3Prop:
-                                    IPoint3 propertyPoint3 = Loader.Global.Point3.Create(0, 0, 0); 
+                                    IPoint3 propertyPoint3 = Loader.Global.Point3.Create(0, 0, 0);
                                     RaiseVerbose("prop.GetPropertyValue(ref propertyPoint3, 0)=" + prop.GetPropertyValue(propertyPoint3, 0), 4);
                                     RaiseVerbose("propertyPoint3=" + Point3ToString(propertyPoint3), 4);
                                     break;
                                 case PropType.Point4Prop:
-                                    IPoint4 propertyPoint4 = Loader.Global.Point4.Create(0,0,0,0);
+                                    IPoint4 propertyPoint4 = Loader.Global.Point4.Create(0, 0, 0, 0);
                                     RaiseVerbose("prop.GetPropertyValue(ref propertyPoint4, 0)=" + prop.GetPropertyValue(propertyPoint4, 0), 4);
                                     RaiseVerbose("propertyPoint4=" + Point4ToString(propertyPoint4), 4);
                                     break;
@@ -108,71 +115,54 @@ namespace Max2Babylon
                 babylonScene.MultiMaterialsList.Add(babylonMultimaterial);
                 return;
             }
-            
+
+            var unlitProperty = materialNode.IPropertyContainer.QueryProperty("BabylonUnlit");
+            bool isUnlit = unlitProperty != null ? unlitProperty.GetBoolValue() : false;
+
             var stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
 
             if (stdMat != null)
             {
-                var isSelfIllumColor = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false);
-
                 var babylonMaterial = new BabylonStandardMaterial
                 {
                     name = name,
                     id = id,
-                    ambient = materialNode.MaxMaterial.GetAmbient(0, false).ToArray(),
+                    isUnlit = isUnlit,
                     diffuse = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray(),
-                    specular = materialNode.MaxMaterial.GetSpecular(0, false).Scale(materialNode.MaxMaterial.GetShinStr(0, false)),
-                    specularPower = materialNode.MaxMaterial.GetShininess(0, false) * 256,
-                    emissive =
-                        isSelfIllumColor
-                            ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
-                            : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false)), // compute the pre-multiplied emissive color
                     alpha = 1.0f - materialNode.MaxMaterial.GetXParency(0, false)
                 };
-
-                // If Self-Illumination color checkbox is checked
-                // Then self-illumination is assumed to be pre-multiplied
-                // Otherwise self-illumination needs to be multiplied with diffuse
-                // linkEmissiveWithDiffuse attribute tells the Babylon engine to perform such multiplication
-                babylonMaterial.linkEmissiveWithDiffuse = !isSelfIllumColor;
-                // useEmissiveAsIllumination attribute tells the Babylon engine to use pre-multiplied emissive as illumination
-                babylonMaterial.useEmissiveAsIllumination = isSelfIllumColor;
-
-                // Store the emissive value (before multiplication) for gltf
-                babylonMaterial.selfIllum = materialNode.MaxMaterial.GetSelfIllum(0, false);
 
                 babylonMaterial.backFaceCulling = !stdMat.TwoSided;
                 babylonMaterial.wireframe = stdMat.Wire;
 
+                var isSelfIllumColor = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false);
+                var maxSpecularColor = materialNode.MaxMaterial.GetSpecular(0, false).ToArray();
+
+                if (isUnlit == false)
+                {
+                    babylonMaterial.ambient = materialNode.MaxMaterial.GetAmbient(0, false).ToArray();
+                    babylonMaterial.specular = maxSpecularColor.Multiply(materialNode.MaxMaterial.GetShinStr(0, false));
+                    babylonMaterial.specularPower = materialNode.MaxMaterial.GetShininess(0, false) * 256;
+                    babylonMaterial.emissive =
+                        isSelfIllumColor
+                            ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
+                            : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false)); // compute the pre-multiplied emissive color
+
+                    // If Self-Illumination color checkbox is checked
+                    // Then self-illumination is assumed to be pre-multiplied
+                    // Otherwise self-illumination needs to be multiplied with diffuse
+                    // linkEmissiveWithDiffuse attribute tells the Babylon engine to perform such multiplication
+                    babylonMaterial.linkEmissiveWithDiffuse = !isSelfIllumColor;
+                    // useEmissiveAsIllumination attribute tells the Babylon engine to use pre-multiplied emissive as illumination
+                    babylonMaterial.useEmissiveAsIllumination = isSelfIllumColor;
+                
+                    // Store the emissive value (before multiplication) for gltf
+                    babylonMaterial.selfIllum = materialNode.MaxMaterial.GetSelfIllum(0, false);
+                }
+
                 // Textures
+
                 BabylonFresnelParameters fresnelParameters;
-
-                babylonMaterial.ambientTexture = ExportTexture(stdMat, 0, out fresnelParameters, babylonScene);                // Ambient
-
-                babylonMaterial.specularTexture = ExportTexture(stdMat, 2, out fresnelParameters, babylonScene);               // Specular
-                babylonMaterial.emissiveTexture = ExportTexture(stdMat, 5, out fresnelParameters, babylonScene);               // Emissive
-                if (fresnelParameters != null)
-                {
-                    babylonMaterial.emissiveFresnelParameters = fresnelParameters;
-                    if (babylonMaterial.emissive[0] == 0 &&
-                        babylonMaterial.emissive[1] == 0 &&
-                        babylonMaterial.emissive[2] == 0 &&
-                        babylonMaterial.emissiveTexture == null)
-                    {
-                        babylonMaterial.emissive = new float[] { 1, 1, 1 };
-                    }
-                }
-
-                babylonMaterial.opacityTexture = ExportTexture(stdMat, 6, out fresnelParameters, babylonScene, false, true);   // Opacity
-                if (fresnelParameters != null)
-                {
-                    babylonMaterial.opacityFresnelParameters = fresnelParameters;
-                    if (babylonMaterial.alpha == 1 &&
-                         babylonMaterial.opacityTexture == null)
-                    {
-                        babylonMaterial.alpha = 0;
-                    }
-                }
                 babylonMaterial.diffuseTexture = ExportTexture(stdMat, 1, out fresnelParameters, babylonScene);                // Diffuse
                 if (fresnelParameters != null)
                 {
@@ -187,17 +177,48 @@ namespace Max2Babylon
                     RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 2);
                 }
 
-                babylonMaterial.bumpTexture = ExportTexture(stdMat, 8, out fresnelParameters, babylonScene);                   // Bump
-                babylonMaterial.reflectionTexture = ExportTexture(stdMat, 9, out fresnelParameters, babylonScene, true);       // Reflection
+                babylonMaterial.opacityTexture = ExportTexture(stdMat, 6, out fresnelParameters, babylonScene, false, true);   // Opacity
                 if (fresnelParameters != null)
                 {
-                    if (babylonMaterial.reflectionTexture == null)
+                    babylonMaterial.opacityFresnelParameters = fresnelParameters;
+                    if (babylonMaterial.alpha == 1 &&
+                         babylonMaterial.opacityTexture == null)
                     {
-                        RaiseWarning("Fallout cannot be used with reflection channel without a texture", 2);
+                        babylonMaterial.alpha = 0;
                     }
-                    else
+                }
+
+                if (isUnlit == false)
+                {
+                    babylonMaterial.ambientTexture = ExportTexture(stdMat, 0, out fresnelParameters, babylonScene);                // Ambient
+
+                    babylonMaterial.specularTexture = ExportSpecularTexture(materialNode, maxSpecularColor, babylonScene);
+
+                    babylonMaterial.emissiveTexture = ExportTexture(stdMat, 5, out fresnelParameters, babylonScene);               // Emissive
+                    if (fresnelParameters != null)
                     {
-                        babylonMaterial.reflectionFresnelParameters = fresnelParameters;
+                        babylonMaterial.emissiveFresnelParameters = fresnelParameters;
+                        if (babylonMaterial.emissive[0] == 0 &&
+                            babylonMaterial.emissive[1] == 0 &&
+                            babylonMaterial.emissive[2] == 0 &&
+                            babylonMaterial.emissiveTexture == null)
+                        {
+                            babylonMaterial.emissive = new float[] { 1, 1, 1 };
+                        }
+                    }
+
+                    babylonMaterial.bumpTexture = ExportTexture(stdMat, 8, out fresnelParameters, babylonScene);                   // Bump
+                    babylonMaterial.reflectionTexture = ExportTexture(stdMat, 9, out fresnelParameters, babylonScene, true);       // Reflection
+                    if (fresnelParameters != null)
+                    {
+                        if (babylonMaterial.reflectionTexture == null)
+                        {
+                            RaiseWarning("Fallout cannot be used with reflection channel without a texture", 2);
+                        }
+                        else
+                        {
+                            babylonMaterial.reflectionFresnelParameters = fresnelParameters;
+                        }
                     }
                 }
 
@@ -232,7 +253,8 @@ namespace Max2Babylon
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
                 {
                     name = name,
-                    id = id
+                    id = id,
+                    isUnlit = isUnlit
                 };
 
                 // --- Global ---
@@ -246,34 +268,215 @@ namespace Max2Babylon
 
                 babylonMaterial.baseColor = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray();
 
-                babylonMaterial.metallic = propertyContainer.GetFloatProperty(6);
-
-                babylonMaterial.roughness = propertyContainer.GetFloatProperty(4);
                 var invertRoughness = propertyContainer.GetBoolProperty(5);
-                if (invertRoughness)
+                if (isUnlit == false)
                 {
-                    // Inverse roughness
-                    babylonMaterial.roughness = 1 - babylonMaterial.roughness;
+                    babylonMaterial.metallic = propertyContainer.GetFloatProperty(6);
+
+                    babylonMaterial.roughness = propertyContainer.GetFloatProperty(4);
+                    if (invertRoughness)
+                    {
+                        // Inverse roughness
+                        babylonMaterial.roughness = 1 - babylonMaterial.roughness;
+                    }
+
+                    // Self illumination is computed from emission color, luminance, temperature and weight
+                    babylonMaterial.emissive = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
+                                                    ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
+                                                    : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false));
+                }
+                else
+                {
+                    // Ignore specified roughness and metallic values
+                    babylonMaterial.metallic = 0;
+                    babylonMaterial.roughness = 0.9f;
                 }
 
-                // Self illumination is computed from emission color, luminance, temperature and weight
-                babylonMaterial.emissive = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
-                                                ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
-                                                : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false));
+                // --- Textures ---
+                // 1 - base color ; 9 - transparancy weight
+                ITexmap colorTexmap = _getTexMap(materialNode, 1);
+                ITexmap alphaTexmap = _getTexMap(materialNode, 9);
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+
+                if (isUnlit == false)
+                {
+                    // Metallic, roughness, ambient occlusion
+                    ITexmap metallicTexmap = _getTexMap(materialNode, 5);
+                    ITexmap roughnessTexmap = _getTexMap(materialNode, 4);
+                    ITexmap ambientOcclusionTexmap = _getTexMap(materialNode, 6); // Use diffuse roughness map as ambient occlusion
+
+                    // Check if MR or ORM textures are already merged
+                    bool areTexturesAlreadyMerged = false;
+                    if (metallicTexmap != null && roughnessTexmap != null)
+                    {
+                        string sourcePathMetallic = getSourcePath(metallicTexmap);
+                        string sourcePathRoughness = getSourcePath(roughnessTexmap);
+
+                        if (sourcePathMetallic == sourcePathRoughness)
+                        {
+                            if (ambientOcclusionTexmap != null && exportParameters.mergeAOwithMR)
+                            {
+                                string sourcePathAmbientOcclusion = getSourcePath(ambientOcclusionTexmap);
+                                if (sourcePathMetallic == sourcePathAmbientOcclusion)
+                                {
+                                    // Metallic, roughness and ambient occlusion are already merged
+                                    RaiseVerbose("Metallic, roughness and ambient occlusion are already merged", 2);
+                                    BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                                    babylonMaterial.metallicRoughnessTexture = ormTexture;
+                                    babylonMaterial.occlusionTexture = ormTexture;
+                                    areTexturesAlreadyMerged = true;
+                                }
+                            }
+                            else
+                            {
+                                // Metallic and roughness are already merged
+                                RaiseVerbose("Metallic and roughness are already merged", 2);
+                                BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                                babylonMaterial.metallicRoughnessTexture = ormTexture;
+                                areTexturesAlreadyMerged = true;
+                            }
+                        }
+                    }
+                    if (areTexturesAlreadyMerged == false)
+                    {
+                        if (metallicTexmap != null || roughnessTexmap != null)
+                        {
+                            // Merge metallic, roughness and ambient occlusion
+                            RaiseVerbose("Merge metallic and roughness (and ambient occlusion if `mergeAOwithMR` is enabled)", 2);
+                            BabylonTexture ormTexture = ExportORMTexture(exportParameters.mergeAOwithMR ? ambientOcclusionTexmap : null, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+
+                            if (ambientOcclusionTexmap != null)
+                            {
+                                if (exportParameters.mergeAOwithMR)
+                                {
+                                    babylonMaterial.occlusionTexture = ormTexture;
+                                }
+                                else
+                                {
+                                    babylonMaterial.occlusionTexture = ExportPBRTexture(materialNode, 6, babylonScene);
+                                }
+                            }
+                        }
+                        else if (ambientOcclusionTexmap != null)
+                        {
+                            // Simply export occlusion texture
+                            RaiseVerbose("Simply export occlusion texture", 2);
+                            babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
+                        }
+                    }
+                    if (ambientOcclusionTexmap != null && !exportParameters.mergeAOwithMR && babylonMaterial.occlusionTexture == null)
+                    {
+                        RaiseVerbose("Exporting occlusion texture without merging with metallic roughness", 2);
+                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
+                    }
+
+                    var normalMapAmount = propertyContainer.GetFloatProperty(91);
+                    babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
+
+                    babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
+                }
+
+                // Constraints
+                if (babylonMaterial.baseTexture != null)
+                {
+                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.alpha = 1.0f;
+                }
+
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+                {
+                    var alphaTestProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTest");
+                    bool isAlphaTest = alphaTestProperty != null ? alphaTestProperty.GetBoolValue() : false;
+
+                    babylonMaterial.transparencyMode = isAlphaTest ? (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST : (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                }
+
+                if (babylonMaterial.emissiveTexture != null)
+                {
+                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+                }
+
+                if (babylonMaterial.metallicRoughnessTexture != null)
+                {
+                    babylonMaterial.metallic = 1.0f;
+                    babylonMaterial.roughness = 1.0f;
+                }
+
+                babylonScene.MaterialsList.Add(babylonMaterial);
+            }
+            else if (isArnoldMaterial(materialNode))
+            {
+                var propertyContainer = materialNode.IPropertyContainer;
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                {
+                    name = name,
+                    id = id,
+                    isUnlit = isUnlit
+                };
+
+                // Alpha
+                babylonMaterial.alpha = 1.0f - propertyContainer.GetFloatProperty(32);
+
+                // Color: base * weight
+                float[] baseColor = propertyContainer.GetPoint3Property(5).ToArray();
+                float baseWeight = propertyContainer.GetFloatProperty(2);
+                babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
+
+                // Metallic & roughness
+                bool invertRoughness = false;
+                babylonMaterial.roughness = propertyContainer.GetFloatProperty(17); // specular_roughness
+                babylonMaterial.metallic = propertyContainer.GetFloatProperty(29);
+
+                // Emissive: emission_color * emission
+                float[] emissionColor = propertyContainer.GetPoint3Property(94).ToArray();
+                float emissionWeight = propertyContainer.GetFloatProperty(91);
+                babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
 
                 // --- Textures ---
+                // 1 - base_color ; 5 - diffuse_roughness ; 9 - metalness ; 10 - transparent
+                ITexmap colorTexmap = _getTexMap(materialNode, 1);
+                ITexmap alphaTexmap = _getTexMap(materialNode, 10);
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+                
+                if (isUnlit == false)
+                {
+                    // Metallic, roughness
+                    ITexmap metallicTexmap = _getTexMap(materialNode, 9);
+                    ITexmap roughnessTexmap = _getTexMap(materialNode, 5);
 
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialNode, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+                    // Check if MR textures are already merged
+                    bool areTexturesAlreadyMerged = false;
+                    if (metallicTexmap != null && roughnessTexmap != null)
+                    {
+                        string sourcePathMetallic = getSourcePath(metallicTexmap);
+                        string sourcePathRoughness = getSourcePath(roughnessTexmap);
 
-                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialNode, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, name, invertRoughness);
+                        if (sourcePathMetallic == sourcePathRoughness)
+                        {
+                            // Metallic and roughness are already merged
+                            RaiseVerbose("Metallic and roughness are already merged", 2);
+                            BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            // The already merged map is assumed to contain Ambient Occlusion in R channel
+                            babylonMaterial.occlusionTexture = ormTexture;
+                            areTexturesAlreadyMerged = true;
+                        }
+                    }
+                    if (areTexturesAlreadyMerged == false)
+                    {
+                        if (metallicTexmap != null || roughnessTexmap != null)
+                        {
+                            // Merge metallic, roughness
+                            RaiseVerbose("Merge metallic and roughness", 2);
+                            BabylonTexture ormTexture = ExportORMTexture(null, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                        }
+                    }
 
-                var normalMapAmount = propertyContainer.GetFloatProperty(91);
-                babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
-
-                babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
-
-                // Use diffuse roughness map as ambient occlusion
-                babylonMaterial.occlusionTexture = ExportPBRTexture(materialNode, 6, babylonScene);
+                    babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 20, babylonScene);
+                    babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 30, babylonScene);
+                }
 
                 // Constraints
                 if (babylonMaterial.baseTexture != null)
@@ -298,6 +501,7 @@ namespace Max2Babylon
                     babylonMaterial.roughness = 1.0f;
                 }
 
+                // Add the material to the scene
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
             else
@@ -323,6 +527,25 @@ namespace Max2Babylon
                      materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
         }
 
+        public bool isDirectXShaderMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "directx shader" ||    // English
+                    materialNode.MaterialClass.ToLower() == "directx-shader" ||   // German
+                    materialNode.MaterialClass.ToLower() == "ombrage directx";   // French
+        }
+
+        public bool isArnoldMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
+        }
+
+        public bool isShellMaterial(IIGameMaterial materialNode)
+        {
+            return materialNode.MaterialClass.ToLower() == "shell material" ||    // English
+                    materialNode.MaterialClass.ToLower() == "hüllenmaterial" ||   // German
+                    materialNode.MaterialClass.ToLower() == "matériau coque";   // French
+        }
+
         /// <summary>
         /// Return null if the material is supported.
         /// Otherwise return the unsupported material (himself or one of its sub-materials)
@@ -331,10 +554,21 @@ namespace Max2Babylon
         /// <returns></returns>
         public IIGameMaterial isMaterialSupported(IIGameMaterial materialNode)
         {
+            // Shell material
+            if (isShellMaterial(materialNode))
+            {
+                var bakedMaterial = GetBakedMaterialFromShellMaterial(materialNode);
+                if(bakedMaterial == null)
+                {
+                    return materialNode;
+                }
+                return isMaterialSupported(bakedMaterial);
+            }
+
             if (materialNode.SubMaterialCount > 0)
             {
                 // Check sub materials recursively
-                for(int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
+                for (int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
                 {
                     IIGameMaterial subMaterialNode = materialNode.GetSubMaterial(indexSubMaterial);
                     IIGameMaterial unsupportedSubMaterial = isMaterialSupported(subMaterialNode);
@@ -364,8 +598,64 @@ namespace Max2Babylon
                 {
                     return null;
                 }
+
+                // Arnold material
+                if (isArnoldMaterial(materialNode))
+                {
+                    return null;
+                }
+
+                // DirectX Shader
+                if (isDirectXShaderMaterial(materialNode))
+                {
+                    return isMaterialSupported(GetRenderMaterialFromDirectXShader(materialNode));
+                }
             }
             return materialNode;
+        }
+
+        private IIGameMaterial GetRenderMaterialFromDirectXShader(IIGameMaterial materialNode)
+        {
+            IIGameMaterial renderMaterial = null;
+
+            if (isDirectXShaderMaterial(materialNode))
+            {
+                var gameScene = Loader.Global.IGameInterface;
+                IMtl renderMtl = materialNode.IPropertyContainer.GetProperty(35).MaxParamBlock2.GetMtl(4, 0, 0);
+                if(renderMtl != null)
+                {
+                    renderMaterial = gameScene.GetIGameMaterial(renderMtl);
+                }
+            }
+
+            return renderMaterial;
+        }
+
+        private IIGameMaterial GetBakedMaterialFromShellMaterial(IIGameMaterial materialNode)
+        {
+            if (isShellMaterial(materialNode))
+            {
+                // Shell Material Parameters
+                // Original Material not exported => only for the offline rendering in 3DS Max
+                // Baked Material => used for the export
+                IMtl bakedMtl = materialNode.IPropertyContainer.GetProperty(1).MaxParamBlock2.GetMtl(3, 0, 0);
+
+                if(bakedMtl != null)
+                {
+                    Guid guid = bakedMtl.GetGuid();
+
+                    for (int indexSubMaterial = 0; indexSubMaterial < materialNode.SubMaterialCount; indexSubMaterial++)
+                    {
+                        IIGameMaterial subMaterialNode = materialNode.GetSubMaterial(indexSubMaterial);
+                        if (guid.Equals(subMaterialNode.MaxMaterial.GetGuid()))
+                        {
+                            return subMaterialNode;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         // -------------------------

@@ -62,7 +62,7 @@ namespace BabylonExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public string activeCameraID { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public BabylonLight[] lights { get; set; }
 
         [DataMember]
@@ -98,8 +98,11 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool workerCollisions { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public BabylonMorphTargetManager[] morphTargetManagers { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public IList<BabylonAnimationGroup> animationGroups { get; set; }
 
         public BabylonVector3 MaxVector { get; set; }
         public BabylonVector3 MinVector { get; set; }
@@ -195,6 +198,11 @@ namespace BabylonExport.Entities
             if (activeCameraID == null && CamerasList.Count > 0)
             {
                 activeCameraID = CamerasList[0].id;
+            }
+
+            if(animationGroups != null && animationGroups.Count == 0)
+            {
+                animationGroups = null;
             }
         }
     }

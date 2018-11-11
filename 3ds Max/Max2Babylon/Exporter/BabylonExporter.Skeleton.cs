@@ -100,6 +100,11 @@ namespace Max2Babylon
 
                 return new List<IIGameNode>();
             }
+            if(rootNodes.Count <= 0)
+            {
+                RaiseWarning("Skin has no bones.", logRank);
+                return new List<IIGameNode>();
+            }
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
@@ -118,7 +123,6 @@ namespace Max2Babylon
                     int childCount = currentNode.ChildCount;
                     for (int index = 0; index < childCount; index++)
                     {
-                        RaiseWarning($"{index}: {currentNode.GetNodeChild(index).Name}", 5);
                         siblings.Push(currentNode.GetNodeChild(childCount - 1 - index));
                     }
                 }
@@ -201,7 +205,7 @@ namespace Max2Babylon
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = node.MaxNode.GetGuid().ToString(),
+                    id = isBabylonExported ? node.MaxNode.GetGuid().ToString()+"-bone" : node.MaxNode.GetGuid().ToString(), // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
@@ -220,7 +224,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                        mat = objectTM.Multiply(parentNode.GetObjectTM(key).Inverse);
+                        mat = node.GetLocalTM(key);
                     }
                     return mat.ToArray();
                 },

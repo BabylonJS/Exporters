@@ -2,11 +2,234 @@
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        private IList<BabylonAnimationGroup> ExportAnimationGroups(BabylonScene babylonScene)
+        {
+            IList<BabylonAnimationGroup> animationGroups = new List<BabylonAnimationGroup>();
+
+            // Retrieve and parse animation group data
+            AnimationGroupList animationList = InitAnimationGroups();
+
+            foreach (AnimationGroup animGroup in animationList)
+            {
+                RaiseMessage("Exporter.animationGroups | " + animGroup.Name, 1);
+
+                BabylonAnimationGroup animationGroup = new BabylonAnimationGroup
+                {
+                    name = animGroup.Name,
+                    from = animGroup.FrameStart,
+                    to = animGroup.FrameEnd,
+                    targetedAnimations = new List<BabylonTargetedAnimation>()
+                };
+
+                // add animations of each nodes contained in the animGroup
+                foreach(uint nodeHandle in animGroup.NodeHandles)
+                {
+                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+
+                    // node could have been deleted, silently ignore it
+                    if (maxNode == null)
+                        continue;
+
+
+                    // Helpers can be exported as dummies and as bones
+                    string nodeId = maxNode.GetGuid().ToString();
+                    string boneId = maxNode.GetGuid().ToString()+"-bone";   // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+
+
+                    // Node
+                    BabylonNode node = babylonScene.MeshesList.FirstOrDefault(m => m.id == nodeId);
+                    if (node == null)
+                        node = babylonScene.CamerasList.FirstOrDefault(c => c.id == nodeId);
+                    if (node == null)
+                        node = babylonScene.LightsList.FirstOrDefault(l => l.id == nodeId);
+
+                    if(node != null)
+                    {
+                        if (node.animations != null && node.animations.Length != 0)
+                        {
+                            IList<BabylonAnimation> animations = GetSubAnimations(node, animationGroup.from, animationGroup.to);
+                            foreach (BabylonAnimation animation in animations)
+                            {
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = nodeId
+                                };
+
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
+                        }
+                        else if (exportNonAnimated)
+                        {
+                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            {
+                                animation = CreatePositionAnimation(animationGroup.from, animationGroup.to, node.position),
+                                targetId = node.id
+                            };
+
+                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                        }
+                    }
+
+                    // bone
+                    BabylonBone bone = null;
+                    int index = 0;
+                    while(index < babylonScene.SkeletonsList.Count && bone == null)
+                    {
+                        BabylonSkeleton skel = babylonScene.SkeletonsList[index];
+                        bone = skel.bones.FirstOrDefault(b => b.id == boneId);
+                        index++;
+                    }
+
+                    if(bone != null)
+                    {
+                        if (bone.animation != null)
+                        {
+                            IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
+                            foreach (BabylonAnimation animation in animations)
+                            {
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = boneId
+                                };
+
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
+                        }
+                        else if (exportNonAnimated)
+                        {
+                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            {
+                                animation = CreateMatrixAnimation(animationGroup.from, animationGroup.to, bone.matrix),
+                                targetId = bone.id
+                            };
+
+                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                        }
+                    }
+                }
+
+                if (animationGroup.targetedAnimations.Count > 0)
+                {
+                    animationGroups.Add(animationGroup);
+                }
+            }
+
+            return animationGroups;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonNode babylonNode, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            foreach (BabylonAnimation nodeAnimation in babylonNode.animations)
+            {
+                // clone the animation
+                BabylonAnimation animation = (BabylonAnimation)nodeAnimation.Clone();
+
+                // Select usefull keys
+                var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+                // Optimize these keys
+                if (optimizeAnimations)
+                {
+                    OptimizeAnimations(keys, true);
+                }
+
+                // 
+                animation.keys = keys.ToArray();
+                subAnimations.Add(animation);
+            }
+
+            return subAnimations;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonBone babylonBone, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            // clone the animation
+            BabylonAnimation animation = (BabylonAnimation)babylonBone.animation.Clone();
+
+            // Select usefull keys
+            var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+            // Optimize these keys
+            if (optimizeAnimations)
+            {
+                OptimizeAnimations(keys, true);
+            }
+
+            // 
+            animation.keys = keys.ToArray();
+            subAnimations.Add(animation);
+
+            return subAnimations;
+        }
+        private BabylonAnimation CreatePositionAnimation(float from, float to, float[] position)
+        {
+            BabylonAnimation animation = new BabylonAnimation
+            {
+                name = "position animation",
+                property = "position",
+                dataType = 1,
+                loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                framePerSecond = Loader.Global.FrameRate,
+                keysFull = new List<BabylonAnimationKey>()
+            };
+
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)from,
+                values = position
+            });
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)to,
+                values = position
+            });
+
+            animation.keys = animation.keysFull.ToArray();
+
+            return animation;
+        }
+
+        private BabylonAnimation CreateMatrixAnimation(float from, float to, float[] matrix)
+        {
+            BabylonAnimation animation = new BabylonAnimation
+            {
+                name = "_matrix animation",
+                property = "_matrix",
+                dataType = 3,
+                loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
+                framePerSecond = Loader.Global.FrameRate,
+                keysFull = new List<BabylonAnimationKey>()
+            };
+
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)from,
+                values = matrix
+            });
+            animation.keysFull.Add(new BabylonAnimationKey
+            {
+                frame = (int)from,
+                values = matrix
+            });
+
+            animation.keys = animation.keysFull.ToArray();
+
+            return animation;
+        }
+
+
         private static bool ExportBabylonKeys(List<BabylonAnimationKey> keys, string property, List<BabylonAnimation> animations, BabylonAnimation.DataType dataType, BabylonAnimation.LoopBehavior loopBehavior)
         {
             if (keys.Count == 0)
@@ -79,7 +302,7 @@ namespace Max2Babylon
             var keys = new List<BabylonAnimationKey>();
             for (int indexKey = 0; indexKey < gameKeyTab.Count; indexKey++)
             {
-#if MAX2017 || MAX2018
+#if MAX2017 || MAX2018 || MAX2019
                 var gameKey = gameKeyTab[indexKey];
 #else
                 var gameKey = gameKeyTab[new IntPtr(indexKey)];
@@ -427,6 +650,7 @@ namespace Max2Babylon
                 gameNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
                 gameNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
                 gameNode.IGameControl.IsAnimated(IGameControlType.EulerZ) ||
+                (gameNode.IGameObject.IGameType == Autodesk.Max.IGameObject.ObjectTypes.Light && gameNode.IGameObject.AsGameLight().LightTarget != null) || // Light with target are indirectly animated by their target
                 force)
             {
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>

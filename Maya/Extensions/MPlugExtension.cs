@@ -9,7 +9,7 @@ namespace Maya2Babylon
             float[] array = new float[mPlug.numChildren];
             for (uint index = 0; index < mPlug.numChildren; index++)
             {
-                array[index] = mPlug.child(index).asFloatProperty;
+                array[index] = mPlug.child(index).asFloat();
             }
             return array;
         }

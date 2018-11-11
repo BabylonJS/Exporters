@@ -11,6 +11,21 @@ namespace Maya2Babylon.Forms
     {
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
+        private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
+
+        const string chkCopyTexturesProperty = "babylonjs_copyTextures";
+        const string chkHiddenProperty = "babylonjs_exportHidden";
+        const string chkOnlySelectedProperty = "babylonjs_exportOnlySelected";
+        const string chkManifestProperty = "babylonjs_generateManifest";
+        const string chkAutoSaveProperty = "babylonjs_autoSave";
+        const string chkOptimizeVerticesProperty = "babylonjs_optimizeVertices";
+        const string chkExportTangentsProperty = "babylonjs_exportTangents";
+        const string chkDracoCompressionProperty = "babylonjs_dracoCompression";
+        const string chkExportSkinProperty = "babylonjs_exportSkin";
+        const string chkExportMorphNormalProperty = "babylonjs_exportMorphNormal";
+        const string chkExportMorphTangentProperty = "babylonjs_exportMorphTangent";
+        const string chkExportKHRTextureTransformProperty = "babylonjs_exportKHRTextureTransform";
+        const string chkExportKHRLightsPunctualProperty = "babylonjs_exportKHRLightsPunctual";
 
         TreeNode currentNode;
         int currentRank;
@@ -18,16 +33,46 @@ namespace Maya2Babylon.Forms
         public ExporterForm()
         {
             InitializeComponent();
+
+            // Check if the gltf-pipeline module is installed
+            try
+            {
+                Process gltfPipeline = new Process();
+                gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
+
+                // Hide the cmd window that show the gltf-pipeline result
+                gltfPipeline.StartInfo.UseShellExecute = false;
+                gltfPipeline.StartInfo.CreateNoWindow = true;
+
+                gltfPipeline.Start();
+                gltfPipeline.WaitForExit();
+            }
+            catch
+            {
+                gltfPipelineInstalled = false;
+            }
+
+            groupBox1.MouseMove += groupBox1_MouseMove;
         }
 
         private void ExporterForm_Load(object sender, EventArgs e)
         {
-           /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
-            Tools.PrepareCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
-            Tools.PrepareCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures", 1);
-            Tools.PrepareCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
-            Tools.PrepareCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave", 1);
-            Tools.PrepareCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
+            comboOutputFormat.SelectedIndex = 0;
+
+            chkCopyTextures.Checked = Loader.GetBoolProperty(chkCopyTexturesProperty, true);
+            chkHidden.Checked = Loader.GetBoolProperty(chkHiddenProperty, false);
+            chkOnlySelected.Checked = Loader.GetBoolProperty(chkOnlySelectedProperty, false);
+            chkManifest.Checked = Loader.GetBoolProperty(chkManifestProperty, false);
+            chkAutoSave.Checked = Loader.GetBoolProperty(chkAutoSaveProperty, false);
+            chkOptimizeVertices.Checked = Loader.GetBoolProperty(chkOptimizeVerticesProperty, true);
+            chkExportTangents.Checked = Loader.GetBoolProperty(chkExportTangentsProperty, true);
+            //chkDracoCompression.Checked = Loader.GetBoolProperty(chkDracoCompressionProperty, false);
+            chkExportSkin.Checked = Loader.GetBoolProperty(chkExportSkinProperty, true);
+            chkExportMorphNormal.Checked = Loader.GetBoolProperty(chkExportMorphNormalProperty, true);
+            chkExportMorphTangent.Checked = Loader.GetBoolProperty(chkExportMorphTangentProperty, false);
+            chkExportKHRLightsPunctual.Checked = Loader.GetBoolProperty(chkExportKHRTextureTransformProperty, false);
+            chkExportKHRTextureTransform.Checked = Loader.GetBoolProperty(chkExportKHRLightsPunctualProperty, false);
+            /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
         }
 
@@ -46,12 +91,21 @@ namespace Maya2Babylon.Forms
 
         private async Task<bool> DoExport()
         {
-            /*Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
-            Tools.UpdateCheckBox(chkCopyTextures, Loader.Core.RootNode, "babylonjs_copytextures");
-            Tools.UpdateCheckBox(chkHidden, Loader.Core.RootNode, "babylonjs_exporthidden");
-            Tools.UpdateCheckBox(chkAutoSave, Loader.Core.RootNode, "babylonjs_autosave");
-            Tools.UpdateCheckBox(chkOnlySelected, Loader.Core.RootNode, "babylonjs_onlySelected");
-            Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
+            Loader.SetBoolProperty(chkCopyTexturesProperty, chkCopyTextures.Checked);
+            Loader.SetBoolProperty(chkHiddenProperty, chkHidden.Checked);
+            Loader.SetBoolProperty(chkOnlySelectedProperty, chkOnlySelected.Checked);
+            Loader.SetBoolProperty(chkManifestProperty, chkManifest.Checked);
+            Loader.SetBoolProperty(chkAutoSaveProperty, chkAutoSave.Checked);
+            Loader.SetBoolProperty(chkOptimizeVerticesProperty, chkOptimizeVertices.Checked);
+            Loader.SetBoolProperty(chkExportTangentsProperty, chkExportTangents.Checked);
+            //Loader.SetBoolProperty(chkDracoCompressionProperty, chkDracoCompression.Checked);
+            Loader.SetBoolProperty(chkExportSkinProperty, chkExportSkin.Checked);
+            Loader.SetBoolProperty(chkExportMorphNormalProperty, chkExportMorphNormal.Checked);
+            Loader.SetBoolProperty(chkExportMorphTangentProperty, chkExportMorphTangent.Checked);
+            Loader.SetBoolProperty(chkExportKHRLightsPunctualProperty, chkExportKHRLightsPunctual.Checked);
+            Loader.SetBoolProperty(chkExportKHRTextureTransformProperty, chkExportKHRTextureTransform.Checked);
+
+            /*Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
             Loader.Core.RootNode.SetLocalData(txtFilename.Text);*/
 
@@ -134,9 +188,11 @@ namespace Maya2Babylon.Forms
             {
                 var directoryName = Path.GetDirectoryName(txtFilename.Text);
                 var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(directoryName, fileName, comboOutputFormat.SelectedItem.ToString(), chkManifest.Checked,
-                                chkOnlySelected.Checked, chkAutoSave.Checked, chkHidden.Checked, chkCopyTextures.Checked,
-                                chkOptimizeVertices.Checked, chkExportTangents.Checked, txtScaleFactor.Text, chkExportSkin.Checked);
+                exporter.Export(outputDirectory: directoryName, outputFileName: fileName, outputFormat: comboOutputFormat.SelectedItem.ToString(), generateManifest: chkManifest.Checked,
+                                onlySelected: chkOnlySelected.Checked, autoSaveMayaFile: chkAutoSave.Checked, exportHiddenObjects: chkHidden.Checked, copyTexturesToOutput: chkCopyTextures.Checked,
+                                optimizeVertices: chkOptimizeVertices.Checked, exportTangents: chkExportTangents.Checked, scaleFactor: txtScaleFactor.Text, exportSkin: chkExportSkin.Checked,
+                                quality: txtQuality.Text, dracoCompression: chkDracoCompression.Checked, exportMorphNormal: chkExportMorphNormal.Checked, exportMorphTangent: chkExportMorphTangent.Checked, 
+                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked);
             }
             catch (OperationCanceledException)
             {
@@ -145,7 +201,7 @@ namespace Maya2Babylon.Forms
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
+                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
 
                 currentNode.EnsureVisible();
                 progressBar.Value = 0;
@@ -248,7 +304,7 @@ namespace Maya2Babylon.Forms
                 WebServer.SceneFilename = Path.GetFileName(txtFilename.Text);
                 WebServer.SceneFolder = Path.GetDirectoryName(txtFilename.Text);
 
-                Process.Start("http://localhost:" + WebServer.Port);
+                Process.Start(WebServer.url + WebServer.SceneFilename);
 
                 WindowState = FormWindowState.Minimized;
             }
@@ -257,16 +313,6 @@ namespace Maya2Babylon.Forms
         private void butClose_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void chkGltf_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
         }
 
         private void comboOutputFormat_SelectedIndexChanged(object sender, EventArgs e)
@@ -278,54 +324,63 @@ namespace Maya2Babylon.Forms
                 case "binary babylon":
                     this.saveFileDialog.DefaultExt = "babylon";
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
-                    chkExportTangents.Checked = true;
+                    chkDracoCompression.Checked = false;
+                    chkDracoCompression.Enabled = false;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
-                    chkExportTangents.Checked = false;
+                    chkDracoCompression.Enabled = gltfPipelineInstalled;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
-                    chkExportTangents.Checked = false;
+                    chkDracoCompression.Enabled = gltfPipelineInstalled;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
         }
 
-
-
-        private void label3_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Show a toolTip when the mouse is over the chkDracoCompression checkBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        bool IsShown = false;
+        private void groupBox1_MouseMove(object sender, MouseEventArgs e)
         {
+            Control ctrl = groupBox1.GetChildAtPoint(e.Location);
 
+            if (ctrl != null)
+            {
+                if (ctrl == chkDracoCompression && !ctrl.Enabled && !IsShown)
+                {
+                    string tip = "For gltf and glb export only.\nNode.js and gltf-pipeline module are required.";
+                    toolTipDracoCompression.Show(tip, chkDracoCompression, chkDracoCompression.Width / 2, chkDracoCompression.Height / 2);
+                    IsShown = true;
+                }
+            }
+            else
+            {
+                toolTipDracoCompression.Hide(chkDracoCompression);
+                IsShown = false;
+            }
         }
 
-        private void chkOnlySelected_CheckedChanged(object sender, EventArgs e)
+        private void chkExportTangents_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!chkExportTangents.Checked)
+            {
+                chkExportMorphTangent.Enabled = false;
+                chkExportMorphTangent.Checked = false;
+            }
+            else
+            {
+                chkExportMorphTangent.Enabled = true;
+            }
         }
 
-        private void chkCopyTextures_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkOptimizeVertices_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtScalingFactor_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void chkExportSkin_CheckedChanged(object sender, EventArgs e)
+        private void label6_Click(object sender, EventArgs e)
         {
 
         }

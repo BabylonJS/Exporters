@@ -209,16 +209,16 @@ namespace Maya2Babylon
                 string opacityAttributeName = "opacity";
                 if (materialDependencyNode.hasAttribute(opacityAttributeName))
                 {
-                    float opacityAttributeValue = materialDependencyNode.findPlug(opacityAttributeName).asFloatProperty;
+                    float opacityAttributeValue = materialDependencyNode.findPlug(opacityAttributeName).asFloat();
                     babylonMaterial.alpha = 1.0f - opacityAttributeValue;
                 }
 
                 // Metallic & roughness
-                babylonMaterial.metallic = materialDependencyNode.findPlug("metallic").asFloatProperty;
-                babylonMaterial.roughness = materialDependencyNode.findPlug("roughness").asFloatProperty;
+                babylonMaterial.metallic = materialDependencyNode.findPlug("metallic").asFloat();
+                babylonMaterial.roughness = materialDependencyNode.findPlug("roughness").asFloat();
 
                 // Emissive
-                float emissiveIntensity = materialDependencyNode.findPlug("emissive_intensity").asFloatProperty;
+                float emissiveIntensity = materialDependencyNode.findPlug("emissive_intensity").asFloat();
                 // Factor emissive color with emissive intensity
                 emissiveIntensity = Tools.Clamp(emissiveIntensity, 0f, 1f);
                 babylonMaterial.emissive = materialDependencyNode.findPlug("emissive").asFloatArray().Multiply(emissiveIntensity);
@@ -226,12 +226,12 @@ namespace Maya2Babylon
                 // --- Textures ---
 
                 // Base color & alpha
-                bool useColorMap = materialDependencyNode.findPlug("use_color_map").asBoolProperty;
+                bool useColorMap = materialDependencyNode.findPlug("use_color_map").asBool();
                 bool useOpacityMap = false;
                 string useOpacityMapAttributeName = "use_opacity_map";
                 if (materialDependencyNode.hasAttribute(useOpacityMapAttributeName))
                 {
-                    useOpacityMap = materialDependencyNode.findPlug(useOpacityMapAttributeName).asBoolProperty;
+                    useOpacityMap = materialDependencyNode.findPlug(useOpacityMapAttributeName).asBool();
                 }
                 if (useColorMap || useOpacityMap)
                 {
@@ -241,28 +241,81 @@ namespace Maya2Babylon
                     babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "TEX_color_map", babylonScene, false, useOpacityMap);
                 }
 
-                // Metallic & roughness
-                bool useMetallicMap = materialDependencyNode.findPlug("use_metallic_map").asBoolProperty;
-                bool useRoughnessMap = materialDependencyNode.findPlug("use_roughness_map").asBoolProperty;
-                babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(materialDependencyNode, useMetallicMap, useRoughnessMap, babylonScene, name);
+                // Metallic, roughness, ambient occlusion
+                bool useMetallicMap = materialDependencyNode.findPlug("use_metallic_map").asBool();
+                bool useRoughnessMap = materialDependencyNode.findPlug("use_roughness_map").asBool();
+                string useAOMapAttributeName = "use_ao_map";
+                bool useAOMap = materialDependencyNode.hasAttribute(useAOMapAttributeName) && materialDependencyNode.findPlug(useAOMapAttributeName).asBool();
 
-                if (materialDependencyNode.findPlug("use_normal_map").asBoolProperty)
+                MFnDependencyNode metallicTextureDependencyNode = useMetallicMap ? getTextureDependencyNode(materialDependencyNode, "TEX_metallic_map") : null;
+                MFnDependencyNode roughnessTextureDependencyNode = useRoughnessMap ? getTextureDependencyNode(materialDependencyNode, "TEX_roughness_map") : null;
+                MFnDependencyNode ambientOcclusionTextureDependencyNode = useAOMap ? getTextureDependencyNode(materialDependencyNode, "TEX_ao_map") : null;
+
+                // Check if MR or ORM textures are already merged
+                bool areTexturesAlreadyMerged = false;
+                if (metallicTextureDependencyNode != null && roughnessTextureDependencyNode != null)
+                {
+                    string sourcePathMetallic = getSourcePathFromFileTexture(metallicTextureDependencyNode);
+                    string sourcePathRoughness = getSourcePathFromFileTexture(roughnessTextureDependencyNode);
+
+                    if (sourcePathMetallic == sourcePathRoughness)
+                    {
+                        if (ambientOcclusionTextureDependencyNode != null)
+                        {
+                            string sourcePathAmbientOcclusion = getSourcePathFromFileTexture(ambientOcclusionTextureDependencyNode);
+                            if (sourcePathMetallic == sourcePathAmbientOcclusion)
+                            {
+                                // Metallic, roughness and ambient occlusion are already merged
+                                RaiseVerbose("Metallic, roughness and ambient occlusion are already merged", 2);
+                                BabylonTexture ormTexture = ExportTexture(metallicTextureDependencyNode, babylonScene);
+                                babylonMaterial.metallicRoughnessTexture = ormTexture;
+                                babylonMaterial.occlusionTexture = ormTexture;
+                                areTexturesAlreadyMerged = true;
+                            }
+                        }
+                        else
+                        {
+                            // Metallic and roughness are already merged
+                            RaiseVerbose("Metallic and roughness are already merged", 2);
+                            BabylonTexture ormTexture = ExportTexture(metallicTextureDependencyNode, babylonScene);
+                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            areTexturesAlreadyMerged = true;
+                        }
+                    }
+                }
+                if (areTexturesAlreadyMerged == false)
+                {
+                    if (metallicTextureDependencyNode != null || roughnessTextureDependencyNode != null)
+                    {
+                        // Merge metallic, roughness and ambient occlusion
+                        RaiseVerbose("Merge metallic, roughness and ambient occlusion", 2);
+                        BabylonTexture ormTexture = ExportORMTexture(babylonScene, metallicTextureDependencyNode, roughnessTextureDependencyNode, ambientOcclusionTextureDependencyNode, babylonMaterial.metallic, babylonMaterial.roughness);
+                        babylonMaterial.metallicRoughnessTexture = ormTexture;
+
+                        if (ambientOcclusionTextureDependencyNode != null)
+                        {
+                            babylonMaterial.occlusionTexture = ormTexture;
+                        }
+                    }
+                    else if (ambientOcclusionTextureDependencyNode != null)
+                    {
+                        // Simply export occlusion texture
+                        RaiseVerbose("Simply export occlusion texture", 2);
+                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTextureDependencyNode, babylonScene);
+                    }
+                }
+
+                // Normal
+                if (materialDependencyNode.findPlug("use_normal_map").asBool())
                 {
                     babylonMaterial.normalTexture = ExportTexture(materialDependencyNode, "TEX_normal_map", babylonScene);
                 }
 
                 // Emissive
-                bool useEmissiveMap = materialDependencyNode.findPlug("use_emissive_map").asBoolProperty;
+                bool useEmissiveMap = materialDependencyNode.findPlug("use_emissive_map").asBool();
                 if (useEmissiveMap)
                 {
                     babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "TEX_emissive_map", babylonScene, false, false, false, emissiveIntensity);
-                }
-
-                // Ambient occlusion
-                string useAOMapAttributeName = "use_ao_map";
-                if (materialDependencyNode.hasAttribute(useAOMapAttributeName) && materialDependencyNode.findPlug(useAOMapAttributeName).asBoolProperty)
-                {
-                    babylonMaterial.occlusionTexture = ExportTexture(materialDependencyNode, "TEX_ao_map", babylonScene);
                 }
 
                 // Constraints
@@ -307,7 +360,7 @@ namespace Maya2Babylon
                 // --- Global ---
 
                 // Color3
-                float baseWeight = materialDependencyNode.findPlug("base").asFloatProperty;
+                float baseWeight = materialDependencyNode.findPlug("base").asFloat();
                 float[] baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
                 babylonMaterial.baseColor = baseColor.Multiply(baseWeight);
 
@@ -326,11 +379,11 @@ namespace Maya2Babylon
                 }
 
                 // Metallic & roughness
-                babylonMaterial.metallic = materialDependencyNode.findPlug("metalness").asFloatProperty;
-                babylonMaterial.roughness = materialDependencyNode.findPlug("specularRoughness").asFloatProperty;
+                babylonMaterial.metallic = materialDependencyNode.findPlug("metalness").asFloat();
+                babylonMaterial.roughness = materialDependencyNode.findPlug("specularRoughness").asFloat();
 
                 // Emissive
-                float emissionWeight = materialDependencyNode.findPlug("emission").asFloatProperty;
+                float emissionWeight = materialDependencyNode.findPlug("emission").asFloat();
                 babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray().Multiply(emissionWeight);
 
                 // --- Textures ---
@@ -380,7 +433,7 @@ namespace Maya2Babylon
                 {
                     // Metallic and roughness files need to be merged into a single file
                     // Occlusion texture is not exported since aiStandardSurface material doesn't provide input for it
-                    babylonMaterial.metallicRoughnessTexture = ExportMetallicRoughnessTexture(metallicTextureDependencyNode, roughnessTextureDependencyNode, babylonScene, name, babylonMaterial.metallic, babylonMaterial.roughness);
+                    babylonMaterial.metallicRoughnessTexture = ExportORMTexture(babylonScene, metallicTextureDependencyNode, roughnessTextureDependencyNode, null, babylonMaterial.metallic, babylonMaterial.roughness);
                 }
 
                 // Normal
@@ -435,8 +488,8 @@ namespace Maya2Babylon
             string graphAttribute = "graph";
             if (materialDependencyNode.hasAttribute(graphAttribute))
             {
-                string graphValue = materialDependencyNode.findPlug(graphAttribute).asStringProperty;
-                return graphValue.Contains("stingray");
+                    string graphValue = materialDependencyNode.findPlug(graphAttribute).asString();
+                    return graphValue.Contains("stingray");
             }
             else
             {

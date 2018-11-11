@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Color = System.Drawing.Color;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Max2Babylon
 {
@@ -45,8 +46,7 @@ namespace Max2Babylon
             // Asset
             gltf.asset = new GLTFAsset
             {
-                version = "2.0",
-                copyright = "2017 (c) BabylonJS"
+                version = "2.0"
                 // no minVersion
             };
 
@@ -57,12 +57,10 @@ namespace Max2Babylon
             maxVersion = "2017";
 #elif MAX2018
             maxVersion = "2018";
+#elif MAX2019
+            maxVersion = "2019";
 #endif
-            gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
-
-            // Extensions
-            gltf.extensionsUsed = new List<string>();
-            gltf.extensionsRequired = new List<string>();
+         gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
 
             // Scene
             gltf.scene = 0;
@@ -201,7 +199,6 @@ namespace Max2Babylon
                     }
                     length += chunkLengthBin + 8; // 8 = bin chunk header length
                 }
-                
 
                 // Write binary file
                 string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
@@ -225,6 +222,44 @@ namespace Max2Babylon
                         gltf.BuffersList[0].bytesList.ForEach(b => writer.Write(b));
                     }
                 };
+            }
+
+            // Draco compression
+            if(exportParameters.dracoCompression)
+            {
+                RaiseMessage("GLTFExporter | Draco compression");
+
+                try
+                {
+                    Process gltfPipeline = new Process();
+
+                    // Hide the cmd window that show the gltf-pipeline result
+                    //gltfPipeline.StartInfo.UseShellExecute = false;
+                    //gltfPipeline.StartInfo.CreateNoWindow = true;
+                    gltfPipeline.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                    string arg;
+                    if (generateBinary)
+                    {
+                        string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
+                        arg = $" -i {outputGlbFile} -o {outputGlbFile} -d";
+                    }
+                    else
+                    {
+                        string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
+                        arg = $" -i {outputGltfFile} -o {outputGltfFile} -d -s";
+                    }
+                    gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
+                    gltfPipeline.StartInfo.Arguments = arg;
+
+                    gltfPipeline.Start();
+                    gltfPipeline.WaitForExit();
+                }
+                catch
+                {
+                    RaiseError("gltf-pipeline module not found.", 1);
+                    RaiseError("The exported file wasn't compressed.");
+                }
             }
 
             ReportProgressChanged(100);
@@ -267,11 +302,12 @@ namespace Max2Babylon
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
+            var type = babylonNode.GetType();
+
             GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
 
             if (gltfNode != null)
             {
-                var type = babylonNode.GetType();
                 if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
                 {
                     gltfNode = ExportAbstractMesh(ref gltfNode, babylonNode as BabylonAbstractMesh, gltf, gltfParentNode, babylonScene);
@@ -280,12 +316,29 @@ namespace Max2Babylon
                 {
                     GLTFCamera gltfCamera = ExportCamera(ref gltfNode, babylonNode as BabylonCamera, gltf, gltfParentNode);
                 }
+                else if (type == typeof(BabylonLight) || type.IsSubclassOf(typeof(BabylonLight)))
+                {
+                    if(((BabylonLight)babylonNode).type != 3)
+                    {
+                        ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
+                    }
+                }
                 else
                 {
                     RaiseError($"Node named {babylonNode.name} as no exporter", 1);
                 }
 
                 CheckCancelled();
+
+                // export its tag
+                if(babylonNode.tag != null && babylonNode.tag != "")
+                {
+                    if (gltfNode.extras == null)
+                    {
+                        gltfNode.extras = new Dictionary<string, object>();
+                    }
+                    gltfNode.extras["tag"] = babylonNode.tag;
+                }
 
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
@@ -350,44 +403,35 @@ namespace Max2Babylon
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
                 var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
-                using (Image image = Image.FromFile(path))
+                byte[] imageBytes = File.ReadAllBytes(path);
+
+                // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
+                imageBytes = padChunk(imageBytes, 4, 0x00);
+
+                // BufferView - Image
+                var buffer = gltf.buffer;
+                var bufferViewImage = new GLTFBufferView
                 {
-                    using (MemoryStream m = new MemoryStream())
-                    {
-                        var imageFormat = gltfImage.FileExtension == "jpeg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                        image.Save(m, imageFormat);
-                        byte[] imageBytes = m.ToArray();
-
-                        // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
-                        imageBytes = padChunk(imageBytes, 4, 0x00);
-
-                        // BufferView - Image
-                        var buffer = gltf.buffer;
-                        var bufferViewImage = new GLTFBufferView
-                        {
-                            name = "bufferViewImage",
-                            buffer = buffer.index,
-                            Buffer = buffer,
-                            byteOffset = buffer.byteLength
-                        };
-                        bufferViewImage.index = gltf.BufferViewsList.Count;
-                        gltf.BufferViewsList.Add(bufferViewImage);
-                        imageBufferViews.Add(bufferViewImage);
+                    name = "bufferViewImage",
+                    buffer = buffer.index,
+                    Buffer = buffer,
+                    byteOffset = buffer.byteLength
+                };
+                bufferViewImage.index = gltf.BufferViewsList.Count;
+                gltf.BufferViewsList.Add(bufferViewImage);
+                imageBufferViews.Add(bufferViewImage);
 
 
-                        gltfImage.uri = null;
-                        gltfImage.bufferView = bufferViewImage.index;
-                        gltfImage.mimeType = "image/" + gltfImage.FileExtension;
+                gltfImage.uri = null;
+                gltfImage.bufferView = bufferViewImage.index;
+                gltfImage.mimeType = "image/" + gltfImage.FileExtension;
 
-                        bufferViewImage.bytesList.AddRange(imageBytes);
-                        bufferViewImage.byteLength += imageBytes.Length;
-                        bufferViewImage.Buffer.byteLength += imageBytes.Length;
-                    }
-                }
+                bufferViewImage.bytesList.AddRange(imageBytes);
+                bufferViewImage.byteLength += imageBytes.Length;
+                bufferViewImage.Buffer.byteLength += imageBytes.Length;
             }
             return imageBufferViews;
         }
-
         private byte[] padChunk(byte[] chunk, int padding, byte trailingChar)
         {
             var chunkModuloPadding = chunk.Length % padding;
@@ -427,20 +471,6 @@ namespace Max2Babylon
                 return boneNodePair.Value;
             }
 
-            if (type == typeof(BabylonLight))
-            {
-                if (isNodeRelevantToExport(babylonNode))
-                {
-                    // Export light nodes as empty nodes (no lights in glTF 2.0 core)
-                    RaiseWarning($"GLTFExporter | Light named {babylonNode.name} has children but lights are not exported with glTF 2.0 core version. An empty node is used instead.", 2);
-                }
-                else
-                {
-                    RaiseMessage($"GLTFExporter | Light named {babylonNode.name} is not relevant to export", 2);
-                    return gltfNode;
-                }
-            }
-
             // Node
             gltfNode = new GLTFNode
             {
@@ -470,47 +500,29 @@ namespace Max2Babylon
             gltfNode.translation = babylonNode.position;
 
             // Rotation
-            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)) || type == typeof(BabylonCamera))
+            if (babylonNode.rotationQuaternion != null)
             {
-                if (babylonNode.rotationQuaternion != null)
-                {
-                    gltfNode.rotation = babylonNode.rotationQuaternion;
-                }
-                else
-                {
-                    // Convert rotation vector to quaternion
-                    BabylonVector3 rotationVector3 = new BabylonVector3
-                    {
-                        X = babylonNode.rotation[0],
-                        Y = babylonNode.rotation[1],
-                        Z = babylonNode.rotation[2]
-                    };
-                    gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
-                }
+                gltfNode.rotation = babylonNode.rotationQuaternion;
             }
-            else // Light
+            else
             {
-                gltfNode.rotation = new float[4] { 0, 0, 0, 1 };
-            }
+                // Convert rotation vector to quaternion
+                BabylonVector3 rotationVector3 = new BabylonVector3
+                {
+                    X = babylonNode.rotation[0],
+                    Y = babylonNode.rotation[1],
+                    Z = babylonNode.rotation[2]
+                };
+                gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
+                }
 
             // Scale
-            if (type == typeof(BabylonAbstractMesh) || type.IsSubclassOf(typeof(BabylonAbstractMesh)))
-            {
-                gltfNode.scale = babylonNode.scaling;
-            }
-            else // Camera and light
-            {
-                gltfNode.scale = new float[3] { 1, 1, 1 };
-
-            }
+            gltfNode.scale = babylonNode.scaling;
 
             // Switch coordinate system at object level
             gltfNode.translation[2] *= -1;
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
-
-            // Animations
-            //ExportNodeAnimation(babylonNode, gltf, gltfNode);
 
             return gltfNode;
         }
