@@ -140,7 +140,7 @@ namespace Max2Babylon
                 bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
                                                             // translated into a property because it has no parameters
             }
-            catch
+            catch (Exception e)
             {
                 RaiseWarning($"Mesh {meshNode.Name} failed to initialize. Mesh is exported as dummy.", 2);
                 return ExportDummy(scene, meshNode, babylonScene);
@@ -651,21 +651,24 @@ namespace Max2Babylon
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
-            // threejs and babylonjs handle negative scales correctly (reversed winding order expected)
-            if (!invertedWorldMatrix.Parity || exportParameters.cesium)
-            {
-                // normal case
-                // bug in cesium: cesium does not expect a reversed winding order for negative scales, thus always take this winding order
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-            }
-            else
+
+            // fix for cesium: currently, cesium does not expect a reversed winding order for negative scales
+            //if (false)
+
+            // for threejs and babylonjs (handle negative scales correctly (reversed winding order expected)
+            if (invertedWorldMatrix.Parity)
             {
                 // flipped case: reverse winding order
                 a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
                 b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
                 c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            }
+            else
+            {
+                // normal case
+                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
 
             indices.Add(a);

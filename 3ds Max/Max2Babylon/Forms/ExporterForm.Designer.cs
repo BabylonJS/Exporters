@@ -42,9 +42,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkWriteTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkCesium = new System.Windows.Forms.CheckBox();
-            this.chkAddDefaultLight = new System.Windows.Forms.CheckBox();
-            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
             this.chkKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.chkKHRTextureTransform = new System.Windows.Forms.CheckBox();
             this.chkKHRLightsPunctual = new System.Windows.Forms.CheckBox();
@@ -64,7 +61,7 @@
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
-            this.toolTipCesium = new System.Windows.Forms.ToolTip(this.components);
+            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -206,8 +203,6 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.chkCesium);
-            this.groupBox1.Controls.Add(this.chkAddDefaultLight);
             this.groupBox1.Controls.Add(this.chkExportMaterials);
             this.groupBox1.Controls.Add(this.chkKHRMaterialsUnlit);
             this.groupBox1.Controls.Add(this.chkKHRTextureTransform);
@@ -237,49 +232,11 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
-            // chkCesium
-            // 
-            this.chkCesium.AutoSize = true;
-            this.chkCesium.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkCesium.Location = new System.Drawing.Point(320, 186);
-            this.chkCesium.Name = "chkCesium";
-            this.chkCesium.Size = new System.Drawing.Size(123, 17);
-            this.chkCesium.TabIndex = 25;
-            this.chkCesium.Text = "Cesium (winding bug)";
-            this.chkCesium.UseVisualStyleBackColor = true;
-            // 
-            // chkAddDefaultLight
-            // 
-            this.chkAddDefaultLight.AutoSize = true;
-            this.chkAddDefaultLight.Checked = true;
-            this.chkAddDefaultLight.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAddDefaultLight.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkAddDefaultLight.Location = new System.Drawing.Point(166, 187);
-            this.chkAddDefaultLight.Name = "chkAddDefaultLight";
-            this.chkAddDefaultLight.Size = new System.Drawing.Size(99, 17);
-            this.chkAddDefaultLight.TabIndex = 24;
-            this.chkAddDefaultLight.Text = "Add default light";
-            this.chkAddDefaultLight.UseVisualStyleBackColor = true;
-            // 
-            // chkExportMaterials
-            // 
-            this.chkExportMaterials.AutoSize = true;
-            this.chkExportMaterials.Checked = true;
-            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMaterials.Location = new System.Drawing.Point(18, 187);
-            this.chkExportMaterials.Name = "chkExportMaterials";
-            this.chkExportMaterials.Size = new System.Drawing.Size(98, 17);
-            this.chkExportMaterials.TabIndex = 23;
-            this.chkExportMaterials.Text = "Export Materials";
-            this.chkExportMaterials.UseVisualStyleBackColor = true;
-            this.chkExportMaterials.CheckedChanged += new System.EventHandler(this.chkExportMaterials_CheckedChanged);
-            // 
             // chkKHRMaterialsUnlit
             // 
             this.chkKHRMaterialsUnlit.AutoSize = true;
             this.chkKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(320, 210);
+            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(317, 210);
             this.chkKHRMaterialsUnlit.Name = "chkKHRMaterialsUnlit";
             this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
             this.chkKHRMaterialsUnlit.TabIndex = 22;
@@ -494,9 +451,19 @@
             // 
             this.toolTipDracoCompression.ShowAlways = true;
             // 
-            // toolTipCesium
+            // chkExportMaterials
             // 
-            this.toolTipCesium.ShowAlways = true;
+            this.chkExportMaterials.AutoSize = true;
+            this.chkExportMaterials.Checked = true;
+            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMaterials.Location = new System.Drawing.Point(18, 187);
+            this.chkExportMaterials.Name = "chkExportMaterials";
+            this.chkExportMaterials.Size = new System.Drawing.Size(98, 17);
+            this.chkExportMaterials.TabIndex = 23;
+            this.chkExportMaterials.Text = "Export Materials";
+            this.chkExportMaterials.UseVisualStyleBackColor = true;
+            this.chkExportMaterials.CheckedChanged += new System.EventHandler(this.chkExportMaterials_CheckedChanged);
             // 
             // ExporterForm
             // 
@@ -563,8 +530,5 @@
         private System.Windows.Forms.CheckBox chkKHRTextureTransform;
         private System.Windows.Forms.CheckBox chkKHRMaterialsUnlit;
         private System.Windows.Forms.CheckBox chkExportMaterials;
-        private System.Windows.Forms.CheckBox chkCesium;
-        private System.Windows.Forms.ToolTip toolTipCesium;
-        private System.Windows.Forms.CheckBox chkAddDefaultLight;
     }
 }
