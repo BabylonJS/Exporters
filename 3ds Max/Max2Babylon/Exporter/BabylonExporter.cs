@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.8";
+        private string exporterVersion = "1.3.9";
 
         void ReportProgressChanged(int progress)
         {
@@ -316,7 +316,7 @@ namespace Max2Babylon
 
             // Default light
             bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
-            if (addDefaultLight && babylonScene.LightsList.Count == 0)
+            if (addDefaultLight && babylonScene.LightsList.Count == 0 && exportParameters.addDefaultLight)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default hemispheric light was added for your convenience", 1);

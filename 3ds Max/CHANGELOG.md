@@ -33,3 +33,8 @@
 ## v1.3.8
 **Fixed bugs:**
 - Fixed normals for models that contain offset transforms (https://github.com/BabylonJS/Exporters/issues/360)
+
+## v1.3.9
+**Implemented changes:**
+- Checkbox to add/remove default light (the default light creates an empty node, that the gltf-validator complains about)
+- Checkbox to export with 'wrong' winding order for gltf/glb-models with negative scales to cope with bug in Cesium (https://github.com/AnalyticalGraphicsInc/cesium/issues/6304)

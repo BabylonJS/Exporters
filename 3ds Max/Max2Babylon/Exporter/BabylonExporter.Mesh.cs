@@ -651,24 +651,21 @@ namespace Max2Babylon
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
-
-            // fix for cesium: currently, cesium does not expect a reversed winding order for negative scales
-            //if (false)
-
-            // for threejs and babylonjs (handle negative scales correctly (reversed winding order expected)
-            if (invertedWorldMatrix.Parity)
+            // threejs and babylonjs handle negative scales correctly (reversed winding order expected)
+            if (!invertedWorldMatrix.Parity || exportParameters.cesium)
+            {
+                // normal case
+                // bug in cesium: cesium does not expect a reversed winding order for negative scales, thus always take this winding order
+                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            }
+            else
             {
                 // flipped case: reverse winding order
                 a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
                 b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
                 c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-            }
-            else
-            {
-                // normal case
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
 
             indices.Add(a);
