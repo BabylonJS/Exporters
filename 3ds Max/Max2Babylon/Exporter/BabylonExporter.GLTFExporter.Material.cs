@@ -335,18 +335,6 @@ namespace Max2Babylon
                         //register the texture
                         AddStandText(_key, textureInfoBC, textureInfoMR);
                     }
-
-                    // Constraints
-                    if (gltfPbrMetallicRoughness.baseColorTexture != null)
-                    {
-                        gltfPbrMetallicRoughness.baseColorFactor = new[] { 1.0f, 1.0f, 1.0f, 1.0f };
-                    }
-
-                    if (gltfPbrMetallicRoughness.metallicRoughnessTexture != null)
-                    {
-                        gltfPbrMetallicRoughness.metallicFactor = 1.0f;
-                        gltfPbrMetallicRoughness.roughnessFactor = 1.0f;
-                    }
                 }
             }
             else if (babylonMaterial.GetType() == typeof(BabylonPBRMetallicRoughnessMaterial))
