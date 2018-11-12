@@ -33,3 +33,7 @@
 ## v1.3.8
 **Fixed bugs:**
 - Fixed normals for models that contain offset transforms (https://github.com/BabylonJS/Exporters/issues/360)
+
+## v1.3.9
+**Fixed bugs:**
+- Fixed bug where setting the base color texture overwrites the base color factor (https://github.com/BabylonJS/Exporters/issues/367)
