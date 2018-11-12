@@ -746,9 +746,31 @@ namespace Max2Babylon
             return invertedWorldMatrix;
         }
 
-
-
-
+        private IMatrix3 GetOffsetTM(IIGameNode gameNode, int key)
+        {
+            IPoint3 objOffsetPos = gameNode.MaxNode.ObjOffsetPos;
+            IQuat objOffsetQuat = gameNode.MaxNode.ObjOffsetRot;
+            IPoint3 objOffsetScale = gameNode.MaxNode.ObjOffsetScale.S;
+            // conversion: LH vs RH coordinate system (swap Y and Z)
+            var tmpSwap = objOffsetPos.Y;
+            objOffsetPos.Y = objOffsetPos.Z;
+            objOffsetPos.Z = tmpSwap;
+            tmpSwap = objOffsetQuat.Y;
+            objOffsetQuat.Y = objOffsetQuat.Z;
+            objOffsetQuat.Z = tmpSwap;
+            var objOffsetRotMat = Tools.Identity;
+            objOffsetQuat.MakeMatrix(objOffsetRotMat, true);
+            tmpSwap = objOffsetScale.Y;
+            objOffsetScale.Y = objOffsetScale.Z;
+            objOffsetScale.Z = tmpSwap;
+            // build the offset transform; equivalent in maxscript: 
+            // offsetTM = (scaleMatrix $.objectOffsetScale) * ($.objectOffsetRot as matrix3) * (transMatrix $.objectOffsetPos)
+            IMatrix3 offsetTM = Tools.Identity;
+            offsetTM.Scale(objOffsetScale, false);
+            offsetTM.MultiplyBy(objOffsetRotMat);
+            offsetTM.Translate(objOffsetPos);
+            return offsetTM;
+        }
 
         /// <summary>
         /// In 3DS Max default element can look in different direction than the same default element in Babylon or in glTF.
