@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.8";
+        private string exporterVersion = "1.3.9";
 
         void ReportProgressChanged(int progress)
         {
@@ -313,10 +313,10 @@ namespace Max2Babylon
             {
                 RaiseMessage(string.Format("Total cameras: {0}", babylonScene.CamerasList.Count), Color.Gray, 1);
             }
-
+            
             // Default light
             bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
-            if (addDefaultLight && babylonScene.LightsList.Count == 0)
+            if (addDefaultLight && babylonScene.LightsList.Count == 0 && exportParameters.addDefaultLight)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default hemispheric light was added for your convenience", 1);
@@ -751,29 +751,24 @@ namespace Max2Babylon
             IPoint3 objOffsetPos = gameNode.MaxNode.ObjOffsetPos;
             IQuat objOffsetQuat = gameNode.MaxNode.ObjOffsetRot;
             IPoint3 objOffsetScale = gameNode.MaxNode.ObjOffsetScale.S;
-
             // conversion: LH vs RH coordinate system (swap Y and Z)
             var tmpSwap = objOffsetPos.Y;
             objOffsetPos.Y = objOffsetPos.Z;
             objOffsetPos.Z = tmpSwap;
-
             tmpSwap = objOffsetQuat.Y;
             objOffsetQuat.Y = objOffsetQuat.Z;
             objOffsetQuat.Z = tmpSwap;
             var objOffsetRotMat = Tools.Identity;
             objOffsetQuat.MakeMatrix(objOffsetRotMat, true);
-
             tmpSwap = objOffsetScale.Y;
             objOffsetScale.Y = objOffsetScale.Z;
             objOffsetScale.Z = tmpSwap;
-
             // build the offset transform; equivalent in maxscript: 
             // offsetTM = (scaleMatrix $.objectOffsetScale) * ($.objectOffsetRot as matrix3) * (transMatrix $.objectOffsetPos)
             IMatrix3 offsetTM = Tools.Identity;
             offsetTM.Scale(objOffsetScale, false);
             offsetTM.MultiplyBy(objOffsetRotMat);
-            offsetTM.Translate(objOffsetPos); 
-
+            offsetTM.Translate(objOffsetPos);
             return offsetTM;
         }
 
