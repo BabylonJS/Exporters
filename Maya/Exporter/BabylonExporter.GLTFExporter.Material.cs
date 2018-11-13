@@ -234,10 +234,9 @@ namespace Maya2Babylon
                             {
                                 opacityBitmap = LoadTexture(babylonStandardMaterial.opacityTexture.originalPath);
                             }
-
                             if (diffuseBitmap != null || specularBitmap != null || opacityBitmap != null)
                             {
-                                // Retreive dimensions
+                                // Retrieve dimensions
                                 int width = 0;
                                 int height = 0;
                                 var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, diffuseBitmap, specularBitmap, opacityBitmap);
@@ -292,10 +291,12 @@ namespace Maya2Babylon
                             }
                         }
 
-
-                        var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
-                        textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
-                        gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
+                        if (baseColorBitmap != null || babylonTexture.bitmap != null)
+                        {
+                            var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
+                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
+                            gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
+                        }
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {

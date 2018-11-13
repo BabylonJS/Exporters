@@ -34,7 +34,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.2.40";
+        private string exporterVersion = "1.3.9";
 
         void ReportProgressChanged(int progress)
         {
@@ -87,7 +87,6 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
-        
         public void Export(ExportParameters exportParameters)
         {
             // Check input text is valid
@@ -111,7 +110,7 @@ namespace Max2Babylon
             {
                 quality = long.Parse(txtQuality);
 
-                if(quality < 0 || quality > 100)
+                if (quality < 0 || quality > 100)
                 {
                     throw new Exception();
                 }
@@ -138,6 +137,7 @@ namespace Max2Babylon
             RaiseMessage("Exportation started", Color.Blue);
             ReportProgressChanged(0);
 
+            string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
             string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
@@ -148,8 +148,9 @@ namespace Max2Babylon
                 ReportProgressChanged(100);
                 return;
             }
-
-            var outputBabylonDirectory = outputDirectory;
+            Directory.CreateDirectory(tempOutputDirectory);
+            
+            var outputBabylonDirectory = tempOutputDirectory;
 
             // Force output file extension to be babylon
             outputFileName = Path.ChangeExtension(outputFileName, "babylon");
@@ -202,7 +203,6 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
-            
             if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
             {
                 // Environment texture
@@ -296,7 +296,7 @@ namespace Max2Babylon
             if (isGltfExported)
             {
                 RaiseMessage("Update light rotation for glTF export", 1);
-                for(int index = 0; index < babylonScene.LightsList.Count; index++)
+                for (int index = 0; index < babylonScene.LightsList.Count; index++)
                 {
                     BabylonNode light = babylonScene.LightsList[index];
                     FixNodeRotation(ref light, ref babylonScene, -Math.PI / 2);
@@ -380,15 +380,22 @@ namespace Max2Babylon
             }
 
             // Materials
-            RaiseMessage("Exporting materials");
-
-            var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
-            foreach (var mat in matsToExport)
+            if (exportParameters.exportMaterials)
             {
-                ExportMaterial(mat, babylonScene);
-                CheckCancelled();
+                RaiseMessage("Exporting materials");
+
+                var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
+                foreach (var mat in matsToExport)
+                {
+                    ExportMaterial(mat, babylonScene);
+                    CheckCancelled();
+                }
+                RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
             }
-            RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
+            else
+            {
+                RaiseMessage("Skipping material export.");
+            }
 
             // Fog
             for (var index = 0; index < Loader.Core.NumAtmospheric; index++)
@@ -462,13 +469,12 @@ namespace Max2Babylon
             if (isBabylonExported)
             {
                 RaiseMessage("Saving to output file");
-                
+
                 var outputFile = Path.Combine(outputBabylonDirectory, outputFileName);
 
                 var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
                 var sb = new StringBuilder();
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-                
                 using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
                     jsonWriter.Formatting = Formatting.None;
@@ -498,11 +504,71 @@ namespace Max2Babylon
             if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
+                ExportGltf(babylonScene, tempOutputDirectory, outputFileName, generateBinary);
             }
-
+            // Move files to output directory
+            var filePaths = Directory.GetFiles(tempOutputDirectory);
+            if (outputFormat == "glb")
+            {
+                foreach (var file_path in filePaths)
+                {
+                    if (Path.GetExtension(file_path) == ".glb")
+                    {
+                        var file = Path.GetFileName(file_path);
+                        var tempFilePath = Path.Combine(tempOutputDirectory, file);
+                        var outputFile = Path.Combine(outputDirectory, file);
+                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                        break;
+                    }   
+                }
+            }
+            else
+            { 
+                foreach (var filePath in filePaths)
+                {
+                    var file = Path.GetFileName(filePath);
+                    var outputPath = Path.Combine(outputDirectory, file);
+                    var tempFilePath = Path.Combine(tempOutputDirectory, file);
+                    moveFileToOutputDirectory(tempFilePath, outputPath, exportParameters);
+                }
+            }
+            Directory.Delete(tempOutputDirectory, true);
             watch.Stop();
             RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
+        }
+
+        private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
+        {
+            var fileExtension = Path.GetExtension(sourceFilePath).Substring(1).ToLower();
+            if (validFormats.Contains(fileExtension))
+            {
+                if (exportParameters.writeTextures)
+                {
+                    if (File.Exists(targetFilePath))
+                    {
+                        if (exportParameters.overwriteTextures)
+                        {
+                            File.Delete(targetFilePath);
+                            File.Move(sourceFilePath, targetFilePath);
+                            RaiseMessage(sourceFilePath + " -> " + targetFilePath);
+                        }
+                    }
+                    else
+                    {
+                        File.Move(sourceFilePath, targetFilePath);
+                        RaiseMessage(sourceFilePath + " -> " + targetFilePath);
+                    }
+                }
+            }
+            else
+            {
+                if (File.Exists(targetFilePath))
+                {
+                    File.Delete(targetFilePath);
+                }
+                File.Move(sourceFilePath, targetFilePath);
+                RaiseMessage(sourceFilePath + " -> " + targetFilePath);
+            }
         }
 
         private void exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
@@ -697,9 +763,36 @@ namespace Max2Babylon
             return invertedWorldMatrix;
         }
 
+        private IMatrix3 GetOffsetTM(IIGameNode gameNode, int key)
+        {
+            IPoint3 objOffsetPos = gameNode.MaxNode.ObjOffsetPos;
+            IQuat objOffsetQuat = gameNode.MaxNode.ObjOffsetRot;
+            IPoint3 objOffsetScale = gameNode.MaxNode.ObjOffsetScale.S;
 
+            // conversion: LH vs RH coordinate system (swap Y and Z)
+            var tmpSwap = objOffsetPos.Y;
+            objOffsetPos.Y = objOffsetPos.Z;
+            objOffsetPos.Z = tmpSwap;
 
+            tmpSwap = objOffsetQuat.Y;
+            objOffsetQuat.Y = objOffsetQuat.Z;
+            objOffsetQuat.Z = tmpSwap;
+            var objOffsetRotMat = Tools.Identity;
+            objOffsetQuat.MakeMatrix(objOffsetRotMat, true);
 
+            tmpSwap = objOffsetScale.Y;
+            objOffsetScale.Y = objOffsetScale.Z;
+            objOffsetScale.Z = tmpSwap;
+
+            // build the offset transform; equivalent in maxscript: 
+            // offsetTM = (scaleMatrix $.objectOffsetScale) * ($.objectOffsetRot as matrix3) * (transMatrix $.objectOffsetPos)
+            IMatrix3 offsetTM = Tools.Identity;
+            offsetTM.Scale(objOffsetScale, false);
+            offsetTM.MultiplyBy(objOffsetRotMat);
+            offsetTM.Translate(objOffsetPos); 
+
+            return offsetTM;
+        }
 
         /// <summary>
         /// In 3DS Max default element can look in different direction than the same default element in Babylon or in glTF.

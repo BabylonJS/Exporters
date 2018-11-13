@@ -41,7 +41,7 @@ namespace Max2Babylon
                 var extension = Path.GetExtension(name).ToLower();
 
                 // Write image to output
-                if (exportParameters.copyTexturesToOutput)
+                if (exportParameters.writeTextures)
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
@@ -162,12 +162,19 @@ namespace Max2Babylon
                 texCoord = babylonTexture.coordinatesIndex
             };
 
-            // Add texture extension
             if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
             {
-                AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+                // Add texture extension if enabled in the export settings
+                if (exportParameters.enableKHRTextureTransform)
+                {
+                    AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+                }
+                else
+                {
+                    RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!");
+                }
             }
-
+            
             // Add the texture in the dictionary
             RegisterTexture(gltfTextureInfo, name);
 
@@ -197,7 +204,7 @@ namespace Max2Babylon
 
             Bitmap emissivePremultipliedBitmap = null;
 
-            if (exportParameters.copyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Emissive
                 Bitmap emissiveBitmap = null;
@@ -348,9 +355,13 @@ namespace Max2Babylon
         /// <param name="babylonMaterial"></param>
         private void AddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
         {
-            if (gltf.extensionsUsed.Contains(KHR_texture_transform) == false)
+            if (!gltf.extensionsUsed.Contains(KHR_texture_transform))
             {
                 gltf.extensionsUsed.Add(KHR_texture_transform);
+            }
+            if (!gltf.extensionsRequired.Contains(KHR_texture_transform))
+            {
+                gltf.extensionsRequired.Add(KHR_texture_transform);
             }
 
             float angle = babylonTexture.wAng;

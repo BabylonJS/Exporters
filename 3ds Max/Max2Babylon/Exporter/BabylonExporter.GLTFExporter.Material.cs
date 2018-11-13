@@ -255,7 +255,7 @@ namespace Max2Babylon
                         GLTFTextureInfo textureInfoBC = new GLTFTextureInfo();
                         GLTFTextureInfo textureInfoMR = new GLTFTextureInfo();
 
-                        if (exportParameters.copyTexturesToOutput)
+                        if (exportParameters.writeTextures)
                         {
                         // Diffuse
                         Bitmap diffuseBitmap = null;
@@ -358,18 +358,6 @@ namespace Max2Babylon
 
                         //register the texture
                         AddStandText(_key, textureInfoBC, textureInfoMR);
-                    }
-
-                    // Constraints
-                    if (gltfPbrMetallicRoughness.baseColorTexture != null)
-                    {
-                        gltfPbrMetallicRoughness.baseColorFactor = new[] { 1.0f, 1.0f, 1.0f, 1.0f };
-                    }
-
-                    if (gltfPbrMetallicRoughness.metallicRoughnessTexture != null)
-                    {
-                        gltfPbrMetallicRoughness.metallicFactor = 1.0f;
-                        gltfPbrMetallicRoughness.roughnessFactor = 1.0f;
                     }
                 }
             }
@@ -563,11 +551,26 @@ namespace Max2Babylon
             if (gltfMaterial != null && babylonMaterial.isUnlit)
             {
                 // Add Unlit extension
-                if (gltfMaterial.extensions == null)
+                if (!exportParameters.enableKHRMaterialsUnlit)
                 {
-                    gltfMaterial.extensions = new GLTFExtensions();
+                    RaiseWarning("GLTFExporter.Material | KHR_materials_unlit has not been enabled for export!", 2);
                 }
-                gltfMaterial.extensions["KHR_materials_unlit"] = new object();
+                else
+                {
+                    if (gltfMaterial.extensions == null)
+                    {
+                        gltfMaterial.extensions = new GLTFExtensions();
+                    }
+                    if (gltf.extensionsUsed == null)
+                    {
+                        gltf.extensionsUsed = new System.Collections.Generic.List<string>();
+                    }
+                    if (!gltf.extensionsUsed.Contains("KHR_materials_unlit"))
+                    {
+                        gltf.extensionsUsed.Add("KHR_materials_unlit");
+                    }
+                    gltfMaterial.extensions["KHR_materials_unlit"] = new object();
+                }
             }
         }
 

@@ -46,8 +46,7 @@ namespace Max2Babylon
             // Asset
             gltf.asset = new GLTFAsset
             {
-                version = "2.0",
-                copyright = "2017 (c) BabylonJS"
+                version = "2.0"
                 // no minVersion
             };
 
@@ -200,7 +199,6 @@ namespace Max2Babylon
                     }
                     length += chunkLengthBin + 8; // 8 = bin chunk header length
                 }
-                
 
                 // Write binary file
                 string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
@@ -324,22 +322,6 @@ namespace Max2Babylon
                     {
                         ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
                     }
-                    else //Ambiant light are attached to the scene. It was previously exported as node to preserve the hierarchy and its children
-                    {
-                        RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
-                        // new light in the scene extensions
-                        GLTFLight light = new GLTFLight
-                        {
-                            light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
-                        };
-
-                        int sceneIndex = (int)gltf.scene;
-                        if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
-                        {
-                            RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
-                        }
-                        gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
-                    }
                 }
                 else
                 {
@@ -450,7 +432,6 @@ namespace Max2Babylon
             }
             return imageBufferViews;
         }
-
         private byte[] padChunk(byte[] chunk, int padding, byte trailingChar)
         {
             var chunkModuloPadding = chunk.Length % padding;

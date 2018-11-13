@@ -85,7 +85,7 @@ namespace Maya2Babylon
             // When fileHasAlpha = true:
             // - texture's format has alpha (png, tif, tga...)
             // - and at least one pixel has an alpha value < 255
-            babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBoolProperty;
+            babylonTexture.getAlphaFromRGB = !textureDependencyNode.findPlug("fileHasAlpha").asBool();
 
             // UVs
             _exportUV(textureDependencyNode, babylonTexture, textureModifiers, updateCoordinatesMode);
@@ -473,11 +473,12 @@ namespace Maya2Babylon
 
             // For more information about UV
             // see http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-94070C7E-C550-42FD-AFC9-FBE82B173B1D
-            babylonTexture.uOffset = textureDependencyNode.findPlug("offsetU").asFloatProperty;
-            babylonTexture.vOffset = textureDependencyNode.findPlug("offsetV").asFloatProperty;
+            babylonTexture.uOffset = textureDependencyNode.findPlug("offsetU").asFloat();
+                ;
+            babylonTexture.vOffset = textureDependencyNode.findPlug("offsetV").asFloat();
             
-            babylonTexture.uScale = textureDependencyNode.findPlug("repeatU").asFloatProperty;
-            babylonTexture.vScale = textureDependencyNode.findPlug("repeatV").asFloatProperty;
+            babylonTexture.uScale = textureDependencyNode.findPlug("repeatU").asFloat();
+            babylonTexture.vScale = textureDependencyNode.findPlug("repeatV").asFloat();
             
             if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
@@ -487,7 +488,7 @@ namespace Maya2Babylon
             // Maya only has a W rotation
             babylonTexture.uAng = 0;
             babylonTexture.vAng = 0;
-            babylonTexture.wAng = textureDependencyNode.findPlug("rotateFrame").asFloatProperty;
+            babylonTexture.wAng = textureDependencyNode.findPlug("rotateFrame").asFloat();
 
             // TODO - rotation and scale
             if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
@@ -497,11 +498,11 @@ namespace Maya2Babylon
 
             // Adress mode U
             // TODO - What is adress mode when both wrap and mirror?
-            if (textureDependencyNode.findPlug("mirrorU").asBoolProperty)
+            if (textureDependencyNode.findPlug("mirrorU").asBool())
             {
                 babylonTexture.wrapU = BabylonTexture.AddressMode.MIRROR_ADDRESSMODE;
             }
-            else if (textureDependencyNode.findPlug("wrapU").asBoolProperty)
+            else if (textureDependencyNode.findPlug("wrapU").asBool())
             {
                 babylonTexture.wrapU = BabylonTexture.AddressMode.WRAP_ADDRESSMODE;
             }
@@ -513,11 +514,11 @@ namespace Maya2Babylon
 
             // Adress mode V
             // TODO - What is adress mode when both wrap and mirror?
-            if (textureDependencyNode.findPlug("mirrorV").asBoolProperty)
+            if (textureDependencyNode.findPlug("mirrorV").asBool())
             {
                 babylonTexture.wrapV = BabylonTexture.AddressMode.MIRROR_ADDRESSMODE;
             }
-            else if (textureDependencyNode.findPlug("wrapV").asBoolProperty)
+            else if (textureDependencyNode.findPlug("wrapV").asBool())
             {
                 babylonTexture.wrapV = BabylonTexture.AddressMode.WRAP_ADDRESSMODE;
             }
@@ -623,7 +624,7 @@ namespace Maya2Babylon
                 RaiseError("Texture path is missing.", logRankTexture + 1);
                 return null;
             }
-            string sourcePath = fileTextureNamePlug.asStringProperty;
+            string sourcePath = fileTextureNamePlug.asString();
             return sourcePath;
         }
 

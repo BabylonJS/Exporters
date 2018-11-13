@@ -752,6 +752,27 @@ namespace Maya2Babylon
                 nodes.AddRange(babylonScene.CamerasList);
                 nodes.AddRange(babylonScene.LightsList);
 
+                foreach(BabylonMorphTargetManager morphTargetManager in babylonScene.MorphTargetManagersList)
+                {
+                    var morphTargets = morphTargetManager.targets;
+                    
+                    foreach (BabylonMorphTarget morphTarget in morphTargets)
+                    {
+                        var animations = GetSubAnimations(morphTarget, animationGroup.from, animationGroup.to);
+                        foreach (BabylonAnimation animation in animations)
+                        {
+                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            {
+                                animation = animation,
+                                targetId = morphTarget.id
+                            };
+                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                        }
+
+
+                    }
+                }
+
                 foreach (BabylonNode node in nodes)
                 {
                     if (node.animations != null && node.animations.Length != 0)
@@ -829,6 +850,29 @@ namespace Maya2Babylon
             {
                 // clone the animation
                 BabylonAnimation animation = (BabylonAnimation)nodeAnimation.Clone();
+
+                // Select usefull keys
+                var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+
+                // Optimize these keys
+                OptimizeAnimations(keys, true);
+
+                // 
+                animation.keys = keys.ToArray();
+                subAnimations.Add(animation);
+            }
+
+            return subAnimations;
+        }
+
+        private IList<BabylonAnimation> GetSubAnimations(BabylonMorphTarget babylonMorphTarget, float from, float to)
+        {
+            IList<BabylonAnimation> subAnimations = new List<BabylonAnimation>();
+
+            foreach (BabylonAnimation morphTargetAnimation in babylonMorphTarget.animations)
+            {
+                // clone the animation
+                BabylonAnimation animation = (BabylonAnimation)morphTargetAnimation.Clone();
 
                 // Select usefull keys
                 var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);

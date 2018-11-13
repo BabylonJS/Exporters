@@ -11,15 +11,13 @@ namespace GLTFExport.Entities
         {
             point,      // BabylonLight.type == 0
             directional,// 1
-            spot,       // 2
-            ambient     // 3                        They are referenced only by a scene object and only 1 can be referenced per scene.
+            spot       // 2
         }
 
 
         // Property used by GLTFNodeExtension
         [DataMember(EmitDefaultValue = false)]
         public int? light { get; set; }
-
 
         // Properties used by GLTFextension
         [DataMember(EmitDefaultValue = false)]
