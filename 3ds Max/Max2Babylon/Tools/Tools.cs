@@ -537,8 +537,11 @@ namespace Max2Babylon
                     // If the uid is already used by another node
                     if (guids[uid].Equals(node as IInterfaceServer) == false)
                     {
+                        // Remove old uid
+                        node.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
                         // Create a new uid for current node
-                        uid = CreateGuid(node);
+                        uid = Guid.NewGuid();
+                        node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
                     }
                 }
                 else
@@ -548,17 +551,10 @@ namespace Max2Babylon
             }
             else
             {
-                uid = CreateGuid(node);
+                uid = Guid.NewGuid();
+                node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
             }
 
-            return uid;
-        }
-
-        private static Guid CreateGuid(this IAnimatable node)
-        {
-            Guid uid = Guid.NewGuid();
-            guids.Add(uid, node);
-            node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
             return uid;
         }
 
