@@ -102,7 +102,7 @@ namespace Maya2Babylon
 
             var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
 
-            // Retreive indices from babylon mesh
+            // Retrieve indices from babylon mesh
             List<int> babylonIndices = babylonMesh.indices.ToList();
 
             // --------------------------
@@ -187,7 +187,7 @@ namespace Maya2Babylon
                         var indexMaterial = babylonMaterialsToExport.FindIndex(_babylonMaterial => _babylonMaterial == babylonMaterial);
                         if (indexMaterial == -1)
                         {
-                            // Store material for exportation
+                            // Store material for export
                             indexMaterial = babylonMaterialsToExport.Count;
                             babylonMaterialsToExport.Add(babylonMaterial);
                         }

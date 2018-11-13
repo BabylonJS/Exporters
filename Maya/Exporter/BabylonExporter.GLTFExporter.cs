@@ -25,7 +25,7 @@ namespace Maya2Babylon
 
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
-            RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
+            RaiseMessage("GLTFExporter | Export started", Color.Blue);
 
             // Force output file extension to be gltf
             outputFileName = Path.ChangeExtension(outputFileName, "gltf");
@@ -47,8 +47,7 @@ namespace Maya2Babylon
             gltf.asset = new GLTFAsset
             {
                 version = "2.0",
-                generator = $"babylon.js glTF exporter for maya 2018 v{exporterVersion}",
-                copyright = "2017 (c) BabylonJS"
+                generator = $"babylon.js glTF exporter for maya 2018 v{exporterVersion}"
                 // no minVersion
             };
 
@@ -296,27 +295,6 @@ namespace Maya2Babylon
         {
             var type = babylonNode.GetType();
             
-            // Ambiant light are attached to the scene
-            if (type == typeof(BabylonLight) && ((BabylonLight)babylonNode).type == 3)
-            {
-                RaiseMessage($"GLTFExporter.Light | Export light named: {babylonNode.name}", 1);
-                // new light in the scene extensions
-                GLTFLight light = new GLTFLight
-                {
-                    light = AddLightExtension(ref gltf, babylonNode as BabylonLight)
-                };
-
-                int sceneIndex = (int)gltf.scene;
-                if (gltf.scenes[sceneIndex].extensions.ContainsKey(KHR_lights))
-                {
-                    RaiseWarning($"Only 1 ambient light can be referenced per scene. {babylonNode.name} has overwritten the previous one.", 2);
-                }
-                gltf.scenes[sceneIndex].extensions[KHR_lights] = light;
-
-                return;
-            }
-
-
             GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
 
             if (gltfNode != null)
@@ -331,7 +309,11 @@ namespace Maya2Babylon
                 }
                 else if (type == typeof(BabylonLight) || type.IsSubclassOf(typeof(BabylonLight)))
                 {
-                    ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
+                    if (_exportKHRLightsPunctual)
+                    {
+                        RaiseMessage("exporting light", 1);
+                        ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
+                    }
                 }
                 else
                 {

@@ -40,8 +40,12 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.chkManifest = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.chkCopyTextures = new System.Windows.Forms.CheckBox();
+            this.chkWriteTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
+            this.chkKHRTextureTransform = new System.Windows.Forms.CheckBox();
+            this.chkKHRLightsPunctual = new System.Windows.Forms.CheckBox();
+            this.chkOverwriteTextures = new System.Windows.Forms.CheckBox();
             this.chkDracoCompression = new System.Windows.Forms.CheckBox();
             this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
@@ -57,6 +61,7 @@
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
+            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -66,7 +71,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(211, 202);
+            this.butExport.Location = new System.Drawing.Point(211, 245);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 100;
@@ -128,9 +133,9 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(12, 235);
+            this.treeView.Location = new System.Drawing.Point(12, 278);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 285);
+            this.treeView.Size = new System.Drawing.Size(810, 242);
             this.treeView.TabIndex = 103;
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
@@ -154,7 +159,7 @@
             this.pictureBox2.Image = global::Max2Babylon.Properties.Resources.Logo_Exporter_v4;
             this.pictureBox2.Location = new System.Drawing.Point(468, 12);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(354, 184);
+            this.pictureBox2.Size = new System.Drawing.Size(354, 207);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
@@ -163,7 +168,7 @@
             // 
             this.chkManifest.AutoSize = true;
             this.chkManifest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkManifest.Location = new System.Drawing.Point(18, 140);
+            this.chkManifest.Location = new System.Drawing.Point(320, 163);
             this.chkManifest.Name = "chkManifest";
             this.chkManifest.Size = new System.Drawing.Size(112, 17);
             this.chkManifest.TabIndex = 14;
@@ -180,22 +185,29 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Options:";
             // 
-            // chkCopyTextures
+            // chkWriteTextures
             // 
-            this.chkCopyTextures.AutoSize = true;
-            this.chkCopyTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkCopyTextures.Location = new System.Drawing.Point(18, 117);
-            this.chkCopyTextures.Name = "chkCopyTextures";
-            this.chkCopyTextures.Size = new System.Drawing.Size(132, 17);
-            this.chkCopyTextures.TabIndex = 11;
-            this.chkCopyTextures.Text = "Copy textures to output";
-            this.chkCopyTextures.UseVisualStyleBackColor = true;
-            this.chkCopyTextures.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
+            this.chkWriteTextures.AutoSize = true;
+            this.chkWriteTextures.Checked = true;
+            this.chkWriteTextures.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkWriteTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkWriteTextures.Location = new System.Drawing.Point(18, 117);
+            this.chkWriteTextures.Name = "chkWriteTextures";
+            this.chkWriteTextures.Size = new System.Drawing.Size(92, 17);
+            this.chkWriteTextures.TabIndex = 11;
+            this.chkWriteTextures.Text = "Write Textures";
+            this.chkWriteTextures.UseVisualStyleBackColor = true;
+            this.chkWriteTextures.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkExportMaterials);
+            this.groupBox1.Controls.Add(this.chkKHRMaterialsUnlit);
+            this.groupBox1.Controls.Add(this.chkKHRTextureTransform);
+            this.groupBox1.Controls.Add(this.chkKHRLightsPunctual);
+            this.groupBox1.Controls.Add(this.chkOverwriteTextures);
             this.groupBox1.Controls.Add(this.chkDracoCompression);
             this.groupBox1.Controls.Add(this.chkMergeAOwithMR);
             this.groupBox1.Controls.Add(this.txtQuality);
@@ -209,16 +221,66 @@
             this.groupBox1.Controls.Add(this.chkAutoSave);
             this.groupBox1.Controls.Add(this.chkHidden);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.chkCopyTextures);
+            this.groupBox1.Controls.Add(this.chkWriteTextures);
             this.groupBox1.Controls.Add(this.txtFilename);
             this.groupBox1.Controls.Add(this.chkManifest);
             this.groupBox1.Controls.Add(this.butBrowse);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(450, 190);
+            this.groupBox1.Size = new System.Drawing.Size(450, 233);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            // 
+            // chkKHRMaterialsUnlit
+            // 
+            this.chkKHRMaterialsUnlit.AutoSize = true;
+            this.chkKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(317, 210);
+            this.chkKHRMaterialsUnlit.Name = "chkKHRMaterialsUnlit";
+            this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
+            this.chkKHRMaterialsUnlit.TabIndex = 22;
+            this.chkKHRMaterialsUnlit.Text = "KHR_materials_unlit";
+            this.chkKHRMaterialsUnlit.UseVisualStyleBackColor = true;
+            this.chkKHRMaterialsUnlit.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
+            // 
+            // chkKHRTextureTransform
+            // 
+            this.chkKHRTextureTransform.AutoSize = true;
+            this.chkKHRTextureTransform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkKHRTextureTransform.Location = new System.Drawing.Point(166, 210);
+            this.chkKHRTextureTransform.Name = "chkKHRTextureTransform";
+            this.chkKHRTextureTransform.Size = new System.Drawing.Size(133, 17);
+            this.chkKHRTextureTransform.TabIndex = 21;
+            this.chkKHRTextureTransform.Text = "KHR_texture_transform";
+            this.chkKHRTextureTransform.UseVisualStyleBackColor = true;
+            this.chkKHRTextureTransform.CheckedChanged += new System.EventHandler(this.chkKHRTextureTransform_CheckedChanged);
+            // 
+            // chkKHRLightsPunctual
+            // 
+            this.chkKHRLightsPunctual.AutoSize = true;
+            this.chkKHRLightsPunctual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkKHRLightsPunctual.Location = new System.Drawing.Point(18, 210);
+            this.chkKHRLightsPunctual.Name = "chkKHRLightsPunctual";
+            this.chkKHRLightsPunctual.Size = new System.Drawing.Size(123, 17);
+            this.chkKHRLightsPunctual.TabIndex = 20;
+            this.chkKHRLightsPunctual.Text = "KHR_lights_punctual";
+            this.chkKHRLightsPunctual.UseVisualStyleBackColor = true;
+            this.chkKHRLightsPunctual.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
+            // 
+            // chkOverwriteTextures
+            // 
+            this.chkOverwriteTextures.AutoSize = true;
+            this.chkOverwriteTextures.Checked = true;
+            this.chkOverwriteTextures.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkOverwriteTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkOverwriteTextures.Location = new System.Drawing.Point(18, 141);
+            this.chkOverwriteTextures.Name = "chkOverwriteTextures";
+            this.chkOverwriteTextures.Size = new System.Drawing.Size(112, 17);
+            this.chkOverwriteTextures.TabIndex = 19;
+            this.chkOverwriteTextures.Text = "Overwrite Textures";
+            this.chkOverwriteTextures.UseVisualStyleBackColor = true;
+            this.chkOverwriteTextures.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // chkDracoCompression
             // 
@@ -363,7 +425,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(414, 202);
+            this.butExportAndRun.Location = new System.Drawing.Point(415, 245);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 102;
@@ -389,6 +451,20 @@
             // 
             this.toolTipDracoCompression.ShowAlways = true;
             // 
+            // chkExportMaterials
+            // 
+            this.chkExportMaterials.AutoSize = true;
+            this.chkExportMaterials.Checked = true;
+            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMaterials.Location = new System.Drawing.Point(18, 187);
+            this.chkExportMaterials.Name = "chkExportMaterials";
+            this.chkExportMaterials.Size = new System.Drawing.Size(98, 17);
+            this.chkExportMaterials.TabIndex = 23;
+            this.chkExportMaterials.Text = "Export Materials";
+            this.chkExportMaterials.UseVisualStyleBackColor = true;
+            this.chkExportMaterials.CheckedChanged += new System.EventHandler(this.chkExportMaterials_CheckedChanged);
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -403,7 +479,7 @@
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.butExport);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MinimumSize = new System.Drawing.Size(850, 400);
+            this.MinimumSize = new System.Drawing.Size(848, 394);
             this.Name = "ExporterForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js - Export scene to babylon or glTF format";
@@ -432,7 +508,7 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.CheckBox chkManifest;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox chkCopyTextures;
+        private System.Windows.Forms.CheckBox chkWriteTextures;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox chkHidden;
         private System.Windows.Forms.CheckBox chkAutoSave;
@@ -449,5 +525,10 @@
         private System.Windows.Forms.CheckBox chkMergeAOwithMR;
         private System.Windows.Forms.CheckBox chkDracoCompression;
         private System.Windows.Forms.ToolTip toolTipDracoCompression;
+        private System.Windows.Forms.CheckBox chkOverwriteTextures;
+        private System.Windows.Forms.CheckBox chkKHRLightsPunctual;
+        private System.Windows.Forms.CheckBox chkKHRTextureTransform;
+        private System.Windows.Forms.CheckBox chkKHRMaterialsUnlit;
+        private System.Windows.Forms.CheckBox chkExportMaterials;
     }
 }
