@@ -141,6 +141,7 @@ namespace Max2Babylon
                         item.NodeHandle = node.Handle;
                     }
                     SetRowData(row, item);
+                    ExportItemGridView.NotifyCurrentCellDirty(true);
                 }
             }
         }
@@ -148,6 +149,7 @@ namespace Max2Babylon
         private void btn_accept_Click(object sender, EventArgs e)
         { 
             exportItemList.SaveToData();
+            Loader.Global.SetSaveRequiredFlag(true, false);
         }
 
         private void btn_cancel_Click(object sender, EventArgs e)
