@@ -226,6 +226,14 @@
       <Link>Forms\MaxNodeTreeView.designer.cs</Link>
       <DependentUpon>MaxNodeTreeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\Forms\MultiExportForm.cs">
+      <Link>Forms\MultiExportForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\MultiExportForm.designer.cs">
+      <Link>Forms\MultiExportForm.designer.cs</Link>
+      <DependentUpon>MultiExportForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\Forms\ObjectPropertiesForm.cs">
       <Link>Forms\ObjectPropertiesForm.cs</Link>
       <SubType>Form</SubType>
@@ -283,6 +291,9 @@
     <Compile Include="..\Exporter\GLTFBufferService.cs">
       <Link>Exporter\GLTFBufferService.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.ExportItem.cs">
+      <Link>Exporter\BabylonExporter.ExportItem.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Animation.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.Animation.cs</Link>
     </Compile>
@@ -319,6 +330,10 @@
     <EmbeddedResource Include="..\Forms\LightPropertiesForm.resx">
       <Link>Forms\LightPropertiesForm.resx</Link>
       <DependentUpon>LightPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\MultiExportForm.resx">
+      <Link>Forms\MultiExportForm.resx</Link>
+      <DependentUpon>MultiExportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\ObjectPropertiesForm.resx">
       <Link>Forms\ObjectPropertiesForm.resx</Link>

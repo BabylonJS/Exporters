@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autodesk.Max;
 
 using Color = System.Drawing.Color;
 
@@ -84,7 +85,25 @@ namespace Max2Babylon
             await DoExport();
         }
 
-        private async Task<bool> DoExport()
+        private async Task<bool> DoExport(ExportItemList exportItemList)
+        {
+            treeView.Nodes.Clear();
+
+            bool allSucceeded = true;
+            foreach (ExportItem item in exportItemList)
+            {
+                if (!item.Selected) continue;
+
+                allSucceeded = allSucceeded && await DoExport(item, false);
+
+                if (exporter.IsCancelled)
+                    break;
+            }
+
+            return allSucceeded;
+        }
+
+        private async Task<bool> DoExport(ExportItem exportItem = null, bool clearLogs = true)
         {
             Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.UpdateCheckBox(chkWriteTextures, Loader.Core.RootNode, "babylonjs_writetextures");
@@ -107,7 +126,8 @@ namespace Max2Babylon
 
             exporter = new BabylonExporter();
 
-            treeView.Nodes.Clear();
+            if(clearLogs)
+                treeView.Nodes.Clear();
 
             exporter.OnImportProgressChanged += progress =>
             {
@@ -160,6 +180,7 @@ namespace Max2Babylon
 
             butExport.Enabled = false;
             butExportAndRun.Enabled = false;
+            butMultiExport.Enabled = false;
             butCancel.Enabled = true;
 
             bool success = true;
@@ -167,7 +188,7 @@ namespace Max2Babylon
             {
                 ExportParameters exportParameters = new ExportParameters
                 {
-                    outputPath = txtFilename.Text,
+                    outputPath = exportItem != null ? exportItem.ExportFilePathAbsolute : txtFilename.Text,
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
                     scaleFactor = txtScaleFactor.Text,
                     writeTextures = chkWriteTextures.Checked,
@@ -180,10 +201,11 @@ namespace Max2Babylon
                     txtQuality = txtQuality.Text,
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
                     dracoCompression = chkDracoCompression.Checked,
-                    enableKHRLightsPunctual =chkKHRLightsPunctual.Checked,
+                    enableKHRLightsPunctual = chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
-                    exportMaterials = chkExportMaterials.Checked
+                    exportMaterials = chkExportMaterials.Checked,
+                    exportNode = exportItem != null ? exportItem.Node : null
                 };
 
                 exporter.callerForm = this;
@@ -207,6 +229,7 @@ namespace Max2Babylon
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
+            butMultiExport.Enabled = true;
             butExportAndRun.Enabled = WebServer.IsSupported;
 
             BringToFront();
@@ -375,29 +398,28 @@ namespace Max2Babylon
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private async void butMultiExport_Click(object sender, EventArgs e)
         {
+            string outputFileExt;
+            outputFileExt = comboOutputFormat.SelectedItem.ToString();
+            if (outputFileExt.Contains("binary babylon"))
+                outputFileExt = "babylon";
 
-        }
+            ExportItemList exportItemList = new ExportItemList(outputFileExt);
 
-        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
-        {
+            exportItemList.LoadFromData();
 
-        }
+            int numLoadedItems = exportItemList.Count;
 
-        private void chkKHRTextureTransform_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged_2(object sender, EventArgs e)
-        {
-
-        }
-
-        private void chkExportMaterials_CheckedChanged(object sender, EventArgs e)
-        {
-
+            if (ModifierKeys == Keys.Shift)
+            {
+                MultiExportForm form = new MultiExportForm(exportItemList);
+                form.ShowDialog(this);
+            }
+            else if(numLoadedItems > 0)
+            {
+                await DoExport(exportItemList);
+            }
         }
     }
 }
