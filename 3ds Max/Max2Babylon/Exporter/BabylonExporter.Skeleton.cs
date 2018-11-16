@@ -63,6 +63,13 @@ namespace Max2Babylon
 
             List<IIGameNode> revelantNodes = new List<IIGameNode>();
             List<IIGameNode> bones = GetBones(skin);
+
+            if(bones.Contains(null))
+            {
+                RaiseError("Skin has bones that are outside of the exported hierarchy.", logRank);
+                RaiseError("The skin cannot be exported", logRank);
+                return new List<IIGameNode>();
+            }
             
             // for each bone of the skin, add their parents in the revelantNodes list.
             foreach (IIGameNode bone in bones)

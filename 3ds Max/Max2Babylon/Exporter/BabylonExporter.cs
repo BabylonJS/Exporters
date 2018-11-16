@@ -128,13 +128,19 @@ namespace Max2Babylon
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            gameScene.InitialiseIGame(false);
+            if (exportParameters.exportNode == null)
+                gameScene.InitialiseIGame(false);
+            else gameScene.InitialiseIGame(exportParameters.exportNode, true);
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
 
             IsCancelled = false;
-            RaiseMessage("Exportation started", Color.Blue);
+
+            string fileExportString = exportParameters.exportNode != null
+                ? $"{exportParameters.exportNode.NodeName} | {exportParameters.outputPath}"
+                : exportParameters.outputPath;
+            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
             ReportProgressChanged(0);
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -274,7 +280,12 @@ namespace Max2Babylon
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)
             {
-                exportNodeRec(maxRootNode, babylonScene, gameScene);
+                BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
+
+                // if we're exporting from a specific node, reset the pivot to {0,0,0}
+                if (exportParameters.exportNode != null)
+                    SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
+
                 progression += progressionStep;
                 ReportProgressChanged((int)progression);
                 CheckCancelled();
@@ -534,7 +545,8 @@ namespace Max2Babylon
             }
             Directory.Delete(tempOutputDirectory, true);
             watch.Stop();
-            RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
+
+            RaiseMessage(string.Format("Exportation done in {0:0.00}s: {1}", watch.ElapsedMilliseconds / 1000.0, fileExportString), Color.Blue);
         }
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
@@ -571,7 +583,7 @@ namespace Max2Babylon
             }
         }
 
-        private void exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
+        private BabylonNode exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
         {
             BabylonNode babylonNode = null;
             switch (maxGameNode.IGameObject.IGameType)
@@ -620,7 +632,7 @@ namespace Max2Babylon
                 }
             }
 
-
+            return babylonNode;
         }
 
         /// <summary>
@@ -897,6 +909,23 @@ namespace Max2Babylon
             }
         }
 
+        private void SetNodePosition(ref BabylonNode node, ref BabylonScene babylonScene, float[] newPosition)
+        {
+            float[] offset = new float[] { newPosition[0] - node.position[0], newPosition[1] - node.position[1], newPosition[2] - node.position[2] };
+            node.position = newPosition;
 
+            List<BabylonAnimation> animations = new List<BabylonAnimation>(node.animations);
+            BabylonAnimation animationPosition = animations.Find(animation => animation.property.Equals("position"));
+            if (animationPosition != null)
+            {
+                foreach (BabylonAnimationKey key in animationPosition.keys)
+                {
+                    key.values = new float[] {
+                        key.values[0] + offset[0],
+                        key.values[1] + offset[1],
+                        key.values[2] + offset[2] };
+                }
+            }
+        }
     }
 }
