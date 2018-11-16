@@ -19,5 +19,6 @@
         public bool enableKHRLightsPunctual = false;
         public bool enableKHRTextureTransform = false;
         public bool enableKHRMaterialsUnlit = false;
+        public Autodesk.Max.IINode exportNode;
     }
 }

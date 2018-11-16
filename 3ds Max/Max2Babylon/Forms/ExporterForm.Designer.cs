@@ -42,6 +42,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkWriteTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
             this.chkKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.chkKHRTextureTransform = new System.Windows.Forms.CheckBox();
             this.chkKHRLightsPunctual = new System.Windows.Forms.CheckBox();
@@ -61,7 +62,7 @@
             this.butExportAndRun = new System.Windows.Forms.Button();
             this.butClose = new System.Windows.Forms.Button();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
-            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
+            this.butMultiExport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -71,7 +72,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(211, 245);
+            this.butExport.Location = new System.Drawing.Point(115, 245);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 100;
@@ -232,6 +233,19 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
+            // chkExportMaterials
+            // 
+            this.chkExportMaterials.AutoSize = true;
+            this.chkExportMaterials.Checked = true;
+            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMaterials.Location = new System.Drawing.Point(18, 187);
+            this.chkExportMaterials.Name = "chkExportMaterials";
+            this.chkExportMaterials.Size = new System.Drawing.Size(98, 17);
+            this.chkExportMaterials.TabIndex = 23;
+            this.chkExportMaterials.Text = "Export Materials";
+            this.chkExportMaterials.UseVisualStyleBackColor = true;
+            // 
             // chkKHRMaterialsUnlit
             // 
             this.chkKHRMaterialsUnlit.AutoSize = true;
@@ -242,7 +256,6 @@
             this.chkKHRMaterialsUnlit.TabIndex = 22;
             this.chkKHRMaterialsUnlit.Text = "KHR_materials_unlit";
             this.chkKHRMaterialsUnlit.UseVisualStyleBackColor = true;
-            this.chkKHRMaterialsUnlit.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
             // 
             // chkKHRTextureTransform
             // 
@@ -254,7 +267,6 @@
             this.chkKHRTextureTransform.TabIndex = 21;
             this.chkKHRTextureTransform.Text = "KHR_texture_transform";
             this.chkKHRTextureTransform.UseVisualStyleBackColor = true;
-            this.chkKHRTextureTransform.CheckedChanged += new System.EventHandler(this.chkKHRTextureTransform_CheckedChanged);
             // 
             // chkKHRLightsPunctual
             // 
@@ -266,7 +278,6 @@
             this.chkKHRLightsPunctual.TabIndex = 20;
             this.chkKHRLightsPunctual.Text = "KHR_lights_punctual";
             this.chkKHRLightsPunctual.UseVisualStyleBackColor = true;
-            this.chkKHRLightsPunctual.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
             // 
             // chkOverwriteTextures
             // 
@@ -280,7 +291,6 @@
             this.chkOverwriteTextures.TabIndex = 19;
             this.chkOverwriteTextures.Text = "Overwrite Textures";
             this.chkOverwriteTextures.UseVisualStyleBackColor = true;
-            this.chkOverwriteTextures.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // chkDracoCompression
             // 
@@ -425,7 +435,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(415, 245);
+            this.butExportAndRun.Location = new System.Drawing.Point(318, 245);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 102;
@@ -451,25 +461,24 @@
             // 
             this.toolTipDracoCompression.ShowAlways = true;
             // 
-            // chkExportMaterials
+            // butMultiExport
             // 
-            this.chkExportMaterials.AutoSize = true;
-            this.chkExportMaterials.Checked = true;
-            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMaterials.Location = new System.Drawing.Point(18, 187);
-            this.chkExportMaterials.Name = "chkExportMaterials";
-            this.chkExportMaterials.Size = new System.Drawing.Size(98, 17);
-            this.chkExportMaterials.TabIndex = 23;
-            this.chkExportMaterials.Text = "Export Materials";
-            this.chkExportMaterials.UseVisualStyleBackColor = true;
-            this.chkExportMaterials.CheckedChanged += new System.EventHandler(this.chkExportMaterials_CheckedChanged);
+            this.butMultiExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.butMultiExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.butMultiExport.Location = new System.Drawing.Point(521, 245);
+            this.butMultiExport.Name = "butMultiExport";
+            this.butMultiExport.Size = new System.Drawing.Size(197, 27);
+            this.butMultiExport.TabIndex = 109;
+            this.butMultiExport.Text = "Multi-File Export | Shift-click to edit";
+            this.butMultiExport.UseVisualStyleBackColor = true;
+            this.butMultiExport.Click += new System.EventHandler(this.butMultiExport_Click);
             // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 561);
+            this.Controls.Add(this.butMultiExport);
             this.Controls.Add(this.butExportAndRun);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox2);
@@ -526,6 +535,7 @@
         private System.Windows.Forms.CheckBox chkDracoCompression;
         private System.Windows.Forms.ToolTip toolTipDracoCompression;
         private System.Windows.Forms.CheckBox chkOverwriteTextures;
+        private System.Windows.Forms.Button butMultiExport;
         private System.Windows.Forms.CheckBox chkKHRLightsPunctual;
         private System.Windows.Forms.CheckBox chkKHRTextureTransform;
         private System.Windows.Forms.CheckBox chkKHRMaterialsUnlit;
