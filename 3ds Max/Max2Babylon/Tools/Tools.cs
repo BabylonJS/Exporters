@@ -527,7 +527,7 @@ namespace Max2Babylon
             var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
             Guid uid;
 
-            // If current node already has an uid
+            // If current node already has a uid
             if (uidData != null)
             {
                 uid = new Guid(uidData.Data);
@@ -535,12 +535,14 @@ namespace Max2Babylon
                 if (guids.ContainsKey(uid))
                 {
                     // If the uid is already used by another node
+                    // This should be very rare, but it is perhaps possible when merging max scenes, or when cloning nodes?
                     if (guids[uid].Equals(node as IInterfaceServer) == false)
                     {
                         // Remove old uid
                         node.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
                         // Create a new uid for current node
                         uid = Guid.NewGuid();
+                        guids.Add(uid, node);
                         node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
                     }
                 }
@@ -552,6 +554,10 @@ namespace Max2Babylon
             else
             {
                 uid = Guid.NewGuid();
+                // verify that we create a unique guid
+                while(guids.ContainsKey(uid))
+                    uid = Guid.NewGuid();
+                guids.Add(uid, node);
                 node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
             }
 

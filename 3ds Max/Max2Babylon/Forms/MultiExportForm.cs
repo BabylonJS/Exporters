@@ -7,36 +7,14 @@ namespace Max2Babylon
 {
     public partial class MultiExportForm : Form
     {
+        const bool Default_ExportItemSelected = true;
+
         ExportItemList exportItemList;
 
         public MultiExportForm(ExportItemList exportItemList)
         {
             InitializeComponent();
             ExportItemGridView_Populate(exportItemList);
-            ExportItemGridView.KeyDown += ExportItemGridView_KeyDown;
-        }
-
-        private void ExportItemGridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Delete)
-            {
-                foreach(DataGridViewRow row in ExportItemGridView.SelectedRows)
-                {
-                    if (row.IsNewRow) continue;
-                    ExportItem item = row.Tag as ExportItem;
-                    if (item != null) exportItemList.Remove(item);
-                    row.Tag = null;
-                    ExportItemGridView.Rows.Remove(row);
-                }
-                foreach(DataGridViewCell cell in ExportItemGridView.SelectedCells)
-                {
-                    if (cell.OwningRow.IsNewRow) continue;
-                    ExportItem item = cell.OwningRow.Tag as ExportItem;
-                    if (item != null) exportItemList.Remove(item);
-                    cell.OwningRow.Tag = null;
-                    ExportItemGridView.Rows.Remove(cell.OwningRow);
-                }
-            }
         }
 
         private void ExportItemGridView_Populate(ExportItemList exportItemList)
@@ -63,43 +41,6 @@ namespace Max2Babylon
             row.Cells[2].Value = item.ExportFilePathAbsolute;
         }
 
-        private void ExportItemGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-
-            if (e.ColumnIndex == ColumnFilePath.Index)
-            {
-                var row = ExportItemGridView.Rows[e.RowIndex];
-                string str = row.Cells[e.ColumnIndex].Value as string;
-                if(!string.IsNullOrWhiteSpace(str) && !Uri.TryCreate(str, UriKind.Absolute, out Uri uri))
-                {
-                    e.Cancel = true;
-                }
-            }
-        }
-
-        private void ExportItemGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return; // not sure why but this happens when opening the form
-
-            if (e.ColumnIndex == ColumnFilePath.Index)
-            {
-                var row = ExportItemGridView.Rows[e.RowIndex];
-                ExportItem item = row.Tag as ExportItem;
-                string str = row.Cells[e.ColumnIndex].Value as string;
-
-                if (item == null)
-                {
-                    item = new ExportItem(exportItemList.OutputFileExtension);
-                    item.SetExportFilePath(GetUniqueExportPath(str));
-                    exportItemList.Add(item);
-                }
-
-                item.SetExportFilePath(str);
-                SetRowData(row, item);
-            }
-        }
-        
         private string GetUniqueExportPath(string initialPath)
         {
             string dir = Path.GetDirectoryName(initialPath);
@@ -120,6 +61,87 @@ namespace Max2Babylon
             return path;
         }
 
+        private ExportItem AddExportItem(DataGridViewRow row, string exportPath)
+        {
+            ExportItem item = new ExportItem(exportItemList.OutputFileExtension);
+            item.SetExportFilePath(GetUniqueExportPath(exportPath));
+            item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
+            exportItemList.Add(item);
+            return item;
+        }
+
+        private ExportItem AddExportItem(DataGridViewRow row, uint nodeHandle, string exportPath = null)
+        {
+            ExportItem item = new ExportItem(exportItemList.OutputFileExtension, nodeHandle);
+            item.SetExportFilePath(GetUniqueExportPath(exportPath != null ? exportPath : item.ExportFilePathRelative));
+            item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
+            exportItemList.Add(item);
+            return item;
+        }
+
+        #region  ExportItemGridView Events
+
+        private void ExportItemGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                foreach (DataGridViewRow row in ExportItemGridView.SelectedRows)
+                {
+                    if (row.IsNewRow) continue;
+                    ExportItem item = row.Tag as ExportItem;
+                    if (item != null) exportItemList.Remove(item);
+                    row.Tag = null;
+                    ExportItemGridView.Rows.Remove(row);
+                }
+                foreach (DataGridViewCell cell in ExportItemGridView.SelectedCells)
+                {
+                    if (cell.OwningRow.IsNewRow) continue;
+                    ExportItem item = cell.OwningRow.Tag as ExportItem;
+                    if (item != null) exportItemList.Remove(item);
+                    cell.OwningRow.Tag = null;
+                    ExportItemGridView.Rows.Remove(cell.OwningRow);
+                }
+            }
+        }
+
+        private void ExportItemGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            if (e.ColumnIndex == ColumnFilePath.Index)
+            {
+                var row = ExportItemGridView.Rows[e.RowIndex];
+                string str = row.Cells[e.ColumnIndex].Value as string;
+                if(!string.IsNullOrWhiteSpace(str) && !Uri.TryCreate(str, UriKind.Absolute, out Uri uri))
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void ExportItemGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            var row = ExportItemGridView.Rows[e.RowIndex];
+            ExportItem item = row.Tag as ExportItem;
+
+            if (e.ColumnIndex == ColumnExportCheckbox.Index)
+            {
+                if(item != null)
+                    item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
+            }
+            if (e.ColumnIndex == ColumnFilePath.Index)
+            {
+                string str = row.Cells[e.ColumnIndex].Value as string;
+
+                if (item == null) item = AddExportItem(row, str);
+                else item.SetExportFilePath(str);
+
+                SetRowData(row, item);
+            }
+        }
+
         private void ExportItemGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             // double-clicked node column cell, select a node!
@@ -127,24 +149,50 @@ namespace Max2Babylon
             {
                 if (Loader.Core.DoHitByNameDialog(null) && Loader.Core.SelNodeCount > 0)
                 {
-                    var row = ExportItemGridView.Rows[e.RowIndex];
-                    ExportItem item = row.Tag as ExportItem;
+                    int highestRowIndexEdited = e.RowIndex;
+                    var selectedRow = ExportItemGridView.Rows[e.RowIndex];
+                    ExportItem item = selectedRow.Tag as ExportItem;
                     IINode node = Loader.Core.GetSelNode(0);
-                    if (item == null)
+
+                    if (item == null)  item = AddExportItem(selectedRow, node.Handle);
+                    else item.NodeHandle = node.Handle;
+
+                    SetRowData(selectedRow, item);
+
+                    // add remaining selected nodes as new rows
+                    for (int i = 1; i < Loader.Core.SelNodeCount; ++i)
                     {
-                        item = new ExportItem(exportItemList.OutputFileExtension, node.Handle);
-                        item.SetExportFilePath(GetUniqueExportPath(item.ExportFilePathRelative));
-                        exportItemList.Add(item);
+                        int rowIndex = ExportItemGridView.Rows.Add();
+                        var newRow = ExportItemGridView.Rows[rowIndex];
+
+                        ExportItem newItem = AddExportItem(newRow, Loader.Core.GetSelNode(i).Handle);
+                        SetRowData(newRow, newItem);
+                        highestRowIndexEdited = rowIndex;
                     }
-                    else
-                    {
-                        item.NodeHandle = node.Handle;
-                    }
-                    SetRowData(row, item);
+
+                    // have to explicitly set it dirty for an edge case:
+                    // when a new row is added "automatically-programmatically", through notify cell dirty and endedit(),
+                    //   if the user then clicks on the checkbox of the newly added row,
+                    //     it doesn't add a new row "automatically", whereas otherwise it will.
+                    ExportItemGridView.CurrentCell = ExportItemGridView[e.ColumnIndex, highestRowIndexEdited];
                     ExportItemGridView.NotifyCurrentCellDirty(true);
+                    ExportItemGridView.EndEdit();
                 }
             }
         }
+
+        private void ExportItemGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            // necessary for checkboxes, problem with datagridview
+            if (e.ColumnIndex == ColumnExportCheckbox.Index)
+            {
+                ExportItemGridView.EndEdit();
+            }
+        }
+
+        #endregion
 
         private void btn_accept_Click(object sender, EventArgs e)
         { 
