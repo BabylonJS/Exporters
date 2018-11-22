@@ -283,7 +283,7 @@ namespace Max2Babylon
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
 
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (exportParameters.exportNode != null)
+                if (node != null && exportParameters.exportNode != null)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
 
                 progression += progressionStep;
