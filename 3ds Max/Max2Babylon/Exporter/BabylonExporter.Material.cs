@@ -119,7 +119,8 @@ namespace Max2Babylon
             var unlitProperty = materialNode.IPropertyContainer.QueryProperty("BabylonUnlit");
             bool isUnlit = unlitProperty != null ? unlitProperty.GetBoolValue() : false;
 
-            var stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+            
+            var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
 
             if (stdMat != null)
             {
@@ -581,7 +582,8 @@ namespace Max2Babylon
             else
             {
                 // Standard material
-                var stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+                var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
+                
                 if (stdMat != null)
                 {
                     return null;
