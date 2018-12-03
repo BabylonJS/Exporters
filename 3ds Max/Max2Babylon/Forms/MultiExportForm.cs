@@ -1,5 +1,6 @@
 ﻿using Autodesk.Max;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -70,8 +71,15 @@ namespace Max2Babylon
             return item;
         }
 
-        private ExportItem AddExportItem(DataGridViewRow row, uint nodeHandle, string exportPath = null)
+        //! Add a new export item. Returns null if the given handle already exists in the export item list.
+        private ExportItem TryAddExportItem(DataGridViewRow row, uint nodeHandle, string exportPath = null)
         {
+            foreach(ExportItem existingItem in exportItemList)
+            {
+                if (existingItem.NodeHandle == nodeHandle)
+                    return null;
+            }
+
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension, nodeHandle);
             item.SetExportFilePath(GetUniqueExportPath(exportPath != null ? exportPath : item.ExportFilePathRelative));
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
@@ -151,13 +159,15 @@ namespace Max2Babylon
                 {
                     int highestRowIndexEdited = e.RowIndex;
                     var selectedRow = ExportItemGridView.Rows[e.RowIndex];
-                    ExportItem item = selectedRow.Tag as ExportItem;
+                    ExportItem existingItem = selectedRow.Tag as ExportItem;
                     IINode node = Loader.Core.GetSelNode(0);
 
-                    if (item == null)  item = AddExportItem(selectedRow, node.Handle);
-                    else item.NodeHandle = node.Handle;
-
-                    SetRowData(selectedRow, item);
+                    if (existingItem == null)
+                        existingItem = TryAddExportItem(selectedRow, node.Handle);
+                    else existingItem.NodeHandle = node.Handle;
+                    
+                    // may be null after trying to add a node that already exists in another row
+                    if(existingItem != null) SetRowData(selectedRow, existingItem);
 
                     // add remaining selected nodes as new rows
                     for (int i = 1; i < Loader.Core.SelNodeCount; ++i)
@@ -165,7 +175,12 @@ namespace Max2Babylon
                         int rowIndex = ExportItemGridView.Rows.Add();
                         var newRow = ExportItemGridView.Rows[rowIndex];
 
-                        ExportItem newItem = AddExportItem(newRow, Loader.Core.GetSelNode(i).Handle);
+                        ExportItem newItem = TryAddExportItem(newRow, Loader.Core.GetSelNode(i).Handle);
+
+                        // may be null after trying to add a node that already exists in another row
+                        if (newItem == null)
+                            continue;
+
                         SetRowData(newRow, newItem);
                         highestRowIndexEdited = rowIndex;
                     }
@@ -194,8 +209,65 @@ namespace Max2Babylon
 
         #endregion
 
+        private void btn_change_path_Click(object sender, EventArgs e)
+        {
+            if (ExportItemGridView.SelectedCells.Count <= 0) return;
+            
+            List<DataGridViewCell> pathCells = new List<DataGridViewCell>(ExportItemGridView.SelectedCells.Count);
+            
+            foreach (DataGridViewCell selectedCell in ExportItemGridView.SelectedCells)
+            {
+                DataGridViewCell matchingPathCell = selectedCell.OwningRow.Cells[ColumnFilePath.Index];
+                if(pathCells.Contains(matchingPathCell)) continue;
+                pathCells.Add(matchingPathCell);
+            }
+
+            if (pathCells.Count == 0) return;
+
+            string firstSelectedCellPath = pathCells[0].Value as string;
+            
+            if (string.IsNullOrWhiteSpace(firstSelectedCellPath))
+            {
+                SetPathFileDialog.InitialDirectory = null;
+                SetPathFileDialog.FileName = "FileName";
+            }
+            else
+            {
+                SetPathFileDialog.InitialDirectory = Path.GetDirectoryName(firstSelectedCellPath);
+                SetPathFileDialog.FileName = Path.GetFileName(firstSelectedCellPath);
+            }
+
+            SetPathFileDialog.FileName = pathCells.Count <= 1 ? SetPathFileDialog.FileName : "FileName not used for multiple file path changes";
+
+            if (SetPathFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string dir = Path.GetDirectoryName(SetPathFileDialog.FileName);
+                string filename = Path.GetFileNameWithoutExtension(SetPathFileDialog.FileName);
+
+                Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
+                {
+                    string oldFileName = Path.GetFileNameWithoutExtension(selectedCell.Value as string);
+                    string oldExtension = Path.GetExtension(selectedCell.Value as string);
+                        
+                    if (forcedFileName != null && string.IsNullOrWhiteSpace(oldFileName))
+                        return;
+
+                    string newPath = Path.Combine(dir, forcedFileName ?? oldFileName);
+                    newPath = Path.ChangeExtension(newPath, oldExtension);
+
+                    // change cell value, which triggers value changed event to update the export item
+                    selectedCell.Value = newPath;
+                };
+
+                if (pathCells.Count > 1)
+                    foreach (DataGridViewCell selectedCell in pathCells)
+                        funcUpdatePath(selectedCell, null);
+                else funcUpdatePath(pathCells[0], SetPathFileDialog.FileName);
+            }
+        }
+
         private void btn_accept_Click(object sender, EventArgs e)
-        { 
+        {
             exportItemList.SaveToData();
             Loader.Global.SetSaveRequiredFlag(true, false);
         }
