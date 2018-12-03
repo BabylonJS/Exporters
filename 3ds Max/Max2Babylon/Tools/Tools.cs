@@ -592,8 +592,11 @@ namespace Max2Babylon
             {
                 node.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1);
             }
-
-            node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, System.Text.Encoding.UTF8.GetBytes(value));
+            
+            if (!string.IsNullOrEmpty(value))
+            {
+                node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, System.Text.Encoding.UTF8.GetBytes(value));
+            }
         }
 
         public static IMatrix3 GetWorldMatrix(this IINode node, int t, bool parent)
