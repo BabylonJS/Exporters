@@ -237,34 +237,32 @@ namespace Max2Babylon
                 SetPathFileDialog.FileName = Path.GetFileName(firstSelectedCellPath);
             }
 
-            SetPathFileDialog.FileName = ExportItemGridView.SelectedCells.Count <= 1 ? SetPathFileDialog.FileName : "FileName not used for multiple file path changes";
+            SetPathFileDialog.FileName = pathCells.Count <= 1 ? SetPathFileDialog.FileName : "FileName not used for multiple file path changes";
 
             if (SetPathFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string dir = Path.GetDirectoryName(SetPathFileDialog.FileName);
                 string filename = Path.GetFileNameWithoutExtension(SetPathFileDialog.FileName);
 
-                Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => {
-                    if (selectedCell.ColumnIndex == ColumnFilePath.Index)
-                    {
-                        string oldFileName = Path.GetFileNameWithoutExtension(selectedCell.Value as string);
-                        string oldExtension = Path.GetExtension(selectedCell.Value as string);
+                Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
+                {
+                    string oldFileName = Path.GetFileNameWithoutExtension(selectedCell.Value as string);
+                    string oldExtension = Path.GetExtension(selectedCell.Value as string);
                         
-                        if (forcedFileName != null && string.IsNullOrWhiteSpace(oldFileName))
-                            return;
+                    if (forcedFileName != null && string.IsNullOrWhiteSpace(oldFileName))
+                        return;
 
-                        string newPath = Path.Combine(dir, forcedFileName ?? oldFileName);
-                        newPath = Path.ChangeExtension(newPath, oldExtension);
+                    string newPath = Path.Combine(dir, forcedFileName ?? oldFileName);
+                    newPath = Path.ChangeExtension(newPath, oldExtension);
 
-                        // change cell value, which triggers value changed event to update the export item
-                        selectedCell.Value = newPath;
-                    }
+                    // change cell value, which triggers value changed event to update the export item
+                    selectedCell.Value = newPath;
                 };
 
-                if (ExportItemGridView.SelectedCells.Count > 1)
-                    foreach (DataGridViewCell selectedCell in ExportItemGridView.SelectedCells)
+                if (pathCells.Count > 1)
+                    foreach (DataGridViewCell selectedCell in pathCells)
                         funcUpdatePath(selectedCell, null);
-                else funcUpdatePath(ExportItemGridView.SelectedCells[0], SetPathFileDialog.FileName);
+                else funcUpdatePath(pathCells[0], SetPathFileDialog.FileName);
             }
         }
 
