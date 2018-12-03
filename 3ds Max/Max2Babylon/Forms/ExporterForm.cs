@@ -122,8 +122,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
             
-            // a space because getting the bytes of an empty string returns something that crashes max
-            Loader.Core.RootNode.SetLocalData(string.IsNullOrEmpty(txtFilename.Text) ? " " : txtFilename.Text);
+            Loader.Core.RootNode.SetLocalData(txtFilename.Text);
 
             exporter = new BabylonExporter();
 
