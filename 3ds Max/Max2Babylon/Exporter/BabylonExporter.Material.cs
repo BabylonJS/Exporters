@@ -123,7 +123,8 @@ namespace Max2Babylon
             // check custom exporters first, to allow custom exporters of supported material classes
             materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter);
 
-            var stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+            
+            var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
 
             if (isBabylonExported && materialExporter != null && materialExporter is IBabylonMaterialExporter)
             {
@@ -610,7 +611,8 @@ namespace Max2Babylon
             else
             {
                 // Standard material
-                var stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+                var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
+                
                 if (stdMat != null)
                 {
                     return null;
