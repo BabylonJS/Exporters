@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.10";
+        private string exporterVersion = "1.3.11";
 
         void ReportProgressChanged(int progress)
         {
@@ -491,6 +491,23 @@ namespace Max2Babylon
             }
             // Move files to output directory
             var filePaths = Directory.GetFiles(tempOutputDirectory);
+            if (outputFormat == "binary babylon")
+            {
+                var tempBinaryOutputDirectory = Path.Combine(tempOutputDirectory, "Binary");
+                var binaryFilePaths = Directory.GetFiles(tempBinaryOutputDirectory);
+                foreach(var filePath in binaryFilePaths)
+                {
+                    if (filePath.EndsWith(".binary.babylon"))
+                    {
+                        var file = Path.GetFileName(filePath);
+                        var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
+                        var outputFile = Path.Combine(outputDirectory, file);
+                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                        break;
+                    }
+                }
+
+            }
             if (outputFormat == "glb")
             {
                 foreach (var file_path in filePaths)

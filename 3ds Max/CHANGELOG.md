@@ -41,3 +41,7 @@
 ## v1.3.10
 **Fixed bugs:**
 - Fixed bug where export would fail if the number of max material param blocks is 0 (https://github.com/BabylonJS/Exporters/issues/392)
+
+## v1.3.11
+**Fixed bugs:**
+- Fixed bug where binary babylon files were not copied to the output directory (https://github.com/BabylonJS/Exporters/issues/397)
