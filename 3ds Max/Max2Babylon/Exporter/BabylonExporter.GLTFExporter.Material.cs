@@ -321,8 +321,7 @@ namespace Max2Babylon
                         }
 
                         //export textures
-                        var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
-                        textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
+                        textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, babylonTexture.name);
                         gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
 
                         // If no specular map is defined, the metallic and roughness values are be driven by the global parameters
