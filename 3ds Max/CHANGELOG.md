@@ -49,3 +49,7 @@
 ## v1.3.12
 **Fixed bugs:**
 - Fixed bug where texture names are changed when exporting from the exporter(https://github.com/BabylonJS/Exporters/issues/379)
+
+## v1.3.13
+**Fixed bugs:**
+- Fixed bug where babylonbinarymeshdata file was not getting copied to the output directory(https://github.com/BabylonJS/Exporters/issues/401)
