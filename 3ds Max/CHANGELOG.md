@@ -53,3 +53,9 @@
 ## v1.3.13
 **Fixed bugs:**
 - Fixed bug where babylonbinarymeshdata file was not getting copied to the output directory(https://github.com/BabylonJS/Exporters/issues/401)
+
+## v1.3.14
+**Fixed bugs:**
+- Fixed bug where texture transform offset and scale is
+not exported correctly using glTF
+(https://github.com/BabylonJS/Exporters/issues/383)

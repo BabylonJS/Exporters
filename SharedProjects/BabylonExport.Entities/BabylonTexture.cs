@@ -68,6 +68,19 @@ namespace BabylonExport.Entities
         public float vScale { get; set; }
 
         [DataMember]
+        public float uRotationCenter { get; set; }
+
+        [DataMember]
+        public float vRotationCenter { get; set; }
+
+        [DataMember]
+        public float wRotationCenter { get; set; }
+
+        [DataMember]
+        public bool invertY { get; set; }
+
+
+        [DataMember]
         public float uAng { get; set; }
 
         [DataMember]
@@ -118,6 +131,10 @@ namespace BabylonExport.Entities
             vOffset = 0;
             uScale = 1.0f;
             vScale = 1.0f;
+            uRotationCenter = 0.5f;
+            vRotationCenter = 0.5f;
+            wRotationCenter = 0.5f;
+            invertY = true;
             uAng = 0;
             vAng = 0;
             wAng = 0;
@@ -140,6 +157,10 @@ namespace BabylonExport.Entities
             vOffset = original.vOffset;
             uScale = original.uScale;
             vScale = original.vScale;
+            uRotationCenter = original.uRotationCenter;
+            vRotationCenter = original.vRotationCenter;
+            wRotationCenter = original.wRotationCenter;
+            invertY = original.invertY;
             uAng = original.uAng;
             vAng = original.vAng;
             wAng = original.wAng;
