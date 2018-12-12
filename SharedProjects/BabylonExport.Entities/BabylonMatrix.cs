@@ -16,6 +16,16 @@ namespace BabylonExport.Entities
         }
 
         /**
+         * Returns a new Translation Matrix from a vector3
+         */
+        public static BabylonMatrix Translation(BabylonVector3 translation)
+        {
+            var result = Identity();
+            result.setTranslation(translation);
+            return result;
+        }
+
+        /**
          * Inverts in place the Matrix.  
          * Returns the Matrix inverted.  
          */

@@ -390,13 +390,10 @@ namespace Max2Babylon
             {
                 offset = new float[] { babylonTexture.uOffset, -babylonTexture.vOffset },
                 rotation = angle,
-                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale },
+                scale = new float[] { babylonTexture.uScale, -babylonTexture.vScale },
                 texCoord = babylonTexture.coordinatesIndex
             };
 
-            textureTransform.offset[1] += 1 - babylonTexture.vScale;    // update vOffset according to the vScale
-            textureTransform.offset[0] += (float)(0.5 * (1 - (Math.Cos(angleDirect) - Math.Sin(angleDirect)))); // update uOffset according to the rotation
-            textureTransform.offset[1] += (float)(0.5 * (1 - (Math.Sin(angleDirect) + Math.Cos(angleDirect)))); // update vOffset according to the rotation
 
             if (gltfTextureInfo.extensions == null)
             {
