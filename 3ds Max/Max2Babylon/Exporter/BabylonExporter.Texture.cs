@@ -622,11 +622,26 @@ namespace Max2Babylon
                 RaiseWarning(string.Format("Unsupported map channel, Only channel 1 and 2 are supported."), 3);
             }
 
-            babylonTexture.uOffset = -uvGen.GetUOffs(0);
+            babylonTexture.uOffset = uvGen.GetUOffs(0);
             babylonTexture.vOffset = -uvGen.GetVOffs(0);
 
             babylonTexture.uScale = uvGen.GetUScl(0);
             babylonTexture.vScale = uvGen.GetVScl(0);
+
+            var offset = new BabylonVector3(babylonTexture.uOffset, -babylonTexture.vOffset, 0);
+            var scale = new BabylonVector3(babylonTexture.uScale, babylonTexture.vScale, 1);
+            var rotation = new BabylonQuaternion();
+            var pivotCenter = new BabylonVector3(-0.5f, -0.5f, 0);
+            var transformMatrix = Tools.ComputeTextureTransformMatrix(pivotCenter, offset, rotation, scale);
+
+            transformMatrix.decompose(scale, rotation, offset);
+            babylonTexture.uOffset = -offset.X;
+            babylonTexture.vOffset = -offset.Y;
+            babylonTexture.uScale = scale.X;
+            babylonTexture.vScale = -scale.Y;
+            babylonTexture.uRotationCenter = 0.0f;
+            babylonTexture.vRotationCenter = 0.0f;
+            babylonTexture.invertY = false;
 
             if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
@@ -637,38 +652,6 @@ namespace Max2Babylon
             babylonTexture.vAng = uvGen.GetVAng(0);
             babylonTexture.wAng = uvGen.GetWAng(0);
 
-
-            // Fix offset according to the rotation
-            // 3DS Max and babylon don't use the same origin for the rotation
-            if(babylonTexture.wAng != 0f)
-            {
-                var angle = -babylonTexture.wAng;
-                var cos = (float)Math.Cos(angle);
-                var sin = (float)Math.Sin(angle);
-                var u = babylonTexture.uOffset;
-                var v = babylonTexture.vOffset;
-
-                // uOffset
-                babylonTexture.uOffset = u * cos;
-                babylonTexture.vOffset = u * -sin;
-                // vOffset
-                babylonTexture.uOffset += v * sin;
-                babylonTexture.vOffset += v * cos;
-                // rotation
-                babylonTexture.uOffset -= sin;
-                babylonTexture.vOffset -= cos;
-            }
-
-            // Fix offset according to the scale
-            // 3DS Max keep the tiling symmetrical
-            if(babylonTexture.uScale != 0f)
-            {
-                babylonTexture.uOffset += (1f - babylonTexture.uScale) / 2f;
-            }
-            if(babylonTexture.vScale != 0f)
-            {
-                babylonTexture.vOffset += (1f - babylonTexture.vScale) * 1.5f;
-            }
 
             // TODO - rotation and scale
             if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
