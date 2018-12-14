@@ -64,3 +64,8 @@ not exported correctly using glTF
 **Fixed bugs:**
 - Fixed bug where morph target normals were not exported unless the property menu was opened
 (https://github.com/BabylonJS/Exporters/issues/382)
+
+## v1.3.16
+**Fixed bugs:**
+- Fixed issue where the scale factor was treated as 1 / scale factor in the exported glTF
+(https://github.com/BabylonJS/Exporters/issues/394)
