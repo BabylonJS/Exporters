@@ -1,7 +1,7 @@
 # Blender2Babylon add-on changelog
 
 ## Blender Exporter Version 6.0.0
-*01 January 2019*
+*01 February 2019*
 
 * Supports Blender 2.80 redesign (not completely yet)
 * Removed Internal render materials support
@@ -21,7 +21,7 @@
 	* Relocated Max Simultaneous Lights from Mesh tab to here
 	* Relocated Name Space from Mesh tab to here (might be in TOB only, since JSON files cannot share materials)
 * Mesh baking can be reduced to only the texture channels required, keeping other image texture based channels (not for multi-material meshes)
-* Nodes based renders (Cycles & eevee) not always just baked.  See chart for properties / textures & where values are from.  Properties are assigned when no texture input to socket (except refraction).
+* Nodes based renders (Cycles & eevee) not always just baked.  See chart for properties / textures & where values are from.  Properties are only assigned when no texture input to socket.
 
 |  STD Property / Tex | PBR Property / Tex | From Nodes-Socket
 | --- | --- | --- |
@@ -30,9 +30,9 @@
 | emissiveColor / emissiveTexture | emissiveColor / emissiveTexture | Emission - Color |
 | specularColor / specularTexture | reflectivityColor / reflectivityTexture | Glossy BSDF - Color, Principled BSDF - Specular |
 | specularPower (inverted & 0 - 128) | roughness / useRoughnessFromMetallicTextureGreen | Glossy BSDF - Roughness, Principled BSDF - Roughness |
+| indexOfRefraction / refractionTexture | indexOfRefraction / refractionTexture | Refraction BSDF - IOR, Frensel - IOR, Principled BSDF - IOR / Refraction BSDF - Color, Principled BSDF - IOR|
 | -- | metallic / metallicTexture | Principled - Specular |
-| -- | indexOfRefraction | Refraction BSDF - IOR, Frensel - IOR, Principled BSDF - IOR|
-| -- | refractionTexture | Refraction BSDF - Color, Principled BSDF - IOR|
+| -- | emissiveIntensity | Emission - Strength|
 | alpha / opacityTexture | alpha / opacityTexture |Diffuse BSDF - Color, Transparency BSDF - Color, Principled BSDF - Base Color |
 | bumpTexture | bumpTexture | Normal Map - Color, Principled BSDF - Normal |
 

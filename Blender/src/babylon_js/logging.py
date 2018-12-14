@@ -40,6 +40,11 @@ class Logger:
         Logger.instance = None
 
     @staticmethod
+    def error(msg, numTabIndent = 0, noNewLine = False):
+        Logger.log('\nERROR: ' + msg + '\n', numTabIndent, noNewLine)
+        Logger.instance.nWarnings += 1
+
+    @staticmethod
     def warn(msg, numTabIndent = 1, noNewLine = False):
         Logger.log('WARNING: ' + msg, numTabIndent, noNewLine)
         Logger.instance.nWarnings += 1

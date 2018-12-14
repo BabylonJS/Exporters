@@ -7,4 +7,8 @@ class NormalMapBJSNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
 
-        self.findTextureInput(BUMP_TEX)
+        input = self.findInput('Color')
+        self.findTexture(input, BUMP_TEX)
+
+        if len(bpyNode.uv_map) > 0:
+            self.uvMapName = bpyNode.uv_map

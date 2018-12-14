@@ -1,4 +1,4 @@
-from .logger import *
+from .logging import *
 from .package_level import *
 
 from .f_curve_animatable import *
@@ -73,7 +73,7 @@ class Light(FCurveAnimatable):
     def get_direction(matrix):
         return (matrix.to_3x3() * Vector((0.0, 0.0, -1.0))).normalized()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.name, True)
         write_string(file_handler, 'id', self.name)
@@ -103,8 +103,7 @@ class Light(FCurveAnimatable):
 
             file_handler.write(']')
 
-
-        super().to_scene_file(file_handler) # Animations
+        super().to_json_file(file_handler) # Animations
         file_handler.write('}')
 #===============================================================================
 class ShadowGenerator:
@@ -130,7 +129,7 @@ class ShadowGenerator:
             if (mesh.castShadows):
                 self.shadowCasters.append(mesh.name)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_int(file_handler, 'mapSize', self.mapSize, True)
         write_string(file_handler, 'lightId', self.lightId)
@@ -158,12 +157,12 @@ class ShadowGenerator:
         file_handler.write(']')
         file_handler.write('}')
 #===============================================================================
-bpy.types.Light.autoAnimate = bpy.props.BoolProperty(
+bpy.types.Lamp.autoAnimate = bpy.props.BoolProperty(
     name='Auto launch animations',
     description='',
     default = False
 )
-bpy.types.Light.shadowMap = bpy.props.EnumProperty(
+bpy.types.Lamp.shadowMap = bpy.props.EnumProperty(
     name='Shadow Map',
     description='',
     items = ((NO_SHADOWS           , 'None'         , 'No Shadow Maps'),
@@ -175,29 +174,29 @@ bpy.types.Light.shadowMap = bpy.props.EnumProperty(
     default = NO_SHADOWS
 )
 
-bpy.types.Light.shadowMapSize = bpy.props.IntProperty(
+bpy.types.Lamp.shadowMapSize = bpy.props.IntProperty(
     name='Shadow Map Size',
     description='',
     default = 512
 )
-bpy.types.Light.shadowBias = bpy.props.FloatProperty(
+bpy.types.Lamp.shadowBias = bpy.props.FloatProperty(
     name='Shadow Bias',
     description='',
     default = 0.00005
 )
 
-bpy.types.Light.shadowBlurScale = bpy.props.IntProperty(
+bpy.types.Lamp.shadowBlurScale = bpy.props.IntProperty(
     name='Blur Scale',
     description='Setting when using a Blur Variance shadow map',
     default = 2
 )
 
-bpy.types.Light.shadowBlurBoxOffset = bpy.props.IntProperty(
+bpy.types.Lamp.shadowBlurBoxOffset = bpy.props.IntProperty(
     name='Blur Box Offset',
     description='Setting when using a Blur Variance shadow map',
     default = 0
 )
-bpy.types.Light.shadowDarkness = bpy.props.FloatProperty(
+bpy.types.Lamp.shadowDarkness = bpy.props.FloatProperty(
     name='Shadow Darkness',
     description='Shadow Darkness',
     default = 0,
@@ -214,7 +213,7 @@ class LightPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob is not None and isinstance(ob.data, bpy.types.Light)
+        return ob is not None and isinstance(ob.data, bpy.types.Lamp)
 
     def draw(self, context):
         ob = context.object

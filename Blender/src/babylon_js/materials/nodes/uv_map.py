@@ -1,7 +1,5 @@
 from .abstract import AbstractBJSNode
 
-import bpy
-
 #===============================================================================
 class UVMapBJSNode(AbstractBJSNode):
     bpyType = 'ShaderNodeUVMap'
@@ -9,4 +7,5 @@ class UVMapBJSNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
 
-        self.mapName = bpyNode.uv_map
+        if len(bpyNode.uv_map) > 0:
+            self.uvMapName = bpyNode.uv_map

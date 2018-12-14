@@ -1,4 +1,5 @@
 from .abstract import AbstractBJSNode
+from babylon_js.logging import *
 
 CONNECTOR_SHADERS = 'ShaderNodeBlackbody ShaderNodeValToRGB ShaderNodeCombineHSV ShaderNodeCombineRGB ShaderNodeCombineXYZ ShaderNodeMath ShaderNodeRGBToBW ShaderNodeSeparateHSV ShaderNodeSeparateXYZ ShaderNodeVectorMath ShaderNodeWavelength'
 PROCEDURAL_TEXTURES = 'ShaderNodeTexBrick ShaderNodeTexChecker ShaderNodeTexGradient ShaderNodeTexMagic ShaderNodeTexMusgrave ShaderNodeTexNoise ShaderNodeTexPointDensity ShaderNodeTexSky ShaderNodeTexVoronoi ShaderNodeTexWave'
@@ -10,7 +11,7 @@ class UnsupportedNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
         self.mustBake = True
-        print('unsupported node type: ' + bpyNode.bl_idname)
+        Logger.log('unsupported node type(' + bpyNode.bl_idname +') will trigger baking', 3)
 #===============================================================================
 #,
 #ShaderNodeAttribute,
@@ -22,7 +23,7 @@ class UnsupportedNode(AbstractBJSNode):
 #ShaderNodeBsdfGlass,
 #,
 #ShaderNodeBsdfHair,
-#ShaderNodeBsdfRefraction,
+#,
 #ShaderNodeBsdfToon,
 #ShaderNodeBsdfTranslucent,
 #,
@@ -34,7 +35,7 @@ class UnsupportedNode(AbstractBJSNode):
 #,
 #,
 #ShaderNodeExtendedMaterial,
-#ShaderNodeFresnel,
+#,
 #ShaderNodeGamma,
 #ShaderNodeGeometry,
 #ShaderNodeGroup,

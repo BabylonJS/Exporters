@@ -1,5 +1,7 @@
 from .abstract import *
 
+from mathutils import Color
+
 #===============================================================================
 class PrincipledBJSNode(AbstractBJSNode):
     bpyType = 'ShaderNodeBsdfPrincipled'
@@ -7,31 +9,40 @@ class PrincipledBJSNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
 
-        defaultDiffuse = self.findTextureInput(DIFFUSE_TEX, 'Base Color')
+        input = self.findInput('Base Color')
+        defaultDiffuse = self.findTexture(input, DIFFUSE_TEX)
         if defaultDiffuse is not None:
             self.diffuseChannelColor = Color((defaultDiffuse[0], defaultDiffuse[1], defaultDiffuse[2]))
             self.diffuseAlpha = defaultDiffuse[3]
 
-        input = self.findInput('Base Color')
-        self.mustBakeDiffuse = input and input.mustBake
+        self.mustBakeDiffuse = input.mustBake if isinstance(input, AbstractBJSNode) else False
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        defaultMetallic = self.findTextureInput(METAL_TEX, 'Metallic')
+        input = self.findInput('Metallic')
+        defaultMetallic = self.findTexture(input, METAL_TEX)
         if defaultMetallic is not None:
             self.metallic = defaultMetallic
-        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        defaultSpecular = self.findTextureInput(SPECULAR_TEX, 'Specular')
-        if defaultSpecular is not None:
-            self.specularColor = Color((defaultSpecular, defaultSpecular, defaultColor))  # for STD
-            self.specular = defaultSpecular # for PBR
 
+        self.mustBakeMetal = input.mustBake if isinstance(input, AbstractBJSNode) else False
+       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         input = self.findInput('Specular')
-        self.mustBakeSpecular = input and input.mustBake
+        defaultSpecular = self.findTexture(input, SPECULAR_TEX)
+        if defaultSpecular is not None:
+            self.specularColor = Color((defaultSpecular, defaultSpecular, defaultSpecular))
+
+        self.mustBakeSpecular = input.mustBake if isinstance(input, AbstractBJSNode) else False
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        defaultRoughness = self.findTextureInput(ROUGHNESS_TEX, 'Roughness')
+        input = self.findInput('Roughness')
+        defaultRoughness = self.findTexture(input, ROUGHNESS_TEX)
         if defaultRoughness is not None:
             self.roughness = defaultRoughness
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        self.findTextureInput(BUMP_TEX, 'Normal')
+        input = self.findInput('IOR')
+        defaultIOR = self.findTexture(input, REFRACTION_TEX)
+        if defaultIOR is not None:
+            self.indexOfRefraction = defaultIOR
 
+        self.mustBakeRefraction = input.mustBake if isinstance(input, AbstractBJSNode) else False
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         input = self.findInput('Normal')
-        self.mustBakeNormal = input and input.mustBake
+        self.findTexture(input, BUMP_TEX)
+        self.mustBakeNormal = input.mustBake if isinstance(input, AbstractBJSNode) else False

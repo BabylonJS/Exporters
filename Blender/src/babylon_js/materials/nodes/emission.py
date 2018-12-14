@@ -9,8 +9,10 @@ class EmissionBJSNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
 
-        defaultColor = self.findTextureInput(EMMISIVE_TEX)
+        input = self.findInput('Color')
+        defaultColor = self.findTexture(input, EMMISIVE_TEX)
         if defaultColor is not None:
             self.emissiveColor = Color((defaultColor[0], defaultColor[1], defaultColor[2]))
 
-        self.mustBakeEmissive = self.mustBake
+        self.emissiveIntensity = self.findInput('Strength')
+        self.mustBakeEmissive = input.mustBake if isinstance(input, AbstractBJSNode) else False

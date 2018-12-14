@@ -1,4 +1,4 @@
-from .logger import *
+from .logging import *
 from .package_level import *
 
 import bpy
@@ -36,7 +36,7 @@ class AnimationRange:
     def to_string(self):
         return self.name + ': ' + ' in[' + format_int(self.frames_in[0]) + ' - ' + format_int(self.highest_frame_in) + '], out[' + format_int(self.frame_start) + ' - ' + format_int(self.frame_end) + ']'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.name, True)
         write_int(file_handler, 'from', self.frame_start)
@@ -95,7 +95,7 @@ class Animation:
         self.name = name
         self.propertyInBabylon = propertyInBabylon
 
-        # these never get used by Bones, so optional in contructor args
+        # these never get used by Bones, so optional in constructor args
         self.attrInBlender = attrInBlender
         self.mult = mult
         self.xOffset = xOffset
@@ -123,7 +123,7 @@ class Animation:
     def get_last_frame(self):
         return self.frames[len(self.frames) - 1] if len(self.frames) > 0 else -1
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         precision = bpy.context.scene.positionsPrecision if self.propertyInBabylon == 'position' else FLOAT_PRECISION_DEFAULT
         file_handler.write('{')
         write_int(file_handler, 'dataType', self.dataType, True)

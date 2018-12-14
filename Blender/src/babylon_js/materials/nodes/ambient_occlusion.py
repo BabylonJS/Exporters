@@ -9,8 +9,9 @@ class AmbientOcclusionBJSNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
 
-        defaultColor = self.findTextureInput(AMBIENT_TEX)
+        input = self.findInput('Color')
+        defaultColor = self.findTexture(input, AMBIENT_TEX)
         if defaultColor is not None:
             self.ambientColor = Color((defaultColor[0], defaultColor[1], defaultColor[2]))
 
-        self.mustBakeAmbient = self.mustBake
+        self.mustBakeAmbient = input.mustBake if isinstance(input, AbstractBJSNode) else False

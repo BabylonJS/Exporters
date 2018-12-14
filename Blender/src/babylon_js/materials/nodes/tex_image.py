@@ -10,7 +10,7 @@ class TextureImageBJSNode(AbstractBJSNode):
 
         # extract node specific (non-input) values
         self.image = bpyNode.image
-        self.alpha = True
+        self.alpha = bpyNode.image.file_format not in NON_ALPHA_FORMATS
         self.coordinatesMode = CUBIC_MODE if bpyNode.interpolation == 'CUBE' else EXPLICIT_MODE
         if bpyNode.extension == 'REPEAT':
             # mirror not in an imageNode, but InvertNode, baking image rather than setting mirror address mode

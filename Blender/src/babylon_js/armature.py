@@ -1,5 +1,5 @@
 from .animation import *
-from .logger import *
+from .logging import *
 from .package_level import *
 
 import bpy
@@ -53,7 +53,7 @@ class Bone:
         else:
             return SystemMatrix * matrix_world * bpyBone.matrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('\n{')
         write_string(file_handler, 'name', self.name, True)
         write_int(file_handler, 'index', self.index)
@@ -161,7 +161,7 @@ class Skeleton:
         # should not happen, but if it does clearly a bug, so terminate
         raise Exception('bone name "' + boneName + '" not found in skeleton')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.name, True)
         write_int(file_handler, 'id', self.id)  # keep int for legacy of original exporter
@@ -174,7 +174,7 @@ class Skeleton:
                 file_handler.write(',')
             first = False
 
-            bone.to_scene_file(file_handler)
+            bone.to_json_file(file_handler)
 
         file_handler.write(']')
 
@@ -186,7 +186,7 @@ class Skeleton:
                     file_handler.write(',')
                 first = False
 
-                range.to_scene_file(file_handler)
+                range.to_json_file(file_handler)
 
             file_handler.write(']')
 

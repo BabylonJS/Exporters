@@ -1,4 +1,4 @@
-from .logger import *
+from .logging import *
 from .package_level import *
 
 from .f_curve_animatable import *
@@ -94,7 +94,7 @@ class Camera(FCurveAnimatable):
             self.arcRotBeta   = abs(beta)
             self.arcRotRadius = distance3D
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.name, True)
         write_string(file_handler, 'id', self.name)
@@ -130,7 +130,7 @@ class Camera(FCurveAnimatable):
         if hasattr(self, 'lockedTargetId'):
             write_string(file_handler, 'lockedTargetId', self.lockedTargetId)
 
-        super().to_scene_file(file_handler) # Animations
+        super().to_json_file(file_handler) # Animations
         file_handler.write('}')
 #===============================================================================
 bpy.types.Camera.autoAnimate = bpy.props.BoolProperty(

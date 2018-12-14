@@ -1,13 +1,13 @@
 from .animation import *
-from .logger import *
+from .logging import *
 from .package_level import *
 
 import bpy
 #===============================================================================
 class FCurveAnimatable:
     def define_animations(self, object, supportsRotation, supportsPosition, supportsScaling, xOffsetForRotation = 0):
-        currentActionOnly = bpy.context.scene.currentActionOnly
-        sceneLevelAutoAnimate = bpy.context.scene.autoAnimate
+        currentActionOnly = bpy.context.scene.world.currentActionOnly
+        sceneLevelAutoAnimate = bpy.context.scene.world.autoAnimate
 
         # just because a sub-class can be animatable does not mean it is
         self.animationsPresent = object.animation_data and object.animation_data.action
@@ -84,7 +84,7 @@ class FCurveAnimatable:
                         self.autoAnimateTo = animation.get_last_frame()
                 self.autoAnimateLoop = True
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         if (self.animationsPresent):
             file_handler.write('\n,"animations":[')
             first = True
