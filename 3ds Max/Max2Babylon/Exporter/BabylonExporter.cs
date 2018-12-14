@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.15";
+        private string exporterVersion = "1.3.16";
 
         void ReportProgressChanged(int progress)
         {
@@ -334,7 +334,7 @@ namespace Max2Babylon
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
                 rootNode.isDummy = true;
-                float rootNodeScale = 1.0f / scaleFactorFloat;
+                float rootNodeScale = scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
 
                 if (ExportQuaternionsInsteadOfEulers)
