@@ -63,4 +63,4 @@ not exported correctly using glTF
 ## v1.3.15
 **Fixed bugs:**
 - Fixed bug where morph target normals were not exported unless the property menu was opened
-(https://github.com/BabylonJS/Exporters/issues/383)
+(https://github.com/BabylonJS/Exporters/issues/382)
