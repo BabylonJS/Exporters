@@ -500,7 +500,7 @@ namespace Max2Babylon
                                 var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
 
-                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals", 1))
                                 {
                                     babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
                                 }
