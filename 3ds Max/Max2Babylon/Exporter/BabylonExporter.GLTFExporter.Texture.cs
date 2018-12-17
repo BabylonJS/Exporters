@@ -95,13 +95,6 @@ namespace Max2Babylon
                 name = babylonTexture.name;
             }
 
-            // Check for texture optimisation
-            if (CheckIfImageIsRegistered(name))
-            {
-                var TextureComponent = GetRegisteredTexture(name);
-
-                return TextureComponent;
-            }
 
             RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
@@ -122,7 +115,7 @@ namespace Max2Babylon
             gltfSampler.index = gltf.SamplersList.Count;
             gltf.SamplersList.Add(gltfSampler);
 
-            // --- Retreive info from babylon texture ---
+            // --- Retrieve info from babylon texture ---
             // Mag and min filters
             GLTFSampler.TextureMagFilter? magFilter;
             GLTFSampler.TextureMinFilter? minFilter;
@@ -193,11 +186,37 @@ namespace Max2Babylon
                     RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!");
                 }
             }
-            
+            var textureID = name + TextureTransformID(gltfTextureInfo);
+            // Check for texture optimization.  This is done here after the texture transform has been potentially applied to the texture extension
+            if (CheckIfImageIsRegistered(textureID))
+            {
+                var textureComponent = GetRegisteredTexture(textureID);
+
+                return textureComponent;
+            }
+
             // Add the texture in the dictionary
-            RegisterTexture(gltfTextureInfo, name);
+            RegisterTexture(gltfTextureInfo, textureID);
 
             return gltfTextureInfo;
+        }
+
+        private string TextureTransformID(GLTFTextureInfo gltfTextureInfo)
+        {
+            if (gltfTextureInfo.extensions == null || !gltfTextureInfo.extensions.ContainsKey(KHR_texture_transform))
+            {
+                return "";
+            }
+            else { 
+                // Set an id for the texture transform and append to the name
+                KHR_texture_transform textureTransform = gltfTextureInfo.extensions[BabylonExporter.KHR_texture_transform] as KHR_texture_transform;
+                var offsetID = textureTransform.offset[0] + "_" + textureTransform.offset[1];
+                var rotationID = textureTransform.rotation.ToString();
+                var scaleID = textureTransform.scale[0] + "_" + textureTransform.scale[1];
+                var textureTransformID = offsetID + "_" + rotationID + "_" + scaleID;
+
+                return textureTransformID;
+            }
         }
 
         private GLTFTextureInfo ExportEmissiveTexture(BabylonStandardMaterial babylonMaterial, GLTF gltf, float[] defaultEmissive, float[] defaultDiffuse)

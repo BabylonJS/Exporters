@@ -69,3 +69,8 @@ not exported correctly using glTF
 **Fixed bugs:**
 - Fixed issue where the scale factor was treated as 1 / scale factor in the exported glTF
 (https://github.com/BabylonJS/Exporters/issues/394)
+
+## v1.3.17
+**Fixed bugs:**
+- Fixed issue where textures with different texture transforms applied were not exported properly with glTF
+(https://github.com/BabylonJS/Exporters/issues/409)
