@@ -87,9 +87,9 @@ namespace Max2Babylon
             return false;
         }
 
-        public void RegisterTexture(GLTFTextureInfo TextureInfo, string name)
+        public void RegisterTexture(GLTFTextureInfo textureInfo, string name)
         {
-            _DicoTextNameTextureComponent.Add(name, TextureInfo);
+            _DicoTextNameTextureComponent.Add(name, textureInfo);
         }
 
         public GLTFTextureInfo GetRegisteredTexture(string name)
