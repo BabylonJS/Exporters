@@ -23,7 +23,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool isBABYLONPreprocessed { get; set; }
 
-        public BabylonHDRCubeTexture()
+        public BabylonHDRCubeTexture(string id) : base(id)
         {
             SetCustomType("BABYLON.HDRCubeTexture");
             size = 0;
