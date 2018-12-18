@@ -124,8 +124,11 @@ namespace BabylonExport.Entities
         // Used for gltf export
         public Bitmap bitmap;
 
-        public BabylonTexture()
+        public string Id { get; }
+
+        public BabylonTexture(string id)
         {
+            this.Id = id;
             level = 1.0f;
             uOffset = 0;
             vOffset = 0;
