@@ -54,7 +54,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public Dictionary<string, object[]> vectors3Arrays;
 
-        public BabylonShaderMaterial()
+        public BabylonShaderMaterial(string id): base(id)
         {
             SetCustomType("BABYLON.ShaderMaterial");
             shaderPath = null;
