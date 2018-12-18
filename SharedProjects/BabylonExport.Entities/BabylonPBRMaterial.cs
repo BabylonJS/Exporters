@@ -133,7 +133,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public int maxSimultaneousLights { get; set; }
 
-        public BabylonPBRMaterial() : base()
+        public BabylonPBRMaterial(string id) : base(id)
         {
             SetCustomType("BABYLON.PBRMaterial");
             directIntensity = 1.0f;

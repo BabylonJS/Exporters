@@ -124,10 +124,9 @@ namespace Max2Babylon
 
             if (stdMat != null)
             {
-                var babylonMaterial = new BabylonStandardMaterial
+                var babylonMaterial = new BabylonStandardMaterial(id)
                 {
                     name = name,
-                    id = id,
                     isUnlit = isUnlit,
                     diffuse = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray(),
                     alpha = 1.0f - materialNode.MaxMaterial.GetXParency(0, false)
@@ -251,10 +250,9 @@ namespace Max2Babylon
             {
                 var propertyContainer = materialNode.IPropertyContainer;
 
-                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
                     name = name,
-                    id = id,
                     isUnlit = isUnlit
                 };
 
@@ -403,10 +401,9 @@ namespace Max2Babylon
             else if (isArnoldMaterial(materialNode))
             {
                 var propertyContainer = materialNode.IPropertyContainer;
-                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
                     name = name,
-                    id = id,
                     isUnlit = isUnlit
                 };
 
