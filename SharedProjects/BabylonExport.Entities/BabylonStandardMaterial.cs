@@ -83,7 +83,7 @@ namespace BabylonExport.Entities
         // Used for gltf
         public float selfIllum;
 
-        public BabylonStandardMaterial() : base()
+        public BabylonStandardMaterial(string id) : base(id)
         {
             SetCustomType("BABYLON.StandardMaterial");
             ambient = new[] {1.0f, 1.0f, 1.0f};

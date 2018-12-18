@@ -79,3 +79,8 @@ not exported correctly using glTF
 **Fixed bugs:**
 - Fixed issue where a texture connected to multiple material inputs would be cloned on export instead of reused
 (https://github.com/BabylonJS/Exporters/issues/386)
+
+## v1.3.19
+**Fixed bugs:**
+- Fixed issue where standard materials with different texture transforms were not exported to glTF
+(https://github.com/BabylonJS/Exporters/issues/409)

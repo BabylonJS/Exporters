@@ -43,7 +43,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public BabylonTexture diffuseTexture { get; set; }
 
-        public BabylonFurMaterial() : base()
+        public BabylonFurMaterial(string id) : base(id)
         {
             customType = "BABYLON.FurMaterial";
             furAngle = 0;
