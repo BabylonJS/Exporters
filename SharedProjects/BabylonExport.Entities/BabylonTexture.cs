@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
@@ -150,6 +151,7 @@ namespace BabylonExport.Entities
 
         public BabylonTexture(BabylonTexture original)
         {
+            Id = Guid.NewGuid().ToString();
             name = original.name;
             level = original.level;
             hasAlpha = original.hasAlpha;

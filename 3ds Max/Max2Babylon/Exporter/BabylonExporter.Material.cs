@@ -349,7 +349,22 @@ namespace Max2Babylon
                             {
                                 if (exportParameters.mergeAOwithMR)
                                 {
-                                    babylonMaterial.occlusionTexture = ormTexture;
+                                    // if the ambient occlusion texture map uses a different set of texture coordinates than
+                                    // metallic roughness, create a new instance of the ORM BabylonTexture with the different texture
+                                    // coordinate indices
+                                    var ambientOcclusionTexture = _getBitmapTex(ambientOcclusionTexmap);
+                                    var texCoordIndex = ambientOcclusionTexture.UVGen.MapChannel - 1;
+                                    if (texCoordIndex != ormTexture.coordinatesIndex)
+                                    {
+                                        babylonMaterial.occlusionTexture = new BabylonTexture(ormTexture);
+                                        babylonMaterial.occlusionTexture.coordinatesIndex = texCoordIndex;
+                                        // Set UVs/texture transform for the ambient occlusion texture
+                                        var uvGen = _exportUV(ambientOcclusionTexture.UVGen, babylonMaterial.occlusionTexture);
+                                    }
+                                    else
+                                    {
+                                        babylonMaterial.occlusionTexture = ormTexture;
+                                    } 
                                 }
                                 else
                                 {
@@ -436,6 +451,7 @@ namespace Max2Babylon
                     // Metallic, roughness
                     ITexmap metallicTexmap = _getTexMap(materialNode, 9);
                     ITexmap roughnessTexmap = _getTexMap(materialNode, 5);
+                    ITexmap ambientOcclusionTexmap = _getTexMap(materialNode, 6); // Use diffuse roughness map as ambient occlusion
 
                     // Check if MR textures are already merged
                     bool areTexturesAlreadyMerged = false;
@@ -451,7 +467,31 @@ namespace Max2Babylon
                             BabylonTexture ormTexture = ExportTexture(metallicTexmap, babylonScene);
                             babylonMaterial.metallicRoughnessTexture = ormTexture;
                             // The already merged map is assumed to contain Ambient Occlusion in R channel
-                            babylonMaterial.occlusionTexture = ormTexture;
+
+                            if (ambientOcclusionTexmap != null)
+                            {
+                                // if the ambient occlusion texture map uses a different set of texture coordinates than
+                                // metallic roughness, create a new instance of the ORM BabylonTexture with the different texture
+                                // coordinate indices
+
+                                var ambientOcclusionTexture = _getBitmapTex(ambientOcclusionTexmap);
+                                var texCoordIndex = ambientOcclusionTexture.UVGen.MapChannel - 1;
+                                if (texCoordIndex != ormTexture.coordinatesIndex)
+                                {
+                                    babylonMaterial.occlusionTexture = new BabylonTexture(ormTexture);
+                                    babylonMaterial.occlusionTexture.coordinatesIndex = texCoordIndex;
+                                    // Set UVs/texture transform for the ambient occlusion texture
+                                    var uvGen = _exportUV(ambientOcclusionTexture.UVGen, babylonMaterial.occlusionTexture);
+                                }
+                                else
+                                {
+                                    babylonMaterial.occlusionTexture = ormTexture;
+                                }
+                            }
+                            else
+                            {
+                                babylonMaterial.occlusionTexture = ormTexture;
+                            }
                             areTexturesAlreadyMerged = true;
                         }
                     }
