@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -13,6 +14,7 @@ namespace Max2Babylon
         private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
         public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
         private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
+        private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
 
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
@@ -116,12 +118,10 @@ namespace Max2Babylon
                 // --------------------------
                 // -------- Sampler ---------
                 // --------------------------
-
                 RaiseMessage("GLTFExporter.Texture | create sampler", 3);
                 GLTFSampler gltfSampler = new GLTFSampler();
                 gltfSampler.index = gltf.SamplersList.Count;
-                gltf.SamplersList.Add(gltfSampler);
-
+                
                 // --- Retrieve info from babylon texture ---
                 // Mag and min filters
                 GLTFSampler.TextureMagFilter? magFilter;
@@ -133,28 +133,48 @@ namespace Max2Babylon
                 gltfSampler.wrapS = getWrapMode(babylonTexture.wrapU);
                 gltfSampler.wrapT = getWrapMode(babylonTexture.wrapV);
 
+                var matchingSampler = gltf.SamplersList.FirstOrDefault(sampler => sampler.wrapS == gltfSampler.wrapS && sampler.wrapT == gltfSampler.wrapT && sampler.magFilter == gltfSampler.magFilter && sampler.minFilter == gltfSampler.minFilter);
+                if (matchingSampler != null)
+                {
+                    gltfSampler = matchingSampler;
+                }
+                else
+                {
+                    gltf.SamplersList.Add(gltfSampler);
+                }
+
 
                 // --------------------------
                 // --------- Image ----------
                 // --------------------------
 
                 RaiseMessage("GLTFExporter.Texture | create image", 3);
-                GLTFImage gltfImage = new GLTFImage
+                GLTFImage gltfImage = null;
+                if (glTFImageMap.ContainsKey(name))
                 {
-                    uri = name
-                };
-
-                gltfImage.index = gltf.ImagesList.Count;
-                gltf.ImagesList.Add(gltfImage);
-                switch (validImageFormat)
-                {
-                    case "jpg":
-                        gltfImage.FileExtension = "jpeg";
-                        break;
-                    case "png":
-                        gltfImage.FileExtension = "png";
-                        break;
+                    gltfImage = glTFImageMap[name];
                 }
+                else
+                {
+                    gltfImage = new GLTFImage
+                    {
+                        uri = name
+                    };
+                    gltfImage.index = gltf.ImagesList.Count;
+                    gltf.ImagesList.Add(gltfImage);
+                    glTFImageMap.Add(name, gltfImage);
+                    switch (validImageFormat)
+                    {
+                        case "jpg":
+                            gltfImage.FileExtension = "jpeg";
+                            break;
+                        case "png":
+                            gltfImage.FileExtension = "png";
+                            break;
+                    }
+                }
+
+                
 
 
                 // --------------------------
@@ -181,7 +201,7 @@ namespace Max2Babylon
                     texCoord = babylonTexture.coordinatesIndex
                 };
 
-                if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
+                if (!(babylonTexture.uOffset == 0f) || !(babylonTexture.vOffset == 0f) || !(babylonTexture.uScale == 1f) || !(babylonTexture.vScale == 1f) || !(babylonTexture.wAng == 0f))
                 {
                     // Add texture extension if enabled in the export settings
                     if (exportParameters.enableKHRTextureTransform)

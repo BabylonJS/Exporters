@@ -84,3 +84,8 @@ not exported correctly using glTF
 **Fixed bugs:**
 - Fixed issue where standard materials with different texture transforms were not exported to glTF
 (https://github.com/BabylonJS/Exporters/issues/409)
+
+## v1.3.20
+**Fixed bugs:**
+- Allow ambient occlusion texture coordinates and texture transforms to be respected when merged with an ORM texture
+(https://github.com/BabylonJS/Exporters/issues/385)
