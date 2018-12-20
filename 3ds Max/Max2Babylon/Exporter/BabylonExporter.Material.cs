@@ -441,7 +441,7 @@ namespace Max2Babylon
                 babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
 
                 // --- Textures ---
-                // 1 - base_color ; 5 - diffuse_roughness ; 9 - metalness ; 10 - transparent
+                // 1 - base_color ; 5 - specular_roughness ; 9 - metalness ; 10 - transparent
                 ITexmap colorTexmap = _getTexMap(materialNode, 1);
                 ITexmap alphaTexmap = _getTexMap(materialNode, 10);
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
@@ -506,8 +506,20 @@ namespace Max2Babylon
                         }
                     }
 
-                    babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 20, babylonScene);
-                    babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 30, babylonScene);
+                    var numOfTexMapSlots = materialNode.MaxMaterial.NumSubTexmaps;
+
+                    for (int i = 0; i < numOfTexMapSlots; i++)
+                    {
+                        if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "normal")
+                        {
+                            babylonMaterial.normalTexture = ExportPBRTexture(materialNode, i, babylonScene);
+                        }
+
+                        if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "emission")
+                        {
+                            babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, i, babylonScene);
+                        }
+                    }
                 }
 
                 // Constraints
@@ -522,7 +534,13 @@ namespace Max2Babylon
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
 
-                if (babylonMaterial.emissiveTexture != null)
+                var emissioncolor = propertyContainer.QueryProperty("emission_color").GetPoint3Property().ToArray();
+
+                if (emissioncolor != null)
+                {
+                    babylonMaterial.emissive = emissioncolor;
+                }
+                else
                 {
                     babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
                 }
