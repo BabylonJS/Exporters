@@ -436,9 +436,12 @@ namespace Max2Babylon
                 babylonMaterial.metallic = propertyContainer.GetFloatProperty(29);
 
                 // Emissive: emission_color * emission
-                float[] emissionColor = propertyContainer.GetPoint3Property(94).ToArray();
-                float emissionWeight = propertyContainer.GetFloatProperty(91);
-                babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+                float[] emissionColor = propertyContainer.QueryProperty("emission_color").GetPoint3Property().ToArray();
+                float emissionWeight = propertyContainer.QueryProperty("emission").GetFloatValue();
+                if (emissionColor != null && emissionWeight > 0f)
+                {
+                    babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+                }
 
                 // --- Textures ---
                 // 1 - base_color ; 5 - specular_roughness ; 9 - metalness ; 10 - transparent
@@ -515,7 +518,7 @@ namespace Max2Babylon
                             babylonMaterial.normalTexture = ExportPBRTexture(materialNode, i, babylonScene);
                         }
 
-                        if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "emission")
+                        else if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "emission")
                         {
                             babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, i, babylonScene);
                         }
@@ -532,17 +535,6 @@ namespace Max2Babylon
                 if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
-                }
-
-                var emissioncolor = propertyContainer.QueryProperty("emission_color").GetPoint3Property().ToArray();
-
-                if (emissioncolor != null)
-                {
-                    babylonMaterial.emissive = emissioncolor;
-                }
-                else
-                {
-                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
                 }
 
                 if (babylonMaterial.metallicRoughnessTexture != null)
