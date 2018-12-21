@@ -198,7 +198,7 @@ namespace Max2Babylon
 
                 var extension = Path.GetExtension(baseColorTexture.Map.FullFilePath).ToLower();
                 if (baseColorTexture.AlphaSource == 3 && // 'None (Opaque)'
-                    extension == ".jpg" || extension == ".jpeg" || extension == ".bmp")
+                    extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".png" )
                 {
                     // Copy base color image
                     return ExportTexture(baseColorTexture, babylonScene);

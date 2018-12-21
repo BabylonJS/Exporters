@@ -436,12 +436,15 @@ namespace Max2Babylon
                 babylonMaterial.metallic = propertyContainer.GetFloatProperty(29);
 
                 // Emissive: emission_color * emission
-                float[] emissionColor = propertyContainer.GetPoint3Property(94).ToArray();
-                float emissionWeight = propertyContainer.GetFloatProperty(91);
-                babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+                float[] emissionColor = propertyContainer.QueryProperty("emission_color").GetPoint3Property().ToArray();
+                float emissionWeight = propertyContainer.QueryProperty("emission").GetFloatValue();
+                if (emissionColor != null && emissionWeight > 0f)
+                {
+                    babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+                }
 
                 // --- Textures ---
-                // 1 - base_color ; 5 - diffuse_roughness ; 9 - metalness ; 10 - transparent
+                // 1 - base_color ; 5 - specular_roughness ; 9 - metalness ; 10 - transparent
                 ITexmap colorTexmap = _getTexMap(materialNode, 1);
                 ITexmap alphaTexmap = _getTexMap(materialNode, 10);
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
@@ -506,8 +509,20 @@ namespace Max2Babylon
                         }
                     }
 
-                    babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 20, babylonScene);
-                    babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 30, babylonScene);
+                    var numOfTexMapSlots = materialNode.MaxMaterial.NumSubTexmaps;
+
+                    for (int i = 0; i < numOfTexMapSlots; i++)
+                    {
+                        if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "normal")
+                        {
+                            babylonMaterial.normalTexture = ExportPBRTexture(materialNode, i, babylonScene);
+                        }
+
+                        else if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "emission")
+                        {
+                            babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, i, babylonScene);
+                        }
+                    }
                 }
 
                 // Constraints
@@ -520,11 +535,6 @@ namespace Max2Babylon
                 if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
-                }
-
-                if (babylonMaterial.emissiveTexture != null)
-                {
-                    babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
                 }
 
                 if (babylonMaterial.metallicRoughnessTexture != null)

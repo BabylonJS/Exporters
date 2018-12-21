@@ -89,3 +89,9 @@ not exported correctly using glTF
 **Fixed bugs:**
 - Allow ambient occlusion texture coordinates and texture transforms to be respected when merged with an ORM texture
 (https://github.com/BabylonJS/Exporters/issues/385)
+
+## v1.3.21
+**Fixed bugs:**
+- fixed material-slot allocation for Arnold materials to better withstand changes to slot IDs (due to feature changes on arnold material)
+- optimizedmaterial-alphasettings-export by adding .png to valid extensions when exporting opaque materials
+(https://github.com/BabylonJS/Exporters/pull/416)
