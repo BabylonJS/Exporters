@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
@@ -33,7 +32,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.21";
+        private string exporterVersion = "1.3.22";
 
         void ReportProgressChanged(int progress)
         {
