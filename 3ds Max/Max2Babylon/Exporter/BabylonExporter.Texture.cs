@@ -534,13 +534,6 @@ namespace Max2Babylon
                 {
                     name = Path.GetFileNameWithoutExtension(texture.MapName) + "." + validImageFormat
                 };
-                var regexInvalidURIPattern = @"/:|;|\?|#|\[|\]|@|!|\$|&|'|\(|\)|\*|\+|,|=";
-                if (Regex.IsMatch(babylonTexture.name, regexInvalidURIPattern))
-                {
-                    RaiseMessage($"'{babylonTexture.name}' contains characters that are not valid for a uri.  Replacing them with '_'", 2);
-                    babylonTexture.name = Regex.Replace(babylonTexture.name, regexInvalidURIPattern, "_"); // replace characters with uri friendly filename
-                }
-                
                 RaiseMessage($"texture id = {babylonTexture.Id}", 2);
 
                 // Level
