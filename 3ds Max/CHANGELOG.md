@@ -100,3 +100,8 @@ not exported correctly using glTF
 **Fixed bugs:**
 - modify texture name if it is not a valid uri name
 (https://github.com/BabylonJS/Exporters/issues/419)
+
+## v1.3.23
+**Changes:**
+- preserve texture name if it is not a valid uri name, but modify within glTF file
+(https://github.com/BabylonJS/Exporters/issues/419)
