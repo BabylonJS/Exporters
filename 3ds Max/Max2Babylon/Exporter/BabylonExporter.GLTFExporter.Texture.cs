@@ -201,7 +201,7 @@ namespace Max2Babylon
                     texCoord = babylonTexture.coordinatesIndex
                 };
 
-                if (!(babylonTexture.uOffset == 0f) || !(babylonTexture.vOffset == 0f) || !(babylonTexture.uScale == 1f) || !(babylonTexture.vScale == 1f) || !(babylonTexture.wAng == 0f))
+                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == 1) || !(babylonTexture.wAng == 0))
                 {
                     // Add texture extension if enabled in the export settings
                     if (exportParameters.enableKHRTextureTransform)

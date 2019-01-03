@@ -110,3 +110,8 @@ not exported correctly using glTF
 **Changes:**
 - Add version number in exporter window
 (https://github.com/BabylonJS/Exporters/issues/424)
+
+## v1.3.25
+**Fixed Bugs:**
+- Fixed bug in GLTFImage uri which caused glb files to not export
+(https://github.com/BabylonJS/Exporters/issues/423)
