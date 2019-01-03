@@ -12,7 +12,14 @@ namespace GLTFExport.Entities
             get => _uri;
             set
             {
-                _uri = Uri.EscapeDataString(value);
+                if (value == null)
+                {
+                    _uri = null;
+                }
+                else
+                {
+                    _uri = Uri.EscapeDataString(value);
+                }
             }
         }
 
