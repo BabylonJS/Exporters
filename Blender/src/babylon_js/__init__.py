@@ -1,8 +1,8 @@
 bl_info = {
     'name': 'Babylon.js',
     'author': 'David Catuhe, Jeff Palmer',
-    'version': (6, 0, -2),
-    'blender': (2, 79, 0),
+    'version': (6, 0, -1),
+    'blender': (2, 80, 0),
     'location': 'File > Export > Babylon.js (.babylon)',
     'description': 'Export Babylon.js scenes (.babylon)',
     'wiki_url': 'https://github.com/BabylonJS/Babylon.js/tree/master/Exporters/Blender',
@@ -66,6 +66,9 @@ class JsonMain(bpy.types.Operator, ExportHelper):
 
         if (exporter.fatalError):
             self.report({'ERROR'}, exporter.fatalError)
+            
+        elif (exporter.nErrors > 0):
+            self.report({'ERROR'}, 'Output cancelled due to data error, See log file.')
 
         elif (exporter.nWarnings > 0):
             self.report({'WARNING'}, 'Processing completed, but ' + str(exporter.nWarnings) + ' WARNINGS were raised,  see log file.')
@@ -100,16 +103,14 @@ def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
-    #bpy.types.TOPBAR_MT_file_export.append(menu_func)
-    bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
         
-    #bpy.types.TOPBAR_MT_file_export.remove(menu_func)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
 # Registration the calling of the INFO_MT_file_export file selector
 def menu_func(self, context):

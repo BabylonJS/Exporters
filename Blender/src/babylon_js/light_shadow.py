@@ -18,9 +18,15 @@ STD_SHADOWS = 'STD'
 POISSON_SHADOWS = 'POISSON'
 ESM_SHADOWS = 'ESM'
 BLUR_ESM_SHADOWS = 'BLUR_ESM'
+
+AUTOMATIC_MODE = '0';
+POWER_MODE = '1';
+LUMINOUS_INTENSITY_MODE = '2';
+ILLUMINANCE_MODE = '3';
+LUMINANCE_MODE = '4';
 #===============================================================================
 class Light(FCurveAnimatable):
-    def __init__(self, light, meshesAndNodes):
+    def __init__(self, light, usePBRMaterials):
         if light.parent and light.parent.type != 'ARMATURE':
             self.parentId = light.parent.name
 
@@ -28,50 +34,53 @@ class Light(FCurveAnimatable):
         Logger.log('processing begun of light (' + light.data.type + '):  ' + self.name)
         self.define_animations(light, False, True, False)
 
-        light_type_items = {'POINT': POINT_LIGHT, 'SUN': DIRECTIONAL_LIGHT, 'SPOT': SPOT_LIGHT, 'HEMI': HEMI_LIGHT, 'AREA': POINT_LIGHT}
+        light_type_items = {'POINT': POINT_LIGHT, 'SUN': DIRECTIONAL_LIGHT, 'SPOT': SPOT_LIGHT, 'AREA': HEMI_LIGHT}
         self.light_type = light_type_items[light.data.type]
 
         if self.light_type == POINT_LIGHT:
             self.position = light.location
-            if hasattr(light.data, 'use_sphere'):
-                if light.data.use_sphere:
-                    self.range = light.data.distance
+            self.range = light.data.cutoff_distance
+            self.radius = light.data.shadow_soft_size
 
         elif self.light_type == DIRECTIONAL_LIGHT:
             self.position = light.location
             self.direction = Light.get_direction(light.matrix_local)
+            self.radius = light.data.shadow_soft_size
 
         elif self.light_type == SPOT_LIGHT:
             self.position = light.location
             self.direction = Light.get_direction(light.matrix_local)
             self.angle = light.data.spot_size
             self.exponent = light.data.spot_blend * 2
-            if light.data.use_sphere:
-                self.range = light.data.distance
+            self.range = light.data.cutoff_distance
+            self.radius = light.data.shadow_soft_size
 
         else:
-            # Hemi
+            # Hemi discontinued for Blender 2.80, so using area
+            self.range = light.data.cutoff_distance
             matrix_local = light.matrix_local.copy()
             matrix_local.translation = Vector((0, 0, 0))
-            self.direction = (Vector((0, 0, -1)) * matrix_local)
+            self.direction = (Vector((0, 0, -1)) @ matrix_local)
             self.direction = scale_vector(self.direction, -1)
             self.groundColor = Color((0, 0, 0))
+            self.radius = light.data.size
 
-        self.intensity = light.data.energy
-        self.diffuse   = light.data.color if light.data.use_diffuse  else Color((0, 0, 0))
-        self.specular  = light.data.color if light.data.use_specular else Color((0, 0, 0))
+        self.intensityMode = light.data.pbrIntensityMode if usePBRMaterials else AUTOMATIC_MODE
+        self.intensity = min(light.data.energy / 10.0, 1.0) if self.intensityMode == AUTOMATIC_MODE else light.data.energy
+        self.diffuse   = light.data.color
+        self.specular  = light.data.color * light.data.specular_factor
 
-        # inclusion section
-        if light.data.use_own_layer:
-            lampLayer = getLayer(light)
-            self.includedOnlyMeshesIds = []
-            for mesh in meshesAndNodes:
-                if mesh.layer == lampLayer:
-                    self.includedOnlyMeshesIds.append(mesh.name)
+        # inclusion section; discontinued for Blender 2.80; meshesAndNodes was a former argument
+        #if light.data.use_own_layer:
+        #    lampLayer = getLayer(light)
+        #    self.includedOnlyMeshesIds = []
+        #    for mesh in meshesAndNodes:
+        #        if mesh.layer == lampLayer:
+        #            self.includedOnlyMeshesIds.append(mesh.name)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     @staticmethod
     def get_direction(matrix):
-        return (matrix.to_3x3() * Vector((0.0, 0.0, -1.0))).normalized()
+        return (matrix.to_3x3() @ Vector((0.0, 0.0, -1.0))).normalized()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def to_json_file(self, file_handler):
         file_handler.write('{')
@@ -87,21 +96,23 @@ class Light(FCurveAnimatable):
         if hasattr(self, 'groundColor'): write_color (file_handler, 'groundColor', self.groundColor)
         if hasattr(self, 'range'      ): write_float (file_handler, 'range'      , self.range      )
 
+        write_int(file_handler, 'intensityMode', self.intensityMode)
         write_float(file_handler, 'intensity', self.intensity)
         write_color(file_handler, 'diffuse', self.diffuse)
         write_color(file_handler, 'specular', self.specular)
+        write_float(file_handler, 'radius', self.radius)
 
-        if hasattr(self, 'includedOnlyMeshesIds'):
-            file_handler.write(',"includedOnlyMeshesIds":[')
-            first = True
-            for meshId in self.includedOnlyMeshesIds:
-                if first != True:
-                    file_handler.write(',')
-                first = False
+#        if hasattr(self, 'includedOnlyMeshesIds'):
+#            file_handler.write(',"includedOnlyMeshesIds":[')
+#            first = True
+#            for meshId in self.includedOnlyMeshesIds:
+#                if first != True:
+#                    file_handler.write(',')
+#                first = False
 
-                file_handler.write('"' + meshId + '"')
+#                file_handler.write('"' + meshId + '"')
 
-            file_handler.write(']')
+#            file_handler.write(']')
 
         super().to_json_file(file_handler) # Animations
         file_handler.write('}')
@@ -157,12 +168,25 @@ class ShadowGenerator:
         file_handler.write(']')
         file_handler.write('}')
 #===============================================================================
-bpy.types.Lamp.autoAnimate = bpy.props.BoolProperty(
+bpy.types.Light.autoAnimate = bpy.props.BoolProperty(
     name='Auto launch animations',
     description='',
     default = False
 )
-bpy.types.Lamp.shadowMap = bpy.props.EnumProperty(
+
+bpy.types.Light.pbrIntensityMode = bpy.props.EnumProperty(
+    name='PBR Intensity Mode',
+    description='',
+    items = ((AUTOMATIC_MODE         , 'Automtic'          , ''),
+             (POWER_MODE             , 'Luminous Power'    , 'Lumen (lm)'),
+             (LUMINOUS_INTENSITY_MODE, 'Luminous Intensity', 'Candela (lm/sr)'),
+             (ILLUMINANCE_MODE       , 'Illuminance'       , 'Lux (lm/m^2)'),
+             (LUMINANCE_MODE         , 'Luminance'         , 'Nit (cd/m^2')
+            ),
+    default = AUTOMATIC_MODE
+)
+
+bpy.types.Light.shadowMap = bpy.props.EnumProperty(
     name='Shadow Map',
     description='',
     items = ((NO_SHADOWS           , 'None'         , 'No Shadow Maps'),
@@ -174,29 +198,29 @@ bpy.types.Lamp.shadowMap = bpy.props.EnumProperty(
     default = NO_SHADOWS
 )
 
-bpy.types.Lamp.shadowMapSize = bpy.props.IntProperty(
+bpy.types.Light.shadowMapSize = bpy.props.IntProperty(
     name='Shadow Map Size',
     description='',
     default = 512
 )
-bpy.types.Lamp.shadowBias = bpy.props.FloatProperty(
+bpy.types.Light.shadowBias = bpy.props.FloatProperty(
     name='Shadow Bias',
     description='',
     default = 0.00005
 )
 
-bpy.types.Lamp.shadowBlurScale = bpy.props.IntProperty(
+bpy.types.Light.shadowBlurScale = bpy.props.IntProperty(
     name='Blur Scale',
     description='Setting when using a Blur Variance shadow map',
     default = 2
 )
 
-bpy.types.Lamp.shadowBlurBoxOffset = bpy.props.IntProperty(
+bpy.types.Light.shadowBlurBoxOffset = bpy.props.IntProperty(
     name='Blur Box Offset',
     description='Setting when using a Blur Variance shadow map',
     default = 0
 )
-bpy.types.Lamp.shadowDarkness = bpy.props.FloatProperty(
+bpy.types.Light.shadowDarkness = bpy.props.FloatProperty(
     name='Shadow Darkness',
     description='Shadow Darkness',
     default = 0,
@@ -213,11 +237,12 @@ class LightPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob is not None and isinstance(ob.data, bpy.types.Lamp)
+        return ob is not None and isinstance(ob.data, bpy.types.Light)
 
     def draw(self, context):
         ob = context.object
         layout = self.layout
+        layout.prop(ob.data, 'pbrIntensityMode')
         layout.prop(ob.data, 'shadowMap')
 
         usingShadows =  ob.data.shadowMap != NO_SHADOWS

@@ -72,12 +72,12 @@ class Texture:
 
         if bpyMesh:
             if not self.uvMapName or self.uvMapName == UV_ACTIVE_TEXTURE:  # only for image based & no node specifying
-                self.uvMapName = bpyMesh.data.uv_textures.active.name
+                self.uvMapName = bpyMesh.data.uv_layers.active.name
 
             Logger.log('texture type:  ' + self.textureType + ', mapped using: "' + self.uvMapName + '"', 4)
-            if bpyMesh.data.uv_textures[0].name == self.uvMapName:
+            if bpyMesh.data.uv_layers[0].name == self.uvMapName:
                 self.coordinatesIndex = 0
-            elif bpyMesh.data.uv_textures[1].name == self.uvMapName:
+            elif bpyMesh.data.uv_layers[1].name == self.uvMapName:
                 self.coordinatesIndex = 1
             else:
                 logging.Logger.warn('Texture is not mapped as UV or UV2, assigned 1', 5)

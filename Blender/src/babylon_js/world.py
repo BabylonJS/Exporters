@@ -24,8 +24,8 @@ class World:
     def __init__(self, scene):
         self.autoClear = True
         world = scene.world
-        self.ambient_color = world.ambient_color # nuke for 2.80
-        self.clear_color   = world.horizon_color # color for 2.80
+        #self.ambient_color = world.ambient_color # nuke for 2.80
+        self.clear_color   = world.color # color for 2.80
 
         self.gravity = scene.gravity
         self.writeManifestFile = world.writeManifestFile
@@ -53,7 +53,6 @@ class World:
     def to_json_file(self, file_handler, exporter):
         write_bool(file_handler, 'autoClear', self.autoClear, True)
         write_color(file_handler, 'clearColor', self.clear_color)
-        write_color(file_handler, 'ambientColor', self.ambient_color)
         write_vector(file_handler, 'gravity', self.gravity)
 
         if exporter.needPhysics:
@@ -77,15 +76,16 @@ class World:
                 write_bool(file_handler, 'createDefaultSkybox ', True) 
                 write_float(file_handler, 'skyboxBlurLevel ', self.boxBlur)
 #===============================================================================
-
+# probably delete!!!!!!!!!!!!!!!!
 bpy.types.World.exportScope = bpy.props.EnumProperty(
+    name="Export Scope",
+    description="Export selection control",
     items=(
         (SCOPE_ALL, "Entire scene", "Export the whole scene"),
         (SCOPE_SELECTED, "Selected Objects", "Export the selected objects only"),
         (SCOPE_VISIBLE, "Selected Layers", "Export only objects in the active layers"),
     ),
-    name="Export Scope",
-    description="Export selection control",
+    default=SCOPE_ALL
 )
 
 ###      Skybox environment      ###
@@ -99,7 +99,7 @@ bpy.types.World.environmentTextureSize = bpy.props.EnumProperty(
     default = ENV_SZ_1
 )
 bpy.types.World.skyBox = bpy.props.BoolProperty(
-    name='Sky Box from Enviroment Tex',
+    name='Sky Box from Environment Tex',
     description='When checked Create a sky box.  A background surface node with an Environment Texture input is also required.',
     default = False
 )
@@ -112,7 +112,7 @@ bpy.types.World.boxBlur = bpy.props.FloatProperty(
 ###      Fog     ###
 bpy.types.World.fogMode = bpy.props.EnumProperty(
     name='Mode',
-    description='',
+    description='Babylon JS fog mode',
     items = ((FOGMODE_NONE  , 'None'               , 'No Fog'),
              (FOGMODE_LINEAR, 'Linear'             , 'Linear Fog'),
              (FOGMODE_EXP   , 'Exponential'        , 'Exponential Fog'),
@@ -226,14 +226,16 @@ class WorldPanel(bpy.types.Panel):
         layout = self.layout
 
         world = context.world
-        layout.prop(world, 'exportScope')
+        # probably permanently delete, but wait for now
+        #layout.prop(world, 'exportScope')
 
-        box = layout.box()
-        box.label(text='Sky Box / Enviroment Texture:')
-        box.prop(world, 'environmentTextureSize')
-        row = box.row()
-        row.prop(world, 'skyBox')
-        row.prop(world, 'boxBlur')
+        # hidden until BJS allows .hdr files
+        #box = layout.box()
+        #box.label(text='Sky Box / Enviroment Texture:')
+        #box.prop(world, 'environmentTextureSize')
+        #row = box.row()
+        #row.prop(world, 'skyBox')
+        #row.prop(world, 'boxBlur')
 
         box = layout.box()
         box.label(text='Fog:')

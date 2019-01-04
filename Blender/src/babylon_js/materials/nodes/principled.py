@@ -12,7 +12,7 @@ class PrincipledBJSNode(AbstractBJSNode):
         input = self.findInput('Base Color')
         defaultDiffuse = self.findTexture(input, DIFFUSE_TEX)
         if defaultDiffuse is not None:
-            self.diffuseChannelColor = Color((defaultDiffuse[0], defaultDiffuse[1], defaultDiffuse[2]))
+            self.diffuseColor = Color((defaultDiffuse[0], defaultDiffuse[1], defaultDiffuse[2]))
             self.diffuseAlpha = defaultDiffuse[3]
 
         self.mustBakeDiffuse = input.mustBake if isinstance(input, AbstractBJSNode) else False

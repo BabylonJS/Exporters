@@ -1,4 +1,7 @@
 from .abstract import AbstractBJSNode
+from babylon_js.logging import *
+
+from mathutils import Color
 
 #===============================================================================
 class GltfBJSNode(AbstractBJSNode):
@@ -8,18 +11,19 @@ class GltfBJSNode(AbstractBJSNode):
         super().__init__(bpyNode, socketName)
         
         # gltf nodes are really groups; weakly linked by name
-        if bpyNode.name.startswith('glTF Metallic Roughness'):
-            self.metallicRoughness()
-        elif bpyNode.name.startswith('glTF Specular Glossiness'):
-            self.specularGlossiness()
+        if bpyNode.name.startswith('glTF '): # 'glTF Metallic Roughness' or 'glTF Specular Glossiness'
+            Logger.error('Legacy glTF material encountered.  Convert to standard nodes or export using the glTF exporter')
         else:
             self.mustBake = True
-            print('unsupported node group: ' + bpyNode.name)
+            self.loggedWarning = True
+            Logger.warn('unsupported node group(' + bpyNode.name +') will trigger baking', 3)
 #===============================================================================
+    # abandoned in place
     def metallicRoughness(self):
-        input = self.findInput('BaseColor')
+        input = self.bpyNode.inputs.get('BaseColor')
         defaultDiffuse = self.findTexture(input, DIFFUSE_TEX)
         if defaultDiffuse is not None:
+            print(defaultDiffuse)
             self.diffuseChannelColor = Color((defaultDiffuse[0], defaultDiffuse[1], defaultDiffuse[2]))
             self.diffuseAlpha = defaultDiffuse[3]
 
@@ -53,7 +57,8 @@ class GltfBJSNode(AbstractBJSNode):
             
         self.mustBakeEmissive = input.mustBake if isinstance(input, AbstractBJSNode) else False
 #===============================================================================        
+    # abandoned in place
     def specularGlossiness(self):
         print('specularGlossiness not yet supported')
         self.mustBake = True
-        
+

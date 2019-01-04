@@ -72,10 +72,9 @@ class BJSMaterial:
         return len(self.textures.items()) > 0
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def bake(self, bpyMesh, recipe):
-        # need to change the
         # texture is baked from selected mesh(es), need to insure this mesh is only one selected
         bpy.ops.object.select_all(action='DESELECT')
-        bpyMesh.select = True
+        bpyMesh.select_set(True)
 
         # store setting to restore; always bake using CYCLES
         scene = bpy.context.scene
@@ -90,20 +89,20 @@ class BJSMaterial:
         usePNG      = bpyMesh.data.usePNG
 
         # mode_set's only work when there is an active object
-        bpy.context.scene.objects.active = bpyMesh
+        bpy.context.view_layer.objects.active = bpyMesh
 
-         # UV unwrap operates on mesh in only edit mode, procedurals can also give error of 'no images to be found' when not done
-         # select all verticies of mesh, since smart_project works only with selected verticies
+        # UV unwrap operates on mesh in only edit mode, procedurals can also give error of 'no images to be found' when not done
+        # select all verticies of mesh, since smart_project works only with selected verticies
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.select_all(action='SELECT')
 
         # you need UV on a mesh in order to bake image.  This is not reqd for procedural textures, so may not exist
         # need to look if it might already be created, if so use the first one
-        uv = bpyMesh.data.uv_textures[0] if len(bpyMesh.data.uv_textures) > 0 else None
+        uv = bpyMesh.data.uv_layers[0] if len(bpyMesh.data.uv_layers) > 0 else None
 
         if uv == None or forceBaking:
-            bpyMesh.data.uv_textures.new('BakingUV')
-            uv = bpyMesh.data.uv_textures['BakingUV']
+            uv = bpyMesh.data.uv_layers.new(name='BakingUV')
+          #  uv = bpyMesh.data.uv_layers['BakingUV']
             uv.active = True
             uv.active_render = not forceBaking # want the other uv's for the source when combining
 
@@ -120,7 +119,7 @@ class BJSMaterial:
         # create a temporary image & link it to the UV/Image Editor so bake_image works
         self.image = bpy.data.images.new(name = bpyMesh.name + '_BJS_BAKE', width = bakeSize, height = bakeSize, alpha = usePNG, float_buffer = False)
         self.image.file_format = format
-        self.image.mapping = 'UV' # default value
+    #    self.image.mapping = 'UV' # default value
 
         image_settings = render.image_settings
         image_settings.file_format = format
@@ -298,9 +297,9 @@ class BJSMaterial:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     @staticmethod
     def meshBakingClean(mesh):
-        for uvMap in mesh.data.uv_textures:
+        for uvMap in mesh.data.uv_layers:
             if uvMap.name == 'BakingUV':
-                mesh.data.uv_textures.remove(uvMap)
+                mesh.data.uv_layers.remove(uvMap)
                 break
 
         # remove an image if it was baked

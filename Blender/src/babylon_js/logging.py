@@ -13,6 +13,7 @@ class Logger:
     def __init__(self, filename):
         self.start_time = time()
         self.nWarnings = 0
+        self.nErrors   = 0
 
         self.log_handler = open(filename, 'w', encoding='utf8')
         self.log_handler.write('Exporter version: ' + format_exporter_version() + ', Blender version: ' + app.version_string + '\n')
@@ -40,9 +41,9 @@ class Logger:
         Logger.instance = None
 
     @staticmethod
-    def error(msg, numTabIndent = 0, noNewLine = False):
-        Logger.log('\nERROR: ' + msg + '\n', numTabIndent, noNewLine)
-        Logger.instance.nWarnings += 1
+    def error(msg):
+        Logger.log('\nERROR: ' + msg.upper() + '\n', 0, False)
+        Logger.instance.nErrors += 1
 
     @staticmethod
     def warn(msg, numTabIndent = 1, noNewLine = False):

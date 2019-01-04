@@ -11,7 +11,8 @@ class UnsupportedNode(AbstractBJSNode):
     def __init__(self, bpyNode, socketName):
         super().__init__(bpyNode, socketName)
         self.mustBake = True
-        Logger.log('unsupported node type(' + bpyNode.bl_idname +') will trigger baking', 3)
+        self.loggedWarning = True
+        Logger.warn('unsupported node type(' + bpyNode.bl_idname +') will trigger baking', 3)
 #===============================================================================
 #,
 #ShaderNodeAttribute,
@@ -38,7 +39,7 @@ class UnsupportedNode(AbstractBJSNode):
 #,
 #ShaderNodeGamma,
 #ShaderNodeGeometry,
-#ShaderNodeGroup,
+#,
 #ShaderNodeHairInfo,
 #ShaderNodeHoldout,
 #ShaderNodeHueSaturation,

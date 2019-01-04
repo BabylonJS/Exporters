@@ -36,22 +36,22 @@ class Bone:
             self.previousBoneMatrix = currentBoneMatrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def set_rest_pose(self, editBone):
-        self.rest = Bone.get_matrix(editBone, self.matrix_world, True)
+        self.rest = Bone.get_matrix(editBone, self.matrix_world)
         # used to calc skeleton restDimensions
         self.restHead = editBone.head
         self.restTail = editBone.tail
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def get_bone_matrix(self, doParentMult = True):
-        return Bone.get_matrix(self.posedBone, self.matrix_world, doParentMult)
+    def get_bone_matrix(self):
+        return Bone.get_matrix(self.posedBone, self.matrix_world)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     @staticmethod
-    def get_matrix(bpyBone, matrix_world, doParentMult):
-        SystemMatrix = Matrix.Scale(-1, 4, Vector((0, 0, 1))) * Matrix.Rotation(radians(-90), 4, 'X')
+    def get_matrix(bpyBone, matrix_world):
+        SystemMatrix = Matrix.Scale(-1, 4, Vector((0, 0, 1))) @ Matrix.Rotation(radians(-90), 4, 'X')
 
-        if (bpyBone.parent and doParentMult):
-            return (SystemMatrix * matrix_world * bpyBone.parent.matrix).inverted() * (SystemMatrix * matrix_world * bpyBone.matrix)
+        if bpyBone.parent:
+            return (SystemMatrix @ matrix_world @ bpyBone.parent.matrix).inverted() @ (SystemMatrix @ matrix_world @ bpyBone.matrix)
         else:
-            return SystemMatrix * matrix_world * bpyBone.matrix
+            return SystemMatrix @ matrix_world @ bpyBone.matrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def to_json_file(self, file_handler):
         file_handler.write('\n{')
@@ -65,12 +65,12 @@ class Bone:
         #animation
         if hasattr(self, 'animation'):
             file_handler.write('\n,"animation":')
-            self.animation.to_scene_file(file_handler)
+            self.animation.to_json_file(file_handler)
 
         file_handler.write('}')
 #===============================================================================
 class Skeleton:
-    def __init__(self, bpySkeleton, scene, id, ignoreIKBones):
+    def __init__(self, bpySkeleton, context, id, ignoreIKBones):
         Logger.log('processing begun of skeleton:  ' + bpySkeleton.name + ', id:  '+ str(id))
         self.name = bpySkeleton.name
         self.id = id
@@ -106,7 +106,7 @@ class Skeleton:
                 frameOffset = animationRange.frame_end
 
         # mode_set's only work when there is an active object, switch bones to edit mode to rest position
-        scene.objects.active = bpySkeleton
+        context.view_layer.objects.active = bpySkeleton
         bpy.ops.object.mode_set(mode='EDIT')
 
         # you need to access edit_bones from skeleton.data not skeleton.pose when in edit mode

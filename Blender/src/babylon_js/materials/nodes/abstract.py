@@ -3,7 +3,7 @@
 from babylon_js.logging import *
 
 # various texture types, value contains the BJS name when needed to be written in output
-ENVIRON_TEX    = 'value not meaningful'
+ENVIRON_TEX    = 'value not meaningful 1'
 
 DIFFUSE_TEX    = 'diffuseTexture'
 AMBIENT_TEX    = 'ambientTexture'
@@ -66,7 +66,7 @@ class AbstractBJSNode:
                 bjsWrapperNode = AbstractBJSNode.GetBJSWrapperNode(nodeSocket.links[0].from_node, nodeSocket.name)
                 self.bubbleUp(bjsWrapperNode)
                 self.bjsInputs[nodeSocket.name] = bjsWrapperNode
-            #    print (nodeSocket.name + ' @ ' + linkNode.bl_idname)
+            #    print (nodeSocket.name + ' @ ' + str(nodeSocket.links[0]))
 
             else:
                 if hasattr(nodeSocket, 'default_value'):
@@ -163,15 +163,12 @@ class AbstractBJSNode:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # leave out bpyType when value can either be a default value or another node
     def findInput(self, socketName, bpyTypeReqd = None):
-        for key, value in self.bjsInputs.items():
-            if key != socketName: continue
+        value = self.bjsInputs[socketName]
+        if bpyTypeReqd is not None:
+            if not hasattr(value, 'bpyType') or value.bpyType != bpyTypeReqd:
+                return None
 
-            if bpyTypeReqd is not None:
-                if not hasattr(value, 'bpyType') or value.bpyType != bpyTypeReqd: continue
-
-            return value
-
-        return None
+        return value
 
     # called by many sub-classes, when just a color, return the default value to caller
     def findTexture(self, input, textureType):
@@ -192,9 +189,9 @@ class AbstractBJSNode:
         # when a link of an un-expected type was assigned, need to bake (probably bubbled up already)
         elif isinstance(input, AbstractBJSNode):
             self.mustBake = True
-            # unsupported types already log, but not counting on some other thing, technically supported, but wrong not being there
-            if not isinstance(input, UnsupportedNode):
-                raise ValueError('un-excepted node type(' + input.bpyType +').  Cannot continue.')
+            # unsupported types already logged warning, but not counting on some other thing, technically supported, but wrong not being there
+            if not hasattr(input, 'loggedWarning'):
+                Logger.error('un-excepted node type(' + input.bpyType +').  Cannot continue.')
             return None
 
         # assign a color when no image texture node assigned

@@ -3,22 +3,28 @@
 ## Blender Exporter Version 6.0.0
 *01 February 2019*
 
-* Supports Blender 2.80 redesign (not completely yet)
+* Supports Blender 2.80 redesign
 * Removed Internal render materials support
 * Relocated Game Engine render properties used
 * Moved all exporter level custom properties from scene tab to world tab
 * Changes to world tab:
 	* Properties from scene tab
-	* Added Sky Box / Environment Textures section (before knowing BJS does not use .hdr textures.  May need to hide.)
-	* Added 'Use PBR' checkbox
-* Changes to mesh tab:
+	* Added Sky Box / Environment Textures section (before knowing BJS does not use .hdr textures, hidden.)
+	* Added `Use PBR` checkbox
+* Changes to mesh tab / proccesing:
 	* Relocated Billboard Mode from Game Engine to here
 	* Relocated most of material section to new panel in Materials tab
-	* Remaining materials stuff now in 'Baking Settings' section.  Added 'Force Baking' checkbox
+	* Remaining materials stuff now in 'Baking Settings' section.  Added `Force Baking` checkbox to avoid multi-materials.
+    * Blender's mixed flat / smooth shading now supported
+    * Alpha now supported in vertex colors
+* Changes for lights tab / proccessing:
+    * Added `PBR intensity mode` custom property.  When `Automatic` or not PBR, `intensity` scaled 0-1 from Blender's `Energy`, where 10 is 1.  Otherwise `Energy` passed, unmodified.
+    * `Range` property now supported using Blender property `Radius`
+    * Hemi light type is no longer supported.  To get a BJS hemi light use area type, & specify `Size X` for `range`.
 * Added new custom properties panel for Materials:
-	* Relocated Back Face Culling checkbox from Game Engine to here
-	* Relocated Check Ready Only Once checkbox from Mesh tab to here
-	* Relocated Max Simultaneous Lights from Mesh tab to here
+	* Relocated `Back Face Culling` checkbox from Game Engine to here
+	* Relocated `Check Ready Only` Once checkbox from Mesh tab to here
+	* Relocated `Max Simultaneous` Lights from Mesh tab to here
 	* Relocated Name Space from Mesh tab to here (might be in TOB only, since JSON files cannot share materials)
 * Mesh baking can be reduced to only the texture channels required, keeping other image texture based channels (not for multi-material meshes)
 * Nodes based renders (Cycles & eevee) not always just baked.  See chart for properties / textures & where values are from.  Properties are only assigned when no texture input to socket.
@@ -36,10 +42,11 @@
 | alpha / opacityTexture | alpha / opacityTexture |Diffuse BSDF - Color, Transparency BSDF - Color, Principled BSDF - Base Color |
 | bumpTexture | bumpTexture | Normal Map - Color, Principled BSDF - Normal |
 
-* Certain Nodes are allowed, and are either ignored or just passed thru
+* Certain nodes are allowed, and are either ignored or just passed thru
 	* Mix Shader, used mostly for non-principled trees
 	* Separate RGB, for metallic textures wt roughness / AO
 	* Frensel, when not PBR
+* glTF legacy nodes (glTF Metallic Roughness or glTF Specular Glossiness) produce an error saying to switch to standard Blender nodes or use glTF exporter
 * Texture / UV parameters are optional Nodes, when input to a texture node (ignored when must be baked, baking uses them though)
 	* Mapping node for (translation to offset), (rotation to ang), (scale to scale)
 	* Texture Coordinate & UVMap nodes for coordinatesIndex

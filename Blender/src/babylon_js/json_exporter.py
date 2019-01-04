@@ -99,17 +99,17 @@ class JsonExporter:
             for object in [object for object in scanObjects]:
                 scene.frame_set(currentFrame)
                 if object.type == 'ARMATURE':  #skeleton.pose.bones
-                    if object.is_visible(scene):
-                        self.skeletons.append(Skeleton(object, scene, skeletonId, self.settings.ignoreIKBones))
+                    if object.visible_get():
+                        self.skeletons.append(Skeleton(object, context, skeletonId, self.settings.ignoreIKBones))
                         skeletonId += 1
                     else:
                         Logger.warn('The following armature not visible in scene thus ignored: ' + object.name)
 
-            # exclude lamps in this pass, so ShadowGenerator constructor can be passed meshesAnNodes
+            # exclude light in this pass, so ShadowGenerator constructor can be passed meshesAnNodes
             for object in [object for object in scanObjects]:
                 scene.frame_set(currentFrame)
                 if object.type == 'CAMERA':
-                    if object.is_visible(scene): # no isInSelectedLayer() required, is_visible() handles this for them
+                    if object.visible_get(): # no isInSelectedLayer() required, visible_get() handles this for them
                         self.cameras.append(Camera(object))
                     else:
                         Logger.warn('The following camera not visible in scene thus ignored: ' + object.name)
@@ -120,6 +120,10 @@ class JsonExporter:
                         self.fatalError = 'Mesh: ' + mesh.name + ' has un-applied transformations.  This will never work for a mesh with an armature.  Export cancelled'
                         Logger.log(self.fatalError)
                         return
+                    
+                    if len(mesh.positions) == 0:
+                        Logger.warn('mesh, ' + mesh.name + ', has 0 vertices; ignored')
+                        continue
 
                     if hasattr(mesh, 'physicsImpostor'): self.needPhysics = True
 
@@ -134,13 +138,13 @@ class JsonExporter:
                 elif object.type == 'EMPTY':
                     self.meshesAndNodes.append(Node(object))
 
-                elif object.type != 'LAMP' and object.type != 'ARMATURE':
+                elif object.type != 'LIGHT' and object.type != 'ARMATURE':
                     Logger.warn('The following object (type - ' +  object.type + ') is not currently exportable thus ignored: ' + object.name)
 
             # Lamp / shadow Generator pass; meshesAnNodes complete & forceParents included
             for object in [object for object in scanObjects]:
-                if object.type == 'LAMP':
-                    bulb = Light(object, self.meshesAndNodes)
+                if object.type == 'LIGHT':
+                    bulb = Light(object, self.settings.usePBRMaterials)
                     self.lights.append(bulb)
                     if object.data.shadowMap != 'NONE':
                         if bulb.light_type == DIRECTIONAL_LIGHT or bulb.light_type == SPOT_LIGHT:
@@ -151,7 +155,10 @@ class JsonExporter:
             bpy.context.scene.frame_set(currentFrame)
 
             # output file
-            self.to_json_file()
+            if log.nErrors == 0:
+                self.to_json_file()
+            else:
+                Logger.log('Output cancelled due to data error')
 
         except:# catch *all* exceptions
             log.log_error_stack()
@@ -161,6 +168,7 @@ class JsonExporter:
             log.close()
 
         self.nWarnings = log.nWarnings
+        self.nErrors = log.nErrors
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def to_json_file(self):
         Logger.log('========= Writing of JSON file started =========', 0)

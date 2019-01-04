@@ -80,7 +80,7 @@ class Mesh(FCurveAnimatable):
         if objArmature != None:
             # unless the armature is the parent
             if bpyMesh.parent and bpyMesh.parent == objArmature:
-                locMatrix = bpyMesh.matrix_world * bpyMesh.parent.matrix_world.inverted()
+                locMatrix = bpyMesh.matrix_world @ bpyMesh.parent.matrix_world.inverted()
 
         loc, rot, scale = locMatrix.decompose()
         self.position = loc
@@ -165,7 +165,7 @@ class Mesh(FCurveAnimatable):
                 Logger.warn('No materials have been assigned: ', 2)
 
         # Get mesh temporary version of mesh with modifiers applied
-        mesh = bpyMesh.to_mesh(scene, True, 'PREVIEW')
+        mesh = bpyMesh.to_mesh(bpy.context.depsgraph, True)
 
         # Triangulate mesh if required
         Mesh.mesh_triangulate(mesh)
@@ -179,18 +179,18 @@ class Mesh(FCurveAnimatable):
         self.indices    = []
         self.subMeshes  = []
 
-        hasUV = len(mesh.tessface_uv_textures) > 0
+        hasUV = len(mesh.uv_layers) > 0
         if hasUV:
-            which = len(mesh.tessface_uv_textures) - 1 if recipe.needsBaking else 0
-            UVmap = mesh.tessface_uv_textures[which].data
+            which = len(mesh.uv_layers) - 1 if recipe.needsBaking else 0
+            UVmap = mesh.uv_layers[which].data
 
-        hasUV2 = len(mesh.tessface_uv_textures) > 1 and not recipe.needsBaking
+        hasUV2 = len(mesh.uv_layers) > 1 and not recipe.needsBaking
         if hasUV2:
-            UV2map = mesh.tessface_uv_textures[1].data
+            UV2map = mesh.uv_layers[1].data
 
         hasVertexColor = len(mesh.vertex_colors) > 0
         if hasVertexColor:
-            Colormap = mesh.tessface_vertex_colors.active.data
+            Colormap = mesh.vertex_colors.active.data
 
         if self.hasSkeleton:
             weightsPerVertex = []
@@ -240,19 +240,18 @@ class Mesh(FCurveAnimatable):
             subMeshVerticesStart = verticesCount
             subMeshIndexStart = indicesCount
 
-            for faceIndex in range(len(mesh.tessfaces)):  # For each face
-                face = mesh.tessfaces[faceIndex]
-
-                if face.material_index != materialIndex and not recipe.needsBaking:
+            for tri in mesh.loop_triangles:
+                if tri.material_index != materialIndex and not recipe.needsBaking:
                     continue
 
-                for v in range(3): # For each vertex in face
-                    vertex_index = face.vertices[v]
+                for v in range(3): # For each vertex in tri
+                    vertex_index = tri.vertices[v]
+                    loop_index = tri.loops[v] # used for uv's & vertex colors
 
                     vertex = mesh.vertices[vertex_index]
                     position = vertex.co
 
-                    normal = vertex.normal
+                    normal = vertex.normal if tri.use_smooth else tri.normal
 
                     #skeletons
                     if self.hasSkeleton:
@@ -271,22 +270,17 @@ class Mesh(FCurveAnimatable):
 
                     # Texture coordinates
                     if hasUV:
-                        vertex_UV = UVmap[face.index].uv[v]
+                        vertex_UV = UVmap[loop_index].uv
 
                     if hasUV2:
-                        vertex_UV2 = UV2map[face.index].uv[v]
+                        vertex_UV2 = UV2map[loop_index].uv
 
                     # Vertex color
                     if hasVertexColor:
-                        if v == 0:
-                            vertex_Color = Colormap[face.index].color1
-                        if v == 1:
-                            vertex_Color = Colormap[face.index].color2
-                        if v == 2:
-                            vertex_Color = Colormap[face.index].color3
+                        vertex_Color = Colormap[loop_index].color
 
                     # Check if the current vertex is already saved
-                    alreadySaved = alreadySavedVertices[vertex_index]
+                    alreadySaved = alreadySavedVertices[vertex_index] and tri.use_smooth
                     if alreadySaved:
                         alreadySaved = False
 
@@ -309,7 +303,7 @@ class Mesh(FCurveAnimatable):
 
                             if hasVertexColor:
                                 vColor = vertices_Colors[vertex_index][index_UV]
-                                if not same_color(vertex_Color, vColor, world.vColorsPrecision):
+                                if not same_array(vertex_Color, vColor, world.vColorsPrecision):
                                     continue
 
                             if self.hasSkeleton:
@@ -345,10 +339,10 @@ class Mesh(FCurveAnimatable):
                             self.uvs2.append(vertex_UV2[1])
                         if hasVertexColor:
                             vertices_Colors[vertex_index].append(vertex_Color)
-                            self.colors.append(vertex_Color.r)
-                            self.colors.append(vertex_Color.g)
-                            self.colors.append(vertex_Color.b)
-                            self.colors.append(1.0)
+                            self.colors.append(vertex_Color[0])
+                            self.colors.append(vertex_Color[1])
+                            self.colors.append(vertex_Color[2])
+                            self.colors.append(vertex_Color[3])
                         if self.hasSkeleton:
                             vertices_sk_weights[vertex_index].append(matricesWeights)
                             vertices_sk_indices[vertex_index].append(matricesIndices)
@@ -392,7 +386,8 @@ class Mesh(FCurveAnimatable):
                 self.skeletonIndicesExtra = Mesh.packSkeletonIndices(self.skeletonIndicesExtra)
 
             Logger.log('Total Influencers:  ' + format_f(totalInfluencers), 3)
-            Logger.log('Avg # of influencers per vertex:  ' + format_f(totalInfluencers / len(self.positions)), 3)
+            if len(self.positions) > 0:
+                Logger.log('Avg # of influencers per vertex:  ' + format_f(totalInfluencers / len(self.positions)), 3)
             Logger.log('Highest # of influencers observed:  ' + str(highestInfluenceObserved) + ', num vertices with this:  ' + format_int(influenceCounts[highestInfluenceObserved if highestInfluenceObserved < 9 else 0]), 3)
             Logger.log('exported as ' + str(self.numBoneInfluencers) + ' influencers', 3)
             nWeights = len(self.skeletonWeights) + (len(self.skeletonWeightsExtra) if hasattr(self, 'skeletonWeightsExtra') else 0)
@@ -482,7 +477,7 @@ class Mesh(FCurveAnimatable):
             bm.from_mesh(mesh)
             bmesh.ops.triangulate(bm, faces = bm.faces)
             bm.to_mesh(mesh)
-            mesh.calc_tessface()
+            mesh.calc_loop_triangles()
             bm.free()
         except:
             pass
