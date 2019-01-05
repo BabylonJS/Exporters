@@ -353,11 +353,11 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017 || MAX2018 || MAX2019
+                #if MAX2017 || MAX2018 || MAX2019
                     var channelNum = mappingChannels[i];
-#else
+                #else
                     var channelNum = mappingChannels[new IntPtr(i)];
-#endif
+                #endif
                     if (channelNum == 1)
                     {
                         hasUV = true;
@@ -583,7 +583,7 @@ namespace Max2Babylon
             int indexInFaceIndexesArray = 0;
             for (int i = 0; i < multiMatsCount; ++i)
             {
-                int materialId = meshNode.NodeMaterial?.GetMaterialID(i) ?? 0;
+                int materialId = i;
                 var indexCount = 0;
                 var minVertexIndex = int.MaxValue;
                 var maxVertexIndex = int.MinValue;
@@ -616,11 +616,11 @@ namespace Max2Babylon
                         if (storeFaceIndexes)
                         {
                             // Retreive face
-#if MAX2017 || MAX2018 || MAX2019
+                            #if MAX2017 || MAX2018 || MAX2019
                             face = materialFaces[j];
-#else
+                            #else
                             face = materialFaces[new IntPtr(j)];
-#endif
+                            #endif
 
                             // Store face index
                             faceIndexes.Add(face.MeshFaceIndex);
