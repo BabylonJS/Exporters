@@ -115,3 +115,8 @@ not exported correctly using glTF
 **Fixed Bugs:**
 - Fixed bug in GLTFImage uri which caused glb files to not export
 (https://github.com/BabylonJS/Exporters/issues/423)
+
+## v1.3.26
+**Fixed Bugs:**
+- Fixed bug in GLTFImage uri which caused glb files with textures containing spaces to not export
+(https://github.com/BabylonJS/Exporters/issues/429)
