@@ -73,7 +73,7 @@ class World:
             write_bool(file_handler, 'isPBR', self.isPBR) 
             # also attempt to create a sky box when environment texture exported
             if self.skyBox:
-                write_bool(file_handler, 'createDefaultSkybox ', True) 
+                write_bool(file_handler, 'createDefaultSkybox', True) 
                 write_float(file_handler, 'skyboxBlurLevel ', self.boxBlur)
 #===============================================================================
 # probably delete!!!!!!!!!!!!!!!!
@@ -229,13 +229,12 @@ class WorldPanel(bpy.types.Panel):
         # probably permanently delete, but wait for now
         #layout.prop(world, 'exportScope')
 
-        # hidden until BJS allows .hdr files
-        #box = layout.box()
-        #box.label(text='Sky Box / Enviroment Texture:')
-        #box.prop(world, 'environmentTextureSize')
-        #row = box.row()
-        #row.prop(world, 'skyBox')
-        #row.prop(world, 'boxBlur')
+        box = layout.box()
+        box.label(text='Sky Box / Environment Texture:')
+        box.prop(world, 'environmentTextureSize')
+        row = box.row()
+        row.prop(world, 'skyBox')
+        row.prop(world, 'boxBlur')
 
         box = layout.box()
         box.label(text='Fog:')

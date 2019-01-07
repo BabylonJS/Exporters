@@ -9,7 +9,7 @@
 * Moved all exporter level custom properties from scene tab to world tab
 * Changes to world tab:
 	* Properties from scene tab
-	* Added Sky Box / Environment Textures section (before knowing BJS does not use .hdr textures, hidden.)
+	* Added Sky Box / Environment Textures section
 	* Added `Use PBR` checkbox
 * Changes to mesh tab / proccesing:
 	* Relocated Billboard Mode from Game Engine to here

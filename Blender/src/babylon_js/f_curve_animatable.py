@@ -91,7 +91,7 @@ class FCurveAnimatable:
             for animation in self.animations:
                 if first == False:
                     file_handler.write(',')
-                animation.to_scene_file(file_handler)
+                animation.to_json_file(file_handler)
                 first = False
             file_handler.write(']')
 
@@ -102,7 +102,7 @@ class FCurveAnimatable:
                     file_handler.write(',')
                 first = False
 
-                range.to_scene_file(file_handler)
+                range.to_json_file(file_handler)
 
             file_handler.write(']')
 
