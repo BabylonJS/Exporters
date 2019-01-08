@@ -23,3 +23,9 @@ from the export interface
 ## v1.2.26
 **Implemented changes:**
 - morph target animations are now included in animation groups when created during export 
+
+## v1.2.27
+**Fixed bugs:**
+- Default light node is not exported in glTF
+**Implemented changes:**
+- Add version number in the exporter window (https://github.com/BabylonJS/Exporters/issues/424)
