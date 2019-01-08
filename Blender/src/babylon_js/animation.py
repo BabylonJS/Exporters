@@ -124,7 +124,7 @@ class Animation:
         return self.frames[len(self.frames) - 1] if len(self.frames) > 0 else -1
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def to_json_file(self, file_handler):
-        precision = bpy.context.scene.positionsPrecision if self.propertyInBabylon == 'position' else FLOAT_PRECISION_DEFAULT
+        precision = bpy.context.scene.world.positionsPrecision if self.propertyInBabylon == 'position' else FLOAT_PRECISION_DEFAULT
         file_handler.write('{')
         write_int(file_handler, 'dataType', self.dataType, True)
         write_int(file_handler, 'framePerSecond', self.framePerSecond)
