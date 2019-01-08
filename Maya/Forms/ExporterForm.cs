@@ -33,6 +33,7 @@ namespace Maya2Babylon.Forms
         public ExporterForm()
         {
             InitializeComponent();
+            this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             // Check if the gltf-pipeline module is installed
             try
