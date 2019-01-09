@@ -29,3 +29,7 @@ from the export interface
 - Default light node is not exported in glTF
 **Implemented changes:**
 - Add version number in the exporter window (https://github.com/BabylonJS/Exporters/issues/424)
+
+## v1.2.28
+**Implemented changes:**
+- Joint indices for glTF are now set to 0 instead of joint count
