@@ -9,8 +9,6 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private int bonesCount;
-
         private bool IsMeshExportable(IIGameNode meshNode)
         {
             return IsNodeExportable(meshNode);
@@ -224,7 +222,6 @@ namespace Max2Babylon
             int maxNbBones = 0;
             if (isSkinned && GetRevelantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
             {
-                bonesCount = skin.TotalSkinBoneCount;
                 var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
                 if (skinAlreadyStored == null)
                 {
@@ -796,7 +793,7 @@ namespace Max2Babylon
             if (skin != null)
             {
                 float[] weight = new float[4] { 0, 0, 0, 0 };
-                int[] bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
+                int[] bone = new int[4] { 0, 0, 0, 0 };
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
                 
                 int currentVtxBone = 0;
@@ -818,7 +815,7 @@ namespace Max2Babylon
                 if (currentVtxBone == 0)
                 {
                     weight[0] = 1.0f;
-                    bone[0] = bonesCount;
+                    bone[0] = 0;
                 }
 
                 vertex.Weights = Loader.Global.Point4.Create(weight);
@@ -827,7 +824,7 @@ namespace Max2Babylon
                 if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
                     weight = new float[4] { 0, 0, 0, 0 };
-                    bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
+                    bone = new int[4] { 0, 0, 0, 0 };
 
                     // process remaining skin bones until we have a total of 8 bones for this vertex or we run out of skin bones
                     for (; currentSkinBone < nbBones && currentVtxBone < 8; ++currentSkinBone)
