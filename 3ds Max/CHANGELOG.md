@@ -125,3 +125,7 @@ not exported correctly using glTF
 **Fixed Bugs:**
 - Fixed issue where shell material may fail to export
 (https://github.com/BabylonJS/Exporters/issues/413)
+
+## v1.3.28
+**Implemented Changes:**
+- Joint indices for glTF are now set to 0 instead of joint count
