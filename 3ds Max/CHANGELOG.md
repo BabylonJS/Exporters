@@ -129,3 +129,8 @@ not exported correctly using glTF
 ## v1.3.28
 **Implemented Changes:**
 - Joint indices for glTF are now set to 0 instead of joint count
+
+## v1.3.29
+**Fixed Bugs:**
+- Change "tag" to "tags" in babylon file and glTF extras
+(https://github.com/BabylonJS/Exporters/issues/436)
