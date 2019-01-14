@@ -331,13 +331,13 @@ namespace Max2Babylon
                 CheckCancelled();
 
                 // export its tag
-                if(babylonNode.tag != null && babylonNode.tag != "")
+                if(babylonNode.tags != null && babylonNode.tags != "")
                 {
                     if (gltfNode.extras == null)
                     {
                         gltfNode.extras = new Dictionary<string, object>();
                     }
-                    gltfNode.extras["tag"] = babylonNode.tag;
+                    gltfNode.extras["tags"] = babylonNode.tags;
                 }
 
                 // ...export its children

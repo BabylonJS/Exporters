@@ -40,7 +40,7 @@ namespace BabylonExport.Entities
         public bool autoAnimateLoop { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public string tag { get; set; }
+        public string tags { get; set; }
 
 		// Animations exported for glTF but not for Babylon
         public List<BabylonAnimation> extraAnimations;

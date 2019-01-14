@@ -32,7 +32,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        public static string exporterVersion = "1.3.28";
+        public static string exporterVersion = "1.3.29";
 
         void ReportProgressChanged(int progress)
         {
@@ -610,7 +610,7 @@ namespace Max2Babylon
                 string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
                 if (tag != "")
                 {
-                    babylonNode.tag = tag;
+                    babylonNode.tags = tag;
                 }
 
                 // Export its children
