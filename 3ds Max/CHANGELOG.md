@@ -134,3 +134,8 @@ not exported correctly using glTF
 **Fixed Bugs:**
 - Change "tag" to "tags" in babylon file and glTF extras
 (https://github.com/BabylonJS/Exporters/issues/436)
+
+## v1.3.30
+**Implemented Changes:**
+- Added @Selmar 's multi material export
+(https://github.com/BabylonJS/Exporters/issues/436)
