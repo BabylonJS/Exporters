@@ -96,12 +96,19 @@ namespace Max2Babylon
 
                     if (subMat != null)
                     {
-                        guids.Add(subMat.MaxMaterial.GetGuid().ToString());
-
-                        if (!referencedMaterials.Contains(subMat))
+                        if (subMat.SubMaterialCount > 0)
                         {
-                            referencedMaterials.Add(subMat);
-                            ExportMaterial(subMat, babylonScene);
+                            RaiseError("MultiMaterials as inputs to other MultiMaterials are not supported!");
+                        }
+                        else
+                        {
+                            guids.Add(subMat.MaxMaterial.GetGuid().ToString());
+
+                            if (!referencedMaterials.Contains(subMat))
+                            {
+                                referencedMaterials.Add(subMat);
+                                ExportMaterial(subMat, babylonScene);
+                            }
                         }
                     }
                     else
