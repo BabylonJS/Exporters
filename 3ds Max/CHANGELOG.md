@@ -137,7 +137,7 @@ not exported correctly using glTF
 
 ## v1.3.30
 **Implemented Changes:**
-- Added @Selmar 's multi material export
+- Added @Selmar 's multi file export
 (https://github.com/BabylonJS/Exporters/issues/436)
 
 ## v1.3.31
