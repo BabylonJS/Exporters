@@ -139,3 +139,8 @@ not exported correctly using glTF
 **Implemented Changes:**
 - Added @Selmar 's multi material export
 (https://github.com/BabylonJS/Exporters/issues/436)
+
+## v1.3.31
+**Fixed Bugs:**
+- Disable exporting a multimaterial connect to another multimaterial
+(https://github.com/BabylonJS/Exporters/issues/384)
