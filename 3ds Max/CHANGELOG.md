@@ -144,3 +144,8 @@ not exported correctly using glTF
 **Fixed Bugs:**
 - Disable exporting a multimaterial connect to another multimaterial
 (https://github.com/BabylonJS/Exporters/issues/384)
+
+## v1.3.32
+**Fixed Bugs:**
+- Fixed bug causing DirectX material to fail the exporter
+(https://github.com/BabylonJS/Exporters/issues/405)
