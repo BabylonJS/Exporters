@@ -671,11 +671,20 @@ namespace Max2Babylon
             if (isDirectXShaderMaterial(materialNode))
             {
                 var gameScene = Loader.Global.IGameInterface;
-                IMtl renderMtl = materialNode.IPropertyContainer.GetProperty(35).MaxParamBlock2.GetMtl(4, 0, 0);
-                if(renderMtl != null)
+                IIGameProperty property = materialNode.IPropertyContainer.GetProperty(35);
+                if (property != null)
                 {
-                    renderMaterial = gameScene.GetIGameMaterial(renderMtl);
+                    IMtl renderMtl = materialNode.IPropertyContainer.GetProperty(35).MaxParamBlock2.GetMtl(4, 0, 0);
+                    if (renderMtl != null)
+                    {
+                        renderMaterial = gameScene.GetIGameMaterial(renderMtl);
+                    }
                 }
+                else
+                {
+                    RaiseWarning($"DirectX material property for {materialNode.MaterialName} is null...", 2);
+                }
+                
             }
 
             return renderMaterial;
