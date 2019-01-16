@@ -251,7 +251,13 @@ class Mesh(FCurveAnimatable):
                     vertex = mesh.vertices[vertex_index]
                     position = vertex.co
 
-                    normal = vertex.normal if tri.use_smooth else tri.normal
+                    if mesh.has_custom_normals:
+                        split_normal = tri.split_normals[v]
+                        normal = Vector(split_normal)
+                    elif tri.use_smooth:
+                        normal = vertex.normal
+                    else:
+                        normal = tri.normal
 
                     #skeletons
                     if self.hasSkeleton:
@@ -280,7 +286,7 @@ class Mesh(FCurveAnimatable):
                         vertex_Color = Colormap[loop_index].color
 
                     # Check if the current vertex is already saved
-                    alreadySaved = alreadySavedVertices[vertex_index] and tri.use_smooth
+                    alreadySaved = alreadySavedVertices[vertex_index]
                     if alreadySaved:
                         alreadySaved = False
 
@@ -478,6 +484,10 @@ class Mesh(FCurveAnimatable):
             bmesh.ops.triangulate(bm, faces = bm.faces)
             bm.to_mesh(mesh)
             mesh.calc_loop_triangles()
+            if mesh.has_custom_normals:
+                mesh.calc_normals_split()
+                Logger.log('Custom split normals being used', 2)
+
             bm.free()
         except:
             pass

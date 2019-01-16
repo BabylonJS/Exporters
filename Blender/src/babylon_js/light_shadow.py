@@ -31,11 +31,11 @@ class Light(FCurveAnimatable):
             self.parentId = light.parent.name
 
         self.name = light.name
-        Logger.log('processing begun of light (' + light.data.type + '):  ' + self.name)
         self.define_animations(light, False, True, False)
 
         light_type_items = {'POINT': POINT_LIGHT, 'SUN': DIRECTIONAL_LIGHT, 'SPOT': SPOT_LIGHT, 'AREA': HEMI_LIGHT}
         self.light_type = light_type_items[light.data.type]
+        Logger.log('processing begun of light (' + ('POINT', 'DIRECTIONAL', 'SPOT', 'HEMI FROM AREA')[self.light_type] + '):  ' + self.name)
 
         if self.light_type == POINT_LIGHT:
             self.position = light.location

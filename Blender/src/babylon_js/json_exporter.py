@@ -301,9 +301,8 @@ class JsonExporter:
         Logger.log('========= Writing of JSON file completed =========', 0)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def getMaterial(self, baseMaterialId):
-        fullName = JsonExporter.nameSpace + '.' + baseMaterialId
         for material in self.materials:
-            if material.name == fullName:
+            if material.name == baseMaterialId:
                 return material
 
         return None
