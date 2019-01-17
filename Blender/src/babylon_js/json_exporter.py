@@ -121,7 +121,7 @@ class JsonExporter:
                         Logger.log(self.fatalError)
                         return
                     
-                    if len(mesh.positions) == 0:
+                    if hasattr(mesh, 'positions') and len(mesh.positions) == 0:  # instances will have no positions assigned
                         Logger.warn('mesh, ' + mesh.name + ', has 0 vertices; ignored')
                         continue
 

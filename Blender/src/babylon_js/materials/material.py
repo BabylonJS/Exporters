@@ -179,6 +179,19 @@ class BJSMaterial:
         write_string(file_handler, 'id', self.name)
         write_string(file_handler, 'customType', 'BABYLON.PBRMaterial' if self.isPBR else 'BABYLON.StandardMaterial')
 
+        if not self.use_nodes:
+            propName = 'albedoColor' if self.isPBR else 'diffuseColor'
+            write_color(file_handler, propName, self.diffuseColor)
+
+            propName = 'reflectivityColor' if self.isPBR else 'specularColor'
+            write_color(file_handler, propName, self.specularColor)
+
+            if self.isPBR:
+                write_float(file_handler, 'metallic', self.metallic)
+
+            file_handler.write('}')
+            return
+
         #--- scalar properties, when not also a texture ----
 
         # sources diffuse & principled nodes
