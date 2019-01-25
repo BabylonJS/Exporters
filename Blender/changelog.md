@@ -1,5 +1,60 @@
 # Blender2Babylon add-on changelog
 
+## Blender Exporter Version 6.0.0
+*24 January 2019*
+
+* Supports Blender 2.80 redesign
+* Removed Internal render materials support
+* Relocated Game Engine render properties used
+* Moved all exporter level custom properties from scene tab to world tab
+* Changes to world tab:
+	* Added properties from scene tab
+	* Added Sky Box / Environment Textures section
+	* Added `Use PBR` checkbox
+* Changes to mesh tab / proccesing:
+	* Relocated Billboard Mode from Game Engine to here
+	* Relocated most of material section to new panel in Materials tab
+	* Remaining materials stuff now in 'Baking Settings' section.  Added `Force Baking` checkbox to avoid multi-materials.
+    * Blender's mixed flat / smooth shading now supported, or custom split normals if used.
+    * Custom properties `Picking` & `Disabled` are now using Outliner Icons instead.
+    * Alpha now supported in vertex colors
+* Changes for lights tab / proccessing:
+    * Added `PBR intensity mode` custom property.  When `Automatic` or not PBR, `intensity` scaled 0-1 from Blender's `Energy`, where 10 is 1.  Otherwise `Energy` passed, unmodified.
+    * `Range` property now supported using Blender property `Radius`
+    * Hemi light type is no longer supported.  To get a BJS hemi light use area type, & specify `Size X` for `range`.
+* Added new custom properties panel for Materials:
+	* Relocated `Back Face Culling` checkbox from Game Engine to here
+	* Relocated `Check Ready Only` Once checkbox from Mesh tab to here
+	* Relocated `Max Simultaneous Lights` from Mesh tab to here
+	* Relocated Name Space from Mesh tab to here (might be in TOB only, since JSON files cannot share materials)
+* Mesh baking can be reduced to only the texture channels required, keeping other image texture based channels (not for multi-material meshes)
+* Nodes based renders (Cycles & eevee) not always just baked.  See chart for properties / textures & where values are from.  Properties are only assigned when no texture input to socket.
+
+|  STD Property / Tex | PBR Property / Tex | From Nodes-Socket
+| --- | --- | --- |
+| diffuseColor / diffuseTexture | albedoColor / albedoTexture |Diffuse BSDF - Color, Principled BSDF - Base Color |
+| ambientColor / ambientTexture | ambientColor / useAmbientOcclusionFromMetallicTextureRed  | Ambient Occlusion - Color |
+| emissiveColor / emissiveTexture | emissiveColor / emissiveTexture | Emission - Color |
+| specularColor / specularTexture | reflectivityColor / reflectivityTexture | Glossy BSDF - Color, Principled BSDF - Specular |
+| specularPower (inverted & 0 - 128) | roughness / useRoughnessFromMetallicTextureGreen | Glossy BSDF - Roughness, Principled BSDF - Roughness |
+| indexOfRefraction / refractionTexture | indexOfRefraction / refractionTexture | Refraction BSDF - IOR, Frensel - IOR, Principled BSDF - IOR / Refraction BSDF - Color, Principled BSDF - IOR|
+| -- | metallic / metallicTexture | Principled - Specular |
+| -- | emissiveIntensity | Emission - Strength|
+| alpha / opacityTexture | alpha / opacityTexture |Diffuse BSDF - Color, Transparency BSDF - Color, Principled BSDF - Base Color |
+| bumpTexture | bumpTexture | Normal Map - Color, Principled BSDF - Normal |
+
+* Certain nodes are allowed, and are either ignored or just passed thru
+	* Mix Shader, used mostly for non-principled trees
+	* Separate RGB, for metallic textures wt roughness / AO
+	* Frensel, when not PBR
+* glTF legacy nodes (glTF Metallic Roughness or glTF Specular Glossiness) produce an error saying to switch to standard Blender nodes or use glTF exporter
+* Texture / UV parameters are optional Nodes, when input to a texture node (ignored when must be baked, baking uses them though)
+	* Mapping node for (translation to offset), (rotation to ang), (scale to scale)
+	* Texture Coordinate & UVMap nodes for coordinatesIndex
+* When a material channel cannot really be represented by mapping, then it will be baked.  Examples:
+	* A Noise or other procedureal texture to Principled BSDF - Normal, then a bump texture will be baked
+	* Any node which is not explicitly supported or ignored
+
 ## Blender Exporter Version 5.6.4
 
 *17 July 2018*

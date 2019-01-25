@@ -1,4 +1,4 @@
-from .logger import *
+from .logging import *
 from .package_level import *
 
 from .f_curve_animatable import *
@@ -27,37 +27,39 @@ RIG_MODE_STEREOSCOPIC_OVERUNDER = '13'
 RIG_MODE_VR = '20'
 #===============================================================================
 class Camera(FCurveAnimatable):
-    def __init__(self, camera):
-        if camera.parent and camera.parent.type != 'ARMATURE':
-            self.parentId = camera.parent.name
+    def __init__(self, bpyCamera, exporter):
 
-        self.CameraType = camera.data.CameraType
-        self.name = camera.name
+        exportedParent = exporter.getExportedParent(bpyCamera)
+        if exportedParent and exportedParent.type != 'ARMATURE':
+            self.parentId = exportedParent.name
+
+        self.CameraType = bpyCamera.data.CameraType
+        self.name = bpyCamera.name
         Logger.log('processing begun of camera (' + self.CameraType + '):  ' + self.name)
-        self.define_animations(camera, True, True, False, math.pi / 2)
-        self.position = camera.location
+        self.define_animations(bpyCamera, True, True, False, math.pi / 2)
+        self.position = bpyCamera.location
 
         # for quaternions, convert to euler XYZ, otherwise, use the default rotation_euler
-        eul = camera.rotation_quaternion.to_euler("XYZ") if camera.rotation_mode == 'QUATERNION' else camera.rotation_euler
+        eul = bpyCamera.rotation_quaternion.to_euler("XYZ") if bpyCamera.rotation_mode == 'QUATERNION' else bpyCamera.rotation_euler
         self.rotation = mathutils.Vector((-eul[0] + math.pi / 2, eul[1], -eul[2]))
 
-        self.fov = camera.data.angle
-        self.minZ = camera.data.clip_start
-        self.maxZ = camera.data.clip_end
+        self.fov = bpyCamera.data.angle
+        self.minZ = bpyCamera.data.clip_start
+        self.maxZ = bpyCamera.data.clip_end
         self.speed = 1.0
         self.inertia = 0.9
-        self.checkCollisions = camera.data.checkCollisions
-        self.applyGravity = camera.data.applyGravity
-        self.ellipsoid = camera.data.ellipsoid
+        self.checkCollisions = bpyCamera.data.checkCollisions
+        self.applyGravity = bpyCamera.data.applyGravity
+        self.ellipsoid = bpyCamera.data.ellipsoid
+        self.trackToBoundingCenter = bpyCamera.data.trackToBoundingCenter
 
-        self.Camera3DRig = camera.data.Camera3DRig
-        self.interaxialDistance = camera.data.interaxialDistance
+        self.Camera3DRig = bpyCamera.data.Camera3DRig
+        self.interaxialDistance = bpyCamera.data.interaxialDistance
 
-        for constraint in camera.constraints:
+        for constraint in bpyCamera.constraints:
             if constraint.type == 'TRACK_TO':
                 self.lockedTargetId = constraint.target.name
                 break
-
 
         if self.CameraType == ARC_ROTATE_CAM or self.CameraType == FOLLOW_CAM:
             if not hasattr(self, 'lockedTargetId'):
@@ -94,7 +96,7 @@ class Camera(FCurveAnimatable):
             self.arcRotBeta   = abs(beta)
             self.arcRotRadius = distance3D
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.name, True)
         write_string(file_handler, 'id', self.name)
@@ -130,7 +132,7 @@ class Camera(FCurveAnimatable):
         if hasattr(self, 'lockedTargetId'):
             write_string(file_handler, 'lockedTargetId', self.lockedTargetId)
 
-        super().to_scene_file(file_handler) # Animations
+        super().to_json_file(file_handler) # Animations
         file_handler.write('}')
 #===============================================================================
 bpy.types.Camera.autoAnimate = bpy.props.BoolProperty(
