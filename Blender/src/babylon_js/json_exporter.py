@@ -1,10 +1,9 @@
 from .animation import *
 from .armature import *
 from .camera import *
-from .exporter_settings_panel import *
 from .light_shadow import *
-from .logger import *
-from .material import *
+from .logging import *
+from .materials.material import *
 from .mesh import *
 from .package_level import *
 from .sound import *
@@ -13,6 +12,8 @@ from .world import *
 import bpy
 from io import open
 from os import path, makedirs
+
+# JSON specific, for manifest file
 import time
 import calendar
 
@@ -23,7 +24,21 @@ class JsonExporter:
     def execute(self, context, filepath):
         scene = context.scene
         self.scene = scene # reference for passing
+        self.settings = scene.world
         self.fatalError = None
+
+        self.cameras = []
+        self.lights = []
+        self.shadowGenerators = []
+        self.skeletons = []
+        skeletonId = 0
+        self.meshesAndNodes = []
+        self.morphTargetMngrs = []
+        self.materials = []
+        self.multiMaterials = []
+        self.sounds = []
+        self.needPhysics = False
+
         try:
             self.filepathMinusExtension = filepath.rpartition('.')[0]
             JsonExporter.nameSpace = getNameSpace(self.filepathMinusExtension)
@@ -33,25 +48,27 @@ class JsonExporter:
             if bpy.ops.object.mode_set.poll():
                 bpy.ops.object.mode_set(mode = 'OBJECT')
 
+            self.inlineTextures = self.settings.inlineTextures
+
             # assign texture location, purely temporary if in-lining
-            self.textureFullPath = path.dirname(filepath)
-            if not scene.inlineTextures:
-                self.textureFullPath = path.join(self.textureFullPath, scene.textureDir)
-                if not path.isdir(self.textureFullPath):
-                    makedirs(self.textureFullPath)
-                    Logger.warn('Texture sub-directory did not already exist, created: ' + self.textureFullPath)
+            self.textureFullPathDir = path.dirname(filepath)
+            if not self.inlineTextures:
+                self.textureFullPathDir = path.join(self.textureFullPathDir, self.settings.textureDir)
+                if not path.isdir(self.textureFullPathDir):
+                    makedirs(self.textureFullPathDir)
+                    Logger.warn('Texture sub-directory did not already exist, created: ' + self.textureFullPathDir)
 
             Logger.log('========= Conversion from Blender to Babylon.js =========', 0)
             Logger.log('Scene settings used :', 1)
-            Logger.log('export scope        :  ' + scene.exportScope, 2)
-            Logger.log('inline textures     :  ' + format_bool(scene.inlineTextures), 2)
-            Logger.log('Positions Precision :  ' + format_int(scene.positionsPrecision), 2)
-            Logger.log('Normals Precision   :  ' + format_int(scene.normalsPrecision), 2)
-            Logger.log('UVs Precision       :  ' + format_int(scene.UVsPrecision), 2)
-            Logger.log('Vert Color Precision:  ' + format_int(scene.vColorsPrecision), 2)
-            Logger.log('Mat Weight Precision:  ' + format_int(scene.mWeightsPrecision), 2)
-            if not scene.inlineTextures:
-                Logger.log('texture directory   :  ' + self.textureFullPath, 2)
+            Logger.log('inline textures     :  ' + format_bool(self.inlineTextures), 2)
+            Logger.log('Material Type       :  ' + ('PBR' if self.settings.usePBRMaterials else 'STD'), 2)
+            Logger.log('Positions Precision :  ' + format_int(self.settings.positionsPrecision), 2)
+            Logger.log('Normals Precision   :  ' + format_int(self.settings.normalsPrecision), 2)
+            Logger.log('UVs Precision       :  ' + format_int(self.settings.UVsPrecision), 2)
+            Logger.log('Vert Color Precision:  ' + format_int(self.settings.vColorsPrecision), 2)
+            Logger.log('Mat Weight Precision:  ' + format_int(self.settings.mWeightsPrecision), 2)
+            if not self.inlineTextures:
+                Logger.log('texture directory   :  ' + self.textureFullPathDir, 2)
             self.world = World(scene)
 
             bpy.ops.screen.animation_cancel()
@@ -63,45 +80,32 @@ class JsonExporter:
             else:
                 Logger.warn('No active camera has been assigned, or is not in a currently selected Blender layer')
 
-            self.cameras = []
-            self.lights = []
-            self.shadowGenerators = []
-            self.skeletons = []
-            skeletonId = 0
-            self.meshesAndNodes = []
-            self.morphTargetMngrs = []
-            self.materials = []
-            self.multiMaterials = []
-            self.sounds = []
-            self.needPhysics = False
-
-            scanObjects = []
-            if (scene.exportScope == 'ALL'):
-                scanObjects = scene.objects
-            elif (scene.exportScope == 'SELECTED'):
-                scanObjects = bpy.context.selected_objects
-            elif (scene.exportScope == 'VISIBLE'):
-                scanObjects = list(filter(
-                    lambda o: self.isInSelectedLayer(o, scene),
-                    scene.objects
-                ))
-
             # Scene level sound
-            if scene.attachedSound != '':
-                self.sounds.append(Sound(scene.attachedSound, scene.autoPlaySound, scene.loopSound))
+            if self.settings.attachedSound != '':
+                self.sounds.append(Sound(self.settings.attachedSound, self.settings.autoPlaySound, self.settings.loopSound))
 
             # separate loop doing all skeletons, so available in Mesh to make skipping IK bones possible
-            for object in [object for object in scanObjects]:
-                scene.frame_set(currentFrame)
-                if object.type == 'ARMATURE':  #skeleton.pose.bones
-                    self.skeletons.append(Skeleton(object, scene, skeletonId, scene.ignoreIKBones))
-                    skeletonId += 1
+            for object in scene.objects:
+                if self.shouldBeCulled(object): continue
 
-            # exclude lamps in this pass, so ShadowGenerator constructor can be passed meshesAnNodes
-            for object in [object for object in scanObjects]:
+                scene.frame_set(currentFrame)
+                if object.type == 'ARMATURE':
+                    if object.visible_get():
+                        self.skeletons.append(Skeleton(object, context, skeletonId, self.settings.ignoreIKBones))
+                        skeletonId += 1
+                    else:
+                        Logger.warn('The following armature not visible in scene thus ignored: ' + object.name)
+
+            # exclude light in this pass, so ShadowGenerator constructor can be passed meshesAnNodes
+            for object in scene.objects:
+                if self.shouldBeCulled(object): continue
+
                 scene.frame_set(currentFrame)
                 if object.type == 'CAMERA':
-                    self.cameras.append(Camera(object))
+                    if object.visible_get():
+                        self.cameras.append(Camera(object, self))
+                    else:
+                        Logger.warn('The following camera not visible in scene thus ignored: ' + object.name)
 
                 elif object.type == 'MESH':
                     mesh = Mesh(object, scene, self)
@@ -109,6 +113,10 @@ class JsonExporter:
                         self.fatalError = 'Mesh: ' + mesh.name + ' has un-applied transformations.  This will never work for a mesh with an armature.  Export cancelled'
                         Logger.log(self.fatalError)
                         return
+
+                    if hasattr(mesh, 'positions') and len(mesh.positions) == 0:  # instances will have no positions assigned
+                        Logger.warn('mesh, ' + mesh.name + ', has 0 vertices; ignored')
+                        continue
 
                     if hasattr(mesh, 'physicsImpostor'): self.needPhysics = True
 
@@ -123,13 +131,15 @@ class JsonExporter:
                 elif object.type == 'EMPTY':
                     self.meshesAndNodes.append(Node(object))
 
-                elif object.type != 'LAMP' and object.type != 'ARMATURE':
+                elif object.type != 'LIGHT' and object.type != 'ARMATURE':
                     Logger.warn('The following object (type - ' +  object.type + ') is not currently exportable thus ignored: ' + object.name)
 
             # Lamp / shadow Generator pass; meshesAnNodes complete & forceParents included
-            for object in [object for object in scanObjects]:
-                if object.type == 'LAMP':
-                    bulb = Light(object, self.meshesAndNodes)
+            for object in scene.objects:
+                if self.shouldBeCulled(object): continue
+
+                if object.type == 'LIGHT':
+                    bulb = Light(object, self, self.settings.usePBRMaterials)
                     self.lights.append(bulb)
                     if object.data.shadowMap != 'NONE':
                         if bulb.light_type == DIRECTIONAL_LIGHT or bulb.light_type == SPOT_LIGHT:
@@ -140,7 +150,10 @@ class JsonExporter:
             bpy.context.scene.frame_set(currentFrame)
 
             # output file
-            self.to_scene_file()
+            if log.nErrors == 0:
+                self.to_json_file()
+            else:
+                Logger.log('Output cancelled due to data error')
 
         except:# catch *all* exceptions
             log.log_error_stack()
@@ -150,14 +163,14 @@ class JsonExporter:
             log.close()
 
         self.nWarnings = log.nWarnings
+        self.nErrors = log.nErrors
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self):
-        Logger.log('========= Writing of scene file started =========', 0)
-        # Open file
+    def to_json_file(self):
+        Logger.log('========= Writing of JSON file started =========', 0)
         file_handler = open(self.filepathMinusExtension + '.babylon', 'w', encoding='utf8')
         file_handler.write('{')
         file_handler.write('"producer":{"name":"Blender","version":"' + bpy.app.version_string + '","exporter_version":"' + format_exporter_version() + '","file":"' + JsonExporter.nameSpace + '.babylon"},\n')
-        self.world.to_scene_file(file_handler, self.needPhysics)
+        self.world.to_json_file(file_handler, self)
 
         # Materials
         file_handler.write(',\n"materials":[')
@@ -167,7 +180,7 @@ class JsonExporter:
                 file_handler.write(',\n')
 
             first = False
-            material.to_scene_file(file_handler)
+            material.to_json_file(file_handler)
         file_handler.write(']')
 
         # Multi-materials
@@ -178,7 +191,7 @@ class JsonExporter:
                 file_handler.write(',')
 
             first = False
-            multimaterial.to_scene_file(file_handler)
+            multimaterial.to_json_file(file_handler)
         file_handler.write(']')
 
         # Armatures/Bones
@@ -189,7 +202,7 @@ class JsonExporter:
                 file_handler.write(',')
 
             first = False
-            skeleton.to_scene_file(file_handler)
+            skeleton.to_json_file(file_handler)
         file_handler.write(']')
 
         # Meshes
@@ -200,7 +213,7 @@ class JsonExporter:
                 file_handler.write(',')
 
             first = False
-            mesh.to_scene_file(file_handler)
+            mesh.to_json_file(file_handler)
         file_handler.write(']')
 
         # Morph targets
@@ -224,7 +237,7 @@ class JsonExporter:
 
             first = False
             camera.update_for_target_attributes(self.meshesAndNodes)
-            camera.to_scene_file(file_handler)
+            camera.to_json_file(file_handler)
         file_handler.write(']')
 
         # Active camera
@@ -239,7 +252,7 @@ class JsonExporter:
                 file_handler.write(',')
 
             first = False
-            light.to_scene_file(file_handler)
+            light.to_json_file(file_handler)
         file_handler.write(']')
 
         # Shadow generators
@@ -250,7 +263,7 @@ class JsonExporter:
                 file_handler.write(',')
 
             first = False
-            shadowGen.to_scene_file(file_handler)
+            shadowGen.to_json_file(file_handler)
         file_handler.write(']')
 
         # Sounds
@@ -262,7 +275,7 @@ class JsonExporter:
                     file_handler.write(',')
 
                 first = False
-                sound.to_scene_file(file_handler)
+                sound.to_json_file(file_handler)
 
             file_handler.write(']')
 
@@ -271,7 +284,7 @@ class JsonExporter:
         file_handler.close()
 
         # Create or update .manifest file
-        if self.scene.writeManifestFile:
+        if self.settings.writeManifestFile:
             file_handler = open(self.filepathMinusExtension + '.babylon.manifest', 'w', encoding='utf8')
             file_handler.write('{\n')
             file_handler.write('\t"version" : ' + str(calendar.timegm(time.localtime())) + ',\n')
@@ -280,12 +293,11 @@ class JsonExporter:
             file_handler.write('}')
             file_handler.close()
 
-        Logger.log('========= Writing of scene file completed =========', 0)
+        Logger.log('========= Writing of JSON file completed =========', 0)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def getMaterial(self, baseMaterialId):
-        fullName = JsonExporter.nameSpace + '.' + baseMaterialId
         for material in self.materials:
-            if material.name == fullName:
+            if material.name == baseMaterialId:
                 return material
 
         return None
@@ -298,18 +310,32 @@ class JsonExporter:
 
         return None
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def isInSelectedLayer(self, obj, scene):
-        if not scene.export_onlySelectedLayer:
-            return True
-
-        for l in range(0, len(scene.layers)):
-            if obj.layers[l] and scene.layers[l]:
-                return True
-        return False
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def get_skeleton(self, name):
         for skeleton in self.skeletons:
             if skeleton.name == name:
                 return skeleton
         #really cannot happen, will cause exception in caller
         return None
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    def get_skeletonIndex(self, name):
+        for idx,skeleton in enumerate(self.skeletons):
+            if skeleton.name == name:
+                return idx
+        #really cannot happen, will cause exception in caller
+        return None
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    def shouldBeCulled(self, object):
+        return object.hide_viewport or object.users_collection[0].hide_viewport
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # only return a parent, when is has not been culled
+    def getExportedParent(self, childObject):
+        cand = childObject.parent
+        if cand is None or self.shouldBeCulled(cand):
+            return None
+
+        # lights & cameras must also be visible to be exported, so check if parent a light or camera
+        if cand.type == 'CAMERA' or cand.type == 'LIGHT':
+            if not cand.visible_get():
+                return None
+
+        return cand
