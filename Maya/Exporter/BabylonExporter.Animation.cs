@@ -472,14 +472,6 @@ namespace Maya2Babylon
         {
             if (keys.Count > 1)
             {
-                if (keys.Count == 2)
-                {
-                    if (keys[0].values.IsEqualTo(keys[1].values))
-                    {
-                        return false;
-                    }
-                }
-
                 return true;
             }
 
