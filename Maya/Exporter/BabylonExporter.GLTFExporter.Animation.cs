@@ -162,7 +162,7 @@ namespace Maya2Babylon
                     // Optimization process always keeps first and last frames
                     OptimizeAnimations(keysInRangeFull, true);
 
-                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    if (IsAnimationKeysRelevant(keysInRangeFull, babylonAnimation.property))
                     {
                         // Override animation keys
                         babylonAnimation.keys = keysInRangeFull.ToArray();
@@ -298,7 +298,7 @@ namespace Maya2Babylon
                     // Optimization process always keeps first and last frames
                     OptimizeAnimations(keysInRangeFull, false);
 
-                    if (IsAnimationKeysRelevant(keysInRangeFull))
+                    if (IsAnimationKeysRelevant(keysInRangeFull, babylonAnimation.property))
                     {
                         // From now, use optimized animation instead
                         // Override animation keys
