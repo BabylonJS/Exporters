@@ -51,7 +51,6 @@ class Camera(FCurveAnimatable):
         self.checkCollisions = bpyCamera.data.checkCollisions
         self.applyGravity = bpyCamera.data.applyGravity
         self.ellipsoid = bpyCamera.data.ellipsoid
-        self.trackToBoundingCenter = bpyCamera.data.trackToBoundingCenter
 
         self.Camera3DRig = bpyCamera.data.Camera3DRig
         self.interaxialDistance = bpyCamera.data.interaxialDistance
