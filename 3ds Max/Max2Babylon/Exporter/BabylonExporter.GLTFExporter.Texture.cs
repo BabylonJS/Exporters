@@ -201,7 +201,7 @@ namespace Max2Babylon
                     texCoord = babylonTexture.coordinatesIndex
                 };
 
-                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == 1) || !(babylonTexture.wAng == 0))
+                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == -1) || !(babylonTexture.wAng == 0))
                 {
                     // Add texture extension if enabled in the export settings
                     if (exportParameters.enableKHRTextureTransform)
@@ -210,7 +210,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                        RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!");
+                        RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                     }
                 }
                 var textureID = name + TextureTransformID(gltfTextureInfo);

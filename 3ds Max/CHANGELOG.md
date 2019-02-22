@@ -149,3 +149,8 @@ not exported correctly using glTF
 **Fixed Bugs:**
 - Fixed bug causing DirectX material to fail the exporter
 (https://github.com/BabylonJS/Exporters/issues/405)
+
+## v1.3.33
+**Fixed Bugs:**
+- Fixed bug where KHR_texture_transform warning is always displayed
+(https://github.com/BabylonJS/Exporters/issues/460)
