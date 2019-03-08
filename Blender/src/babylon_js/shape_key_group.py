@@ -28,7 +28,7 @@ class RawShapeKey:
         if state != 'BASIS' and group is not None:
             Logger.log('shape key "' + group + '-' + state + '":  n verts different from basis: ' + str(nDifferent), 3)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    def to_scene_file(self, file_handler):
+    def to_json_file(self, file_handler):
         file_handler.write('{')
         write_string(file_handler, 'name', self.state, True)
         write_vector_array(file_handler, 'positions', self.vertices, self.precision)
