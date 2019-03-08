@@ -179,6 +179,11 @@ class BJSMaterial:
         write_string(file_handler, 'id', self.name)
         write_string(file_handler, 'customType', 'BABYLON.PBRMaterial' if self.isPBR else 'BABYLON.StandardMaterial')
 
+        # properties from UI
+        write_bool(file_handler, 'backFaceCulling', self.backFaceCulling)
+        write_bool(file_handler, 'checkReadyOnlyOnce', self.checkReadyOnlyOnce)
+        write_int(file_handler, 'maxSimultaneousLights', self.maxSimultaneousLights)
+
         if not self.use_nodes:
             propName = 'albedoColor' if self.isPBR else 'diffuseColor'
             write_color(file_handler, propName, self.diffuseColor)
@@ -239,11 +244,6 @@ class BJSMaterial:
             # source emissive node
             if self.bjsNodeTree.emissiveIntensity:
                 write_color(file_handler, 'emissiveIntensity', self.bjsNodeTree.emissiveIntensity)
-
-        # properties from UI
-        write_bool(file_handler, 'backFaceCulling', self.backFaceCulling)
-        write_bool(file_handler, 'checkReadyOnlyOnce', self.checkReadyOnlyOnce)
-        write_int(file_handler, 'maxSimultaneousLights', self.maxSimultaneousLights)
 
         # ---- add textures ----
 

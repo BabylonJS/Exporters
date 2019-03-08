@@ -155,7 +155,8 @@ def format_array(array, precision, indent = '', beginIdx = 0, firstNotIncludedId
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def format_color(color, precision = FLOAT_PRECISION_DEFAULT):
     fmt = '%.' + str(precision) + 'f'
-    return format_float(color.r, fmt) + ',' + format_float(color.g, fmt) + ',' + format_float(color.b, fmt)
+    # reference by [], since converted materials to 2.80 cannot be addressed by .r, .g, or .b
+    return format_float(color[0], fmt) + ',' + format_float(color[1], fmt) + ',' + format_float(color[2], fmt)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def format_vector(vector, precision = FLOAT_PRECISION_DEFAULT):
     fmt = '%.' + str(precision) + 'f'
