@@ -148,11 +148,10 @@ namespace Max2Babylon
             else if (isGltfExported && materialExporter != null && materialExporter is IGLTFMaterialExporter)
             {
                 // add a basic babylon material to the list to forward the max material reference
-                var babylonMaterial = new BabylonMaterial
+                var babylonMaterial = new BabylonMaterial(id)
                 {
                     maxGameMaterial = materialNode,
-                    name = name,
-                    id = id
+                    name = name
                 };
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
