@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -12,6 +13,8 @@ namespace Max2Babylon
         private static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
         private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
         public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
+        private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
+        private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
 
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
@@ -60,28 +63,28 @@ namespace Max2Babylon
         }
 
         private string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
-        {
-            if (sourcePath == null || sourcePath == "")
             {
-                RaiseWarning("Texture path is missing.", 3);
-                return null;
-            }
+                if (sourcePath == null || sourcePath == "")
+                {
+                    RaiseWarning("Texture path is missing.", 3);
+                    return null;
+                }
 
-            var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
+                var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
 
-            if (validImageFormat == null)
-            {
-                // Image format is not supported by the exporter
-                RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
-                return null;
-            }
+                if (validImageFormat == null)
+                {
+                    // Image format is not supported by the exporter
+                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
+                    return null;
+                }
 
-            // Copy texture to output
+                // Copy texture to output
             var destPath = Path.Combine(gltf.OutputFolder, textureName);
-            destPath = Path.ChangeExtension(destPath, validImageFormat);
-            CopyGltfTexture(sourcePath, destPath);
+                destPath = Path.ChangeExtension(destPath, validImageFormat);
+                CopyGltfTexture(sourcePath, destPath);
 
-            return validImageFormat;
+                return validImageFormat;
         }
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Func<string> writeImageFunc)
@@ -96,16 +99,15 @@ namespace Max2Babylon
                 name = babylonTexture.name;
             }
 
-            // Check for texture optimisation
-            if (CheckIfImageIsRegistered(name))
-            {
-                var TextureComponent = GetRegisteredTexture(name);
-
-                return TextureComponent;
-            }
 
             RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
+            if (glTFTextureInfoMap.ContainsKey(babylonTexture.Id))
+            {
+                return glTFTextureInfoMap[babylonTexture.Id];
+            }
+            else
+            {
             string validImageFormat = writeImageFunc.Invoke();
             if (validImageFormat == null)
             {
@@ -117,11 +119,11 @@ namespace Max2Babylon
             // --------------------------
             // -------- Sampler ---------
             // --------------------------
-
             RaiseMessage("GLTFExporter.Texture | create sampler", 3);
-            GLTFSampler gltfSampler = gltf.AddSampler();
+                GLTFSampler gltfSampler = new GLTFSampler();
+                gltfSampler.index = gltf.SamplersList.Count;
 
-            // --- Retreive info from babylon texture ---
+                // --- Retrieve info from babylon texture ---
             // Mag and min filters
             GLTFSampler.TextureMagFilter? magFilter;
             GLTFSampler.TextureMinFilter? minFilter;
@@ -132,16 +134,48 @@ namespace Max2Babylon
             gltfSampler.wrapS = getWrapMode(babylonTexture.wrapU);
             gltfSampler.wrapT = getWrapMode(babylonTexture.wrapV);
 
+                var matchingSampler = gltf.SamplersList.FirstOrDefault(sampler => sampler.wrapS == gltfSampler.wrapS && sampler.wrapT == gltfSampler.wrapT && sampler.magFilter == gltfSampler.magFilter && sampler.minFilter == gltfSampler.minFilter);
+                if (matchingSampler != null)
+                {
+                    gltfSampler = matchingSampler;
+                }
+                else
+                {
+                    gltf.SamplersList.Add(gltfSampler);
+                }
+
 
             // --------------------------
             // --------- Image ----------
             // --------------------------
 
             RaiseMessage("GLTFExporter.Texture | create image", 3);
-            GLTFImage gltfImage = gltf.AddImage();
+                GLTFImage gltfImage = null;
+                if (glTFImageMap.ContainsKey(name))
+                {
+                    gltfImage = glTFImageMap[name];
+                }
+                else
+                {
+                    gltfImage = new GLTFImage
+                    {
+                        uri = name
+                    };
+                    gltfImage.index = gltf.ImagesList.Count;
+                    gltf.ImagesList.Add(gltfImage);
+                    glTFImageMap.Add(name, gltfImage);
+                    switch (validImageFormat)
+                    {
+                        case "jpg":
+                            gltfImage.FileExtension = "jpeg";
+                            break;
+                        case "png":
+                            gltfImage.FileExtension = "png";
+                            break;
+                    }
+                }
 
-            gltfImage.uri = name;
-            gltfImage.FileExtension = validImageFormat;
+
 
 
             // --------------------------
@@ -149,8 +183,14 @@ namespace Max2Babylon
             // --------------------------
 
             RaiseMessage("GLTFExporter.Texture | create texture", 3);
-            GLTFTexture gltfTexture = gltf.AddTexture(gltfImage, gltfSampler);
-            gltfTexture.name = name;
+            var gltfTexture = new GLTFTexture
+            {
+                name = name,
+                sampler = gltfSampler.index,
+                source = gltfImage.index
+            };
+            gltfTexture.index = gltf.TexturesList.Count;
+            gltf.TexturesList.Add(gltfTexture);
 
 
             // --------------------------
@@ -162,7 +202,7 @@ namespace Max2Babylon
                 texCoord = babylonTexture.coordinatesIndex
             };
 
-            if (babylonTexture.uOffset != 0f || babylonTexture.vOffset != 0f || babylonTexture.uScale != 1f || babylonTexture.vScale != 1f || babylonTexture.wAng != 0f)
+                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == -1) || !(babylonTexture.wAng == 0))
             {
                 // Add texture extension if enabled in the export settings
                 if (exportParameters.enableKHRTextureTransform)
@@ -171,14 +211,42 @@ namespace Max2Babylon
                 }
                 else
                 {
-                    RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!");
+                        RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                 }
             }
+                var textureID = name + TextureTransformID(gltfTextureInfo);
+                // Check for texture optimization.  This is done here after the texture transform has been potentially applied to the texture extension
+                if (CheckIfImageIsRegistered(textureID))
+                {
+                    var textureComponent = GetRegisteredTexture(textureID);
             
+                    return textureComponent;
+                }
+
             // Add the texture in the dictionary
-            RegisterTexture(gltfTextureInfo, name);
+                RegisterTexture(gltfTextureInfo, textureID);
+                glTFTextureInfoMap[babylonTexture.Id] = gltfTextureInfo;
 
             return gltfTextureInfo;
+        }
+        }
+
+        private string TextureTransformID(GLTFTextureInfo gltfTextureInfo)
+        {
+            if (gltfTextureInfo.extensions == null || !gltfTextureInfo.extensions.ContainsKey(KHR_texture_transform))
+            {
+                return "";
+            }
+            else { 
+                // Set an id for the texture transform and append to the name
+                KHR_texture_transform textureTransform = gltfTextureInfo.extensions[BabylonExporter.KHR_texture_transform] as KHR_texture_transform;
+                var offsetID = textureTransform.offset[0] + "_" + textureTransform.offset[1];
+                var rotationID = textureTransform.rotation.ToString();
+                var scaleID = textureTransform.scale[0] + "_" + textureTransform.scale[1];
+                var textureTransformID = offsetID + "_" + rotationID + "_" + scaleID;
+
+                return textureTransformID;
+            }
         }
 
         private GLTFTextureInfo ExportEmissiveTexture(BabylonStandardMaterial babylonMaterial, GLTF gltf, float[] defaultEmissive, float[] defaultDiffuse)
@@ -371,13 +439,10 @@ namespace Max2Babylon
             {
                 offset = new float[] { babylonTexture.uOffset, -babylonTexture.vOffset },
                 rotation = angle,
-                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale },
+                scale = new float[] { babylonTexture.uScale, -babylonTexture.vScale },
                 texCoord = babylonTexture.coordinatesIndex
             };
 
-            textureTransform.offset[1] += 1 - babylonTexture.vScale;    // update vOffset according to the vScale
-            textureTransform.offset[0] += (float)(0.5 * (1 - (Math.Cos(angleDirect) - Math.Sin(angleDirect)))); // update uOffset according to the rotation
-            textureTransform.offset[1] += (float)(0.5 * (1 - (Math.Sin(angleDirect) + Math.Cos(angleDirect)))); // update vOffset according to the rotation
 
             if (gltfTextureInfo.extensions == null)
             {

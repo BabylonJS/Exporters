@@ -441,6 +441,21 @@ namespace Maya2Babylon
             GLTFNode gltfNode = null;
             var type = babylonNode.GetType();
 
+            // Do not export light if it is not enabled, or if it is an ambient light
+            if (type == typeof(BabylonLight) || type.IsSubclassOf(typeof(BabylonLight)))
+            {
+                if (!_exportKHRLightsPunctual)
+                {
+                    return null;
+                }
+                else if (_exportKHRLightsPunctual && (babylonNode as BabylonLight).type == 3)
+                {
+                    RaiseMessage($"Ambient light {babylonNode.name} is not supported in KHR_lights_punctual.");
+                    return null;
+                }
+            }
+
+
             var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
             if (nodeNodePair.Key != null)
             {

@@ -130,7 +130,7 @@ namespace Maya2Babylon
                 OptimizeAnimations(keys, true);
 
                 // Ensure animation has at least 2 frames
-                if (IsAnimationKeysRelevant(keys))
+                if (IsAnimationKeysRelevant(keys, babylonAnimationProperty))
                 {
                     int dataType = 0;   // "scaling", "rotationQuaternion", "position", "visibility"
                     if (indexAnimation == 0 || indexAnimation == 2) // scaling and position
@@ -316,10 +316,10 @@ namespace Maya2Babylon
                 OptimizeAnimations(babylonAnimationKeys, true);
 
                 // Ensure animation has at least 2 frames
-                if (IsAnimationKeysRelevant(keys))
+                string babylonAnimationProperty = babylonAnimationProperties[indexAnimationProperty];
+                if (IsAnimationKeysRelevant(keys, babylonAnimationProperty))
                 {
                     // Create BabylonAnimation
-                    string babylonAnimationProperty = babylonAnimationProperties[indexAnimationProperty];
                     animationsObject.Add(new BabylonAnimation()
                     {
                         dataType = indexAnimationProperty == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
@@ -435,7 +435,7 @@ namespace Maya2Babylon
             OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
 
             // Ensure animation has at least 2 frames
-            if (IsAnimationKeysRelevant(keys))
+            if (IsAnimationKeysRelevant(keys, "_matrix"))
             {
                 // Animations
                 animation = new BabylonAnimation()
@@ -467,8 +467,13 @@ namespace Maya2Babylon
         {
             return ConvertMayaToBabylonMatrix(GetMMatrix(mFnTransform, currentFrame));
         }
-
-        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys)
+        /// <summary>
+        /// Determines if the animation key frames are relevant 
+        /// </summary>
+        /// <param name="keys">Animation key frames</param>
+        /// <param name="property">The target property of the animation</param>
+        /// <returns></returns>
+        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys, string property)
         {
             if (keys.Count > 1)
             {
@@ -476,14 +481,35 @@ namespace Maya2Babylon
                 {
                     if (keys[0].values.IsEqualTo(keys[1].values))
                     {
-                        return false;
+                        switch(property)
+                        {
+                            case "scaling":
+                                if (keys[0].values.IsEqualTo( new BabylonVector3(1,1,1).ToArray()))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "rotationQuaternion":
+                                if (keys[0].values.IsEqualTo(new BabylonQuaternion(0,0,0,1).ToArray()))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "position":
+                                if (keys[0].values.IsEqualTo(new BabylonVector3(0,0,0).ToArray()))
+                                {
+                                    return false;
+                                }
+                                break;
+                            default:
+                                return true;
+
+                        }
                     }
                 }
-
-                return true;
             }
 
-            return false;
+            return true;
         }
 
 
@@ -550,7 +576,7 @@ namespace Maya2Babylon
             OptimizeAnimations(keys, false);
 
             // Ensure animation has at least 2 frames
-            if (IsAnimationKeysRelevant(keys))
+            if (IsAnimationKeysRelevant(keys, "influence"))
             {
                 // Animations
                 animation = new BabylonAnimation()
@@ -639,7 +665,7 @@ namespace Maya2Babylon
             OptimizeAnimations(keys, false);
 
             // Ensure animation has at least 2 frames
-            if (IsAnimationKeysRelevant(keys))
+            if (IsAnimationKeysRelevant(keys, babylonProperty))
             {
                 // Animations
                 animation = new BabylonAnimation()

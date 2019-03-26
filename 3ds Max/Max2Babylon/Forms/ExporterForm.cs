@@ -21,6 +21,7 @@ namespace Max2Babylon
         public ExporterForm(BabylonExportActionItem babylonExportAction)
         {
             InitializeComponent();
+            this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
             
@@ -219,7 +220,7 @@ namespace Max2Babylon
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Exportation cancelled: " + ex.Message, Color.Red);
+                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message, Color.Red);
                 currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
 
@@ -370,7 +371,7 @@ namespace Max2Babylon
             {
                 if (ctrl == chkDracoCompression && !ctrl.Enabled && !IsShown)
                 {
-                    string tip = "For gltf and glb export only.\nNode.js and gltf-pipeline module are required.";
+                    string tip = "For glTF and glb export only.\nNode.js and gltf-pipeline modules are required.";
                     toolTipDracoCompression.Show(tip, chkDracoCompression, chkDracoCompression.Width / 2, chkDracoCompression.Height / 2);
                     IsShown = true;
                 }

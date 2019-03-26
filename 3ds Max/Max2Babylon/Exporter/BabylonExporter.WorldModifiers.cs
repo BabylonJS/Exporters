@@ -67,9 +67,8 @@ namespace Max2Babylon
                 diffuseTexture.level = 1;
             }
 
-            return new BabylonFurMaterial
+            return new BabylonFurMaterial(modifier.GetGuid().ToString())
             {
-                id = modifier.GetGuid().ToString(),
                 name = modifier.GetGuid().ToString(),
                 sourceMeshName = sourceMeshName,
                 furDensity = density,
