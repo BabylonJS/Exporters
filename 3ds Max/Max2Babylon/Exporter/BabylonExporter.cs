@@ -526,14 +526,22 @@ namespace Max2Babylon
                         var file = Path.GetFileName(filePath);
                         var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
                         var outputFile = Path.Combine(outputDirectory, file);
+
+                        IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputFile);
+                        Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);
                         moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                        Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, maxNotification);
                     }
                     else if (filePath.EndsWith(".babylonbinarymeshdata"))
                     {
                         var file = Path.GetFileName(filePath);
                         var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
                         var outputFile = Path.Combine(outputDirectory, file);
+
+                        IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputFile);
+                        Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);
                         moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                        Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, maxNotification);
                     }
                 }
             }
@@ -546,7 +554,12 @@ namespace Max2Babylon
                         var file = Path.GetFileName(file_path);
                         var tempFilePath = Path.Combine(tempOutputDirectory, file);
                         var outputFile = Path.Combine(outputDirectory, file);
+
+                        IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputFile);
+                        Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);
                         moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                        Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, maxNotification);
+
                         break;
                     }   
                 }
@@ -558,13 +571,19 @@ namespace Max2Babylon
                     var file = Path.GetFileName(filePath);
                     var outputPath = Path.Combine(outputDirectory, file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
+
+                    IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputPath);
+                    Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);
                     moveFileToOutputDirectory(tempFilePath, outputPath, exportParameters);
+                    Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, maxNotification);
                 }
             }
             Directory.Delete(tempOutputDirectory, true);
             watch.Stop();
 
             RaiseMessage(string.Format("Exportation done in {0:0.00}s: {1}", watch.ElapsedMilliseconds / 1000.0, fileExportString), Color.Blue);
+            IUTF8Str max_notification = Autodesk.Max.GlobalInterface.Instance.UTF8Str.Create("BabylonExportComplete");
+            Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, max_notification);
         }
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
