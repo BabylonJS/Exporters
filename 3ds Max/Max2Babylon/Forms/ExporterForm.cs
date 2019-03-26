@@ -220,6 +220,9 @@ namespace Max2Babylon
             }
             catch (Exception ex)
             {
+                IUTF8Str operationStatus = GlobalInterface.Instance.UTF8Str.Create("BabylonExportAborted");
+                Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, operationStatus);
+
                 currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message, Color.Red);
                 currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
