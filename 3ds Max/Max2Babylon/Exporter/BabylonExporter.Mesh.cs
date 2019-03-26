@@ -9,8 +9,6 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private int bonesCount;
-
         private bool IsMeshExportable(IIGameNode meshNode)
         {
             return IsNodeExportable(meshNode);
@@ -224,7 +222,6 @@ namespace Max2Babylon
             int maxNbBones = 0;
             if (isSkinned && GetRevelantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
             {
-                bonesCount = skin.TotalSkinBoneCount;
                 var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
                 if (skinAlreadyStored == null)
                 {
@@ -353,11 +350,11 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017 || MAX2018 || MAX2019
+                #if MAX2017 || MAX2018 || MAX2019
                     var channelNum = mappingChannels[i];
-#else
+                #else
                     var channelNum = mappingChannels[new IntPtr(i)];
-#endif
+                #endif
                     if (channelNum == 1)
                     {
                         hasUV = true;
@@ -500,7 +497,7 @@ namespace Max2Babylon
                                 var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
 
-                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                                if (rawScene.GetBoolProperty("babylonjs_export_Morph_Normals", 1))
                                 {
                                     babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
                                 }
@@ -583,7 +580,7 @@ namespace Max2Babylon
             int indexInFaceIndexesArray = 0;
             for (int i = 0; i < multiMatsCount; ++i)
             {
-                int materialId = meshNode.NodeMaterial?.GetMaterialID(i) ?? 0;
+                int materialId = i;
                 var indexCount = 0;
                 var minVertexIndex = int.MaxValue;
                 var maxVertexIndex = int.MinValue;
@@ -616,11 +613,11 @@ namespace Max2Babylon
                         if (storeFaceIndexes)
                         {
                             // Retreive face
-#if MAX2017 || MAX2018 || MAX2019
+                            #if MAX2017 || MAX2018 || MAX2019
                             face = materialFaces[j];
-#else
+                            #else
                             face = materialFaces[new IntPtr(j)];
-#endif
+                            #endif
 
                             // Store face index
                             faceIndexes.Add(face.MeshFaceIndex);
@@ -796,7 +793,7 @@ namespace Max2Babylon
             if (skin != null)
             {
                 float[] weight = new float[4] { 0, 0, 0, 0 };
-                int[] bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
+                int[] bone = new int[4] { 0, 0, 0, 0 };
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
                 
                 int currentVtxBone = 0;
@@ -818,7 +815,7 @@ namespace Max2Babylon
                 if (currentVtxBone == 0)
                 {
                     weight[0] = 1.0f;
-                    bone[0] = bonesCount;
+                    bone[0] = 0;
                 }
 
                 vertex.Weights = Loader.Global.Point4.Create(weight);
@@ -827,7 +824,7 @@ namespace Max2Babylon
                 if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
                     weight = new float[4] { 0, 0, 0, 0 };
-                    bone = new int[4] { bonesCount, bonesCount, bonesCount, bonesCount };
+                    bone = new int[4] { 0, 0, 0, 0 };
 
                     // process remaining skin bones until we have a total of 8 bones for this vertex or we run out of skin bones
                     for (; currentSkinBone < nbBones && currentVtxBone < 8; ++currentSkinBone)

@@ -67,7 +67,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool doubleSided { get; set; }
 
-        public BabylonPBRMetallicRoughnessMaterial() : base()
+        public BabylonPBRMetallicRoughnessMaterial(string id) : base(id)
         {
             customType = "BABYLON.PBRMetallicRoughnessMaterial";
 

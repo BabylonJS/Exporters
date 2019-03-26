@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -34,14 +33,11 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        private string exporterVersion = "1.3.10";
+        public static string exporterVersion = "1.3.33";
 
         void ReportProgressChanged(int progress)
         {
-            if (OnImportProgressChanged != null)
-            {
-                OnImportProgressChanged(progress);
-            }
+            OnImportProgressChanged?.Invoke(progress);
         }
 
         void RaiseError(string error, int rank = 0)
@@ -129,7 +125,7 @@ namespace Max2Babylon
 
             var gameScene = Loader.Global.IGameInterface;
             if (exportParameters.exportNode == null)
-                gameScene.InitialiseIGame(false);
+            gameScene.InitialiseIGame(false);
             else gameScene.InitialiseIGame(exportParameters.exportNode, true);
             gameScene.SetStaticFrame(0);
 
@@ -224,7 +220,7 @@ namespace Max2Babylon
                     babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
                 }
             }
-            
+
             // Instantiate custom material exporters
             materialExporters = new Dictionary<ClassIDWrapper, IMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
@@ -361,7 +357,7 @@ namespace Max2Babylon
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
                 rootNode.isDummy = true;
-                float rootNodeScale = 1.0f / scaleFactorFloat;
+                float rootNodeScale = scaleFactorFloat;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
 
                 if (ExportQuaternionsInsteadOfEulers)
@@ -519,6 +515,28 @@ namespace Max2Babylon
             }
             // Move files to output directory
             var filePaths = Directory.GetFiles(tempOutputDirectory);
+            if (outputFormat == "binary babylon")
+            {
+                var tempBinaryOutputDirectory = Path.Combine(tempOutputDirectory, "Binary");
+                var binaryFilePaths = Directory.GetFiles(tempBinaryOutputDirectory);
+                foreach(var filePath in binaryFilePaths)
+                {
+                    if (filePath.EndsWith(".binary.babylon"))
+                    {
+                        var file = Path.GetFileName(filePath);
+                        var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
+                        var outputFile = Path.Combine(outputDirectory, file);
+                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                    }
+                    else if (filePath.EndsWith(".babylonbinarymeshdata"))
+                    {
+                        var file = Path.GetFileName(filePath);
+                        var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
+                        var outputFile = Path.Combine(outputDirectory, file);
+                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
+                    }
+                }
+            }
             if (outputFormat == "glb")
             {
                 foreach (var file_path in filePaths)
@@ -621,7 +639,7 @@ namespace Max2Babylon
                 string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
                 if (tag != "")
                 {
-                    babylonNode.tag = tag;
+                    babylonNode.tags = tag;
                 }
 
                 // Export its children

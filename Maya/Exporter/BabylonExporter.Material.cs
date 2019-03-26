@@ -104,10 +104,9 @@ namespace Maya2Babylon
                 RaiseVerbose("diffuseCoeff=" + lambertShader.diffuseCoeff, 2);
                 RaiseVerbose("translucenceCoeff=" + lambertShader.translucenceCoeff, 2);
 
-                var babylonMaterial = new BabylonStandardMaterial
+                var babylonMaterial = new BabylonStandardMaterial(id)
                 {
                     name = name,
-                    id = id,
                     diffuse = lambertShader.color.toArrayRGB(),
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
@@ -194,10 +193,9 @@ namespace Maya2Babylon
             {
                 RaiseMessage("Stingray shader", 2);
 
-                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
-                    name = name,
-                    id = id
+                    name = name
                 };
 
                 // --- Global ---
@@ -351,10 +349,9 @@ namespace Maya2Babylon
             {
                 RaiseMessage("Ai Standard Surface shader", 2);
 
-                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial
+                var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
-                    name = name,
-                    id = id
+                    name = name
                 };
 
                 // --- Global ---

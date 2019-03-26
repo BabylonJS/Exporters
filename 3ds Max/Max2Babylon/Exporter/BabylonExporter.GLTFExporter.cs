@@ -331,13 +331,13 @@ namespace Max2Babylon
                 CheckCancelled();
 
                 // export its tag
-                if(babylonNode.tag != null && babylonNode.tag != "")
+                if(babylonNode.tags != null && babylonNode.tags != "")
                 {
                     if (gltfNode.extras == null)
                     {
                         gltfNode.extras = new Dictionary<string, object>();
                     }
-                    gltfNode.extras["tag"] = babylonNode.tag;
+                    gltfNode.extras["tags"] = babylonNode.tags;
                 }
 
                 // ...export its children
@@ -402,7 +402,7 @@ namespace Max2Babylon
 
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
-                var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
+                var path = Path.Combine(gltf.OutputFolder, Uri.UnescapeDataString(gltfImage.uri));
                 byte[] imageBytes = File.ReadAllBytes(path);
 
                 // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements

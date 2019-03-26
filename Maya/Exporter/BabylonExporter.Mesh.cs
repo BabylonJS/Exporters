@@ -860,10 +860,10 @@ namespace Maya2Babylon
                 float weight1 = 0;
                 float weight2 = 0;
                 float weight3 = 0;
-                int bone0 = bonesCount;
-                int bone1 = bonesCount;
-                int bone2 = bonesCount;
-                int bone3 = bonesCount;
+                int bone0 = 0;
+                int bone1 = 0;
+                int bone2 = 0;
+                int bone3 = 0;
                 int nbBones = weightByInfluenceIndex.Count; // number of bones/influences for this vertex
 
                 if (nbBones == 0)

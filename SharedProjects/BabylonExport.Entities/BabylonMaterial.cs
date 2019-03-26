@@ -28,8 +28,9 @@ namespace BabylonExport.Entities
 
         public bool isUnlit = false;
 
-        public BabylonMaterial()
+        public BabylonMaterial(string id)
         {
+            this.id = id;
             backFaceCulling = true;
 
             alpha = 1.0f;

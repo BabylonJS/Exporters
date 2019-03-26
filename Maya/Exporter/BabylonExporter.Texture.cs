@@ -72,7 +72,9 @@ namespace Maya2Babylon
             }
             RaiseVerbose("validImageFormat=" + validImageFormat, logRankTexture + 1);
 
-            var babylonTexture = new BabylonTexture
+            var id = textureDependencyNode.uuid().asString();
+
+            var babylonTexture = new BabylonTexture(id)
             {
                 name = Path.GetFileNameWithoutExtension(sourcePath) + "." + validImageFormat
             };
@@ -269,7 +271,9 @@ namespace Maya2Babylon
                 return null;
             }
 
-            var babylonTexture = new BabylonTexture
+            var id = textureDependencyNode.uuid().asString();
+
+            var babylonTexture = new BabylonTexture(id)
             {
                 name = (ambientOcclusionTextureDependencyNode != null ? ambientOcclusionTextureDependencyNode.name : "") +
                        (roughnessTextureDependencyNode != null ? roughnessTextureDependencyNode.name : ("" + (int)(defaultRoughness * 255))) +
@@ -344,7 +348,8 @@ namespace Maya2Babylon
                 return null;
             }
 
-            var babylonTexture = new BabylonTexture
+            var id = textureDependencyNode.uuid().asString();
+            var babylonTexture = new BabylonTexture(id)
             {
                 name = materialName + "_baseColor" + ".png" // TODO - unsafe name, may conflict with another texture name
             };

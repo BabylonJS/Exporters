@@ -1,4 +1,5 @@
 ﻿using Autodesk.Max;
+using BabylonExport.Entities;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,22 @@ namespace Max2Babylon
         public static int RoundToInt(float f)
         {
             return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
+        }
+
+        /**
+         * Computes a texture transform matrix with a pre-transformation
+         */
+        public static BabylonMatrix ComputeTextureTransformMatrix(BabylonVector3 pivotCenter , BabylonVector3 offset, BabylonQuaternion rotation, BabylonVector3 scale)
+        {
+            var dOffset = new BabylonVector3();
+            var dRotation = new BabylonQuaternion();
+            var dScale = new BabylonVector3();
+            offset.X *= scale.X;
+            offset.Y *= scale.Y;
+            offset.Z *= 0;
+
+            var transformMatrix = BabylonMatrix.Translation(new BabylonVector3(-pivotCenter.X, -pivotCenter.Y, 0)).multiply(BabylonMatrix.Compose(scale, rotation, offset)).multiply(BabylonMatrix.Translation(pivotCenter));
+            return transformMatrix;
         }
 
         #endregion

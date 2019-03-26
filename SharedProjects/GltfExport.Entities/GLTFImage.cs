@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace GLTFExport.Entities
 {
@@ -6,7 +7,21 @@ namespace GLTFExport.Entities
     public class GLTFImage : GLTFIndexedChildRootProperty
     {
         [DataMember(EmitDefaultValue = false)]
-        public string uri { get; set; }
+        public string uri
+        {
+            get => _uri;
+            set
+            {
+                if (value == null)
+                {
+                    _uri = null;
+                }
+                else
+                {
+                    _uri = Uri.EscapeDataString(value);
+                }
+            }
+        }
 
         [DataMember(EmitDefaultValue = false)]
         public string mimeType { get; set; } // "image/jpeg" or "image/png"
@@ -15,5 +30,6 @@ namespace GLTFExport.Entities
         public int? bufferView { get; set; }
 
         public string FileExtension;
+        private string _uri;
     }
 }
