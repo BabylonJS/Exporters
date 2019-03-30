@@ -695,6 +695,8 @@ class MeshInstance:
         self.scaling = instancedMesh.scaling
         self.freezeWorldMatrix = instancedMesh.freezeWorldMatrix
         self.tags = instancedMesh.tags
+        self.checkCollisions = instancedMesh.checkCollisions
+        self.isPickable = instancedMesh.isPickable
 
         if hasattr(instancedMesh, 'physicsImpostor'):
             self.physicsImpostor = instancedMesh.physicsImpostor
@@ -716,6 +718,8 @@ class MeshInstance:
         # freeze World Matrix currently ignored for instances
         write_bool(file_handler, 'freezeWorldMatrix', self.freezeWorldMatrix)
         write_string(file_handler, 'tags', self.tags)
+        write_bool(file_handler, 'checkCollisions', self.checkCollisions)
+        write_bool(file_handler, 'pickable', self.isPickable)
 
         if hasattr(self, 'physicsImpostor'):
             write_int(file_handler, 'physicsImpostor', self.physicsImpostor)
