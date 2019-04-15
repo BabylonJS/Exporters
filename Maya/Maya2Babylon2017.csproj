@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{50780553-6248-463B-A0F3-F82C6CCEC703}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Maya2Babylon</RootNamespace>
+    <AssemblyName>Maya2Babylon</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\2017-2018\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GDImageLibrary">
+      <HintPath>Refs\GDImageLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Refs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="openmayacs">
+      <HintPath>Refs\2017\openmayacs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TargaImage">
+      <HintPath>Refs\TargaImage.dll</HintPath>
+    </Reference>
+    <Reference Include="TQ.Texture">
+      <HintPath>Refs\TQ.Texture.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BabylonExportActionItem.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Light.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.Optimiser.cs" />
+    <Compile Include="Exporter\BabylonExporter.Camera.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Animation.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Camera.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Material.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Mesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Skin.cs" />
+    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Texture.cs" />
+    <Compile Include="Exporter\BabylonExporter.Light.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.cs" />
+    <Compile Include="Exporter\BabylonExporter.Animation.cs" />
+    <Compile Include="Exporter\BabylonExporter.Mesh.cs" />
+    <Compile Include="Exporter\BabylonExporter.Node.cs" />
+    <Compile Include="Exporter\BabylonExporter.Skeleton.cs" />
+    <Compile Include="Exporter\BabylonExporter.Texture.cs" />
+    <Compile Include="Exporter\BabylonExporter.Writer.cs" />
+    <Compile Include="Exporter\BabylonExporter.Logger.cs" />
+    <Compile Include="Exporter\BabylonExporter.cs" />
+    <Compile Include="Exporter\AnimationGroup.cs" />
+    <Compile Include="Exporter\GlobalVertex.cs" />
+    <Compile Include="Exporter\GLTFGlobalVertex.cs" />
+    <Compile Include="Exporter\BabylonExporter.Material.Duplication.cs" />
+    <Compile Include="Exporter\MaterialDuplicationData.cs" />
+    <Compile Include="Extensions\ColorExtension.cs" />
+    <Compile Include="Extensions\MColorExtension.cs" />
+    <Compile Include="Extensions\MFloatVectorExtension.cs" />
+    <Compile Include="Extensions\MFloatPointExtension.cs" />
+    <Compile Include="Extensions\MMatrixExtension.cs" />
+    <Compile Include="Extensions\MPlugExtension.cs" />
+    <Compile Include="Extensions\MPointExtension.cs" />
+    <Compile Include="Extensions\MVectorExtension.cs" />
+    <Compile Include="Extensions\MTransformationMatrixExtension.cs" />
+    <Compile Include="Forms\ExporterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExporterForm.Designer.cs">
+      <DependentUpon>ExporterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Exporter\GLTFBufferService.cs" />
+    <Compile Include="Forms\AnimationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AnimationForm.Designer.cs">
+      <DependentUpon>AnimationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AnimationGroupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\AnimationGroupControl.Designer.cs">
+      <DependentUpon>AnimationGroupControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Loader.cs" />
+    <Compile Include="MayaPlugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\JsonTextWriterBounded.cs" />
+    <Compile Include="Tools\JsonTextWriterOptimized.cs" />
+    <Compile Include="Tools\Tools.cs" />
+    <Compile Include="Tools\WebServer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Refs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\AnimationForm.resx">
+      <DependentUpon>AnimationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AnimationGroupControl.resx">
+      <DependentUpon>AnimationGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExporterForm.resx">
+      <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\maya_exporter_logo.jpg" />
+  </ItemGroup>
+  <Import Project="..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
+  <Import Project="..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
+  <Import Project="..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+if not exist "$(SolutionDir)assemblies\2017-2018" mkdir "$(SolutionDir)assemblies\2017-2018"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2017-2018\"
+del "$(SolutionDir)assemblies\2017-2018\$(TargetName).dll"
+copy "$(TargetPath)" "$(SolutionDir)assemblies\2017-2018\$(TargetName).nll.dll"
+if exist "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\2017-2018\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"
+if exist "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\2017-2018\*.dll" "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
