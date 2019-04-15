@@ -41,3 +41,7 @@ from the export interface
 ## v1.2.30
 **Fixed bugs:**
 - Disallow animation groups with two key frames of a TRS value to export if they are the default value (origin, no scale, no rotation)
+
+## v1.2.31
+**Implemented changes:**
+- Allow building to Maya 2019
