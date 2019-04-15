@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{50780553-6248-463B-A0F3-F82C6CCEC703}</ProjectGuid>
+    <ProjectGuid>{0AC46A8E-8C0D-4EBE-B64A-4CC274E0FF38}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Maya2Babylon</RootNamespace>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\2019\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,7 +40,7 @@
       <HintPath>Refs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="openmayacs">
-      <HintPath>Refs\openmayacs.dll</HintPath>
+      <HintPath>Refs\2019\openmayacs.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -162,10 +162,11 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
-copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\"
-del "$(SolutionDir)assemblies\$(TargetName).dll"
-copy "$(TargetPath)" "$(SolutionDir)assemblies\$(TargetName).nll.dll"
-if exist "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"
-if exist "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\*.dll" "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
+if not exist "$(SolutionDir)assemblies\2019" mkdir "$(SolutionDir)assemblies\2019"
+copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2019\"
+del "$(SolutionDir)assemblies\2019\$(TargetName).dll"
+copy "$(TargetPath)" "$(SolutionDir)assemblies\2019\$(TargetName).nll.dll"
+if exist "D:\Programmes\Autodesk\Maya2019\bin\plug-ins\" copy "$(SolutionDir)assemblies\2019\*.dll" "D:\Programmes\Autodesk\Maya2019\bin\plug-ins\"
+if exist "C:\Program Files\Autodesk\Maya2019\bin\plug-ins\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\Maya2019\bin\plug-ins\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
