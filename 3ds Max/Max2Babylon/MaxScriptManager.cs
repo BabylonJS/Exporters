@@ -12,6 +12,10 @@ namespace Max2Babylon
 
         public static void Export(ExportParameters exportParameters)
         {
+            if (Loader.Class_ID == null)
+            {
+                Loader.AssemblyMain();
+            }
             // Check output format is valid
             List<string> validFormats = new List<string>(new string[] { "babylon", "binary babylon", "gltf", "glb" });
             if (!validFormats.Contains(exportParameters.outputFormat))
