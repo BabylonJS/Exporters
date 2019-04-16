@@ -120,7 +120,9 @@ namespace Max2Babylon
                         string id = maxNode.GetGuid().ToString();
                         BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
 
-                        if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out GLTFNode gltfNode))
+                        GLTFNode gltfNode;
+
+                        if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
                         {
                             ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
                         }
