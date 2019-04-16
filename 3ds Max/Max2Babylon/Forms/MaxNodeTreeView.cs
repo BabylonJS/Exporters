@@ -131,7 +131,8 @@ namespace Max2Babylon
             foreach (uint nodeHandle in nodeHandles)
             {
                 // get visual node from tree or create it (as non-dummies)
-                if (!visualNodeMap.TryGetValue(nodeHandle, out VisualNode visualNode))
+                VisualNode visualNode;
+                if (!visualNodeMap.TryGetValue(nodeHandle, out visualNode))
                 {
                     IINode node = Loader.Core.RootNode.FindChildNode(nodeHandle);
 
@@ -167,7 +168,8 @@ namespace Max2Babylon
         }
         public void QueueRemoveNode(uint nodeHandle)
         {
-            if (!visualNodeMap.TryGetValue(nodeHandle, out VisualNode node))
+            VisualNode node;
+            if (!visualNodeMap.TryGetValue(nodeHandle, out node))
                 return;
 
             BeginUpdate();
@@ -314,7 +316,9 @@ namespace Max2Babylon
             if(setNonDummy)
                 nodeInfo.IsDummy = false;
 
-            if (previousAppliedHandles.TryGetValue(nodeInfo.MaxNode.Handle, out bool wasDummy))
+            bool wasDummy;
+
+            if (previousAppliedHandles.TryGetValue(nodeInfo.MaxNode.Handle, out wasDummy))
             {
                 if (wasDummy)
                     nodeInfo.State = nodeInfo.IsDummy ? VisualNodeInfo.EState.Saved : VisualNodeInfo.EState.Upgraded;
@@ -342,7 +346,9 @@ namespace Max2Babylon
             if (keepAsDummy)
             {
                 nodeInfo.IsDummy = true;
-                if (previousAppliedHandles.TryGetValue(nodeInfo.MaxNode.Handle, out bool wasDummy))
+                bool wasDummy;
+
+                if (previousAppliedHandles.TryGetValue(nodeInfo.MaxNode.Handle, out wasDummy))
                     nodeInfo.State = wasDummy ? VisualNodeInfo.EState.Saved : VisualNodeInfo.EState.Downgraded;
                 else
                     nodeInfo.State = VisualNodeInfo.EState.Added;
