@@ -48,7 +48,8 @@ namespace Max2Babylon
 
                 MaxNodeTree.BeginUpdate();
                 MaxNodeTree.QueueSetNodes(info.NodeHandles, false);
-                MaxNodeTree.ApplyQueuedChanges(out List<uint> handles, false);
+                List<uint> handles;
+                MaxNodeTree.ApplyQueuedChanges(out handles, false);
                 MaxNodeTree.EndUpdate();
 
                 // if the nodes changed on max' side, even though the data has not changed, the list may be different (e.g. deleted nodes)
@@ -72,7 +73,8 @@ namespace Max2Babylon
 
                 MaxNodeTree.BeginUpdate();
                 MaxNodeTree.QueueSetNodes(null, false);
-                MaxNodeTree.ApplyQueuedChanges(out List<uint> handles, false);
+                List<uint> handles;
+                MaxNodeTree.ApplyQueuedChanges(out handles, false);
                 MaxNodeTree.EndUpdate();
             }
         }
@@ -99,7 +101,9 @@ namespace Max2Babylon
                 return;
             }
 
-            if (!int.TryParse(startTextBox.Text, out int newFrameStart))
+            int newFrameStart;
+
+            if (!int.TryParse(startTextBox.Text, out newFrameStart))
                 newFrameStart = currentInfo.FrameStart;
 
             bool changed = newFrameStart != currentInfo.FrameStart;
@@ -114,7 +118,9 @@ namespace Max2Babylon
                 return;
             }
 
-            if (!int.TryParse(endTextBox.Text, out int newFrameEnd))
+            int newFrameEnd;
+
+            if (!int.TryParse(endTextBox.Text, out newFrameEnd))
                 newFrameEnd = currentInfo.FrameEnd;
 
             bool changed = newFrameEnd != currentInfo.FrameEnd;
@@ -131,9 +137,12 @@ namespace Max2Babylon
 
             string newName = nameTextBox.Text;
 
-            if (!int.TryParse(startTextBox.Text, out int newFrameStart))
+            int newFrameStart;
+
+            if (!int.TryParse(startTextBox.Text, out newFrameStart))
                 newFrameStart = confirmedInfo.FrameStart;
-            if (!int.TryParse(endTextBox.Text, out int newFrameEnd))
+            int newFrameEnd;
+            if (!int.TryParse(endTextBox.Text, out newFrameEnd))
                 newFrameEnd = confirmedInfo.FrameEnd;
 
             List<uint> newHandles;

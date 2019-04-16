@@ -9,7 +9,7 @@ namespace GLTFExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public string uri
         {
-            get => _uri;
+            get { return _uri; }
             set
             {
                 if (value == null)
