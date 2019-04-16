@@ -372,8 +372,7 @@
 if not exist "$(SolutionDir)assemblies\2019" mkdir "$(SolutionDir)assemblies\2019"
 del "$(SolutionDir)assemblies\2019\*.dll"
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2019\"
-if exist "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\"
-if exist "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\"</PostBuildEvent>
+if exist "%ADSK_3DSMAX_x64_2019%bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "%ADSK_3DSMAX_x64_2019%bin\assemblies\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
