@@ -226,13 +226,13 @@ namespace Max2Babylon
                 if (skinAlreadyStored == null)
                 {
                     skins.Add(skin);
+                    babylonMesh.skeletonId = skins.IndexOf(skin);
                 }
                 else
                 {
-                    skin = skinAlreadyStored;
+                    babylonMesh.skeletonId = skins.IndexOf(skinAlreadyStored);
                 }
 
-                babylonMesh.skeletonId = skins.IndexOf(skin);
                 skin.GetInitSkinTM(skinInitPoseMatrix);
                 boneIds = GetNodeIndices(skin);
             }

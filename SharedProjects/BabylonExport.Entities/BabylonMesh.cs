@@ -87,6 +87,15 @@ namespace BabylonExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public int? morphTargetManagerId { get; set; }
 
+        [DataMember]
+        public string[] lodMeshIds { get; set; }
+
+        [DataMember]
+        public int[] lodDistances { get; set; }
+
+        [DataMember]
+        public float[] lodCoverages { get; set; }
+
         public bool isDummy = false;
 
         public List<VertexData> VertexDatas { get; set; } = new List<VertexData>();
@@ -105,6 +114,10 @@ namespace BabylonExport.Entities
             pickable = true;
 
             numBoneInfluencers = 4;
+
+            lodMeshIds = null;
+            lodCoverages = null;
+            lodDistances = null;
 
             position = new float[] { 0, 0, 0 };
         }
