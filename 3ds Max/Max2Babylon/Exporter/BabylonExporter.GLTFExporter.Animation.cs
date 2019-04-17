@@ -246,6 +246,9 @@ namespace Max2Babylon
                         if (babylonAnimation.property == "position")
                         {
                             outputValues[2] *= -1;
+                            outputValues[0] *= scaleFactor;
+                            outputValues[1] *= scaleFactor;
+                            outputValues[2] *= scaleFactor;
                         }
                         else if (babylonAnimation.property == "rotationQuaternion")
                         {

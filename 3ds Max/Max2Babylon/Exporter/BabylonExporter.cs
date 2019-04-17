@@ -33,6 +33,7 @@ namespace Max2Babylon
         private bool exportNonAnimated;
 
         public static string exporterVersion = "1.3.33";
+        public float scaleFactor = 1.0f;
 
         void ReportProgressChanged(int progress)
         {
@@ -85,6 +86,8 @@ namespace Max2Babylon
         public void Export(ExportParameters exportParameters)
         {
             // Check input text is valid
+            this.scaleFactor = Tools.GetScaleFactorToMeters();
+
             var scaleFactorFloat = 1.0f;
             string scaleFactor = exportParameters.scaleFactor;
             try
