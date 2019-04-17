@@ -63,7 +63,6 @@ namespace Max2Babylon
                 globalVertex.Normal.Z *= -1;
 
                 globalVertex.Position *= scaleFactor;
-                globalVertex.Normal *= scaleFactor;
 
                 if (hasUV)
                 {

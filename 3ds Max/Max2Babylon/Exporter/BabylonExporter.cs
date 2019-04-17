@@ -86,10 +86,10 @@ namespace Max2Babylon
         }
         public void Export(ExportParameters exportParameters)
         {
-            // Check input text is valid
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
             var scaleFactorFloat = 1.0f;
+            // Check input text is valid
             string scaleFactor = exportParameters.scaleFactor;
             try
             {
