@@ -62,6 +62,9 @@ namespace Max2Babylon
                 globalVertex.Position.Z *= -1;
                 globalVertex.Normal.Z *= -1;
 
+                globalVertex.Position *= scaleFactor;
+                globalVertex.Normal *= scaleFactor;
+
                 if (hasUV)
                 {
                     globalVertex.UV = BabylonVector2.FromArray(babylonMesh.uvs, indexVertex);
