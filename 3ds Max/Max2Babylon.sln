@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3ds Max", "3ds Max", "{2139CC27-1C89-49C8-95AC-7715ACBADC1F}"
+	ProjectSection(SolutionItems) = preProject
+		Max2Babylon\OnPostBuild.bat = Max2Babylon\OnPostBuild.bat
+		Max2Babylon\OnPreBuild.bat = Max2Babylon\OnPreBuild.bat
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Max2Babylon2017", "Max2Babylon\2017\Max2Babylon2017.csproj", "{2F49C726-A1F8-40D4-859F-1355949608DC}"
 EndProject
