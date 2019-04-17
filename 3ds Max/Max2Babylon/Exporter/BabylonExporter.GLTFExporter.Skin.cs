@@ -28,10 +28,11 @@ namespace Max2Babylon
                     var boneLocalMatrix = new BabylonMatrix();
                     boneLocalMatrix.m = babylonBone.matrix;
 
-                    var translationBabylon = new BabylonVector3() * scaleFactor;
+                    var translationBabylon = new BabylonVector3();
                     var rotationQuatBabylon = new BabylonQuaternion();
                     var scale = new BabylonVector3();
                     boneLocalMatrix.decompose(scale, rotationQuatBabylon, translationBabylon);
+                    translationBabylon *= scaleFactor;
                     translationBabylon.Z *= -1;
                     rotationQuatBabylon.X *= -1;
                     rotationQuatBabylon.Y *= -1;
