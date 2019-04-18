@@ -1,7 +1,10 @@
 SETLOCAL enabledelayedexpansion
 @ECHO off
 
+
 SET max_version=%2
+SET max_location=!ADSK_3DSMAX_x64_%max_version%!
+
 SET source_dir="%~dp0assemblies\%max_version%\"
 ECHO %source_dir%
 
@@ -11,17 +14,17 @@ IF %1=="Release" GOTO OnRelease
 
 
 :OnDebug
-SET dest_dir="C:\Program Files\Autodesk\3ds Max %max_version%\bin\assemblies"
+SET dest_dir="%max_location%bin\assemblies"
 GOTO CopyFiles
 
 :OnRelease
-SET dest_dir="C:\Program Files\Autodesk\3ds Max %max_version%\bin\assemblies"
+SET dest_dir="%max_location%bin\assemblies"
 GOTO CopyFiles
 
 :CopyFiles
 ECHO :: Copying plug-in files
 ECHO :: From: %source_dir%
-ECHO :: To: %dest_dir%\bin\assemblies\
+ECHO :: To: %dest_dir%
 
 if exist %dest_dir%\GDImageLibrary.dll del /f /q %dest_dir%\GDImageLibrary.dll
 COPY %source_dir%\GDImageLibrary.dll %dest_dir%\GDImageLibrary.dll
@@ -54,7 +57,7 @@ ECHO "No Configuaration"
 GOTO Close
 
 :DebugOnMax
-START /d "C:\Program Files\Autodesk\3ds Max %max_version%\" 3dsmax.exe
+START /d "%max_location%" 3dsmax.exe
 GOTO Close
 
 :Close
