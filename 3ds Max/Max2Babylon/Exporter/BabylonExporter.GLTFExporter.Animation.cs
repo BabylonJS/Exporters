@@ -361,8 +361,10 @@ namespace Max2Babylon
                     var rotationQuatBabylon = new BabylonQuaternion();
                     var scaleBabylon = new BabylonVector3();
                     matrix.decompose(scaleBabylon, rotationQuatBabylon, translationBabylon);
-
+                    
+                    // Switch coordinate system at object level
                     translationBabylon.Z *= -1;
+                    translationBabylon *= scaleFactor;
                     rotationQuatBabylon.X *= -1;
                     rotationQuatBabylon.Y *= -1;
 
