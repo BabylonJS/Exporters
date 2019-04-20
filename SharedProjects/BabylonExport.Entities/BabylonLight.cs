@@ -52,6 +52,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public int? lightmapMode { get; set; }
 
+        [DataMember]
+        public int? falloffType { get; set; }
+
         public BabylonLight()
         {
             diffuse = new[] {1.0f, 1.0f, 1.0f};
@@ -60,6 +63,7 @@ namespace BabylonExport.Entities
             range = float.MaxValue;
 
             lightmapMode = null;
+            falloffType = null;
 
             position = new float[] { 0, 0, 0 };
             rotation = new float[] { 0, 0, 0 };
