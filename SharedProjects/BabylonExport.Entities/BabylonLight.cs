@@ -49,12 +49,17 @@ namespace BabylonExport.Entities
         [DataMember]
         public object metadata { get; set; }
 
+        [DataMember]
+        public int? lightmapMode { get; set; }
+
         public BabylonLight()
         {
             diffuse = new[] {1.0f, 1.0f, 1.0f};
             specular = new[] { 1.0f, 1.0f, 1.0f };
             intensity = 1.0f;
             range = float.MaxValue;
+
+            lightmapMode = null;
 
             position = new float[] { 0, 0, 0 };
             rotation = new float[] { 0, 0, 0 };
