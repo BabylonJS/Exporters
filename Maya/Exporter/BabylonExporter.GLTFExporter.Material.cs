@@ -571,7 +571,7 @@ namespace Maya2Babylon
             var P3 = new BabylonVector2(1300f, 0.1f);
 
             /**
-             * Helper function that defines the bezier curve as well.Given the control points, solve for x based on a given t for a cubic bezier curve
+             * Helper function that defines the bezier curve as well. Given the control points, solve for x based on a given t for a cubic bezier curve
              * @param t a value between 0 and 1
              * @param p0 first control point
              * @param p1 second control point
