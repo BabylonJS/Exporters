@@ -153,7 +153,8 @@ namespace Max2Babylon
             int numFailed = 0;
             for (int i = 0; i < numNodeIDs; ++i)
             {
-                if (!uint.TryParse(properties[3 + i], out uint id))
+                uint id;
+                if (!uint.TryParse(properties[3 + i], out id))
                 {
                     ++numFailed;
                     continue;

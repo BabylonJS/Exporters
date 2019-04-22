@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Max2Babylon.Extensions;
 
 namespace Max2Babylon
 {
@@ -295,6 +296,57 @@ namespace Max2Babylon
             r2.X, r2.Y,r2.Z, r2.W,
             r3.X, r3.Y,r3.Z, r3.W,};
         }
+
+        public static float GetScaleFactorToMeters()
+        {
+            float scaleFactorFloat = 1;
+            int unitType = 0;
+            unsafe
+            {
+                double ptrScale = 0.0f;
+
+                var pType = new IntPtr(&unitType);
+                var pScale = new IntPtr(&ptrScale);
+
+                GlobalInterface.Instance.GetMasterUnitInfo(pType, pScale);
+            }
+            float masterScale = (float)Loader.Global.GetMasterScale(unitType);
+
+            ScaleUnitType scaleUnitType = (ScaleUnitType)unitType;
+            switch (scaleUnitType)
+            {
+                case ScaleUnitType.Inches:
+                    scaleFactorFloat *= 0.0254f * masterScale;
+                    break;
+                case ScaleUnitType.Feet:
+                    scaleFactorFloat *= 0.3048f * masterScale;
+                    break;
+                case ScaleUnitType.Miles:
+                    scaleFactorFloat *= 1609.34f * masterScale;
+                    break;
+                case ScaleUnitType.Millimeters:
+                    scaleFactorFloat *= 0.001f * masterScale;
+                    break;
+                case ScaleUnitType.Centimeters:
+                    scaleFactorFloat *= 0.01f * masterScale;
+                    break;
+                case ScaleUnitType.Meters:
+                    scaleFactorFloat *= 1 * masterScale;
+                    break;
+                case ScaleUnitType.Kilometers:
+                    scaleFactorFloat *= 1000 * masterScale;
+                    break;
+                default:
+                    scaleFactorFloat *= 1 * masterScale;
+                    break;
+            }
+
+            return scaleFactorFloat;
+
+        }
+
+
+
         public static void PreparePipeline(IINode node, bool deactivate)
         {
             var obj = node.ObjectRef;
