@@ -120,7 +120,8 @@ namespace Max2Babylon
             {
                 var row = ExportItemGridView.Rows[e.RowIndex];
                 string str = row.Cells[e.ColumnIndex].Value as string;
-                if(!string.IsNullOrWhiteSpace(str) && !Uri.TryCreate(str, UriKind.Absolute, out Uri uri))
+                Uri uri;
+                if (!string.IsNullOrWhiteSpace(str) && !Uri.TryCreate(str, UriKind.Absolute, out uri))
                 {
                     e.Cancel = true;
                 }

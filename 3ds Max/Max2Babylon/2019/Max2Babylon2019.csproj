@@ -43,7 +43,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MAX2019</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
@@ -52,7 +52,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;MAX2019</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -173,6 +173,9 @@
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Light.cs">
       <Link>Exporter\GLTFGlobalVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\Extensions\ScaleSystem.cs">
+      <Link>Extensions\ScaleSystem.cs</Link>
     </Compile>
     <Compile Include="..\Forms\AnimationForm.cs">
       <Link>Forms\AnimationForm.cs</Link>
@@ -368,12 +371,10 @@
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
-if not exist "$(SolutionDir)assemblies\2019" mkdir "$(SolutionDir)assemblies\2019"
-del "$(SolutionDir)assemblies\2019\*.dll"
-copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2019\"
-if exist "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\"
-if exist "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\"</PostBuildEvent>
+    <PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" "$(ConfigurationName)" 2019</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>call "$(SolutionDir)Max2Babylon\OnPreBuild.bat" "$(ConfigurationName)"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

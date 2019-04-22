@@ -120,7 +120,9 @@ namespace Max2Babylon
                         string id = maxNode.GetGuid().ToString();
                         BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
 
-                        if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out GLTFNode gltfNode))
+                        GLTFNode gltfNode;
+
+                        if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
                         {
                             ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
                         }
@@ -244,6 +246,9 @@ namespace Max2Babylon
                         if (babylonAnimation.property == "position")
                         {
                             outputValues[2] *= -1;
+                            outputValues[0] *= scaleFactor;
+                            outputValues[1] *= scaleFactor;
+                            outputValues[2] *= scaleFactor;
                         }
                         else if (babylonAnimation.property == "rotationQuaternion")
                         {
@@ -356,8 +361,10 @@ namespace Max2Babylon
                     var rotationQuatBabylon = new BabylonQuaternion();
                     var scaleBabylon = new BabylonVector3();
                     matrix.decompose(scaleBabylon, rotationQuatBabylon, translationBabylon);
-
+                    
+                    // Switch coordinate system at object level
                     translationBabylon.Z *= -1;
+                    translationBabylon *= scaleFactor;
                     rotationQuatBabylon.X *= -1;
                     rotationQuatBabylon.Y *= -1;
 
