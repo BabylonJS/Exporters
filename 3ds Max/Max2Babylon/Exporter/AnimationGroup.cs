@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using Autodesk.Max;
+using Autodesk.Max.Plugins;
+using Max2Babylon.Exporter;
+using Newtonsoft.Json;
 
 namespace Max2Babylon
 {
@@ -85,9 +91,9 @@ namespace Max2Babylon
         public int TicksStart { get { return ticksStart; } }
         public int TicksEnd { get { return ticksEnd; } }
 
-        const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
-        const char s_PropertySeparator = ';';
-        const string s_PropertyFormat = "{0};{1};{2};{3}";
+        public const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
+        public const char s_PropertySeparator = ';';
+        public const string s_PropertyFormat = "{0};{1};{2};{3}";
 
         private Guid serializedId = Guid.NewGuid();
         private string name = "Animation";
@@ -191,7 +197,7 @@ namespace Max2Babylon
 
         #endregion
     }
-
+    
     public class AnimationGroupList : List<AnimationGroup>
     {
         const string s_AnimationListPropertyName = "babylonjs_AnimationList";
@@ -222,6 +228,94 @@ namespace Max2Babylon
             }
             
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+        }
+
+        public void SaveToJson(string filePath)
+        {
+            List<AnimationGroupData> animationGroupDatas  = new List<AnimationGroupData>();
+            string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+
+            if (Capacity < animationPropertyNames.Length)
+                Capacity = animationPropertyNames.Length;
+
+            foreach (string propertyNameStr in animationPropertyNames)
+            {
+                AnimationGroup info = new AnimationGroup();
+                info.LoadFromData(propertyNameStr);
+                AnimationGroupData animationGroupData = new AnimationGroupData();
+                animationGroupData.ID = info.SerializedId;
+                animationGroupData.Name = info.Name;
+                animationGroupData.StartTick = info.TicksStart;
+                animationGroupData.EndTick = info.TicksEnd;
+                animationGroupData.NodeDataList = new List<NodeData>();
+                foreach (uint infoNodeHandle in info.NodeHandles)
+                {
+                    string name = Loader.Core.GetINodeByHandle(infoNodeHandle).Name;
+                    string parentName = Loader.Core.GetINodeByHandle(infoNodeHandle).ParentNode.Name;
+                    NodeData nodeData = new NodeData(infoNodeHandle, name,parentName);
+                    animationGroupData.NodeDataList.Add(nodeData);
+                }
+                animationGroupDatas.Add(animationGroupData);
+            }
+
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(animationGroupDatas));
+        }
+
+        public void LoadFromJson(string jsonContent)
+        {
+            Clear();
+
+            List<string> animationPropertyNameList = new List<string>();
+            List<AnimationGroupData> animationGroupsData = JsonConvert.DeserializeObject<List<AnimationGroupData>>(jsonContent);
+
+            foreach (AnimationGroupData animData in animationGroupsData)
+            {
+                List<uint> nodeHandles = new List<uint>();
+                foreach (NodeData nodeData in animData.NodeDataList)
+                {
+                    //check here if something changed between export\import
+                    // a node handle is reassigned the moment the node is created
+                    // it is no possible to have consistency at 100% sure between two file
+                    // we need to prevent artists
+                    IINode node = Loader.Core.GetINodeByName(nodeData.Name);
+                    if (node == null)
+                    {
+                        //node is missing
+                        //skip restoration of evaluated animation group 
+                        nodeHandles = new List<uint>(); //empthy 
+                        break;
+                    }
+
+                    if (node.ParentNode.Name != nodeData.ParentName)
+                    {
+                        //node has been moved in hierarchy 
+                        //skip restoration of evaluated animation group 
+                        nodeHandles = new List<uint>(); //empthy 
+                        break;
+                    }
+
+                    nodeHandles.Add(nodeData.Handle);
+
+
+                }
+                string nodes = string.Join(AnimationGroup.s_PropertySeparator.ToString(), nodeHandles);
+                
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.AppendFormat(AnimationGroup.s_PropertyFormat, animData.Name, animData.StartTick, animData.EndTick, nodes);
+
+                Loader.Core.RootNode.SetStringProperty(animData.ID.ToString(), stringBuilder.ToString());
+            }
+            
+            foreach (AnimationGroupData animData in animationGroupsData)
+            {
+                animationPropertyNameList.Add(animData.ID.ToString());
+                
+            }
+
+            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+
+            LoadFromData();
+            
         }
     }
 }

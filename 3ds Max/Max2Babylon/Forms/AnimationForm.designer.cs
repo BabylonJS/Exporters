@@ -38,6 +38,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.animationGroupControl = new Max2Babylon.AnimationGroupControl();
+            this.ImportBtn = new System.Windows.Forms.Button();
+            this.ExportBtn = new System.Windows.Forms.Button();
             panel1 = new System.Windows.Forms.Panel();
             panel2 = new System.Windows.Forms.Panel();
             ExportPropertiesGroupBox = new System.Windows.Forms.GroupBox();
@@ -55,12 +57,14 @@
             // 
             panel1.AutoSize = true;
             panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            panel1.Controls.Add(this.ExportBtn);
+            panel1.Controls.Add(this.ImportBtn);
             panel1.Controls.Add(this.createAnimationButton);
             panel1.Controls.Add(this.deleteAnimationButton);
             panel1.Dock = System.Windows.Forms.DockStyle.Top;
             panel1.Location = new System.Drawing.Point(3, 16);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(171, 29);
+            panel1.Size = new System.Drawing.Size(171, 56);
             panel1.TabIndex = 4;
             // 
             // createAnimationButton
@@ -93,9 +97,9 @@
             panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             panel2.Controls.Add(this.AnimationListBox);
             panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            panel2.Location = new System.Drawing.Point(3, 45);
+            panel2.Location = new System.Drawing.Point(3, 72);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(171, 337);
+            panel2.Size = new System.Drawing.Size(171, 310);
             panel2.TabIndex = 5;
             // 
             // AnimationListBox
@@ -104,7 +108,7 @@
             this.AnimationListBox.HorizontalScrollbar = true;
             this.AnimationListBox.Location = new System.Drawing.Point(0, 0);
             this.AnimationListBox.Name = "AnimationListBox";
-            this.AnimationListBox.Size = new System.Drawing.Size(171, 337);
+            this.AnimationListBox.Size = new System.Drawing.Size(171, 310);
             this.AnimationListBox.Sorted = true;
             this.AnimationListBox.TabIndex = 0;
             this.AnimationListBox.SelectedValueChanged += new System.EventHandler(this.animationList_SelectedValueChanged);
@@ -182,6 +186,30 @@
             this.animationGroupControl.Size = new System.Drawing.Size(479, 385);
             this.animationGroupControl.TabIndex = 3;
             // 
+            // ImportBtn
+            // 
+            this.ImportBtn.AutoSize = true;
+            this.ImportBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ImportBtn.Location = new System.Drawing.Point(57, 30);
+            this.ImportBtn.Name = "ImportBtn";
+            this.ImportBtn.Size = new System.Drawing.Size(46, 23);
+            this.ImportBtn.TabIndex = 3;
+            this.ImportBtn.Text = "Import";
+            this.ImportBtn.UseVisualStyleBackColor = true;
+            this.ImportBtn.Click += new System.EventHandler(this.ImportBtn_Click);
+            // 
+            // ExportBtn
+            // 
+            this.ExportBtn.AutoSize = true;
+            this.ExportBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ExportBtn.Location = new System.Drawing.Point(3, 30);
+            this.ExportBtn.Name = "ExportBtn";
+            this.ExportBtn.Size = new System.Drawing.Size(47, 23);
+            this.ExportBtn.TabIndex = 4;
+            this.ExportBtn.Text = "Export";
+            this.ExportBtn.UseVisualStyleBackColor = true;
+            this.ExportBtn.Click += new System.EventHandler(this.ExportBtn_Click);
+            // 
             // AnimationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -225,5 +253,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListBox AnimationListBox;
         private System.Windows.Forms.CheckBox exportNonAnimatedNodesCheckBox;
+        private System.Windows.Forms.Button ExportBtn;
+        private System.Windows.Forms.Button ImportBtn;
     }
 }
