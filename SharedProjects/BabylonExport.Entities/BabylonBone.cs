@@ -23,9 +23,13 @@ namespace BabylonExport.Entities
         [DataMember]
         public BabylonAnimation animation { get; set; }
 
+        [DataMember]
+        public string linkedTransformNodeId { get; set; }
+
         public BabylonBone()
         {
             parentBoneIndex = -1;
+            linkedTransformNodeId = null;
         }
     }
 }
