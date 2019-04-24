@@ -117,9 +117,6 @@
     <Compile Include="..\Exporter\AnimationGroup.cs">
       <Link>Exporter\AnimationGroup.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\AnimationGroupData.cs">
-      <Link>AnimationGroupData.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Animation.cs">
       <Link>Exporter\BabylonExporter.Animation.cs</Link>
     </Compile>
