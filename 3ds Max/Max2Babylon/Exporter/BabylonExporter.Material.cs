@@ -587,40 +587,31 @@ namespace Max2Babylon
                 RaiseError("Unsupported material type: " + materialNode.MaterialClass, 2);
             }
         }
+        
 
         public bool isPhysicalMaterial(IIGameMaterial materialNode)
         {
-            // TODO - Find another way to detect if material is physical
-            return materialNode.MaterialClass.ToLower() == "physical material" || // English
-                     materialNode.MaterialClass.ToLower() == "physikalisches material" || // German
-                     materialNode.MaterialClass.ToLower() == "matériau physique"; // French
+            return ClassIDWrapper.Physical_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isMultiSubObjectMaterial(IIGameMaterial materialNode)
         {
-            // TODO - Find another way to detect if material is a multi/sub-object
-            return materialNode.MaterialClass.ToLower() == "multi/sub-object" || // English
-                     materialNode.MaterialClass.ToLower() == "multi-/unterobjekt" || // German
-                     materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
+            return ClassIDWrapper.Multi_Sub_Object_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isDirectXShaderMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "directx shader" ||    // English
-                    materialNode.MaterialClass.ToLower() == "directx-shader" ||   // German
-                    materialNode.MaterialClass.ToLower() == "ombrage directx";   // French
+            return ClassIDWrapper.DirectX_Shader_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isArnoldMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
+            return ClassIDWrapper.Standard_Surface_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isShellMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "shell material" ||    // English
-                    materialNode.MaterialClass.ToLower() == "hüllenmaterial" ||   // German
-                    materialNode.MaterialClass.ToLower() == "matériau coque";   // French
+            return ClassIDWrapper.Shell_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         /// <summary>
