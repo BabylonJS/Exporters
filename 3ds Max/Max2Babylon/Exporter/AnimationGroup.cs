@@ -2,19 +2,40 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
 using Autodesk.Max;
 using Autodesk.Max.Plugins;
-using Max2Babylon.Exporter;
 using Newtonsoft.Json;
 
 namespace Max2Babylon
 {
+    [DataContract]
+    public class AnimationGroupNode
+    {
+        [DataMember]
+        public uint Handle { get; set; }
+        [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public string ParentName { get; set; }
+
+        public AnimationGroupNode(uint _handle, string _name, string _parentName)
+        {
+            Handle = _handle;
+            Name = _name;
+            ParentName = _parentName;
+        }
+
+    }
+
+    [DataContract]
     public class AnimationGroup
     {
         public bool IsDirty { get; private set; } = true;
 
+        [DataMember]
         public Guid SerializedId
         {
             get { return serializedId; }
@@ -26,6 +47,7 @@ namespace Max2Babylon
                 serializedId = value;
             }
         }
+        [DataMember]
         public string Name
         {
             get { return name; }
@@ -59,6 +81,11 @@ namespace Max2Babylon
                 ticksEnd = value * Loader.Global.TicksPerFrame;
             }
         }
+
+        [DataMember]
+        public List<AnimationGroupNode> AnimationGroupNodes {get; set;}
+
+        
         public IList<uint> NodeHandles
         {
             get { return nodeHandles.AsReadOnly(); }
@@ -88,7 +115,10 @@ namespace Max2Babylon
             }
         }
 
+
+        [DataMember]
         public int TicksStart { get { return ticksStart; } }
+        [DataMember]
         public int TicksEnd { get { return ticksEnd; } }
 
         public const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
@@ -168,6 +198,15 @@ namespace Max2Babylon
                 nodeHandles.Add(id);
             }
 
+            AnimationGroupNodes = new List<AnimationGroupNode>();
+            foreach (uint nodeHandle in nodeHandles)
+            {
+                string name = Loader.Core.GetINodeByHandle(nodeHandle).Name;
+                string parentName = Loader.Core.GetINodeByHandle(nodeHandle).ParentNode.Name;
+                AnimationGroupNode nodeData = new AnimationGroupNode(nodeHandle, name, parentName);
+                AnimationGroupNodes.Add(nodeData);
+            }
+
             if (numFailed > 0)
                 throw new Exception(string.Format("Failed to parse {0} node ids.", numFailed));
             
@@ -232,33 +271,18 @@ namespace Max2Babylon
 
         public void SaveToJson(string filePath)
         {
-            List<AnimationGroupData> animationGroupDatas  = new List<AnimationGroupData>();
-            string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+            List<AnimationGroup> toSerailize = new List<AnimationGroup>();
+            string[] animationPropertyNamesInfo = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
 
-            if (Capacity < animationPropertyNames.Length)
-                Capacity = animationPropertyNames.Length;
-
-            foreach (string propertyNameStr in animationPropertyNames)
+            foreach (string propertyNameStr in animationPropertyNamesInfo)
             {
                 AnimationGroup info = new AnimationGroup();
                 info.LoadFromData(propertyNameStr);
-                AnimationGroupData animationGroupData = new AnimationGroupData();
-                animationGroupData.ID = info.SerializedId;
-                animationGroupData.Name = info.Name;
-                animationGroupData.StartTick = info.TicksStart;
-                animationGroupData.EndTick = info.TicksEnd;
-                animationGroupData.NodeDataList = new List<NodeData>();
-                foreach (uint infoNodeHandle in info.NodeHandles)
-                {
-                    string name = Loader.Core.GetINodeByHandle(infoNodeHandle).Name;
-                    string parentName = Loader.Core.GetINodeByHandle(infoNodeHandle).ParentNode.Name;
-                    NodeData nodeData = new NodeData(infoNodeHandle, name,parentName);
-                    animationGroupData.NodeDataList.Add(nodeData);
-                }
-                animationGroupDatas.Add(animationGroupData);
+                Add(info);
+                toSerailize.Add(info);
             }
 
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(animationGroupDatas));
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(toSerailize));
         }
 
         public void LoadFromJson(string jsonContent)
@@ -266,12 +290,12 @@ namespace Max2Babylon
             Clear();
 
             List<string> animationPropertyNameList = new List<string>();
-            List<AnimationGroupData> animationGroupsData = JsonConvert.DeserializeObject<List<AnimationGroupData>>(jsonContent);
+            List<AnimationGroup> animationGroupsData = JsonConvert.DeserializeObject<List<AnimationGroup>>(jsonContent);
 
-            foreach (AnimationGroupData animData in animationGroupsData)
+            foreach (AnimationGroup animData in animationGroupsData)
             {
                 List<uint> nodeHandles = new List<uint>();
-                foreach (NodeData nodeData in animData.NodeDataList)
+                foreach (AnimationGroupNode nodeData in animData.AnimationGroupNodes)
                 {
                     //check here if something changed between export\import
                     // a node handle is reassigned the moment the node is created
@@ -295,21 +319,20 @@ namespace Max2Babylon
                     }
 
                     nodeHandles.Add(nodeData.Handle);
-
-
                 }
-                string nodes = string.Join(AnimationGroup.s_PropertySeparator.ToString(), nodeHandles);
+
+                animData.NodeHandles = nodeHandles;
+                string nodes = string.Join(AnimationGroup.s_PropertySeparator.ToString(), animData.NodeHandles);
                 
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendFormat(AnimationGroup.s_PropertyFormat, animData.Name, animData.StartTick, animData.EndTick, nodes);
+                stringBuilder.AppendFormat(AnimationGroup.s_PropertyFormat, animData.Name, animData.TicksStart, animData.TicksEnd, nodes);
 
-                Loader.Core.RootNode.SetStringProperty(animData.ID.ToString(), stringBuilder.ToString());
+                Loader.Core.RootNode.SetStringProperty(animData.SerializedId.ToString(), stringBuilder.ToString());
             }
             
-            foreach (AnimationGroupData animData in animationGroupsData)
+            foreach (AnimationGroup animData in animationGroupsData)
             {
-                animationPropertyNameList.Add(animData.ID.ToString());
-                
+                animationPropertyNameList.Add(animData.SerializedId.ToString());
             }
 
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
