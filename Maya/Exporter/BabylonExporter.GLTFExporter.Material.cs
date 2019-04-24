@@ -564,44 +564,66 @@ namespace Maya2Babylon
 
         private MetallicRoughness ConvertToMetallicRoughness(SpecularGlossiness specularGlossiness, bool displayPrints = false)
         {
-            var diffuse = specularGlossiness.diffuse;
+            // Hard coded points used to define the specular power to roughness curve.
+            var P0 = new BabylonVector2(0f, 1f);
+            var P1 = new BabylonVector2(0f, 0.1f);
+            var P2 = new BabylonVector2(0f, 0.1f);
+            var P3 = new BabylonVector2(1300f, 0.1f);
+
+            /**
+             * Helper function that defines the bezier curve as well. Given the control points, solve for x based on a given t for a cubic bezier curve
+             * @param t a value between 0 and 1
+             * @param p0 first control point
+             * @param p1 second control point
+             * @param p2 third control point
+             * @param p3 fourth control point
+             * @returns number result of cubic bezier curve at the specified t
+             */
+            float _cubicBezierCurve(float t, float p0, float p1, float p2, float p3)
+            {
+                return
+                (
+                    (1 - t) * (1 - t) * (1 - t) * p0 +
+                    3 * (1 - t) * (1 - t) * t * p1 +
+                    3 * (1 - t) * t * t * p2 +
+                    t * t * t * p3
+                );
+            }
+
+            /*
+             * Helper function that calculates a roughness coefficient given a blinn-phong specular power coefficient
+             * @param specularPower the blinn-phong specular power coefficient
+             * @returns number result of specularPower -> roughness conversion curve.
+             */
+            float _solveForRoughness(float specularPower)
+            {
+                var t = Math.Pow(specularPower / P3.X, 0.333333);
+                return _cubicBezierCurve((float)t, P0.Y, P1.Y, P2.Y, P3.Y);
+            }
+
+            var diffuse = specularGlossiness.diffuse.scale(0.5f);
             var opacity = specularGlossiness.opacity;
-            var specular = specularGlossiness.specular;
             var glossiness = specularGlossiness.glossiness;
-
-            var oneMinusSpecularStrength = 1 - specular.getMaxComponent();
-            var metallic = solveMetallic(diffuse.getPerceivedBrightness(), specular.getPerceivedBrightness(), oneMinusSpecularStrength);
-
-            var diffuseScaleFactor = oneMinusSpecularStrength / (1 - dielectricSpecular.r) / Math.Max(1 - metallic, epsilon);
-            var baseColorFromDiffuse = diffuse.scale(diffuseScaleFactor);
-            var baseColorFromSpecular = specular.subtract(dielectricSpecular.scale(1 - metallic)).scale(1 / Math.Max(metallic, epsilon));
-            var baseColor = BabylonColor3.Lerp(baseColorFromDiffuse, baseColorFromSpecular, metallic * metallic).clamp();
-            //var baseColor = baseColorFromDiffuse.clamp();
+            var metallic = 0;
+            var roughness = _solveForRoughness(glossiness * 256); // Glossiness = specularPower / 256
 
             if (displayPrints)
             {
                 RaiseVerbose("-----------------------", 3);
                 RaiseVerbose("diffuse=" + diffuse, 3);
                 RaiseVerbose("opacity=" + opacity, 3);
-                RaiseVerbose("specular=" + specular, 3);
                 RaiseVerbose("glossiness=" + glossiness, 3);
-
-                RaiseVerbose("oneMinusSpecularStrength=" + oneMinusSpecularStrength, 3);
+                RaiseVerbose("roughness=" + roughness, 3);
                 RaiseVerbose("metallic=" + metallic, 3);
-                RaiseVerbose("diffuseScaleFactor=" + diffuseScaleFactor, 3);
-                RaiseVerbose("baseColorFromDiffuse=" + baseColorFromDiffuse, 3);
-                RaiseVerbose("baseColorFromSpecular=" + baseColorFromSpecular, 3);
-                RaiseVerbose("metallic * metallic=" + metallic * metallic, 3);
-                RaiseVerbose("baseColor=" + baseColor, 3);
                 RaiseVerbose("-----------------------", 3);
             }
 
             return new MetallicRoughness
             {
-                baseColor = baseColor,
+                baseColor = diffuse,
                 opacity = opacity,
                 metallic = metallic,
-                roughness = 1 - glossiness
+                roughness = roughness
             };
         }
 
