@@ -29,7 +29,8 @@ NON_ALPHA_FORMATS = {'BMP', 'JPEG'}
 class Texture:
     # called in constructor for BakeTexture, but for BJSImageTexture, called in Mesh, after ruling out will be baked
     # An environment texture cannot be base64, & does not supply a mesh argument
-    def process(self, textureFullPathDir, canBeBase64 = True, bpyMesh = None):
+    def process(self, material, canBeBase64 = True, bpyMesh = None):
+
         settings = bpy.context.scene.world
         inlineTextures = canBeBase64 and settings.inlineTextures
 
@@ -47,16 +48,16 @@ class Texture:
             # when coming from either a packed image or a baked image, then save_render
             if self.isInternalImage:
                 if inlineTextures:
-                    textureFile = path.join(textureFullPathDir, self.fileNoPath + 'temp')
+                    textureFile = path.join(material.textureFullPathDir, self.fileNoPath + 'temp')
                 else:
-                    textureFile = path.join(textureFullPathDir, self.fileNoPath)
+                    textureFile = path.join(material.textureFullPathDir, self.fileNoPath)
                 self.image.save_render(textureFile)
 
             # when backed by an actual file, copy to target dir, unless inlining
             else:
                 textureFile = bpy.path.abspath(filePath)
                 if not inlineTextures:
-                    copy(textureFile, textureFullPathDir)
+                    copy(textureFile, material.textureFullPathDir)
         except:
             ex = exc_info()
             Logger.warn('Exception during copy:\n\t\t\t\t\t'+ str(ex[1]), 4)
@@ -69,6 +70,13 @@ class Texture:
 
             if self.isInternalImage:
                 remove(textureFile)
+
+        else:
+            # adjust name to reflect path
+            relPath = material.textureDir
+            if len(relPath) > 0:
+                if not relPath.endswith('/'): relPath += '/'
+                self.fileNoPath = relPath + self.fileNoPath
 
         if bpyMesh:
             if not self.uvMapName or self.uvMapName == UV_ACTIVE_TEXTURE:  # only for image based & no node specifying
@@ -127,7 +135,7 @@ class BakedTexture(Texture):
         self.wrapV = CLAMP_ADDRESSMODE
 
         self.uvMapName = bakedMaterial.uvMapName
-        self.process(bakedMaterial.textureFullPathDir, True, bpyMesh)
+        self.process(bakedMaterial, True, bpyMesh)
 #===============================================================================
 class BJSImageTexture(Texture):
     def __init__(self, bjsImageNode, isForEnvironment = False):

@@ -255,4 +255,4 @@ class WorldPanel(bpy.types.Panel):
         box.prop(world, 'autoAnimate')
         box.prop(world, 'ignoreIKBones')
 
-        layout.prop(scene, 'writeManifestFile')
+        layout.prop(world, 'writeManifestFile')
