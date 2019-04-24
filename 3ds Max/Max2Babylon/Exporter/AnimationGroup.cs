@@ -1,14 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Windows.Forms;
+using Autodesk.Max;
+using Autodesk.Max.Plugins;
+using Newtonsoft.Json;
 
 namespace Max2Babylon
 {
+    [DataContract]
+    public class AnimationGroupNode
+    {
+        [DataMember]
+        public uint Handle { get; set; }
+        [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public string ParentName { get; set; }
+
+        public AnimationGroupNode(uint _handle, string _name, string _parentName)
+        {
+            Handle = _handle;
+            Name = _name;
+            ParentName = _parentName;
+        }
+
+    }
+
+    [DataContract]
     public class AnimationGroup
     {
         public bool IsDirty { get; private set; } = true;
 
+        [DataMember]
         public Guid SerializedId
         {
             get { return serializedId; }
@@ -20,6 +47,7 @@ namespace Max2Babylon
                 serializedId = value;
             }
         }
+        [DataMember]
         public string Name
         {
             get { return name; }
@@ -53,6 +81,11 @@ namespace Max2Babylon
                 ticksEnd = value * Loader.Global.TicksPerFrame;
             }
         }
+
+        [DataMember]
+        public List<AnimationGroupNode> AnimationGroupNodes {get; set;}
+
+        
         public IList<uint> NodeHandles
         {
             get { return nodeHandles.AsReadOnly(); }
@@ -82,12 +115,15 @@ namespace Max2Babylon
             }
         }
 
+
+        [DataMember]
         public int TicksStart { get { return ticksStart; } }
+        [DataMember]
         public int TicksEnd { get { return ticksEnd; } }
 
-        const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
-        const char s_PropertySeparator = ';';
-        const string s_PropertyFormat = "{0};{1};{2};{3}";
+        public const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
+        public const char s_PropertySeparator = ';';
+        public const string s_PropertyFormat = "{0};{1};{2};{3}";
 
         private Guid serializedId = Guid.NewGuid();
         private string name = "Animation";
@@ -162,6 +198,15 @@ namespace Max2Babylon
                 nodeHandles.Add(id);
             }
 
+            AnimationGroupNodes = new List<AnimationGroupNode>();
+            foreach (uint nodeHandle in nodeHandles)
+            {
+                string name = Loader.Core.GetINodeByHandle(nodeHandle).Name;
+                string parentName = Loader.Core.GetINodeByHandle(nodeHandle).ParentNode.Name;
+                AnimationGroupNode nodeData = new AnimationGroupNode(nodeHandle, name, parentName);
+                AnimationGroupNodes.Add(nodeData);
+            }
+
             if (numFailed > 0)
                 throw new Exception(string.Format("Failed to parse {0} node ids.", numFailed));
             
@@ -191,7 +236,7 @@ namespace Max2Babylon
 
         #endregion
     }
-
+    
     public class AnimationGroupList : List<AnimationGroup>
     {
         const string s_AnimationListPropertyName = "babylonjs_AnimationList";
@@ -222,6 +267,78 @@ namespace Max2Babylon
             }
             
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+        }
+
+        public void SaveToJson(string filePath)
+        {
+            List<AnimationGroup> toSerailize = new List<AnimationGroup>();
+            string[] animationPropertyNamesInfo = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+
+            foreach (string propertyNameStr in animationPropertyNamesInfo)
+            {
+                AnimationGroup info = new AnimationGroup();
+                info.LoadFromData(propertyNameStr);
+                Add(info);
+                toSerailize.Add(info);
+            }
+
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(toSerailize));
+        }
+
+        public void LoadFromJson(string jsonContent)
+        {
+            Clear();
+
+            List<string> animationPropertyNameList = new List<string>();
+            List<AnimationGroup> animationGroupsData = JsonConvert.DeserializeObject<List<AnimationGroup>>(jsonContent);
+
+            foreach (AnimationGroup animData in animationGroupsData)
+            {
+                List<uint> nodeHandles = new List<uint>();
+                foreach (AnimationGroupNode nodeData in animData.AnimationGroupNodes)
+                {
+                    //check here if something changed between export\import
+                    // a node handle is reassigned the moment the node is created
+                    // it is no possible to have consistency at 100% sure between two file
+                    // we need to prevent artists
+                    IINode node = Loader.Core.GetINodeByName(nodeData.Name);
+                    if (node == null)
+                    {
+                        //node is missing
+                        //skip restoration of evaluated animation group 
+                        nodeHandles = new List<uint>(); //empthy 
+                        break;
+                    }
+
+                    if (node.ParentNode.Name != nodeData.ParentName)
+                    {
+                        //node has been moved in hierarchy 
+                        //skip restoration of evaluated animation group 
+                        nodeHandles = new List<uint>(); //empthy 
+                        break;
+                    }
+
+                    nodeHandles.Add(nodeData.Handle);
+                }
+
+                animData.NodeHandles = nodeHandles;
+                string nodes = string.Join(AnimationGroup.s_PropertySeparator.ToString(), animData.NodeHandles);
+                
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.AppendFormat(AnimationGroup.s_PropertyFormat, animData.Name, animData.TicksStart, animData.TicksEnd, nodes);
+
+                Loader.Core.RootNode.SetStringProperty(animData.SerializedId.ToString(), stringBuilder.ToString());
+            }
+            
+            foreach (AnimationGroup animData in animationGroupsData)
+            {
+                animationPropertyNameList.Add(animData.SerializedId.ToString());
+            }
+
+            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+
+            LoadFromData();
+            
         }
     }
 }

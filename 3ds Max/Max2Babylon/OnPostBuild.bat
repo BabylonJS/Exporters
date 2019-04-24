@@ -5,7 +5,7 @@ SETLOCAL enabledelayedexpansion
 SET max_version=%2
 SET max_location=!ADSK_3DSMAX_x64_%max_version%!
 
-SET source_dir="%~dp0assemblies\%max_version%\"
+SET source_dir="%~dp0%max_version%\bin\%1"
 ECHO %source_dir%
 
 IF %1=="Debug" GOTO OnDebug
