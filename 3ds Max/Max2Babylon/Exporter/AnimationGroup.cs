@@ -201,10 +201,14 @@ namespace Max2Babylon
             AnimationGroupNodes = new List<AnimationGroupNode>();
             foreach (uint nodeHandle in nodeHandles)
             {
-                string name = Loader.Core.GetINodeByHandle(nodeHandle).Name;
-                string parentName = Loader.Core.GetINodeByHandle(nodeHandle).ParentNode.Name;
-                AnimationGroupNode nodeData = new AnimationGroupNode(nodeHandle, name, parentName);
-                AnimationGroupNodes.Add(nodeData);
+                var node = Loader.Core.GetINodeByHandle(nodeHandle);
+                if (node != null)
+                {
+                    string name = node.Name;
+                    string parentName = Loader.Core.GetINodeByHandle(nodeHandle).ParentNode.Name;
+                    AnimationGroupNode nodeData = new AnimationGroupNode(nodeHandle, name, parentName);
+                    AnimationGroupNodes.Add(nodeData);
+                }
             }
 
             if (numFailed > 0)
@@ -278,7 +282,6 @@ namespace Max2Babylon
             {
                 AnimationGroup info = new AnimationGroup();
                 info.LoadFromData(propertyNameStr);
-                Add(info);
                 toSerailize.Add(info);
             }
 
