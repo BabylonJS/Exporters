@@ -37,6 +37,7 @@ class BJSMaterial:
 
         self.isPBR = exporter.settings.usePBRMaterials
         self.textureFullPathDir = exporter.textureFullPathDir
+        self.textureDir = exporter.settings.textureDir
 
         # transfer from either the Blender or previous BJSMaterial
         self.checkReadyOnlyOnce = mat.checkReadyOnlyOnce
@@ -67,7 +68,7 @@ class BJSMaterial:
 
         for texType, tex in self.bjsNodeTree.bjsTextures.items():
             self.textures[texType] = tex
-            tex.process(self.textureFullPathDir, True, bpyMesh)
+            tex.process(self, True, bpyMesh)
 
         return len(self.textures.items()) > 0
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
