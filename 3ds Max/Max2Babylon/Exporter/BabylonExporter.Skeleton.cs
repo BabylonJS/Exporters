@@ -91,6 +91,13 @@ namespace Max2Babylon
             List<IIGameNode> sorted = new List<IIGameNode>();
             Stack<IIGameNode> siblings = new Stack<IIGameNode>();   // keep the siblings in a LIFO list to add them after the children
             siblings.Push(lowestCommonAncestor);
+
+            // add the skeletonroot:
+            // - as a fallback for vertices without any joint weights (although invalid joints could also be "ok"?)
+            // - to have easy access to the root node for the gltf's [skin.skeleton] property (skeleton root node)
+            // [##onlyBones] commented for now because uncertain if it will work with babylon bone exports
+            //sorted.Add(lowestCommonAncestor);
+
             while (siblings.Count > 0)
             {
                 IIGameNode currentNode = siblings.Pop();
@@ -98,8 +105,9 @@ namespace Max2Babylon
                 if (allHierarchyNodes.Contains(currentNode))    // The node is part of the skeleton hierarchy
                 {
                     // only add if the node is an actual bone (to keep the joint list small)
-                    if (bones.Contains(currentNode))
-                        sorted.Add(currentNode);
+                    // [##onlyBones] commented for now because uncertain if it will work with babylon bone exports
+                    //if (bones.Contains(currentNode))
+                    sorted.Add(currentNode);
 
                     // Add its children to the stack (in reverse order because it's a LIFO)
                     int childCount = currentNode.ChildCount;
