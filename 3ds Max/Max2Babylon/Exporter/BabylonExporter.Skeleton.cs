@@ -76,9 +76,8 @@ namespace Max2Babylon
                 return new List<IIGameNode>();
             }
 
-            //return a list of all bones that are root
-            IIGameNode rootNodes = GetCommonAncestor(bones);
-            if (rootNodes == null)
+            IIGameNode sharedRootNode = GetLowestCommonAncestor(bones);
+            if (sharedRootNode == null)
             {
                 string rootNames = "";
                 RaiseError($"More than one root node for the skin: {rootNames}", logRank);
@@ -91,7 +90,7 @@ namespace Max2Babylon
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
             Stack<IIGameNode> siblings = new Stack<IIGameNode>();   // keep the siblings in a LIFO list to add them after the children
-            siblings.Push(rootNodes);
+            siblings.Push(sharedRootNode);
             while (siblings.Count > 0)
             {
                 IIGameNode currentNode = siblings.Pop();
@@ -115,12 +114,12 @@ namespace Max2Babylon
             return sorted;
         }
 
-        private IIGameNode GetCommonAncestor(List<IIGameNode> bones)
+        private IIGameNode GetLowestCommonAncestor(List<IIGameNode> bones)
         {
             IIGameNode ancestor = null;
             foreach (IIGameNode b in bones)
             {
-                ancestor = GetCommonAncestor(ancestor, b);
+                ancestor = GetLowestCommonAncestor(ancestor, b);
                 if (ancestor == null)
                 {
                     break;
@@ -130,68 +129,64 @@ namespace Max2Babylon
             return ancestor;
         }
 
-        private IIGameNode GetCommonAncestor(IIGameNode nodeA, IIGameNode nodeB)
+        private IIGameNode GetLowestCommonAncestor(IIGameNode nodeA, IIGameNode nodeB)
         {
             if (nodeA == nodeB || nodeB == null) return nodeA;
             if (nodeA == null) return nodeB;
 
-            List<IIGameNode> previousANodes = new List<IIGameNode>();
-            previousANodes.Add(nodeA);
-            List<IIGameNode> previousBNodes = new List<IIGameNode>();
-            previousBNodes.Add(nodeB);
+            List<IIGameNode> nodeHierarchyA = new List<IIGameNode>();
+            nodeHierarchyA.Add(nodeA);
+            List<IIGameNode> nodeHierarchyB = new List<IIGameNode>();
+            nodeHierarchyB.Add(nodeB);
 
-            int previousANodesIndex = 0;
-            int previousBNodesIndex = 0;
+            int hierarchyAIndex = 0;
+            int hierarchyBIndex = 0;
 
+            // build hierarchies up to the root node
             while (true)
             {
-                if (previousANodes[previousANodesIndex].NodeParent != null)
+                if (nodeHierarchyA[hierarchyAIndex].NodeParent != null)
                 {
-                    previousANodes.Add(previousANodes[previousANodesIndex].NodeParent);
-                    ++previousANodesIndex;
+                    nodeHierarchyA.Add(nodeHierarchyA[hierarchyAIndex].NodeParent);
+                    ++hierarchyAIndex;
                 }
 
-                if (previousBNodes[previousBNodesIndex].NodeParent != null)
+                if (nodeHierarchyB[hierarchyBIndex].NodeParent != null)
                 {
-                    previousBNodes.Add(previousBNodes[previousBNodesIndex].NodeParent);
-                    ++previousBNodesIndex;
+                    nodeHierarchyB.Add(nodeHierarchyB[hierarchyBIndex].NodeParent);
+                    ++hierarchyBIndex;
                 }
 
-                if (previousANodes[previousANodesIndex].NodeParent == null && previousBNodes[previousBNodesIndex].NodeParent == null)
+                if (nodeHierarchyA[hierarchyAIndex].NodeParent == null && nodeHierarchyB[hierarchyBIndex].NodeParent == null)
                 {
                     break;
                 }
-
-
             }
 
-            IIGameNode topA = previousANodes[previousANodesIndex--];
-            IIGameNode topB = previousBNodes[previousBNodesIndex--];
+            // check whether the nodes exist in the same hierarchy
+            IIGameNode topA = nodeHierarchyA[hierarchyAIndex];
+            IIGameNode topB = nodeHierarchyB[hierarchyBIndex];
             if (topA.MaxNode.Handle != topB.MaxNode.Handle)
             {
                 return null;
             }
 
-            
-
+            // traverse down the two hierarchies until they diverge
             while (true)
             {
+                --hierarchyAIndex;
+                --hierarchyBIndex;
+                
                 // in the case that one is a child of the other, other will be invalid when one still has more nodes to go
-                if (previousANodesIndex == -1)
-                    return previousBNodes[previousBNodesIndex + 1];
-                if (previousBNodesIndex == -1)
-                    return previousANodes[previousANodesIndex + 1];
+                if (hierarchyAIndex == -1)
+                    return nodeHierarchyB[hierarchyBIndex + 1];
+                if (hierarchyBIndex == -1)
+                    return nodeHierarchyA[hierarchyAIndex + 1];
 
                 // if the current nodes differ, the parent was the last shared node
-                if (previousANodes[previousANodesIndex].MaxNode.Handle != previousBNodes[previousBNodesIndex].MaxNode.Handle)
-                    return previousANodes[previousANodesIndex + 1];
-
-                --previousANodesIndex;
-                --previousBNodesIndex;
+                if (nodeHierarchyA[hierarchyAIndex].MaxNode.Handle != nodeHierarchyB[hierarchyBIndex].MaxNode.Handle)
+                    return nodeHierarchyA[hierarchyAIndex + 1];
             }
-
-
-            return null;
         }
 
         /// <summary>
