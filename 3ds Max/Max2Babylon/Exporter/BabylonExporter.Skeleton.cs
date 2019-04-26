@@ -63,7 +63,13 @@ namespace Max2Babylon
 
             List<IIGameNode> bones = GetBones(skin);
 
-            if(bones.Contains(null))
+            if (bones == null)
+            {
+                RaiseWarning("Skin has no bones.", logRank);
+                return new List<IIGameNode>();
+            }
+
+            if (bones.Contains(null))
             {
                 RaiseError("Skin has bones that are outside of the exported hierarchy.", logRank);
                 RaiseError("The skin cannot be exported", logRank);
@@ -71,29 +77,21 @@ namespace Max2Babylon
             }
 
             //return a list of all bones that are root
-            List<IIGameNode> rootNodes = GetSkinRoots(bones,skin);
-            if (rootNodes.Count > 1)
+            IIGameNode rootNodes = GetCommonAncestor(bones);
+            if (rootNodes == null)
             {
                 string rootNames = "";
-                foreach(IIGameNode root in rootNodes)
-                {
-                    rootNames += $" {root.Name}";
-                }
                 RaiseError($"More than one root node for the skin: {rootNames}", logRank);
                 RaiseError($"The skin cannot be exported", logRank);
 
                 return new List<IIGameNode>();
             }
-            if(rootNodes.Count <= 0)
-            {
-                RaiseWarning("Skin has no bones.", logRank);
-                return new List<IIGameNode>();
-            }
+            
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
             Stack<IIGameNode> siblings = new Stack<IIGameNode>();   // keep the siblings in a LIFO list to add them after the children
-            siblings.Push(rootNodes[0]);
+            siblings.Push(rootNodes);
             while (siblings.Count > 0)
             {
                 IIGameNode currentNode = siblings.Pop();
@@ -117,20 +115,83 @@ namespace Max2Babylon
             return sorted;
         }
 
-        private List<IIGameNode> GetSkinRoots(List<IIGameNode> relevantNodes, IIGameSkin skin)
+        private IIGameNode GetCommonAncestor(List<IIGameNode> bones)
         {
-            List<IIGameNode> relevantRootNodes = new List<IIGameNode>();
-            List<IIGameNode> skinnedNodes = GetBones(skin);
-            foreach (IIGameNode relevantNode in relevantNodes)
+            IIGameNode ancestor = null;
+            foreach (IIGameNode b in bones)
             {
-                IIGameNode parent = relevantNode.NodeParent;
-                if (!skinnedNodes.Contains(parent))
+                ancestor = GetCommonAncestor(ancestor, b);
+                if (ancestor == null)
                 {
-                    //found a skin bone root
-                    relevantRootNodes.Add(relevantNode);
+                    break;
                 }
             }
-            return relevantRootNodes;
+
+            return ancestor;
+        }
+
+        private IIGameNode GetCommonAncestor(IIGameNode nodeA, IIGameNode nodeB)
+        {
+            if (nodeA == nodeB || nodeB == null) return nodeA;
+            if (nodeA == null) return nodeB;
+
+            List<IIGameNode> previousANodes = new List<IIGameNode>();
+            previousANodes.Add(nodeA);
+            List<IIGameNode> previousBNodes = new List<IIGameNode>();
+            previousBNodes.Add(nodeB);
+
+            int previousANodesIndex = 0;
+            int previousBNodesIndex = 0;
+
+            while (true)
+            {
+                if (previousANodes[previousANodesIndex].NodeParent != null)
+                {
+                    previousANodes.Add(previousANodes[previousANodesIndex].NodeParent);
+                    ++previousANodesIndex;
+                }
+
+                if (previousBNodes[previousBNodesIndex].NodeParent != null)
+                {
+                    previousBNodes.Add(previousBNodes[previousBNodesIndex].NodeParent);
+                    ++previousBNodesIndex;
+                }
+
+                if (previousANodes[previousANodesIndex].NodeParent == null && previousBNodes[previousBNodesIndex].NodeParent == null)
+                {
+                    break;
+                }
+
+
+            }
+
+            IIGameNode topA = previousANodes[previousANodesIndex--];
+            IIGameNode topB = previousBNodes[previousBNodesIndex--];
+            if (topA.MaxNode.Handle != topB.MaxNode.Handle)
+            {
+                return null;
+            }
+
+            
+
+            while (true)
+            {
+                // in the case that one is a child of the other, other will be invalid when one still has more nodes to go
+                if (previousANodesIndex == -1)
+                    return previousBNodes[previousBNodesIndex + 1];
+                if (previousBNodesIndex == -1)
+                    return previousANodes[previousANodesIndex + 1];
+
+                // if the current nodes differ, the parent was the last shared node
+                if (previousANodes[previousANodesIndex].MaxNode.Handle != previousBNodes[previousBNodesIndex].MaxNode.Handle)
+                    return previousANodes[previousANodesIndex + 1];
+
+                --previousANodesIndex;
+                --previousBNodesIndex;
+            }
+
+
+            return null;
         }
 
         /// <summary>
