@@ -247,7 +247,16 @@ namespace Max2Babylon
                 var hasAlpha = isTextureOk(alphaTexMap);
 
                 // Alpha
-                babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0) || alpha < 1.0f;
+
+                // If the texture file format does not traditionally support an alpha channel, export the base texture as opaque
+                if (baseColorTexture.Map.FullFilePath.EndsWith(".jpg") || baseColorTexture.Map.FullFilePath.EndsWith(".jpeg") || baseColorTexture.Map.FullFilePath.EndsWith(".bmp"))
+                {
+                    babylonTexture.hasAlpha = false;
+                }
+                else
+                {
+                    babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0) || alpha < 1.0f;
+                }
                 babylonTexture.getAlphaFromRGB = false;
                 if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0)) &&
                     (baseColorTexture.Map.FullFilePath.EndsWith(".tif") || baseColorTexture.Map.FullFilePath.EndsWith(".tiff")))
