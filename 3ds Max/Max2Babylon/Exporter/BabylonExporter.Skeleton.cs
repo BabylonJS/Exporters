@@ -61,7 +61,6 @@ namespace Max2Babylon
                 return revelantNodesBySkin[skin];
             }
 
-            List<IIGameNode> revelantNodes = new List<IIGameNode>();
             List<IIGameNode> bones = GetBones(skin);
 
             if(bones.Contains(null))
@@ -70,31 +69,9 @@ namespace Max2Babylon
                 RaiseError("The skin cannot be exported", logRank);
                 return new List<IIGameNode>();
             }
-            
-            // for each bone of the skin, add their parents in the revelantNodes list.
-            foreach (IIGameNode bone in bones)
-            {
-                if (!revelantNodes.Contains(bone))
-                {
-                    revelantNodes.Add(bone);
-                    IIGameNode currentNode = bone.NodeParent;
-                    while (currentNode != null)
-                    {
-                        if (!revelantNodes.Contains(currentNode))
-                        {
-                            revelantNodes.Add(currentNode);
-                            currentNode = currentNode.NodeParent;
-                        }
-                        else // the node and its parents are already in the list
-                        {
-                            currentNode = null;
-                        }
-                    }
-                }
-            }
 
-            // return an empty list if there is more than one root
-            List<IIGameNode> rootNodes = revelantNodes.FindAll(node => node.NodeParent == null);    // should contains only one node
+            //return a list of all bones that are root
+            List<IIGameNode> rootNodes = GetSkinRoots(bones,skin);
             if (rootNodes.Count > 1)
             {
                 string rootNames = "";
@@ -121,7 +98,7 @@ namespace Max2Babylon
             {
                 IIGameNode currentNode = siblings.Pop();
 
-                if (revelantNodes.Contains(currentNode))    // The node is part of the skeleton
+                if (bones.Contains(currentNode))    // The node is part of the skeleton
                 {
                     // Add the current node to the sorted list
                     sorted.Add(currentNode);
@@ -135,10 +112,25 @@ namespace Max2Babylon
                 }
             }
 
-            revelantNodes = sorted;
-            revelantNodesBySkin.Add(skin, revelantNodes);   // Stock the result for optimization
+            revelantNodesBySkin.Add(skin, sorted);   // Stock the result for optimization
 
-            return revelantNodes;
+            return sorted;
+        }
+
+        private List<IIGameNode> GetSkinRoots(List<IIGameNode> relevantNodes, IIGameSkin skin)
+        {
+            List<IIGameNode> relevantRootNodes = new List<IIGameNode>();
+            List<IIGameNode> skinnedNodes = GetBones(skin);
+            foreach (IIGameNode relevantNode in relevantNodes)
+            {
+                IIGameNode parent = relevantNode.NodeParent;
+                if (!skinnedNodes.Contains(parent))
+                {
+                    //found a skin bone root
+                    relevantRootNodes.Add(relevantNode);
+                }
+            }
+            return relevantRootNodes;
         }
 
         /// <summary>
