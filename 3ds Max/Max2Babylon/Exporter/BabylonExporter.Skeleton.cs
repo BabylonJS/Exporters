@@ -63,7 +63,7 @@ namespace Max2Babylon
 
             List<IIGameNode> bones = GetBones(skin);
 
-            if (bones == null)
+            if (bones.Count == 0)
             {
                 RaiseWarning("Skin has no bones.", logRank);
                 return new List<IIGameNode>();
