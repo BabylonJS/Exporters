@@ -103,14 +103,14 @@ namespace Max2Babylon
                         }
                         else
                         {
-                        guids.Add(subMat.MaxMaterial.GetGuid().ToString());
+                            guids.Add(subMat.MaxMaterial.GetGuid().ToString());
 
-                        if (!referencedMaterials.Contains(subMat))
-                        {
-                            referencedMaterials.Add(subMat);
-                            ExportMaterial(subMat, babylonScene);
+                            if (!referencedMaterials.Contains(subMat))
+                            {
+                                referencedMaterials.Add(subMat);
+                                ExportMaterial(subMat, babylonScene);
+                            }
                         }
-                    }
                     }
                     else
                     {
@@ -398,8 +398,8 @@ namespace Max2Babylon
                                     }
                                     else
                                     {
-                                    babylonMaterial.occlusionTexture = ormTexture;
-                                }
+                                        babylonMaterial.occlusionTexture = ormTexture;
+                                    }
                                 }
                                 else
                                 {
@@ -475,7 +475,7 @@ namespace Max2Babylon
                 float emissionWeight = propertyContainer.QueryProperty("emission").GetFloatValue();
                 if (emissionColor != null && emissionWeight > 0f)
                 {
-                babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+                    babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
                 }
 
                 // --- Textures ---
@@ -528,7 +528,7 @@ namespace Max2Babylon
                             }
                             else
                             {
-                            babylonMaterial.occlusionTexture = ormTexture;
+                                babylonMaterial.occlusionTexture = ormTexture;
                             }
                             areTexturesAlreadyMerged = true;
                         }
@@ -587,7 +587,6 @@ namespace Max2Babylon
                 RaiseError("Unsupported material type: " + materialNode.MaterialClass, 2);
             }
         }
-        
 
         public bool isPhysicalMaterial(IIGameMaterial materialNode)
         {

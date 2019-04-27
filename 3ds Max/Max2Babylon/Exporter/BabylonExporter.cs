@@ -128,7 +128,7 @@ namespace Max2Babylon
 
             var gameScene = Loader.Global.IGameInterface;
             if (exportParameters.exportNode == null)
-            gameScene.InitialiseIGame(false);
+                gameScene.InitialiseIGame(false);
             else gameScene.InitialiseIGame(exportParameters.exportNode, true);
             gameScene.SetStaticFrame(0);
 
@@ -393,7 +393,6 @@ namespace Max2Babylon
             if (exportParameters.exportMaterials)
             {
                 RaiseMessage("Exporting materials");
-
                 var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
                 foreach (var mat in matsToExport)
                 {
