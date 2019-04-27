@@ -144,6 +144,9 @@
     <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Texture.cs">
       <Link>Exporter\BabylonExporter.GLTFExporter.Texture.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.IMaterialExporter.cs">
+      <Link>Exporter\BabylonExporter.IMaterialExporter.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Light.cs">
       <Link>Exporter\BabylonExporter.Light.cs</Link>
     </Compile>

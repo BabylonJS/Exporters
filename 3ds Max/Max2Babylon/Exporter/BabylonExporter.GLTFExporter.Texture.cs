@@ -58,10 +58,12 @@ namespace Max2Babylon
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf)
         {
-            return ExportTexture(babylonTexture, gltf, null, () =>
-            {
-                var sourcePath = babylonTexture.originalPath;
+            return ExportTexture(babylonTexture, gltf, null, 
+                () => { return TryWriteImage(gltf, babylonTexture.originalPath, babylonTexture.name); });
+        }
 
+        private string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
+            {
                 if (sourcePath == null || sourcePath == "")
                 {
                     RaiseWarning("Texture path is missing.", 3);
@@ -78,12 +80,11 @@ namespace Max2Babylon
                 }
 
                 // Copy texture to output
-                var destPath = Path.Combine(gltf.OutputFolder, babylonTexture.name);
+                var destPath = Path.Combine(gltf.OutputFolder, textureName);
                 destPath = Path.ChangeExtension(destPath, validImageFormat);
                 CopyGltfTexture(sourcePath, destPath);
 
                 return validImageFormat;
-            });
         }
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Func<string> writeImageFunc)
@@ -173,9 +174,6 @@ namespace Max2Babylon
                             break;
                     }
                 }
-
-                
-
 
                 // --------------------------
                 // -------- Texture ---------
