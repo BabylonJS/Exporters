@@ -701,12 +701,12 @@ namespace Max2Babylon
                 IIGameProperty property = materialNode.IPropertyContainer.GetProperty(35);
                 if (property != null)
                 {
-                IMtl renderMtl = materialNode.IPropertyContainer.GetProperty(35).MaxParamBlock2.GetMtl(4, 0, 0);
+                    IMtl renderMtl = materialNode.IPropertyContainer.GetProperty(35).MaxParamBlock2.GetMtl(4, 0, 0);
                     if (renderMtl != null)
-                {
-                    renderMaterial = gameScene.GetIGameMaterial(renderMtl);
+                    {
+                        renderMaterial = gameScene.GetIGameMaterial(renderMtl);
+                    }
                 }
-            }
                 else
                 {
                     RaiseWarning($"DirectX material property for {materialNode.MaterialName} is null...", 2);
