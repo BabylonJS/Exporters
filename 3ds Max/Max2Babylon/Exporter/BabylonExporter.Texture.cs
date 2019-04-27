@@ -187,19 +187,20 @@ namespace Max2Babylon
 
             var baseColorTexture = _getBitmapTex(baseColorTexMap);
             var alphaTexture = _getBitmapTex(alphaTexMap);
+            var baseColorTextureMapExtension = Path.GetExtension(baseColorTexture.Map.FullFilePath).ToLower();
 
             if (alphaTexture == null && baseColorTexture != null && alpha == 1)
             {
                 if (baseColorTexture.AlphaSource == 0 &&
-                    (baseColorTexture.Map.FullFilePath.EndsWith(".tif") || baseColorTexture.Map.FullFilePath.EndsWith(".tiff")))
+                    (baseColorTextureMapExtension == ".tif" || baseColorTextureMapExtension == ".tiff"))
                 {
                     RaiseWarning($"Diffuse texture named {baseColorTexture.Map.FullFilePath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 3);
                     RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
                 }
 
-                var extension = Path.GetExtension(baseColorTexture.Map.FullFilePath).ToLower();
+                
                 if (baseColorTexture.AlphaSource == 3 && // 'None (Opaque)'
-                    extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".png" )
+                    baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp" || baseColorTextureMapExtension == ".png" )
                 {
                     // Copy base color image
                     return ExportTexture(baseColorTexture, babylonScene);
@@ -248,8 +249,9 @@ namespace Max2Babylon
 
                 // Alpha
 
+
                 // If the texture file format does not traditionally support an alpha channel, export the base texture as opaque
-                if (baseColorTexture.Map.FullFilePath.EndsWith(".jpg") || baseColorTexture.Map.FullFilePath.EndsWith(".jpeg") || baseColorTexture.Map.FullFilePath.EndsWith(".bmp"))
+                if (baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp")
                 {
                     babylonTexture.hasAlpha = false;
                 }
@@ -259,7 +261,7 @@ namespace Max2Babylon
                 }
                 babylonTexture.getAlphaFromRGB = false;
                 if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == 0)) &&
-                    (baseColorTexture.Map.FullFilePath.EndsWith(".tif") || baseColorTexture.Map.FullFilePath.EndsWith(".tiff")))
+                    (baseColorTextureMapExtension == ".tif" || baseColorTextureMapExtension == ".tiff"))
                 {
                     RaiseWarning($"Diffuse texture named {baseColorTexture.Map.FullFilePath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 3);
                     RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
