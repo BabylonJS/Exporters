@@ -120,10 +120,10 @@ namespace Max2Babylon
                 // -------- Sampler ---------
                 // --------------------------
                 RaiseMessage("GLTFExporter.Texture | create sampler", 3);
-                    GLTFSampler gltfSampler = new GLTFSampler();
-                    gltfSampler.index = gltf.SamplersList.Count;
-
-                    // --- Retrieve info from babylon texture ---
+                GLTFSampler gltfSampler = new GLTFSampler();
+                gltfSampler.index = gltf.SamplersList.Count;
+                
+                // --- Retrieve info from babylon texture ---
                 // Mag and min filters
                 GLTFSampler.TextureMagFilter? magFilter;
                 GLTFSampler.TextureMinFilter? minFilter;
@@ -208,7 +208,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                            RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
+                        RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                     }
                 }
                 var textureID = name + TextureTransformID(gltfTextureInfo);
@@ -216,6 +216,7 @@ namespace Max2Babylon
                 if (CheckIfImageIsRegistered(textureID))
                 {
                     var textureComponent = GetRegisteredTexture(textureID);
+
                     return textureComponent;
                 }
 
