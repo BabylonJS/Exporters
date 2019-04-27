@@ -399,7 +399,7 @@ namespace Max2Babylon
                                     else
                                     {
                                         babylonMaterial.occlusionTexture = ormTexture;
-                                    }
+                                    } 
                                 }
                                 else
                                 {
