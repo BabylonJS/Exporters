@@ -249,7 +249,6 @@ namespace Max2Babylon
 
                 // Alpha
 
-
                 // If the texture file format does not traditionally support an alpha channel, export the base texture as opaque
                 if (baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp")
                 {
