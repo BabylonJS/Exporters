@@ -220,7 +220,7 @@ namespace Max2Babylon
             IGMatrix skinInitPoseMatrix = Loader.Global.GMatrix.Create(Loader.Global.Matrix3.Create(true));
             List<int> boneIds = null;
             int maxNbBones = 0;
-            if (isSkinned && GetRevelantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
+            if (isSkinned && GetRelevantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
             {
                 var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
                 if (skinAlreadyStored == null)

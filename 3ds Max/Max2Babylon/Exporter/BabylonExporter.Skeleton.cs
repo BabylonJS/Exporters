@@ -50,80 +50,63 @@ namespace Max2Babylon
         /// <returns>
         /// All nodes needed for the skeleton hierarchy
         /// </returns>
-        private Dictionary<IIGameSkin, List<IIGameNode>> revelantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
-        private List<IIGameNode> GetRevelantNodes(IIGameSkin skin)
+        private Dictionary<IIGameSkin, List<IIGameNode>> relevantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
+        private List<IIGameNode> GetRelevantNodes(IIGameSkin skin)
         {
             int logRank = 2;
             
             // For optimization
-            if (revelantNodesBySkin.ContainsKey(skin))
+            if (relevantNodesBySkin.ContainsKey(skin))
             {
-                return revelantNodesBySkin[skin];
+                return relevantNodesBySkin[skin];
             }
 
-            List<IIGameNode> revelantNodes = new List<IIGameNode>();
             List<IIGameNode> bones = GetBones(skin);
 
-            if(bones.Contains(null))
+            if (bones.Count == 0)
+            {
+                RaiseWarning("Skin has no bones.", logRank);
+                return new List<IIGameNode>();
+            }
+
+            if (bones.Contains(null))
             {
                 RaiseError("Skin has bones that are outside of the exported hierarchy.", logRank);
                 RaiseError("The skin cannot be exported", logRank);
                 return new List<IIGameNode>();
             }
-            
-            // for each bone of the skin, add their parents in the revelantNodes list.
-            foreach (IIGameNode bone in bones)
-            {
-                if (!revelantNodes.Contains(bone))
-                {
-                    revelantNodes.Add(bone);
-                    IIGameNode currentNode = bone.NodeParent;
-                    while (currentNode != null)
-                    {
-                        if (!revelantNodes.Contains(currentNode))
-                        {
-                            revelantNodes.Add(currentNode);
-                            currentNode = currentNode.NodeParent;
-                        }
-                        else // the node and its parents are already in the list
-                        {
-                            currentNode = null;
-                        }
-                    }
-                }
-            }
 
-            // return an empty list if there is more than one root
-            List<IIGameNode> rootNodes = revelantNodes.FindAll(node => node.NodeParent == null);    // should contains only one node
-            if (rootNodes.Count > 1)
+            List<IIGameNode> allHierarchyNodes = null;
+            IIGameNode lowestCommonAncestor = GetLowestCommonAncestor(bones, ref allHierarchyNodes);
+
+            if (lowestCommonAncestor == null)
             {
-                string rootNames = "";
-                foreach(IIGameNode root in rootNodes)
-                {
-                    rootNames += $" {root.Name}";
-                }
-                RaiseError($"More than one root node for the skin: {rootNames}", logRank);
+                RaiseError($"More than one root node for the skin. The skeleton bones need to be part of the same hierarchy.", logRank);
                 RaiseError($"The skin cannot be exported", logRank);
 
-                return new List<IIGameNode>();
-            }
-            if(rootNodes.Count <= 0)
-            {
-                RaiseWarning("Skin has no bones.", logRank);
                 return new List<IIGameNode>();
             }
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
             Stack<IIGameNode> siblings = new Stack<IIGameNode>();   // keep the siblings in a LIFO list to add them after the children
-            siblings.Push(rootNodes[0]);
+            siblings.Push(lowestCommonAncestor);
+
+            // add the skeletonroot:
+            // - as a fallback for vertices without any joint weights (although invalid joints could also be "ok"?)
+            // - to have easy access to the root node for the gltf's [skin.skeleton] property (skeleton root node)
+            // [##onlyBones] commented for now because uncertain if it will work with babylon bone exports
+            //sorted.Add(lowestCommonAncestor);
+
             while (siblings.Count > 0)
             {
                 IIGameNode currentNode = siblings.Pop();
 
-                if (revelantNodes.Contains(currentNode))    // The node is part of the skeleton
+                if (allHierarchyNodes.Contains(currentNode))    // The node is part of the skeleton hierarchy
                 {
-                    // Add the current node to the sorted list
+                    // only add if the node is an actual bone (to keep the joint list small)
+                    // [##onlyBones] commented for now because uncertain if it will work with babylon bone exports
+                    //if (bones.Contains(currentNode))
                     sorted.Add(currentNode);
 
                     // Add its children to the stack (in reverse order because it's a LIFO)
@@ -135,10 +118,124 @@ namespace Max2Babylon
                 }
             }
 
-            revelantNodes = sorted;
-            revelantNodesBySkin.Add(skin, revelantNodes);   // Stock the result for optimization
+            relevantNodesBySkin.Add(skin, sorted);   // Stock the result for optimization
 
-            return revelantNodes;
+            return sorted;
+        }
+
+        private IIGameNode GetLowestCommonAncestor(List<IIGameNode> nodes, ref List<IIGameNode> allHierarchyNodes)
+        {
+            IIGameNode commonAncestor = null;
+            allHierarchyNodes = new List<IIGameNode>();
+            List<IIGameNode> nodeHierarchyA = new List<IIGameNode>();
+            List<IIGameNode> nodeHierarchyB = new List<IIGameNode>();
+            foreach (IIGameNode node in nodes)
+            {
+                commonAncestor = GetLowestCommonAncestor(commonAncestor, node, nodeHierarchyA, nodeHierarchyB);
+                if (commonAncestor == null)
+                {
+                    allHierarchyNodes.Clear();
+                    return null;
+                }
+                
+                foreach (IIGameNode nodeA in nodeHierarchyA)
+                {
+                    if (!allHierarchyNodes.Contains(nodeA))
+                        allHierarchyNodes.Add(nodeA);
+                }
+                foreach (IIGameNode nodeB in nodeHierarchyB)
+                {
+                    if (!allHierarchyNodes.Contains(nodeB))
+                        allHierarchyNodes.Add(nodeB);
+                }
+            }
+
+            return commonAncestor;
+        }
+
+        private IIGameNode GetLowestCommonAncestor(IIGameNode nodeA, IIGameNode nodeB, List<IIGameNode> nodeHierarchyA = null, List<IIGameNode> nodeHierarchyB = null)
+        {
+            if (nodeA == nodeB || nodeB == null) return nodeA;
+            if (nodeA == null) return nodeB;
+
+            if (nodeHierarchyA == null) nodeHierarchyA = new List<IIGameNode>();
+            else nodeHierarchyA.Clear();
+            if (nodeHierarchyB == null) nodeHierarchyB = new List<IIGameNode>();
+            else nodeHierarchyB.Clear();
+
+            nodeHierarchyA.Add(nodeA);
+            nodeHierarchyB.Add(nodeB);
+
+            int hierarchyAIndex = 0;
+            int hierarchyBIndex = 0;
+
+            // build hierarchies up to the root node
+            while (true)
+            {
+                if (nodeHierarchyA[hierarchyAIndex].NodeParent != null)
+                {
+                    nodeHierarchyA.Add(nodeHierarchyA[hierarchyAIndex].NodeParent);
+                    ++hierarchyAIndex;
+                }
+
+                if (nodeHierarchyB[hierarchyBIndex].NodeParent != null)
+                {
+                    nodeHierarchyB.Add(nodeHierarchyB[hierarchyBIndex].NodeParent);
+                    ++hierarchyBIndex;
+                }
+
+                if (nodeHierarchyA[hierarchyAIndex].NodeParent == null && nodeHierarchyB[hierarchyBIndex].NodeParent == null)
+                {
+                    break;
+                }
+            }
+
+            // check whether the nodes exist in the same hierarchy
+            IIGameNode topA = nodeHierarchyA[hierarchyAIndex];
+            IIGameNode topB = nodeHierarchyB[hierarchyBIndex];
+            if (topA.MaxNode.Handle != topB.MaxNode.Handle)
+            {
+                return null;
+            }
+
+            // traverse down the two hierarchies until they diverge
+            IIGameNode lowestCommonAncestor = null;
+            while (true)
+            {
+                --hierarchyAIndex;
+                --hierarchyBIndex;
+                
+                // in the case that one is a child of the other, other will be invalid when one still has more nodes to go
+                if (hierarchyAIndex == -1)
+                {
+                    lowestCommonAncestor = nodeHierarchyA[0];
+                    break;
+                }
+                if (hierarchyBIndex == -1)
+                {
+                    lowestCommonAncestor = nodeHierarchyB[0];
+                    break;
+                }
+
+                // if the current nodes differ, the parent was the last shared node
+                if (nodeHierarchyA[hierarchyAIndex].MaxNode.Handle != nodeHierarchyB[hierarchyBIndex].MaxNode.Handle)
+                {
+                    lowestCommonAncestor = nodeHierarchyA[hierarchyAIndex + 1];
+                    break;
+                }
+            }
+
+            // fix up hierarchies to only contain nodes between the nodes we got (which have index 0) and the common ancestor we found
+            int ancestorIndexA = hierarchyAIndex + 1;
+            int ancestorIndexB = hierarchyBIndex + 1;
+            int numNodesToKeepA = ancestorIndexA + 1;
+            int numNodesToKeepB = ancestorIndexB + 1;
+            if (nodeHierarchyA.Count > numNodesToKeepA)
+                nodeHierarchyA.RemoveRange(numNodesToKeepA, nodeHierarchyA.Count - numNodesToKeepA);
+            if (nodeHierarchyB.Count > numNodesToKeepB)
+                nodeHierarchyB.RemoveRange(numNodesToKeepB, nodeHierarchyB.Count - numNodesToKeepB);
+
+            return lowestCommonAncestor;
         }
 
         /// <summary>
@@ -159,7 +256,7 @@ namespace Max2Babylon
             }
 
             List<int> nodeIndex = new List<int>();
-            List<IIGameNode> revelantNodes = GetRevelantNodes(skin);
+            List<IIGameNode> revelantNodes = GetRelevantNodes(skin);
 
             for (int index = 0; index < revelantNodes.Count; index++)
             {
@@ -203,7 +300,7 @@ namespace Max2Babylon
         {
             List<BabylonBone> bones = new List<BabylonBone>();
             List<int> nodeIndices = GetNodeIndices(skin);
-            List<IIGameNode> revelantNodes = GetRevelantNodes(skin);
+            List<IIGameNode> revelantNodes = GetRelevantNodes(skin);
 
             foreach (IIGameNode node in revelantNodes)
             {
