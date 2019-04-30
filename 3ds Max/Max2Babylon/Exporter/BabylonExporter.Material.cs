@@ -4,6 +4,14 @@ using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
 
+namespace BabylonExport.Entities
+{
+    partial class BabylonMaterial
+    {
+        public IIGameMaterial maxGameMaterial { get; set; }
+    }
+}
+
 namespace Max2Babylon
 {
     partial class BabylonExporter
