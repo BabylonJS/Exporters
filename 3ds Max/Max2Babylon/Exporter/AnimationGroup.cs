@@ -72,13 +72,13 @@ namespace Max2Babylon
         }
         public int FrameEnd
         {
-            get { return Tools.RoundToInt(ticksEnd / (float)Loader.Global.TicksPerFrame); }
+            get { return Tools.RoundToInt(TicksEnd / (float)Loader.Global.TicksPerFrame); }
             set
             {
                 if (value.Equals(FrameEnd)) // property getter
                     return;
                 IsDirty = true;
-                ticksEnd = value * Loader.Global.TicksPerFrame;
+                TicksEnd = value * Loader.Global.TicksPerFrame;
             }
         }
 
@@ -115,11 +115,23 @@ namespace Max2Babylon
             }
         }
 
+        private int ticksStart = Loader.Core.AnimRange.Start;
+        private int ticksEnd = Loader.Core.AnimRange.End;
 
         [DataMember]
-        public int TicksStart { get { return ticksStart; } }
+        public int TicksStart
+        {
+            get { return ticksStart; }
+            set { ticksStart = value; }
+        }
+
         [DataMember]
-        public int TicksEnd { get { return ticksEnd; } }
+        public int TicksEnd
+        {
+            get { return ticksEnd; }
+            set { ticksEnd = value; }
+        }
+        
 
         public const string s_DisplayNameFormat = "{0} ({1:d}, {2:d})";
         public const char s_PropertySeparator = ';';
@@ -128,8 +140,7 @@ namespace Max2Babylon
         private Guid serializedId = Guid.NewGuid();
         private string name = "Animation";
         // use current timeline frame range by default
-        private int ticksStart = Loader.Core.AnimRange.Start;
-        private int ticksEnd = Loader.Core.AnimRange.End;
+
         private List<uint> nodeHandles = new List<uint>();
 
         public AnimationGroup() { }
@@ -141,8 +152,8 @@ namespace Max2Babylon
         {
             serializedId = other.serializedId;
             name = other.name;
-            ticksStart = other.ticksStart;
-            ticksEnd = other.ticksEnd;
+            TicksStart = other.TicksStart;
+            TicksEnd = other.TicksEnd;
             nodeHandles.Clear();
             nodeHandles.AddRange(other.nodeHandles);
             IsDirty = true;
@@ -225,7 +236,7 @@ namespace Max2Babylon
 
             string nodes = string.Join(s_PropertySeparator.ToString(), nodeHandles);
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(s_PropertyFormat, name, ticksStart, ticksEnd, nodes);
+            stringBuilder.AppendFormat(s_PropertyFormat, name, TicksStart, TicksEnd, nodes);
 
             Loader.Core.RootNode.SetStringProperty(GetPropertyName(), stringBuilder.ToString());
 
@@ -298,9 +309,11 @@ namespace Max2Babylon
             foreach (AnimationGroup animData in animationGroupsData)
             {
                 List<uint> nodeHandles = new List<uint>();
-
+                
                 if (animData.AnimationGroupNodes != null)
                 {
+                    string missingNodes= "";
+                    string movedNodes = "";
                     foreach (AnimationGroupNode nodeData in animData.AnimationGroupNodes)
                     {
                         //check here if something changed between export\import
@@ -311,20 +324,30 @@ namespace Max2Babylon
                         if (node == null)
                         {
                             //node is missing
-                            //skip restoration of evaluated animation group 
-                            nodeHandles = new List<uint>(); //empthy 
-                            break;
+                            missingNodes += node.Name + "\n";
                         }
 
                         if (node.ParentNode.Name != nodeData.ParentName)
                         {
                             //node has been moved in hierarchy 
-                            //skip restoration of evaluated animation group 
-                            nodeHandles = new List<uint>(); //empthy 
-                            break;
+                            movedNodes += node.Name + "\n";
                         }
 
                         nodeHandles.Add(nodeData.Handle);
+                    }
+
+                    if (!string.IsNullOrEmpty(movedNodes))
+                    {
+                        //skip restoration of evaluated animation group
+                        nodeHandles = new List<uint>();
+                        MessageBox.Show(string.Format("{0} has been moved in hierarchy,{1} import skipped", movedNodes, animData.Name));
+                    }
+
+                    if (!string.IsNullOrEmpty(missingNodes))
+                    {
+                        //skip restoration of evaluated animation group
+                        nodeHandles = new List<uint>();
+                        MessageBox.Show(string.Format("{0} does not exist,{1} import skipped", missingNodes, animData.Name));
                     }
                 }
 
