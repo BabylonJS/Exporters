@@ -325,15 +325,17 @@ namespace Max2Babylon
                         {
                             //node is missing
                             missingNodes += node.Name + "\n";
+                            continue;
                         }
 
                         if (node.ParentNode.Name != nodeData.ParentName)
                         {
                             //node has been moved in hierarchy 
                             movedNodes += node.Name + "\n";
+                            continue;
                         }
 
-                        nodeHandles.Add(nodeData.Handle);
+                        nodeHandles.Add(node.Handle);
                     }
 
                     if (!string.IsNullOrEmpty(movedNodes))
@@ -358,6 +360,7 @@ namespace Max2Babylon
                 stringBuilder.AppendFormat(AnimationGroup.s_PropertyFormat, animData.Name, animData.TicksStart, animData.TicksEnd, nodes);
 
                 Loader.Core.RootNode.SetStringProperty(animData.SerializedId.ToString(), stringBuilder.ToString());
+
             }
             
             foreach (AnimationGroup animData in animationGroupsData)
