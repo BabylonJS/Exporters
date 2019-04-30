@@ -298,30 +298,34 @@ namespace Max2Babylon
             foreach (AnimationGroup animData in animationGroupsData)
             {
                 List<uint> nodeHandles = new List<uint>();
-                foreach (AnimationGroupNode nodeData in animData.AnimationGroupNodes)
+
+                if (animData.AnimationGroupNodes != null)
                 {
-                    //check here if something changed between export\import
-                    // a node handle is reassigned the moment the node is created
-                    // it is no possible to have consistency at 100% sure between two file
-                    // we need to prevent artists
-                    IINode node = Loader.Core.GetINodeByName(nodeData.Name);
-                    if (node == null)
+                    foreach (AnimationGroupNode nodeData in animData.AnimationGroupNodes)
                     {
-                        //node is missing
-                        //skip restoration of evaluated animation group 
-                        nodeHandles = new List<uint>(); //empthy 
-                        break;
-                    }
+                        //check here if something changed between export\import
+                        // a node handle is reassigned the moment the node is created
+                        // it is no possible to have consistency at 100% sure between two file
+                        // we need to prevent artists
+                        IINode node = Loader.Core.GetINodeByName(nodeData.Name);
+                        if (node == null)
+                        {
+                            //node is missing
+                            //skip restoration of evaluated animation group 
+                            nodeHandles = new List<uint>(); //empthy 
+                            break;
+                        }
 
-                    if (node.ParentNode.Name != nodeData.ParentName)
-                    {
-                        //node has been moved in hierarchy 
-                        //skip restoration of evaluated animation group 
-                        nodeHandles = new List<uint>(); //empthy 
-                        break;
-                    }
+                        if (node.ParentNode.Name != nodeData.ParentName)
+                        {
+                            //node has been moved in hierarchy 
+                            //skip restoration of evaluated animation group 
+                            nodeHandles = new List<uint>(); //empthy 
+                            break;
+                        }
 
-                    nodeHandles.Add(nodeData.Handle);
+                        nodeHandles.Add(nodeData.Handle);
+                    }
                 }
 
                 animData.NodeHandles = nodeHandles;
