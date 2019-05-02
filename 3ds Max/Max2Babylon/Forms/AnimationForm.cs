@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Max2Babylon
 {
@@ -146,6 +147,48 @@ namespace Max2Babylon
         {
             Tools.UpdateCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
             Loader.Global.SetSaveRequiredFlag(true, false);
+        }
+
+        private void ExportBtn_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "JSON File|*.json";
+            saveFileDialog1.Title = "Save an Export Info File";
+
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
+            animationGroups.SaveToJson(saveFileDialog1.FileName);
+        }
+
+        private void ImportBtn_Click(object sender, EventArgs e)
+        {
+            string jsonPath = string.Empty;
+            string jsonContent = string.Empty;
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = "c:\\";
+                openFileDialog.Filter = "json files (*.json)|*.json";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    jsonPath = openFileDialog.FileName;
+
+                    //Read the contents of the file into a stream
+                    var fileStream = openFileDialog.OpenFile();
+
+                    using (StreamReader reader = new StreamReader(fileStream))
+                    {
+                        jsonContent = reader.ReadToEnd();
+                        animationGroups.LoadFromJson(jsonContent);
+                        animationListBinding.ResetBindings(false);
+                        Loader.Global.SetSaveRequiredFlag(true, false);
+                    }
+                }
+            }
+            
+
+
         }
     }
 }
