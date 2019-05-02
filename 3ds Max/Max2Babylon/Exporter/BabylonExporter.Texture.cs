@@ -187,6 +187,13 @@ namespace Max2Babylon
 
             var baseColorTexture = _getBitmapTex(baseColorTexMap);
             var alphaTexture = _getBitmapTex(alphaTexMap);
+
+            var texture = baseColorTexture != null ? baseColorTexture : alphaTexture;
+            if (texture == null)
+            {
+                return null;
+            }
+
             var baseColorTextureMapExtension = Path.GetExtension(baseColorTexture.Map.FullFilePath).ToLower();
 
             if (alphaTexture == null && baseColorTexture != null && alpha == 1)
@@ -208,11 +215,7 @@ namespace Max2Babylon
             }
 
             // Use one as a reference for UVs parameters
-            var texture = baseColorTexture != null ? baseColorTexture : alphaTexture;
-            if (texture == null)
-            {
-                return null;
-            }
+            
 
             RaiseMessage("Export baseColor+Alpha texture", 2);
 
