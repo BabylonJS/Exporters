@@ -21,7 +21,7 @@ namespace Maya2Babylon
         /// <param name="mFnTransform">Transform above mesh/camera/light</param>
         private void ExportNodeAnimation(BabylonNode babylonNode, MFnTransform mFnTransform)
         {
-            _exporNodeAnimation(babylonNode, mFnTransform, GetAnimationsFrameByFrame); // currently using frame by frame instead
+            _exporNodeAnimation(babylonNode, mFnTransform, GetAnimation);
         }
 
         /// <summary>
@@ -348,6 +348,7 @@ namespace Maya2Babylon
                     }
                 }
             }
+
         }
 
         static float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
