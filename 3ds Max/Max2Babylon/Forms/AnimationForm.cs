@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -77,31 +78,52 @@ namespace Max2Babylon
             animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
 
+            AnimationListBox.ClearSelected();
             AnimationListBox.SelectedItem = info;
         }
 
         private void deleteAnimationButton_Click(object sender, EventArgs e)
         {
-            int selectedIndex = AnimationListBox.SelectedIndex;
-
-            if (selectedIndex < 0)
+           
+            if (AnimationListBox.SelectedIndices.Count <= 0)
+            {
+                MessageBox.Show("Select at least one Animation Group");
                 return;
+            }
 
-            AnimationGroup selectedItem = (AnimationGroup)AnimationListBox.SelectedItem;
-            
-            // delete item
-            selectedItem.DeleteFromData();
+            //retrieve list of selected animation groups to delete 
+            List<AnimationGroup> deletedAnimationGroups = new List<AnimationGroup>();
 
-            // update list
-            animationGroups.Remove(selectedItem);
+            foreach (int selectedIndex in AnimationListBox.SelectedIndices)
+            {
+
+                if (selectedIndex < 0)
+                    return;
+
+                deletedAnimationGroups.Add((AnimationGroup)AnimationListBox.Items[selectedIndex]);
+                
+            }
+
+            foreach (AnimationGroup deletedItem in deletedAnimationGroups)
+            {
+                // delete item
+                deletedItem.DeleteFromData();
+
+                // update list
+                animationGroups.Remove(deletedItem);
+            }
+
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
 
             // get new selected item at the current index, if any
-            selectedIndex = Math.Min(selectedIndex, AnimationListBox.Items.Count - 1);
-            selectedItem = selectedIndex < 0 ? null : (AnimationGroup)AnimationListBox.Items[selectedIndex];
-            AnimationListBox.SelectedItem = selectedItem;
+            if (AnimationListBox.Items.Count > 0)
+            {
+                int newIndex = Math.Min(AnimationListBox.SelectedIndices[0], AnimationListBox.Items.Count - 1);
+                AnimationGroup newSelectedItem = newIndex < 0 ? null : (AnimationGroup)AnimationListBox.Items[newIndex];
+                AnimationListBox.SelectedItem = newSelectedItem;
+            }
         }
 
         private void animationList_SelectedValueChanged(object sender, EventArgs e)
@@ -151,15 +173,33 @@ namespace Max2Babylon
 
         private void ExportBtn_Click(object sender, EventArgs e)
         {
+            if (AnimationListBox.SelectedIndices.Count <= 0)
+            {
+                MessageBox.Show("Select at least one Animation Group");
+                return;
+            }
+
+            List<AnimationGroup> exportList = AnimationListBox.SelectedItems.Cast<AnimationGroup>().ToList();
+
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
             saveFileDialog1.Filter = "JSON File|*.json";
             saveFileDialog1.Title = "Save an Export Info File";
 
             if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
-            animationGroups.SaveToJson(saveFileDialog1.FileName);
+            animationGroups.SaveToJson(saveFileDialog1.FileName, exportList);
         }
 
         private void ImportBtn_Click(object sender, EventArgs e)
+        {
+            LoadDialog();
+        }
+
+        private void MergeBtn_Click(object sender, EventArgs e)
+        {
+            LoadDialog(true);
+        }
+
+        private void LoadDialog(bool merge = false)
         {
             string jsonPath = string.Empty;
             string jsonContent = string.Empty;
@@ -179,16 +219,36 @@ namespace Max2Babylon
 
                     using (StreamReader reader = new StreamReader(fileStream))
                     {
+                        BindingSource bindingSource = (BindingSource)AnimationListBox.DataSource;
+                        System.Collections.IList SourceList = bindingSource.List;
+                        SourceList.Clear();
                         jsonContent = reader.ReadToEnd();
-                        animationGroups.LoadFromJson(jsonContent);
+                        animationGroups.LoadFromJson(jsonContent, merge);
                         animationListBinding.ResetBindings(false);
                         Loader.Global.SetSaveRequiredFlag(true, false);
                     }
                 }
             }
-            
-
-
         }
+
+
+        //remove aniamtion groups with no nodes
+        private void cleanBtn_Click(object sender, EventArgs e)
+        {
+            foreach (AnimationGroup item in AnimationListBox.Items)
+            {
+                if (item.NodeHandles != null && item.NodeHandles.Count>0)
+                {
+                   continue;
+                }
+                item.DeleteFromData();
+                animationGroups.Remove(item);
+            }
+            animationGroups.SaveToData();
+            animationListBinding.ResetBindings(false);
+            Loader.Global.SetSaveRequiredFlag(true, false);
+        }
+
+        
     }
 }
