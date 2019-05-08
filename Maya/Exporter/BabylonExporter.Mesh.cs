@@ -37,7 +37,14 @@ namespace Maya2Babylon
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
             // Animations
-            ExportNodeAnimation(babylonMesh, mFnTransform);
+            if (_bakeAnimationFrames)
+            {
+                ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
+            }
+            else
+            {
+                ExportNodeAnimation(babylonMesh, mFnTransform);
+            }
 
             babylonScene.MeshesList.Add(babylonMesh);
 
@@ -287,7 +294,14 @@ namespace Maya2Babylon
             }
 
             // Animations
-            ExportNodeAnimation(babylonMesh, mFnTransform);
+            if (_bakeAnimationFrames)
+            {
+                ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
+            }
+            else
+            {
+                ExportNodeAnimation(babylonMesh, mFnTransform);
+            }
 
             // Material
             MObjectArray shaders = new MObjectArray();

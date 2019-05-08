@@ -26,6 +26,7 @@ namespace Maya2Babylon.Forms
         const string chkExportMorphTangentProperty = "babylonjs_exportMorphTangent";
         const string chkExportKHRTextureTransformProperty = "babylonjs_exportKHRTextureTransform";
         const string chkExportKHRLightsPunctualProperty = "babylonjs_exportKHRLightsPunctual";
+        const string chkBakeAnimationFramesProperty = "babylonjs_bakeAnimationFrames";
 
         TreeNode currentNode;
         int currentRank;
@@ -73,6 +74,7 @@ namespace Maya2Babylon.Forms
             chkExportMorphTangent.Checked = Loader.GetBoolProperty(chkExportMorphTangentProperty, false);
             chkExportKHRLightsPunctual.Checked = Loader.GetBoolProperty(chkExportKHRTextureTransformProperty, false);
             chkExportKHRTextureTransform.Checked = Loader.GetBoolProperty(chkExportKHRLightsPunctualProperty, false);
+            chkBakeAnimationFrames.Checked = Loader.GetBoolProperty(chkBakeAnimationFramesProperty, false);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
         }
@@ -105,6 +107,7 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkExportMorphTangentProperty, chkExportMorphTangent.Checked);
             Loader.SetBoolProperty(chkExportKHRLightsPunctualProperty, chkExportKHRLightsPunctual.Checked);
             Loader.SetBoolProperty(chkExportKHRTextureTransformProperty, chkExportKHRTextureTransform.Checked);
+            Loader.SetBoolProperty(chkBakeAnimationFramesProperty, chkBakeAnimationFrames.Checked);
 
             /*Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
@@ -193,7 +196,7 @@ namespace Maya2Babylon.Forms
                                 onlySelected: chkOnlySelected.Checked, autoSaveMayaFile: chkAutoSave.Checked, exportHiddenObjects: chkHidden.Checked, copyTexturesToOutput: chkCopyTextures.Checked,
                                 optimizeVertices: chkOptimizeVertices.Checked, exportTangents: chkExportTangents.Checked, scaleFactor: txtScaleFactor.Text, exportSkin: chkExportSkin.Checked,
                                 quality: txtQuality.Text, dracoCompression: chkDracoCompression.Checked, exportMorphNormal: chkExportMorphNormal.Checked, exportMorphTangent: chkExportMorphTangent.Checked, 
-                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked);
+                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked, bakeAnimationFrames: chkBakeAnimationFrames.Checked);
             }
             catch (OperationCanceledException)
             {
