@@ -28,6 +28,7 @@ namespace Maya2Babylon
         private bool _exportMorphTangent;
         private bool _exportKHRLightsPunctual;
         private bool _exportKHRTextureTransform;
+        private bool _bakeAnimationFrames;
 
         public bool IsCancelled { get; set; }
 
@@ -64,10 +65,11 @@ namespace Maya2Babylon
         /// <param name="exportMorphTangent">Specifies if tangents should be exported for morph targets</param>
         /// <param name="exportKHRLightsPunctual">Specifies if the KHR_lights_punctual extension should be enabled</param>
         /// <param name="exportKHRTextureTransform">Specifies if the KHR_texture_transform extension should be enabled</param>
+        /// <param name="bakeAnimationFrames">Specifies if animations should be exporting keyframes directly or should manually bake out animations frame by frame</param>
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
                             bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression,
-                            bool exportMorphNormal, bool exportMorphTangent, bool exportKHRLightsPunctual, bool exportKHRTextureTransform)
+                            bool exportMorphNormal, bool exportMorphTangent, bool exportKHRLightsPunctual, bool exportKHRTextureTransform, bool bakeAnimationFrames)
         {
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
@@ -124,6 +126,7 @@ namespace Maya2Babylon
             _exportMorphTangent = exportMorphTangent;
             _exportKHRLightsPunctual = exportKHRLightsPunctual;
             _exportKHRTextureTransform = exportKHRTextureTransform;
+            _bakeAnimationFrames = bakeAnimationFrames;
             
 
             // Check directory exists
