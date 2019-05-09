@@ -9,23 +9,25 @@ from mathutils import Vector, Matrix
 DEFAULT_LIB_NAME = 'Same as filename'
 #===============================================================================
 class Bone:
-    def __init__(self, bpyBone, bpySkeleton, bonesSoFar):
-        self.index = len(bonesSoFar)
+    def __init__(self, bpyBone, bpySkeleton, bjsIndex):
+        self.index = bjsIndex
         Logger.log('processing begun of bone:  ' + bpyBone.name + ', index:  '+ str(self.index), 2)
         self.name = bpyBone.name
         self.length = bpyBone.length
-        self.posedBone = bpyBone # record so can be used by get_matrix, called by append_animation_pose
+        self.posedBone = bpyBone # record so can be used by get_matrix, assignParentIndex
         self.parentBone = bpyBone.parent
 
         self.matrix_world = bpySkeleton.matrix_world
         self.matrix = self.get_bone_matrix()
 
-        self.parentBoneIndex = Skeleton.get_bone(bpyBone.parent.name, bonesSoFar).index if bpyBone.parent else -1
-
         #animation
         if (bpySkeleton.animation_data):
             self.animation = Animation(ANIMATIONTYPE_MATRIX, ANIMATIONLOOPMODE_CYCLE, 'anim', '_matrix')
             self.previousBoneMatrix = None
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   # not done in constructor, as some skeleton changes may cause parent to be proccessed before children
+    def assignParentIndex(self, bjsBones):
+        self.parentBoneIndex = Skeleton.get_bone(self.posedBone.parent.name, bjsBones).index if self.posedBone.parent else -1
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def append_animation_pose(self, frame, force = False):
         currentBoneMatrix = self.get_bone_matrix()
@@ -76,12 +78,16 @@ class Skeleton:
         self.id = id
         self.bones = []
 
-        for bone in bpySkeleton.pose.bones:
+        for idx, bone in enumerate(bpySkeleton.pose.bones):
             if ignoreIKBones and Skeleton.isIkName(bone.name):
                 Logger.log('Ignoring IK bone:  ' + bone.name, 2)
                 continue
 
-            self.bones.append(Bone(bone, bpySkeleton, self.bones))
+            self.bones.append(Bone(bone, bpySkeleton, idx))
+
+        # separate pass to assign index of parent bones
+        for bone in self.bones:
+            bone.assignParentIndex(self.bones)
 
         if (bpySkeleton.animation_data):
             self.ranges = []
