@@ -154,3 +154,50 @@ not exported correctly using glTF
 **Fixed Bugs:**
 - Fixed bug where KHR_texture_transform warning is always displayed
 (https://github.com/BabylonJS/Exporters/issues/460)
+
+## v1.3.34
+**Implemented Changes**
+- Added @MackeyK24 's support for BabylonMesh LOD
+(https://github.com/BabylonJS/Exporters/pull/479)
+
+## v1.3.35
+**Implemented Changes**
+- Added @elpie89 's implementation for different unit scale systems
+(https://github.com/BabylonJS/Exporters/pull/481)
+
+- Added @MackeyK24 's Support for Bablyon Lightmap mode parsing
+(https://github.com/BabylonJS/Exporters/pull/486)
+
+- Added @MackeyK24 's Support for Babylon Link Transform Nodes
+(https://github.com/BabylonJS/Exporters/pull/488)
+
+- Added @Selmar 's support for custom material exporters 
+(https://github.com/BabylonJS/Exporters/pull/493)
+
+- Added @Luca Pierabella 's support for animation group exporting
+(https://github.com/BabylonJS/Exporters/pull/492)
+
+
+**Fixed Bugs:**
+- Fixed bug where high standard shader specular power results in a white material base color
+(https://github.com/BabylonJS/Exporters/issues/466)
+
+- Added @Selmar 's fix where the export hierarchy is incorrect when exporting skinning nodes
+(https://github.com/BabylonJS/Exporters/issues/489)
+
+- Fixed bug where babylon material is exported with improper alpha blending mode when texture lacks alpha channel
+(https://github.com/BabylonJS/Exporters/issues/470)
+
+## v1.3.36
+**Fixed Bugs**
+- Fixed build break caused by shared components using 3dsMax implementations
+(https://github.com/BabylonJS/Exporters/pull/498)
+
+## v1.4.0
+**Implemented Changes**
+- Added Animation Bake export toggle
+(https://github.com/BabylonJS/Exporters/issues/503)
+
+**Fixed Bugs**
+- Added @Luca Pierabella 's fix for null references when exporting Physical Material with no Texture
+(https://github.com/BabylonJS/Exporters/issues/509)
