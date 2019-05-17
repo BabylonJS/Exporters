@@ -436,7 +436,7 @@ namespace Max2Babylon
                 gltfMaterial.alphaCutoff = alphaCutoff;
 
                 // DoubleSided
-                gltfMaterial.doubleSided = !babylonMaterial.backFaceCulling || babylonPBRMetallicRoughnessMaterial.doubleSided;
+                gltfMaterial.doubleSided = babylonPBRMetallicRoughnessMaterial.doubleSided;
 
                 // Normal
                 gltfMaterial.normalTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.normalTexture, gltf);

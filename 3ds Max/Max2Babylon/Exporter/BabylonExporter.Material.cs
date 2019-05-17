@@ -19,7 +19,7 @@ namespace Max2Babylon
         readonly List<IIGameMaterial> referencedMaterials = new List<IIGameMaterial>();
         Dictionary<ClassIDWrapper, IMaterialExporter> materialExporters;
 
-        private void ExportMaterial(IIGameMaterial materialNode, BabylonScene babylonScene, bool backFaceCulling = true)
+        private void ExportMaterial(IIGameMaterial materialNode, BabylonScene babylonScene)
         {
             var name = materialNode.MaterialName;
             var id = materialNode.MaxMaterial.GetGuid().ToString();
@@ -98,7 +98,6 @@ namespace Max2Babylon
                 var babylonMultimaterial = new BabylonMultiMaterial { name = name, id = id };
 
                 var guids = new List<string>();
-                bool twoSided = isTwoSidedMaterial(materialNode);
 
                 for (var index = 0; index < materialNode.SubMaterialCount; index++)
                 {
@@ -117,7 +116,7 @@ namespace Max2Babylon
                             if (!referencedMaterials.Contains(subMat))
                             {
                                 referencedMaterials.Add(subMat);
-                                ExportMaterial(subMat, babylonScene, !twoSided);
+                                ExportMaterial(subMat, babylonScene);
                             }
                         }
                     }
@@ -160,8 +159,7 @@ namespace Max2Babylon
                 var babylonMaterial = new BabylonMaterial(id)
                 {
                     maxGameMaterial = materialNode,
-                    name = name,
-                    backFaceCulling = backFaceCulling,
+                    name = name
                 };
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
@@ -173,10 +171,10 @@ namespace Max2Babylon
                     name = name,
                     isUnlit = isUnlit,
                     diffuse = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray(),
-                    alpha = 1.0f - materialNode.MaxMaterial.GetXParency(0, false),
-                    backFaceCulling = backFaceCulling && !stdMat.TwoSided,
+                    alpha = 1.0f - materialNode.MaxMaterial.GetXParency(0, false)
                 };
 
+                babylonMaterial.backFaceCulling = !stdMat.TwoSided;
                 babylonMaterial.wireframe = stdMat.Wire;
 
                 var isSelfIllumColor = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false);
@@ -298,9 +296,7 @@ namespace Max2Babylon
                 {
                     maxGameMaterial = materialNode,
                     name = name,
-                    isUnlit = isUnlit,
-                    backFaceCulling = backFaceCulling,
-                    doubleSided = !backFaceCulling,
+                    isUnlit = isUnlit
                 };
 
                 // --- Global ---
@@ -466,8 +462,7 @@ namespace Max2Babylon
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
                     name = name,
-                    isUnlit = isUnlit,
-                    backFaceCulling = backFaceCulling,
+                    isUnlit = isUnlit
                 };
 
                 // Alpha
@@ -611,12 +606,6 @@ namespace Max2Babylon
             return ClassIDWrapper.Multi_Sub_Object_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
-        public bool isTwoSidedMaterial(IIGameMaterial materialNode)
-        {
-            return ClassIDWrapper.Double_Sided_Material.Equals(materialNode.MaxMaterial.ClassID) ||
-                   ClassIDWrapper.Two_Sided_Material.Equals(materialNode.MaxMaterial.ClassID);
-        }
-
         public bool isDirectXShaderMaterial(IIGameMaterial materialNode)
         {
             return ClassIDWrapper.DirectX_Shader_Material.Equals(materialNode.MaxMaterial.ClassID);
@@ -666,12 +655,6 @@ namespace Max2Babylon
 
                 // Multi/sub-object material
                 if (isMultiSubObjectMaterial(materialNode))
-                {
-                    return null;
-                }
-
-                // 2-sided material
-                if (isTwoSidedMaterial(materialNode))
                 {
                     return null;
                 }
