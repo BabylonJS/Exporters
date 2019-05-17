@@ -1,5 +1,6 @@
 ﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using Max2Babylon.Extensions;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Max2Babylon.Extensions;
 
 namespace Max2Babylon
 {
@@ -55,7 +56,7 @@ namespace Max2Babylon
         /**
          * Computes a texture transform matrix with a pre-transformation
          */
-        public static BabylonMatrix ComputeTextureTransformMatrix(BabylonVector3 pivotCenter , BabylonVector3 offset, BabylonQuaternion rotation, BabylonVector3 scale)
+        public static BabylonMatrix ComputeTextureTransformMatrix(BabylonVector3 pivotCenter, BabylonVector3 offset, BabylonQuaternion rotation, BabylonVector3 scale)
         {
             var dOffset = new BabylonVector3();
             var dRotation = new BabylonQuaternion();
@@ -661,7 +662,7 @@ namespace Max2Babylon
             {
                 node.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1);
             }
-            
+
             if (!string.IsNullOrEmpty(value))
             {
                 node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, System.Text.Encoding.UTF8.GetBytes(value));
@@ -906,7 +907,7 @@ namespace Max2Babylon
                 {
                     // simply read all lines and write them back into the ouput
                     // skip the lines that have a matching property name
-                    for(string line = reader.ReadLine(); line != null; line = reader.ReadLine())
+                    for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
                     {
                         string[] propValuePair = line.Split('=');
                         string currentPropertyName = propValuePair[0].Trim();
@@ -983,7 +984,7 @@ namespace Max2Babylon
 
         public static void PrepareTextBox(TextBox textBox, List<IINode> nodes, string propertyName, string defaultValue = "")
         {
-            foreach(IINode node in nodes)
+            foreach (IINode node in nodes)
             {
                 PrepareTextBox(textBox, node, propertyName, defaultValue);
             }
@@ -1129,6 +1130,70 @@ namespace Max2Babylon
 
             return relativePath;
         }
+
+
+        public static string UnformatPath(string formattedPath)
+        {
+            string newPath = formattedPath;
+            newPath = Regex.Replace(formattedPath, @"[()]", string.Empty);
+            return newPath;
+        }
+
+        public static string FormatPath(string absolutePath)
+        {
+            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            {
+                return absolutePath;
+            }
+
+            
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+
+            if (!absolutePath.StartsWith(dirName))
+            {
+                return absolutePath;
+            }
+
+            //wrap the part of path relative to user project folder around ()
+            return string.Format("({0})\\{1}",dirName, absolutePath.TrimStart(dirName.ToCharArray()));
+        }
+
+        public static string RelativePathStore(string path)
+        {
+            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            {
+                return path;
+            }
+
+
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+
+            if (!path.StartsWith(dirName))
+            {
+                return path;
+            }
+
+            return path.TrimStart(dirName.ToCharArray());
+        }
+
+        public static string ResolveRelativePath(string path)
+        {
+            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            {
+                return path;
+            }
+
+
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+
+            if(Path.IsPathRooted(path))
+            {
+                return path;
+            }
+
+            return string.Format("({0})\\{1}", dirName, path);
+        }
+
 
         #endregion
     }
