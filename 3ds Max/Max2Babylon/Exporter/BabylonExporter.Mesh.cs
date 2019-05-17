@@ -32,20 +32,6 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
-        private int GetMultiMaterialCount(IIGameMaterial material)
-        {
-            if (material == null)
-            {
-                return 1;
-            }
-            if (isTwoSidedMaterial(material))
-            {
-                // Treat two-sided materials as a single material with backface culling disabled.
-                return 1;
-            }
-            return Math.Max(material.SubMaterialCount, 1);
-        }
-
         private BabylonNode ExportMesh(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
             if (IsMeshExportable(meshNode) == false)
@@ -340,7 +326,7 @@ namespace Max2Babylon
                             referencedMaterials.Add(mtl);
                         }
 
-                        multiMatsCount = GetMultiMaterialCount(mtl);
+                        multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
                     }
                     else
                     {
@@ -557,7 +543,12 @@ namespace Max2Babylon
                                                         // translated into a property because it has no parameters
 
             var mtl = maxMorphTarget.NodeMaterial;
-            var multiMatsCount = GetMultiMaterialCount(mtl);
+            var multiMatsCount = 1;
+
+            if (mtl != null)
+            {
+                multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
+            }
 
             var invertedWorldMatrix = GetInvertWorldTM(maxMorphTarget, 0);
             var offsetTM = GetOffsetTM(maxMorphTarget, 0);
