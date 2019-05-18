@@ -38,8 +38,7 @@ namespace Max2Babylon
             animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
 
             Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
-
-            HighlightAnimationGroupOfSelection();
+            
 
         }
 
