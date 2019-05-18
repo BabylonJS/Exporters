@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Autodesk.Max;
 
 namespace Max2Babylon
 {
@@ -37,6 +38,9 @@ namespace Max2Babylon
             animationGroupControl.ConfirmPressed += animationGroupControl_ConfirmPressed;
 
             Tools.PrepareCheckBox(exportNonAnimatedNodesCheckBox, Loader.Core.RootNode, "babylonjs_animgroup_exportnonanimated");
+
+            HighlightAnimationGroupOfSelection();
+
         }
 
         #endregion
@@ -231,7 +235,6 @@ namespace Max2Babylon
             }
         }
 
-
         //remove aniamtion groups with no nodes
         private void cleanBtn_Click(object sender, EventArgs e)
         {
@@ -247,6 +250,22 @@ namespace Max2Babylon
             animationGroups.SaveToData();
             animationListBinding.ResetBindings(false);
             Loader.Global.SetSaveRequiredFlag(true, false);
+        }
+
+        public void HighlightAnimationGroupOfSelection()
+        {
+            AnimationListBox.ClearSelected();
+            IINode node = Loader.Core.GetSelNode(0);
+            if (node != null)
+            {
+                for (int i = 0; i < animationGroups.Count; i++)
+                {
+                    if (animationGroups[i].NodeHandles.Contains(node.Handle))
+                    {
+                        AnimationListBox.SelectedItem = animationGroups[i];
+                    }
+                }
+            }
         }
 
         
