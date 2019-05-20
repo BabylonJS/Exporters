@@ -1141,7 +1141,7 @@ namespace Max2Babylon
 
         public static string FormatPath(string absolutePath)
         {
-            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
             {
                 return absolutePath;
             }
@@ -1160,7 +1160,7 @@ namespace Max2Babylon
 
         public static string RelativePathStore(string path)
         {
-            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
             {
                 return path;
             }
@@ -1178,7 +1178,7 @@ namespace Max2Babylon
 
         public static string ResolveRelativePath(string path)
         {
-            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
             {
                 return path;
             }
