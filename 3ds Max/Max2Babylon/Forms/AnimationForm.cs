@@ -1,7 +1,7 @@
-﻿using System.Windows.Forms;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Windows.Forms;
+using Autodesk.Max;
 
 namespace Max2Babylon
 {
@@ -45,7 +45,7 @@ namespace Max2Babylon
         private void createAnimationButton_Click(object sender, EventArgs e)
         {
             AnimationGroup info = new AnimationGroup();
-            
+
             // get a unique name and guid
             string baseName = info.Name;
             int i = 0;
@@ -88,7 +88,7 @@ namespace Max2Babylon
                 return;
 
             AnimationGroup selectedItem = (AnimationGroup)AnimationListBox.SelectedItem;
-            
+
             // delete item
             selectedItem.DeleteFromData();
 
@@ -186,9 +186,22 @@ namespace Max2Babylon
                     }
                 }
             }
-            
+        }
 
-
+        public void HighlightAnimationGroupOfSelection()
+        {
+            AnimationListBox.ClearSelected();
+            IINode node = Loader.Core.GetSelNode(0);
+            if (node != null)
+            {
+                for (int i = 0; i < animationGroups.Count; i++)
+                {
+                    if (animationGroups[i].NodeHandles.Contains(node.Handle))
+                    {
+                        AnimationListBox.SelectedItem = animationGroups[i];
+                    }
+                }
+            }
         }
     }
 }
