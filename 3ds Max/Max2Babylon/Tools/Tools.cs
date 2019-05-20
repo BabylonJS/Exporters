@@ -1194,6 +1194,25 @@ namespace Max2Babylon
             return string.Format("({0})\\{1}", dirName, path);
         }
 
+        public static bool IsBelowModelPath(string folderPath,string modelPath)
+        {
+            string modelFolderPath = Path.GetDirectoryName(modelPath);
+            if (folderPath.StartsWith(modelFolderPath))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static string GetPathRelativeToModel(string folderPath, string modelPath)
+        {
+            Uri path1 = new Uri(modelPath);
+            Uri path2 = new Uri(folderPath);
+            Uri diff = path1.MakeRelativeUri(path2);
+            return diff.OriginalString;
+        }
+
 
         #endregion
     }
