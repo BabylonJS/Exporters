@@ -174,7 +174,7 @@ not exported correctly using glTF
 - Added @Selmar 's support for custom material exporters 
 (https://github.com/BabylonJS/Exporters/pull/493)
 
-- Added @Luca Pierabella 's support for animation group exporting
+- Added @elpie89 's support for animation group exporting
 (https://github.com/BabylonJS/Exporters/pull/492)
 
 
@@ -194,10 +194,6 @@ not exported correctly using glTF
 (https://github.com/BabylonJS/Exporters/pull/498)
 
 ## v1.4.0
-**Implemented Changes**
-- Added Animation Bake export toggle
-(https://github.com/BabylonJS/Exporters/issues/503)
-
 **Fixed Bugs**
-- Added @Luca Pierabella 's fix for null references when exporting Physical Material with no Texture
+- Added @elpie89 's fix for null references when exporting Physical Material with no Texture
 (https://github.com/BabylonJS/Exporters/issues/509)
