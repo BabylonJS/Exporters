@@ -237,7 +237,8 @@ namespace Max2Babylon
         {
             foreach (AnimationGroup item in AnimationListBox.Items)
             {
-                if (item.NodeHandles != null && item.NodeHandles.Count>0)
+                
+                if (item.AnimationGroupNodes != null && item.AnimationGroupNodes.Count>0)
                 {
                    continue;
                 }
