@@ -113,7 +113,8 @@ namespace Max2Babylon
                     MessageBox.Show("WARNING: folderPath should be below model file path");
                 }
 
-                txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath + "\\");
+                txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath);
+
             }
         }
 

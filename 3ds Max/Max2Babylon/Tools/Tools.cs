@@ -1208,6 +1208,12 @@ namespace Max2Babylon
         public static string GetPathRelativeToModel(string folderPath, string modelPath)
         {
             Uri path1 = new Uri(modelPath);
+
+            if (!folderPath.EndsWith("\\"))
+            {
+                folderPath += "\\";
+            }
+
             Uri path2 = new Uri(folderPath);
             Uri diff = path1.MakeRelativeUri(path2);
             return diff.OriginalString;
