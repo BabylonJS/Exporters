@@ -11,6 +11,9 @@ namespace Max2Babylon
 {
     public partial class ExporterForm : Form
     {
+        private const string ModelFilePathProperty = "modelFilePathProperty";
+        private const string TextureFolderPathProperty = "textureFolderPathProperty";
+
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
@@ -50,12 +53,14 @@ namespace Max2Babylon
 
         private void ExporterForm_Load(object sender, EventArgs e)
         {
-            string userRelativePath = Tools.ResolveRelativePath(Loader.Core.RootNode.GetLocalData());
+            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ModelFilePathProperty,string.Empty);
+            string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
             txtModelName.Text = userRelativePath;
             string absoluteModelPath = Tools.UnformatPath(txtModelName.Text);
             singleExportItem = new ExportItem(absoluteModelPath);
 
-            string formatedFolderPath = Tools.ResolveRelativePath(Loader.Core.RootNode.GetLocalData());
+            string storedFolderPath = Loader.Core.RootNode.GetStringProperty(TextureFolderPathProperty, string.Empty);
+            string formatedFolderPath = Tools.ResolveRelativePath(storedFolderPath);
             txtTextureName.Text = formatedFolderPath;
 
             Tools.PrepareCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
@@ -108,7 +113,7 @@ namespace Max2Babylon
                     MessageBox.Show("WARNING: folderPath should be below model file path");
                 }
 
-                txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath);
+                txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath + "\\");
             }
         }
 
@@ -155,14 +160,16 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
 
             string unformattedPath = Tools.UnformatPath(txtModelName.Text);
-            Loader.Core.RootNode.SetLocalData(Tools.RelativePathStore(unformattedPath));
+            Loader.Core.RootNode.SetStringProperty(ModelFilePathProperty, Tools.RelativePathStore(unformattedPath));
 
             string unformattedTextureFolderPath = Tools.UnformatPath(txtTextureName.Text);
-            Loader.Core.RootNode.SetLocalData(Tools.RelativePathStore(unformattedTextureFolderPath));
+            Loader.Core.RootNode.SetStringProperty(TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
 
             exporter = new BabylonExporter();
-            exporter.relativeTextureFolder = Tools.GetPathRelativeToModel(Tools.UnformatPath(txtTextureName.Text), Tools.UnformatPath(txtModelName.Text));
-            
+            if (!string.IsNullOrWhiteSpace(txtTextureName.Text))
+            {
+                exporter.relativeTextureFolder = Tools.GetPathRelativeToModel(Tools.UnformatPath(txtTextureName.Text), Tools.UnformatPath(txtModelName.Text));
+            }
 
             if (clearLogs)
                 treeView.Nodes.Clear();
@@ -377,6 +384,7 @@ namespace Max2Babylon
                     chkDracoCompression.Enabled = false;
                     chkWriteTextures.Enabled = true;
                     chkOverwriteTextures.Enabled = true;
+                    txtTextureName.Text = string.Empty;
                     txtTextureName.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
@@ -399,6 +407,7 @@ namespace Max2Babylon
                     chkWriteTextures.Enabled = false;
                     chkOverwriteTextures.Checked = true;
                     chkOverwriteTextures.Enabled = false;
+                    txtTextureName.Text = string.Empty;
                     txtTextureName.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
