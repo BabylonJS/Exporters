@@ -8,6 +8,11 @@ SET max_location=!ADSK_3DSMAX_x64_%max_version%!
 SET source_dir="%~dp0%max_version%\bin\%1"
 ECHO %source_dir%
 
+IF "%max_location%"=="" (
+	ECHO 3DS Max %max_version% not installed. Skipping copy.
+	GOTO Close
+)
+
 IF %1=="Debug" GOTO OnDebug
 IF %1=="Release" GOTO OnRelease
 
