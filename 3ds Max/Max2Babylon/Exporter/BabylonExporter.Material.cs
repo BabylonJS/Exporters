@@ -136,7 +136,8 @@ namespace Max2Babylon
             bool isUnlit = unlitProperty != null ? unlitProperty.GetBoolValue() : false;
 
             // check custom exporters first, to allow custom exporters of supported material classes
-            materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter);
+            IMaterialExporter materialExporter;
+            materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter);
 
             
             var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
@@ -676,7 +677,8 @@ namespace Max2Babylon
                 }
 
                 // Custom material exporters
-                if (materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter))
+                IMaterialExporter materialExporter;
+                if (materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter))
                 {
                     if (isGltfExported && materialExporter is IGLTFMaterialExporter)
                         return null;

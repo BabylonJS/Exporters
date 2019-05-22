@@ -19,7 +19,8 @@ namespace Max2Babylon
             IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
             IMtl maxMtl = gameMtl.MaxMaterial;
 
-            if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out IMaterialExporter materialExporter)
+            IMaterialExporter materialExporter;
+            if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out materialExporter)
                 && materialExporter is IGLTFMaterialExporter)
             {
                 gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this, gltf, gameMtl,
@@ -610,6 +611,37 @@ namespace Max2Babylon
         BabylonColor3 dielectricSpecular = new BabylonColor3(0.04f, 0.04f, 0.04f);
         const float epsilon = 1e-6f;
 
+        /**
+          * Helper function that defines the bezier curve as well.Given the control points, solve for x based on a given t for a cubic bezier curve
+          * @param t a value between 0 and 1
+          * @param p0 first control point
+          * @param p1 second control point
+          * @param p2 third control point
+          * @param p3 fourth control point
+          * @returns number result of cubic bezier curve at the specified t
+          */
+        private static float _cubicBezierCurve(float t, float p0, float p1, float p2, float p3)
+        {
+            return
+            (
+                (1 - t) * (1 - t) * (1 - t) * p0 +
+                3 * (1 - t) * (1 - t) * t * p1 +
+                3 * (1 - t) * t * t * p2 +
+                t * t * t * p3
+            );
+        }
+
+        /*
+          * Helper function that calculates a roughness coefficient given a blinn-phong specular power coefficient
+          * @param specularPower the blinn-phong specular power coefficient
+          * @returns number result of specularPower -> roughness conversion curve.
+          */
+        private static float _solveForRoughness(float specularPower, BabylonVector2 P0, BabylonVector2 P1, BabylonVector2 P2, BabylonVector2 P3)
+        {
+            var t = Math.Pow(specularPower / P3.X, 0.333333);
+            return _cubicBezierCurve((float)t, P0.Y, P1.Y, P2.Y, P3.Y);
+        }
+
         private MetallicRoughness ConvertToMetallicRoughness(SpecularGlossiness specularGlossiness, bool displayPrints = false)
         {
             // Hard coded points used to define the specular power to roughness curve.
@@ -618,42 +650,11 @@ namespace Max2Babylon
             var P2 = new BabylonVector2(0f, 0.1f);
             var P3 = new BabylonVector2(1300f, 0.1f);
 
-            /**
-             * Helper function that defines the bezier curve as well.Given the control points, solve for x based on a given t for a cubic bezier curve
-             * @param t a value between 0 and 1
-             * @param p0 first control point
-             * @param p1 second control point
-             * @param p2 third control point
-             * @param p3 fourth control point
-             * @returns number result of cubic bezier curve at the specified t
-             */
-            float _cubicBezierCurve(float t, float p0, float p1, float p2, float p3)
-            {
-                return
-                (
-                    (1 - t) * (1 - t) * (1 - t) * p0 +
-                    3 * (1 - t) * (1 - t) * t * p1 +
-                    3 * (1 - t) * t * t * p2 +
-                    t * t * t * p3
-                );
-            }
-
-            /*
-             * Helper function that calculates a roughness coefficient given a blinn-phong specular power coefficient
-             * @param specularPower the blinn-phong specular power coefficient
-             * @returns number result of specularPower -> roughness conversion curve.
-             */
-            float _solveForRoughness(float specularPower)
-            {
-                var t = Math.Pow(specularPower / P3.X, 0.333333);
-                return _cubicBezierCurve((float)t, P0.Y, P1.Y, P2.Y, P3.Y);
-            }
-
             var diffuse = specularGlossiness.diffuse.scale(0.5f);
             var opacity = specularGlossiness.opacity;
             var glossiness = specularGlossiness.glossiness;
             var metallic = 0;
-            var roughness = _solveForRoughness(glossiness * 256); // Glossiness = specularPower / 256
+            var roughness = _solveForRoughness(glossiness * 256, P0, P1, P2, P3); // Glossiness = specularPower / 256
 
             if (displayPrints)
             {
