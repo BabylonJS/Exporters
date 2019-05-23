@@ -1155,7 +1155,8 @@ namespace Max2Babylon
             }
 
             //wrap the part of path relative to user project folder around ()
-            return string.Format("({0})\\{1}",dirName, absolutePath.TrimStart(dirName.ToCharArray()));
+            string relativePath = absolutePath.Remove(0, dirName.Length);
+            return string.Format(@"({0}){1}",dirName, relativePath);
         }
 
         public static string RelativePathStore(string path)
@@ -1173,7 +1174,7 @@ namespace Max2Babylon
                 return path;
             }
 
-            return path.TrimStart(dirName.ToCharArray());
+            return path.Remove(0,dirName.Length);
         }
 
         public static string ResolveRelativePath(string path)
