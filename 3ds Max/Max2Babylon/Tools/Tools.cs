@@ -1179,7 +1179,7 @@ namespace Max2Babylon
 
         public static string ResolveRelativePath(string path)
         {
-            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
+            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
             {
                 return path;
             }
@@ -1187,12 +1187,12 @@ namespace Max2Babylon
 
             string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
 
-            if(Path.IsPathRooted(path))
+            if(!path.StartsWith("\\"))
             {
                 return path;
             }
 
-            return string.Format("({0})\\{1}", dirName, path);
+            return string.Format(@"({0}){1}", dirName, path);
         }
 
         public static bool IsBelowModelPath(string folderPath,string modelPath)
