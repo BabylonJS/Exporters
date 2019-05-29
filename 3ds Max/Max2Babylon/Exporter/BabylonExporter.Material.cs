@@ -4,11 +4,20 @@ using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
 
+namespace BabylonExport.Entities
+{
+    partial class BabylonMaterial
+    {
+        public IIGameMaterial maxGameMaterial { get; set; }
+    }
+}
+
 namespace Max2Babylon
 {
     partial class BabylonExporter
     {
         readonly List<IIGameMaterial> referencedMaterials = new List<IIGameMaterial>();
+        Dictionary<ClassIDWrapper, IMaterialExporter> materialExporters;
 
         private void ExportMaterial(IIGameMaterial materialNode, BabylonScene babylonScene)
         {
@@ -126,13 +135,39 @@ namespace Max2Babylon
             var unlitProperty = materialNode.IPropertyContainer.QueryProperty("BabylonUnlit");
             bool isUnlit = unlitProperty != null ? unlitProperty.GetBoolValue() : false;
 
+            // check custom exporters first, to allow custom exporters of supported material classes
+            materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter);
+
             
             var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
 
-            if (stdMat != null)
+            if (isBabylonExported && materialExporter != null && materialExporter is IBabylonMaterialExporter)
+            {
+                IBabylonMaterialExporter babylonMaterialExporter = materialExporter as IBabylonMaterialExporter;
+                BabylonMaterial babylonMaterial = babylonMaterialExporter.ExportBabylonMaterial(materialNode);
+                if (babylonMaterial == null)
+                {
+                    string message = string.Format("Custom Babylon material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
+                        babylonMaterialExporter.GetType().ToString(), materialNode.MaterialName, materialNode.MaterialClass);
+                    RaiseWarning(message, 2);
+                }
+                else babylonScene.MaterialsList.Add(babylonMaterial);
+            }
+            else if (isGltfExported && materialExporter != null && materialExporter is IGLTFMaterialExporter)
+            {
+                // add a basic babylon material to the list to forward the max material reference
+                var babylonMaterial = new BabylonMaterial(id)
+                {
+                    maxGameMaterial = materialNode,
+                    name = name
+                };
+                babylonScene.MaterialsList.Add(babylonMaterial);
+            }
+            else if (stdMat != null)
             {
                 var babylonMaterial = new BabylonStandardMaterial(id)
                 {
+                    maxGameMaterial = materialNode,
                     name = name,
                     isUnlit = isUnlit,
                     diffuse = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray(),
@@ -259,6 +294,7 @@ namespace Max2Babylon
 
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
+                    maxGameMaterial = materialNode,
                     name = name,
                     isUnlit = isUnlit
                 };
@@ -562,37 +598,27 @@ namespace Max2Babylon
 
         public bool isPhysicalMaterial(IIGameMaterial materialNode)
         {
-            // TODO - Find another way to detect if material is physical
-            return materialNode.MaterialClass.ToLower() == "physical material" || // English
-                     materialNode.MaterialClass.ToLower() == "physikalisches material" || // German
-                     materialNode.MaterialClass.ToLower() == "matériau physique"; // French
+            return ClassIDWrapper.Physical_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isMultiSubObjectMaterial(IIGameMaterial materialNode)
         {
-            // TODO - Find another way to detect if material is a multi/sub-object
-            return materialNode.MaterialClass.ToLower() == "multi/sub-object" || // English
-                     materialNode.MaterialClass.ToLower() == "multi-/unterobjekt" || // German
-                     materialNode.MaterialClass.ToLower() == "multi/sous-objet"; // French
+            return ClassIDWrapper.Multi_Sub_Object_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isDirectXShaderMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "directx shader" ||    // English
-                    materialNode.MaterialClass.ToLower() == "directx-shader" ||   // German
-                    materialNode.MaterialClass.ToLower() == "ombrage directx";   // French
+            return ClassIDWrapper.DirectX_Shader_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isArnoldMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "standard surface"; // English, German and French
+            return ClassIDWrapper.Standard_Surface_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         public bool isShellMaterial(IIGameMaterial materialNode)
         {
-            return materialNode.MaterialClass.ToLower() == "shell material" ||    // English
-                    materialNode.MaterialClass.ToLower() == "hüllenmaterial" ||   // German
-                    materialNode.MaterialClass.ToLower() == "matériau coque";   // French
+            return ClassIDWrapper.Shell_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
         /// <summary>
@@ -647,6 +673,15 @@ namespace Max2Babylon
                 if (isPhysicalMaterial(materialNode))
                 {
                     return null;
+                }
+
+                // Custom material exporters
+                if (materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaterialExporter materialExporter))
+                {
+                    if (isGltfExported && materialExporter is IGLTFMaterialExporter)
+                        return null;
+                    else if (isBabylonExported && materialExporter is IBabylonMaterialExporter)
+                        return null;
                 }
 
                 // Arnold material

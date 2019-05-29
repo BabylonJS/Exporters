@@ -1,8 +1,9 @@
 ﻿using System.Runtime.Serialization;
+
 namespace BabylonExport.Entities
 {
     [DataContract]
-    public class BabylonMaterial
+    public partial class BabylonMaterial
     {
         [DataMember]
         public string name { get; set; }

@@ -37,12 +37,14 @@ class BJSMaterial:
 
         self.isPBR = exporter.settings.usePBRMaterials
         self.textureFullPathDir = exporter.textureFullPathDir
+        self.textureDir = exporter.settings.textureDir
 
         # transfer from either the Blender or previous BJSMaterial
         self.checkReadyOnlyOnce = mat.checkReadyOnlyOnce
         self.maxSimultaneousLights = mat.maxSimultaneousLights
         self.backFaceCulling = mat.backFaceCulling
         self.use_nodes = mat.use_nodes
+        self.environmentIntensity = mat.environmentIntensity
 
         if not isinstance(mat, BJSMaterial):
             bpyMaterial = mat
@@ -67,7 +69,7 @@ class BJSMaterial:
 
         for texType, tex in self.bjsNodeTree.bjsTextures.items():
             self.textures[texType] = tex
-            tex.process(self.textureFullPathDir, True, bpyMesh)
+            tex.process(self, True, bpyMesh)
 
         return len(self.textures.items()) > 0
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -183,6 +185,7 @@ class BJSMaterial:
         write_bool(file_handler, 'backFaceCulling', self.backFaceCulling)
         write_bool(file_handler, 'checkReadyOnlyOnce', self.checkReadyOnlyOnce)
         write_int(file_handler, 'maxSimultaneousLights', self.maxSimultaneousLights)
+        if self.isPBR: write_float(file_handler, 'environmentIntensity', self.environmentIntensity)
 
         if not self.use_nodes:
             propName = 'albedoColor' if self.isPBR else 'diffuseColor'
@@ -337,6 +340,11 @@ bpy.types.Material.maxSimultaneousLights = bpy.props.IntProperty(
     description='BJS property set on each material.\nSet higher for more complex lighting.\nSet lower for armatures on mobile',
     default = 4, min = 0, max = 32
 )
+bpy.types.Material.environmentIntensity = bpy.props.FloatProperty(
+    name='Env. Intensity',
+    description='This is the intensity of the environment to be applied to materials.\nNo meaning unless exporting PBR materials.',
+    default = 1.0, min = 0, max = 1.0
+)
 bpy.types.Material.materialNameSpace = bpy.props.StringProperty(
     name='Name Space',
     description='Prefix to use for materials for sharing across .blends.',
@@ -363,3 +371,4 @@ class MaterialsPanel(bpy.types.Panel):
                 layout.prop(material, 'maxSimultaneousLights')
                 layout.prop(material, 'environmentIntensity')
                 layout.prop(material, 'materialNameSpace')
+                

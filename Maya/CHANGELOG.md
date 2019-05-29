@@ -45,3 +45,17 @@ from the export interface
 ## v1.2.31
 **Implemented changes:**
 - Allow building to Maya 2019
+
+## v1.2.32
+**Implemented changes:**
+- Added @MackeyK24 's support for BabylonMesh LOD
+(https://github.com/BabylonJS/Exporters/pull/479)
+
+## v1.3.0
+**Implemented Changes**
+- Added Animation Bake export toggle
+(https://github.com/BabylonJS/Exporters/issues/503)
+
+**Fixed Bugs**
+- Fixed build break caused by shared components using 3dsMax implementations
+(https://github.com/BabylonJS/Exporters/pull/498)

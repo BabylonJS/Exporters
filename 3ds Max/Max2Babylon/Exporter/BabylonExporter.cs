@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
@@ -32,7 +33,8 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        public static string exporterVersion = "1.3.33";
+        public static string exporterVersion = "1.4.0";
+        public float scaleFactor = 1.0f;
 
         void ReportProgressChanged(int progress)
         {
@@ -84,8 +86,10 @@ namespace Max2Babylon
         }
         public void Export(ExportParameters exportParameters)
         {
-            // Check input text is valid
+            this.scaleFactor = Tools.GetScaleFactorToMeters();
+
             var scaleFactorFloat = 1.0f;
+            // Check input text is valid
             string scaleFactor = exportParameters.scaleFactor;
             try
             {
@@ -218,6 +222,21 @@ namespace Max2Babylon
                     babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
                     babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
                 }
+            }
+
+            // Instantiate custom material exporters
+            materialExporters = new Dictionary<ClassIDWrapper, IMaterialExporter>();
+            foreach (Type type in Tools.GetAllLoadableTypes())
+            {
+                if (type.IsAbstract || type.IsInterface || !typeof(IMaterialExporter).IsAssignableFrom(type))
+                    continue;
+
+                IMaterialExporter exporter = Activator.CreateInstance(type) as IMaterialExporter;
+
+                if (exporter == null)
+                    RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+                materialExporters.Add(exporter.MaterialClassID, exporter);
             }
 
             // Sounds

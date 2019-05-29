@@ -1,4 +1,5 @@
-﻿using BabylonExport.Entities;
+﻿using Autodesk.Max;
+using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System;
 using System.Drawing;
@@ -12,11 +13,34 @@ namespace Max2Babylon
         {
             var name = babylonMaterial.name;
             var id = babylonMaterial.id;
-
             RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
             GLTFMaterial gltfMaterial = null;
-            if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
+            IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
+            IMtl maxMtl = gameMtl.MaxMaterial;
+
+            if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out IMaterialExporter materialExporter)
+                && materialExporter is IGLTFMaterialExporter)
+            {
+                gltfMaterial = ((IGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this, gltf, gameMtl,
+                    (string sourcePath, string textureName) => { return TryWriteImage(gltf, sourcePath, textureName); },
+                    (string message, Color color) => { RaiseMessage(message, color, 2); },
+                    (string message) => { RaiseWarning(message, 2); },
+                    (string message) => { RaiseError(message, 2); });
+
+                if (gltfMaterial == null)
+                {
+                    string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
+                        materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
+                    RaiseWarning(message, 2);
+                }
+                else
+                {
+                    gltfMaterial.index = gltf.MaterialsList.Count;
+                    gltf.MaterialsList.Add(gltfMaterial);
+                }
+            }
+            else if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
             {
                 var babylonStandardMaterial = babylonMaterial as BabylonStandardMaterial;
 
@@ -224,17 +248,17 @@ namespace Max2Babylon
 
                     if (exportParameters.writeTextures)
                     {
-                    // Diffuse
-                    Bitmap diffuseBitmap = null;
-                    if (babylonStandardMaterial.diffuseTexture != null)
-                    {
-                        diffuseBitmap = LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath);
-                    }
+                        // Diffuse
+                        Bitmap diffuseBitmap = null;
+                        if (babylonStandardMaterial.diffuseTexture != null)
+                        {
+                            diffuseBitmap = LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath);
+                        }
 
-                    // Specular
-                    Bitmap specularBitmap = null;
-                    if (babylonStandardMaterial.specularTexture != null)
-                    {
+                        // Specular
+                        Bitmap specularBitmap = null;
+                        if (babylonStandardMaterial.specularTexture != null)
+                        {
                             if (babylonStandardMaterial.specularTexture.bitmap != null)
                             {
                                 // Specular color map has been computed by the exporter
@@ -245,66 +269,66 @@ namespace Max2Babylon
                                 // Specular color map is straight input
                                 specularBitmap = LoadTexture(babylonStandardMaterial.specularTexture.originalPath);
                             }
-                    }
-
-                    // Opacity / Alpha / Transparency
-                    Bitmap opacityBitmap = null;
-                    if ((babylonStandardMaterial.diffuseTexture == null || babylonStandardMaterial.diffuseTexture.hasAlpha == false) && babylonStandardMaterial.opacityTexture != null)
-                    {
-                        opacityBitmap = LoadTexture(babylonStandardMaterial.opacityTexture.originalPath);
-                    }
-
-                    if (diffuseBitmap != null || specularBitmap != null || opacityBitmap != null)
-                    {
-                        // Retreive dimensions
-                        int width = 0;
-                        int height = 0;
-                        var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, diffuseBitmap, specularBitmap, opacityBitmap);
-                        if (!haveSameDimensions)
-                        {
-                            RaiseError("Diffuse, specular and opacity maps should have same dimensions", 2);
                         }
 
-                        // Create baseColor+alpha and metallic+roughness maps
-                        baseColorBitmap = new Bitmap(width, height);
-                        metallicRoughnessBitmap = new Bitmap(width, height);
-                        for (int x = 0; x < width; x++)
+                        // Opacity / Alpha / Transparency
+                        Bitmap opacityBitmap = null;
+                        if ((babylonStandardMaterial.diffuseTexture == null || babylonStandardMaterial.diffuseTexture.hasAlpha == false) && babylonStandardMaterial.opacityTexture != null)
                         {
-                            for (int y = 0; y < height; y++)
+                            opacityBitmap = LoadTexture(babylonStandardMaterial.opacityTexture.originalPath);
+                        }
+
+                        if (diffuseBitmap != null || specularBitmap != null || opacityBitmap != null)
+                        {
+                            // Retreive dimensions
+                            int width = 0;
+                            int height = 0;
+                            var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, diffuseBitmap, specularBitmap, opacityBitmap);
+                            if (!haveSameDimensions)
                             {
-                                SpecularGlossiness specularGlossinessTexture = new SpecularGlossiness
+                                RaiseError("Diffuse, specular and opacity maps should have same dimensions", 2);
+                            }
+
+                            // Create baseColor+alpha and metallic+roughness maps
+                            baseColorBitmap = new Bitmap(width, height);
+                            metallicRoughnessBitmap = new Bitmap(width, height);
+                            for (int x = 0; x < width; x++)
+                            {
+                                for (int y = 0; y < height; y++)
                                 {
-                                    diffuse = diffuseBitmap != null ? new BabylonColor3(diffuseBitmap.GetPixel(x, y)) :
-                                                _specularGlossiness.diffuse,
-                                    opacity = diffuseBitmap != null && babylonStandardMaterial.diffuseTexture.hasAlpha ? diffuseBitmap.GetPixel(x, y).A / 255.0f :
-                                                opacityBitmap != null && babylonStandardMaterial.opacityTexture.getAlphaFromRGB ? opacityBitmap.GetPixel(x, y).R / 255.0f :
-                                                opacityBitmap != null && babylonStandardMaterial.opacityTexture.getAlphaFromRGB == false ? opacityBitmap.GetPixel(x, y).A / 255.0f :
-                                                _specularGlossiness.opacity,
-                                    specular = specularBitmap != null ? new BabylonColor3(specularBitmap.GetPixel(x, y)) :
-                                                _specularGlossiness.specular,
-                                    glossiness = babylonStandardMaterial.useGlossinessFromSpecularMapAlpha && specularBitmap != null ? specularBitmap.GetPixel(x, y).A / 255.0f :
-                                                    _specularGlossiness.glossiness
-                                };
+                                    SpecularGlossiness specularGlossinessTexture = new SpecularGlossiness
+                                    {
+                                        diffuse = diffuseBitmap != null ? new BabylonColor3(diffuseBitmap.GetPixel(x, y)) :
+                                                    _specularGlossiness.diffuse,
+                                        opacity = diffuseBitmap != null && babylonStandardMaterial.diffuseTexture.hasAlpha ? diffuseBitmap.GetPixel(x, y).A / 255.0f :
+                                                    opacityBitmap != null && babylonStandardMaterial.opacityTexture.getAlphaFromRGB ? opacityBitmap.GetPixel(x, y).R / 255.0f :
+                                                    opacityBitmap != null && babylonStandardMaterial.opacityTexture.getAlphaFromRGB == false ? opacityBitmap.GetPixel(x, y).A / 255.0f :
+                                                    _specularGlossiness.opacity,
+                                        specular = specularBitmap != null ? new BabylonColor3(specularBitmap.GetPixel(x, y)) :
+                                                    _specularGlossiness.specular,
+                                        glossiness = babylonStandardMaterial.useGlossinessFromSpecularMapAlpha && specularBitmap != null ? specularBitmap.GetPixel(x, y).A / 255.0f :
+                                                        _specularGlossiness.glossiness
+                                    };
 
-                                var displayPrints = x == width / 2 && y == height / 2;
-                                MetallicRoughness metallicRoughnessTexture = ConvertToMetallicRoughness(specularGlossinessTexture, displayPrints);
+                                    var displayPrints = x == width / 2 && y == height / 2;
+                                    MetallicRoughness metallicRoughnessTexture = ConvertToMetallicRoughness(specularGlossinessTexture, displayPrints);
 
-                                Color colorBase = Color.FromArgb(
-                                    (int)(metallicRoughnessTexture.opacity * 255),
-                                    (int)(metallicRoughnessTexture.baseColor.r * 255),
-                                    (int)(metallicRoughnessTexture.baseColor.g * 255),
-                                    (int)(metallicRoughnessTexture.baseColor.b * 255)
-                                );
-                                baseColorBitmap.SetPixel(x, y, colorBase);
+                                    Color colorBase = Color.FromArgb(
+                                        (int)(metallicRoughnessTexture.opacity * 255),
+                                        (int)(metallicRoughnessTexture.baseColor.r * 255),
+                                        (int)(metallicRoughnessTexture.baseColor.g * 255),
+                                        (int)(metallicRoughnessTexture.baseColor.b * 255)
+                                    );
+                                    baseColorBitmap.SetPixel(x, y, colorBase);
 
-                                // The metalness values are sampled from the B channel.
-                                // The roughness values are sampled from the G channel.
-                                // These values are linear. If other channels are present (R or A), they are ignored for metallic-roughness calculations.
-                                Color colorMetallicRoughness = Color.FromArgb(
-                                    0,
-                                    (int)(metallicRoughnessTexture.roughness * 255),
-                                    (int)(metallicRoughnessTexture.metallic * 255)
-                                );
+                                    // The metalness values are sampled from the B channel.
+                                    // The roughness values are sampled from the G channel.
+                                    // These values are linear. If other channels are present (R or A), they are ignored for metallic-roughness calculations.
+                                    Color colorMetallicRoughness = Color.FromArgb(
+                                        0,
+                                        (int)(metallicRoughnessTexture.roughness * 255),
+                                        (int)(metallicRoughnessTexture.metallic * 255)
+                                    );
                                     metallicRoughnessBitmap.SetPixel(x, y, colorMetallicRoughness);
                                 }
                             }
@@ -507,7 +531,7 @@ namespace Max2Babylon
             }
             else
             {
-                RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType(), 2);
+                RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType() + " | Max MaterialClass: " + babylonMaterial.maxGameMaterial.ClassName, 2);
             }
 
             if (gltfMaterial != null && babylonMaterial.isUnlit)
@@ -588,44 +612,66 @@ namespace Max2Babylon
 
         private MetallicRoughness ConvertToMetallicRoughness(SpecularGlossiness specularGlossiness, bool displayPrints = false)
         {
-            var diffuse = specularGlossiness.diffuse;
+            // Hard coded points used to define the specular power to roughness curve.
+            var P0 = new BabylonVector2(0f, 1f);
+            var P1 = new BabylonVector2(0f, 0.1f);
+            var P2 = new BabylonVector2(0f, 0.1f);
+            var P3 = new BabylonVector2(1300f, 0.1f);
+
+            /**
+             * Helper function that defines the bezier curve as well.Given the control points, solve for x based on a given t for a cubic bezier curve
+             * @param t a value between 0 and 1
+             * @param p0 first control point
+             * @param p1 second control point
+             * @param p2 third control point
+             * @param p3 fourth control point
+             * @returns number result of cubic bezier curve at the specified t
+             */
+            float _cubicBezierCurve(float t, float p0, float p1, float p2, float p3)
+            {
+                return
+                (
+                    (1 - t) * (1 - t) * (1 - t) * p0 +
+                    3 * (1 - t) * (1 - t) * t * p1 +
+                    3 * (1 - t) * t * t * p2 +
+                    t * t * t * p3
+                );
+            }
+
+            /*
+             * Helper function that calculates a roughness coefficient given a blinn-phong specular power coefficient
+             * @param specularPower the blinn-phong specular power coefficient
+             * @returns number result of specularPower -> roughness conversion curve.
+             */
+            float _solveForRoughness(float specularPower)
+            {
+                var t = Math.Pow(specularPower / P3.X, 0.333333);
+                return _cubicBezierCurve((float)t, P0.Y, P1.Y, P2.Y, P3.Y);
+            }
+
+            var diffuse = specularGlossiness.diffuse.scale(0.5f);
             var opacity = specularGlossiness.opacity;
-            var specular = specularGlossiness.specular;
             var glossiness = specularGlossiness.glossiness;
-
-            var oneMinusSpecularStrength = 1 - specular.getMaxComponent();
-            var metallic = solveMetallic(diffuse.getPerceivedBrightness(), specular.getPerceivedBrightness(), oneMinusSpecularStrength);
-
-            var diffuseScaleFactor = oneMinusSpecularStrength / (1 - dielectricSpecular.r) / Math.Max(1 - metallic, epsilon);
-            var baseColorFromDiffuse = diffuse.scale(diffuseScaleFactor);
-            var baseColorFromSpecular = specular.subtract(dielectricSpecular.scale(1 - metallic)).scale(1 / Math.Max(metallic, epsilon));
-            var baseColor = BabylonColor3.Lerp(baseColorFromDiffuse, baseColorFromSpecular, metallic * metallic).clamp();
-            //var baseColor = baseColorFromDiffuse.clamp();
+            var metallic = 0;
+            var roughness = _solveForRoughness(glossiness * 256); // Glossiness = specularPower / 256
 
             if (displayPrints)
             {
                 RaiseVerbose("-----------------------", 3);
                 RaiseVerbose("diffuse=" + diffuse, 3);
                 RaiseVerbose("opacity=" + opacity, 3);
-                RaiseVerbose("specular=" + specular, 3);
                 RaiseVerbose("glossiness=" + glossiness, 3);
-
-                RaiseVerbose("oneMinusSpecularStrength=" + oneMinusSpecularStrength, 3);
+                RaiseVerbose("roughness=" + roughness, 3);
                 RaiseVerbose("metallic=" + metallic, 3);
-                RaiseVerbose("diffuseScaleFactor=" + diffuseScaleFactor, 3);
-                RaiseVerbose("baseColorFromDiffuse=" + baseColorFromDiffuse, 3);
-                RaiseVerbose("baseColorFromSpecular=" + baseColorFromSpecular, 3);
-                RaiseVerbose("metallic * metallic=" + metallic * metallic, 3);
-                RaiseVerbose("baseColor=" + baseColor, 3);
                 RaiseVerbose("-----------------------", 3);
             }
 
             return new MetallicRoughness
             {
-                baseColor = baseColor,
+                baseColor = diffuse,
                 opacity = opacity,
                 metallic = metallic,
-                roughness = 1 - glossiness
+                roughness = roughness
             };
         }
 
@@ -658,6 +704,7 @@ namespace Max2Babylon
             public BabylonColor3 diffuse;
             public float opacity;
             public BabylonColor3 specular;
+            public float specularPower;
             public float glossiness;
         }
 
