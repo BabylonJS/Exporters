@@ -168,7 +168,6 @@ class Mesh(FCurveAnimatable):
 
         # Get mesh temporary version of mesh with modifiers applied
         if bpyMesh.type == 'MESH':
-            # mesh = bpyMesh.to_mesh(bpy.context.depsgraph, True) # old
             depsgraph = bpy.context.evaluated_depsgraph_get()
             mesh_owner = bpyMesh.evaluated_get(depsgraph)
             mesh = mesh_owner.to_mesh()
