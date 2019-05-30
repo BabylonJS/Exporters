@@ -45,7 +45,7 @@ namespace Max2Babylon
         private void createAnimationButton_Click(object sender, EventArgs e)
         {
             AnimationGroup info = new AnimationGroup();
-
+            
             // get a unique name and guid
             string baseName = info.Name;
             int i = 0;
@@ -88,7 +88,7 @@ namespace Max2Babylon
                 return;
 
             AnimationGroup selectedItem = (AnimationGroup)AnimationListBox.SelectedItem;
-
+            
             // delete item
             selectedItem.DeleteFromData();
 
