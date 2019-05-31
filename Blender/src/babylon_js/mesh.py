@@ -167,10 +167,7 @@ class Mesh(FCurveAnimatable):
                 Logger.warn('No materials have been assigned: ', 2)
 
         # Get mesh temporary version of mesh with modifiers applied
-        if bpyMesh.type == 'MESH':
-            depsgraph = bpy.context.evaluated_depsgraph_get()
-            mesh_owner = bpyMesh.evaluated_get(depsgraph)
-            mesh = mesh_owner.to_mesh()
+        mesh = bpyMesh.to_mesh(bpy.context.depsgraph, True)
 
         # Triangulate mesh if required
         Mesh.mesh_triangulate(mesh)
