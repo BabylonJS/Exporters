@@ -28,7 +28,6 @@ namespace Max2Babylon
 
             form.HighlightAnimationGroupOfSelection();
 
-
             return true;
 		}
 
