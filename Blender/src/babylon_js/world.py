@@ -198,7 +198,7 @@ bpy.types.World.writeManifestFile = bpy.props.BoolProperty(
     default = True,
 )
 #===============================================================================
-class WorldPanel(bpy.types.Panel):
+class WORLDPANEL_PT_WorldPanel(bpy.types.Panel):
     bl_label = get_title()
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

@@ -892,7 +892,7 @@ bpy.types.Mesh.billboardMode = bpy.props.EnumProperty(
 )
 
 #===============================================================================
-class MeshPanel(bpy.types.Panel):
+class MESHPANEL_PT_MeshPanel(bpy.types.Panel):
     bl_label = get_title()
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

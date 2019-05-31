@@ -222,7 +222,7 @@ bpy.types.Light.shadowDarkness = bpy.props.FloatProperty(
     max = 1
 )
 #===============================================================================
-class LightPanel(bpy.types.Panel):
+class LIGHTPANEL_PT_LightPanel(bpy.types.Panel):
     bl_label = get_title()
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

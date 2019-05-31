@@ -190,7 +190,7 @@ bpy.types.Camera.interaxialDistance = bpy.props.FloatProperty(
     default = 0.0637
 )
 #===============================================================================
-class CameraPanel(bpy.types.Panel):
+class CAMERAPANEL_PT_CameraPanel(bpy.types.Panel):
     bl_label = get_title()
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

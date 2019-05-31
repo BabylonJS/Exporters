@@ -351,7 +351,7 @@ bpy.types.Material.materialNameSpace = bpy.props.StringProperty(
     default = DEFAULT_MATERIAL_NAMESPACE
 )
 #===============================================================================
-class MaterialsPanel(bpy.types.Panel):
+class MATERIALSPANEL_PT_MaterialsPanel(bpy.types.Panel):
     bl_label = get_title()
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

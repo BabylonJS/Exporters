@@ -82,21 +82,21 @@ class JsonMain(bpy.types.Operator, ExportHelper):
         )
 #===============================================================================
 # The list of classes which sub-class a Blender class, which needs to be registered
-from . import camera
-from . import light_shadow
-from . import materials # directory
-from . import world # must be defined before mesh
-from . import mesh
+from .camera import CAMERAPANEL_PT_CameraPanel
+from .light_shadow import LIGHTPANEL_PT_LightPanel
+from .materials.material import MATERIALSPANEL_PT_MaterialsPanel # directory
+from .world import WORLDPANEL_PT_WorldPanel # must be defined before mesh
+from .mesh import MESHPANEL_PT_MeshPanel
 classes = (
     # Operator sub-classes
     JsonMain,
 
     # Panel sub-classes
-    camera.CameraPanel,
-    light_shadow.LightPanel,
-    materials.material.MaterialsPanel,
-    mesh.MeshPanel,
-    world.WorldPanel
+    CAMERAPANEL_PT_CameraPanel,
+    LIGHTPANEL_PT_LightPanel,
+    MATERIALSPANEL_PT_MaterialsPanel,
+    MESHPANEL_PT_MeshPanel,
+    WORLDPANEL_PT_WorldPanel
 )
 
 def register():
