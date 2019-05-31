@@ -175,3 +175,6 @@ obj
 *.swatches
 assemblies
 /Maya/Assemblies/*.dll
+src/babylon_js/__pycache__/*
+src/babylon_js/materials/__pycache__/*
+src/babylon_js/materials/nodes/__pycache__/*
