@@ -362,13 +362,10 @@ class MaterialsPanel(bpy.types.Panel):
 
         mesh = context.object
         index = mesh.active_material_index
-        
-        if  len(mesh.material_slots) >= 1:
-            material = mesh.material_slots[index].material
-            if material:
-                layout.prop(material, 'backFaceCulling')
-                layout.prop(material, 'checkReadyOnlyOnce')
-                layout.prop(material, 'maxSimultaneousLights')
-                layout.prop(material, 'environmentIntensity')
-                layout.prop(material, 'materialNameSpace')
-                
+        material = mesh.material_slots[index].material
+
+        layout.prop(material, 'backFaceCulling')
+        layout.prop(material, 'checkReadyOnlyOnce')
+        layout.prop(material, 'maxSimultaneousLights')
+        layout.prop(material, 'environmentIntensity')
+        layout.prop(material, 'materialNameSpace')
