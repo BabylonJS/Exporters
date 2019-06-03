@@ -284,26 +284,21 @@ namespace Max2Babylon
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
         }
 
-        public void SaveToJson(string filePath)
+        public void SaveToJson(string filePath, List<AnimationGroup> exportList)
         {
-            List<AnimationGroup> toSerailize = new List<AnimationGroup>();
-            string[] animationPropertyNamesInfo = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
-
-            foreach (string propertyNameStr in animationPropertyNamesInfo)
-            {
-                AnimationGroup info = new AnimationGroup();
-                info.LoadFromData(propertyNameStr);
-                toSerailize.Add(info);
-            }
-
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(toSerailize));
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(exportList));
         }
 
-        public void LoadFromJson(string jsonContent)
+        public void LoadFromJson(string jsonContent, bool merge = false)
         {
-            Clear();
+            List<string> animationPropertyNameList = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName).ToList();
 
-            List<string> animationPropertyNameList = new List<string>();
+            if (!merge)
+            {
+                animationPropertyNameList = new List<string>();
+                Clear();
+            }
+            
             List<AnimationGroup> animationGroupsData = JsonConvert.DeserializeObject<List<AnimationGroup>>(jsonContent);
 
             foreach (AnimationGroup animData in animationGroupsData)
@@ -365,7 +360,21 @@ namespace Max2Babylon
             
             foreach (AnimationGroup animData in animationGroupsData)
             {
-                animationPropertyNameList.Add(animData.SerializedId.ToString());
+                string id = animData.SerializedId.ToString();
+
+                if (merge)
+                {
+                    //if json are merged check if the same animgroup is already in list
+                    //and skip in that case
+                    if (!animationPropertyNameList.Contains(id))
+                    {
+                        animationPropertyNameList.Add(animData.SerializedId.ToString());
+                    }
+                }
+                else
+                {
+                    animationPropertyNameList.Add(animData.SerializedId.ToString());
+                }
             }
 
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
