@@ -1,10 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Max2Babylon
 {
     public class MaxScriptManager
     {
+        public static void Export()
+        {
+            string outputPath = Tools.ResolveRelativePath(Loader.Core.RootNode.GetLocalData());
+            Export(InitParameters(outputPath));
+        }
+
         public static void Export(string outputPath)
         {
             Export(InitParameters(outputPath));
@@ -48,12 +56,54 @@ namespace Max2Babylon
             exporter.Export(exportParameters);
         }
 
+
+        //leave the possibility to do get the outputh path from the babylon exporter with all the settings as presaved
         public static ExportParameters InitParameters(string outputPath)
         {
             ExportParameters exportParameters = new ExportParameters();
             exportParameters.outputPath = outputPath;
-            exportParameters.outputFormat = Path.GetExtension(outputPath).Substring(1);
+            exportParameters.outputFormat = Path.GetExtension(outputPath)?.Substring(1);
+            exportParameters.generateManifest = Loader.Core.RootNode.GetBoolProperty("babylonjs_generatemanifest");
+            exportParameters.writeTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_writetextures");
+            exportParameters.overwriteTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_overwritetextures");
+            exportParameters.exportHiddenObjects = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporthidden");
+            exportParameters.autoSave3dsMaxFile = Loader.Core.RootNode.GetBoolProperty("babylonjs_autosave");
+            exportParameters.exportOnlySelected = Loader.Core.RootNode.GetBoolProperty("babylonjs_onlySelected");
+            exportParameters.exportTangents = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporttangents");
+            exportParameters.scaleFactor = Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1");
+            exportParameters.txtQuality = Loader.Core.RootNode.GetStringProperty("babylonjs_txtCompression", "100");
+            exportParameters.mergeAOwithMR = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergeAOwithMR");
+            exportParameters.dracoCompression = Loader.Core.RootNode.GetBoolProperty("babylonjs_dracoCompression");
+            exportParameters.enableKHRLightsPunctual = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrLightsPunctual");
+            exportParameters.enableKHRTextureTransform = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrTextureTransform");
+            exportParameters.enableKHRMaterialsUnlit = Loader.Core.RootNode.GetBoolProperty("babylonjs_khr_materials_unlit");
+            exportParameters.exportMaterials = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_materials");
             return exportParameters;
         }
+
+        public static void ImportAnimationGroups(string jsonPath)
+        {
+            AnimationGroupList animationGroups = new AnimationGroupList();
+            var fileStream = File.Open(jsonPath, FileMode.Open);
+
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                string jsonContent = reader.ReadToEnd();
+                animationGroups.LoadFromJson(jsonContent);
+            }
+        }
+
+        public static void MergeAnimationGroups(string jsonPath)
+        {
+            AnimationGroupList animationGroups = new AnimationGroupList();
+            var fileStream = File.Open(jsonPath, FileMode.Open);
+
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                string jsonContent = reader.ReadToEnd();
+                animationGroups.LoadFromJson(jsonContent,true);
+            }
+        }
+
     }
 }

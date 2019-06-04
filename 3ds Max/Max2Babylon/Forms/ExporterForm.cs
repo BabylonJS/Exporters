@@ -110,7 +110,12 @@ namespace Max2Babylon
             return allSucceeded;
         }
 
-        private async Task<bool> DoExport(ExportItem exportItem, bool clearLogs = true)
+        private void saveOptionBtn_Click(object sender, EventArgs e)
+        {
+            SaveOptions();
+        }
+
+        private void SaveOptions()
         {
             Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.UpdateCheckBox(chkWriteTextures, Loader.Core.RootNode, "babylonjs_writetextures");
@@ -131,6 +136,11 @@ namespace Max2Babylon
 
             string unformattedPath = Tools.UnformatPath(txtFilename.Text);
             Loader.Core.RootNode.SetLocalData(Tools.RelativePathStore(unformattedPath));
+        }
+
+        private async Task<bool> DoExport(ExportItem exportItem, bool clearLogs = true)
+        {
+            SaveOptions();
 
             exporter = new BabylonExporter();
 
