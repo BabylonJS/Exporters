@@ -1,8 +1,9 @@
-﻿using System.Windows.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using Autodesk.Max;
 
 namespace Max2Babylon
 {
@@ -250,6 +251,20 @@ namespace Max2Babylon
             Loader.Global.SetSaveRequiredFlag(true, false);
         }
 
-        
+        public void HighlightAnimationGroupOfSelection()
+        {
+            AnimationListBox.ClearSelected();
+            IINode node = Loader.Core.GetSelNode(0);
+            if (node != null)
+            {
+                for (int i = 0; i < animationGroups.Count; i++)
+                {
+                    if (animationGroups[i].NodeHandles.Contains(node.Handle))
+                    {
+                        AnimationListBox.SelectedItem = animationGroups[i];
+                    }
+                }
+            }
+        }
     }
 }

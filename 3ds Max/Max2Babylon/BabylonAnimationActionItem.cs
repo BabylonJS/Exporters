@@ -26,6 +26,7 @@ namespace Max2Babylon
             form.WindowState = FormWindowState.Normal;
             form.BringToFront();
 
+            form.HighlightAnimationGroupOfSelection();
 
             return true;
 		}

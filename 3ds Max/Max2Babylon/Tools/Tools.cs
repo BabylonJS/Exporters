@@ -1,5 +1,6 @@
 ﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using Max2Babylon.Extensions;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Max2Babylon.Extensions;
 
 namespace Max2Babylon
 {
@@ -1129,6 +1130,70 @@ namespace Max2Babylon
 
             return relativePath;
         }
+
+
+        public static string UnformatPath(string formattedPath)
+        {
+            string newPath = formattedPath;
+            newPath = Regex.Replace(formattedPath, @"[()]", string.Empty);
+            return newPath;
+        }
+
+        public static string FormatPath(string absolutePath)
+        {
+            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
+            {
+                return absolutePath;
+            }
+
+            
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+
+            if (!absolutePath.StartsWith(dirName))
+            {
+                return absolutePath;
+            }
+
+            //wrap the part of path relative to user project folder around ()
+            return string.Format("({0})\\{1}",dirName, absolutePath.TrimStart(dirName.ToCharArray()));
+        }
+
+        public static string RelativePathStore(string path)
+        {
+            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
+            {
+                return path;
+            }
+
+
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+
+            if (!path.StartsWith(dirName))
+            {
+                return path;
+            }
+
+            return path.TrimStart(dirName.ToCharArray());
+        }
+
+        public static string ResolveRelativePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
+            {
+                return path;
+            }
+
+
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+
+            if(Path.IsPathRooted(path))
+            {
+                return path;
+            }
+
+            return string.Format("({0})\\{1}", dirName, path);
+        }
+
 
         #endregion
     }
