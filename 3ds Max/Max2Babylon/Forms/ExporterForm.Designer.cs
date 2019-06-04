@@ -67,6 +67,7 @@
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             this.butMultiExport = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.saveOptionBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -76,7 +77,7 @@
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(114, 261);
+            this.butExport.Location = new System.Drawing.Point(215, 261);
             this.butExport.Name = "butExport";
             this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 100;
@@ -472,7 +473,7 @@
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(317, 261);
+            this.butExportAndRun.Location = new System.Drawing.Point(418, 261);
             this.butExportAndRun.Name = "butExportAndRun";
             this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 102;
@@ -502,7 +503,7 @@
             // 
             this.butMultiExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butMultiExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butMultiExport.Location = new System.Drawing.Point(520, 261);
+            this.butMultiExport.Location = new System.Drawing.Point(621, 261);
             this.butMultiExport.Name = "butMultiExport";
             this.butMultiExport.Size = new System.Drawing.Size(197, 27);
             this.butMultiExport.TabIndex = 109;
@@ -510,11 +511,24 @@
             this.butMultiExport.UseVisualStyleBackColor = true;
             this.butMultiExport.Click += new System.EventHandler(this.butMultiExport_Click);
             // 
+            // saveOptionBtn
+            // 
+            this.saveOptionBtn.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.saveOptionBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.saveOptionBtn.Location = new System.Drawing.Point(12, 261);
+            this.saveOptionBtn.Name = "saveOptionBtn";
+            this.saveOptionBtn.Size = new System.Drawing.Size(197, 27);
+            this.saveOptionBtn.TabIndex = 110;
+            this.saveOptionBtn.Text = "Save";
+            this.saveOptionBtn.UseVisualStyleBackColor = true;
+            this.saveOptionBtn.Click += new System.EventHandler(this.saveOptionBtn_Click);
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 616);
+            this.Controls.Add(this.saveOptionBtn);
             this.Controls.Add(this.butMultiExport);
             this.Controls.Add(this.butExportAndRun);
             this.Controls.Add(this.groupBox1);
@@ -581,5 +595,6 @@
         private System.Windows.Forms.TextBox txtTextureName;
         private System.Windows.Forms.Button btnTxtBrowse;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button saveOptionBtn;
     }
 }
