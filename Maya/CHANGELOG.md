@@ -52,6 +52,7 @@ from the export interface
 (https://github.com/BabylonJS/Exporters/pull/479)
 
 ## v1.3.0
+### (2019-05-21 13:16:12)
 **Implemented Changes**
 - Added Animation Bake export toggle
 (https://github.com/BabylonJS/Exporters/issues/503)
