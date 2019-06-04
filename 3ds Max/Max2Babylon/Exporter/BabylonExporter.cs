@@ -144,6 +144,7 @@ namespace Max2Babylon
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
+            string folderOuputDirectory = exportParameters.textureFolder;
             string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
             // Check directory exists
@@ -557,6 +558,7 @@ namespace Max2Babylon
                         var tempFilePath = Path.Combine(tempOutputDirectory, file);
                         var outputFile = Path.Combine(outputDirectory, file);
 
+
                         IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputFile);
                         Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);
                         moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
@@ -571,8 +573,13 @@ namespace Max2Babylon
                 foreach (var filePath in filePaths)
                 {
                     var file = Path.GetFileName(filePath);
-                    var outputPath = Path.Combine(outputDirectory, file);
+                    string ext = Path.GetExtension(file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
+                    var outputPath = Path.Combine(outputDirectory, file);
+                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder) && ExtensionIsValidGLTFTexture(ext))
+                    {
+                        outputPath = Path.Combine(exportParameters.textureFolder, file);
+                    }
 
                     IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputPath);
                     Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);

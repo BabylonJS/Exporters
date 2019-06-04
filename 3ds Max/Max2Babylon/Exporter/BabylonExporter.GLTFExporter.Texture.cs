@@ -15,7 +15,7 @@ namespace Max2Babylon
         public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
         private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
         private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
-
+        public string relativeTextureFolder = "";
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
         /// Write the bitmap file
@@ -60,6 +60,21 @@ namespace Max2Babylon
         {
             return ExportTexture(babylonTexture, gltf, null, 
                 () => { return TryWriteImage(gltf, babylonTexture.originalPath, babylonTexture.name); });
+        }
+
+        private bool ExtensionIsValidGLTFTexture(string _extension)
+        {
+            if (_extension.StartsWith("."))
+            {
+                _extension = _extension.Replace(".", "");
+            }
+
+            if (validGltfFormats.Contains(_extension))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
@@ -157,9 +172,14 @@ namespace Max2Babylon
                 }
                 else
                 {
+                    string textureUri = name;
+                    if (!string.IsNullOrWhiteSpace(relativeTextureFolder))
+                    {
+                        textureUri = relativeTextureFolder + "/"+ name;
+                    }
                     gltfImage = new GLTFImage
                     {
-                        uri = name
+                        uri = textureUri
                     };
                     gltfImage.index = gltf.ImagesList.Count;
                     gltf.ImagesList.Add(gltfImage);
