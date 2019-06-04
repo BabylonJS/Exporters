@@ -31,6 +31,10 @@
             System.Windows.Forms.Panel panel1;
             System.Windows.Forms.Panel panel2;
             System.Windows.Forms.GroupBox ExportPropertiesGroupBox;
+            this.MergeBtn = new System.Windows.Forms.Button();
+            this.cleanBtn = new System.Windows.Forms.Button();
+            this.ExportBtn = new System.Windows.Forms.Button();
+            this.ImportBtn = new System.Windows.Forms.Button();
             this.createAnimationButton = new System.Windows.Forms.Button();
             this.deleteAnimationButton = new System.Windows.Forms.Button();
             this.AnimationListBox = new System.Windows.Forms.ListBox();
@@ -38,8 +42,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.animationGroupControl = new Max2Babylon.AnimationGroupControl();
-            this.ImportBtn = new System.Windows.Forms.Button();
-            this.ExportBtn = new System.Windows.Forms.Button();
             panel1 = new System.Windows.Forms.Panel();
             panel2 = new System.Windows.Forms.Panel();
             ExportPropertiesGroupBox = new System.Windows.Forms.GroupBox();
@@ -57,6 +59,8 @@
             // 
             panel1.AutoSize = true;
             panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            panel1.Controls.Add(this.MergeBtn);
+            panel1.Controls.Add(this.cleanBtn);
             panel1.Controls.Add(this.ExportBtn);
             panel1.Controls.Add(this.ImportBtn);
             panel1.Controls.Add(this.createAnimationButton);
@@ -66,6 +70,54 @@
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(171, 56);
             panel1.TabIndex = 4;
+            // 
+            // mergeBtn
+            // 
+            this.MergeBtn.AutoSize = true;
+            this.MergeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.MergeBtn.Location = new System.Drawing.Point(109, 30);
+            this.MergeBtn.Name = "mergeBtn";
+            this.MergeBtn.Size = new System.Drawing.Size(47, 23);
+            this.MergeBtn.TabIndex = 6;
+            this.MergeBtn.Text = "Merge";
+            this.MergeBtn.UseVisualStyleBackColor = true;
+            this.MergeBtn.Click += new System.EventHandler(this.MergeBtn_Click);
+            // 
+            // cleanBtn
+            // 
+            this.cleanBtn.AutoSize = true;
+            this.cleanBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.cleanBtn.Location = new System.Drawing.Point(111, 3);
+            this.cleanBtn.Name = "cleanBtn";
+            this.cleanBtn.Size = new System.Drawing.Size(44, 23);
+            this.cleanBtn.TabIndex = 5;
+            this.cleanBtn.Text = "Clean";
+            this.cleanBtn.UseVisualStyleBackColor = true;
+            this.cleanBtn.Click += new System.EventHandler(this.cleanBtn_Click);
+            // 
+            // ExportBtn
+            // 
+            this.ExportBtn.AutoSize = true;
+            this.ExportBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ExportBtn.Location = new System.Drawing.Point(3, 30);
+            this.ExportBtn.Name = "ExportBtn";
+            this.ExportBtn.Size = new System.Drawing.Size(47, 23);
+            this.ExportBtn.TabIndex = 4;
+            this.ExportBtn.Text = "Export";
+            this.ExportBtn.UseVisualStyleBackColor = true;
+            this.ExportBtn.Click += new System.EventHandler(this.ExportBtn_Click);
+            // 
+            // ImportBtn
+            // 
+            this.ImportBtn.AutoSize = true;
+            this.ImportBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ImportBtn.Location = new System.Drawing.Point(57, 30);
+            this.ImportBtn.Name = "ImportBtn";
+            this.ImportBtn.Size = new System.Drawing.Size(46, 23);
+            this.ImportBtn.TabIndex = 3;
+            this.ImportBtn.Text = "Import";
+            this.ImportBtn.UseVisualStyleBackColor = true;
+            this.ImportBtn.Click += new System.EventHandler(this.ImportBtn_Click);
             // 
             // createAnimationButton
             // 
@@ -108,6 +160,7 @@
             this.AnimationListBox.HorizontalScrollbar = true;
             this.AnimationListBox.Location = new System.Drawing.Point(0, 0);
             this.AnimationListBox.Name = "AnimationListBox";
+            this.AnimationListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.AnimationListBox.Size = new System.Drawing.Size(171, 310);
             this.AnimationListBox.Sorted = true;
             this.AnimationListBox.TabIndex = 0;
@@ -186,30 +239,6 @@
             this.animationGroupControl.Size = new System.Drawing.Size(479, 385);
             this.animationGroupControl.TabIndex = 3;
             // 
-            // ImportBtn
-            // 
-            this.ImportBtn.AutoSize = true;
-            this.ImportBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ImportBtn.Location = new System.Drawing.Point(57, 30);
-            this.ImportBtn.Name = "ImportBtn";
-            this.ImportBtn.Size = new System.Drawing.Size(46, 23);
-            this.ImportBtn.TabIndex = 3;
-            this.ImportBtn.Text = "Import";
-            this.ImportBtn.UseVisualStyleBackColor = true;
-            this.ImportBtn.Click += new System.EventHandler(this.ImportBtn_Click);
-            // 
-            // ExportBtn
-            // 
-            this.ExportBtn.AutoSize = true;
-            this.ExportBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ExportBtn.Location = new System.Drawing.Point(3, 30);
-            this.ExportBtn.Name = "ExportBtn";
-            this.ExportBtn.Size = new System.Drawing.Size(47, 23);
-            this.ExportBtn.TabIndex = 4;
-            this.ExportBtn.Text = "Export";
-            this.ExportBtn.UseVisualStyleBackColor = true;
-            this.ExportBtn.Click += new System.EventHandler(this.ExportBtn_Click);
-            // 
             // AnimationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -255,5 +284,7 @@
         private System.Windows.Forms.CheckBox exportNonAnimatedNodesCheckBox;
         private System.Windows.Forms.Button ExportBtn;
         private System.Windows.Forms.Button ImportBtn;
+        private System.Windows.Forms.Button MergeBtn;
+        private System.Windows.Forms.Button cleanBtn;
     }
 }
