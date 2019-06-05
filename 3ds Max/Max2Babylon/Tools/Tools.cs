@@ -1155,7 +1155,8 @@ namespace Max2Babylon
             }
 
             //wrap the part of path relative to user project folder around ()
-            return string.Format("({0})\\{1}",dirName, absolutePath.TrimStart(dirName.ToCharArray()));
+            string relativePath = absolutePath.Remove(0, dirName.Length);
+            return string.Format(@"({0}){1}",dirName, relativePath);
         }
 
         public static string RelativePathStore(string path)
@@ -1173,12 +1174,12 @@ namespace Max2Babylon
                 return path;
             }
 
-            return path.TrimStart(dirName.ToCharArray());
+            return path.Remove(0,dirName.Length);
         }
 
         public static string ResolveRelativePath(string path)
         {
-            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
+            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
             {
                 return path;
             }
@@ -1186,12 +1187,37 @@ namespace Max2Babylon
 
             string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
 
-            if(Path.IsPathRooted(path))
+            if(!path.StartsWith("\\"))
             {
                 return path;
             }
 
-            return string.Format("({0})\\{1}", dirName, path);
+            return string.Format(@"({0}){1}", dirName, path);
+        }
+
+        public static bool IsBelowModelPath(string folderPath,string modelPath)
+        {
+            string modelFolderPath = Path.GetDirectoryName(modelPath);
+            if (folderPath.StartsWith(modelFolderPath))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static string GetPathRelativeToModel(string folderPath, string modelPath)
+        {
+            Uri path1 = new Uri(modelPath);
+
+            if (!folderPath.EndsWith("\\"))
+            {
+                folderPath += "\\";
+            }
+
+            Uri path2 = new Uri(folderPath);
+            Uri diff = path1.MakeRelativeUri(path2);
+            return diff.OriginalString;
         }
 
 
