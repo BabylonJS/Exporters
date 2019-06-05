@@ -66,8 +66,8 @@
             this.butClose = new System.Windows.Forms.Button();
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             this.butMultiExport = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveOptionBtn = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -129,7 +129,7 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 581);
+            this.progressBar.Location = new System.Drawing.Point(12, 526);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(638, 23);
             this.progressBar.TabIndex = 104;
@@ -141,7 +141,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView.Location = new System.Drawing.Point(12, 294);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 281);
+            this.treeView.Size = new System.Drawing.Size(810, 224);
             this.treeView.TabIndex = 103;
             this.treeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
@@ -150,7 +150,7 @@
             this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCancel.Enabled = false;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(656, 581);
+            this.butCancel.Location = new System.Drawing.Point(656, 526);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(80, 23);
             this.butCancel.TabIndex = 105;
@@ -486,7 +486,7 @@
             // 
             this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butClose.Location = new System.Drawing.Point(742, 581);
+            this.butClose.Location = new System.Drawing.Point(742, 526);
             this.butClose.Name = "butClose";
             this.butClose.Size = new System.Drawing.Size(80, 23);
             this.butClose.TabIndex = 106;
@@ -527,7 +527,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 616);
+            this.ClientSize = new System.Drawing.Size(834, 561);
             this.Controls.Add(this.saveOptionBtn);
             this.Controls.Add(this.butMultiExport);
             this.Controls.Add(this.butExportAndRun);
@@ -591,10 +591,10 @@
         private System.Windows.Forms.CheckBox chkKHRTextureTransform;
         private System.Windows.Forms.CheckBox chkKHRMaterialsUnlit;
         private System.Windows.Forms.CheckBox chkExportMaterials;
+        private System.Windows.Forms.Button saveOptionBtn;
         private System.Windows.Forms.Label textureLabel;
         private System.Windows.Forms.TextBox txtTextureName;
         private System.Windows.Forms.Button btnTxtBrowse;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.Button saveOptionBtn;
     }
 }
