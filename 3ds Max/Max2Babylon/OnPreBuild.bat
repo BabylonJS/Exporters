@@ -6,7 +6,7 @@ ECHO %configurationName%
 IF "%configurationName%"=="Debug" GOTO OnDebug
 
 :OnDebug
-taskkill /f /fi "pid gt 0" /im 3dsmax.exe
+taskkill  /im 3dsmax.exe /f /fi "STATUS eq RUNNING"
 
 
 pause
