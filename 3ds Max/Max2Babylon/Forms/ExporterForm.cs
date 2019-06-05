@@ -11,9 +11,6 @@ namespace Max2Babylon
 {
     public partial class ExporterForm : Form
     {
-        private const string ModelFilePathProperty = "modelFilePathProperty";
-        private const string TextureFolderPathProperty = "textureFolderPathProperty";
-
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
@@ -53,13 +50,13 @@ namespace Max2Babylon
 
         private void ExporterForm_Load(object sender, EventArgs e)
         {
-            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ModelFilePathProperty,string.Empty);
+            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty,string.Empty);
             string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
             txtModelName.Text = userRelativePath;
             string absoluteModelPath = Tools.UnformatPath(txtModelName.Text);
             singleExportItem = new ExportItem(absoluteModelPath);
 
-            string storedFolderPath = Loader.Core.RootNode.GetStringProperty(TextureFolderPathProperty, string.Empty);
+            string storedFolderPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.TextureFolderPathProperty, string.Empty);
             string formatedFolderPath = Tools.ResolveRelativePath(storedFolderPath);
             txtTextureName.Text = formatedFolderPath;
 
@@ -166,10 +163,10 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
 
             string unformattedPath = Tools.UnformatPath(txtModelName.Text);
-            Loader.Core.RootNode.SetStringProperty(ModelFilePathProperty, Tools.RelativePathStore(unformattedPath));
+            Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(unformattedPath));
 
-			string unformattedTextureFolderPath = Tools.UnformatPath(txtTextureName.Text);
-            Loader.Core.RootNode.SetStringProperty(TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
+            string unformattedTextureFolderPath = Tools.UnformatPath(txtTextureName.Text);
+            Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
         }
             
 

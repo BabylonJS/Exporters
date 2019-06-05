@@ -9,8 +9,10 @@ namespace Max2Babylon
     {
         public static void Export()
         {
-            string outputPath = Tools.ResolveRelativePath(Loader.Core.RootNode.GetLocalData());
-            Export(InitParameters(outputPath));
+            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
+            string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
+            string absoluteModelPath = Tools.UnformatPath(userRelativePath);
+            Export(InitParameters(absoluteModelPath));
         }
 
         public static void Export(string outputPath)
@@ -63,6 +65,7 @@ namespace Max2Babylon
             ExportParameters exportParameters = new ExportParameters();
             exportParameters.outputPath = outputPath;
             exportParameters.outputFormat = Path.GetExtension(outputPath)?.Substring(1);
+            exportParameters.textureFolder = Loader.Core.RootNode.GetStringProperty("textureFolderPathProperty", string.Empty);
             exportParameters.generateManifest = Loader.Core.RootNode.GetBoolProperty("babylonjs_generatemanifest");
             exportParameters.writeTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_writetextures");
             exportParameters.overwriteTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_overwritetextures");
