@@ -132,7 +132,7 @@ namespace Max2Babylon
             {
                 if (!item.Selected) continue;
 
-                allSucceeded = allSucceeded && await DoExport(item, false);
+                allSucceeded = allSucceeded && await DoExport(item,true, false);
 
                 if (exporter.IsCancelled)
                     break;
@@ -141,7 +141,7 @@ namespace Max2Babylon
             return allSucceeded;
         }
 
-        private async Task<bool> DoExport(ExportItem exportItem, bool clearLogs = true)
+        private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false,bool clearLogs = true)
         {
             Tools.UpdateCheckBox(chkManifest, Loader.Core.RootNode, "babylonjs_generatemanifest");
             Tools.UpdateCheckBox(chkWriteTextures, Loader.Core.RootNode, "babylonjs_writetextures");
@@ -232,9 +232,10 @@ namespace Max2Babylon
             bool success = true;
             try
             {
+                string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : Tools.UnformatPath(txtModelName.Text);
                 ExportParameters exportParameters = new ExportParameters
                 {
-                    outputPath = Tools.UnformatPath(txtModelName.Text),
+                    outputPath = modelAbsolutePath,
                     textureFolder = Tools.UnformatPath(txtTextureName.Text),
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
                     scaleFactor = txtScaleFactor.Text,
@@ -479,6 +480,12 @@ namespace Max2Babylon
             }
             else if(numLoadedItems > 0)
             {
+                if (chkWriteTextures.Checked || chkOverwriteTextures.Checked)
+                {
+                    MessageBox.Show("Cannot write textures with Multi-File Export");
+                    return;
+                }
+
                 await DoExport(exportItemList);
             }
         }
