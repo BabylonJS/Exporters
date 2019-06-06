@@ -78,14 +78,14 @@ def updateChangelog () :
     response = requests.post(
         'https://api.github.com/graphql', headers=headers, json=query)
 
-    if (json.loads(response.text)['message']) :
+    if ('message' in json.loads(response.text)) :
         print(" ==> /!\\ Error when trying to reach the Github API : {0} \n".format(json.loads(response.text)['message']))
         return
 
     data = json.loads(response.text)['data']['repository']['pullRequests']['nodes']
 
     # Get last version date
-    with open('CHANGELOG.md', 'r') as file_Changelog:
+    with open('{0}CHANGELOG.md'.format(packageFolderPrefix), 'r') as file_Changelog:
         lineIndex = 0
         for line in reversed(file_Changelog.readlines()):
             lineIndex += 1
@@ -99,7 +99,7 @@ def updateChangelog () :
     # Then write PR titles in the Changelog
     list_bug = []
     list_enhancement = []
-    with open('CHANGELOG.md', 'a') as file_Changelog:
+    with open('{0}CHANGELOG.md'.format(packageFolderPrefix), 'a') as file_Changelog:
         file_Changelog.write("\n## v" + Maya2BabylonVersion)
         file_Changelog.write("\n### ({0})".format(currentVersionTime))
 
