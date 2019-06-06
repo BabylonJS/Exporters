@@ -194,6 +194,7 @@ not exported correctly using glTF
 (https://github.com/BabylonJS/Exporters/pull/498)
 
 ## v1.4.0
+### (2019-05-17 12:00:00)
 **Fixed Bugs**
 - Added @elpie89 's fix for null references when exporting Physical Material with no Texture
 (https://github.com/BabylonJS/Exporters/issues/509)
