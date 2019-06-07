@@ -79,6 +79,7 @@ namespace Max2Babylon
         private bool selected = true;
         private string exportPathRelative = "";
         private string exportPathAbsolute = "";
+        private string exportTextureFolderPathRelative = "";
 
         public ExportItem(string outputFileExt) { this.outputFileExt = outputFileExt; }
 

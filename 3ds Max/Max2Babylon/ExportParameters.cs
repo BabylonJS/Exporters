@@ -4,6 +4,7 @@
     {
         public string outputPath;
         public string outputFormat;
+        public string textureFolder;
         public string scaleFactor = "1";
         public bool writeTextures = true;
         public bool overwriteTextures = true;
