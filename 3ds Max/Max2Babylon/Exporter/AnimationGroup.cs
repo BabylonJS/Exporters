@@ -319,7 +319,7 @@ namespace Max2Babylon
                         if (node == null)
                         {
                             //node is missing
-                            missingNodes += node.Name + "\n";
+                            missingNodes += nodeData.Name + "\n";
                             continue;
                         }
 
