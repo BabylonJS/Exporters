@@ -11,6 +11,9 @@ namespace Max2Babylon
 {
     public partial class ExporterForm : Form
     {
+        private const string ModelFilePathProperty = "modelFilePathProperty";
+        private const string TextureFolderPathProperty = "textureFolderPathProperty";
+
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
@@ -111,7 +114,6 @@ namespace Max2Babylon
                 }
 
                 txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath);
-               
             }
         }
 
@@ -129,7 +131,7 @@ namespace Max2Babylon
             {
                 if (!item.Selected) continue;
 
-                allSucceeded = allSucceeded && await DoExport(item, false);
+                allSucceeded = allSucceeded && await DoExport(item,true, false);
 
                 if (exporter.IsCancelled)
                     break;
@@ -168,12 +170,10 @@ namespace Max2Babylon
             string unformattedTextureFolderPath = Tools.UnformatPath(txtTextureName.Text);
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
         }
-            
 
         private async Task<bool> DoExport(ExportItem exportItem, bool clearLogs = true)
         {
             SaveOptions();
-            
 
             exporter = new BabylonExporter();
             if (!string.IsNullOrWhiteSpace(txtTextureName.Text))
@@ -241,6 +241,7 @@ namespace Max2Babylon
             bool success = true;
             try
             {
+                string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : Tools.UnformatPath(txtModelName.Text);
                 ExportParameters exportParameters = new ExportParameters
                 {
                     outputPath = Tools.UnformatPath(txtModelName.Text),
@@ -488,6 +489,12 @@ namespace Max2Babylon
             }
             else if(numLoadedItems > 0)
             {
+                if (chkWriteTextures.Checked || chkOverwriteTextures.Checked)
+                {
+                    MessageBox.Show("Cannot write textures with Multi-File Export");
+                    return;
+                }
+
                 await DoExport(exportItemList);
             }
         }
