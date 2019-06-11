@@ -223,12 +223,6 @@ not exported correctly using glTF
 
 - Fix #533 : Base Color Texture is half darker than the original (https://github.com/BabylonJS/Exporters/commit/7df0e691cbd099bd56514c233d63e8dabd46c32a)
 
-- Fix #472 : add NormalBumpTex support (https://github.com/BabylonJS/Exporters/commit/630779ed04ea8b8f6f235a00783e3d555f6a2421)
-## v1.4.1
-### (2019-06-11 15:37:20)
-**Fixed Bugs**
-- Fix #472 : add NormalBumpTex support (https://github.com/BabylonJS/Exporters/pull/538)
-
 ## v1.4.2
 ### (2019-06-11 15:40:44)
 **Fixed Bugs**
