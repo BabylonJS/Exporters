@@ -513,6 +513,12 @@ namespace Max2Babylon
 
         private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount)
         {
+            if (texMap == null)
+            {
+                amount = 0.0f;
+                return null;
+            }
+
             if (texMap.ClassName == "Normal Bump")
             {
                 var block = texMap.GetParamBlockByID(0);        // General Block
