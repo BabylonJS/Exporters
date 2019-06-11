@@ -511,9 +511,76 @@ namespace Max2Babylon
         // -- Export sub methods ---
         // -------------------------
 
+        private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount)
+        {
+            if (texMap.ClassName == "Normal Bump")
+            {
+                var block = texMap.GetParamBlockByID(0);        // General Block
+                if (block != null)
+                {
+                    amount = block.GetFloat(0, 0, 0);           // Normal texture Mult Spin
+                    var map = block.GetTexmap(2, 0, 0);         // Normal texture
+                    var mapEnabled = block.GetInt(4, 0, 0);     // Normal texture Enable
+                    if (mapEnabled == 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture with Normal enabled are supported.", 2);
+                        return null;
+                    }
+
+                    var method = block.GetInt(6, 0, 0);         // Normal texture mode (Tangent, screen...)
+                    if (method != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture in tangent space are supported.", 2);
+                        return null;
+                    }
+                    var flipR = block.GetInt(7, 0, 0);          // Normal texture Red chanel Flip
+                    if (flipR != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture without R flip are supported.", 2);
+                        return null;
+                    }
+                    var flipG = block.GetInt(8, 0, 0);          // Normal texture Green chanel Flip
+                    if (flipG != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture without G flip are supported.", 2);
+                        return null;
+                    }
+                    var swapRG = block.GetInt(9, 0, 0);         // Normal texture swap R and G channels
+                    if (swapRG != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture without R and G swap are supported.", 2);
+                        return null;
+                    }
+
+                    // var bumpAmount = block.GetFloat(1, 0, 0);   // Bump texture Mult Spin
+                    // var bumpMap = block.GetMap(3, 0, 0);        // Bump texture
+                    var bumpMapEnable = block.GetInt(5, 0, 0);  // Bump texture Enable
+                    if (bumpMapEnable == 1)
+                    {
+                        RaiseError($"Only Normal Bump Texture without Bump are supported.", 2);
+                        return null;
+                    }
+
+                    return map;
+                }
+            }
+
+            amount = 0.0f;
+            RaiseError($"Texture type is not supported. Use a Bitmap or Normal Bump map instead.", 2);
+            return null;
+        }
+
         private BabylonTexture ExportTexture(ITexmap texMap, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
         {
-            IBitmapTex texture = _getBitmapTex(texMap);
+            IBitmapTex texture = _getBitmapTex(texMap, false);
+            if (texture == null)
+            {
+                float specialAmount;
+                var specialTexMap = _getSpecialTexmap(texMap, out specialAmount);
+                texture = _getBitmapTex(specialTexMap, false);
+                amount *= specialAmount;
+            }
+
             if (texture == null)
             {
                 return null;
@@ -811,7 +878,7 @@ namespace Max2Babylon
         // --------- Utils ---------
         // -------------------------
 
-        private IBitmapTex _getBitmapTex(ITexmap texMap)
+        private IBitmapTex _getBitmapTex(ITexmap texMap, bool raiseError = true)
         {
             if (texMap == null || texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
             {
@@ -819,7 +886,7 @@ namespace Max2Babylon
             }
 
             var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
-            if (texture == null)
+            if (texture == null && raiseError)
             {
                 RaiseError($"Texture type is not supported. Use a Bitmap instead.", 2);
             }
