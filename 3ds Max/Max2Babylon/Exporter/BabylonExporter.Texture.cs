@@ -553,7 +553,7 @@ namespace Max2Babylon
                     }
 
                     // var bumpAmount = block.GetFloat(1, 0, 0);   // Bump texture Mult Spin
-                    // var bumpMap = block.GetMap(3, 0, 0);        // Bump texture Mult Spin
+                    // var bumpMap = block.GetMap(3, 0, 0);        // Bump texture
                     var bumpMapEnable = block.GetInt(5, 0, 0);  // Bump texture Enable
                     if (bumpMapEnable == 1)
                     {
