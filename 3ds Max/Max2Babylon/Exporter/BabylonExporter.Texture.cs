@@ -819,7 +819,6 @@ namespace Max2Babylon
             }
 
             var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
-
             if (texture == null)
             {
                 RaiseError($"Texture type is not supported. Use a Bitmap instead.", 2);

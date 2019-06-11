@@ -171,7 +171,7 @@ namespace Max2Babylon
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
         }
 
-        private async Task<bool> DoExport(ExportItem exportItem, bool clearLogs = true)
+        private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
         {
             SaveOptions();
 
