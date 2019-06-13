@@ -65,7 +65,41 @@ namespace BabylonExport.Entities
             return result;
         }
 
-        public override string ToString()
+        public static BabylonQuaternion FromEulerAngles(float x, float y, float z)
+        {
+            var q = new BabylonQuaternion();
+            BabylonQuaternion.RotationYawPitchRollToRef(y, x, z, q);
+            return q;
+        }
+
+        /**
+         * Creates a new rotation from the given Euler float angles (y, x, z) and stores it in the target quaternion
+         * @param yaw defines the rotation around Y axis
+         * @param pitch defines the rotation around X axis
+         * @param roll defines the rotation around Z axis
+         * @param result defines the target quaternion
+         */
+        public static void RotationYawPitchRollToRef(float yaw, float pitch, float roll, BabylonQuaternion result)
+        {
+            // Produces a quaternion from Euler angles in the z-y-x orientation (Tait-Bryan angles)
+            var halfRoll = roll * 0.5;
+            var halfPitch = pitch * 0.5;
+            var halfYaw = yaw * 0.5;
+
+            var sinRoll = Math.Sin(halfRoll);
+            var cosRoll = Math.Cos(halfRoll);
+            var sinPitch = Math.Sin(halfPitch);
+            var cosPitch = Math.Cos(halfPitch);
+            var sinYaw = Math.Sin(halfYaw);
+            var cosYaw = Math.Cos(halfYaw);
+
+            result.X = (float)((cosYaw* sinPitch * cosRoll) + (sinYaw* cosPitch * sinRoll));
+            result.Y = (float)((sinYaw* cosPitch * cosRoll) - (cosYaw* sinPitch * sinRoll));
+            result.Z = (float)((cosYaw* cosPitch * sinRoll) - (sinYaw* sinPitch * cosRoll));
+            result.W = (float)((cosYaw* cosPitch * cosRoll) + (sinYaw* sinPitch * sinRoll));
+        }
+
+    public override string ToString()
         {
             return "{ X=" + X + ", Y=" + Y + ", Z=" + Z + ", W=" + W + " }";
         }
