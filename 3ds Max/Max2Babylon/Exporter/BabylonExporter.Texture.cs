@@ -779,10 +779,11 @@ namespace Max2Babylon
                 babylonTexture.vScale *= -1; // Need to invert Y-axis for DDS texture
             }
 
-            // TODO - rotation and scale
-            if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
+            if (babylonTexture.wAng != 0f 
+                && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f) 
+                && (Math.Abs(babylonTexture.uScale) - Math.Abs(babylonTexture.vScale)) > float.Epsilon)
             {
-                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", 3);
+                RaiseWarning("Rotation and non-uniform tiling (scale) on a texture is not supported as it will cause texture shearing. You can use the map UV of the mesh for those transformations.", 3);
             }
 
 
