@@ -329,6 +329,84 @@ namespace Maya2Babylon
             return babylonTexture;
         }
 
+        private BabylonTexture ExportCoatTexture(MFnDependencyNode intensityTextureDependencyNode, MFnDependencyNode roughnessTextureDependencyNode, BabylonScene babylonScene, string materialName, float intensity, float roughness)
+        {
+            // Prints
+            if (intensityTextureDependencyNode != null)
+            {
+                Print(intensityTextureDependencyNode, logRankTexture, "Print ExportCoatTexture intensityTextureDependencyNode");
+            }
+            if (roughnessTextureDependencyNode != null)
+            {
+                Print(roughnessTextureDependencyNode, logRankTexture, "Print ExportCoatTexture roughnessTextureDependencyNode");
+            }
+
+            // Use one as a reference for UVs parameters
+            var textureDependencyNode = intensityTextureDependencyNode != null ? intensityTextureDependencyNode : roughnessTextureDependencyNode;
+            if (textureDependencyNode == null)
+            {
+                return null;
+            }
+
+            var id = textureDependencyNode.uuid().asString();
+            var babylonTexture = new BabylonTexture(id)
+            {
+                name = materialName + "_coat" + ".jpg" // TODO - unsafe name, may conflict with another texture name
+            };
+
+            // Level
+            babylonTexture.level = 1.0f;
+
+            // Alpha
+            babylonTexture.hasAlpha = false;
+            babylonTexture.getAlphaFromRGB = false;
+
+            // UVs
+            _exportUV(textureDependencyNode, babylonTexture);
+
+            // Is cube
+            string sourcePath = getSourcePathFromFileTexture(textureDependencyNode);
+            if (sourcePath == null)
+            {
+                return null;
+            }
+            if (sourcePath == "")
+            {
+                RaiseError("Texture path is missing.", logRankTexture + 1);
+                return null;
+            }
+            _exportIsCube(sourcePath, babylonTexture, false);
+
+
+            // --- Merge base color and opacity maps ---
+
+            if (CopyTexturesToOutput)
+            {
+                // Load bitmaps
+                var intensityBitmap = LoadTexture(intensityTextureDependencyNode);
+                var roughnessBitmap = LoadTexture(roughnessTextureDependencyNode);
+
+                // Merge bitmaps
+                Bitmap[] bitmaps = new Bitmap[] { intensityBitmap, roughnessBitmap, null, null };
+                int[] defaultValues = new int[] { (int)(intensity * 255), (int)(roughness * 255), 0, 1 };
+                Bitmap coatBitmap = MergeBitmaps(bitmaps, defaultValues, "Coat intensity and roughness");
+                
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
+                    SaveBitmap(coatBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+                else
+                {
+                    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = coatBitmap;
+                }
+            }
+
+            return babylonTexture;
+        }
+
         private BabylonTexture ExportBaseColorAlphaTexture(MFnDependencyNode baseColorTextureDependencyNode, MFnDependencyNode opacityTextureDependencyNode, BabylonScene babylonScene, string materialName, Color defaultBaseColor, float defaultOpacity = 1.0f)
         {
             // Prints
