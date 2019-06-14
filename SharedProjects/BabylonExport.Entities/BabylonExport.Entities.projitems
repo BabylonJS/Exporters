@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMultiMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonParticleSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRClearCoat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRMetallicRoughnessMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonProducer.cs" />

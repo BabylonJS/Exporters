@@ -67,6 +67,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool doubleSided { get; set; }
 
+        [DataMember]
+        public BabylonPBRClearCoat clearCoat { get; set; }
+
         public BabylonPBRMetallicRoughnessMaterial(string id) : base(id)
         {
             customType = "BABYLON.PBRMetallicRoughnessMaterial";
@@ -76,6 +79,8 @@ namespace BabylonExport.Entities
             occlusionStrength = 1.0f;
             alphaCutOff = 0.4f;
             transparencyMode = (int)TransparencyMode.OPAQUE;
+
+            clearCoat = new BabylonPBRClearCoat();
         }
 
         public BabylonPBRMetallicRoughnessMaterial(BabylonPBRMetallicRoughnessMaterial original) : base(original)
@@ -98,6 +103,7 @@ namespace BabylonExport.Entities
             alphaCutOff = original.alphaCutOff;
             transparencyMode = original.transparencyMode;
             doubleSided = original.doubleSided;
+            clearCoat = original.clearCoat;
         }
     }
 }

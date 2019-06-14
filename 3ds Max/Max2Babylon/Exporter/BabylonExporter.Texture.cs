@@ -171,15 +171,116 @@ namespace Max2Babylon
             return null;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="baseColorTexMap"></param>
-        /// <param name="alphaTexMap">Transparency weight map</param>
-        /// <param name="baseColor"></param>
-        /// <param name="alpha"></param>
-        /// <param name="babylonScene"></param>
-        /// <param name="materialName"></param>
+        private BabylonTexture ExportClearCoatTexture(ITexmap intensityTexMap, ITexmap roughnessTexMap, float coatWeight, float coatRoughness, BabylonScene babylonScene, string materialName, bool invertRoughness)
+        {
+            // --- Babylon texture ---
+            var intensityTexture = _getBitmapTex(intensityTexMap);
+            var roughnessTexture = _getBitmapTex(roughnessTexMap);
+
+            var texture = intensityTexture != null ? intensityTexture : roughnessTexture;
+            if (texture == null)
+            {
+                return null;
+            }
+
+            // Use one as a reference for UVs parameters
+
+            RaiseMessage("Export Clear Coat weight+roughness texture", 2);
+
+            string nameText = Path.GetFileNameWithoutExtension(texture.Map.FullFilePath);
+
+            var textureID = texture.GetGuid().ToString();
+            if (textureMap.ContainsKey(textureID))
+            {
+                return textureMap[textureID];
+            }
+            else
+            {
+                var babylonTexture = new BabylonTexture(textureID)
+                {
+                    name = nameText // TODO - unsafe name, may conflict with another texture name
+                };
+
+                // Level
+                babylonTexture.level = 1.0f;
+
+                // UVs
+                var uvGen = _exportUV(texture.UVGen, babylonTexture);
+
+                // Is cube
+                _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
+
+                // --- Merge maps ---
+                var hasIntensity = isTextureOk(intensityTexture);
+                var hasRoughness = isTextureOk(roughnessTexture);
+                if (!hasIntensity && !hasRoughness)
+                {
+                    return null;
+                }
+
+                // Set image format
+                ImageFormat imageFormat = ImageFormat.Jpeg;
+                babylonTexture.name += ".jpg";
+
+                if (exportParameters.writeTextures)
+                {
+                    // Load bitmaps
+                    var intensityBitmap = _loadTexture(intensityTexture);
+                    var roughnessBitmap = _loadTexture(roughnessTexture);
+
+                    // Retreive dimensions
+                    int width = 0;
+                    int height = 0;
+                    var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, intensityBitmap, roughnessBitmap);
+                    if (!haveSameDimensions)
+                    {
+                        RaiseError("Base color and transparency color maps should have same dimensions", 3);
+                    }
+
+                    // Create map
+                    var _intensity = (int)(coatWeight * 255);
+                    var _roughness = (int)(coatRoughness * 255);
+                    Bitmap intensityRoughnessBitmap = new Bitmap(width, height);
+                    for (int x = 0; x < width; x++)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            var intensityAtPixel = (intensityBitmap == null) ? _intensity : intensityBitmap.GetPixel(x, y).R;
+
+                            Color intensityRoughness;
+                            if (roughnessBitmap == null)
+                            {
+                                intensityRoughness = Color.FromArgb(intensityAtPixel, _roughness, 0);
+                            }
+                            else
+                            {
+                                var roughnessAtPixel = (roughnessBitmap == null) ?
+                                    _roughness :
+                                    invertRoughness ? 255 - roughnessBitmap.GetPixel(x, y).G : roughnessBitmap.GetPixel(x, y).G;
+
+                                intensityRoughness = Color.FromArgb(intensityAtPixel, roughnessAtPixel, 0);
+                            }
+                            intensityRoughnessBitmap.SetPixel(x, y, intensityRoughness);
+                        }
+                    }
+
+                    // Write bitmap
+                    if (isBabylonExported)
+                    {
+                        RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
+                        SaveBitmap(intensityRoughnessBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat);
+                    }
+                    else
+                    {
+                        // Store created bitmap for further use in gltf export
+                        babylonTexture.bitmap = intensityRoughnessBitmap;
+                    }
+                }
+
+                return babylonTexture;
+            }
+        }
+
         /// <returns></returns>
         private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName)
         {
