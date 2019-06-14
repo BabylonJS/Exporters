@@ -194,6 +194,38 @@ not exported correctly using glTF
 (https://github.com/BabylonJS/Exporters/pull/498)
 
 ## v1.4.0
+### (2019-05-17 12:00:00)
 **Fixed Bugs**
 - Added @elpie89 's fix for null references when exporting Physical Material with no Texture
 (https://github.com/BabylonJS/Exporters/issues/509)
+
+## v1.4.1
+### (2019-06-11 14:15:45)
+**Implemented Changes**
+- 3ds Max exporter batching improvements, add parameter saving, decouple export entrypoint from export button click callback. (https://github.com/BabylonJS/Exporters/pull/530)
+
+- Texture folder explicit (https://github.com/BabylonJS/Exporters/pull/532)
+
+- Get animation group by node (https://github.com/BabylonJS/Exporters/pull/516)
+
+- Relative file path (https://github.com/BabylonJS/Exporters/pull/515)
+
+- AnimationGroup multiselection, merge, clean features (https://github.com/BabylonJS/Exporters/pull/507)
+
+- Implement 3DS Max double-sided materials (https://github.com/BabylonJS/Exporters/pull/514)
+
+**Fixed Bugs**
+- fix merge, clean button after last merge issues (https://github.com/BabylonJS/Exporters/pull/528)
+
+- Fix merge regression, Re-Add animation group selection (https://github.com/BabylonJS/Exporters/pull/527)
+
+- VS 2015 build fixes for 3DS Max Exporter (https://github.com/BabylonJS/Exporters/pull/513)
+
+- Fix #533 : Base Color Texture is half darker than the original (https://github.com/BabylonJS/Exporters/commit/7df0e691cbd099bd56514c233d63e8dabd46c32a)
+
+## v1.4.2
+### (2019-06-11 15:40:44)
+**Fixed Bugs**
+- Fix _getSpecialTexmap null reference exception (https://github.com/BabylonJS/Exporters/pull/539)
+
+- Fix #472 : add NormalBumpTex support (https://github.com/BabylonJS/Exporters/pull/538)

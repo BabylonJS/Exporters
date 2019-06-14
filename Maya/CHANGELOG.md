@@ -52,6 +52,7 @@ from the export interface
 (https://github.com/BabylonJS/Exporters/pull/479)
 
 ## v1.3.0
+### (2019-05-21 13:16:12)
 **Implemented Changes**
 - Added Animation Bake export toggle
 (https://github.com/BabylonJS/Exporters/issues/503)
@@ -59,3 +60,8 @@ from the export interface
 **Fixed Bugs**
 - Fixed build break caused by shared components using 3dsMax implementations
 (https://github.com/BabylonJS/Exporters/pull/498)
+
+## v1.3.1
+### (2019-06-11 14:16:08)
+**Implemented Changes**
+- Maya2Babylon packaging script. (https://github.com/BabylonJS/Exporters/pull/520)

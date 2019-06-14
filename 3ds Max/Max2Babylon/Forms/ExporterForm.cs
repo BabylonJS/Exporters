@@ -11,6 +11,9 @@ namespace Max2Babylon
 {
     public partial class ExporterForm : Form
     {
+        private const string ModelFilePathProperty = "modelFilePathProperty";
+        private const string TextureFolderPathProperty = "textureFolderPathProperty";
+
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
@@ -111,7 +114,6 @@ namespace Max2Babylon
                 }
 
                 txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath);
-
             }
         }
 
@@ -169,7 +171,7 @@ namespace Max2Babylon
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
         }
 
-        private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false,bool clearLogs = true)
+        private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
         {
             SaveOptions();
 
@@ -242,7 +244,7 @@ namespace Max2Babylon
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : Tools.UnformatPath(txtModelName.Text);
                 ExportParameters exportParameters = new ExportParameters
                 {
-                    outputPath = modelAbsolutePath,
+                    outputPath = Tools.UnformatPath(txtModelName.Text),
                     textureFolder = Tools.UnformatPath(txtTextureName.Text),
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
                     scaleFactor = txtScaleFactor.Text,
