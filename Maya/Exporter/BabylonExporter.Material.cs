@@ -383,6 +383,61 @@ namespace Maya2Babylon
                 float emissionWeight = materialDependencyNode.findPlug("emission").asFloat();
                 babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray().Multiply(emissionWeight);
 
+
+                var list = new List<string>();
+
+                for (int i = 0; i < materialDependencyNode.attributeCount; i++)
+                {
+                    var attr = materialDependencyNode.attribute((uint)i);
+                    var plug = materialDependencyNode.findPlug(attr);
+                    //string aliasName;
+                    //materialDependencyNode.getPlugsAlias(plug, out aliasName);
+                    System.Diagnostics.Debug.WriteLine(plug.name + i.ToString());
+                }
+
+                // --- Clear Coat ---
+                float coatWeight = materialDependencyNode.findPlug("coat").asFloat();
+                MFnDependencyNode intensityCoatTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "coat");
+                if (coatWeight > 0.0f || intensityCoatTextureDependencyNode != null)
+                {
+                    babylonMaterial.clearCoat.isEnabled = true;
+                    babylonMaterial.clearCoat.indexOfRefraction = materialDependencyNode.findPlug("coatIOR").asFloat();
+
+                    var coatRoughness = materialDependencyNode.findPlug("coatRoughness").asFloat();
+                    MFnDependencyNode roughnessCoatTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "coatRoughness");
+                    var coatTexture = ExportCoatTexture(intensityCoatTextureDependencyNode, roughnessCoatTextureDependencyNode, babylonScene, name, coatWeight, coatRoughness);
+                    if (coatTexture != null)
+                    {
+                        babylonMaterial.clearCoat.texture = coatTexture;
+                        babylonMaterial.clearCoat.roughness = 1.0f;
+                        babylonMaterial.clearCoat.intensity = 1.0f;
+                    }
+                    else
+                    {
+                        babylonMaterial.clearCoat.intensity = coatWeight;
+                        babylonMaterial.clearCoat.roughness = coatRoughness;
+                    }
+
+                    float[] coatColor = materialDependencyNode.findPlug("coatColor").asFloatArray();
+                    if (coatColor[0] != 1.0f || coatColor[1] != 1.0f || coatColor[2] != 1.0f)
+                    {
+                        babylonMaterial.clearCoat.isTintEnabled = true;
+                        babylonMaterial.clearCoat.tintColor = coatColor;
+                    }
+
+                    babylonMaterial.clearCoat.tintTexture = ExportTexture(materialDependencyNode, "coatColor", babylonScene);
+                    if (babylonMaterial.clearCoat.tintTexture != null)
+                    {
+                        babylonMaterial.clearCoat.tintColor = new[] { 1.0f, 1.0f, 1.0f };
+                        babylonMaterial.clearCoat.isTintEnabled = true;
+                    }
+
+                    // EyeBall deduction...
+                    babylonMaterial.clearCoat.tintThickness = 0.65f;
+
+                    babylonMaterial.clearCoat.bumpTexture = ExportTexture(materialDependencyNode, "coatNormal", babylonScene);
+                }
+
                 // --- Textures ---
 
                 // Base color & alpha
