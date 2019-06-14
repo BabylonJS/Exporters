@@ -133,6 +133,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public int maxSimultaneousLights { get; set; }
 
+        [DataMember]
+        public BabylonPBRClearCoat clearCoat { get; set; }
+
         public BabylonPBRMaterial(string id) : base(id)
         {
             SetCustomType("BABYLON.PBRMaterial");
@@ -164,6 +167,8 @@ namespace BabylonExport.Entities
             reflectivity = new[] { 1f, 1f, 1f };
             reflection = new[] { 0.5f, 0.5f, 0.5f };
             emissive = new[] { 0f, 0f, 0f };
+
+            clearCoat = new BabylonPBRClearCoat();
         }
 
         public void SetCustomType(string type)
