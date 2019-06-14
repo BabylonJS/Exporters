@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+
 namespace BabylonExport.Entities
 {
     [DataContract]
