@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
+using System.Diagnostics;
 
 namespace BabylonExport.Entities
 {
@@ -485,6 +486,49 @@ namespace Max2Babylon
                 if (emissionColor != null && emissionWeight > 0f)
                 {
                     babylonMaterial.emissive = emissionColor.Multiply(emissionWeight);
+                }
+
+                // --- Clear Coat ---
+                float coatWeight = propertyContainer.GetFloatProperty(75);
+                if (coatWeight > 0.0f)
+                {
+                    babylonMaterial.clearCoat.isEnabled = true;
+                    babylonMaterial.clearCoat.indexOfRefraction = propertyContainer.GetFloatProperty(84);
+
+                    ITexmap intensityTexmap = _getTexMap(materialNode, 23);
+                    ITexmap roughnessTexmap = _getTexMap(materialNode, 25);
+                    var coatRoughness = propertyContainer.GetFloatProperty(81);
+                    var coatTexture = ExportClearCoatTexture(intensityTexmap, roughnessTexmap, coatWeight, coatRoughness, babylonScene, name, invertRoughness);
+                    if (coatTexture != null)
+                    {
+                        babylonMaterial.clearCoat.texture = coatTexture;
+                        babylonMaterial.clearCoat.roughness = 1.0f;
+                        babylonMaterial.clearCoat.intensity = 1.0f;
+                    }
+                    else
+                    {
+                        babylonMaterial.clearCoat.intensity = coatWeight;
+                        babylonMaterial.clearCoat.roughness = coatRoughness;
+                    }
+
+                    float[] coatColor = propertyContainer.GetPoint3Property(78).ToArray();
+                    if (coatColor[0] != 1.0f || coatColor[1] != 1.0f || coatColor[2] != 1.0f)
+                    {
+                        babylonMaterial.clearCoat.isTintEnabled = true;
+                        babylonMaterial.clearCoat.tintColor = coatColor;
+                    }
+
+                    babylonMaterial.clearCoat.tintTexture = ExportPBRTexture(materialNode, 24, babylonScene);
+                    if (babylonMaterial.clearCoat.tintTexture != null)
+                    {
+                        babylonMaterial.clearCoat.tintColor = new[] { 1.0f, 1.0f, 1.0f };
+                        babylonMaterial.clearCoat.isTintEnabled = true;
+                    }
+
+                    // EyeBall deduction...
+                    babylonMaterial.clearCoat.tintThickness = 0.65f;
+
+                    babylonMaterial.clearCoat.bumpTexture = ExportPBRTexture(materialNode, 27, babylonScene);
                 }
 
                 // --- Textures ---
