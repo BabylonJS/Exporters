@@ -856,11 +856,14 @@ namespace Max2Babylon
 
             var offset = new BabylonVector3(babylonTexture.uOffset, -babylonTexture.vOffset, 0);
             var scale = new BabylonVector3(babylonTexture.uScale, babylonTexture.vScale, 1);
-            var rotation = new BabylonQuaternion();
+            var rotationEuler = new BabylonVector3(uvGen.GetUAng(0), uvGen.GetVAng(0), uvGen.GetWAng(0));
+            var rotation = BabylonQuaternion.FromEulerAngles(rotationEuler.X, rotationEuler.Y, rotationEuler.Z);
             var pivotCenter = new BabylonVector3(-0.5f, -0.5f, 0);
             var transformMatrix = Tools.ComputeTextureTransformMatrix(pivotCenter, offset, rotation, scale);
 
             transformMatrix.decompose(scale, rotation, offset);
+            var texTransformRotationEuler = rotation.toEulerAngles();
+
             babylonTexture.uOffset = -offset.X;
             babylonTexture.vOffset = -offset.Y;
             babylonTexture.uScale = scale.X;
@@ -868,21 +871,20 @@ namespace Max2Babylon
             babylonTexture.uRotationCenter = 0.0f;
             babylonTexture.vRotationCenter = 0.0f;
             babylonTexture.invertY = false;
+            babylonTexture.uAng = texTransformRotationEuler.X;
+            babylonTexture.vAng = texTransformRotationEuler.Y;
+            babylonTexture.wAng = texTransformRotationEuler.Z;
 
             if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
                 babylonTexture.vScale *= -1; // Need to invert Y-axis for DDS texture
             }
 
-            babylonTexture.uAng = uvGen.GetUAng(0);
-            babylonTexture.vAng = uvGen.GetVAng(0);
-            babylonTexture.wAng = uvGen.GetWAng(0);
-
-
-            // TODO - rotation and scale
-            if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
+            if (babylonTexture.wAng != 0f 
+                && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f) 
+                && (Math.Abs(babylonTexture.uScale) - Math.Abs(babylonTexture.vScale)) > float.Epsilon)
             {
-                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", 3);
+                RaiseWarning("Rotation and non-uniform tiling (scale) on a texture is not supported as it will cause texture shearing. You can use the map UV of the mesh for those transformations.", 3);
             }
 
 
