@@ -634,7 +634,9 @@ namespace Max2Babylon
 
                 if (exportParameters.pbrFull)
                 {
-                    babylonScene.MaterialsList.Add(new BabylonPBRMaterial(babylonMaterial));
+                    var fullPBR = new BabylonPBRMaterial(babylonMaterial);
+                    fullPBR.maxGameMaterial = babylonMaterial.maxGameMaterial;
+                    babylonScene.MaterialsList.Add(fullPBR);
                 }
                 else
                 {
