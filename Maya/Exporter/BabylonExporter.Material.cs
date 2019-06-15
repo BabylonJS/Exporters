@@ -19,7 +19,7 @@ namespace Maya2Babylon
         /// </summary>
         readonly Dictionary<string, List<MFnDependencyNode>> multiMaterials = new Dictionary<string, List<MFnDependencyNode>>();
 
-        private void ExportMultiMaterial(string uuidMultiMaterial, List<MFnDependencyNode> materials, BabylonScene babylonScene)
+        private void ExportMultiMaterial(string uuidMultiMaterial, List<MFnDependencyNode> materials, BabylonScene babylonScene, bool fullPBR)
         {
             var babylonMultimaterial = new BabylonMultiMaterial { id = uuidMultiMaterial };
 
@@ -51,7 +51,7 @@ namespace Maya2Babylon
                 {
                     // Export sub material
                     referencedMaterials.Add(subMat);
-                    ExportMaterial(subMat, babylonScene);
+                    ExportMaterial(subMat, babylonScene, fullPBR);
                 }
             }
             babylonMultimaterial.materials = uuids.ToArray();
@@ -59,7 +59,7 @@ namespace Maya2Babylon
             babylonScene.MultiMaterialsList.Add(babylonMultimaterial);
         }
 
-        private void ExportMaterial(MFnDependencyNode materialDependencyNode, BabylonScene babylonScene)
+        private void ExportMaterial(MFnDependencyNode materialDependencyNode, BabylonScene babylonScene, bool fullPBR)
         {
             MObject materialObject = materialDependencyNode.objectProperty;
             var name = materialDependencyNode.name;
@@ -526,7 +526,15 @@ namespace Maya2Babylon
                     }
                 }
 
-                babylonScene.MaterialsList.Add(babylonMaterial);
+                if (fullPBR)
+                {
+                    var fullPBRMaterial = new BabylonPBRMaterial(babylonMaterial);
+                    babylonScene.MaterialsList.Add(fullPBRMaterial);
+                }
+                else
+                {
+                    babylonScene.MaterialsList.Add(babylonMaterial);
+                }
             }
             else
             {
