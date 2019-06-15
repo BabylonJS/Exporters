@@ -126,8 +126,6 @@ namespace Max2Babylon
         {
             if (envFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string selectedFolderPath = envFileDialog.FileName;
-                string absoluteModelPath = Tools.UnformatPath(txtModelName.Text);
                 txtEnvironmentName.Text = Tools.FormatPath(envFileDialog.FileName);
             }
         }
