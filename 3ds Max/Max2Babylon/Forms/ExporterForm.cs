@@ -85,6 +85,12 @@ namespace Max2Babylon
                 chkDracoCompression.Checked = false;
                 chkDracoCompression.Enabled = false;
             }
+
+            Tools.PrepareCheckBox(chkFullPBR, Loader.Core.RootNode, ExportParameters.PBRFullPropertyName);
+            Tools.PrepareCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
+            string storedEnvironmentPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
+            string formatedEnvironmentPath = Tools.ResolveRelativePath(storedEnvironmentPath);
+            txtEnvironmentName.Text = formatedEnvironmentPath;
         }
 
         private void butModelBrowse_Click(object sender, EventArgs e)
@@ -94,7 +100,6 @@ namespace Max2Babylon
                 txtModelName.Text = Tools.FormatPath(saveFileDialog.FileName);
             }
         }
-
 
         private void btnTextureBrowse_Click(object sender, EventArgs e)
         {
@@ -114,6 +119,16 @@ namespace Max2Babylon
                 }
 
                 txtTextureName.Text = Tools.FormatPath(folderBrowserDialog1.SelectedPath);
+            }
+        }
+
+        private void btnEnvBrowse_Click(object sender, EventArgs e)
+        {
+            if (envFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string selectedFolderPath = envFileDialog.FileName;
+                string absoluteModelPath = Tools.UnformatPath(txtModelName.Text);
+                txtEnvironmentName.Text = Tools.FormatPath(envFileDialog.FileName);
             }
         }
 
@@ -169,6 +184,11 @@ namespace Max2Babylon
 
             string unformattedTextureFolderPath = Tools.UnformatPath(txtTextureName.Text);
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
+
+            Tools.UpdateCheckBox(chkFullPBR, Loader.Core.RootNode, ExportParameters.PBRFullPropertyName);
+            Tools.UpdateCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
+            string unformattedEnvironmentPath = Tools.UnformatPath(txtEnvironmentName.Text);
+            Loader.Core.RootNode.SetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, Tools.RelativePathStore(unformattedEnvironmentPath));
         }
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
@@ -262,7 +282,10 @@ namespace Max2Babylon
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
                     exportMaterials = chkExportMaterials.Checked,
-                    exportNode = exportItem != null ? exportItem.Node : null
+                    exportNode = exportItem != null ? exportItem.Node : null,
+                    pbrNoLight = chkNoAutoLight.Checked,
+                    pbrFull = chkFullPBR.Checked,
+                    pbrEnvironment = txtEnvironmentName.Text
                 };
 
                 exporter.callerForm = this;
@@ -399,6 +422,13 @@ namespace Max2Babylon
                     txtTextureName.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
+                    chkNoAutoLight.Enabled = true;
+                    chkFullPBR.Enabled = true;
+                    btnEnvBrowse.Enabled = true;
+                    txtEnvironmentName.Enabled = true;
+                    chkKHRMaterialsUnlit.Enabled = false;
+                    chkKHRLightsPunctual.Enabled = false;
+                    chkKHRTextureTransform.Enabled = false;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
@@ -409,6 +439,16 @@ namespace Max2Babylon
                     txtTextureName.Enabled = true;
                     textureLabel.Enabled = true;
                     btnTxtBrowse.Enabled = true;
+                    chkNoAutoLight.Enabled = false;
+                    chkNoAutoLight.Checked = false;
+                    chkFullPBR.Enabled = false;
+                    chkFullPBR.Checked = false;
+                    btnEnvBrowse.Enabled = false;
+                    txtEnvironmentName.Enabled = false;
+                    txtEnvironmentName.Text = string.Empty;
+                    chkKHRMaterialsUnlit.Enabled = true;
+                    chkKHRLightsPunctual.Enabled = true;
+                    chkKHRTextureTransform.Enabled = true;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
@@ -422,6 +462,16 @@ namespace Max2Babylon
                     txtTextureName.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
+                    chkNoAutoLight.Enabled = false;
+                    chkNoAutoLight.Checked = false;
+                    chkFullPBR.Enabled = false;
+                    chkFullPBR.Checked = false;
+                    btnEnvBrowse.Enabled = false;
+                    txtEnvironmentName.Enabled = false;
+                    txtEnvironmentName.Text = string.Empty;
+                    chkKHRMaterialsUnlit.Enabled = true;
+                    chkKHRLightsPunctual.Enabled = true;
+                    chkKHRTextureTransform.Enabled = true;
                     break;
             }
             this.txtModelName.Text = Path.ChangeExtension(txtModelName.Text, this.saveFileDialog.DefaultExt);
