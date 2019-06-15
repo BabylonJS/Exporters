@@ -95,6 +95,9 @@ namespace BabylonExport.Entities
         public bool useRoughnessFromMetallicTextureGreen { get; set; }
 
         [DataMember]
+        public bool useMetallnessFromMetallicTextureBlue { get; set; }
+
+        [DataMember]
         public bool useAlphaFromAlbedoTexture { get; set; }
 
         [DataMember]
@@ -134,6 +137,21 @@ namespace BabylonExport.Entities
         public int maxSimultaneousLights { get; set; }
 
         [DataMember]
+        public float alphaCutOff { get; set; }
+
+        [DataMember]
+        public int transparencyMode { get; set; }
+
+        [DataMember]
+        public bool invertNormalMapX { get; set; }
+
+        [DataMember]
+        public bool invertNormalMapY { get; set; }
+
+        [DataMember]
+        public float ambientTextureStrength { get; set; }
+
+        [DataMember]
         public BabylonPBRClearCoat clearCoat { get; set; }
 
         public BabylonPBRMaterial(string id) : base(id)
@@ -158,6 +176,7 @@ namespace BabylonExport.Entities
             roughness = null;
             useRoughnessFromMetallicTextureAlpha = true;
             useRoughnessFromMetallicTextureGreen = false;
+            useMetallnessFromMetallicTextureBlue = false;
 
             microSurface = 0.9f;
             useMicroSurfaceFromReflectivityMapAplha = false;
@@ -168,7 +187,66 @@ namespace BabylonExport.Entities
             reflection = new[] { 0.5f, 0.5f, 0.5f };
             emissive = new[] { 0f, 0f, 0f };
 
+            invertNormalMapX = false;
+            invertNormalMapY = false;
+            ambientTextureStrength = 1.0f;
+            alphaCutOff = 0.4f;
+            transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE;
+
             clearCoat = new BabylonPBRClearCoat();
+        }
+
+        public BabylonPBRMaterial(BabylonPBRMetallicRoughnessMaterial origin) : base(origin.id)
+        {
+            SetCustomType("BABYLON.PBRMaterial");
+            directIntensity = 1.0f;
+            emissiveIntensity = 1.0f;
+            environmentIntensity = 1.0f;
+            specularIntensity = 1.0f;
+            cameraExposure = 1.0f;
+            cameraContrast = 1.0f;
+
+            useRadianceOverAlpha = true;
+            useSpecularOverAlpha = true;
+            usePhysicalLightFalloff = true;
+            useEmissiveAsIllumination = true;
+
+            useRoughnessFromMetallicTextureAlpha = false;
+            useRoughnessFromMetallicTextureGreen = true;
+            useMetallnessFromMetallicTextureBlue = true;
+
+            ambient = new[] { 0f, 0f, 0f };
+            reflectivity = new[] { 1f, 1f, 1f };
+            reflection = new[] { 1f, 1f, 1f };
+
+            maxSimultaneousLights = 4;
+
+            albedoTexture = origin.baseTexture;
+            alpha = origin.alpha;
+            alphaCutOff = origin.alphaCutOff;
+            alphaMode = origin.alphaMode;
+            backFaceCulling = origin.backFaceCulling;
+            albedo = origin.baseColor;
+            albedoTexture = origin.baseTexture;
+            clearCoat = origin.clearCoat;
+            disableLighting = origin.disableLighting;
+            twoSidedLighting = origin.doubleSided;
+            emissive = origin.emissive;
+            emissiveTexture = origin.emissiveTexture;
+            invertNormalMapX = origin.invertNormalMapX;
+            invertNormalMapY = origin.invertNormalMapY;
+            isUnlit = origin.isUnlit;
+            maxGameMaterial = origin.maxGameMaterial;
+            maxSimultaneousLights = origin.maxSimultaneousLights;
+            metallic = origin.metallic;
+            reflectivityTexture = origin.metallicRoughnessTexture;
+            name = origin.name;
+            bumpTexture = origin.normalTexture;
+            ambientTextureStrength = origin.occlusionStrength;
+            ambientTexture = origin.occlusionTexture;
+            roughness = origin.roughness;
+            transparencyMode = origin.transparencyMode;
+            wireframe = origin.wireframe;
         }
 
         public void SetCustomType(string type)
