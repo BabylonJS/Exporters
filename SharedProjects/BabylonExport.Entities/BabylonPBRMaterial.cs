@@ -236,7 +236,6 @@ namespace BabylonExport.Entities
             invertNormalMapX = origin.invertNormalMapX;
             invertNormalMapY = origin.invertNormalMapY;
             isUnlit = origin.isUnlit;
-            maxGameMaterial = origin.maxGameMaterial;
             maxSimultaneousLights = origin.maxSimultaneousLights;
             metallic = origin.metallic;
             reflectivityTexture = origin.metallicRoughnessTexture;
