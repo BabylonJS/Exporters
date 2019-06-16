@@ -601,7 +601,7 @@ namespace Maya2Babylon
                 return _cubicBezierCurve((float)t, P0.Y, P1.Y, P2.Y, P3.Y);
             }
 
-            var diffuse = specularGlossiness.diffuse.scale(0.5f);
+            var diffuse = specularGlossiness.diffuse.scale(1.0f);
             var opacity = specularGlossiness.opacity;
             var glossiness = specularGlossiness.glossiness;
             var metallic = 0;
