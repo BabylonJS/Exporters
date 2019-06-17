@@ -14,7 +14,7 @@ I know this might sound scary but this is the only way we can deploy the require
 # How to use
 You can now launch the tool \o/
 
-Once launched it will show you for both Max/Maya and their different respective versions, the currently installed exporter version.
+Once launched, it will show you for both Max/Maya and their different respective versions, the currently installed exporter version.
 
 You can then easily install the latest available version or uninstall the plugin.
 
