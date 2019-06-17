@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace BabylonJS_Installer
@@ -61,6 +62,7 @@ namespace BabylonJS_Installer
 
             this.checker = new SoftwareChecker();
             this.checker.form = this;
+            this.checker.setLatestVersionDate();
 
             this.locations = new Dictionary<string, Dictionary<string, string>>();
             this.checkInstall("Max");
@@ -71,8 +73,22 @@ namespace BabylonJS_Installer
 
         public void log(string text)
         {
+            this.log_text.SelectionColor = Color.Blue;
             this.log_text.AppendText(text + "\n");
         }
+
+        public void warn(string text)
+        {
+            this.log_text.SelectionColor = Color.Orange;
+            this.log_text.AppendText(text + "\n");
+        }
+
+        public void error(string text)
+        {
+            this.log_text.SelectionColor = Color.Red;
+            this.log_text.AppendText(text + "\n");
+        }
+
         public void goTab(string soft)
         {
             switch(soft)
@@ -122,7 +138,7 @@ namespace BabylonJS_Installer
                 if (expDate != "")
                 {
                     labelDate.Text = "Exporter last update : " + expDate;
-                    this.log("Exporter last update : " + expDate);
+                    this.log("Exporter last update : " + version);
                     buttonUninstall.Visible = true;
                 }
                 else
@@ -132,8 +148,15 @@ namespace BabylonJS_Installer
                     buttonUninstall.Visible = false;
                 }
 
+                if(this.checker.isLatestVersionInstalled(soft, version, location))
+                {
+                    buttonUpdate.Enabled = false;
+                }
+                else
+                {
+                    buttonUpdate.Enabled = true;
+                }
                 // TO DO : Check if the installed version (if one) is the latest or not.
-                buttonUpdate.Visible = true;
             }
             else
             {
