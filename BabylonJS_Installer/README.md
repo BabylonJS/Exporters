@@ -2,7 +2,7 @@
 Here are the steps to follow to use the installer locally.
 
 ## Copy
-Copy the exe from the zip file on your local drive.
+Copy the executable from the zip file on your local drive.
 
 ## Admin Mode
 In order to use the installer, as it will have to modify files in you program files folder, you need to run the application in admin mode.
