@@ -69,6 +69,12 @@ namespace BabylonJS_Installer
             this.checkInstall("Maya");
 
             this.mainTabControl.Visible = true;
+
+            if(!this.checker.ensureAdminMode())
+            {
+                this.goTab("");
+                this.error("Application is not running in Administrator mode.\nYou should restart the application to ensure its functionnalities.");
+            }
         }
 
         public void log(string text)
