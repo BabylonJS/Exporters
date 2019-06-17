@@ -28,6 +28,11 @@ namespace Maya2Babylon.Forms
         const string chkExportKHRLightsPunctualProperty = "babylonjs_exportKHRLightsPunctual";
         const string chkBakeAnimationFramesProperty = "babylonjs_bakeAnimationFrames";
 
+        const string PBRFullPropertyName = "babylonjs_pbr_full";
+        const string PBRNoLightPropertyName = "babylonjs_pbr_nolight";
+        const string PBREnvironmentPathPropertyName = "babylonjs_pbr_environmentPathProperty";
+        const string PBRDefaultSkyboxName = "babylonjs_pbr_defaultSkybox";
+
         TreeNode currentNode;
         int currentRank;
 
@@ -77,6 +82,10 @@ namespace Maya2Babylon.Forms
             chkBakeAnimationFrames.Checked = Loader.GetBoolProperty(chkBakeAnimationFramesProperty, false);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
+
+            chkFullPBR.Checked = Loader.GetBoolProperty(PBRFullPropertyName, true);
+            chkNoAutoLight.Checked = Loader.GetBoolProperty(PBRNoLightPropertyName, true);
+            chkDefaultSkybox.Checked = Loader.GetBoolProperty(PBRDefaultSkyboxName, true);
         }
 
         private void butBrowse_Click(object sender, EventArgs e)
@@ -108,6 +117,10 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkExportKHRLightsPunctualProperty, chkExportKHRLightsPunctual.Checked);
             Loader.SetBoolProperty(chkExportKHRTextureTransformProperty, chkExportKHRTextureTransform.Checked);
             Loader.SetBoolProperty(chkBakeAnimationFramesProperty, chkBakeAnimationFrames.Checked);
+
+            Loader.SetBoolProperty(PBRFullPropertyName, chkFullPBR.Checked);
+            Loader.SetBoolProperty(PBRNoLightPropertyName, chkNoAutoLight.Checked);
+            Loader.SetBoolProperty(PBRDefaultSkyboxName, chkDefaultSkybox.Checked);
 
             /*Tools.UpdateComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat");
 
@@ -196,7 +209,8 @@ namespace Maya2Babylon.Forms
                                 onlySelected: chkOnlySelected.Checked, autoSaveMayaFile: chkAutoSave.Checked, exportHiddenObjects: chkHidden.Checked, copyTexturesToOutput: chkCopyTextures.Checked,
                                 optimizeVertices: chkOptimizeVertices.Checked, exportTangents: chkExportTangents.Checked, scaleFactor: txtScaleFactor.Text, exportSkin: chkExportSkin.Checked,
                                 quality: txtQuality.Text, dracoCompression: chkDracoCompression.Checked, exportMorphNormal: chkExportMorphNormal.Checked, exportMorphTangent: chkExportMorphTangent.Checked, 
-                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked, bakeAnimationFrames: chkBakeAnimationFrames.Checked);
+                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked, bakeAnimationFrames: chkBakeAnimationFrames.Checked,
+                                fullPBR: chkFullPBR.Checked, noAutoLight: chkNoAutoLight.Checked, defaultSkybox: chkDefaultSkybox.Checked, environmentName: txtEnvironmentName.Text);
             }
             catch (OperationCanceledException)
             {
@@ -330,16 +344,39 @@ namespace Maya2Babylon.Forms
                     this.saveFileDialog.Filter = "Babylon files|*.babylon";
                     chkDracoCompression.Checked = false;
                     chkDracoCompression.Enabled = false;
+                    chkNoAutoLight.Enabled = true;
+                    chkFullPBR.Enabled = true;
+                    chkDefaultSkybox.Enabled = true;
+                    butEnvironmentPath.Enabled = true;
+                    txtEnvironmentName.Enabled = true;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
+                    chkNoAutoLight.Enabled = false;
+                    chkNoAutoLight.Checked = false;
+                    chkFullPBR.Enabled = false;
+                    chkFullPBR.Checked = false;
+                    chkDefaultSkybox.Enabled = true;
+                    chkDefaultSkybox.Checked = false;
+                    butEnvironmentPath.Enabled = false;
+                    txtEnvironmentName.Enabled = false;
+                    txtEnvironmentName.Text = string.Empty;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
                     this.saveFileDialog.Filter = "glb files|*.glb";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
+                    chkNoAutoLight.Enabled = false;
+                    chkNoAutoLight.Checked = false;
+                    chkFullPBR.Enabled = false;
+                    chkFullPBR.Checked = false;
+                    chkDefaultSkybox.Enabled = true;
+                    chkDefaultSkybox.Checked = false;
+                    butEnvironmentPath.Enabled = false;
+                    txtEnvironmentName.Enabled = false;
+                    txtEnvironmentName.Text = string.Empty;
                     break;
             }
             this.txtFilename.Text = Path.ChangeExtension(this.txtFilename.Text, this.saveFileDialog.DefaultExt);
@@ -387,6 +424,14 @@ namespace Maya2Babylon.Forms
         private void label6_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void butEnvironmentPath_Click(object sender, EventArgs e)
+        {
+            if (envFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                txtEnvironmentName.Text = envFileDialog.FileName;
+            }
         }
     }
 }

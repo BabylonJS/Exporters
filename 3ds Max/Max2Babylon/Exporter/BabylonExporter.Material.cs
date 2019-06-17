@@ -463,6 +463,7 @@ namespace Max2Babylon
                 var propertyContainer = materialNode.IPropertyContainer;
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
+                    maxGameMaterial = materialNode,
                     name = name,
                     isUnlit = isUnlit
                 };
@@ -631,8 +632,17 @@ namespace Max2Babylon
                     babylonMaterial.roughness = 1.0f;
                 }
 
-                // Add the material to the scene
-                babylonScene.MaterialsList.Add(babylonMaterial);
+                if (exportParameters.pbrFull)
+                {
+                    var fullPBR = new BabylonPBRMaterial(babylonMaterial);
+                    fullPBR.maxGameMaterial = babylonMaterial.maxGameMaterial;
+                    babylonScene.MaterialsList.Add(fullPBR);
+                }
+                else
+                {
+                    // Add the material to the scene
+                    babylonScene.MaterialsList.Add(babylonMaterial);
+                }
             }
             else
             {
