@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BabylonJS_Installer
 {
@@ -49,7 +50,7 @@ namespace BabylonJS_Installer
 
                 if (result.Status != System.Net.NetworkInformation.IPStatus.Success)
                 {
-                    this.form.log("Error : Can't reach Github.");
+                    this.form.error("Error : Can't reach Github.");
                     return false;
                 }
                 else
@@ -59,7 +60,7 @@ namespace BabylonJS_Installer
             }
             catch (Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't reach Github.\n"
                     + "Error : \n"
                     + "\"" + ex.Message + "\""
@@ -84,14 +85,12 @@ namespace BabylonJS_Installer
                 //this.download(this.latestRelease);
                 //}
 
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", "BJS_Installer");
-                HttpResponseMessage response = await client.GetAsync(this.url_github_API_releases);
-
                 // TO DO - Parse the JSON in a more beautiful way...
-                String responseBody = await response.Content.ReadAsStringAsync();
+
+                String responseBody = await this.GetJSONBodyRequest(this.url_github_API_releases);
+
                 String lastestReleaseInfos = responseBody.Substring(responseBody.IndexOf("\"prerelease\":") + "\"prerelease\":".Length);
-                //Ensure we are on Rrerelease version
+                //Ensure we are on Prerelease version
                 if (lastestReleaseInfos.StartsWith("true"))
                 {
                     //We parse the array to find the dowload URL
@@ -104,11 +103,11 @@ namespace BabylonJS_Installer
                     this.download(this.latestRelease);
                 }
                 else
-                    this.form.log("Error : Can't find the last release package.");
+                    this.form.error("Error : Can't find the last release package.");
             }
             catch(Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't reach the GitHub API\n"
                     + "Please, try in 1 hour. (The API limitation is 60 queries / hour\n"
                     + "Error message : \n"
@@ -137,7 +136,7 @@ namespace BabylonJS_Installer
             }
             catch (Exception ex)
             {
-                this.form.log(
+                this.form.warn(
                     "Can't download the files.\n"
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
@@ -173,7 +172,7 @@ namespace BabylonJS_Installer
             }
             catch(Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't extract the files.\n"
                     + "If you're not, please try to run this tool in ADMINISTRATOR MODE. It's necessary to extract the files in \"Program Files\" folder (or other protected folders).\n"
                     + "Error message : \n"
@@ -189,17 +188,30 @@ namespace BabylonJS_Installer
             try
             {
                 File.Delete(this.software + "_" + this.version + ".zip");
+                this.form.log("\n----- " + this.software + " " + this.version + " EXPORTER UP TO DATE ----- \n");
             }
             catch (Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't delete temporary files.\n"
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
             }
+        }
 
-            this.form.log("\n----- " + this.software + " " + this.version + " EXPORTER UP TO DATE ----- \n");
+        public async Task<string> GetJSONBodyRequest(string requestURI)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "BJS_Installer");
+            HttpResponseMessage response = await client.GetAsync(requestURI);
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public string GetURLGitHubAPI()
+        {
+            return this.url_github_API_releases;
         }
     }
 }
