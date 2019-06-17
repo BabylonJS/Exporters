@@ -9,7 +9,7 @@ In order to use the installer, as it will have to modify files in you program fi
 
 To run in administrator mode, simply right click the exe, navigate to the compatibility tab and select the run this program as an administrator checkbox.
 
-I know this might sound scary but this is the way we can deploy the required dll in you program files folder. In case you prefer to deploy manually, you can still find all the built libraries in the Github releases assets.
+I know this might sound scary but this is the only way we can deploy the required dll in you program files folder. In case you prefer to deploy manually, you can still find all the built libraries in the Github releases assets.
 
 # How to use
 You can now launch the tool \o/
