@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace BabylonJS_Installer
@@ -162,8 +163,14 @@ namespace BabylonJS_Installer
                     this.form.error("Error : software not found");
                     break;
             }
-            this.form.warn("OH MY GOD");
             return isLatestversion;
+        }
+
+        public bool ensureAdminMode()
+        {
+            var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
