@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.Max;
-
+using BabylonExport.Entities;
 using Color = System.Drawing.Color;
 
 namespace Max2Babylon
@@ -196,7 +196,8 @@ namespace Max2Babylon
             exporter = new BabylonExporter();
             if (!string.IsNullOrWhiteSpace(txtTextureName.Text))
             {
-                exporter.relativeTextureFolder = Tools.GetPathRelativeToModel(Tools.UnformatPath(txtTextureName.Text), Tools.UnformatPath(txtModelName.Text));
+                // TODO:
+                //exporter.relativeTextureFolder = Tools.GetPathRelativeToModel(Tools.UnformatPath(txtTextureName.Text), Tools.UnformatPath(txtModelName.Text));
             }
 
             if (clearLogs)

@@ -1,4 +1,5 @@
 ﻿using BabylonExport.Entities;
+using BabylonExport.Tools;
 using GLTFExport.Entities;
 using Newtonsoft.Json;
 using System;
@@ -11,21 +12,26 @@ using Color = System.Drawing.Color;
 using System.Linq;
 using System.Diagnostics;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    internal partial class BabylonExporter
+    internal partial class GLTFExporter
     {
         List<BabylonMaterial> babylonMaterialsToExport;
+        ExportParameters exportParameters;
 
         private List<BabylonNode> babylonNodes;
+
+        ILoggingHelper logger;
 
         // from BabylonNode to GLTFNode
         Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
         Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
 
-        public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
+        public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary, ExportParameters parameters)
         {
-            RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
+            logger.RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
+
+            this.exportParameters = parameters;
 
             // Force output file extension to be gltf
             outputFileName = Path.ChangeExtension(outputFileName, "gltf");
@@ -35,7 +41,7 @@ namespace Max2Babylon
 
             float progressionStep;
             var progression = 0.0f;
-            ReportProgressChanged((int)progression);
+            logger.ReportProgressChanged((int)progression);
 
             // Initialization
             initBabylonNodes(babylonScene);
@@ -60,7 +66,7 @@ namespace Max2Babylon
 #elif MAX2019
             maxVersion = "2019";
 #endif
-         gltf.asset.generator = $"babylon.js glTF exporter for 3ds max {maxVersion} v{exporterVersion}";
+         gltf.asset.generator = $"babylon.js glTF exporter for {parameters.softwarePackageName} {parameters.softwareVersion} v{parameters.exporterVersion}";
 
             // Scene
             gltf.scene = 0;
@@ -71,21 +77,21 @@ namespace Max2Babylon
             gltf.scenes = scenes;
 
             // Meshes
-            RaiseMessage("GLTFExporter | Exporting meshes");
+            logger.RaiseMessage("GLTFExporter | Exporting meshes");
             progression = 10.0f;
-            ReportProgressChanged((int)progression);
+            logger.ReportProgressChanged((int)progression);
             progressionStep = 40.0f / babylonScene.meshes.Length;
             foreach (var babylonMesh in babylonScene.meshes)
             {
                 ExportMesh(babylonMesh, gltf, babylonScene);
                 progression += progressionStep;
-                ReportProgressChanged((int)progression);
-                CheckCancelled();
+                logger.ReportProgressChanged((int)progression);
+                logger.CheckCancelled();
             }
-
+ 
 
             // Root nodes
-            RaiseMessage("GLTFExporter | Exporting nodes");
+            logger.RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
@@ -96,21 +102,21 @@ namespace Max2Babylon
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
                 progression += progressionStep;
-                ReportProgressChanged((int)progression);
-                CheckCancelled();
+                logger.ReportProgressChanged((int)progression);
+                logger.CheckCancelled();
             });
 
             // Materials
-            RaiseMessage("GLTFExporter | Exporting materials");
+            logger.RaiseMessage("GLTFExporter | Exporting materials");
             foreach (var babylonMaterial in babylonMaterialsToExport)
             {
                 ExportMaterial(babylonMaterial, gltf);
-                CheckCancelled();
+                logger.CheckCancelled();
             };
-            RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
+            logger.RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
 
             // Animations
-            RaiseMessage("GLTFExporter | Exporting Animations");
+            logger.RaiseMessage("GLTFExporter | Exporting Animations");
             ExportAnimationGroups(gltf, babylonScene);
 
             // Prepare buffers

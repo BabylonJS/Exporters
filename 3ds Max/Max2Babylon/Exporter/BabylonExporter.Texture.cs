@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Autodesk.Max;
 using BabylonExport.Entities;
+using Extensions;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;

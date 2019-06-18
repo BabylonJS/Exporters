@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
+using Extensions;
 using System.Diagnostics;
 
 namespace BabylonExport.Entities

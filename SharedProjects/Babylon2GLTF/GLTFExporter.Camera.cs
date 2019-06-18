@@ -1,9 +1,9 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         private GLTFCamera ExportCamera(ref GLTFNode gltfNode, BabylonCamera babylonCamera, GLTF gltf, GLTFNode gltfParentNode)
         {

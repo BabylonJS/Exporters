@@ -2,9 +2,9 @@
 using GLTFExport.Entities;
 using System.Collections.Generic;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         /// <summary>
         /// Store the number of nodes with a specific name

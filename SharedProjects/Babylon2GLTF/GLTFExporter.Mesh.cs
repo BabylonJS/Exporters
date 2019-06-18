@@ -1,16 +1,18 @@
 ﻿using BabylonExport.Entities;
+using Extensions;
 using GLTFExport.Entities;
+using GLTFExport.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         private GLTFMesh ExportMesh(BabylonMesh babylonMesh, GLTF gltf, BabylonScene babylonScene)
         {
-            RaiseMessage("GLTFExporter.Mesh | Export mesh named: " + babylonMesh.name, 1);
+            logger.RaiseMessage("GLTFExporter.Mesh | Export mesh named: " + babylonMesh.name, 1);
 
             // --------------------------
             // --- Mesh from babylon ----
@@ -18,11 +20,11 @@ namespace Max2Babylon
 
             if (babylonMesh.positions == null || babylonMesh.positions.Length == 0)
             {
-                RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
+                logger.RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
                 return null;
             }
 
-            RaiseMessage("GLTFExporter.Mesh | Mesh from babylon", 2);
+            logger.RaiseMessage("GLTFExporter.Mesh | Mesh from babylon", 2);
             // Retreive general data from babylon mesh
             int nbVertices = babylonMesh.positions.Length / 3;
             bool hasUV = babylonMesh.uvs != null && babylonMesh.uvs.Length > 0;
@@ -32,12 +34,12 @@ namespace Max2Babylon
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
             bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
 
-            RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -80,7 +82,7 @@ namespace Max2Babylon
                 }
                 if (hasColor)
                 {
-                    globalVertex.Color = Tools.SubArrayFromEntity(babylonMesh.colors, indexVertex, 4);
+                    globalVertex.Color = ArrayExtension.SubArrayFromEntity(babylonMesh.colors, indexVertex, 4);
                 }
                 if (hasBones)
                 {
@@ -97,7 +99,7 @@ namespace Max2Babylon
                     bonesIndicesMerged -= bone0 << 0;
                     var bonesIndicesArray = new ushort[] { (ushort)bone0, (ushort)bone1, (ushort)bone2, (ushort)bone3 };
                     globalVertex.BonesIndices = bonesIndicesArray;
-                    globalVertex.BonesWeights = Tools.SubArrayFromEntity(babylonMesh.matricesWeights, indexVertex, 4);
+                    globalVertex.BonesWeights = ArrayExtension.SubArrayFromEntity(babylonMesh.matricesWeights, indexVertex, 4);
                 }
 
                 globalVertices.Add(globalVertex);
@@ -112,7 +114,7 @@ namespace Max2Babylon
             // ------- Init glTF --------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Mesh | Init glTF", 2);
+            logger.RaiseMessage("GLTFExporter.Mesh | Init glTF", 2);
             // Mesh
             var gltfMesh = new GLTFMesh { name = babylonMesh.name };
             gltfMesh.index = gltf.MeshesList.Count;
@@ -127,7 +129,7 @@ namespace Max2Babylon
             // ---- glTF primitives -----
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Mesh | glTF primitives", 2);
+            logger.RaiseMessage("GLTFExporter.Mesh | glTF primitives", 2);
             var meshPrimitives = new List<GLTFMeshPrimitive>();
             foreach (BabylonSubMesh babylonSubMesh in babylonMesh.subMeshes)
             {
@@ -162,7 +164,7 @@ namespace Max2Babylon
                 // Material
                 if (babylonMesh.materialId != null)
                 {
-                    RaiseMessage("GLTFExporter.Mesh | Material", 3);
+                    logger.RaiseMessage("GLTFExporter.Mesh | Material", 3);
                     // Retreive the babylon material
                     BabylonMaterial babylonMaterial;
                     var babylonMaterialId = babylonMesh.materialId;
@@ -205,7 +207,7 @@ namespace Max2Babylon
                 // ------- Accessors --------
                 // --------------------------
 
-                RaiseMessage("GLTFExporter.Mesh | Geometry", 3);
+                logger.RaiseMessage("GLTFExporter.Mesh | Geometry", 3);
 
                 // Buffer
                 var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
@@ -346,7 +348,7 @@ namespace Max2Babylon
                 // --- Bones ---
                 if (hasBones)
                 {
-                    RaiseMessage("GLTFExporter.Mesh | Bones", 3);
+                    logger.RaiseMessage("GLTFExporter.Mesh | Bones", 3);
                     // --- Joints ---
                     var accessorJoints = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -379,7 +381,7 @@ namespace Max2Babylon
                 // Morph targets positions and normals
                 if (babylonMorphTargetManager != null)
                 {
-                    RaiseMessage("GLTFExporter.Mesh | Morph targets", 3);
+                    logger.RaiseMessage("GLTFExporter.Mesh | Morph targets", 3);
                     _exportMorphTargets(babylonMesh, babylonSubMesh, babylonMorphTargetManager, gltf, buffer, meshPrimitive);
                 }
             }
@@ -405,7 +407,7 @@ namespace Max2Babylon
             {
                 if (babylonScene.morphTargetManagers == null)
                 {
-                    RaiseWarning("GLTFExporter.Mesh | morphTargetManagers is not defined", 3);
+                    logger.RaiseWarning("GLTFExporter.Mesh | morphTargetManagers is not defined", 3);
                 }
                 else
                 {
@@ -413,7 +415,7 @@ namespace Max2Babylon
 
                     if (babylonMorphTargetManager == null)
                     {
-                        RaiseWarning($"GLTFExporter.Mesh | morphTargetManager with index {babylonMesh.morphTargetManagerId.Value} not found", 3);
+                        logger.RaiseWarning($"GLTFExporter.Mesh | morphTargetManager with index {babylonMesh.morphTargetManagerId.Value} not found", 3);
                     }
                     return babylonMorphTargetManager;
                 }
@@ -448,10 +450,10 @@ namespace Max2Babylon
                     accessorTargetPositions.max = new float[] { float.MinValue, float.MinValue, float.MinValue };
                     for (int indexPosition = startIndex; indexPosition < endIndex; indexPosition += 3)
                     {
-                        var positionTarget = Tools.SubArray(babylonMorphTarget.positions, indexPosition, 3);
+                        var positionTarget = ArrayExtension.SubArray(babylonMorphTarget.positions, indexPosition, 3);
 
                         // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
-                        var positionMesh = Tools.SubArray(babylonMesh.positions, indexPosition, 3);
+                        var positionMesh = ArrayExtension.SubArray(babylonMesh.positions, indexPosition, 3);
                         for (int indexCoordinate = 0; indexCoordinate < positionTarget.Length; indexCoordinate++)
                         {
                             positionTarget[indexCoordinate] = positionTarget[indexCoordinate] - positionMesh[indexCoordinate];
@@ -487,10 +489,10 @@ namespace Max2Babylon
                     int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
                     for (int indexNormal = startIndex; indexNormal < endIndex; indexNormal += 3)
                     {
-                        var normalTarget = Tools.SubArray(babylonMorphTarget.normals, indexNormal, 3);
+                        var normalTarget = ArrayExtension.SubArray(babylonMorphTarget.normals, indexNormal, 3);
 
                         // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
-                        var normalMesh = Tools.SubArray(babylonMesh.normals, indexNormal, 3);
+                        var normalMesh = ArrayExtension.SubArray(babylonMesh.normals, indexNormal, 3);
                         for (int indexCoordinate = 0; indexCoordinate < normalTarget.Length; indexCoordinate++)
                         {
                             normalTarget[indexCoordinate] = normalTarget[indexCoordinate] - normalMesh[indexCoordinate];
@@ -525,10 +527,10 @@ namespace Max2Babylon
                     int endIndex = startIndex + babylonSubMesh.verticesCount * nbComponents;
                     for (int indexTangent = startIndex; indexTangent < endIndex; indexTangent += 4)
                     {
-                        var tangentTarget = Tools.SubArray(babylonMorphTarget.tangents, indexTangent, 3);
+                        var tangentTarget = ArrayExtension.SubArray(babylonMorphTarget.tangents, indexTangent, 3);
 
                         // Babylon stores morph target information as final data while glTF expects deltas from mesh primitive
-                        var tangentMesh = Tools.SubArray(babylonMesh.tangents, indexTangent, 3);
+                        var tangentMesh = ArrayExtension.SubArray(babylonMesh.tangents, indexTangent, 3);
                         for (int indexCoordinate = 0; indexCoordinate < tangentTarget.Length; indexCoordinate++)
                         {
                             tangentTarget[indexCoordinate] = tangentTarget[indexCoordinate] - tangentMesh[indexCoordinate];

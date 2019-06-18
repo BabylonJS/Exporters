@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using BabylonExport.Entities;
+using Extensions;
 
 namespace Max2Babylon
 {
