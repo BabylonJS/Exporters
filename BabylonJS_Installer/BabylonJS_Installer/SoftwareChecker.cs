@@ -83,7 +83,7 @@ namespace BabylonJS_Installer
                         lastUpdate = File.GetLastWriteTime(path + "bin\\assemblies\\Max2Babylon.dll").ToString();
                         break;
                     case "Maya":
-                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Max2Babylon.dll").ToString();
+                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Maya2Babylon.dll").ToString();
                         break;
                     default:
                         this.form.error("Error : software not found");
@@ -144,7 +144,6 @@ namespace BabylonJS_Installer
             string year = latestDateSplit[0];
             string month = latestDateSplit[1];
             string day = latestDateSplit[2].Substring(0, 2);
-            //this.form.log(File.GetLastWriteTime(location + "bin\\assemblies\\Max2Babylon.dll").ToString());
             bool isLatestversion = false;
             string lastUpdate = "";
             switch (soft)
@@ -155,7 +154,7 @@ namespace BabylonJS_Installer
                     break;
 
                 case "Maya":
-                    lastUpdate = File.GetLastWriteTime(location + "bin\\plug-ins\\Max2Babylon.dll").ToString();
+                    lastUpdate = File.GetLastWriteTime(location + "bin\\plug-ins\\Maya2Babylon.dll").ToString();
                     if (lastUpdate.Contains(year) && lastUpdate.Contains(month) && lastUpdate.Contains(day)) isLatestversion = true;
                     break;
 
