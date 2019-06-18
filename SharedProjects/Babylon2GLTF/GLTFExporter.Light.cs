@@ -2,9 +2,9 @@
 using GLTFExport.Entities;
 using System.Collections.Generic;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    internal partial class BabylonExporter
+    internal partial class GLTFExporter
     {
         public const string KHR_lights_punctuals = "KHR_lights_punctual";  // Name of the extension
 
@@ -49,7 +49,7 @@ namespace Max2Babylon
                     };
                     break;
                 default:
-                    RaiseError($"Unsupported light type {light.type} for glTF");
+                    Logger.RaiseError($"Unsupported light type {light.type} for glTF");
                     throw new System.Exception($"Unsupported light type {light.type} for glTF");
             }
 

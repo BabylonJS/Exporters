@@ -1,7 +1,10 @@
-﻿namespace Max2Babylon
+﻿namespace BabylonExport.Entities
 {
     public class ExportParameters
     {
+        public string softwarePackageName;
+        public string softwareVersion;
+        public string exporterVersion;
         public string outputPath;
         public string outputFormat;
         public string textureFolder;

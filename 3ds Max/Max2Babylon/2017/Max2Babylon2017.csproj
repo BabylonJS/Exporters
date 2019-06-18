@@ -126,24 +126,6 @@
     <Compile Include="..\Exporter\BabylonExporter.cs">
       <Link>Exporter\BabylonExporter.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Camera.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Camera.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Material.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Material.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Mesh.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Mesh.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Texture.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Texture.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.IMaterialExporter.cs">
       <Link>Exporter\BabylonExporter.IMaterialExporter.cs</Link>
     </Compile>
@@ -172,9 +154,6 @@
       <Link>Exporter\GlobalVertex.cs</Link>
     </Compile>
     <Compile Include="..\Exporter\GLTFGlobalVertex.cs">
-      <Link>Exporter\GLTFGlobalVertex.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Light.cs">
       <Link>Exporter\GLTFGlobalVertex.cs</Link>
     </Compile>
     <Compile Include="..\Extensions\ScaleSystem.cs">
@@ -293,18 +272,10 @@
     <Compile Include="..\Exporter\BabylonExporter.ExportItem.cs">
       <Link>Exporter\BabylonExporter.ExportItem.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Animation.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Animation.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.GLTFExporter.Skin.cs">
-      <Link>Exporter\BabylonExporter.GLTFExporter.Skin.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.WorldModifiers.cs">
       <Link>Exporter\BabylonExporter.WorldModifiers.Skin.cs</Link>
     </Compile>
-    <Compile Include="..\Extensions\ColorExtension.cs">
-      <Link>Extensions\ColorExtension.cs</Link>
-    </Compile>
+    <Compile Include="ILoggingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -371,6 +342,8 @@
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
+  <Import Project="..\..\..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems" Label="Shared" />
+  <Import Project="..\..\..\SharedProjects\Extensions\Extensions.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" "$(ConfigurationName)" 2017</PostBuildEvent>

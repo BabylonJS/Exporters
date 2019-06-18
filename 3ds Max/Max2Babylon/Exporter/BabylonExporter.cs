@@ -1,5 +1,7 @@
 ﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using Babylon2GLTF;
+using BabylonExport.Tools;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ using Color = System.Drawing.Color;
 
 namespace Max2Babylon
 {
-    internal partial class BabylonExporter
+    internal partial class BabylonExporter : ILoggingHelper
     {
         public event Action<int> OnImportProgressChanged;
         public event Action<string, int> OnWarning;
@@ -36,12 +38,12 @@ namespace Max2Babylon
         public static string exporterVersion = "1.4.2";
         public float scaleFactor = 1.0f;
 
-        void ReportProgressChanged(int progress)
+        public void ReportProgressChanged(int progress)
         {
             OnImportProgressChanged?.Invoke(progress);
         }
 
-        void RaiseError(string error, int rank = 0)
+        public void RaiseError(string error, int rank = 0)
         {
             if (OnError != null)
             {
@@ -49,7 +51,7 @@ namespace Max2Babylon
             }
         }
 
-        void RaiseWarning(string warning, int rank = 0)
+        public void RaiseWarning(string warning, int rank = 0)
         {
             if (OnWarning != null)
             {
@@ -57,12 +59,12 @@ namespace Max2Babylon
             }
         }
 
-        void RaiseMessage(string message, int rank = 0, bool emphasis = false)
+        public void RaiseMessage(string message, int rank = 0, bool emphasis = false)
         {
             RaiseMessage(message, Color.Black, rank, emphasis);
         }
 
-        void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
+        public void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
         {
             if (OnMessage != null)
             {
@@ -71,12 +73,12 @@ namespace Max2Babylon
         }
 
         // For debug purpose
-        void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
+        public void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
         {
             //RaiseMessage(message, Color.DarkGray, rank, emphasis);
         }
 
-        void CheckCancelled()
+        public void CheckCancelled()
         {
             Application.DoEvents();
             if (IsCancelled)
@@ -552,7 +554,8 @@ namespace Max2Babylon
             if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, tempOutputDirectory, outputFileName, generateBinary);
+                // TODO
+                //ExportGltf(babylonScene, tempOutputDirectory, outputFileName, generateBinary);
             }
             // Move files to output directory
             var filePaths = Directory.GetFiles(tempOutputDirectory);
@@ -614,7 +617,7 @@ namespace Max2Babylon
                     string ext = Path.GetExtension(file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
                     var outputPath = Path.Combine(outputDirectory, file);
-                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder) && ExtensionIsValidGLTFTexture(ext))
+                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder)) // TODO && ExtensionIsValidGLTFTexture(ext))
                     {
                         outputPath = Path.Combine(exportParameters.textureFolder, file);
                     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BabylonExport.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -269,6 +270,59 @@ namespace Max2Babylon
                 info.LoadFromData(propertyNameStr);
                 Add(info);
             }
+        }
+
+        public static AnimationGroupList InitAnimationGroups(ILoggingHelper logger)
+        {
+            AnimationGroupList animationList = new AnimationGroupList();
+            animationList.LoadFromData();
+
+            if (animationList.Count > 0)
+            {
+                int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+                int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+
+                foreach (AnimationGroup animGroup in animationList)
+                {
+                    // ensure min <= start <= end <= max
+                    List<string> warnings = new List<string>();
+                    if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
+                    {
+                        warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
+                        animGroup.FrameStart = timelineStart;
+                    }
+                    if (animGroup.FrameEnd < timelineStart || animGroup.FrameEnd > timelineEnd)
+                    {
+                        warnings.Add("End frame '" + animGroup.FrameEnd + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline end time '" + timelineEnd + "'");
+                        animGroup.FrameEnd = timelineEnd;
+                    }
+                    if (animGroup.FrameEnd <= animGroup.FrameStart)
+                    {
+                        if (animGroup.FrameEnd < animGroup.FrameStart)
+                            // Strict
+                            warnings.Add("End frame '" + animGroup.FrameEnd + "' lower than Start frame '" + animGroup.FrameStart + "'. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+                        else
+                            // Equal
+                            warnings.Add("End frame '" + animGroup.FrameEnd + "' equal to Start frame '" + animGroup.FrameStart + "'. Single frame animation are not allowed. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
+
+                        animGroup.FrameStart = timelineStart;
+                        animGroup.FrameEnd = timelineEnd;
+                    }
+
+                    // Print animation group warnings if any
+                    // Nothing printed otherwise
+                    if (warnings.Count > 0)
+                    {
+                        logger.RaiseWarning(animGroup.Name, 1);
+                        foreach (string warning in warnings)
+                        {
+                            logger.RaiseWarning(warning, 2);
+                        }
+                    }
+                }
+            }
+
+            return animationList;
         }
 
         public void SaveToData()

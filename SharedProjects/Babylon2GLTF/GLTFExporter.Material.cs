@@ -1,19 +1,21 @@
 ﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using Extensions;
 using GLTFExport.Entities;
+using Max2Babylon;
 using System;
 using System.Drawing;
 using System.IO;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         private void ExportMaterial(BabylonMaterial babylonMaterial, GLTF gltf)
         {
             var name = babylonMaterial.name;
             var id = babylonMaterial.id;
-            RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
+            logger.RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
             GLTFMaterial gltfMaterial = null;
             IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
@@ -33,7 +35,7 @@ namespace Max2Babylon
                 {
                     string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
                         materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
-                    RaiseWarning(message, 2);
+                    logger.RaiseWarning(message, 2);
                 }
                 else
                 {
@@ -141,7 +143,7 @@ namespace Max2Babylon
                 // --------- gltfMaterial ---------
                 // --------------------------------
 
-                RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
+                logger.RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
                 gltfMaterial = new GLTFMaterial
                 {
                     name = name
@@ -197,7 +199,7 @@ namespace Max2Babylon
                 // --- gltfPbrMetallicRoughness ---
                 // --------------------------------
 
-                RaiseMessage("GLTFExporter.Material | create gltfPbrMetallicRoughness", 2);
+                logger.RaiseMessage("GLTFExporter.Material | create gltfPbrMetallicRoughness", 2);
                 var gltfPbrMetallicRoughness = new GLTFPBRMetallicRoughness();
                 gltfMaterial.pbrMetallicRoughness = gltfPbrMetallicRoughness;
 

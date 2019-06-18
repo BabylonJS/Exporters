@@ -1,14 +1,16 @@
-﻿using BabylonExport.Entities;
+﻿using BabylonExport;
+using BabylonExport.Entities;
 using GLTFExport.Entities;
+using Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         private static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
         private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });

@@ -1,77 +1,25 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using GLTFExport.Tools;
 using System;
 using System.Collections.Generic;
-using Autodesk.Max;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
-        private AnimationGroupList InitAnimationGroups()
-        {
-            AnimationGroupList animationList = new AnimationGroupList();
-            animationList.LoadFromData();
-
-            if (animationList.Count > 0)
-            {
-                int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
-                int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
-            
-                foreach (AnimationGroup animGroup in animationList)
-                {
-                    // ensure min <= start <= end <= max
-                    List<string> warnings = new List<string>();
-                    if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
-                    {
-                        warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
-                        animGroup.FrameStart = timelineStart;
-                    }
-                    if (animGroup.FrameEnd < timelineStart || animGroup.FrameEnd > timelineEnd)
-                    {
-                        warnings.Add("End frame '" + animGroup.FrameEnd + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline end time '" + timelineEnd + "'");
-                        animGroup.FrameEnd = timelineEnd;
-                    }
-                    if (animGroup.FrameEnd <= animGroup.FrameStart)
-                    {
-                        if (animGroup.FrameEnd < animGroup.FrameStart)
-                            // Strict
-                            warnings.Add("End frame '" + animGroup.FrameEnd + "' lower than Start frame '" + animGroup.FrameStart + "'. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
-                        else
-                            // Equal
-                            warnings.Add("End frame '" + animGroup.FrameEnd + "' equal to Start frame '" + animGroup.FrameStart + "'. Single frame animation are not allowed. Start frame set to timeline start time '" + timelineStart + "'. End frame set to timeline end time '" + timelineEnd + "'.");
-
-                        animGroup.FrameStart = timelineStart;
-                        animGroup.FrameEnd = timelineEnd;
-                    }
-
-                    // Print animation group warnings if any
-                    // Nothing printed otherwise
-                    if (warnings.Count > 0)
-                    {
-                        RaiseWarning(animGroup.Name, 1);
-                        foreach(string warning in warnings)
-                        {
-                            RaiseWarning(warning, 2);
-                        }
-                    }
-                }
-            }
-
-            return animationList;
-        }
        
         private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
             // Retreive and parse animation group data
-            AnimationGroupList animationList = InitAnimationGroups();
+            IList<BabylonAnimationGroup> animationList = babylonScene.animationGroups;
 
             gltf.AnimationsList.Clear();
             gltf.AnimationsList.Capacity = Math.Max(gltf.AnimationsList.Capacity, animationList.Count);
 
             if (animationList.Count <= 0)
             {
-                RaiseMessage("GLTFExporter.Animation | No AnimationGroups: exporting all animations together.", 1);
+                logger.RaiseMessage("GLTFExporter.Animation | No AnimationGroups: exporting all animations together.", 1);
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = "All Animations";
                 
@@ -93,14 +41,14 @@ namespace Max2Babylon
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Animation | No animation data for this animation, it is ignored.", 2);
+                    logger.RaiseMessage("GLTFExporter.Animation | No animation data for this animation, it is ignored.", 2);
                 }
             }
             else
             {
                 foreach (AnimationGroup animGroup in animationList)
                 {
-                    RaiseMessage("GLTFExporter.Animation | " + animGroup.Name, 1);
+                    logger.RaiseMessage("GLTFExporter.Animation | " + animGroup.Name, 1);
 
                     GLTFAnimation gltfAnimation = new GLTFAnimation();
                     gltfAnimation.name = animGroup.Name;
