@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("An app to download and install the Babylon.js exporters from GitHub to your 3D softwares installation directories.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Babylon.js")]
-[assembly: AssemblyProduct("BabylonJS_Exporters")]
+[assembly: AssemblyProduct("Babylon.js_Exporters")]
 [assembly: AssemblyCopyright("Copyright Babylon.js ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyVersion("0.4.0.0")]
 [assembly: AssemblyFileVersion("0.1.0.0")]

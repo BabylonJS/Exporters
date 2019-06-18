@@ -73,7 +73,7 @@ namespace BabylonJS_Installer
             if(!this.checker.ensureAdminMode())
             {
                 this.goTab("");
-                this.error("Application is not running in Administrator mode.\nYou should restart the application to ensure its functionnalities.");
+                this.error("\nApplication is not running in Administrator mode.\nYou should restart the application to ensure its functionnalities.\n");
             }
         }
 
@@ -190,6 +190,17 @@ namespace BabylonJS_Installer
             this.displayInstall(soft, year);
         }
 
+        private void Button_All_Update_Click(object sender, EventArgs e)
+        {
+            foreach(KeyValuePair<string, Dictionary<string, string>> softYear in this.versions)
+            {
+                foreach (KeyValuePair<string, string> yearVersion in softYear.Value)
+                {
+                    this.button_update(softYear.Key, yearVersion.Key);
+                }
+            }
+        }
+
         private void Button_Max19_Update_Click(object sender, EventArgs e)
         {
             this.button_update("Max", "2019");
@@ -231,6 +242,17 @@ namespace BabylonJS_Installer
         {
             this.checker.uninstallExporter(soft, year, this.locations[soft][year]);
             this.displayInstall(soft, year);
+        }
+
+        private void Button_All_Delete_Click(object sender, EventArgs e)
+        {
+            foreach (KeyValuePair<string, Dictionary<string, string>> softYear in this.versions)
+            {
+                foreach (KeyValuePair<string, string> yearVersion in softYear.Value)
+                {
+                    this.button_delete(softYear.Key, yearVersion.Key);
+                }
+            }
         }
 
         private void Button_Max19_Delete_Click(object sender, EventArgs e)
