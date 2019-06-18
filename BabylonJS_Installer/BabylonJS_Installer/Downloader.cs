@@ -118,6 +118,11 @@ namespace BabylonJS_Installer
 
         private void download(string releaseName)
         {
+            if(this.software.Equals("Maya") && (this.version.Equals("2017") || this.version.Equals("2018")))
+            {
+                this.form.warn("Maya 2017 and 2018 have the same archive, changing version for proper download");
+                this.version = "2017-2018";
+            }
             this.form.log(
                 "Downloading files : \n"
                 + this.url_download + releaseName + "/" + this.software + "_" + this.version + ".zip"

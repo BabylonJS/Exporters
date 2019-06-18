@@ -139,13 +139,14 @@ namespace BabylonJS_Installer
                 labelPath.Text = "Path : " + location;
                 labelDate.Visible = true;
                 this.log("Installation found for " + soft + " " + year + "  -> " + location);
-
+                buttonUpdate.Visible = true;
                 expDate = this.checker.checkExporterDate(soft, location);
                 if (expDate != "")
                 {
                     labelDate.Text = "Exporter last update : " + expDate;
                     this.log("Exporter last update : " + version);
                     buttonUninstall.Visible = true;
+                    
                 }
                 else
                 {
@@ -196,7 +197,10 @@ namespace BabylonJS_Installer
             {
                 foreach (KeyValuePair<string, string> yearVersion in softYear.Value)
                 {
-                    this.button_update(softYear.Key, yearVersion.Key);
+                    //We check if the uninstall button is visible for the current soft and if the current version is the latest
+                    //If not, there is no need to update a soft that isn't there
+                    if(this.buttons[softYear.Key][yearVersion.Key][1].Visible && this.buttons[softYear.Key][yearVersion.Key][0].Enabled)
+                        this.button_update(softYear.Key, yearVersion.Key);
                 }
             }
         }
@@ -250,7 +254,9 @@ namespace BabylonJS_Installer
             {
                 foreach (KeyValuePair<string, string> yearVersion in softYear.Value)
                 {
-                    this.button_delete(softYear.Key, yearVersion.Key);
+                    //There is no need to delete a soft that isnt there, so we check for the uninstall button
+                    if (this.buttons[softYear.Key][yearVersion.Key][1].Visible)
+                        this.button_delete(softYear.Key, yearVersion.Key);
                 }
             }
         }
