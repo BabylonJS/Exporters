@@ -80,6 +80,8 @@
             this.bjs_logo = new System.Windows.Forms.PictureBox();
             this.title = new System.Windows.Forms.Label();
             this.soft_version = new System.Windows.Forms.Label();
+            this.button_All_Update = new System.Windows.Forms.Button();
+            this.button_All_Delete = new System.Windows.Forms.Button();
             this.mainTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -709,14 +711,40 @@
             this.soft_version.Name = "soft_version";
             this.soft_version.Size = new System.Drawing.Size(130, 25);
             this.soft_version.TabIndex = 3;
-            this.soft_version.Text = "  v0.2";
+            this.soft_version.Text = "  v0.4";
             this.soft_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // button_All_Update
+            // 
+            this.button_All_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_All_Update.Location = new System.Drawing.Point(591, 115);
+            this.button_All_Update.Margin = new System.Windows.Forms.Padding(4);
+            this.button_All_Update.Name = "button_All_Update";
+            this.button_All_Update.Size = new System.Drawing.Size(160, 31);
+            this.button_All_Update.TabIndex = 6;
+            this.button_All_Update.Text = "Update all";
+            this.button_All_Update.UseVisualStyleBackColor = true;
+            this.button_All_Update.Click += new System.EventHandler(this.Button_All_Update_Click);
+            // 
+            // button_All_Delete
+            // 
+            this.button_All_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_All_Delete.Location = new System.Drawing.Point(768, 115);
+            this.button_All_Delete.Margin = new System.Windows.Forms.Padding(4);
+            this.button_All_Delete.Name = "button_All_Delete";
+            this.button_All_Delete.Size = new System.Drawing.Size(160, 31);
+            this.button_All_Delete.TabIndex = 6;
+            this.button_All_Delete.Text = "Uninstall all";
+            this.button_All_Delete.UseVisualStyleBackColor = true;
+            this.button_All_Delete.Click += new System.EventHandler(this.Button_All_Delete_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(981, 627);
+            this.Controls.Add(this.button_All_Delete);
+            this.Controls.Add(this.button_All_Update);
             this.Controls.Add(this.soft_version);
             this.Controls.Add(this.title);
             this.Controls.Add(this.bjs_logo);
@@ -808,6 +836,8 @@
         private System.Windows.Forms.Button button_Maya19_Locate;
         private System.Windows.Forms.Button button_Maya19_Delete;
         private System.Windows.Forms.Button button_Maya19_Update;
+        private System.Windows.Forms.Button button_All_Update;
+        private System.Windows.Forms.Button button_All_Delete;
     }
 }
 
