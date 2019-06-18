@@ -33,7 +33,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        public static string exporterVersion = "1.4.1";
+        public static string exporterVersion = "1.4.2";
         public float scaleFactor = 1.0f;
 
         void ReportProgressChanged(int progress)
@@ -144,6 +144,7 @@ namespace Max2Babylon
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string outputDirectory = Path.GetDirectoryName(exportParameters.outputPath);
+            string folderOuputDirectory = exportParameters.textureFolder;
             string outputFileName = Path.GetFileName(exportParameters.outputPath);
 
             // Check directory exists
@@ -208,7 +209,7 @@ namespace Max2Babylon
 
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
-            if (Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
+            if (string.IsNullOrEmpty(exportParameters.pbrEnvironment) && Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
             {
                 // Environment texture
                 var environmentMap = Loader.Core.EnvironmentMap;
@@ -222,6 +223,11 @@ namespace Max2Babylon
                     babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
                     babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
                 }
+            }
+            else if (!string.IsNullOrEmpty(exportParameters.pbrEnvironment))
+            {
+                babylonScene.createDefaultSkybox = rawScene.GetBoolProperty("babylonjs_createDefaultSkybox");
+                babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
             }
 
             // Instantiate custom material exporters
@@ -342,7 +348,7 @@ namespace Max2Babylon
 
             // Default light
             bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
-            if (addDefaultLight && babylonScene.LightsList.Count == 0)
+            if (!exportParameters.pbrNoLight && addDefaultLight && babylonScene.LightsList.Count == 0)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default hemispheric light was added for your convenience", 1);
@@ -470,6 +476,39 @@ namespace Max2Babylon
                         }
                     }
                 }
+
+                var sourcePath = exportParameters.pbrEnvironment;
+                if (!string.IsNullOrEmpty(sourcePath)) {
+                    var fileName = Path.GetFileName(sourcePath);
+
+                    // Allow only dds file format
+                    if (!fileName.EndsWith(".dds"))
+                    {
+                        RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
+                    }
+                    else
+                    {
+                        RaiseMessage($"texture id = Max_Babylon_Default_Environment");
+                        babylonScene.environmentTexture = fileName;
+
+                        if (exportParameters.writeTextures)
+                        {
+                            try
+                            {
+                                var destPath = Path.Combine(babylonScene.OutputPath, fileName);
+                                if (File.Exists(sourcePath) && sourcePath != destPath)
+                                {
+                                    File.Copy(sourcePath, destPath, true);
+                                }
+                            }
+                            catch
+                            {
+                                // silently fails
+                                RaiseMessage($"Fail to export the default env texture", 3);
+                            }
+                        }
+                    }
+                }
             }
 
 
@@ -557,6 +596,7 @@ namespace Max2Babylon
                         var tempFilePath = Path.Combine(tempOutputDirectory, file);
                         var outputFile = Path.Combine(outputDirectory, file);
 
+
                         IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputFile);
                         Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);
                         moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
@@ -571,8 +611,13 @@ namespace Max2Babylon
                 foreach (var filePath in filePaths)
                 {
                     var file = Path.GetFileName(filePath);
-                    var outputPath = Path.Combine(outputDirectory, file);
+                    string ext = Path.GetExtension(file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
+                    var outputPath = Path.Combine(outputDirectory, file);
+                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder) && ExtensionIsValidGLTFTexture(ext))
+                    {
+                        outputPath = Path.Combine(exportParameters.textureFolder, file);
+                    }
 
                     IUTF8Str maxNotification = GlobalInterface.Instance.UTF8Str.Create(outputPath);
                     Loader.Global.BroadcastNotification(SystemNotificationCode.PreExport, maxNotification);

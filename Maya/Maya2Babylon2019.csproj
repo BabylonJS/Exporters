@@ -161,12 +161,44 @@
   <Import Project="..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+    <PostBuildEvent>setlocal enabledelayedexpansion
+
+SET configurationName=$(ConfigurationName)
+ECHO %25configurationName%25
+
+if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
 if not exist "$(SolutionDir)assemblies\2019" mkdir "$(SolutionDir)assemblies\2019"
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2019\"
 del "$(SolutionDir)assemblies\2019\$(TargetName).dll"
 copy "$(TargetPath)" "$(SolutionDir)assemblies\2019\$(TargetName).nll.dll"
 if exist "D:\Programmes\Autodesk\Maya2019\bin\plug-ins\" copy "$(SolutionDir)assemblies\2019\*.dll" "D:\Programmes\Autodesk\Maya2019\bin\plug-ins\"
-if exist "C:\Program Files\Autodesk\Maya2019\bin\plug-ins\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\Maya2019\bin\plug-ins\"</PostBuildEvent>
+if exist "C:\Program Files\Autodesk\Maya2019\bin\plug-ins\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\Maya2019\bin\plug-ins\"
+
+IF "%25configurationName%25"=="Debug" GOTO DebugOnMaya
+GOTO Close
+
+:DebugOnMaya
+if exist "C:\Program Files\Autodesk\Maya2019\bin\maya.exe" START /d "C:\Program Files\Autodesk\Maya2019\bin" maya.exe
+GOTO Close
+
+:Close
+PAUSE
+EXIT</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>setlocal enabledelayedexpansion
+
+SET configurationName=$(ConfigurationName)
+ECHO %25configurationName%25
+
+IF "%25configurationName%25"=="Debug" GOTO OnDebug
+GOTO Close
+
+:OnDebug
+taskkill  /im maya.exe /f /fi "STATUS eq RUNNING"
+
+:Close
+PAUSE
+EXIT</PreBuildEvent>
   </PropertyGroup>
 </Project>

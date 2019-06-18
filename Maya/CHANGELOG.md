@@ -60,3 +60,8 @@ from the export interface
 **Fixed Bugs**
 - Fixed build break caused by shared components using 3dsMax implementations
 (https://github.com/BabylonJS/Exporters/pull/498)
+
+## v1.3.1
+### (2019-06-11 14:16:08)
+**Implemented Changes**
+- Maya2Babylon packaging script. (https://github.com/BabylonJS/Exporters/pull/520)

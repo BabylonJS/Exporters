@@ -103,4 +103,23 @@
     <Content Include="Img\BJS_logo_4.0.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>setlocal enabledelayedexpansion
+
+SET configurationName=$(ConfigurationName)
+ECHO %25configurationName%25
+
+IF "%25configurationName%25"=="Debug" GOTO Close
+
+if not exist "$(SolutionDir)Dist" mkdir "$(SolutionDir)Dist"
+del "$(SolutionDir)Dist\$(TargetName).exe"
+del "$(SolutionDir)Dist\README.md"
+copy "$(TargetPath)" "$(SolutionDir)Dist\$(TargetName).exe"
+copy "$(SolutionDir)README.md" "$(SolutionDir)Dist\README.md"
+
+:Close
+PAUSE
+EXIT
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

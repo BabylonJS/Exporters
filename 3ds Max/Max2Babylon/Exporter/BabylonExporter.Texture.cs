@@ -171,15 +171,116 @@ namespace Max2Babylon
             return null;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="baseColorTexMap"></param>
-        /// <param name="alphaTexMap">Transparency weight map</param>
-        /// <param name="baseColor"></param>
-        /// <param name="alpha"></param>
-        /// <param name="babylonScene"></param>
-        /// <param name="materialName"></param>
+        private BabylonTexture ExportClearCoatTexture(ITexmap intensityTexMap, ITexmap roughnessTexMap, float coatWeight, float coatRoughness, BabylonScene babylonScene, string materialName, bool invertRoughness)
+        {
+            // --- Babylon texture ---
+            var intensityTexture = _getBitmapTex(intensityTexMap);
+            var roughnessTexture = _getBitmapTex(roughnessTexMap);
+
+            var texture = intensityTexture != null ? intensityTexture : roughnessTexture;
+            if (texture == null)
+            {
+                return null;
+            }
+
+            // Use one as a reference for UVs parameters
+
+            RaiseMessage("Export Clear Coat weight+roughness texture", 2);
+
+            string nameText = Path.GetFileNameWithoutExtension(texture.Map.FullFilePath);
+
+            var textureID = texture.GetGuid().ToString();
+            if (textureMap.ContainsKey(textureID))
+            {
+                return textureMap[textureID];
+            }
+            else
+            {
+                var babylonTexture = new BabylonTexture(textureID)
+                {
+                    name = nameText // TODO - unsafe name, may conflict with another texture name
+                };
+
+                // Level
+                babylonTexture.level = 1.0f;
+
+                // UVs
+                var uvGen = _exportUV(texture.UVGen, babylonTexture);
+
+                // Is cube
+                _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
+
+                // --- Merge maps ---
+                var hasIntensity = isTextureOk(intensityTexture);
+                var hasRoughness = isTextureOk(roughnessTexture);
+                if (!hasIntensity && !hasRoughness)
+                {
+                    return null;
+                }
+
+                // Set image format
+                ImageFormat imageFormat = ImageFormat.Jpeg;
+                babylonTexture.name += ".jpg";
+
+                if (exportParameters.writeTextures)
+                {
+                    // Load bitmaps
+                    var intensityBitmap = _loadTexture(intensityTexture);
+                    var roughnessBitmap = _loadTexture(roughnessTexture);
+
+                    // Retreive dimensions
+                    int width = 0;
+                    int height = 0;
+                    var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, intensityBitmap, roughnessBitmap);
+                    if (!haveSameDimensions)
+                    {
+                        RaiseError("Base color and transparency color maps should have same dimensions", 3);
+                    }
+
+                    // Create map
+                    var _intensity = (int)(coatWeight * 255);
+                    var _roughness = (int)(coatRoughness * 255);
+                    Bitmap intensityRoughnessBitmap = new Bitmap(width, height);
+                    for (int x = 0; x < width; x++)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            var intensityAtPixel = (intensityBitmap == null) ? _intensity : intensityBitmap.GetPixel(x, y).R;
+
+                            Color intensityRoughness;
+                            if (roughnessBitmap == null)
+                            {
+                                intensityRoughness = Color.FromArgb(intensityAtPixel, _roughness, 0);
+                            }
+                            else
+                            {
+                                var roughnessAtPixel = (roughnessBitmap == null) ?
+                                    _roughness :
+                                    invertRoughness ? 255 - roughnessBitmap.GetPixel(x, y).G : roughnessBitmap.GetPixel(x, y).G;
+
+                                intensityRoughness = Color.FromArgb(intensityAtPixel, roughnessAtPixel, 0);
+                            }
+                            intensityRoughnessBitmap.SetPixel(x, y, intensityRoughness);
+                        }
+                    }
+
+                    // Write bitmap
+                    if (isBabylonExported)
+                    {
+                        RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
+                        SaveBitmap(intensityRoughnessBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat);
+                    }
+                    else
+                    {
+                        // Store created bitmap for further use in gltf export
+                        babylonTexture.bitmap = intensityRoughnessBitmap;
+                    }
+                }
+
+                return babylonTexture;
+            }
+        }
+
         /// <returns></returns>
         private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName)
         {
@@ -511,9 +612,82 @@ namespace Max2Babylon
         // -- Export sub methods ---
         // -------------------------
 
+        private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount)
+        {
+            if (texMap == null)
+            {
+                amount = 0.0f;
+                return null;
+            }
+
+            if (texMap.ClassName == "Normal Bump")
+            {
+                var block = texMap.GetParamBlockByID(0);        // General Block
+                if (block != null)
+                {
+                    amount = block.GetFloat(0, 0, 0);           // Normal texture Mult Spin
+                    var map = block.GetTexmap(2, 0, 0);         // Normal texture
+                    var mapEnabled = block.GetInt(4, 0, 0);     // Normal texture Enable
+                    if (mapEnabled == 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture with Normal enabled are supported.", 2);
+                        return null;
+                    }
+
+                    var method = block.GetInt(6, 0, 0);         // Normal texture mode (Tangent, screen...)
+                    if (method != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture in tangent space are supported.", 2);
+                        return null;
+                    }
+                    var flipR = block.GetInt(7, 0, 0);          // Normal texture Red chanel Flip
+                    if (flipR != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture without R flip are supported.", 2);
+                        return null;
+                    }
+                    var flipG = block.GetInt(8, 0, 0);          // Normal texture Green chanel Flip
+                    if (flipG != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture without G flip are supported.", 2);
+                        return null;
+                    }
+                    var swapRG = block.GetInt(9, 0, 0);         // Normal texture swap R and G channels
+                    if (swapRG != 0)
+                    {
+                        RaiseError($"Only Normal Bump Texture without R and G swap are supported.", 2);
+                        return null;
+                    }
+
+                    // var bumpAmount = block.GetFloat(1, 0, 0);   // Bump texture Mult Spin
+                    // var bumpMap = block.GetMap(3, 0, 0);        // Bump texture
+                    var bumpMapEnable = block.GetInt(5, 0, 0);  // Bump texture Enable
+                    if (bumpMapEnable == 1)
+                    {
+                        RaiseError($"Only Normal Bump Texture without Bump are supported.", 2);
+                        return null;
+                    }
+
+                    return map;
+                }
+            }
+
+            amount = 0.0f;
+            RaiseError($"Texture type is not supported. Use a Bitmap or Normal Bump map instead.", 2);
+            return null;
+        }
+
         private BabylonTexture ExportTexture(ITexmap texMap, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
         {
-            IBitmapTex texture = _getBitmapTex(texMap);
+            IBitmapTex texture = _getBitmapTex(texMap, false);
+            if (texture == null)
+            {
+                float specialAmount;
+                var specialTexMap = _getSpecialTexmap(texMap, out specialAmount);
+                texture = _getBitmapTex(specialTexMap, false);
+                amount *= specialAmount;
+            }
+
             if (texture == null)
             {
                 return null;
@@ -682,11 +856,14 @@ namespace Max2Babylon
 
             var offset = new BabylonVector3(babylonTexture.uOffset, -babylonTexture.vOffset, 0);
             var scale = new BabylonVector3(babylonTexture.uScale, babylonTexture.vScale, 1);
-            var rotation = new BabylonQuaternion();
+            var rotationEuler = new BabylonVector3(uvGen.GetUAng(0), uvGen.GetVAng(0), uvGen.GetWAng(0));
+            var rotation = BabylonQuaternion.FromEulerAngles(rotationEuler.X, rotationEuler.Y, rotationEuler.Z);
             var pivotCenter = new BabylonVector3(-0.5f, -0.5f, 0);
             var transformMatrix = Tools.ComputeTextureTransformMatrix(pivotCenter, offset, rotation, scale);
 
             transformMatrix.decompose(scale, rotation, offset);
+            var texTransformRotationEuler = rotation.toEulerAngles();
+
             babylonTexture.uOffset = -offset.X;
             babylonTexture.vOffset = -offset.Y;
             babylonTexture.uScale = scale.X;
@@ -694,21 +871,20 @@ namespace Max2Babylon
             babylonTexture.uRotationCenter = 0.0f;
             babylonTexture.vRotationCenter = 0.0f;
             babylonTexture.invertY = false;
+            babylonTexture.uAng = texTransformRotationEuler.X;
+            babylonTexture.vAng = texTransformRotationEuler.Y;
+            babylonTexture.wAng = texTransformRotationEuler.Z;
 
             if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
                 babylonTexture.vScale *= -1; // Need to invert Y-axis for DDS texture
             }
 
-            babylonTexture.uAng = uvGen.GetUAng(0);
-            babylonTexture.vAng = uvGen.GetVAng(0);
-            babylonTexture.wAng = uvGen.GetWAng(0);
-
-
-            // TODO - rotation and scale
-            if (babylonTexture.wAng != 0f && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f))
+            if (babylonTexture.wAng != 0f 
+                && (babylonTexture.uScale != 1f || babylonTexture.vScale != 1f) 
+                && (Math.Abs(babylonTexture.uScale) - Math.Abs(babylonTexture.vScale)) > float.Epsilon)
             {
-                RaiseWarning("Rotation and tiling (scale) on a texture are only supported separatly. You can use the map UV of the mesh for those transformation.", 3);
+                RaiseWarning("Rotation and non-uniform tiling (scale) on a texture is not supported as it will cause texture shearing. You can use the map UV of the mesh for those transformations.", 3);
             }
 
 
@@ -811,7 +987,7 @@ namespace Max2Babylon
         // --------- Utils ---------
         // -------------------------
 
-        private IBitmapTex _getBitmapTex(ITexmap texMap)
+        private IBitmapTex _getBitmapTex(ITexmap texMap, bool raiseError = true)
         {
             if (texMap == null || texMap.GetParamBlock(0) == null || texMap.GetParamBlock(0).Owner == null)
             {
@@ -819,8 +995,7 @@ namespace Max2Babylon
             }
 
             var texture = texMap.GetParamBlock(0).Owner as IBitmapTex;
-
-            if (texture == null)
+            if (texture == null && raiseError)
             {
                 RaiseError($"Texture type is not supported. Use a Bitmap instead.", 2);
             }
