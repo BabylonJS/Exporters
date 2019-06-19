@@ -199,7 +199,7 @@ namespace BabylonJS_Installer
                 {
                     //We check if the uninstall button is visible for the current soft and if the current version is the latest
                     //If not, there is no need to update a soft that isn't there
-                    if(this.buttons[softYear.Key][yearVersion.Key][1].Visible && this.buttons[softYear.Key][yearVersion.Key][0].Enabled)
+                    if (this.buttons[softYear.Key][yearVersion.Key][0].Visible && this.buttons[softYear.Key][yearVersion.Key][0].Enabled)
                         this.button_update(softYear.Key, yearVersion.Key);
                 }
             }
