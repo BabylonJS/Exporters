@@ -122,7 +122,7 @@ namespace BabylonJS_Installer
             }
         }
 
-        private void displayInstall(string soft, string year)
+        public void displayInstall(string soft, string year)
         {
             string version = this.versions[soft][year];
             Label labelPath = this.labels[soft][year][0];
@@ -188,7 +188,6 @@ namespace BabylonJS_Installer
         private void button_update(string soft, string year)
         {
             this.downloader.init(soft, year, this.locations[soft][year] + this.checker.libFolder[soft]);
-            this.displayInstall(soft, year);
         }
 
         private void Button_All_Update_Click(object sender, EventArgs e)
@@ -245,7 +244,6 @@ namespace BabylonJS_Installer
         private void button_delete(string soft, string year)
         {
             this.checker.uninstallExporter(soft, year, this.locations[soft][year]);
-            this.displayInstall(soft, year);
         }
 
         private void Button_All_Delete_Click(object sender, EventArgs e)
@@ -348,6 +346,5 @@ namespace BabylonJS_Installer
         {
             this.button_locate("Maya", "2017");
         }
-
     }
 }

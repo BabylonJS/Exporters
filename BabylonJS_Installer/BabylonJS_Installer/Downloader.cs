@@ -160,12 +160,6 @@ namespace BabylonJS_Installer
 
             try
             {
-                // This way can't rewrite files
-                //ZipFile.ExtractToDirectory(
-                //    this.software + "_" + this.version + ".zip",
-                //    this.installDir
-                //    );
-
                 String zipFileName = this.software + "_" + this.version + ".zip";
                 using (ZipArchive myZip = ZipFile.OpenRead(zipFileName))
                 {
@@ -203,6 +197,8 @@ namespace BabylonJS_Installer
                     + "\"" + ex.Message + "\""
                     );
             }
+
+            this.form.displayInstall(this.software, this.version);
         }
 
         public async Task<string> GetJSONBodyRequest(string requestURI)
