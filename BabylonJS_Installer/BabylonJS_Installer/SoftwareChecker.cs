@@ -125,6 +125,8 @@ namespace BabylonJS_Installer
 
             if(errors == 0) this.form.log("\n----- UNINSTALLING COMPLETE -----\n");
             else this.form.log("\n----- UNINSTALLING COMPLETE with " + errors + "errors -----\n");
+
+            this.form.displayInstall(soft, version);
         }
 
         public void setLatestVersionDate()
