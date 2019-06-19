@@ -19,7 +19,7 @@ Once launched, it will show you for both Max/Maya and their different respective
 You can then easily install the latest available version or uninstall the plugin.
 
 ## Plugin not found
-If the plugin was not automatically found, you can easily relocate the installation folder by pressing the relocate button.
+If the software (3ds Max or Maya) was not automatically found, you can easily relocate the installation folder by pressing the (re)locate button. Just locate the root of the installation. At this point, the software will automatically search for the exporter.
 
 ## Quick Update
-The update all button is the way to go and will install all the application it found on your system at once.
+The update all button is the way to go and will install / update the exporter for all the applications found on your system at once.

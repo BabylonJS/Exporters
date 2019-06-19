@@ -711,13 +711,13 @@
             this.soft_version.Name = "soft_version";
             this.soft_version.Size = new System.Drawing.Size(130, 25);
             this.soft_version.TabIndex = 3;
-            this.soft_version.Text = "  v0.4";
+            this.soft_version.Text = "  v1.0";
             this.soft_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // button_All_Update
             // 
             this.button_All_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_All_Update.Location = new System.Drawing.Point(591, 115);
+            this.button_All_Update.Location = new System.Drawing.Point(591, 128);
             this.button_All_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_All_Update.Name = "button_All_Update";
             this.button_All_Update.Size = new System.Drawing.Size(160, 31);
@@ -729,7 +729,7 @@
             // button_All_Delete
             // 
             this.button_All_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_All_Delete.Location = new System.Drawing.Point(768, 115);
+            this.button_All_Delete.Location = new System.Drawing.Point(768, 128);
             this.button_All_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_All_Delete.Name = "button_All_Delete";
             this.button_All_Delete.Size = new System.Drawing.Size(160, 31);
