@@ -83,9 +83,9 @@ namespace Maya2Babylon.Forms
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
 
-            chkFullPBR.Checked = Loader.GetBoolProperty(PBRFullPropertyName, true);
-            chkNoAutoLight.Checked = Loader.GetBoolProperty(PBRNoLightPropertyName, true);
-            chkDefaultSkybox.Checked = Loader.GetBoolProperty(PBRDefaultSkyboxName, true);
+            chkFullPBR.Checked = Loader.GetBoolProperty(PBRFullPropertyName, false);
+            chkNoAutoLight.Checked = Loader.GetBoolProperty(PBRNoLightPropertyName, false);
+            chkDefaultSkybox.Checked = Loader.GetBoolProperty(PBRDefaultSkyboxName, false);
         }
 
         private void butBrowse_Click(object sender, EventArgs e)
@@ -358,7 +358,7 @@ namespace Maya2Babylon.Forms
                     chkNoAutoLight.Checked = false;
                     chkFullPBR.Enabled = false;
                     chkFullPBR.Checked = false;
-                    chkDefaultSkybox.Enabled = true;
+                    chkDefaultSkybox.Enabled = false;
                     chkDefaultSkybox.Checked = false;
                     butEnvironmentPath.Enabled = false;
                     txtEnvironmentName.Enabled = false;
@@ -372,7 +372,7 @@ namespace Maya2Babylon.Forms
                     chkNoAutoLight.Checked = false;
                     chkFullPBR.Enabled = false;
                     chkFullPBR.Checked = false;
-                    chkDefaultSkybox.Enabled = true;
+                    chkDefaultSkybox.Enabled = false;
                     chkDefaultSkybox.Checked = false;
                     butEnvironmentPath.Enabled = false;
                     txtEnvironmentName.Enabled = false;
