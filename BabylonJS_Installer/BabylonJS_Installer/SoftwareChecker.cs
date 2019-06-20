@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace BabylonJS_Installer
 {
     class SoftwareChecker
     {
+        string latestVersionDate;
         private Dictionary<string, string[]> files = new Dictionary<string, string[]>() {
             { "Max", new string[] {
                 "GDImageLibrary",
@@ -80,9 +83,10 @@ namespace BabylonJS_Installer
                         lastUpdate = File.GetLastWriteTime(path + "bin\\assemblies\\Max2Babylon.dll").ToString();
                         break;
                     case "Maya":
-                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Max2Babylon.dll").ToString();
+                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Maya2Babylon.dll").ToString();
                         break;
                     default:
+                        this.form.error("Error : software not found");
                         break;
                 }
 
@@ -112,7 +116,7 @@ namespace BabylonJS_Installer
                 catch(Exception ex)
                 {
                     errors++;
-                    this.form.log(
+                    this.form.error(
                         "Error while deleting the file : " + file + ".dll \n"
                         + "At : " + path + this.libFolder[soft] + "\\" + "\n"
                         + ex.Message);
@@ -121,6 +125,53 @@ namespace BabylonJS_Installer
 
             if(errors == 0) this.form.log("\n----- UNINSTALLING COMPLETE -----\n");
             else this.form.log("\n----- UNINSTALLING COMPLETE with " + errors + "errors -----\n");
+
+            this.form.displayInstall(soft, version);
+        }
+
+        public void setLatestVersionDate()
+        {
+            Downloader downloader = new Downloader();
+            Task<string> jsonRequest = Task.Run(async () => { return await downloader.GetJSONBodyRequest(downloader.GetURLGitHubAPI()); });
+            //TO DO Find a better way to parse JSON aswell
+            string json = jsonRequest.Result;
+            string published_at = json.Substring(json.IndexOf("\"published_at\":"));
+            published_at = published_at.Remove(published_at.IndexOf("\","));
+            this.latestVersionDate = published_at.Remove(0, "\"published_at\":\"".Length);
+        }
+
+        public bool isLatestVersionInstalled(string soft, string version, string location)
+        {// To ensure latest version, we compare between last modified time of files and the publish date of github release
+            string[] latestDateSplit = this.latestVersionDate.Split('-');
+            string year = latestDateSplit[0];
+            string month = latestDateSplit[1];
+            string day = latestDateSplit[2].Substring(0, 2);
+            bool isLatestversion = false;
+            string lastUpdate = "";
+            switch (soft)
+            {
+                case "Max":
+                    lastUpdate = File.GetLastWriteTime(location + "bin\\assemblies\\Max2Babylon.dll").ToString();                    
+                    if (lastUpdate.Contains(year) && lastUpdate.Contains(month) && lastUpdate.Contains(day)) isLatestversion = true;
+                    break;
+
+                case "Maya":
+                    lastUpdate = File.GetLastWriteTime(location + "bin\\plug-ins\\Maya2Babylon.dll").ToString();
+                    if (lastUpdate.Contains(year) && lastUpdate.Contains(month) && lastUpdate.Contains(day)) isLatestversion = true;
+                    break;
+
+                default:
+                    this.form.error("Error : software not found");
+                    break;
+            }
+            return isLatestversion;
+        }
+
+        public bool ensureAdminMode()
+        {
+            var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
