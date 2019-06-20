@@ -22,7 +22,7 @@ namespace BabylonJS_Installer
             } },
             { "Maya", new string[] {
                 "GDImageLibrary",
-                "Maya2Babylon",
+                "Maya2Babylon.nll",
                 "Newtonsoft.Json",
                 "TargaImage",
                 "TQ.Texture"
@@ -83,7 +83,7 @@ namespace BabylonJS_Installer
                         lastUpdate = File.GetLastWriteTime(path + "bin\\assemblies\\Max2Babylon.dll").ToString();
                         break;
                     case "Maya":
-                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Maya2Babylon.dll").ToString();
+                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Maya2Babylon.nll.dll").ToString();
                         break;
                     default:
                         this.form.error("Error : software not found");
@@ -156,7 +156,7 @@ namespace BabylonJS_Installer
                     break;
 
                 case "Maya":
-                    lastUpdate = File.GetLastWriteTime(location + "bin\\plug-ins\\Maya2Babylon.dll").ToString();
+                    lastUpdate = File.GetLastWriteTime(location + "bin\\plug-ins\\Maya2Babylon.nll.dll").ToString();
                     if (lastUpdate.Contains(year) && lastUpdate.Contains(month) && lastUpdate.Contains(day)) isLatestversion = true;
                     break;
 
