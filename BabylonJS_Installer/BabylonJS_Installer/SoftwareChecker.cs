@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -135,29 +136,23 @@ namespace BabylonJS_Installer
             Task<string> jsonRequest = Task.Run(async () => { return await downloader.GetJSONBodyRequest(downloader.GetURLGitHubAPI()); });
             //TO DO Find a better way to parse JSON aswell
             string json = jsonRequest.Result;
-            string published_at = json.Substring(json.IndexOf("\"published_at\":"));
-            published_at = published_at.Remove(published_at.IndexOf("\","));
-            this.latestVersionDate = published_at.Remove(0, "\"published_at\":\"".Length);
+            string created_at = json.Substring(json.IndexOf("\"created_at\":"));
+            created_at = created_at.Remove(created_at.IndexOf("\","));
+            this.latestVersionDate = created_at.Remove(0, "\"created_at\":\"".Length);
         }
 
         public bool isLatestVersionInstalled(string soft, string version, string location)
         {// To ensure latest version, we compare between last modified time of files and the publish date of github release
-            string[] latestDateSplit = this.latestVersionDate.Split('-');
-            string year = latestDateSplit[0];
-            string month = latestDateSplit[1];
-            string day = latestDateSplit[2].Substring(0, 2);
-            bool isLatestversion = false;
-            string lastUpdate = "";
+            var latest = DateTime.Parse(this.latestVersionDate, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
+            var isLatestversion = false;
             switch (soft)
             {
                 case "Max":
-                    lastUpdate = File.GetLastWriteTime(location + "bin\\assemblies\\Max2Babylon.dll").ToString();                    
-                    if (lastUpdate.Contains(year) && lastUpdate.Contains(month) && lastUpdate.Contains(day)) isLatestversion = true;
+                    if (latest <= File.GetLastWriteTime(location + "bin\\assemblies\\Max2Babylon.dll")) isLatestversion = true;
                     break;
 
                 case "Maya":
-                    lastUpdate = File.GetLastWriteTime(location + "bin\\plug-ins\\Maya2Babylon.nll.dll").ToString();
-                    if (lastUpdate.Contains(year) && lastUpdate.Contains(month) && lastUpdate.Contains(day)) isLatestversion = true;
+                    if (latest <= File.GetLastWriteTime(location + "bin\\plug-ins\\Maya2Babylon.nll.dll")) isLatestversion = true;
                     break;
 
                 default:
