@@ -336,9 +336,9 @@
             this.label8.Location = new System.Drawing.Point(8, 484);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(88, 20);
+            this.label8.Size = new System.Drawing.Size(162, 20);
             this.label8.TabIndex = 28;
-            this.label8.Text = "Animations";
+            this.label8.Text = "Babylon PBR Options";
             // 
             // chkBakeAnimationFrames
             // 
