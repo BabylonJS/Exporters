@@ -268,9 +268,9 @@
             this.chkDefaultSkybox.Location = new System.Drawing.Point(480, 509);
             this.chkDefaultSkybox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkDefaultSkybox.Name = "chkDefaultSkybox";
-            this.chkDefaultSkybox.Size = new System.Drawing.Size(189, 24);
+            this.chkDefaultSkybox.Size = new System.Drawing.Size(170, 24);
             this.chkDefaultSkybox.TabIndex = 34;
-            this.chkDefaultSkybox.Text = "Create Default Skybox";
+            this.chkDefaultSkybox.Text = "Add Default Skybox";
             this.chkDefaultSkybox.UseVisualStyleBackColor = true;
             // 
             // label9
