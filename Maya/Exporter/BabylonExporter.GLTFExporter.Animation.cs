@@ -158,11 +158,23 @@ namespace Maya2Babylon
                 {
                     // Filter animation keys to only keep frames between start and end
                     List<BabylonAnimationKey> keysInRangeFull = babylonAnimation.keysFull.FindAll(babylonAnimationKey => babylonAnimationKey.frame >= startFrame && babylonAnimationKey.frame <= endFrame);
-
+                    
                     // Optimization process always keeps first and last frames
                     OptimizeAnimations(keysInRangeFull, true);
+                    bool keysInRangeAreRelevant = IsAnimationKeysRelevant(keysInRangeFull, babylonAnimation.property);
 
-                    if (IsAnimationKeysRelevant(keysInRangeFull, babylonAnimation.property))
+                    // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel
+                    if (!keysInRangeAreRelevant && _bakeAnimationFrames)
+                    {
+                        List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(babylonAnimation.keysFull);
+                        OptimizeAnimations(optimizedKeysFull, true);
+                        keysInRangeAreRelevant = IsAnimationKeysRelevant(optimizedKeysFull, babylonAnimation.property);
+                    }
+
+                    // If we have any significant animation keys in this channel
+                    // (or if we are baking the animation track and have any significant animation keys in the whole track)
+                    // then add the optimized keys in range to the animation track
+                    if (keysInRangeAreRelevant)
                     {
                         // Override animation keys
                         babylonAnimation.keys = keysInRangeFull.ToArray();
