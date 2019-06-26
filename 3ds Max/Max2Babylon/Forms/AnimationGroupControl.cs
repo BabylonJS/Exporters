@@ -157,14 +157,51 @@ namespace Max2Babylon
             confirmedInfo.FrameStart = newFrameStart;
             confirmedInfo.FrameEnd = newFrameEnd;
 
-            if(nodesChanged)
+            if (nodesChanged)
+            {
                 confirmedInfo.NodeHandles = newHandles;
+                confirmedInfo = CalculateEndFrameFromAnimationGroupNodes(confirmedInfo);
+            }
 
             ResetChangedTextBoxColors();
             MaxNodeTree.SelectedNode = null;
 
             InfoChanged?.Invoke(confirmedInfo);
             ConfirmPressed?.Invoke(confirmedInfo);
+        }
+
+        private AnimationGroup CalculateEndFrameFromAnimationGroupNodes(AnimationGroup animationGroup)
+        {
+            int endFrame = 0;
+            foreach (uint nodeHandle in currentInfo.NodeHandles)
+            {
+                IINode node = Loader.Core.GetINodeByHandle(nodeHandle);
+                if (node.IsAnimated && node.TMController!=null)
+                {
+                    int lastKey = 0;
+                    if (node.TMController.PositionController != null)
+                    {
+                        int posKeys = node.TMController.PositionController.NumKeys;
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
+                    }
+
+                    if (node.TMController.RotationController!=null)
+                    {
+                        int rotKeys = node.TMController.RotationController.NumKeys;
+                        lastKey = Math.Max(lastKey, node.TMController.RotationController.GetKeyTime(rotKeys - 1));
+                    }
+
+                    if (node.TMController.ScaleController!=null)
+                    {
+                        int scaleKeys = node.TMController.ScaleController.NumKeys;
+                        lastKey = Math.Max(lastKey, node.TMController.ScaleController.GetKeyTime(scaleKeys - 1));
+                    }
+                    decimal keyTime = Decimal.Ceiling(lastKey / 160);
+                    endFrame = Math.Max(endFrame, Decimal.ToInt32(keyTime));
+                }
+            }
+            animationGroup.FrameEnd = endFrame;
+            return animationGroup;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
