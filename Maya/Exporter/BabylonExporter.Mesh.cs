@@ -540,7 +540,7 @@ namespace Maya2Babylon
 
                 if (_exportSkin && mFnSkinCluster != null)
                 {
-                    RaiseWarning("A mesh with both skin and morph target is not fully supported.", 3);
+                    RaiseWarning("A mesh with both skinning and morph target is not fully supported. Please set the playhead at the frame you want to choose as the bind pose before exporting.", 3);
                 }
 
                 if(blendShapeDeformers.Count > 1)
