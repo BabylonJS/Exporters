@@ -431,7 +431,7 @@ namespace Maya2Babylon
             {
                 name = materialName + "_baseColor" + ".png" // TODO - unsafe name, may conflict with another texture name
             };
-            babylonTexture.name = babylonTexture.name.Replace(":", string.Empty);
+            babylonTexture.name = babylonTexture.name.Replace(":", "_");
 
             // Level
             babylonTexture.level = 1.0f;

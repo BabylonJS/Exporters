@@ -298,7 +298,7 @@ namespace Maya2Babylon
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
                             var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
-                            baseColorFileName = baseColorFileName.Replace(":", string.Empty);
+                            baseColorFileName = baseColorFileName.Replace(":", "_");
                             textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
