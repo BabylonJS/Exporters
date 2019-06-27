@@ -256,6 +256,19 @@ namespace Max2Babylon
     {
         const string s_AnimationListPropertyName = "babylonjs_AnimationList";
 
+        public AnimationGroup GetAnimationGroupByName(string name)
+        {
+            foreach (AnimationGroup animationGroup in this)
+            {
+                if (animationGroup.Name == name)
+                {
+                    return animationGroup;
+                }
+            }
+
+            return null;
+        }
+
         public void LoadFromData()
         {
             string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
