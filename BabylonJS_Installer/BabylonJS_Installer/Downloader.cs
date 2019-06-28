@@ -118,14 +118,15 @@ namespace BabylonJS_Installer
 
         private void download(string releaseName)
         {
-            if(this.software.Equals("Maya") && (this.version.Equals("2017") || this.version.Equals("2018")))
+            var downloadVersion = this.version;
+            if (this.software.Equals("Maya") && (this.version.Equals("2017") || this.version.Equals("2018")))
             {
                 this.form.warn("Maya 2017 and 2018 have the same archive, changing version for proper download");
-                this.version = "2017-2018";
+                downloadVersion = "2017-2018";
             }
             this.form.log(
                 "Downloading files : \n"
-                + this.url_download + releaseName + "/" + this.software + "_" + this.version + ".zip"
+                + this.url_download + releaseName + "/" + this.software + "_" + downloadVersion + ".zip"
                 );
 
             // Download the zip
@@ -134,8 +135,8 @@ namespace BabylonJS_Installer
                 using (var client = new WebClient())
                 {
                     client.DownloadFile(
-                        this.url_download + releaseName + "/" + this.software + "_" + this.version + ".zip",
-                        this.software + "_" + this.version + ".zip"
+                        this.url_download + releaseName + "/" + this.software + "_" + downloadVersion + ".zip",
+                        this.software + "_" + downloadVersion + ".zip"
                         );
                 }
             }
@@ -148,10 +149,10 @@ namespace BabylonJS_Installer
                     );
             }
 
-            this.downloadComplete();
+            this.downloadComplete(downloadVersion);
         }
 
-        private void downloadComplete()
+        private void downloadComplete(string downloadVersion)
         {
             this.form.log(
                 "Download complete.\n"
@@ -160,7 +161,7 @@ namespace BabylonJS_Installer
 
             try
             {
-                String zipFileName = this.software + "_" + this.version + ".zip";
+                String zipFileName = this.software + "_" + downloadVersion + ".zip";
                 using (ZipArchive myZip = ZipFile.OpenRead(zipFileName))
                 {
                     foreach (ZipArchiveEntry entry in myZip.Entries)
@@ -186,8 +187,8 @@ namespace BabylonJS_Installer
 
             try
             {
-                File.Delete(this.software + "_" + this.version + ".zip");
-                this.form.log("\n----- " + this.software + " " + this.version + " EXPORTER UP TO DATE ----- \n");
+                File.Delete(this.software + "_" + downloadVersion + ".zip");
+                this.form.log("\n----- " + this.software + " " + downloadVersion + " EXPORTER UP TO DATE ----- \n");
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace BabylonJS_Installer
 {
@@ -11,6 +12,7 @@ namespace BabylonJS_Installer
         private SoftwareChecker checker = null;
 
         private Dictionary<string, Dictionary<string, string>> versions; // Soft, Version - Year
+        private Dictionary<string, Dictionary<string, bool>> latestInstalled; // Soft, Version - isLatestInstalled
         private Dictionary<string, Dictionary<string, string>> locations; // Soft, Year - Location
         private Dictionary<string, Dictionary<string, Label[]>> labels; // Soft, Year - [lab. location, lab. expDate]
         private Dictionary<string, Dictionary<string, Button[]>> buttons; // Soft, Year - [but.Update, but.Uninstall, but.Locate]
@@ -32,6 +34,16 @@ namespace BabylonJS_Installer
             this.versions["Maya"].Add("2019", "20");
             this.versions["Maya"].Add("2018", "19");
             this.versions["Maya"].Add("2017", "18");
+
+            this.latestInstalled = new Dictionary<string, Dictionary<string, bool>>();
+            foreach (var dcc in this.versions.Keys)
+            {
+                this.latestInstalled[dcc] = new Dictionary<string, bool>();
+                foreach (var dccVersion in this.versions[dcc].Keys)
+                {
+                    this.latestInstalled[dcc][dccVersion] = true;
+                }
+            }
 
             this.labels = new Dictionary<string, Dictionary<string, Label[]>>();
             this.labels["Max"] = new Dictionary<string, Label[]>();
@@ -155,15 +167,9 @@ namespace BabylonJS_Installer
                     buttonUninstall.Visible = false;
                 }
 
-                if(this.checker.isLatestVersionInstalled(soft, version, location))
-                {
-                    buttonUpdate.Enabled = false;
-                }
-                else
-                {
-                    buttonUpdate.Enabled = true;
-                }
-                // TO DO : Check if the installed version (if one) is the latest or not.
+                var isLatest = this.checker.isLatestVersionInstalled(soft, version, location);
+                this.latestInstalled[soft][version] = isLatest;
+                buttonUpdate.Enabled = !isLatest;
             }
             else
             {
@@ -174,6 +180,9 @@ namespace BabylonJS_Installer
                 buttonUpdate.Visible = false;
                 buttonUninstall.Visible = false;
             }
+
+            var oneEnabled = this.latestInstalled.Any(dccTools => dccTools.Value.Any(installedTools => installedTools.Value));
+            button_All_Update.Enabled = !oneEnabled;
         }
 
         // ---------- UI CLICKS ----------
