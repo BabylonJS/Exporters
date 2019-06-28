@@ -162,7 +162,7 @@ namespace Max2Babylon
                     attributes = new Dictionary<string, int>()
                 };
                 meshPrimitives.Add(meshPrimitive);
-                
+
                 // Material
                 if (babylonMesh.materialId != null)
                 {
