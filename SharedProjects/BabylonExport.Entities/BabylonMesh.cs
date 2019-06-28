@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
+    
     [DataContract]
     public class BabylonMesh : BabylonAbstractMesh
     {
@@ -120,6 +123,23 @@ namespace BabylonExport.Entities
             lodDistances = null;
 
             position = new float[] { 0, 0, 0 };
+        }
+
+        // sometimes the skinning weights can be a tad off between otherwise identically skinned meshes. This factor allow a variance of 5% influence.
+        internal static float SkinningWeightToleranceThreshold = 0.05f;
+
+
+        internal static bool MeshesShareSkin(BabylonMesh matchingSkinnedMesh, BabylonMesh babylonMesh)
+        {
+            // check if the skinning matrix indices are equivalent
+            if (!babylonMesh.matricesIndices.SequenceEqual(matchingSkinnedMesh.matricesIndices))
+            {
+                return false;
+            }
+
+            // finally, compare the skinning matrix weights within a tolerance threshold.
+            var skinDifference = babylonMesh.matricesWeights.Zip(matchingSkinnedMesh.matricesWeights, (first, second) => first - second).ToArray();
+            return skinDifference.All(value => Math.Abs(value) < BabylonMesh.SkinningWeightToleranceThreshold);
         }
     }
 
