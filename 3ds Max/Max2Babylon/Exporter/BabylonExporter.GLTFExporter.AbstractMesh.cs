@@ -1,6 +1,7 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -25,9 +26,20 @@ namespace Max2Babylon
                 if (gltfMesh.idBabylonSkeleton.HasValue)
                 {
                     var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
-                    // Export a new skeleton if necessary and a new skin
-                    var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
-                    gltfNode.skin = gltfSkin.index;
+
+                    // if this mesh is sharing a skin with another mesh, use the exported skin
+                    if (sharedSkinnedMeshesByOriginal.Values.Any(skinSharingMeshes => skinSharingMeshes.Contains(gltfMesh)))
+                    {
+                        RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on previously exported skeleton '" + babylonSkeleton.name + "'", 2);
+                        var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
+                        gltfNode.skin = skeletonExportData.skinIndex;
+                    }
+                    else
+                    {
+                        // Export a new skeleton if necessary and a new skin
+                        var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
+                        gltfNode.skin = gltfSkin.index;
+                    }
                 }
             }
 

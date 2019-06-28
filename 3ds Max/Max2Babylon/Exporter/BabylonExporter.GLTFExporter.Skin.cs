@@ -52,6 +52,7 @@ namespace Max2Babylon
             gltfSkin.index = gltf.SkinsList.Count;
             gltf.SkinsList.Add(gltfSkin);
             babylonSkeletonExportData.nb++;
+            babylonSkeletonExportData.skinIndex = gltfSkin.index;
 
             var bones = new List<BabylonBone>(babylonSkeleton.bones);
 
@@ -260,6 +261,11 @@ namespace Max2Babylon
             /// Number of times the skeleton has been exported
             /// </summary>
             public int nb = 0;
+
+            /// <summary>
+            /// Which skin index is used for this skeleton
+            /// </summary>
+            public int skinIndex = -1;
 
             /// <summary>
             /// Each glTF bone is binded to a babylon bone
