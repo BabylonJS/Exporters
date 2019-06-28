@@ -933,6 +933,43 @@ namespace Max2Babylon
 
         #endregion
 
+        #region AnimationGroup Helpers
+        public static int CalculateEndFrameFromAnimationGroupNodes(AnimationGroup animationGroup)
+        {
+            int endFrame = 0;
+            foreach (uint nodeHandle in animationGroup.NodeHandles)
+            {
+                IINode node = Loader.Core.GetINodeByHandle(nodeHandle);
+                if (node.IsAnimated && node.TMController != null)
+                {
+                    int lastKey = 0;
+                    if (node.TMController.PositionController != null)
+                    {
+                        int posKeys = node.TMController.PositionController.NumKeys;
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
+                    }
+
+                    if (node.TMController.RotationController != null)
+                    {
+                        int rotKeys = node.TMController.RotationController.NumKeys;
+                        lastKey = Math.Max(lastKey, node.TMController.RotationController.GetKeyTime(rotKeys - 1));
+                    }
+
+                    if (node.TMController.ScaleController != null)
+                    {
+                        int scaleKeys = node.TMController.ScaleController.NumKeys;
+                        lastKey = Math.Max(lastKey, node.TMController.ScaleController.GetKeyTime(scaleKeys - 1));
+                    }
+                    decimal keyTime = Decimal.Ceiling(lastKey / 160);
+                    endFrame = Math.Max(endFrame, Decimal.ToInt32(keyTime));
+                }
+            }
+
+            return (endFrame!=0)? endFrame : animationGroup.FrameEnd;
+        }
+        #endregion
+
+
         #region Windows.Forms.Control Serialization
 
         public static bool PrepareCheckBox(CheckBox checkBox, IINode node, string propertyName, int defaultState = 0)
