@@ -27,19 +27,9 @@ namespace Max2Babylon
                 {
                     var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
 
-                    // if this mesh is sharing a skin with another mesh, use the exported skin
-                    if (sharedSkinnedMeshesByOriginal.Values.Any(skinSharingMeshes => skinSharingMeshes.Contains(gltfMesh)))
-                    {
-                        RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on previously exported skeleton '" + babylonSkeleton.name + "'", 2);
-                        var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
-                        gltfNode.skin = skeletonExportData.skinIndex;
-                    }
-                    else
-                    {
-                        // Export a new skeleton if necessary and a new skin
-                        var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
-                        gltfNode.skin = gltfSkin.index;
-                    }
+                    // Export a new skeleton if necessary and a new skin
+                    var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode, gltfMesh);
+                    gltfNode.skin = gltfSkin.index;
                 }
             }
 

@@ -9,6 +9,8 @@ namespace Max2Babylon
     partial class BabylonExporter
     {
         private List<BabylonMesh> alreadyExportedSkinnedMeshes = new List<BabylonMesh>();
+
+        // Meshes that share skinning information, indexed by the exported mesh with the original skinning information.
         private Dictionary<GLTFMesh, List<GLTFMesh>> sharedSkinnedMeshesByOriginal = new Dictionary<GLTFMesh, List<GLTFMesh>>();
         private GLTFMesh ExportMesh(BabylonMesh babylonMesh, GLTF gltf, BabylonScene babylonScene)
         {
