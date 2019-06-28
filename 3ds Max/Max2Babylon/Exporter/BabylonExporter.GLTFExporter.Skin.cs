@@ -52,101 +52,100 @@ namespace Max2Babylon
                 RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
                 var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
                 gltfNode.skin = skeletonExportData.skinIndex;
+                return gltf.skins[(int)gltfNode.skin];
             }
-            else
+
+            // otherwise create a new GLTFSkin
+            var nameSuffix = babylonSkeletonExportData.nb != 0 ? "_" + babylonSkeletonExportData.nb : "";
+            GLTFSkin gltfSkin = new GLTFSkin
             {
-                // otherwise create a new GLTFSkin
-                var nameSuffix = babylonSkeletonExportData.nb != 0 ? "_" + babylonSkeletonExportData.nb : "";
-                GLTFSkin gltfSkin = new GLTFSkin
-                {
-                    name = babylonSkeleton.name + nameSuffix
-                };
-                gltfSkin.index = gltf.SkinsList.Count;
-                gltf.SkinsList.Add(gltfSkin);
-                babylonSkeletonExportData.nb++;
-                babylonSkeletonExportData.skinIndex = gltfSkin.index;
+                name = babylonSkeleton.name + nameSuffix
+            };
+            gltfSkin.index = gltf.SkinsList.Count;
+            gltf.SkinsList.Add(gltfSkin);
+            babylonSkeletonExportData.nb++;
+            babylonSkeletonExportData.skinIndex = gltfSkin.index;
 
-                var bones = new List<BabylonBone>(babylonSkeleton.bones);
+            var bones = new List<BabylonBone>(babylonSkeleton.bones);
 
-                // Compute and store world matrix of each bone
-                var bonesWorldMatrices = new Dictionary<int, BabylonMatrix>();
-                foreach (var babylonBone in babylonSkeleton.bones)
+            // Compute and store world matrix of each bone
+            var bonesWorldMatrices = new Dictionary<int, BabylonMatrix>();
+            foreach (var babylonBone in babylonSkeleton.bones)
+            {
+                if (!bonesWorldMatrices.ContainsKey(babylonBone.index))
                 {
-                    if (!bonesWorldMatrices.ContainsKey(babylonBone.index))
-                    {
-                        BabylonMatrix boneWorldMatrix = _getBoneWorldMatrix(babylonBone, bones);
-                        bonesWorldMatrices.Add(babylonBone.index, boneWorldMatrix);
-                    }
+                    BabylonMatrix boneWorldMatrix = _getBoneWorldMatrix(babylonBone, bones);
+                    bonesWorldMatrices.Add(babylonBone.index, boneWorldMatrix);
                 }
-
-                // Buffer
-                var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
-
-                // Accessor - InverseBindMatrices
-                var accessorInverseBindMatrices = GLTFBufferService.Instance.CreateAccessor(
-                    gltf,
-                    GLTFBufferService.Instance.GetBufferViewFloatMat4(gltf, buffer),
-                    "accessorInverseBindMatrices",
-                    GLTFAccessor.ComponentType.FLOAT,
-                    GLTFAccessor.TypeEnum.MAT4
-                );
-                gltfSkin.inverseBindMatrices = accessorInverseBindMatrices.index;
-
-                // World matrix of the node
-                var nodeWorldMatrix = _getNodeWorldMatrix(gltfNode);
-
-                var gltfJoints = new List<int>();
-
-                foreach (var babylonBone in babylonSkeleton.bones)
-                {
-                    GLTFNode gltfBoneNode = null;
-                    if (!babylonSkeletonExportData.nodeByBone.ContainsKey(babylonBone))
-                    {
-                        // Export bone as a new node
-                        gltfBoneNode = _exportBone(babylonBone, gltf, babylonSkeleton, bones);
-                        babylonSkeletonExportData.nodeByBone.Add(babylonBone, gltfBoneNode);
-                    }
-                    gltfBoneNode = babylonSkeletonExportData.nodeByBone[babylonBone];
-
-                    gltfJoints.Add(gltfBoneNode.index);
-
-                    // Set this bone as skeleton if it is a root
-                    // Meaning of 'skeleton' here is the top root bone
-                    if (babylonBone.parentBoneIndex == -1)
-                    {
-                        gltfSkin.skeleton = gltfBoneNode.index;
-                    }
-
-                    // Compute inverseBindMatrice for this bone when attached to this node
-                    var boneLocalMatrix = new BabylonMatrix();
-                    boneLocalMatrix.m = babylonBone.matrix;
-                    //printMatrix("boneLocalMatrix[" + babylonBone.name + "]", boneLocalMatrix);
-
-                    BabylonMatrix boneWorldMatrix = null;
-                    if (babylonBone.parentBoneIndex == -1)
-                    {
-                        boneWorldMatrix = boneLocalMatrix;
-                    }
-                    else
-                    {
-                        var parentWorldMatrix = bonesWorldMatrices[babylonBone.parentBoneIndex];
-                        // Remove scale of parent
-                        // This actually enable to take into account the scale of the bones, except for the root one
-                        parentWorldMatrix = _removeScale(parentWorldMatrix);
-
-                        boneWorldMatrix = boneLocalMatrix * parentWorldMatrix;
-                    }
-                    //printMatrix("boneWorldMatrix[" + babylonBone.name + "]", boneWorldMatrix);
-
-                    var inverseBindMatrices = nodeWorldMatrix * BabylonMatrix.Invert(boneWorldMatrix);
-
-                    // Populate accessor
-                    List<float> matrix = new List<float>(inverseBindMatrices.m);
-                    matrix.ForEach(n => accessorInverseBindMatrices.bytesList.AddRange(BitConverter.GetBytes(n)));
-                    accessorInverseBindMatrices.count++;
-                }
-                gltfSkin.joints = gltfJoints.ToArray();
             }
+
+            // Buffer
+            var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
+
+            // Accessor - InverseBindMatrices
+            var accessorInverseBindMatrices = GLTFBufferService.Instance.CreateAccessor(
+                gltf,
+                GLTFBufferService.Instance.GetBufferViewFloatMat4(gltf, buffer),
+                "accessorInverseBindMatrices",
+                GLTFAccessor.ComponentType.FLOAT,
+                GLTFAccessor.TypeEnum.MAT4
+            );
+            gltfSkin.inverseBindMatrices = accessorInverseBindMatrices.index;
+
+            // World matrix of the node
+            var nodeWorldMatrix = _getNodeWorldMatrix(gltfNode);
+
+            var gltfJoints = new List<int>();
+
+            foreach (var babylonBone in babylonSkeleton.bones)
+            {
+                GLTFNode gltfBoneNode = null;
+                if (!babylonSkeletonExportData.nodeByBone.ContainsKey(babylonBone))
+                {
+                    // Export bone as a new node
+                    gltfBoneNode = _exportBone(babylonBone, gltf, babylonSkeleton, bones);
+                    babylonSkeletonExportData.nodeByBone.Add(babylonBone, gltfBoneNode);
+                }
+                gltfBoneNode = babylonSkeletonExportData.nodeByBone[babylonBone];
+
+                gltfJoints.Add(gltfBoneNode.index);
+
+                // Set this bone as skeleton if it is a root
+                // Meaning of 'skeleton' here is the top root bone
+                if (babylonBone.parentBoneIndex == -1)
+                {
+                    gltfSkin.skeleton = gltfBoneNode.index;
+                }
+
+                // Compute inverseBindMatrice for this bone when attached to this node
+                var boneLocalMatrix = new BabylonMatrix();
+                boneLocalMatrix.m = babylonBone.matrix;
+                //printMatrix("boneLocalMatrix[" + babylonBone.name + "]", boneLocalMatrix);
+
+                BabylonMatrix boneWorldMatrix = null;
+                if (babylonBone.parentBoneIndex == -1)
+                {
+                    boneWorldMatrix = boneLocalMatrix;
+                }
+                else
+                {
+                    var parentWorldMatrix = bonesWorldMatrices[babylonBone.parentBoneIndex];
+                    // Remove scale of parent
+                    // This actually enable to take into account the scale of the bones, except for the root one
+                    parentWorldMatrix = _removeScale(parentWorldMatrix);
+
+                    boneWorldMatrix = boneLocalMatrix * parentWorldMatrix;
+                }
+                //printMatrix("boneWorldMatrix[" + babylonBone.name + "]", boneWorldMatrix);
+
+                var inverseBindMatrices = nodeWorldMatrix * BabylonMatrix.Invert(boneWorldMatrix);
+
+                // Populate accessor
+                List<float> matrix = new List<float>(inverseBindMatrices.m);
+                matrix.ForEach(n => accessorInverseBindMatrices.bytesList.AddRange(BitConverter.GetBytes(n)));
+                accessorInverseBindMatrices.count++;
+            }
+            gltfSkin.joints = gltfJoints.ToArray();
 
             return gltfSkin;
         }
