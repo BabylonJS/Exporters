@@ -205,5 +205,13 @@ namespace Max2Babylon
             }
             MaxNodeTree.EndUpdate();
         }
+
+        private void calculateTimeRangeBtn_Click(object sender, EventArgs e)
+        {
+            if (currentInfo == null)
+                return;
+
+            endTextBox.Text = Tools.CalculateEndFrameFromAnimationGroupNodes(currentInfo).ToString();
+        }
     }
 }

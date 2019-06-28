@@ -258,15 +258,7 @@ namespace Max2Babylon
 
         public AnimationGroup GetAnimationGroupByName(string name)
         {
-            foreach (AnimationGroup animationGroup in this)
-            {
-                if (animationGroup.Name == name)
-                {
-                    return animationGroup;
-                }
-            }
-
-            return null;
+            return this.First(animationGroup => animationGroup.Name == name);
         }
 
         public void LoadFromData()
