@@ -42,7 +42,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        public static string exporterVersion = "1.3.1";
+        public static string exporterVersion = "1.4.0";
 
         /// <summary>
         /// Export to file
@@ -69,7 +69,8 @@ namespace Maya2Babylon
         public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
                             bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
                             bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression,
-                            bool exportMorphNormal, bool exportMorphTangent, bool exportKHRLightsPunctual, bool exportKHRTextureTransform, bool bakeAnimationFrames)
+                            bool exportMorphNormal, bool exportMorphTangent, bool exportKHRLightsPunctual, bool exportKHRTextureTransform, bool bakeAnimationFrames,
+                            bool fullPBR, bool noAutoLight, bool defaultSkybox, string environmentName)
         {
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
@@ -350,7 +351,7 @@ namespace Maya2Babylon
             }
 
             // Default light
-            if (babylonScene.LightsList.Count == 0)
+            if (!noAutoLight && babylonScene.LightsList.Count == 0)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default ambient light was added for your convenience", 1);
@@ -404,12 +405,12 @@ namespace Maya2Babylon
             GenerateMaterialDuplicationDatas(babylonScene);
             foreach (var mat in referencedMaterials)
             {
-                ExportMaterial(mat, babylonScene);
+                ExportMaterial(mat, babylonScene, fullPBR);
                 CheckCancelled();
             }
             foreach (var mat in multiMaterials)
             {
-                ExportMultiMaterial(mat.Key, mat.Value, babylonScene);
+                ExportMultiMaterial(mat.Key, mat.Value, babylonScene, fullPBR);
                 CheckCancelled();
             }
             UpdateMeshesMaterialId(babylonScene);
@@ -462,9 +463,44 @@ namespace Maya2Babylon
                 }
             }
 
-
             // Output
             babylonScene.Prepare(false, false);
+
+            var sourcePath = environmentName;
+            if (!string.IsNullOrEmpty(sourcePath))
+            {
+                babylonScene.createDefaultSkybox = defaultSkybox;
+                var fileName = Path.GetFileName(sourcePath);
+
+                // Allow only dds file format
+                if (!fileName.EndsWith(".dds"))
+                {
+                    RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
+                }
+                else
+                {
+                    RaiseMessage($"texture id = Max_Babylon_Default_Environment");
+                    babylonScene.environmentTexture = fileName;
+
+                    if (copyTexturesToOutput)
+                    {
+                        try
+                        {
+                            var destPath = Path.Combine(babylonScene.OutputPath, fileName);
+                            if (File.Exists(sourcePath) && sourcePath != destPath)
+                            {
+                                File.Copy(sourcePath, destPath, true);
+                            }
+                        }
+                        catch
+                        {
+                            // silently fails
+                            RaiseMessage($"Fail to export the default env texture", 3);
+                        }
+                    }
+                }
+            }
+
             if (isBabylonExported)
             {
                 Write(babylonScene, outputBabylonDirectory, outputFileName, outputFormat, generateManifest);

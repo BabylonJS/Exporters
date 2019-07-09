@@ -20,10 +20,17 @@
         public bool enableKHRLightsPunctual = false;
         public bool enableKHRTextureTransform = false;
         public bool enableKHRMaterialsUnlit = false;
-        public Autodesk.Max.IINode exportNode;
+        public bool pbrFull = false;
+        public bool pbrNoLight = false;
+        public string pbrEnvironment;
 
+        public Autodesk.Max.IINode exportNode;
 
         public const string ModelFilePathProperty = "modelFilePathProperty";
         public const string TextureFolderPathProperty = "textureFolderPathProperty";
+
+        public const string PBRFullPropertyName = "babylonjs_pbr_full";
+        public const string PBRNoLightPropertyName = "babylonjs_pbr_nolight";
+        public const string PBREnvironmentPathPropertyName = "babylonjs_pbr_environmentPathProperty";
     }
 }

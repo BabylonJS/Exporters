@@ -1,6 +1,7 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -26,7 +27,7 @@ namespace Max2Babylon
                 {
                     var babylonSkeleton = babylonScene.skeletons[gltfMesh.idBabylonSkeleton.Value];
                     // Export a new skeleton if necessary and a new skin
-                    var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode);
+                    var gltfSkin = ExportSkin(babylonSkeleton, gltf, gltfNode, gltfMesh);
                     gltfNode.skin = gltfSkin.index;
                 }
             }
