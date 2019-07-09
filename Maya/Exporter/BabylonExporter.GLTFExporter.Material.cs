@@ -160,9 +160,13 @@ namespace Maya2Babylon
 
                 // --- Global ---
 
+                // Eye Ball correction to limit overall brightness from std to PBR.
+                // This only impacts the factors.
+                var correctedDiffuse = new BabylonColor3(babylonStandardMaterial.diffuse).scale(0.5f);
+
                 SpecularGlossiness _specularGlossiness = new SpecularGlossiness
                 {
-                    diffuse = new BabylonColor3(babylonStandardMaterial.diffuse),
+                    diffuse = correctedDiffuse,
                     opacity = babylonMaterial.alpha,
                     specular = new BabylonColor3(babylonStandardMaterial.specular),
                     glossiness = babylonStandardMaterial.specularPower / 256
@@ -294,6 +298,7 @@ namespace Maya2Babylon
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
                             var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
+                            baseColorFileName = baseColorFileName.Replace(":", "_");
                             textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
@@ -601,7 +606,7 @@ namespace Maya2Babylon
                 return _cubicBezierCurve((float)t, P0.Y, P1.Y, P2.Y, P3.Y);
             }
 
-            var diffuse = specularGlossiness.diffuse.scale(0.5f);
+            var diffuse = specularGlossiness.diffuse;
             var opacity = specularGlossiness.opacity;
             var glossiness = specularGlossiness.glossiness;
             var metallic = 0;

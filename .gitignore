@@ -175,3 +175,5 @@ obj
 *.swatches
 assemblies
 /Maya/Assemblies/*.dll
+
+BabylonJS_Installer/Dist/*

@@ -39,6 +39,7 @@
             this.nameLabel = new System.Windows.Forms.Label();
             this.ConfirmButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.calculateTimeRangeBtn = new System.Windows.Forms.Button();
             this.removeNodeButton = new System.Windows.Forms.Button();
             this.addSelectedButton = new System.Windows.Forms.Button();
             this.endTextBox = new System.Windows.Forms.TextBox();
@@ -106,7 +107,7 @@
             optionsButtonsPanel.Controls.Add(this.ConfirmButton);
             optionsButtonsPanel.Controls.Add(this.cancelButton);
             optionsButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            optionsButtonsPanel.Location = new System.Drawing.Point(3, 120);
+            optionsButtonsPanel.Location = new System.Drawing.Point(3, 143);
             optionsButtonsPanel.Name = "optionsButtonsPanel";
             optionsButtonsPanel.Size = new System.Drawing.Size(184, 29);
             optionsButtonsPanel.TabIndex = 0;
@@ -135,14 +136,28 @@
             // 
             nodeButtonsPanel.AutoSize = true;
             nodeButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            nodeButtonsPanel.Controls.Add(this.calculateTimeRangeBtn);
             nodeButtonsPanel.Controls.Add(this.removeNodeButton);
             nodeButtonsPanel.Controls.Add(this.addSelectedButton);
             nodeButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             nodeButtonsPanel.Location = new System.Drawing.Point(3, 68);
             nodeButtonsPanel.Name = "nodeButtonsPanel";
             nodeButtonsPanel.Padding = new System.Windows.Forms.Padding(3);
-            nodeButtonsPanel.Size = new System.Drawing.Size(184, 52);
+            nodeButtonsPanel.Size = new System.Drawing.Size(184, 75);
             nodeButtonsPanel.TabIndex = 0;
+            // 
+            // calculateTimeRangeBtn
+            // 
+            this.calculateTimeRangeBtn.AutoSize = true;
+            this.calculateTimeRangeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.calculateTimeRangeBtn.Dock = System.Windows.Forms.DockStyle.Top;
+            this.calculateTimeRangeBtn.Location = new System.Drawing.Point(3, 49);
+            this.calculateTimeRangeBtn.Name = "calculateTimeRangeBtn";
+            this.calculateTimeRangeBtn.Size = new System.Drawing.Size(178, 23);
+            this.calculateTimeRangeBtn.TabIndex = 5;
+            this.calculateTimeRangeBtn.Text = "Calculate Time Range";
+            this.calculateTimeRangeBtn.UseVisualStyleBackColor = true;
+            this.calculateTimeRangeBtn.Click += new System.EventHandler(this.calculateTimeRangeBtn_Click);
             // 
             // removeNodeButton
             // 
@@ -362,5 +377,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.Button removeNodeButton;
+        private System.Windows.Forms.Button calculateTimeRangeBtn;
     }
 }

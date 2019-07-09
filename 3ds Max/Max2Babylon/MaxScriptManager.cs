@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Autodesk.Max;
 
 namespace Max2Babylon
 {
@@ -81,6 +84,10 @@ namespace Max2Babylon
             exportParameters.enableKHRTextureTransform = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrTextureTransform");
             exportParameters.enableKHRMaterialsUnlit = Loader.Core.RootNode.GetBoolProperty("babylonjs_khr_materials_unlit");
             exportParameters.exportMaterials = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_materials");
+
+            exportParameters.pbrFull = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRFullPropertyName);
+            exportParameters.pbrNoLight = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRNoLightPropertyName);
+            exportParameters.pbrEnvironment = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
             return exportParameters;
         }
 
@@ -107,6 +114,165 @@ namespace Max2Babylon
                 animationGroups.LoadFromJson(jsonContent,true);
             }
         }
+
+        public static void MergeAnimationGroups(string jsonPath, string old_root, string new_root)
+        {
+            AnimationGroupList animationGroups = new AnimationGroupList();
+            var fileStream = File.Open(jsonPath, FileMode.Open);
+
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                string jsonContent = reader.ReadToEnd();
+                string textToFind = string.Format(@"\b{0}\b", old_root);
+                string overridedJsonContent = Regex.Replace(jsonContent, textToFind, new_root);
+                animationGroups.LoadFromJson(overridedJsonContent, true);
+            }
+        }
+
+        public AnimationGroup GetAnimationGroupByName(string name)
+        {
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+
+            foreach (AnimationGroup animationGroup in animationGroupList)
+            {
+                if (animationGroup.Name == name)
+                {
+                    return animationGroup;
+                }
+            }
+
+            return null;
+        }
+
+        public AnimationGroup CreateAnimationGroup()
+        {
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+
+            AnimationGroup info = new AnimationGroup();
+
+            // get a unique name and guid
+            string baseName = info.Name;
+            int i = 0;
+            bool hasConflict = true;
+            while (hasConflict)
+            {
+                hasConflict = false;
+                foreach (AnimationGroup animationGroup in animationGroupList)
+                {
+                    if (info.Name.Equals(animationGroup.Name))
+                    {
+                        info.Name = baseName + i.ToString();
+                        ++i;
+                        hasConflict = true;
+                        break;
+                    }
+                    if (info.SerializedId.Equals(animationGroup.SerializedId))
+                    {
+                        info.SerializedId = Guid.NewGuid();
+                        hasConflict = true;
+                        break;
+                    }
+                }
+            }
+
+            // save info and animation list entry
+            animationGroupList.Add(info);
+            animationGroupList.SaveToData();
+            Loader.Global.SetSaveRequiredFlag(true, false);
+            return info;
+        }
+
+        public string RenameAnimationGroup(AnimationGroup info,string name)
+        {
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+
+            AnimationGroup animGroupToRename = animationGroupList.GetAnimationGroupByName(info.Name);
+
+            string baseName = name;
+            int i = 0;
+            bool hasConflict = true;
+            while (hasConflict)
+            {
+                hasConflict = false;
+                foreach (AnimationGroup animationGroup in animationGroupList)
+                {
+                    if (baseName.Equals(animationGroup.Name))
+                    {
+                        baseName = name + i.ToString();
+                        ++i;
+                        hasConflict = true;
+                        break;
+                    }
+                }
+            }
+
+            animGroupToRename.Name = baseName;
+
+            // save info and animation list entry
+            animationGroupList.SaveToData();
+            Loader.Global.SetSaveRequiredFlag(true, false);
+            return baseName;
+        }
+
+        public void AddNodeInAnimationGroup(AnimationGroup info, uint nodeHandle)
+        {
+            if (info == null)
+                return;
+
+            IINode node = Loader.Core.GetINodeByHandle(nodeHandle);
+            if (node == null)
+            {
+                return;
+            }
+
+            List<uint> newHandles = info.NodeHandles.ToList();
+            newHandles.Add(nodeHandle);
+            info.NodeHandles = newHandles;
+            info.SaveToData();
+        }
+
+        public void SetAnimationGroupTimeRange(AnimationGroup info, int start,int end)
+        {
+            if (info == null)
+                return;
+
+            info.FrameStart = start;
+            info.FrameEnd = end;
+            info.SaveToData();
+        }
+
+        public void RemoveAllNodeFromAnimationGroup(AnimationGroup info)
+        {
+            if (info == null)
+                return;
+
+            info.NodeHandles = new List<uint>();
+            info.SaveToData();
+        }
+
+        public void RemoveNodeFromAnimationGroup(AnimationGroup info, uint nodeHandle)
+        {
+            if (info == null)
+                return;
+
+            IINode node = Loader.Core.GetINodeByHandle(nodeHandle);
+            if (node == null)
+            {
+                return;
+            }
+
+            List<uint> newHandles = info.NodeHandles.ToList();
+            newHandles.Remove(nodeHandle);
+            info.NodeHandles = newHandles;
+            info.SaveToData();
+        }
+
+
+
+
 
     }
 }
