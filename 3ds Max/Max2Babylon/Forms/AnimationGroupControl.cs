@@ -157,8 +157,10 @@ namespace Max2Babylon
             confirmedInfo.FrameStart = newFrameStart;
             confirmedInfo.FrameEnd = newFrameEnd;
 
-            if(nodesChanged)
+            if (nodesChanged)
+            {
                 confirmedInfo.NodeHandles = newHandles;
+            }
 
             ResetChangedTextBoxColors();
             MaxNodeTree.SelectedNode = null;
@@ -202,6 +204,14 @@ namespace Max2Babylon
                 MaxNodeTree.QueueRemoveNode(node);
             }
             MaxNodeTree.EndUpdate();
+        }
+
+        private void calculateTimeRangeBtn_Click(object sender, EventArgs e)
+        {
+            if (currentInfo == null)
+                return;
+
+            endTextBox.Text = Tools.CalculateEndFrameFromAnimationGroupNodes(currentInfo).ToString();
         }
     }
 }

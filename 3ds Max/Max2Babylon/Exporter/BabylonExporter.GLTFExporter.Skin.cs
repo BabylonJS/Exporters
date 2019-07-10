@@ -13,7 +13,7 @@ namespace Max2Babylon
         // This dictionary is reset everytime a scene is exported
         private Dictionary<BabylonSkeleton, BabylonSkeletonExportData> alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
 
-        private GLTFSkin ExportSkin(BabylonSkeleton babylonSkeleton, GLTF gltf, GLTFNode gltfNode)
+        private GLTFSkin ExportSkin(BabylonSkeleton babylonSkeleton, GLTF gltf, GLTFNode gltfNode, GLTFMesh gltfMesh)
         {
             RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on skeleton '" + babylonSkeleton.name + "'", 2);
 
@@ -44,6 +44,18 @@ namespace Max2Babylon
             var babylonSkeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
 
             // Skin
+
+            // if this mesh is sharing a skin with another mesh, use the already exported skin
+            var sharedSkinnedMeshesByOriginalPair = sharedSkinnedMeshesByOriginal.Where(skinSharingMeshPair => skinSharingMeshPair.Value.Contains(gltfMesh)).Select(kvp => (KeyValuePair<GLTFMesh, List<GLTFMesh>>?) kvp).FirstOrDefault();
+            if (sharedSkinnedMeshesByOriginalPair != null)
+            {
+                RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
+                var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
+                gltfNode.skin = skeletonExportData.skinIndex;
+                return gltf.skins[(int)gltfNode.skin];
+            }
+
+            // otherwise create a new GLTFSkin
             var nameSuffix = babylonSkeletonExportData.nb != 0 ? "_" + babylonSkeletonExportData.nb : "";
             GLTFSkin gltfSkin = new GLTFSkin
             {
@@ -52,6 +64,7 @@ namespace Max2Babylon
             gltfSkin.index = gltf.SkinsList.Count;
             gltf.SkinsList.Add(gltfSkin);
             babylonSkeletonExportData.nb++;
+            babylonSkeletonExportData.skinIndex = gltfSkin.index;
 
             var bones = new List<BabylonBone>(babylonSkeleton.bones);
 
@@ -260,6 +273,11 @@ namespace Max2Babylon
             /// Number of times the skeleton has been exported
             /// </summary>
             public int nb = 0;
+
+            /// <summary>
+            /// Which skin index is used for this skeleton
+            /// </summary>
+            public int skinIndex = -1;
 
             /// <summary>
             /// Each glTF bone is binded to a babylon bone
