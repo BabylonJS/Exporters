@@ -20,5 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Texture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFGlobalVertex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Material.Optimizer.cs" />
   </ItemGroup>
 </Project>

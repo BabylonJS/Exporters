@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace Max2Babylon
+namespace Utilities
 {
     class JsonTextWriterBounded : JsonTextWriter
     {

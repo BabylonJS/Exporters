@@ -1,5 +1,4 @@
 ﻿using BabylonExport.Entities;
-using BabylonExport.Tools;
 using GLTFExport.Entities;
 using Newtonsoft.Json;
 using System;
@@ -11,6 +10,7 @@ using System.Text;
 using Color = System.Drawing.Color;
 using System.Linq;
 using System.Diagnostics;
+using Utilities;
 
 namespace Babylon2GLTF
 {
@@ -21,18 +21,19 @@ namespace Babylon2GLTF
 
         private List<BabylonNode> babylonNodes;
 
-        ILoggingHelper logger;
+        ILoggingProvider logger;
 
         // from BabylonNode to GLTFNode
         Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
         Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
 
-        public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary, ExportParameters parameters)
+        public void ExportGltf(ExportParameters exportParameters, BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary, ILoggingProvider logger)
         {
+            this.exportParameters = exportParameters;
+            this.logger = logger;
+
             logger.RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
-
-            this.exportParameters = parameters;
-
+            
             // Force output file extension to be gltf
             outputFileName = Path.ChangeExtension(outputFileName, "gltf");
 
@@ -56,17 +57,7 @@ namespace Babylon2GLTF
                 // no minVersion
             };
 
-            string maxVersion = null;
-#if MAX2015
-            maxVersion = "2015";
-#elif MAX2017
-            maxVersion = "2017";
-#elif MAX2018
-            maxVersion = "2018";
-#elif MAX2019
-            maxVersion = "2019";
-#endif
-         gltf.asset.generator = $"babylon.js glTF exporter for {parameters.softwarePackageName} {parameters.softwareVersion} v{parameters.exporterVersion}";
+            gltf.asset.generator = $"babylon.js glTF exporter for {exportParameters.softwarePackageName} {exportParameters.softwareVersion} v{exportParameters.exporterVersion}";
 
             // Scene
             gltf.scene = 0;
@@ -147,7 +138,7 @@ namespace Babylon2GLTF
             gltf.Prepare();
 
             // Output
-            RaiseMessage("GLTFExporter | Saving to output file");
+            logger.RaiseMessage("GLTFExporter | Saving to output file");
             if (!generateBinary) {
 
                 // Write .gltf file
@@ -233,7 +224,7 @@ namespace Babylon2GLTF
             // Draco compression
             if(exportParameters.dracoCompression)
             {
-                RaiseMessage("GLTFExporter | Draco compression");
+                logger.RaiseMessage("GLTFExporter | Draco compression");
 
                 try
                 {
@@ -263,12 +254,12 @@ namespace Babylon2GLTF
                 }
                 catch
                 {
-                    RaiseError("gltf-pipeline module not found.", 1);
-                    RaiseError("The exported file wasn't compressed.");
+                    logger.RaiseError("gltf-pipeline module not found.", 1);
+                    logger.RaiseError("The exported file wasn't compressed.");
                 }
             }
 
-            ReportProgressChanged(100);
+            logger.ReportProgressChanged(100);
         }
 
         private List<BabylonNode> initBabylonNodes(BabylonScene babylonScene)
@@ -331,10 +322,10 @@ namespace Babylon2GLTF
                 }
                 else
                 {
-                    RaiseError($"Node named {babylonNode.name} as no exporter", 1);
+                    logger.RaiseError($"Node named {babylonNode.name} as no exporter", 1);
                 }
 
-                CheckCancelled();
+                logger.CheckCancelled();
 
                 // export its tag
                 if(babylonNode.tags != null && babylonNode.tags != "")
@@ -461,7 +452,7 @@ namespace Babylon2GLTF
         /// <returns>The gltf node created.</returns>
         private GLTFNode ExportNode(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode)
         {
-            RaiseMessage($"GLTFExporter | ExportNode {babylonNode.name}", 1);
+            logger.RaiseMessage($"GLTFExporter | ExportNode {babylonNode.name}", 1);
             GLTFNode gltfNode = null;
             var type = babylonNode.GetType();
 
@@ -489,7 +480,7 @@ namespace Babylon2GLTF
             // Hierarchy
             if (gltfParentNode != null)
             {
-                RaiseMessage("GLTFExporter.Node| Add " + babylonNode.name + " as child to " + gltfParentNode.name, 2);
+                logger.RaiseMessage("GLTFExporter.Node| Add " + babylonNode.name + " as child to " + gltfParentNode.name, 2);
                 gltfParentNode.ChildrenList.Add(gltfNode.index);
                 gltfNode.parent = gltfParentNode;
             }
@@ -497,7 +488,7 @@ namespace Babylon2GLTF
             {
                 // It's a root node
                 // Only root nodes are listed in a gltf scene
-                RaiseMessage("GLTFExporter.Node | Add " + babylonNode.name + " as root node to scene", 2);
+                logger.RaiseMessage("GLTFExporter.Node | Add " + babylonNode.name + " as root node to scene", 2);
                 gltf.scenes[0].NodesList.Add(gltfNode.index);
             }
 
@@ -527,9 +518,9 @@ namespace Babylon2GLTF
 
             // Switch coordinate system at object level
             gltfNode.translation[2] *= -1;
-            gltfNode.translation[0] *= scaleFactor;
-            gltfNode.translation[1] *= scaleFactor;
-            gltfNode.translation[2] *= scaleFactor;
+            gltfNode.translation[0] *= exportParameters.scaleFactor;
+            gltfNode.translation[1] *= exportParameters.scaleFactor;
+            gltfNode.translation[2] *= exportParameters.scaleFactor;
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
 

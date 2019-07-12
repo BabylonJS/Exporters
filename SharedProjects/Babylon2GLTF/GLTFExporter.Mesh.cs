@@ -1,5 +1,5 @@
 ﻿using BabylonExport.Entities;
-using Extensions;
+using Utilities;
 using GLTFExport.Entities;
 using GLTFExport.Tools;
 using System;
@@ -64,7 +64,7 @@ namespace Babylon2GLTF
                 globalVertex.Position.Z *= -1;
                 globalVertex.Normal.Z *= -1;
 
-                globalVertex.Position *= scaleFactor;
+                globalVertex.Position *= exportParameters.scaleFactor;
 
                 if (hasUV)
                 {
@@ -426,7 +426,6 @@ namespace Babylon2GLTF
         private void _exportMorphTargets(BabylonMesh babylonMesh, BabylonSubMesh babylonSubMesh, BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFBuffer buffer, GLTFMeshPrimitive meshPrimitive)
         {
             var gltfMorphTargets = new List<GLTFMorphTarget>();
-            var rawScene = Loader.Core.RootNode;
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
             {
                 var gltfMorphTarget = new GLTFMorphTarget();
@@ -473,7 +472,7 @@ namespace Babylon2GLTF
                 }
 
                 // Normals
-                if (babylonMorphTarget.normals != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Normals"))
+                if (babylonMorphTarget.normals != null && exportParameters.exportMorphNormals)
                 {
                     var accessorTargetNormals = GLTFBufferService.Instance.CreateAccessor(
                         gltf,
@@ -510,7 +509,7 @@ namespace Babylon2GLTF
                 }
 
                 // Tangents
-                if(babylonMorphTarget.tangents != null && rawScene.GetBoolProperty("babylonjs_export_Morph_Tangents") && exportParameters.exportTangents)
+                if(babylonMorphTarget.tangents != null && exportParameters.exportTangents)
                 {
                     var accessorTargetTangents = GLTFBufferService.Instance.CreateAccessor(
                         gltf,

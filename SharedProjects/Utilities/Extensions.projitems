@@ -6,10 +6,16 @@
     <SharedGUID>daed1281-4757-4a4e-b252-b879b43193a3</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Extensions</Import_RootNamespace>
+    <Import_RootNamespace>Utilities</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ColorExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ArrayExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ILoggingProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IMaterialExporterProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterBounded.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterOptimized.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MathUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextureUtilities.cs" />
   </ItemGroup>
 </Project>

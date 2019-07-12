@@ -1,7 +1,7 @@
 ﻿using BabylonExport;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
-using Extensions;
+using Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,8 +12,6 @@ namespace Babylon2GLTF
 {
     partial class GLTFExporter
     {
-        private static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
-        private static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
         public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
         private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
         private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
@@ -50,8 +48,8 @@ namespace Babylon2GLTF
                 {
                     var absolutePath = Path.Combine(gltf.OutputFolder, name);
                     var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                    RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
-                    SaveBitmap(bitmap, absolutePath, imageFormat);
+                    logger.RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
+                    TextureUtilities.SaveBitmap(bitmap, absolutePath, imageFormat, exportParameters.txtQuality, logger);
                 }
 
                 return extension.Substring(1); // remove the dot
@@ -64,26 +62,11 @@ namespace Babylon2GLTF
                 () => { return TryWriteImage(gltf, babylonTexture.originalPath, babylonTexture.name); });
         }
 
-        private bool ExtensionIsValidGLTFTexture(string _extension)
-        {
-            if (_extension.StartsWith("."))
-            {
-                _extension = _extension.Replace(".", "");
-            }
-
-            if (validGltfFormats.Contains(_extension))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
+        public string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
             {
                 if (sourcePath == null || sourcePath == "")
                 {
-                    RaiseWarning("Texture path is missing.", 3);
+                    logger.RaiseWarning("Texture path is missing.", 3);
                     return null;
                 }
 
@@ -92,7 +75,7 @@ namespace Babylon2GLTF
                 if (validImageFormat == null)
                 {
                     // Image format is not supported by the exporter
-                    RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
+                    logger.RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
                     return null;
                 }
 
@@ -117,7 +100,7 @@ namespace Babylon2GLTF
             }
 
 
-            RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
+            logger.RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             if (glTFTextureInfoMap.ContainsKey(babylonTexture.Id))
             {
@@ -136,7 +119,7 @@ namespace Babylon2GLTF
                 // --------------------------
                 // -------- Sampler ---------
                 // --------------------------
-                RaiseMessage("GLTFExporter.Texture | create sampler", 3);
+                logger.RaiseMessage("GLTFExporter.Texture | create sampler", 3);
                 GLTFSampler gltfSampler = new GLTFSampler();
                 gltfSampler.index = gltf.SamplersList.Count;
                 
@@ -166,7 +149,7 @@ namespace Babylon2GLTF
                 // --------- Image ----------
                 // --------------------------
 
-                RaiseMessage("GLTFExporter.Texture | create image", 3);
+                logger.RaiseMessage("GLTFExporter.Texture | create image", 3);
                 GLTFImage gltfImage = null;
                 if (glTFImageMap.ContainsKey(name))
                 {
@@ -201,7 +184,7 @@ namespace Babylon2GLTF
                 // -------- Texture ---------
                 // --------------------------
 
-                RaiseMessage("GLTFExporter.Texture | create texture", 3);
+                logger.RaiseMessage("GLTFExporter.Texture | create texture", 3);
                 var gltfTexture = new GLTFTexture
                 {
                     name = name,
@@ -230,7 +213,8 @@ namespace Babylon2GLTF
                     }
                     else
                     {
-                        RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
+                        logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
+                        logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                     }
                 }
                 var textureID = name + TextureTransformID(gltfTextureInfo);
@@ -258,7 +242,7 @@ namespace Babylon2GLTF
             }
             else { 
                 // Set an id for the texture transform and append to the name
-                KHR_texture_transform textureTransform = gltfTextureInfo.extensions[BabylonExporter.KHR_texture_transform] as KHR_texture_transform;
+                KHR_texture_transform textureTransform = gltfTextureInfo.extensions[GLTFExporter.KHR_texture_transform] as KHR_texture_transform;
                 var offsetID = textureTransform.offset[0] + "_" + textureTransform.offset[1];
                 var rotationID = textureTransform.rotation.ToString();
                 var scaleID = textureTransform.scale[0] + "_" + textureTransform.scale[1];
@@ -297,14 +281,14 @@ namespace Babylon2GLTF
                 Bitmap emissiveBitmap = null;
                 if (babylonMaterial.emissiveTexture != null)
                 {
-                    emissiveBitmap = LoadTexture(babylonMaterial.emissiveTexture.originalPath);
+                    emissiveBitmap = TextureUtilities.LoadTexture(babylonMaterial.emissiveTexture.originalPath, logger);
                 }
 
                 // Diffuse
                 Bitmap diffuseBitmap = null;
                 if (babylonMaterial.diffuseTexture != null)
                 {
-                    diffuseBitmap = LoadTexture(babylonMaterial.diffuseTexture.originalPath);
+                    diffuseBitmap = TextureUtilities.LoadTexture(babylonMaterial.diffuseTexture.originalPath, logger);
                 }
 
                 if (emissiveBitmap != null || diffuseBitmap != null)
@@ -312,10 +296,10 @@ namespace Babylon2GLTF
                     // Retreive dimensions
                     int width = 0;
                     int height = 0;
-                    var haveSameDimensions = _getMinimalBitmapDimensions(out width, out height, emissiveBitmap, diffuseBitmap);
+                    var haveSameDimensions = TextureUtilities.GetMinimalBitmapDimensions(out width, out height, emissiveBitmap, diffuseBitmap);
                     if (!haveSameDimensions)
                     {
-                        RaiseError("Emissive and diffuse maps should have same dimensions", 2);
+                        logger.RaiseError("Emissive and diffuse maps should have same dimensions", 2);
                     }
 
                     // Create pre-multiplied emissive map
@@ -402,7 +386,7 @@ namespace Babylon2GLTF
                     minFilter = GLTFSampler.TextureMinFilter.NEAREST;
                     break;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture sampling mode not found", 3);
+                    logger.RaiseError("GLTFExporter.Texture | texture sampling mode not found", 3);
                     magFilter = null;
                     minFilter = null;
                     break;
@@ -420,19 +404,19 @@ namespace Babylon2GLTF
                 case BabylonTexture.AddressMode.MIRROR_ADDRESSMODE:
                     return GLTFSampler.TextureWrapMode.MIRRORED_REPEAT;
                 default:
-                    RaiseError("GLTFExporter.Texture | texture wrap mode not found", 3);
+                    logger.RaiseError("GLTFExporter.Texture | texture wrap mode not found", 3);
                     return null;
             }
         }
 
         private string GetGltfValidImageFormat(string extension)
         {
-            return _getValidImageFormat(extension, validGltfFormats, invalidGltfFormats);
+            return TextureUtilities.GetValidImageFormat(extension);
         }
 
         private void CopyGltfTexture(string sourcePath, string destPath)
         {
-            _copyTexture(sourcePath, destPath, validGltfFormats, invalidGltfFormats);
+            TextureUtilities.CopyTexture(sourcePath, destPath, exportParameters.txtQuality, logger);
         }
 
         /// <summary>

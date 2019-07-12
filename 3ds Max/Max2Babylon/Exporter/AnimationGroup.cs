@@ -1,5 +1,4 @@
-﻿using BabylonExport.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Windows.Forms;
 using Autodesk.Max;
 using Autodesk.Max.Plugins;
 using Newtonsoft.Json;
+using Utilities;
 
 namespace Max2Babylon
 {
@@ -62,7 +62,7 @@ namespace Max2Babylon
         }
         public int FrameStart
         {
-            get { return Tools.RoundToInt(ticksStart / (float)Loader.Global.TicksPerFrame); }
+            get { return MathUtilities.RoundToInt(ticksStart / (float)Loader.Global.TicksPerFrame); }
             set
             {
                 if (value.Equals(FrameStart)) // property getter
@@ -73,7 +73,7 @@ namespace Max2Babylon
         }
         public int FrameEnd
         {
-            get { return Tools.RoundToInt(TicksEnd / (float)Loader.Global.TicksPerFrame); }
+            get { return MathUtilities.RoundToInt(TicksEnd / (float)Loader.Global.TicksPerFrame); }
             set
             {
                 if (value.Equals(FrameEnd)) // property getter
@@ -272,7 +272,7 @@ namespace Max2Babylon
             }
         }
 
-        public static AnimationGroupList InitAnimationGroups(ILoggingHelper logger)
+        public static AnimationGroupList InitAnimationGroups(ILoggingProvider logger)
         {
             AnimationGroupList animationList = new AnimationGroupList();
             animationList.LoadFromData();

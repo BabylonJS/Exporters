@@ -1,31 +1,73 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Autodesk.Max;
+using Babylon2GLTF;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
+using Utilities;
 
 namespace Max2Babylon
 {
-    
+    internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
+    {
+        private Dictionary<ClassIDWrapper, IMaxMaterialExporter> materialExporters;
+        private ExportParameters exportParameters;
+        private GLTFExporter gltfExporter;
 
-    public interface IMaterialExporter
+        public MaxGLTFMaterialExporter(Dictionary<ClassIDWrapper, IMaxMaterialExporter> materialExporters, ExportParameters exportParameters, GLTFExporter gltfExporter)
+        {
+            this.materialExporters = materialExporters;
+            this.exportParameters = exportParameters;
+            this.gltfExporter = gltfExporter;
+        }
+
+        public bool GetGltfMaterial(BabylonMaterial babylonMaterial, GLTF gltf, ILoggingProvider logger, out GLTFMaterial gltfMaterial)
+        {
+            gltfMaterial = null;
+            IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
+            IMtl maxMtl = gameMtl.MaxMaterial;
+
+            IMaxMaterialExporter materialExporter;
+            if (materialExporters.TryGetValue(new ClassIDWrapper(maxMtl.ClassID), out materialExporter)
+                && materialExporter is IMaxGLTFMaterialExporter)
+            {
+                gltfMaterial = ((IMaxGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this.exportParameters, gltf, gameMtl,
+                    (string sourcePath, string textureName) => { return gltfExporter.TryWriteImage(gltf, sourcePath, textureName); },
+                    (string message, Color color) => { logger.RaiseMessage(message, color, 2); },
+                    (string message) => { logger.RaiseWarning(message, 2); },
+                    (string message) => { logger.RaiseError(message, 2); });
+
+                if (gltfMaterial == null)
+                {
+                    string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
+                        materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
+                    logger.RaiseWarning(message, 2);
+                }
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public interface IMaxMaterialExporter
     {
         ClassIDWrapper MaterialClassID { get; }
     }
 
-    public interface IBabylonMaterialExporter : IMaterialExporter
+    public interface IMaxBabylonMaterialExporter : IMaxMaterialExporter
     {
         BabylonMaterial ExportBabylonMaterial(IIGameMaterial material);
     }
 
     delegate string TryWriteImageCallback(string sourceTexturePath);
     
-    internal interface IGLTFMaterialExporter : IMaterialExporter
+    internal interface IMaxGLTFMaterialExporter : IMaxMaterialExporter
     {
         /// <summary>
         /// Creates a GLTF material using the given GameMaterial.
         /// </summary>
-        /// <param name="exporter">The current exporter, for export parameters like CopyTexturesToOuput.</param>
+        /// <param name="exporter">The current exporter parameters, like CopyTexturesToOuput.</param>
         /// <param name="gltf">The GLTF output structure, for adding instances of classes such as GLTFSampler, GLTFImage and GLTFTexture.</param>
         /// <param name="material">The input material matching the MaterialClassID defined by the exporter. </param>
         /// <param name="tryWriteImageFunc">Callback function to verify images and to write images to the output folder. 
@@ -35,7 +77,7 @@ namespace Max2Babylon
         /// <param name="raiseWarningAction">Callback function to raise warnings.</param>
         /// <param name="raiseErrorAction">Callback function to raise errors.</param>
         /// <returns>The exported GLTF material.</returns>
-        GLTFMaterial ExportGLTFMaterial(BabylonExporter exporter, GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc,
+        GLTFMaterial ExportGLTFMaterial(ExportParameters exportParameters, GLTF gltf, IIGameMaterial material, Func<string, string, string> tryWriteImageFunc,
             Action<string, Color> raiseMessageAction, Action<string> raiseWarningAction, Action<string> raiseErrorAction);
     }
 

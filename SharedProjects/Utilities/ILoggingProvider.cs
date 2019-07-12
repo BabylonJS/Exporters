@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 
-namespace BabylonExport.Tools
+namespace Utilities
 {
-    public interface ILoggingHelper
+    public interface ILoggingProvider
     {
         void ReportProgressChanged(int progress);
 
@@ -14,7 +14,8 @@ namespace BabylonExport.Tools
 
         void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false);
 
-        // For debug purpose
         void RaiseVerbose(string message, int rank = 0, bool emphasis = false);
+
+        void CheckCancelled();
     }
 }

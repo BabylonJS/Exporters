@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using BabylonExport.Entities;
-using Extensions;
+using Utilities;
 
 namespace Max2Babylon
 {
@@ -75,8 +75,8 @@ namespace Max2Babylon
             exportParameters.autoSave3dsMaxFile = Loader.Core.RootNode.GetBoolProperty("babylonjs_autosave");
             exportParameters.exportOnlySelected = Loader.Core.RootNode.GetBoolProperty("babylonjs_onlySelected");
             exportParameters.exportTangents = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporttangents");
-            exportParameters.scaleFactor = Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1");
-            exportParameters.txtQuality = Loader.Core.RootNode.GetStringProperty("babylonjs_txtCompression", "100");
+            exportParameters.scaleFactor = float.Parse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1"));
+            exportParameters.txtQuality = long.Parse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtCompression", "100"));
             exportParameters.mergeAOwithMR = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergeAOwithMR");
             exportParameters.dracoCompression = Loader.Core.RootNode.GetBoolProperty("babylonjs_dracoCompression");
             exportParameters.enableKHRLightsPunctual = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrLightsPunctual");

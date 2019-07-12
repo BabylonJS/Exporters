@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Max2Babylon
+namespace Utilities
 {
     class JsonTextWriterOptimized : JsonTextWriter
     {
