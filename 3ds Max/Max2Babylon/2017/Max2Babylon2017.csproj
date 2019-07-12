@@ -135,9 +135,6 @@
     <Compile Include="..\Exporter\BabylonExporter.Material.cs">
       <Link>Exporter\BabylonExporter.Material.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.Material.Optimiser.cs">
-      <Link>Exporter\BabylonExporter.Material.Optimiser.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Mesh.cs">
       <Link>Exporter\BabylonExporter.Mesh.cs</Link>
     </Compile>
@@ -152,9 +149,6 @@
     </Compile>
     <Compile Include="..\Exporter\GlobalVertex.cs">
       <Link>Exporter\GlobalVertex.cs</Link>
-    </Compile>
-    <Compile Include="..\Exporter\GLTFGlobalVertex.cs">
-      <Link>Exporter\GLTFGlobalVertex.cs</Link>
     </Compile>
     <Compile Include="..\Extensions\ScaleSystem.cs">
       <Link>Extensions\ScaleSystem.cs</Link>
@@ -242,17 +236,8 @@
     <Compile Include="..\GlobalUtility.cs">
       <Link>GlobalUtility.cs</Link>
     </Compile>
-    <Compile Include="..\JsonTextWriterBounded.cs">
-      <Link>JsonTextWriterBounded.cs</Link>
-    </Compile>
-    <Compile Include="..\JsonTextWriterOptimized.cs">
-      <Link>JsonTextWriterOptimized.cs</Link>
-    </Compile>
     <Compile Include="..\Loader.cs">
       <Link>Loader.cs</Link>
-    </Compile>
-    <Compile Include="..\ExportParameters.cs">
-      <Link>ExportParameters.cs</Link>
     </Compile>
     <Compile Include="..\MaxScriptManager.cs">
       <Link>MaxScriptManager.cs</Link>
@@ -266,16 +251,12 @@
     <Compile Include="..\Tools\WebServer.cs">
       <Link>Tools\WebServer.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\GLTFBufferService.cs">
-      <Link>Exporter\GLTFBufferService.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.ExportItem.cs">
       <Link>Exporter\BabylonExporter.ExportItem.cs</Link>
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.WorldModifiers.cs">
       <Link>Exporter\BabylonExporter.WorldModifiers.Skin.cs</Link>
     </Compile>
-    <Compile Include="ILoggingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -343,7 +324,7 @@
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems" Label="Shared" />
-  <Import Project="..\..\..\SharedProjects\Extensions\Extensions.projitems" Label="Shared" />
+  <Import Project="..\..\..\SharedProjects\Utilities\Extensions.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" "$(ConfigurationName)" 2017</PostBuildEvent>

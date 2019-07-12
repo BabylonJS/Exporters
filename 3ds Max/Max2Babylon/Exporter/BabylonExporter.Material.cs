@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
-using Extensions;
+using Utilities;
 using System.Diagnostics;
 
 namespace BabylonExport.Entities
@@ -19,7 +19,7 @@ namespace Max2Babylon
     partial class BabylonExporter
     {
         readonly List<IIGameMaterial> referencedMaterials = new List<IIGameMaterial>();
-        Dictionary<ClassIDWrapper, IMaterialExporter> materialExporters;
+        Dictionary<ClassIDWrapper, IMaxMaterialExporter> materialExporters;
 
         private void ExportMaterial(IIGameMaterial materialNode, BabylonScene babylonScene)
         {
@@ -138,15 +138,15 @@ namespace Max2Babylon
             bool isUnlit = unlitProperty != null ? unlitProperty.GetBoolValue() : false;
 
             // check custom exporters first, to allow custom exporters of supported material classes
-            IMaterialExporter materialExporter;
+            IMaxMaterialExporter materialExporter;
             materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter);
 
             
             var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
 
-            if (isBabylonExported && materialExporter != null && materialExporter is IBabylonMaterialExporter)
+            if (isBabylonExported && materialExporter != null && materialExporter is IMaxBabylonMaterialExporter)
             {
-                IBabylonMaterialExporter babylonMaterialExporter = materialExporter as IBabylonMaterialExporter;
+                IMaxBabylonMaterialExporter babylonMaterialExporter = materialExporter as IMaxBabylonMaterialExporter;
                 BabylonMaterial babylonMaterial = babylonMaterialExporter.ExportBabylonMaterial(materialNode);
                 if (babylonMaterial == null)
                 {
@@ -156,7 +156,7 @@ namespace Max2Babylon
                 }
                 else babylonScene.MaterialsList.Add(babylonMaterial);
             }
-            else if (isGltfExported && materialExporter != null && materialExporter is IGLTFMaterialExporter)
+            else if (isGltfExported && materialExporter != null && materialExporter is IMaxGLTFMaterialExporter)
             {
                 // add a basic babylon material to the list to forward the max material reference
                 var babylonMaterial = new BabylonMaterial(id)
@@ -732,12 +732,12 @@ namespace Max2Babylon
                 }
 
                 // Custom material exporters
-                IMaterialExporter materialExporter;
+                IMaxMaterialExporter materialExporter;
                 if (materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter))
                 {
-                    if (isGltfExported && materialExporter is IGLTFMaterialExporter)
+                    if (isGltfExported && materialExporter is IMaxGLTFMaterialExporter)
                         return null;
-                    else if (isBabylonExported && materialExporter is IBabylonMaterialExporter)
+                    else if (isBabylonExported && materialExporter is IMaxBabylonMaterialExporter)
                         return null;
                 }
 

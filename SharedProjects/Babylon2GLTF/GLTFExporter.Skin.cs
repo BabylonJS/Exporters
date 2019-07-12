@@ -1,5 +1,6 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using GLTFExport.Tools;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Babylon2GLTF
 
         private GLTFSkin ExportSkin(BabylonSkeleton babylonSkeleton, GLTF gltf, GLTFNode gltfNode)
         {
-            RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on skeleton '" + babylonSkeleton.name + "'", 2);
+            logger.RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on skeleton '" + babylonSkeleton.name + "'", 2);
 
             // Retreive gltf skeleton data if babylon skeleton has already been exported
             if (!alreadyExportedSkeletons.ContainsKey(babylonSkeleton))
@@ -32,7 +33,7 @@ namespace Babylon2GLTF
                     var rotationQuatBabylon = new BabylonQuaternion();
                     var scale = new BabylonVector3();
                     boneLocalMatrix.decompose(scale, rotationQuatBabylon, translationBabylon);
-                    translationBabylon *= scaleFactor;
+                    translationBabylon *= exportParameters.scaleFactor;
                     translationBabylon.Z *= -1;
                     rotationQuatBabylon.X *= -1;
                     rotationQuatBabylon.Y *= -1;
@@ -166,7 +167,7 @@ namespace Babylon2GLTF
             {
                 var babylonParentBone = bones.Find(_babylonBone => _babylonBone.index == babylonBone.parentBoneIndex);
                 var gltfParentNode = _exportBone(babylonParentBone, gltf, babylonSkeleton, bones);
-                RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as child to " + gltfParentNode.name, 3);
+                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as child to " + gltfParentNode.name, 3);
                 gltfParentNode.ChildrenList.Add(gltfNode.index);
                 gltfNode.parent = gltfParentNode;
             }
@@ -174,7 +175,7 @@ namespace Babylon2GLTF
             {
                 // It's a root node
                 // Only root nodes are listed in a gltf scene
-                RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
+                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
                 gltf.scenes[0].NodesList.Add(gltfNode.index);
             }
 
@@ -278,9 +279,9 @@ namespace Babylon2GLTF
             rotation *= (float)(180 / Math.PI);
 
             var lvl = 3;
-            RaiseWarning(name + ".translation=[" + translation.X + ", " + translation.Y + ", " + translation.Z + "]", lvl);
-            RaiseWarning(name + ".rotation=[" + rotation.X + ", " + rotation.Y + ", " + rotation.Z + "]", lvl);
-            RaiseWarning(name + ".scale=[" + scale.X + ", " + scale.Y + ", " + scale.Z + "]", lvl);
+            logger.RaiseWarning(name + ".translation=[" + translation.X + ", " + translation.Y + ", " + translation.Z + "]", lvl);
+            logger.RaiseWarning(name + ".rotation=[" + rotation.X + ", " + rotation.Y + ", " + rotation.Z + "]", lvl);
+            logger.RaiseWarning(name + ".scale=[" + scale.X + ", " + scale.Y + ", " + scale.Z + "]", lvl);
         }
     }
 }
