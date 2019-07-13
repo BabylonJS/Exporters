@@ -1,13 +1,20 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using GLTFExport.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utilities;
 
 namespace Babylon2GLTF
 {
     partial class GLTFExporter
     {
+        private List<BabylonMesh> alreadyExportedSkinnedMeshes = new List<BabylonMesh>();
+
+        // Meshes that share skinning information, indexed by the exported mesh with the original skinning information.
+        private Dictionary<GLTFMesh, List<GLTFMesh>> sharedSkinnedMeshesByOriginal = new Dictionary<GLTFMesh, List<GLTFMesh>>();
+
         private GLTFMesh ExportMesh(BabylonMesh babylonMesh, GLTF gltf, BabylonScene babylonScene)
         {
             logger.RaiseMessage("GLTFExporter.Mesh | Export mesh named: " + babylonMesh.name, 1);
@@ -32,12 +39,12 @@ namespace Babylon2GLTF
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
             bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
 
-            RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
-            RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -412,6 +419,11 @@ namespace Babylon2GLTF
                     weights.Add(babylonMorphTarget.influence);
                 }
                 gltfMesh.weights = weights.ToArray();
+            }
+
+            if (hasBones)
+            {
+                alreadyExportedSkinnedMeshes.Add(babylonMesh);
             }
 
             return gltfMesh;
