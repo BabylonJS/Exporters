@@ -184,7 +184,7 @@
             // pictureBox2
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox2.Image = global::Max2Babylon.Properties.Resources.Logo_Exporter_v4;
+            this.pictureBox2.Image = global::Max2Babylon.Properties.Resources.MaxExporter;
             this.pictureBox2.Location = new System.Drawing.Point(473, 57);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBox2.Name = "pictureBox2";

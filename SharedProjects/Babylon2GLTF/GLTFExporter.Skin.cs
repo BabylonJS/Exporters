@@ -50,7 +50,7 @@ namespace Babylon2GLTF
             var sharedSkinnedMeshesByOriginalPair = sharedSkinnedMeshesByOriginal.Where(skinSharingMeshPair => skinSharingMeshPair.Value.Contains(gltfMesh)).Select(kvp => (KeyValuePair<GLTFMesh, List<GLTFMesh>>?) kvp).FirstOrDefault();
             if (sharedSkinnedMeshesByOriginalPair != null)
             {
-                RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
+                logger.RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
                 var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
                 gltfNode.skin = skeletonExportData.skinIndex;
                 return gltf.skins[(int)gltfNode.skin];
