@@ -80,6 +80,8 @@
             this.bjs_logo = new System.Windows.Forms.PictureBox();
             this.title = new System.Windows.Forms.Label();
             this.soft_version = new System.Windows.Forms.Label();
+            this.button_All_Update = new System.Windows.Forms.Button();
+            this.button_All_Delete = new System.Windows.Forms.Button();
             this.mainTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -106,7 +108,7 @@
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.Padding = new System.Drawing.Point(0, 0);
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(957, 464);
+            this.mainTabControl.Size = new System.Drawing.Size(698, 471);
             this.mainTabControl.TabIndex = 0;
             // 
             // tabPage1
@@ -116,7 +118,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage1.Size = new System.Drawing.Size(949, 433);
+            this.tabPage1.Size = new System.Drawing.Size(690, 440);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Autodesk - 3DsMax";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -141,11 +143,11 @@
             this.groupBox4.Controls.Add(this.button_Max15_Update);
             this.groupBox4.Controls.Add(this.label_Max15_ExpDate);
             this.groupBox4.Controls.Add(this.label_Max15_Info);
-            this.groupBox4.Location = new System.Drawing.Point(7, 324);
+            this.groupBox4.Location = new System.Drawing.Point(7, 330);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox4.Size = new System.Drawing.Size(913, 98);
+            this.groupBox4.Size = new System.Drawing.Size(676, 100);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "3ds Max 2015";
@@ -153,10 +155,10 @@
             // button_Max15_Locate
             // 
             this.button_Max15_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max15_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Max15_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Max15_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max15_Locate.Name = "button_Max15_Locate";
-            this.button_Max15_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Max15_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Max15_Locate.TabIndex = 10;
             this.button_Max15_Locate.Text = "(re)Locate";
             this.button_Max15_Locate.UseVisualStyleBackColor = true;
@@ -165,10 +167,10 @@
             // button_Max15_Delete
             // 
             this.button_Max15_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max15_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Max15_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Max15_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max15_Delete.Name = "button_Max15_Delete";
-            this.button_Max15_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Max15_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Max15_Delete.TabIndex = 12;
             this.button_Max15_Delete.Text = "Uninstall";
             this.button_Max15_Delete.UseVisualStyleBackColor = true;
@@ -177,10 +179,10 @@
             // button_Max15_Update
             // 
             this.button_Max15_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max15_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Max15_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Max15_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max15_Update.Name = "button_Max15_Update";
-            this.button_Max15_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Max15_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Max15_Update.TabIndex = 11;
             this.button_Max15_Update.Text = "Update";
             this.button_Max15_Update.UseVisualStyleBackColor = true;
@@ -200,7 +202,7 @@
             // label_Max15_Info
             // 
             this.label_Max15_Info.AutoSize = true;
-            this.label_Max15_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Max15_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Max15_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Max15_Info.Name = "label_Max15_Info";
             this.label_Max15_Info.Size = new System.Drawing.Size(165, 18);
@@ -214,11 +216,11 @@
             this.groupBox3.Controls.Add(this.button_Max17_Update);
             this.groupBox3.Controls.Add(this.label_Max17_ExpDate);
             this.groupBox3.Controls.Add(this.label_Max17_Info);
-            this.groupBox3.Location = new System.Drawing.Point(7, 218);
+            this.groupBox3.Location = new System.Drawing.Point(7, 222);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(913, 98);
+            this.groupBox3.Size = new System.Drawing.Size(676, 100);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "3ds Max 2017";
@@ -226,10 +228,10 @@
             // button_Max17_Locate
             // 
             this.button_Max17_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max17_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Max17_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Max17_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max17_Locate.Name = "button_Max17_Locate";
-            this.button_Max17_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Max17_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Max17_Locate.TabIndex = 7;
             this.button_Max17_Locate.Text = "(re)Locate";
             this.button_Max17_Locate.UseVisualStyleBackColor = true;
@@ -238,10 +240,10 @@
             // button_Max17_Delete
             // 
             this.button_Max17_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max17_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Max17_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Max17_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max17_Delete.Name = "button_Max17_Delete";
-            this.button_Max17_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Max17_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Max17_Delete.TabIndex = 9;
             this.button_Max17_Delete.Text = "Uninstall";
             this.button_Max17_Delete.UseVisualStyleBackColor = true;
@@ -250,10 +252,10 @@
             // button_Max17_Update
             // 
             this.button_Max17_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max17_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Max17_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Max17_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max17_Update.Name = "button_Max17_Update";
-            this.button_Max17_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Max17_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Max17_Update.TabIndex = 8;
             this.button_Max17_Update.Text = "Update";
             this.button_Max17_Update.UseVisualStyleBackColor = true;
@@ -273,7 +275,7 @@
             // label_Max17_Info
             // 
             this.label_Max17_Info.AutoSize = true;
-            this.label_Max17_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Max17_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Max17_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Max17_Info.Name = "label_Max17_Info";
             this.label_Max17_Info.Size = new System.Drawing.Size(165, 18);
@@ -287,11 +289,11 @@
             this.groupBox2.Controls.Add(this.button_Max18_Update);
             this.groupBox2.Controls.Add(this.label_Max18_ExpDate);
             this.groupBox2.Controls.Add(this.label_Max18_Info);
-            this.groupBox2.Location = new System.Drawing.Point(7, 112);
+            this.groupBox2.Location = new System.Drawing.Point(7, 114);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox2.Size = new System.Drawing.Size(913, 98);
+            this.groupBox2.Size = new System.Drawing.Size(676, 100);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "3ds Max 2018";
@@ -299,10 +301,10 @@
             // button_Max18_Locate
             // 
             this.button_Max18_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max18_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Max18_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Max18_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max18_Locate.Name = "button_Max18_Locate";
-            this.button_Max18_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Max18_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Max18_Locate.TabIndex = 4;
             this.button_Max18_Locate.Text = "(re)Locate";
             this.button_Max18_Locate.UseVisualStyleBackColor = true;
@@ -311,10 +313,10 @@
             // button_Max18_Delete
             // 
             this.button_Max18_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max18_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Max18_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Max18_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max18_Delete.Name = "button_Max18_Delete";
-            this.button_Max18_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Max18_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Max18_Delete.TabIndex = 6;
             this.button_Max18_Delete.Text = "Uninstall";
             this.button_Max18_Delete.UseVisualStyleBackColor = true;
@@ -323,10 +325,10 @@
             // button_Max18_Update
             // 
             this.button_Max18_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max18_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Max18_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Max18_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max18_Update.Name = "button_Max18_Update";
-            this.button_Max18_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Max18_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Max18_Update.TabIndex = 5;
             this.button_Max18_Update.Text = "Update";
             this.button_Max18_Update.UseVisualStyleBackColor = true;
@@ -346,7 +348,7 @@
             // label_Max18_Info
             // 
             this.label_Max18_Info.AutoSize = true;
-            this.label_Max18_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Max18_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Max18_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Max18_Info.Name = "label_Max18_Info";
             this.label_Max18_Info.Size = new System.Drawing.Size(165, 18);
@@ -364,7 +366,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(913, 98);
+            this.groupBox1.Size = new System.Drawing.Size(676, 100);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "3ds Max 2019";
@@ -372,10 +374,10 @@
             // button_Max19_Locate
             // 
             this.button_Max19_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max19_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Max19_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Max19_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max19_Locate.Name = "button_Max19_Locate";
-            this.button_Max19_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Max19_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Max19_Locate.TabIndex = 1;
             this.button_Max19_Locate.Text = "(re)Locate";
             this.button_Max19_Locate.UseVisualStyleBackColor = true;
@@ -384,10 +386,10 @@
             // button_Max19_Delete
             // 
             this.button_Max19_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max19_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Max19_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Max19_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max19_Delete.Name = "button_Max19_Delete";
-            this.button_Max19_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Max19_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Max19_Delete.TabIndex = 3;
             this.button_Max19_Delete.Text = "Uninstall";
             this.button_Max19_Delete.UseVisualStyleBackColor = true;
@@ -407,10 +409,10 @@
             // button_Max19_Update
             // 
             this.button_Max19_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Max19_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Max19_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Max19_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Max19_Update.Name = "button_Max19_Update";
-            this.button_Max19_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Max19_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Max19_Update.TabIndex = 2;
             this.button_Max19_Update.Text = "Update";
             this.button_Max19_Update.UseVisualStyleBackColor = true;
@@ -419,7 +421,7 @@
             // label_Max19_Info
             // 
             this.label_Max19_Info.AutoSize = true;
-            this.label_Max19_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Max19_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Max19_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Max19_Info.Name = "label_Max19_Info";
             this.label_Max19_Info.Size = new System.Drawing.Size(165, 18);
@@ -435,7 +437,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage2.Size = new System.Drawing.Size(949, 433);
+            this.tabPage2.Size = new System.Drawing.Size(690, 440);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Autodesk - Maya";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -447,11 +449,11 @@
             this.groupBox5.Controls.Add(this.button_Maya17_Update);
             this.groupBox5.Controls.Add(this.label_Maya17_ExpDate);
             this.groupBox5.Controls.Add(this.label_Maya17_Info);
-            this.groupBox5.Location = new System.Drawing.Point(7, 218);
+            this.groupBox5.Location = new System.Drawing.Point(7, 222);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox5.Size = new System.Drawing.Size(913, 98);
+            this.groupBox5.Size = new System.Drawing.Size(676, 100);
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Maya 2017";
@@ -459,10 +461,10 @@
             // button_Maya17_Locate
             // 
             this.button_Maya17_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya17_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Maya17_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Maya17_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya17_Locate.Name = "button_Maya17_Locate";
-            this.button_Maya17_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya17_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Maya17_Locate.TabIndex = 107;
             this.button_Maya17_Locate.Text = "(re)Locate";
             this.button_Maya17_Locate.UseVisualStyleBackColor = true;
@@ -471,10 +473,10 @@
             // button_Maya17_Delete
             // 
             this.button_Maya17_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya17_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Maya17_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Maya17_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya17_Delete.Name = "button_Maya17_Delete";
-            this.button_Maya17_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya17_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Maya17_Delete.TabIndex = 109;
             this.button_Maya17_Delete.Text = "Uninstall";
             this.button_Maya17_Delete.UseVisualStyleBackColor = true;
@@ -483,10 +485,10 @@
             // button_Maya17_Update
             // 
             this.button_Maya17_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya17_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Maya17_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Maya17_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya17_Update.Name = "button_Maya17_Update";
-            this.button_Maya17_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya17_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Maya17_Update.TabIndex = 108;
             this.button_Maya17_Update.Text = "Update";
             this.button_Maya17_Update.UseVisualStyleBackColor = true;
@@ -506,7 +508,7 @@
             // label_Maya17_Info
             // 
             this.label_Maya17_Info.AutoSize = true;
-            this.label_Maya17_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Maya17_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Maya17_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Maya17_Info.Name = "label_Maya17_Info";
             this.label_Maya17_Info.Size = new System.Drawing.Size(165, 18);
@@ -520,11 +522,11 @@
             this.groupBox6.Controls.Add(this.button_Maya18_Update);
             this.groupBox6.Controls.Add(this.label_Maya18_ExpDate);
             this.groupBox6.Controls.Add(this.label_Maya18_Info);
-            this.groupBox6.Location = new System.Drawing.Point(7, 112);
+            this.groupBox6.Location = new System.Drawing.Point(7, 114);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox6.Size = new System.Drawing.Size(913, 98);
+            this.groupBox6.Size = new System.Drawing.Size(676, 100);
             this.groupBox6.TabIndex = 8;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Maya 2018";
@@ -532,10 +534,10 @@
             // button_Maya18_Locate
             // 
             this.button_Maya18_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya18_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Maya18_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Maya18_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya18_Locate.Name = "button_Maya18_Locate";
-            this.button_Maya18_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya18_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Maya18_Locate.TabIndex = 104;
             this.button_Maya18_Locate.Text = "(re)Locate";
             this.button_Maya18_Locate.UseVisualStyleBackColor = true;
@@ -544,10 +546,10 @@
             // button_Maya18_Delete
             // 
             this.button_Maya18_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya18_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Maya18_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Maya18_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya18_Delete.Name = "button_Maya18_Delete";
-            this.button_Maya18_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya18_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Maya18_Delete.TabIndex = 106;
             this.button_Maya18_Delete.Text = "Uninstall";
             this.button_Maya18_Delete.UseVisualStyleBackColor = true;
@@ -556,10 +558,10 @@
             // button_Maya18_Update
             // 
             this.button_Maya18_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya18_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Maya18_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Maya18_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya18_Update.Name = "button_Maya18_Update";
-            this.button_Maya18_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya18_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Maya18_Update.TabIndex = 105;
             this.button_Maya18_Update.Text = "Update";
             this.button_Maya18_Update.UseVisualStyleBackColor = true;
@@ -579,7 +581,7 @@
             // label_Maya18_Info
             // 
             this.label_Maya18_Info.AutoSize = true;
-            this.label_Maya18_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Maya18_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Maya18_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Maya18_Info.Name = "label_Maya18_Info";
             this.label_Maya18_Info.Size = new System.Drawing.Size(165, 18);
@@ -597,7 +599,7 @@
             this.groupBox7.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox7.Size = new System.Drawing.Size(913, 98);
+            this.groupBox7.Size = new System.Drawing.Size(676, 100);
             this.groupBox7.TabIndex = 6;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Maya 2019";
@@ -605,10 +607,10 @@
             // button_Maya19_Locate
             // 
             this.button_Maya19_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya19_Locate.Location = new System.Drawing.Point(683, 34);
+            this.button_Maya19_Locate.Location = new System.Drawing.Point(470, 61);
             this.button_Maya19_Locate.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya19_Locate.Name = "button_Maya19_Locate";
-            this.button_Maya19_Locate.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya19_Locate.Size = new System.Drawing.Size(95, 31);
             this.button_Maya19_Locate.TabIndex = 101;
             this.button_Maya19_Locate.Text = "(re)Locate";
             this.button_Maya19_Locate.UseVisualStyleBackColor = true;
@@ -617,10 +619,10 @@
             // button_Maya19_Delete
             // 
             this.button_Maya19_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya19_Delete.Location = new System.Drawing.Point(798, 34);
+            this.button_Maya19_Delete.Location = new System.Drawing.Point(573, 61);
             this.button_Maya19_Delete.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya19_Delete.Name = "button_Maya19_Delete";
-            this.button_Maya19_Delete.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya19_Delete.Size = new System.Drawing.Size(95, 31);
             this.button_Maya19_Delete.TabIndex = 103;
             this.button_Maya19_Delete.Text = "Uninstall";
             this.button_Maya19_Delete.UseVisualStyleBackColor = true;
@@ -629,10 +631,10 @@
             // button_Maya19_Update
             // 
             this.button_Maya19_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.button_Maya19_Update.Location = new System.Drawing.Point(568, 34);
+            this.button_Maya19_Update.Location = new System.Drawing.Point(367, 61);
             this.button_Maya19_Update.Margin = new System.Windows.Forms.Padding(4);
             this.button_Maya19_Update.Name = "button_Maya19_Update";
-            this.button_Maya19_Update.Size = new System.Drawing.Size(107, 31);
+            this.button_Maya19_Update.Size = new System.Drawing.Size(95, 31);
             this.button_Maya19_Update.TabIndex = 102;
             this.button_Maya19_Update.Text = "Update";
             this.button_Maya19_Update.UseVisualStyleBackColor = true;
@@ -652,7 +654,7 @@
             // label_Maya19_Info
             // 
             this.label_Maya19_Info.AutoSize = true;
-            this.label_Maya19_Info.Location = new System.Drawing.Point(8, 34);
+            this.label_Maya19_Info.Location = new System.Drawing.Point(8, 25);
             this.label_Maya19_Info.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Maya19_Info.Name = "label_Maya19_Info";
             this.label_Maya19_Info.Size = new System.Drawing.Size(165, 18);
@@ -664,7 +666,7 @@
             this.tabPage3.Controls.Add(this.log_text);
             this.tabPage3.Location = new System.Drawing.Point(4, 27);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(949, 433);
+            this.tabPage3.Size = new System.Drawing.Size(690, 440);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Logs";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -676,7 +678,7 @@
             this.log_text.Location = new System.Drawing.Point(3, 3);
             this.log_text.Name = "log_text";
             this.log_text.ReadOnly = true;
-            this.log_text.Size = new System.Drawing.Size(943, 427);
+            this.log_text.Size = new System.Drawing.Size(684, 427);
             this.log_text.TabIndex = 0;
             this.log_text.Text = "";
             // 
@@ -704,19 +706,45 @@
             // soft_version
             // 
             this.soft_version.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.soft_version.Location = new System.Drawing.Point(839, 71);
+            this.soft_version.Location = new System.Drawing.Point(569, 12);
             this.soft_version.Margin = new System.Windows.Forms.Padding(3, 50, 3, 0);
             this.soft_version.Name = "soft_version";
             this.soft_version.Size = new System.Drawing.Size(130, 25);
             this.soft_version.TabIndex = 3;
-            this.soft_version.Text = "  v0.2";
+            this.soft_version.Text = "  v1.0";
             this.soft_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // button_All_Update
+            // 
+            this.button_All_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_All_Update.Location = new System.Drawing.Point(390, 115);
+            this.button_All_Update.Margin = new System.Windows.Forms.Padding(4);
+            this.button_All_Update.Name = "button_All_Update";
+            this.button_All_Update.Size = new System.Drawing.Size(140, 31);
+            this.button_All_Update.TabIndex = 6;
+            this.button_All_Update.Text = "Update all";
+            this.button_All_Update.UseVisualStyleBackColor = true;
+            this.button_All_Update.Click += new System.EventHandler(this.Button_All_Update_Click);
+            // 
+            // button_All_Delete
+            // 
+            this.button_All_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_All_Delete.Location = new System.Drawing.Point(551, 115);
+            this.button_All_Delete.Margin = new System.Windows.Forms.Padding(4);
+            this.button_All_Delete.Name = "button_All_Delete";
+            this.button_All_Delete.Size = new System.Drawing.Size(140, 31);
+            this.button_All_Delete.TabIndex = 6;
+            this.button_All_Delete.Text = "Uninstall all";
+            this.button_All_Delete.UseVisualStyleBackColor = true;
+            this.button_All_Delete.Click += new System.EventHandler(this.Button_All_Delete_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(981, 627);
+            this.ClientSize = new System.Drawing.Size(722, 627);
+            this.Controls.Add(this.button_All_Delete);
+            this.Controls.Add(this.button_All_Update);
             this.Controls.Add(this.soft_version);
             this.Controls.Add(this.title);
             this.Controls.Add(this.bjs_logo);
@@ -724,8 +752,8 @@
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MaximumSize = new System.Drawing.Size(999, 674);
-            this.MinimumSize = new System.Drawing.Size(999, 674);
+            this.MaximumSize = new System.Drawing.Size(740, 674);
+            this.MinimumSize = new System.Drawing.Size(740, 674);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js Exporters";
@@ -808,6 +836,8 @@
         private System.Windows.Forms.Button button_Maya19_Locate;
         private System.Windows.Forms.Button button_Maya19_Delete;
         private System.Windows.Forms.Button button_Maya19_Update;
+        private System.Windows.Forms.Button button_All_Update;
+        private System.Windows.Forms.Button button_All_Delete;
     }
 }
 

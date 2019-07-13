@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BabylonJS_Installer
 {
@@ -49,7 +50,7 @@ namespace BabylonJS_Installer
 
                 if (result.Status != System.Net.NetworkInformation.IPStatus.Success)
                 {
-                    this.form.log("Error : Can't reach Github.");
+                    this.form.error("Error : Can't reach Github.");
                     return false;
                 }
                 else
@@ -59,7 +60,7 @@ namespace BabylonJS_Installer
             }
             catch (Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't reach Github.\n"
                     + "Error : \n"
                     + "\"" + ex.Message + "\""
@@ -84,14 +85,12 @@ namespace BabylonJS_Installer
                 //this.download(this.latestRelease);
                 //}
 
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", "BJS_Installer");
-                HttpResponseMessage response = await client.GetAsync(this.url_github_API_releases);
-
                 // TO DO - Parse the JSON in a more beautiful way...
-                String responseBody = await response.Content.ReadAsStringAsync();
+
+                String responseBody = await this.GetJSONBodyRequest(this.url_github_API_releases);
+
                 String lastestReleaseInfos = responseBody.Substring(responseBody.IndexOf("\"prerelease\":") + "\"prerelease\":".Length);
-                //Ensure we are on Rrerelease version
+                //Ensure we are on Prerelease version
                 if (lastestReleaseInfos.StartsWith("true"))
                 {
                     //We parse the array to find the dowload URL
@@ -104,11 +103,11 @@ namespace BabylonJS_Installer
                     this.download(this.latestRelease);
                 }
                 else
-                    this.form.log("Error : Can't find the last release package.");
+                    this.form.error("Error : Can't find the last release package.");
             }
             catch(Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't reach the GitHub API\n"
                     + "Please, try in 1 hour. (The API limitation is 60 queries / hour\n"
                     + "Error message : \n"
@@ -119,9 +118,15 @@ namespace BabylonJS_Installer
 
         private void download(string releaseName)
         {
+            var downloadVersion = this.version;
+            if (this.software.Equals("Maya") && (this.version.Equals("2017") || this.version.Equals("2018")))
+            {
+                this.form.warn("Maya 2017 and 2018 have the same archive, changing version for proper download");
+                downloadVersion = "2017-2018";
+            }
             this.form.log(
                 "Downloading files : \n"
-                + this.url_download + releaseName + "/" + this.software + "_" + this.version + ".zip"
+                + this.url_download + releaseName + "/" + this.software + "_" + downloadVersion + ".zip"
                 );
 
             // Download the zip
@@ -130,24 +135,24 @@ namespace BabylonJS_Installer
                 using (var client = new WebClient())
                 {
                     client.DownloadFile(
-                        this.url_download + releaseName + "/" + this.software + "_" + this.version + ".zip",
-                        this.software + "_" + this.version + ".zip"
+                        this.url_download + releaseName + "/" + this.software + "_" + downloadVersion + ".zip",
+                        this.software + "_" + downloadVersion + ".zip"
                         );
                 }
             }
             catch (Exception ex)
             {
-                this.form.log(
+                this.form.warn(
                     "Can't download the files.\n"
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
             }
 
-            this.downloadComplete();
+            this.downloadComplete(downloadVersion);
         }
 
-        private void downloadComplete()
+        private void downloadComplete(string downloadVersion)
         {
             this.form.log(
                 "Download complete.\n"
@@ -156,13 +161,7 @@ namespace BabylonJS_Installer
 
             try
             {
-                // This way can't rewrite files
-                //ZipFile.ExtractToDirectory(
-                //    this.software + "_" + this.version + ".zip",
-                //    this.installDir
-                //    );
-
-                String zipFileName = this.software + "_" + this.version + ".zip";
+                String zipFileName = this.software + "_" + downloadVersion + ".zip";
                 using (ZipArchive myZip = ZipFile.OpenRead(zipFileName))
                 {
                     foreach (ZipArchiveEntry entry in myZip.Entries)
@@ -173,7 +172,7 @@ namespace BabylonJS_Installer
             }
             catch(Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't extract the files.\n"
                     + "If you're not, please try to run this tool in ADMINISTRATOR MODE. It's necessary to extract the files in \"Program Files\" folder (or other protected folders).\n"
                     + "Error message : \n"
@@ -188,18 +187,33 @@ namespace BabylonJS_Installer
 
             try
             {
-                File.Delete(this.software + "_" + this.version + ".zip");
+                File.Delete(this.software + "_" + downloadVersion + ".zip");
+                this.form.log("\n----- " + this.software + " " + downloadVersion + " EXPORTER UP TO DATE ----- \n");
             }
             catch (Exception ex)
             {
-                this.form.log(
+                this.form.error(
                     "Can't delete temporary files.\n"
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
             }
 
-            this.form.log("\n----- " + this.software + " " + this.version + " EXPORTER UP TO DATE ----- \n");
+            this.form.displayInstall(this.software, this.version);
+        }
+
+        public async Task<string> GetJSONBodyRequest(string requestURI)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "BJS_Installer");
+            HttpResponseMessage response = await client.GetAsync(requestURI);
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public string GetURLGitHubAPI()
+        {
+            return this.url_github_API_releases;
         }
     }
 }

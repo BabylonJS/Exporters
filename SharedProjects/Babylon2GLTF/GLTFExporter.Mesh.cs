@@ -1,7 +1,5 @@
 ﻿using BabylonExport.Entities;
-using Utilities;
 using GLTFExport.Entities;
-using GLTFExport.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,12 +32,12 @@ namespace Babylon2GLTF
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
             bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
 
-            logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
-            logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
-            logger.RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
-            logger.RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
-            logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
-            logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
+            RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
+            RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -349,33 +347,51 @@ namespace Babylon2GLTF
                 if (hasBones)
                 {
                     logger.RaiseMessage("GLTFExporter.Mesh | Bones", 3);
-                    // --- Joints ---
-                    var accessorJoints = GLTFBufferService.Instance.CreateAccessor(
-                        gltf,
-                        GLTFBufferService.Instance.GetBufferViewUnsignedShortVec4(gltf, buffer),
-                        "accessorJoints",
-                        GLTFAccessor.ComponentType.UNSIGNED_SHORT,
-                        GLTFAccessor.TypeEnum.VEC4
-                    );
-                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.JOINTS_0.ToString(), accessorJoints.index);
-                    // Populate accessor
-                    List<ushort> joints = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesIndices[0], v.BonesIndices[1], v.BonesIndices[2], v.BonesIndices[3] }).ToList();
-                    joints.ForEach(n => accessorJoints.bytesList.AddRange(BitConverter.GetBytes(n)));
-                    accessorJoints.count = globalVerticesSubMesh.Count;
 
-                    // --- Weights ---
-                    var accessorWeights = GLTFBufferService.Instance.CreateAccessor(
-                        gltf,
-                        GLTFBufferService.Instance.GetBufferViewFloatVec4(gltf, buffer),
-                        "accessorWeights",
-                        GLTFAccessor.ComponentType.FLOAT,
-                        GLTFAccessor.TypeEnum.VEC4
-                    );
-                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.WEIGHTS_0.ToString(), accessorWeights.index);
-                    // Populate accessor
-                    List<float> weightBones = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesWeights[0], v.BonesWeights[1], v.BonesWeights[2], v.BonesWeights[3] }).ToList();
-                    weightBones.ForEach(n => accessorWeights.bytesList.AddRange(BitConverter.GetBytes(n)));
-                    accessorWeights.count = globalVerticesSubMesh.Count;
+                    // if we've already exported this mesh's skeleton, check if the skins match,
+                    // if so then export this mesh primitive to share joint and weight accessors.
+                    var matchingSkinnedMesh = alreadyExportedSkinnedMeshes.FirstOrDefault(skinnedMesh => skinnedMesh.skeletonId == babylonMesh.skeletonId);
+                    if (matchingSkinnedMesh != null && BabylonMesh.MeshesShareSkin(matchingSkinnedMesh, babylonMesh))
+                    {
+                        var tmpGltfMesh = gltf.MeshesList.FirstOrDefault(mesh => matchingSkinnedMesh.name == mesh.name);
+                        var tmpGltfMeshPrimitive = tmpGltfMesh.primitives.First();
+                        
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.JOINTS_0.ToString(), tmpGltfMeshPrimitive.attributes[GLTFMeshPrimitive.Attribute.JOINTS_0.ToString()]);
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.WEIGHTS_0.ToString(), tmpGltfMeshPrimitive.attributes[GLTFMeshPrimitive.Attribute.WEIGHTS_0.ToString()]);
+                        sharedSkinnedMeshesByOriginal[tmpGltfMesh].Add(gltfMesh);
+                    }
+                    else
+                    {
+                        // Create new joint and weight accessors for this mesh's skinning.
+                        // --- Joints ---
+                        sharedSkinnedMeshesByOriginal[gltfMesh] = new List<GLTFMesh>();
+                        var accessorJoints = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewUnsignedShortVec4(gltf, buffer),
+                            "accessorJoints",
+                            GLTFAccessor.ComponentType.UNSIGNED_SHORT,
+                            GLTFAccessor.TypeEnum.VEC4
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.JOINTS_0.ToString(), accessorJoints.index);
+                        // Populate accessor
+                        List<ushort> joints = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesIndices[0], v.BonesIndices[1], v.BonesIndices[2], v.BonesIndices[3] }).ToList();
+                        joints.ForEach(n => accessorJoints.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorJoints.count = globalVerticesSubMesh.Count;
+
+                        // --- Weights ---
+                        var accessorWeights = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec4(gltf, buffer),
+                            "accessorWeights",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC4
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.WEIGHTS_0.ToString(), accessorWeights.index);
+                        // Populate accessor
+                        List<float> weightBones = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesWeights[0], v.BonesWeights[1], v.BonesWeights[2], v.BonesWeights[3] }).ToList();
+                        weightBones.ForEach(n => accessorWeights.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorWeights.count = globalVerticesSubMesh.Count;
+                    }
                 }
 
                 // Morph targets positions and normals

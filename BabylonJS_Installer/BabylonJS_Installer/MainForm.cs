@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace BabylonJS_Installer
 {
@@ -10,6 +12,7 @@ namespace BabylonJS_Installer
         private SoftwareChecker checker = null;
 
         private Dictionary<string, Dictionary<string, string>> versions; // Soft, Version - Year
+        private Dictionary<string, Dictionary<string, bool>> latestInstalled; // Soft, Version - isLatestInstalled
         private Dictionary<string, Dictionary<string, string>> locations; // Soft, Year - Location
         private Dictionary<string, Dictionary<string, Label[]>> labels; // Soft, Year - [lab. location, lab. expDate]
         private Dictionary<string, Dictionary<string, Button[]>> buttons; // Soft, Year - [but.Update, but.Uninstall, but.Locate]
@@ -31,6 +34,16 @@ namespace BabylonJS_Installer
             this.versions["Maya"].Add("2019", "20");
             this.versions["Maya"].Add("2018", "19");
             this.versions["Maya"].Add("2017", "18");
+
+            this.latestInstalled = new Dictionary<string, Dictionary<string, bool>>();
+            foreach (var dcc in this.versions.Keys)
+            {
+                this.latestInstalled[dcc] = new Dictionary<string, bool>();
+                foreach (var dccVersion in this.versions[dcc].Keys)
+                {
+                    this.latestInstalled[dcc][dccVersion] = true;
+                }
+            }
 
             this.labels = new Dictionary<string, Dictionary<string, Label[]>>();
             this.labels["Max"] = new Dictionary<string, Label[]>();
@@ -61,18 +74,39 @@ namespace BabylonJS_Installer
 
             this.checker = new SoftwareChecker();
             this.checker.form = this;
+            this.checker.setLatestVersionDate();
 
             this.locations = new Dictionary<string, Dictionary<string, string>>();
             this.checkInstall("Max");
             this.checkInstall("Maya");
 
             this.mainTabControl.Visible = true;
+
+            if(!this.checker.ensureAdminMode())
+            {
+                this.goTab("");
+                this.error("\nApplication is not running in Administrator mode.\nYou should restart the application to ensure its functionnalities.\n");
+            }
         }
 
         public void log(string text)
         {
+            this.log_text.SelectionColor = Color.Blue;
             this.log_text.AppendText(text + "\n");
         }
+
+        public void warn(string text)
+        {
+            this.log_text.SelectionColor = Color.Orange;
+            this.log_text.AppendText(text + "\n");
+        }
+
+        public void error(string text)
+        {
+            this.log_text.SelectionColor = Color.Red;
+            this.log_text.AppendText(text + "\n");
+        }
+
         public void goTab(string soft)
         {
             switch(soft)
@@ -100,7 +134,7 @@ namespace BabylonJS_Installer
             }
         }
 
-        private void displayInstall(string soft, string year)
+        public void displayInstall(string soft, string year)
         {
             string version = this.versions[soft][year];
             Label labelPath = this.labels[soft][year][0];
@@ -117,13 +151,14 @@ namespace BabylonJS_Installer
                 labelPath.Text = "Path : " + location;
                 labelDate.Visible = true;
                 this.log("Installation found for " + soft + " " + year + "  -> " + location);
-
+                buttonUpdate.Visible = true;
                 expDate = this.checker.checkExporterDate(soft, location);
                 if (expDate != "")
                 {
                     labelDate.Text = "Exporter last update : " + expDate;
-                    this.log("Exporter last update : " + expDate);
+                    this.log("Exporter last update : " + version);
                     buttonUninstall.Visible = true;
+                    
                 }
                 else
                 {
@@ -132,8 +167,9 @@ namespace BabylonJS_Installer
                     buttonUninstall.Visible = false;
                 }
 
-                // TO DO : Check if the installed version (if one) is the latest or not.
-                buttonUpdate.Visible = true;
+                var isLatest = this.checker.isLatestVersionInstalled(soft, version, location);
+                this.latestInstalled[soft][version] = isLatest;
+                buttonUpdate.Enabled = !isLatest;
             }
             else
             {
@@ -144,6 +180,9 @@ namespace BabylonJS_Installer
                 buttonUpdate.Visible = false;
                 buttonUninstall.Visible = false;
             }
+
+            var oneEnabled = this.latestInstalled.Any(dccTools => dccTools.Value.Any(installedTools => installedTools.Value));
+            button_All_Update.Enabled = !oneEnabled;
         }
 
         // ---------- UI CLICKS ----------
@@ -158,7 +197,20 @@ namespace BabylonJS_Installer
         private void button_update(string soft, string year)
         {
             this.downloader.init(soft, year, this.locations[soft][year] + this.checker.libFolder[soft]);
-            this.displayInstall(soft, year);
+        }
+
+        private void Button_All_Update_Click(object sender, EventArgs e)
+        {
+            foreach(KeyValuePair<string, Dictionary<string, string>> softYear in this.versions)
+            {
+                foreach (KeyValuePair<string, string> yearVersion in softYear.Value)
+                {
+                    //We check if the uninstall button is visible for the current soft and if the current version is the latest
+                    //If not, there is no need to update a soft that isn't there
+                    if (this.buttons[softYear.Key][yearVersion.Key][0].Visible && this.buttons[softYear.Key][yearVersion.Key][0].Enabled)
+                        this.button_update(softYear.Key, yearVersion.Key);
+                }
+            }
         }
 
         private void Button_Max19_Update_Click(object sender, EventArgs e)
@@ -201,7 +253,19 @@ namespace BabylonJS_Installer
         private void button_delete(string soft, string year)
         {
             this.checker.uninstallExporter(soft, year, this.locations[soft][year]);
-            this.displayInstall(soft, year);
+        }
+
+        private void Button_All_Delete_Click(object sender, EventArgs e)
+        {
+            foreach (KeyValuePair<string, Dictionary<string, string>> softYear in this.versions)
+            {
+                foreach (KeyValuePair<string, string> yearVersion in softYear.Value)
+                {
+                    //There is no need to delete a soft that isnt there, so we check for the uninstall button
+                    if (this.buttons[softYear.Key][yearVersion.Key][1].Visible)
+                        this.button_delete(softYear.Key, yearVersion.Key);
+                }
+            }
         }
 
         private void Button_Max19_Delete_Click(object sender, EventArgs e)
@@ -291,6 +355,5 @@ namespace BabylonJS_Installer
         {
             this.button_locate("Maya", "2017");
         }
-
     }
 }
