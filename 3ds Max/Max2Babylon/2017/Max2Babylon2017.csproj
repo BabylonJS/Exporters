@@ -266,7 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
-    <None Include="Resources\Logo_Exporter_v4.jpg" />
+    <None Include="Resources\MaxExporter.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Forms\AnimationForm.resx">
