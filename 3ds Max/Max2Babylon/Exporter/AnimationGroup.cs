@@ -15,15 +15,15 @@ namespace Max2Babylon
     public class AnimationGroupNode
     {
         [DataMember]
-        public uint Handle { get; set; }
+        public Guid Guid { get; set; } 
         [DataMember]
         public string Name { get; set; }
         [DataMember]
         public string ParentName { get; set; }
 
-        public AnimationGroupNode(uint _handle, string _name, string _parentName)
+        public AnimationGroupNode(Guid _guid, string _name, string _parentName)
         {
-            Handle = _handle;
+            Guid = _guid;
             Name = _name;
             ParentName = _parentName;
         }
@@ -85,20 +85,19 @@ namespace Max2Babylon
         [DataMember]
         public List<AnimationGroupNode> AnimationGroupNodes {get; set;}
 
-        
-        public IList<uint> NodeHandles
+        public IList<Guid> NodeGuids
         {
-            get { return nodeHandles.AsReadOnly(); }
+            get { return nodeGuids.AsReadOnly(); }
             set
             {
                 // if the lists are equal, return early so isdirty is not touched
-                if (nodeHandles.Count == value.Count)
+                if (nodeGuids.Count == value.Count)
                 {
                     bool equal = true;
                     int i = 0;
-                    foreach(uint newNodeHandle in value)
+                    foreach (Guid newNodeGuid in value)
                     {
-                        if(!newNodeHandle.Equals(nodeHandles[i]))
+                        if (!newNodeGuid.Equals(nodeGuids[i]))
                         {
                             equal = false;
                             break;
@@ -110,8 +109,8 @@ namespace Max2Babylon
                 }
 
                 IsDirty = true;
-                nodeHandles.Clear();
-                nodeHandles.AddRange(value);
+                nodeGuids.Clear();
+                nodeGuids.AddRange(value);
             }
         }
 
@@ -141,7 +140,7 @@ namespace Max2Babylon
         private string name = "Animation";
         // use current timeline frame range by default
 
-        private List<uint> nodeHandles = new List<uint>();
+        private List<Guid> nodeGuids = new List<Guid>();
 
         public AnimationGroup() { }
         public AnimationGroup(AnimationGroup other)
@@ -154,8 +153,8 @@ namespace Max2Babylon
             name = other.name;
             TicksStart = other.TicksStart;
             TicksEnd = other.TicksEnd;
-            nodeHandles.Clear();
-            nodeHandles.AddRange(other.nodeHandles);
+            nodeGuids.Clear();
+            nodeGuids.AddRange(other.nodeGuids);
             IsDirty = true;
         }
 
@@ -196,28 +195,40 @@ namespace Max2Babylon
                 return;
 
             int numNodeIDs = properties.Length - 3;
-            if (nodeHandles.Capacity < numNodeIDs) nodeHandles.Capacity = numNodeIDs;
+            if (nodeGuids.Capacity < numNodeIDs) nodeGuids.Capacity = numNodeIDs;
             int numFailed = 0;
+
             for (int i = 0; i < numNodeIDs; ++i)
             {
-                uint id;
-                if (!uint.TryParse(properties[3 + i], out id))
+                Guid guid;
+                if (!Guid.TryParse(properties[3 + i], out guid))
                 {
-                    ++numFailed;
-                    continue;
+                    uint id;
+                    if (!uint.TryParse(properties[3 + i], out id))
+                    {
+                        ++numFailed;
+                        continue;
+                    }
+                    //node is serialized in the old way ,force the reassignation of a new Guid on
+                    IINode node = Loader.Core.GetINodeByHandle(id);
+                    if (node != null)
+                    {
+                        guid= node.GetGuid();
+                    }
                 }
-                nodeHandles.Add(id);
+                nodeGuids.Add(guid);
+                
             }
 
             AnimationGroupNodes = new List<AnimationGroupNode>();
-            foreach (uint nodeHandle in nodeHandles)
+            foreach (Guid nodeGuid in nodeGuids)
             {
-                var node = Loader.Core.GetINodeByHandle(nodeHandle);
+                var node = Tools.GetINodeByGuid(nodeGuid);
                 if (node != null)
                 {
                     string name = node.Name;
-                    string parentName = Loader.Core.GetINodeByHandle(nodeHandle).ParentNode.Name;
-                    AnimationGroupNode nodeData = new AnimationGroupNode(nodeHandle, name, parentName);
+                    string parentName =  Tools.GetINodeByGuid(nodeGuid).ParentNode.Name;
+                    AnimationGroupNode nodeData = new AnimationGroupNode(nodeGuid, name, parentName);
                     AnimationGroupNodes.Add(nodeData);
                 }
             }
@@ -234,7 +245,7 @@ namespace Max2Babylon
             if (name.Contains(' ') || name.Contains('=') || name.Contains(s_PropertySeparator))
                 throw new FormatException("Invalid character(s) in animation Name: " + name + ". Spaces, equal signs and the separator '" + s_PropertySeparator + "' are not allowed.");
 
-            string nodes = string.Join(s_PropertySeparator.ToString(), nodeHandles);
+            string nodes = string.Join(s_PropertySeparator.ToString(), nodeGuids);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendFormat(s_PropertyFormat, name, TicksStart, TicksEnd, nodes);
 
@@ -308,7 +319,7 @@ namespace Max2Babylon
 
             foreach (AnimationGroup animData in animationGroupsData)
             {
-                List<uint> nodeHandles = new List<uint>();
+                List<Guid> nodeGuids = new List<Guid>();
                 
                 if (animData.AnimationGroupNodes != null)
                 {
@@ -335,26 +346,26 @@ namespace Max2Babylon
                             continue;
                         }
 
-                        nodeHandles.Add(node.Handle);
+                        nodeGuids.Add(node.GetGuid());
                     }
 
                     if (!string.IsNullOrEmpty(movedNodes))
                     {
                         //skip restoration of evaluated animation group
-                        nodeHandles = new List<uint>();
+                        nodeGuids = new List<Guid>();
                         MessageBox.Show(string.Format("{0} has been moved in hierarchy,{1} import skipped", movedNodes, animData.Name));
                     }
 
                     if (!string.IsNullOrEmpty(missingNodes))
                     {
                         //skip restoration of evaluated animation group
-                        nodeHandles = new List<uint>();
+                        nodeGuids = new List<Guid>();
                         MessageBox.Show(string.Format("{0} does not exist,{1} import skipped", missingNodes, animData.Name));
                     }
                 }
 
-                animData.NodeHandles = nodeHandles;
-                string nodes = string.Join(AnimationGroup.s_PropertySeparator.ToString(), animData.NodeHandles);
+                animData.NodeGuids = nodeGuids;
+                string nodes = string.Join(AnimationGroup.s_PropertySeparator.ToString(), animData.NodeGuids);
                 
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.AppendFormat(AnimationGroup.s_PropertyFormat, animData.Name, animData.TicksStart, animData.TicksEnd, nodes);

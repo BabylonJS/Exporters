@@ -2,6 +2,8 @@
 using Autodesk.Max.IQuadMenuContext;
 using Autodesk.Max.Plugins;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Max2Babylon
 {
@@ -21,11 +23,41 @@ namespace Max2Babylon
 
 #if MAX2018 || MAX2019
         GlobalDelegates.Delegate5 m_SystemStartupDelegate;
+        private static bool filePreOpenCallback = false;
+        private GlobalDelegates.Delegate5 m_FilePreOpenDelegate;
+
+        private static bool nodeAddedCallback = false;
+        private GlobalDelegates.Delegate5 m_NodeAddedDelegate;
 #endif
 
         private void MenuSystemStartupHandler(IntPtr objPtr, INotifyInfo infoPtr)
         {
             InstallMenus();
+        }
+
+        private void InitializeBabylonGuids(IntPtr objPtr, INotifyInfo infoPtr)
+        {
+            Tools.guids = new Dictionary<Guid, IAnimatable>();
+        }
+
+        private void OnNodeAdded(IntPtr objPtr, INotifyInfo infoPtr)
+        {
+            try
+            {
+                IINode n = (IINode)infoPtr.CallParam;
+                n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+
+                IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
+                if (contaner!=null)
+                {
+                    // a generic operation on a container is done (open/inherit)
+                    Tools.guids = new Dictionary<Guid, IAnimatable>();
+                }
+            }
+            catch
+            {
+                // Fails silently
+            }
         }
 
         public override void Stop()
@@ -86,13 +118,38 @@ namespace Max2Babylon
                 var global = GlobalInterface.Instance;
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
+                RegisterFilePreOpen();
+                RegisterNodeAddedCallback();
 #else
                 InstallMenus();
 #endif
-
                 return 0;
             }
         }
+
+#if MAX2018 || MAX2019
+        public void RegisterFilePreOpen()
+        {
+            if (!filePreOpenCallback)
+            {
+                m_FilePreOpenDelegate = new GlobalDelegates.Delegate5(this.InitializeBabylonGuids);
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePreOpenDelegate, null, SystemNotificationCode.FilePreOpen );
+
+                filePreOpenCallback = true;
+            }
+        }
+
+        public void RegisterNodeAddedCallback()
+        {
+            if (!nodeAddedCallback)
+            {
+                m_NodeAddedDelegate = new GlobalDelegates.Delegate5(this.OnNodeAdded);
+                GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.SceneAddedNode );
+
+                nodeAddedCallback = true;
+            }
+        }
+#endif
 
         private void InstallMenus()
         {
