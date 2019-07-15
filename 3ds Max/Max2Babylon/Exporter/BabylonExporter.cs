@@ -112,22 +112,23 @@ namespace Max2Babylon
             }
 
             this.exportParameters = exportParameters;
+            var exportNode = (exportParameters as MaxExportParameters).exportNode;
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            if (exportParameters.exportNode == null)
+            if (exportNode == null)
                 gameScene.InitialiseIGame(false);
-            else gameScene.InitialiseIGame(exportParameters.exportNode, true);
+            else gameScene.InitialiseIGame(exportNode, true);
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
 
             IsCancelled = false;
 
-            string fileExportString = exportParameters.exportNode != null
-                ? $"{exportParameters.exportNode.NodeName} | {exportParameters.outputPath}"
+            string fileExportString = exportNode != null
+                ? $"{exportNode.NodeName} | {exportParameters.outputPath}"
                 : exportParameters.outputPath;
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
             ReportProgressChanged(0);
@@ -282,7 +283,7 @@ namespace Max2Babylon
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
 
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (node != null && exportParameters.exportNode != null)
+                if (node != null && exportNode != null)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
 
                 progression += progressionStep;

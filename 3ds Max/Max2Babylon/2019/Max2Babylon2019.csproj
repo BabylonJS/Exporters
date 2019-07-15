@@ -150,6 +150,9 @@
     <Compile Include="..\Exporter\GlobalVertex.cs">
       <Link>Exporter\GlobalVertex.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\MaxExportParameters.cs">
+      <Link>Exporter\MaxExportParameters.cs</Link>
+    </Compile>
     <Compile Include="..\Extensions\ScaleSystem.cs">
       <Link>Extensions\ScaleSystem.cs</Link>
     </Compile>
