@@ -305,11 +305,12 @@ namespace Maya2Babylon
                     foreach (var babylonAnimationKey in babylonAnimationKeys)
                     {
                         BabylonVector3 eulerAngles = BabylonVector3.FromArray(babylonAnimationKey.values);
-                        BabylonQuaternion quaternionAngles = eulerAngles.toQuaternion();
+                        BabylonVector3 eulerAnglesRadians = eulerAngles * (float)(Math.PI / 180);
+                        BabylonQuaternion quaternionAngles = eulerAnglesRadians.toQuaternion();
                         babylonAnimationKey.values = quaternionAngles.ToArray();
                     }
                 }
-
+                
                 var keysFull = new List<BabylonAnimationKey>(babylonAnimationKeys);
 
                 // Optimization
