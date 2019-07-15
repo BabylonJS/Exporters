@@ -305,7 +305,9 @@ namespace Maya2Babylon
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {
-                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, babylonMaterial.name + "_metallicRoughness" + ".jpg");
+                            var metallicRoughnessFileName = babylonMaterial.name + "_metallicRoughness" + ".jpg";
+                            metallicRoughnessFileName = metallicRoughnessFileName.Replace(":", "_");
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, metallicRoughnessFileName);
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
                         }
 

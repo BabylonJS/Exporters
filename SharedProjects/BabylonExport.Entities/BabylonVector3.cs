@@ -59,7 +59,7 @@ namespace BabylonExport.Entities
 
         /**
          * (Copy pasted from babylon)
-         * Sets the passed quaternion "result" from the passed float Euler angles (y, x, z).  
+         * Sets the passed quaternion "result" from the passed float Euler angles (radians) (y, x, z).
          */
         private BabylonQuaternion RotationYawPitchRollToRefBabylon(float yaw, float pitch, float roll)
         {
