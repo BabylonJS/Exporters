@@ -33,8 +33,6 @@ namespace BabylonExport.Entities
         public bool pbrNoLight = false;
         public string pbrEnvironment;
 
-        public Autodesk.Max.IINode exportNode;
-
         public IGLTFMaterialExporter customGLTFMaterialExporter;
 
         public const string ModelFilePathProperty = "modelFilePathProperty";
