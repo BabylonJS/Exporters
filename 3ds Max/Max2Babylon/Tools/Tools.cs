@@ -558,6 +558,15 @@ namespace Max2Babylon
             return null;
         }
 
+        public static IINode FindChildNode(this IINode node, Guid nodeGuid)
+        {
+            foreach (IINode childNode in node.NodeTree())
+                if (childNode.GetGuid().Equals(nodeGuid))
+                    return childNode;
+
+            return null;
+        }
+
         /// <summary>
         /// Convert horizontal FOV to vertical FOV using default aspect ratio
         /// </summary>
@@ -589,59 +598,7 @@ namespace Max2Babylon
         {
             node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, new byte[] { 1 });
         }
-
-        public static IDictionary<Guid, IAnimatable> guids = new Dictionary<Guid, IAnimatable>();
-
-        public static Guid GetGuid(this IAnimatable node)
-        {
-            var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
-            Guid uid;
-
-            // If current node already has a uid
-            if (uidData != null)
-            {
-                uid = new Guid(uidData.Data);
-
-                if (guids.ContainsKey(uid))
-                {
-                    // If the uid is already used by another node
-                    // This should be very rare, but it is possible:
-                    // - when merging max scenes?
-                    // - when cloning IAnimatable objects?
-                    // - when exporting old assets that were created before GUID uniqueness was checked
-                    // - when exporting parts of a scene separately, creating equal guids, and after that exporting them together
-                    // All of the above problems disappear after exporting AGAIN, because the GUIDs will be unique then.
-                    if (guids[uid].Equals(node as IInterfaceServer) == false)
-                    {
-                        // Remove old uid
-                        node.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
-                        // Create a new uid for current node
-                        uid = Guid.NewGuid();
-                        guids.Add(uid, node);
-                        node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
-                    }
-                }
-                else
-                {
-                    guids.Add(uid, node);
-                }
-            }
-            else
-            {
-                uid = Guid.NewGuid();
-                // verify that we create a unique guid
-                // there is still a possibility for a guid conflict:
-                //   e.g. when we export parts of the scene separately an equal Guid can be generated...
-                // only after re-exporting again after that will all guids be unique...
-                while (guids.ContainsKey(uid))
-                    uid = Guid.NewGuid();
-                guids.Add(uid, node);
-                node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
-            }
-
-            return uid;
-        }
-
+        
         public static string GetLocalData(this IAnimatable node)
         {
             var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1);
@@ -801,6 +758,159 @@ namespace Max2Babylon
 
         #endregion
 
+        #region GUID
+
+        public static List<Guid> ToGuids(this IList<uint> handles)
+        {
+            List<Guid> guids = new List<Guid>();
+            foreach (uint handle in handles)
+            {
+                IINode node = Loader.Core.GetINodeByHandle(handle);
+                Guid guid = node.GetGuid();
+                guids.Add(guid);
+            }
+            return guids;
+        }
+
+        public static List<uint> ToHandles(this IList<Guid> guids)
+        {
+            List<uint> handles = new List<uint>();
+            foreach (Guid guid in guids)
+            {
+                IINode node = GetINodeByGuid(guid);
+                if (node != null)
+                {
+                    handles.Add(node.Handle);
+                }
+            }
+            return handles;
+        }
+
+        public static IINode GetINodeByGuid(Guid guid)
+        {
+            IINode root = Loader.Core.RootNode;
+            foreach (IINode iNode in root.NodeTree())
+            {
+                if (iNode.GetGuid().Equals(guid))
+                {
+                    return iNode;
+                }
+            }
+
+            return null;
+        }
+
+        public static IDictionary<Guid, IAnimatable> guids = new Dictionary<Guid, IAnimatable>();
+
+        public static Guid GetGuid<T>(this T animatable) where T: IAnimatable
+        {
+            if (animatable is IINode)
+            {
+                IINode node = (IINode) animatable;
+                return node.GetIINodeGuid();
+            }
+
+            return animatable.GetIAnimatableGuid();
+        }
+
+
+        private static Guid GetIINodeGuid(this IINode node)
+        {
+            Guid guid = Guid.Empty;
+            Guid.TryParse(node.GetStringProperty("babylonjs_GUID", string.Empty), out guid);
+            if (guid != Guid.Empty)
+            {
+                if (guids.ContainsKey(guid))
+                {
+                    // If the uid is already used by another node
+                    // This should be very rare, but it is possible:
+                    // - when merging max scenes?
+                    // - when cloning IAnimatable objects?
+                    // - when exporting old assets that were created before GUID uniqueness was checked
+                    // - when exporting parts of a scene separately, creating equal guids, and after that exporting them together
+                    // All of the above problems disappear after exporting AGAIN, because the GUIDs will be unique then.
+                    if (guids[guid].Equals(node as IInterfaceServer) == false)
+                    {
+                        // Create a new uid for current node
+                        guid = Guid.NewGuid();
+                        guids.Add(guid, node);
+                        node.SetStringProperty("babylonjs_GUID", guid.ToString());
+                    }
+                }
+                else
+                {
+                    guids.Add(guid, node);
+                }
+            }
+            else
+            {
+                guid = Guid.NewGuid();
+                // verify that we create a unique guid
+                // there is still a possibility for a guid conflict:
+                // e.g. when we export parts of the scene separately an equal Guid can be generated...
+                // only after re-exporting again after that will all guids be unique...
+                while (guids.ContainsKey(guid))
+                {
+                    guid = Guid.NewGuid();
+                }
+                guids.Add(guid, node);
+                node.SetStringProperty("babylonjs_GUID", guid.ToString());
+            }
+            return guid;
+        }
+
+        private static Guid GetIAnimatableGuid(this IAnimatable animatable)
+        {
+            //use the appdatachank method
+            var uidData = animatable.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
+            Guid uid;
+
+            // If current node already has a uid
+            if (uidData != null)
+            {
+                uid = new Guid(uidData.Data);
+
+                if (guids.ContainsKey(uid))
+                {
+                    // If the uid is already used by another node
+                    // This should be very rare, but it is possible:
+                    // - when merging max scenes?
+                    // - when cloning IAnimatable objects?
+                    // - when exporting old assets that were created before GUID uniqueness was checked
+                    // - when exporting parts of a scene separately, creating equal guids, and after that exporting them together
+                    // All of the above problems disappear after exporting AGAIN, because the GUIDs will be unique then.
+                    if (guids[uid].Equals(animatable as IInterfaceServer) == false)
+                    {
+                        // Remove old uid
+                        animatable.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0);
+                        // Create a new uid for current node
+                        uid = Guid.NewGuid();
+                        guids.Add(uid, animatable);
+                        animatable.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
+                    }
+                }
+                else
+                {
+                    guids.Add(uid, animatable);
+                }
+            }
+            else
+            {
+                uid = Guid.NewGuid();
+                // verify that we create a unique guid
+                // there is still a possibility for a guid conflict:
+                //   e.g. when we export parts of the scene separately an equal Guid can be generated...
+                // only after re-exporting again after that will all guids be unique...
+                while (guids.ContainsKey(uid))
+                    uid = Guid.NewGuid();
+                guids.Add(uid, animatable);
+                animatable.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 0, uid.ToByteArray());
+            }
+            return uid;
+        }
+        #endregion
+
+
         #region UserProperties
 
         public static void SetStringProperty(this IINode node, string propertyName, string defaultState)
@@ -937,9 +1047,9 @@ namespace Max2Babylon
         public static int CalculateEndFrameFromAnimationGroupNodes(AnimationGroup animationGroup)
         {
             int endFrame = 0;
-            foreach (uint nodeHandle in animationGroup.NodeHandles)
+            foreach (Guid nodeGuid in animationGroup.NodeGuids)
             {
-                IINode node = Loader.Core.GetINodeByHandle(nodeHandle);
+                IINode node = Tools.GetINodeByGuid(nodeGuid);
                 if (node.IsAnimated && node.TMController != null)
                 {
                     int lastKey = 0;

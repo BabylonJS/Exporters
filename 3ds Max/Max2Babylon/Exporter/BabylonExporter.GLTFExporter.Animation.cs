@@ -108,10 +108,10 @@ namespace Max2Babylon
                     int startFrame = animGroup.FrameStart;
                     int endFrame = animGroup.FrameEnd;
 
-                    foreach (uint nodeHandle in animGroup.NodeHandles)
+                    foreach (Guid nodeGuid in animGroup.NodeGuids)
                     {
                         // todo: make something a little more efficient..
-                        IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+                        IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeGuid);
 
                         // node could have been deleted, silently ignore it
                         if (maxNode == null)

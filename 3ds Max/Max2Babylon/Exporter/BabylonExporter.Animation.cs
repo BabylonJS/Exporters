@@ -28,9 +28,9 @@ namespace Max2Babylon
                 };
 
                 // add animations of each nodes contained in the animGroup
-                foreach(uint nodeHandle in animGroup.NodeHandles)
+                foreach(Guid nodeGuid in animGroup.NodeGuids)
                 {
-                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeHandle);
+                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeGuid);
 
                     // node could have been deleted, silently ignore it
                     if (maxNode == null)

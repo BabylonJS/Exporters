@@ -259,7 +259,7 @@ namespace Max2Babylon
             {
                 for (int i = 0; i < animationGroups.Count; i++)
                 {
-                    if (animationGroups[i].NodeHandles.Contains(node.Handle))
+                    if (animationGroups[i].NodeGuids.Contains(node.GetGuid()))
                     {
                         AnimationListBox.SelectedItem = animationGroups[i];
                     }
