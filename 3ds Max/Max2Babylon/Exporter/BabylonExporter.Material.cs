@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
-using BabylonExport.Entities;
 using Utilities;
-using System.Diagnostics;
+using BabylonExport.Entities;
 
 namespace BabylonExport.Entities
 {

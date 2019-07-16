@@ -1,4 +1,5 @@
 ﻿using Utilities;
+using GLTFExport.Entities;
 
 namespace BabylonExport.Entities
 {
@@ -8,6 +9,7 @@ namespace BabylonExport.Entities
         public string softwareVersion;
         public string exporterVersion;
         public string outputPath;
+        public string outputTexturePath;
         public string outputFormat;
         public string textureFolder;
         public float scaleFactor = 1.0f;

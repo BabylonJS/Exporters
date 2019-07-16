@@ -6,6 +6,7 @@ using Max2Babylon;
 using System;
 using System.Drawing;
 using System.IO;
+using Utilities;
 
 namespace Babylon2GLTF
 {

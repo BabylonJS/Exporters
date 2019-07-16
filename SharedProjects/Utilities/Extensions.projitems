@@ -12,10 +12,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)ColorExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ArrayExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILoggingProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IMaterialExporterProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterBounded.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterOptimized.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MathUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PathUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextureUtilities.cs" />
   </ItemGroup>
 </Project>

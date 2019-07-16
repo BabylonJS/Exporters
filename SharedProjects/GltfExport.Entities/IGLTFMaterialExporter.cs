@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
+using Utilities;
 
-namespace Utilities
+namespace GLTFExport.Entities
 {
     public interface IGLTFMaterialExporter
     {

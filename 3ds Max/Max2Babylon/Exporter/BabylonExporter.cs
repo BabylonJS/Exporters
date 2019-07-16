@@ -611,7 +611,7 @@ namespace Max2Babylon
                     string ext = Path.GetExtension(file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
                     var outputPath = Path.Combine(outputDirectory, file);
-                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder)) // TODO && ExtensionIsValidGLTFTexture(ext))
+                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder) && TextureUtilities.ExtensionIsValidGLTFTexture(ext))
                     {
                         outputPath = Path.Combine(exportParameters.textureFolder, file);
                     }
