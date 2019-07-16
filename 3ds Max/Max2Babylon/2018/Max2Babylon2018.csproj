@@ -153,6 +153,9 @@
     <Compile Include="..\Exporter\MaxExportParameters.cs">
       <Link>Exporter\MaxExportParameters.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\MaxGLTFMaterialExporter.cs">
+      <Link>Exporter\MaxGLTFMaterialExporter.cs</Link>
+    </Compile>
     <Compile Include="..\Extensions\ScaleSystem.cs">
       <Link>Extensions\ScaleSystem.cs</Link>
     </Compile>

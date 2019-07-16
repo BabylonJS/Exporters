@@ -8,7 +8,7 @@ using GLTFExport.Entities;
 
 namespace Utilities
 {
-    class TextureUtilities
+    static class TextureUtilities
     {
         public static List<string> validGltfFormats = new List<string>(new string[] { "png", "jpg", "jpeg" });
         public static List<string> invalidGltfFormats = new List<string>(new string[] { "dds", "tga", "tif", "tiff", "bmp", "gif" });
@@ -93,6 +93,21 @@ namespace Utilities
         public static string GetValidImageFormat(string extension)
         {
             return _getValidImageFormat(extension, validGltfFormats, invalidGltfFormats);
+        }
+
+        public static bool ExtensionIsValidGLTFTexture(string _extension)
+        {
+            if (_extension.StartsWith("."))
+            {
+                _extension = _extension.Replace(".", "");
+            }
+
+            if (validGltfFormats.Contains(_extension))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static string _getValidImageFormat(string extension, List<string> validFormats, List<string> invalidFormats)
