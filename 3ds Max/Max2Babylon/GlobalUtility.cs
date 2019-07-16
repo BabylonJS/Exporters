@@ -4,6 +4,9 @@ using Autodesk.Max.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Autodesk.Max.MaxSDK.AssetManagement;
+using Object = Autodesk.Max.Plugins.Object;
 
 namespace Max2Babylon
 {
@@ -23,21 +26,49 @@ namespace Max2Babylon
 
 #if MAX2018 || MAX2019
         GlobalDelegates.Delegate5 m_SystemStartupDelegate;
+#endif
         private static bool filePreOpenCallback = false;
         private GlobalDelegates.Delegate5 m_FilePreOpenDelegate;
 
         private static bool nodeAddedCallback = false;
         private GlobalDelegates.Delegate5 m_NodeAddedDelegate;
-#endif
+
 
         private void MenuSystemStartupHandler(IntPtr objPtr, INotifyInfo infoPtr)
         {
             InstallMenus();
         }
 
+        private void InitializeBabylonGuids(IntPtr param0, IntPtr param1)
+        {
+            Tools.guids = new Dictionary<Guid, IAnimatable>();
+        }
+
         private void InitializeBabylonGuids(IntPtr objPtr, INotifyInfo infoPtr)
         {
             Tools.guids = new Dictionary<Guid, IAnimatable>();
+        }
+
+        private void OnNodeAdded(IntPtr param0, IntPtr param1)
+        {
+            try
+            {
+                INotifyInfo obj = Loader.Global.NotifyInfo.Marshal(param1);
+
+                IINode n = (IINode) obj.CallParam;
+                n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+
+                IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
+                if (contaner != null)
+                {
+                    // a generic operation on a container is done (open/inherit)
+                    Tools.guids = new Dictionary<Guid, IAnimatable>();
+                }
+            }
+            catch
+            {
+                // Fails silently
+            }
         }
 
         private void OnNodeAdded(IntPtr objPtr, INotifyInfo infoPtr)
@@ -118,16 +149,17 @@ namespace Max2Babylon
                 var global = GlobalInterface.Instance;
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
-                RegisterFilePreOpen();
-                RegisterNodeAddedCallback();
+                
 #else
                 InstallMenus();
 #endif
+                RegisterFilePreOpen();
+                RegisterNodeAddedCallback();
+
                 return 0;
             }
         }
 
-#if MAX2018 || MAX2019
         public void RegisterFilePreOpen()
         {
             if (!filePreOpenCallback)
@@ -138,18 +170,22 @@ namespace Max2Babylon
                 filePreOpenCallback = true;
             }
         }
+        
 
         public void RegisterNodeAddedCallback()
         {
             if (!nodeAddedCallback)
             {
                 m_NodeAddedDelegate = new GlobalDelegates.Delegate5(this.OnNodeAdded);
+#if MAX2015 || MAX2017
+                //bug on Autodesk API  SystemNotificationCode.SceneAddedNode doesn't work for max 2015-2017
+                GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.NodeLinked );
+#else
                 GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.SceneAddedNode );
-
+#endif
                 nodeAddedCallback = true;
             }
         }
-#endif
 
         private void InstallMenus()
         {
