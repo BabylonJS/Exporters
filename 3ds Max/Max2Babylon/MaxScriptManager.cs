@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using BabylonExport.Entities;
+using Utilities;
 using Autodesk.Max;
 
 namespace Max2Babylon
@@ -14,7 +16,7 @@ namespace Max2Babylon
         {
             string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
-            string absoluteModelPath = Tools.UnformatPath(userRelativePath);
+            string absoluteModelPath = PathUtilities.UnformatPath(userRelativePath);
             Export(InitParameters(absoluteModelPath));
         }
 
@@ -65,6 +67,8 @@ namespace Max2Babylon
         //leave the possibility to do get the outputh path from the babylon exporter with all the settings as presaved
         public static ExportParameters InitParameters(string outputPath)
         {
+            long txtQuality = 100;
+            float scaleFactor = 1f;
             ExportParameters exportParameters = new ExportParameters();
             exportParameters.outputPath = outputPath;
             exportParameters.outputFormat = Path.GetExtension(outputPath)?.Substring(1);
@@ -76,8 +80,8 @@ namespace Max2Babylon
             exportParameters.autoSave3dsMaxFile = Loader.Core.RootNode.GetBoolProperty("babylonjs_autosave");
             exportParameters.exportOnlySelected = Loader.Core.RootNode.GetBoolProperty("babylonjs_onlySelected");
             exportParameters.exportTangents = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporttangents");
-            exportParameters.scaleFactor = Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1");
-            exportParameters.txtQuality = Loader.Core.RootNode.GetStringProperty("babylonjs_txtCompression", "100");
+            exportParameters.scaleFactor = float.TryParse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1"), out scaleFactor) ? scaleFactor : 1;
+            exportParameters.txtQuality = long.TryParse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtCompression", "100"), out txtQuality) ? txtQuality : 100;
             exportParameters.mergeAOwithMR = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergeAOwithMR");
             exportParameters.dracoCompression = Loader.Core.RootNode.GetBoolProperty("babylonjs_dracoCompression");
             exportParameters.enableKHRLightsPunctual = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrLightsPunctual");
@@ -269,10 +273,5 @@ namespace Max2Babylon
             info.NodeHandles = newHandles;
             info.SaveToData();
         }
-
-
-
-
-
     }
 }

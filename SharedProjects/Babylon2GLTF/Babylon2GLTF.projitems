@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>cc8bfa12-aff1-4f9f-9ee4-c4a3a5d86237</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Babylon2GLTF</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFBufferService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.AbstractMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Animation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Light.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Material.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Mesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Skin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Texture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFGlobalVertex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Material.Optimizer.cs" />
+  </ItemGroup>
+</Project>

@@ -1,5 +1,4 @@
 ﻿using Autodesk.Max;
-using BabylonExport.Entities;
 using Max2Babylon.Extensions;
 using SharpDX;
 using System;
@@ -8,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Max2Babylon
@@ -40,99 +38,6 @@ namespace Max2Babylon
                 return e.Types.Where(t => t != null);
             }
         }
-
-        #region Math
-
-        public static float Lerp(float min, float max, float t)
-        {
-            return min + (max - min) * t;
-        }
-
-        public static int RoundToInt(float f)
-        {
-            return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
-        }
-
-        /**
-         * Computes a texture transform matrix with a pre-transformation
-         */
-        public static BabylonMatrix ComputeTextureTransformMatrix(BabylonVector3 pivotCenter , BabylonVector3 offset, BabylonQuaternion rotation, BabylonVector3 scale)
-        {
-            var dOffset = new BabylonVector3();
-            var dRotation = new BabylonQuaternion();
-            var dScale = new BabylonVector3();
-            offset.X *= scale.X;
-            offset.Y *= scale.Y;
-            offset.Z *= 0;
-
-            var transformMatrix = BabylonMatrix.Translation(new BabylonVector3(-pivotCenter.X, -pivotCenter.Y, 0)).multiply(BabylonMatrix.Compose(scale, rotation, offset)).multiply(BabylonMatrix.Translation(pivotCenter));
-            return transformMatrix;
-        }
-
-        #endregion
-
-        #region Array
-
-        public static T[] SubArray<T>(T[] array, int startIndex, int count)
-        {
-            var result = new T[count];
-            for (int i = 0; i < count; i++)
-            {
-                result[i] = array[startIndex + i];
-            }
-            return result;
-        }
-
-        public static T[] SubArrayFromEntity<T>(T[] array, int startEntityIndex, int count)
-        {
-            return SubArray(array, startEntityIndex * count, count);
-        }
-
-        public static string ToString<T>(this T[] array, bool withBrackets = true)
-        {
-            if (array == null)
-            {
-                return "";
-            }
-
-            var result = "";
-            if (array.Length > 0)
-            {
-                result += array[0];
-                for (int i = 1; i < array.Length; i++)
-                {
-                    result += ", " + array[i];
-                }
-            }
-
-            if (withBrackets)
-            {
-                result = "[" + result + "]";
-            }
-            return result;
-        }
-
-        public static float[] Multiply(this float[] array, float[] array2)
-        {
-            float[] res = new float[array.Length];
-            for (int index = 0; index < array.Length; index++)
-            {
-                res[index] = array[index] * array2[index];
-            }
-            return res;
-        }
-
-        public static float[] Multiply(this float[] array, float value)
-        {
-            float[] res = new float[array.Length];
-            for (int index = 0; index < array.Length; index++)
-            {
-                res[index] = array[index] * value;
-            }
-            return res;
-        }
-
-        #endregion
 
         #region IIPropertyContainer
 
@@ -716,29 +621,7 @@ namespace Max2Babylon
 
             return obj.ConvertToType(0, triObjectClassId) as ITriObject;
         }
-        public static bool IsAlmostEqualTo(this float[] current, float[] other, float epsilon)
-        {
-            if (current == null && other == null)
-            {
-                return true;
-            }
-            if (current == null || other == null)
-            {
-                return false;
-            }
-            if (current.Length != other.Length)
-            {
-                return false;
-            }
-            for (var i = 0; i < current.Length; ++i)
-            {
-                if (Math.Abs(current[i] - other[i]) > epsilon)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        
         public static bool IsAlmostEqualTo(this IPoint4 current, IPoint4 other, float epsilon)
         {
             if (Math.Abs(current.X - other.X) > epsilon)
@@ -1137,44 +1020,6 @@ namespace Max2Babylon
 
         #region File Path
 
-        /// <summary>
-        /// Creates a relative path from one file or folder to another. Input paths that are directories should have a trailing slash.
-        /// </summary>
-        /// <param name="fromPath">Contains the directory that defines the start of the relative path. Directories should have a trailing slash.</param>
-        /// <param name="toPath">Contains the path that defines the endpoint of the relative path. Directories should have a trailing slash.</param>
-        /// <returns>The relative path from the start directory to the end path.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="toPath"/> is <c>null</c>.</exception>
-        /// <exception cref="UriFormatException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static string GetRelativePath(string fromPath, string toPath)
-        {
-            if (string.IsNullOrEmpty(fromPath))
-                return toPath;
-            if (string.IsNullOrEmpty(toPath))
-                throw new ArgumentNullException("toPath");
-
-            Uri fromUri = new Uri(fromPath);
-            Uri toUri = new Uri(toPath);
-
-            if (fromUri.Scheme != toUri.Scheme)
-                return toPath;
-
-            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-            if (string.Equals(toUri.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
-                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-
-            return relativePath;
-        }
-
-
-        public static string UnformatPath(string formattedPath)
-        {
-            string newPath = formattedPath;
-            newPath = Regex.Replace(formattedPath, @"[()]", string.Empty);
-            return newPath;
-        }
 
         public static string FormatPath(string absolutePath)
         {
@@ -1231,33 +1076,6 @@ namespace Max2Babylon
 
             return string.Format(@"({0}){1}", dirName, path);
         }
-
-        public static bool IsBelowModelPath(string folderPath,string modelPath)
-        {
-            string modelFolderPath = Path.GetDirectoryName(modelPath);
-            if (folderPath.StartsWith(modelFolderPath))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static string GetPathRelativeToModel(string folderPath, string modelPath)
-        {
-            Uri path1 = new Uri(modelPath);
-
-            if (!folderPath.EndsWith("\\"))
-            {
-                folderPath += "\\";
-            }
-
-            Uri path2 = new Uri(folderPath);
-            Uri diff = path1.MakeRelativeUri(path2);
-            return diff.OriginalString;
-        }
-
-
         #endregion
     }
 }

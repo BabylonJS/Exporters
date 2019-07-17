@@ -107,6 +107,10 @@ namespace BabylonExport.Entities
         public BabylonVector3 MaxVector { get; set; }
         public BabylonVector3 MinVector { get; set; }
 
+        public int TimelineFramesPerSecond { get; set; }
+        public int TimelineStartFrame { get; set; }
+        public int TimelineEndFrame { get; set; }
+
         public string OutputPath { get; private set; }
 
         public List<BabylonMesh> MeshesList { get; private set; }
