@@ -571,6 +571,7 @@ namespace Max2Babylon
             }
             var keysFull = new List<BabylonAnimationKey>(keys);
 
+            // Optimization process always keeps first and last frames
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);
