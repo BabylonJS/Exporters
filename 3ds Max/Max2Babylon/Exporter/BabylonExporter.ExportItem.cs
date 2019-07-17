@@ -3,8 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Utilities;
 
 namespace Max2Babylon
 {
@@ -145,12 +144,12 @@ namespace Max2Babylon
             else if (Path.IsPathRooted(filePath)) // absolute path
             {
                 absolutePath = Path.GetFullPath(filePath);
-                relativePath = Tools.GetRelativePath(dirName, filePath);
+                relativePath = PathUtilities.GetRelativePath(dirName, filePath);
             }
             else // relative path
             {
                 absolutePath = Path.GetFullPath(Path.Combine(dirName, filePath));
-                relativePath = Tools.GetRelativePath(dirName, absolutePath);
+                relativePath = PathUtilities.GetRelativePath(dirName, absolutePath);
 
                 exportPathRelative = relativePath;
             }

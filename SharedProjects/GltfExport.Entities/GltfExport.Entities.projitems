@@ -38,5 +38,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)GLTFSkin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFTextureInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IGLTFMaterialExporter.cs" />
   </ItemGroup>
 </Project>
