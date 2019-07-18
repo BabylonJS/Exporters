@@ -78,6 +78,7 @@ namespace Maya2Babylon
             {
                 name = Path.GetFileNameWithoutExtension(sourcePath) + "." + validImageFormat
             };
+            babylonTexture.name = babylonTexture.name.Replace(":", "_");
 
             // Level
             babylonTexture.level = amount;
@@ -279,6 +280,7 @@ namespace Maya2Babylon
                        (roughnessTextureDependencyNode != null ? roughnessTextureDependencyNode.name : ("" + (int)(defaultRoughness * 255))) +
                        (metallicTextureDependencyNode != null ? metallicTextureDependencyNode.name : ("" + (int)(defaultMetallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
+            babylonTexture.name = babylonTexture.name.Replace(":", "_");
 
             // UVs
             _exportUV(textureDependencyNode, babylonTexture);
@@ -353,6 +355,7 @@ namespace Maya2Babylon
             {
                 name = materialName + "_coat" + ".jpg" // TODO - unsafe name, may conflict with another texture name
             };
+            babylonTexture.name = babylonTexture.name.Replace(":", "_");
 
             // Level
             babylonTexture.level = 1.0f;
