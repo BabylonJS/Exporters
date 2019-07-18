@@ -413,6 +413,12 @@ namespace Max2Babylon
 
             foreach (IIContainerObject iContainerObject in containers)
             {
+                if (!iContainerObject.IsOpen)
+                {
+                    MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be saved because Container is closed");
+                    continue;
+                }
+
                 RemoveDataOnContainer(iContainerObject); //cleanup for a new serialization
                 List<string> animationPropertyNameList = new List<string>();
                 foreach (AnimationGroup animationGroup in animationGroupList)
@@ -421,14 +427,14 @@ namespace Max2Babylon
                     if (containerObject!=null && containerObject.ContainerNode.Handle == iContainerObject.ContainerNode.Handle)
                     {
                         string prop = Loader.Core.RootNode.GetStringProperty(animationGroup.GetPropertyName(),"");
-                        containerObject.ContainerNode.SetStringProperty(animationGroup.GetPropertyName(), prop);
+                        containerObject.BabylonContainerHelper().SetStringProperty(animationGroup.GetPropertyName(), prop);
                         animationPropertyNameList.Add(animationGroup.GetPropertyName());
                     }
                 }
 
                 if (animationPropertyNameList.Count > 0)
                 {
-                    iContainerObject.ContainerNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+                    iContainerObject.BabylonContainerHelper().SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
                 }
 
             }
@@ -441,9 +447,14 @@ namespace Max2Babylon
 
             foreach (IIContainerObject iContainerObject in containers)
             {
+                if (!iContainerObject.IsOpen)
+                {
+                    MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be loaded because Container is closed");
+                    continue;
+                }
                 //on container added in scene try retrieve info from containers
                 string[] sceneAnimationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
-                string[] containerAnimationPropertyNames = iContainerObject.ContainerNode.GetStringArrayProperty(s_AnimationListPropertyName);
+                string[] containerAnimationPropertyNames = iContainerObject.BabylonContainerHelper().GetStringArrayProperty(s_AnimationListPropertyName);
                 string[] mergedAnimationPropertyNames = sceneAnimationPropertyNames.Concat(containerAnimationPropertyNames).Distinct().ToArray();
 
                 Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, mergedAnimationPropertyNames);
@@ -451,7 +462,7 @@ namespace Max2Babylon
                 foreach (string propertyNameStr in containerAnimationPropertyNames)
                 {
                     //copy
-                    string prop = iContainerObject.ContainerNode.GetStringProperty(propertyNameStr,"");
+                    string prop = iContainerObject.BabylonContainerHelper().GetStringProperty(propertyNameStr,"");
                     Loader.Core.RootNode.SetStringProperty(propertyNameStr, prop);
                 }
             }
@@ -460,14 +471,14 @@ namespace Max2Babylon
         public static void RemoveDataOnContainer(IIContainerObject containerObject)
         {
             //remove all property related to animation group 
-            string[] animationPropertyNames =containerObject.ContainerNode.GetStringArrayProperty(s_AnimationListPropertyName);
+            string[] animationPropertyNames =containerObject.BabylonContainerHelper().GetStringArrayProperty(s_AnimationListPropertyName);
 
             foreach (string propertyNameStr in animationPropertyNames)
             {
-                containerObject.ContainerNode.DeleteProperty(propertyNameStr);
+                containerObject.BabylonContainerHelper().DeleteProperty(propertyNameStr);
             }
 
-            containerObject.ContainerNode.DeleteProperty(s_AnimationListPropertyName);
+            containerObject.BabylonContainerHelper().DeleteProperty(s_AnimationListPropertyName);
         }
     }
 }
