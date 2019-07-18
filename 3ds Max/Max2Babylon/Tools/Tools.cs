@@ -558,6 +558,15 @@ namespace Max2Babylon
             return null;
         }
 
+        public static IINode FindChildNode(this IINode node, string nodeName)
+        {
+            foreach (IINode childNode in node.NodeTree())
+                if (childNode.Name == nodeName)
+                    return childNode;
+
+            return null;
+        }
+
         public static IINode FindChildNode(this IINode node, Guid nodeGuid)
         {
             foreach (IINode childNode in node.NodeTree())
@@ -822,8 +831,22 @@ namespace Max2Babylon
                     containersList.Add(containerObject);
                 }
             }
-
             return containersList;
+        }
+
+        public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
+        {
+            IINode babylonHelper = containerObject.ContainerNode.FindChildNode("BabylonAnimationHelper");
+            if (babylonHelper == null)
+            {
+                IDummyObject dummy = Loader.Global.DummyObject.Create();
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, "BabylonAnimationHelper");
+
+                Loader.Core.SetQuietMode(true);
+                containerObject.ContainerNode.AttachChild(babylonHelper,false);
+                Loader.Core.SetQuietMode(false);
+            }
+            return babylonHelper;
         }
 
         public static List<Guid> ToGuids(this IList<uint> handles)
