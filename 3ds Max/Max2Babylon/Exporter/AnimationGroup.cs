@@ -398,5 +398,76 @@ namespace Max2Babylon
             LoadFromData();
             
         }
+
+        public static void SaveDataToContainers()
+        {
+            //on scene close automatically move serialization to affected containers
+            // look on each animation group if all node are in same container
+            // copy property to container
+
+            List<IIContainerObject> containers = Tools.GetAllContainers();
+            if (containers.Count<=0) return;
+
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+
+            foreach (IIContainerObject iContainerObject in containers)
+            {
+                RemoveDataOnContainer(iContainerObject); //cleanup for a new serialization
+                List<string> animationPropertyNameList = new List<string>();
+                foreach (AnimationGroup animationGroup in animationGroupList)
+                {
+                    IIContainerObject containerObject = animationGroup.NodeGuids.InSameContainer();
+                    if (containerObject!=null && containerObject.ContainerNode.Handle == iContainerObject.ContainerNode.Handle)
+                    {
+                        string prop = Loader.Core.RootNode.GetStringProperty(animationGroup.GetPropertyName(),"");
+                        containerObject.ContainerNode.SetStringProperty(animationGroup.GetPropertyName(), prop);
+                        animationPropertyNameList.Add(animationGroup.GetPropertyName());
+                    }
+                }
+
+                if (animationPropertyNameList.Count > 0)
+                {
+                    iContainerObject.ContainerNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+                }
+
+            }
+        }
+
+        public static void LoadDataFromContainers()
+        {
+            List<IIContainerObject> containers = Tools.GetAllContainers();
+            if (containers.Count<=0) return;
+
+            foreach (IIContainerObject iContainerObject in containers)
+            {
+                //on container added in scene try retrieve info from containers
+                string[] sceneAnimationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+                string[] containerAnimationPropertyNames = iContainerObject.ContainerNode.GetStringArrayProperty(s_AnimationListPropertyName);
+                string[] mergedAnimationPropertyNames = sceneAnimationPropertyNames.Concat(containerAnimationPropertyNames).Distinct().ToArray();
+
+                Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, mergedAnimationPropertyNames);
+
+                foreach (string propertyNameStr in containerAnimationPropertyNames)
+                {
+                    //copy
+                    string prop = iContainerObject.ContainerNode.GetStringProperty(propertyNameStr,"");
+                    Loader.Core.RootNode.SetStringProperty(propertyNameStr, prop);
+                }
+            }
+        }
+
+        public static void RemoveDataOnContainer(IIContainerObject containerObject)
+        {
+            //remove all property related to animation group 
+            string[] animationPropertyNames =containerObject.ContainerNode.GetStringArrayProperty(s_AnimationListPropertyName);
+
+            foreach (string propertyNameStr in animationPropertyNames)
+            {
+                containerObject.ContainerNode.DeleteProperty(propertyNameStr);
+            }
+
+            containerObject.ContainerNode.DeleteProperty(s_AnimationListPropertyName);
+        }
     }
 }
