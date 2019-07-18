@@ -108,8 +108,14 @@
     <Compile Include="..\BabylonExportActionItem.cs">
       <Link>BabylonExportActionItem.cs</Link>
     </Compile>
+    <Compile Include="..\BabylonLoadAnimationFromContainers.cs">
+      <Link>BabylonLoadAnimationFromContainers.cs</Link>
+    </Compile>
     <Compile Include="..\BabylonPropertiesActionItem.cs">
       <Link>BabylonPropertiesActionItem.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonSaveAnimationToContainers.cs">
+      <Link>BabylonSaveAnimationToContainers.cs</Link>
     </Compile>
     <Compile Include="..\Descriptor.cs">
       <Link>Descriptor.cs</Link>

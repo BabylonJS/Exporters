@@ -760,6 +760,72 @@ namespace Max2Babylon
 
         #region GUID
 
+        public static  IIContainerObject GetContainer(this IList<Guid> guids)
+        {
+            foreach (Guid guid in guids)
+            {
+                IINode node = GetINodeByGuid(guid);
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsInContainer(node);
+                if (containerObject != null)
+                {
+                    return containerObject;
+                }
+            }
+            return null;
+        }
+
+        public static  IIContainerObject GetContainer(this IList<uint> handles)
+        {
+            foreach (uint handle in handles)
+            {
+                IINode node = Loader.Core.GetINodeByHandle(handle);
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsInContainer(node);
+                if (containerObject != null)
+                {
+                    return containerObject;
+                }
+            }
+            return null;
+        }
+
+        public static IIContainerObject InSameContainer(this IList<Guid> guids)
+        {
+            List<IIContainerObject> containers = new List<IIContainerObject>();
+            foreach (Guid guid in guids)
+            {
+                IINode node = GetINodeByGuid(guid);
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsInContainer(node);
+                if (containerObject != null)
+                {
+                    if (!containers.Contains(containerObject))
+                    {
+                        containers.Add(containerObject);
+                    }
+                }
+            }
+
+            if (containers.Count == 1)
+            {
+                return containers[0];
+            }
+            return null;
+        }
+
+        public static List<IIContainerObject> GetAllContainers()
+        {
+            List<IIContainerObject> containersList = new List<IIContainerObject>();
+            foreach (IINode node in Loader.Core.RootNode.NodeTree())
+            {
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(node);
+                if (containerObject != null)
+                {
+                    containersList.Add(containerObject);
+                }
+            }
+
+            return containersList;
+        }
+
         public static List<Guid> ToGuids(this IList<uint> handles)
         {
             List<Guid> guids = new List<Guid>();
