@@ -9,8 +9,8 @@ using Utilities;
 namespace Babylon2GLTF
 {
     partial class GLTFExporter
-    {
-       
+                        {
+
         private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
             // Retreive and parse animation group data
@@ -25,7 +25,7 @@ namespace Babylon2GLTF
                 logger.RaiseMessage("GLTFExporter.Animation | No AnimationGroups: exporting all animations together.", 1);
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = "All Animations";
-
+                
                 int minFrame = babylonScene.TimelineStartFrame;
                 int maxFrame = babylonScene.TimelineEndFrame;
 
