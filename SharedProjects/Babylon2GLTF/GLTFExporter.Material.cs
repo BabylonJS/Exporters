@@ -1,8 +1,6 @@
-﻿using Autodesk.Max;
-using BabylonExport.Entities;
+﻿using BabylonExport.Entities;
 using Utilities;
 using GLTFExport.Entities;
-using Max2Babylon;
 using System;
 using System.Drawing;
 using System.IO;
@@ -556,7 +554,7 @@ namespace Babylon2GLTF
             }
             else
             {
-                logger.RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType() + " | Max MaterialClass: " + babylonMaterial.maxGameMaterial.ClassName, 2);
+                logger.RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType(), 2);
             }
 
             if (gltfMaterial != null && babylonMaterial.isUnlit)
