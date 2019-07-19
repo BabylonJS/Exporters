@@ -77,7 +77,7 @@ namespace Max2Babylon
             exportParameters.writeTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_writetextures");
             exportParameters.overwriteTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_overwritetextures");
             exportParameters.exportHiddenObjects = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporthidden");
-            exportParameters.autoSave3dsMaxFile = Loader.Core.RootNode.GetBoolProperty("babylonjs_autosave");
+            exportParameters.autoSaveSceneFile = Loader.Core.RootNode.GetBoolProperty("babylonjs_autosave");
             exportParameters.exportOnlySelected = Loader.Core.RootNode.GetBoolProperty("babylonjs_onlySelected");
             exportParameters.exportTangents = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporttangents");
             exportParameters.scaleFactor = float.TryParse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1"), out scaleFactor) ? scaleFactor : 1;

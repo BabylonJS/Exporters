@@ -1,7 +1,9 @@
 using Autodesk.Max;
 using Max2Babylon;
+using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Reflection;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
 using Babylon2GLTF;
@@ -13,9 +15,22 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
     private ExportParameters exportParameters;
     private GLTFExporter gltfExporter;
 
-    public MaxGLTFMaterialExporter(Dictionary<ClassIDWrapper, IMaxMaterialExporter> materialExporters, ExportParameters exportParameters, GLTFExporter gltfExporter)
+    public MaxGLTFMaterialExporter(ExportParameters exportParameters, GLTFExporter gltfExporter, ILoggingProvider logger)
     {
-        this.materialExporters = materialExporters;
+        // Instantiate custom material exporters
+        this.materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
+        foreach (Type type in Tools.GetAllLoadableTypes())
+        {
+            if (type.IsAbstract || type.IsInterface || !typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                continue;
+
+            IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
+
+            if (exporter == null)
+                logger.RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+            materialExporters.Add(exporter.MaterialClassID, exporter);
+        }
         this.exportParameters = exportParameters;
         this.gltfExporter = gltfExporter;
     }
@@ -41,6 +56,7 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
                 string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
                     materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
                 logger.RaiseWarning(message, 2);
+                return false;
             }
             return true;
         }
