@@ -2,6 +2,11 @@
 using Autodesk.Max.IQuadMenuContext;
 using Autodesk.Max.Plugins;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Autodesk.Max.MaxSDK.AssetManagement;
+using Object = Autodesk.Max.Plugins.Object;
 
 namespace Max2Babylon
 {
@@ -22,10 +27,70 @@ namespace Max2Babylon
 #if MAX2018 || MAX2019
         GlobalDelegates.Delegate5 m_SystemStartupDelegate;
 #endif
+        private static bool filePreOpenCallback = false;
+        private GlobalDelegates.Delegate5 m_FilePreOpenDelegate;
+
+        private static bool nodeAddedCallback = false;
+        private GlobalDelegates.Delegate5 m_NodeAddedDelegate;
+
 
         private void MenuSystemStartupHandler(IntPtr objPtr, INotifyInfo infoPtr)
         {
             InstallMenus();
+        }
+
+        private void InitializeBabylonGuids(IntPtr param0, IntPtr param1)
+        {
+            Tools.guids = new Dictionary<Guid, IAnimatable>();
+        }
+
+        private void InitializeBabylonGuids(IntPtr objPtr, INotifyInfo infoPtr)
+        {
+            Tools.guids = new Dictionary<Guid, IAnimatable>();
+        }
+
+#if MAX2015
+        private void OnNodeAdded(IntPtr param0, IntPtr param1)
+        {
+            try
+            {
+                INotifyInfo obj = Loader.Global.NotifyInfo.Marshal(param1);
+
+                IINode n = (IINode) obj.CallParam;
+                n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+
+                IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
+                if (contaner != null)
+                {
+                    // a generic operation on a container is done (open/inherit)
+                    Tools.guids = new Dictionary<Guid, IAnimatable>();
+                }
+            }
+            catch
+            {
+                // Fails silently
+            }
+        }
+#endif
+
+        private void OnNodeAdded(IntPtr objPtr, INotifyInfo infoPtr)
+        {
+            try
+            {
+                IINode n = (IINode)infoPtr.CallParam;
+                n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+
+                IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
+                if (contaner!=null)
+                {
+                    // a generic operation on a container is done (open/inherit)
+                    Tools.guids = new Dictionary<Guid, IAnimatable>();
+                }
+            }
+            catch
+            {
+                // Fails silently
+            }
         }
 
         public override void Stop()
@@ -76,6 +141,9 @@ namespace Max2Babylon
                 actionTable.AppendOperation(babylonExportActionItem);
                 actionTable.AppendOperation(new BabylonPropertiesActionItem()); // Babylon Properties forms are modals => no need to store reference
                 actionTable.AppendOperation(new BabylonAnimationActionItem());
+                actionTable.AppendOperation(new BabylonSaveAnimationToContainers());
+                actionTable.AppendOperation(new BabylonLoadAnimationFromContainers());
+
                 actionCallback = new BabylonActionCallback();
 
                 actionManager.RegisterActionTable(actionTable);
@@ -86,11 +154,41 @@ namespace Max2Babylon
                 var global = GlobalInterface.Instance;
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
+                
 #else
                 InstallMenus();
 #endif
+                RegisterFilePreOpen();
+                RegisterNodeAddedCallback();
 
                 return 0;
+            }
+        }
+
+        public void RegisterFilePreOpen()
+        {
+            if (!filePreOpenCallback)
+            {
+                m_FilePreOpenDelegate = new GlobalDelegates.Delegate5(this.InitializeBabylonGuids);
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePreOpenDelegate, null, SystemNotificationCode.FilePreOpen );
+
+                filePreOpenCallback = true;
+            }
+        }
+        
+
+        public void RegisterNodeAddedCallback()
+        {
+            if (!nodeAddedCallback)
+            {
+                m_NodeAddedDelegate = new GlobalDelegates.Delegate5(this.OnNodeAdded);
+#if MAX2015
+                //bug on Autodesk API  SystemNotificationCode.SceneAddedNode doesn't work for max 2015-2016
+                GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.NodeLinked );
+#else
+                GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.SceneAddedNode );
+#endif
+                nodeAddedCallback = true;
             }
         }
 
@@ -152,8 +250,18 @@ namespace Max2Babylon
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.Title = "Babylon Save Animation To Containers";
             menuItemBabylon.ActionItem = actionTable[3];
+            menu.AddItem(menuItemBabylon, -1);
+
+            menuItemBabylon = Loader.Global.IMenuItem;
+            menuItemBabylon.Title = "Babylon Load Animation From Containers";
+            menuItemBabylon.ActionItem = actionTable[4];
+            menu.AddItem(menuItemBabylon, -1);
+
+            menuItemBabylon = Loader.Global.IMenuItem;
+            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.ActionItem = actionTable[5];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItem = Loader.Global.IMenuItem;
