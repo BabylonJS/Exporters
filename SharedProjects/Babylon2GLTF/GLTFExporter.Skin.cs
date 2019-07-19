@@ -1,12 +1,13 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using GLTFExport.Tools;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         // Skeletons, aka group of nodes, are re-used when exporting same babylon skeleton
         // Only the inverseBindMatrices change, as it is linked to the mesh of the gltf node the skin is applied to
@@ -15,7 +16,7 @@ namespace Max2Babylon
 
         private GLTFSkin ExportSkin(BabylonSkeleton babylonSkeleton, GLTF gltf, GLTFNode gltfNode, GLTFMesh gltfMesh)
         {
-            RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on skeleton '" + babylonSkeleton.name + "'", 2);
+            logger.RaiseMessage("GLTFExporter.Skin | Export skin of node '" + gltfNode.name + "' based on skeleton '" + babylonSkeleton.name + "'", 2);
 
             // Retreive gltf skeleton data if babylon skeleton has already been exported
             if (!alreadyExportedSkeletons.ContainsKey(babylonSkeleton))
@@ -32,7 +33,7 @@ namespace Max2Babylon
                     var rotationQuatBabylon = new BabylonQuaternion();
                     var scale = new BabylonVector3();
                     boneLocalMatrix.decompose(scale, rotationQuatBabylon, translationBabylon);
-                    translationBabylon *= scaleFactor;
+                    translationBabylon *= exportParameters.scaleFactor;
                     translationBabylon.Z *= -1;
                     rotationQuatBabylon.X *= -1;
                     rotationQuatBabylon.Y *= -1;
@@ -49,7 +50,7 @@ namespace Max2Babylon
             var sharedSkinnedMeshesByOriginalPair = sharedSkinnedMeshesByOriginal.Where(skinSharingMeshPair => skinSharingMeshPair.Value.Contains(gltfMesh)).Select(kvp => (KeyValuePair<GLTFMesh, List<GLTFMesh>>?) kvp).FirstOrDefault();
             if (sharedSkinnedMeshesByOriginalPair != null)
             {
-                RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
+                logger.RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
                 var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
                 gltfNode.skin = skeletonExportData.skinIndex;
                 return gltf.skins[(int)gltfNode.skin];
@@ -179,7 +180,7 @@ namespace Max2Babylon
             {
                 var babylonParentBone = bones.Find(_babylonBone => _babylonBone.index == babylonBone.parentBoneIndex);
                 var gltfParentNode = _exportBone(babylonParentBone, gltf, babylonSkeleton, bones);
-                RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as child to " + gltfParentNode.name, 3);
+                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as child to " + gltfParentNode.name, 3);
                 gltfParentNode.ChildrenList.Add(gltfNode.index);
                 gltfNode.parent = gltfParentNode;
             }
@@ -187,7 +188,7 @@ namespace Max2Babylon
             {
                 // It's a root node
                 // Only root nodes are listed in a gltf scene
-                RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
+                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
                 gltf.scenes[0].NodesList.Add(gltfNode.index);
             }
 
@@ -296,9 +297,9 @@ namespace Max2Babylon
             rotation *= (float)(180 / Math.PI);
 
             var lvl = 3;
-            RaiseWarning(name + ".translation=[" + translation.X + ", " + translation.Y + ", " + translation.Z + "]", lvl);
-            RaiseWarning(name + ".rotation=[" + rotation.X + ", " + rotation.Y + ", " + rotation.Z + "]", lvl);
-            RaiseWarning(name + ".scale=[" + scale.X + ", " + scale.Y + ", " + scale.Z + "]", lvl);
+            logger.RaiseWarning(name + ".translation=[" + translation.X + ", " + translation.Y + ", " + translation.Z + "]", lvl);
+            logger.RaiseWarning(name + ".rotation=[" + rotation.X + ", " + rotation.Y + ", " + rotation.Z + "]", lvl);
+            logger.RaiseWarning(name + ".scale=[" + scale.X + ", " + scale.Y + ", " + scale.Z + "]", lvl);
         }
     }
 }

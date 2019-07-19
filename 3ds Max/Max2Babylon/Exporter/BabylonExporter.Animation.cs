@@ -13,7 +13,7 @@ namespace Max2Babylon
             IList<BabylonAnimationGroup> animationGroups = new List<BabylonAnimationGroup>();
 
             // Retrieve and parse animation group data
-            AnimationGroupList animationList = InitAnimationGroups();
+            AnimationGroupList animationList = AnimationGroupList.InitAnimationGroups(this);
 
             foreach (AnimationGroup animGroup in animationList)
             {
@@ -571,6 +571,7 @@ namespace Max2Babylon
             }
             var keysFull = new List<BabylonAnimationKey>(keys);
 
+            // Optimization process always keeps first and last frames
             if (optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);

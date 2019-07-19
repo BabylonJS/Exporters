@@ -1,5 +1,6 @@
 ﻿using Autodesk.Max;
 using BabylonExport.Entities;
+using Babylon2GLTF;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,11 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
+using Utilities;
 
 namespace Max2Babylon
 {
-    internal partial class BabylonExporter
+    internal partial class BabylonExporter : ILoggingProvider
     {
         public event Action<int> OnImportProgressChanged;
         public event Action<string, int> OnWarning;
@@ -36,12 +38,14 @@ namespace Max2Babylon
         public static string exporterVersion = "1.5.0";
         public float scaleFactor = 1.0f;
 
-        void ReportProgressChanged(int progress)
+        public const int MaxSceneTicksPerSecond = 4800; //https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/MAXScript-Help/files/GUID-141213A1-B5A8-457B-8838-E602022C8798-htm.html
+
+        public void ReportProgressChanged(int progress)
         {
             OnImportProgressChanged?.Invoke(progress);
         }
 
-        void RaiseError(string error, int rank = 0)
+        public void RaiseError(string error, int rank = 0)
         {
             if (OnError != null)
             {
@@ -49,7 +53,7 @@ namespace Max2Babylon
             }
         }
 
-        void RaiseWarning(string warning, int rank = 0)
+        public void RaiseWarning(string warning, int rank = 0)
         {
             if (OnWarning != null)
             {
@@ -57,12 +61,12 @@ namespace Max2Babylon
             }
         }
 
-        void RaiseMessage(string message, int rank = 0, bool emphasis = false)
+        public void RaiseMessage(string message, int rank = 0, bool emphasis = false)
         {
             RaiseMessage(message, Color.Black, rank, emphasis);
         }
 
-        void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
+        public void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
         {
             if (OnMessage != null)
             {
@@ -71,12 +75,12 @@ namespace Max2Babylon
         }
 
         // For debug purpose
-        void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
+        public void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
         {
             //RaiseMessage(message, Color.DarkGray, rank, emphasis);
         }
 
-        void CheckCancelled()
+        public void CheckCancelled()
         {
             Application.DoEvents();
             if (IsCancelled)
@@ -90,25 +94,11 @@ namespace Max2Babylon
 
             var scaleFactorFloat = 1.0f;
             // Check input text is valid
-            string scaleFactor = exportParameters.scaleFactor;
+            float scaleFactor = exportParameters.scaleFactor;
+
+            long quality = exportParameters.txtQuality;
             try
             {
-                scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-                scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-                scaleFactorFloat = float.Parse(scaleFactor);
-            }
-            catch
-            {
-                RaiseError("Scale factor is not a valid number.");
-                return;
-            }
-
-            long quality = 0L;
-            string txtQuality = exportParameters.txtQuality;
-            try
-            {
-                quality = long.Parse(txtQuality);
-
                 if (quality < 0 || quality > 100)
                 {
                     throw new Exception();
@@ -117,27 +107,28 @@ namespace Max2Babylon
             catch
             {
                 RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
-                RaiseError("This parameter set the quality of jpg compression.");
+                RaiseError("This parameter sets the quality of jpg compression.");
                 return;
             }
 
             this.exportParameters = exportParameters;
+            var exportNode = (exportParameters as MaxExportParameters).exportNode;
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            if (exportParameters.exportNode == null)
+            if (exportNode == null)
                 gameScene.InitialiseIGame(false);
-            else gameScene.InitialiseIGame(exportParameters.exportNode, true);
+            else gameScene.InitialiseIGame(exportNode, true);
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
 
             IsCancelled = false;
 
-            string fileExportString = exportParameters.exportNode != null
-                ? $"{exportParameters.exportNode.NodeName} | {exportParameters.outputPath}"
+            string fileExportString = exportNode != null
+                ? $"{exportNode.NodeName} | {exportParameters.outputPath}"
                 : exportParameters.outputPath;
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
             ReportProgressChanged(0);
@@ -207,6 +198,10 @@ namespace Max2Babylon
             babylonScene.clearColor = Loader.Core.GetBackGround(0, Tools.Forever).ToArray();
             babylonScene.ambientColor = Loader.Core.GetAmbient(0, Tools.Forever).ToArray();
 
+            babylonScene.TimelineStartFrame = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
+            babylonScene.TimelineEndFrame = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
+            babylonScene.TimelineFramesPerSecond = MaxSceneTicksPerSecond / Loader.Global.TicksPerFrame;
+
             babylonScene.gravity = rawScene.GetVector3Property("babylonjs_gravity");
             ExportQuaternionsInsteadOfEulers = rawScene.GetBoolProperty("babylonjs_exportquaternions", 1);
             if (string.IsNullOrEmpty(exportParameters.pbrEnvironment) && Loader.Core.UseEnvironmentMap && Loader.Core.EnvironmentMap != null)
@@ -231,13 +226,13 @@ namespace Max2Babylon
             }
 
             // Instantiate custom material exporters
-            materialExporters = new Dictionary<ClassIDWrapper, IMaterialExporter>();
+            materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
             {
-                if (type.IsAbstract || type.IsInterface || !typeof(IMaterialExporter).IsAssignableFrom(type))
+                if (type.IsAbstract || type.IsInterface || !typeof(IMaxMaterialExporter).IsAssignableFrom(type))
                     continue;
 
-                IMaterialExporter exporter = Activator.CreateInstance(type) as IMaterialExporter;
+                IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
 
                 if (exporter == null)
                     RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
@@ -288,7 +283,7 @@ namespace Max2Babylon
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
 
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (node != null && exportParameters.exportNode != null)
+                if (node != null && exportNode != null)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
 
                 progression += progressionStep;
@@ -447,12 +442,12 @@ namespace Max2Babylon
             }
 
             // Animation group
+            RaiseMessage("Export animation groups");
+            // add animation groups to the scene
+            babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
             if (isBabylonExported)
             {
-                RaiseMessage("Export animation groups");
-                // add animation groups to the scene
-                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
-
                 // if there is animationGroup, then remove animations from nodes
                 if (babylonScene.animationGroups.Count > 0)
                 {
@@ -552,7 +547,9 @@ namespace Max2Babylon
             if (isGltfExported)
             {
                 bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, tempOutputDirectory, outputFileName, generateBinary);
+
+                GLTFExporter gltfExporter = new GLTFExporter();
+                gltfExporter.ExportGltf(this.exportParameters, babylonScene, tempOutputDirectory, outputFileName, generateBinary, this);
             }
             // Move files to output directory
             var filePaths = Directory.GetFiles(tempOutputDirectory);
@@ -614,7 +611,7 @@ namespace Max2Babylon
                     string ext = Path.GetExtension(file);
                     var tempFilePath = Path.Combine(tempOutputDirectory, file);
                     var outputPath = Path.Combine(outputDirectory, file);
-                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder) && ExtensionIsValidGLTFTexture(ext))
+                    if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder) && TextureUtilities.ExtensionIsValidGLTFTexture(ext))
                     {
                         outputPath = Path.Combine(exportParameters.textureFolder, file);
                     }

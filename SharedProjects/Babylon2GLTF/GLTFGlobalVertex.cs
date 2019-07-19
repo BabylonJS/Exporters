@@ -1,6 +1,6 @@
 ﻿using BabylonExport.Entities;
 
-namespace Max2Babylon
+namespace GLTFExport.Entities
 {
     public class GLTFGlobalVertex
     {

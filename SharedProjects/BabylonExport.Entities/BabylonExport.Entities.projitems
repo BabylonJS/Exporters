@@ -49,5 +49,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonUniversalCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVector2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVector3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExportParameters.cs" />
   </ItemGroup>
 </Project>

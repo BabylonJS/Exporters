@@ -8,16 +8,65 @@ using GLTFExport.Entities;
 using System.IO;
 
 
-namespace Max2Babylon
+namespace Utilities
 {
-    partial class BabylonExporter
+    public class TexturesPaths
+    {
+        public string diffusePath;
+        public string opacityPath;
+        public string specularName;
+        public float[] diffuse;
+        public float opacity;
+        public float[] specular;
+        public float glossiness;
+
+        public bool Equals(TexturesPaths textpaths)
+        {
+            if ((this.diffusePath == textpaths.diffusePath) && (this.opacityPath == textpaths.opacityPath) && (this.specularName == textpaths.specularName) && (this.diffuse.SequenceEqual(textpaths.diffuse)) && (this.opacity == textpaths.opacity) && (this.specular.SequenceEqual(textpaths.specular)) && (this.glossiness == textpaths.glossiness))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    public class PairBaseColorMetallicRoughness
+    {
+        public GLTFTextureInfo baseColor = new GLTFTextureInfo();
+        public GLTFTextureInfo metallicRoughness = new GLTFTextureInfo();
+    }
+
+    public class PairEmissiveDiffuse
+    {
+        public string diffusePath = null;
+        public string emissivePath = null;
+        public float[] defaultEmissive = null;
+        public float[] defaultDiffuse = null;
+
+        public bool Equals(PairEmissiveDiffuse textures)
+        {
+            if ((this.diffusePath == textures.diffusePath) && (this.emissivePath == textures.emissivePath) && (this.defaultEmissive.SequenceEqual(textures.defaultEmissive)) && (this.defaultDiffuse.SequenceEqual(textures.defaultDiffuse)))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    public static class AssetPathUtilities
     {
         
-        private Dictionary<TexturesPaths, PairBaseColorMetallicRoughness> _DicoMatTextureGLTF = new Dictionary<TexturesPaths, PairBaseColorMetallicRoughness>();
-        private Dictionary<string, GLTFTextureInfo> _DicoTextNameTextureComponent = new Dictionary<string, GLTFTextureInfo>();
-        private Dictionary<PairEmissiveDiffuse, GLTFTextureInfo> _DicoEmissiveTextureComponent = new Dictionary<PairEmissiveDiffuse, GLTFTextureInfo>();
+        private static Dictionary<TexturesPaths, PairBaseColorMetallicRoughness> _DicoMatTextureGLTF = new Dictionary<TexturesPaths, PairBaseColorMetallicRoughness>();
+        private static Dictionary<string, GLTFTextureInfo> _DicoTextNameTextureComponent = new Dictionary<string, GLTFTextureInfo>();
+        private static Dictionary<PairEmissiveDiffuse, GLTFTextureInfo> _DicoEmissiveTextureComponent = new Dictionary<PairEmissiveDiffuse, GLTFTextureInfo>();
 
-        public TexturesPaths SetStandText(BabylonStandardMaterial babylonStandardMaterial)
+        public static TexturesPaths SetStandText(BabylonStandardMaterial babylonStandardMaterial)
         {
             var _StandText = new TexturesPaths();
             if (babylonStandardMaterial.diffuseTexture != null)
@@ -53,7 +102,7 @@ namespace Max2Babylon
             return _StandText;
         }
 
-        public void AddStandText(TexturesPaths key, GLTFTextureInfo finalTextBC, GLTFTextureInfo finalTextMR)
+        public static void AddStandText(TexturesPaths key, GLTFTextureInfo finalTextBC, GLTFTextureInfo finalTextMR)
         {
             var _valuePair = new PairBaseColorMetallicRoughness();
             _valuePair.baseColor = finalTextBC;
@@ -62,7 +111,7 @@ namespace Max2Babylon
             _DicoMatTextureGLTF.Add(key, _valuePair);
         }
 
-        public PairBaseColorMetallicRoughness GetStandTextInfo(TexturesPaths textpaths)
+        public static PairBaseColorMetallicRoughness GetStandTextInfo(TexturesPaths textpaths)
         {
             foreach (TexturesPaths textPathsObject  in _DicoMatTextureGLTF.Keys)
             {
@@ -75,7 +124,7 @@ namespace Max2Babylon
         }
 
 
-        public bool CheckIfImageIsRegistered(string name)
+        public static bool CheckIfImageIsRegistered(string name)
         {
             foreach(string registeredName in _DicoTextNameTextureComponent.Keys)
             {
@@ -87,18 +136,18 @@ namespace Max2Babylon
             return false;
         }
 
-        public void RegisterTexture(GLTFTextureInfo textureInfo, string name)
+        public static void RegisterTexture(GLTFTextureInfo textureInfo, string name)
         {
             _DicoTextNameTextureComponent.Add(name, textureInfo);
         }
 
-        public GLTFTextureInfo GetRegisteredTexture(string name)
+        public static GLTFTextureInfo GetRegisteredTexture(string name)
         {
             return _DicoTextNameTextureComponent[name];
         }
 
 
-        public PairEmissiveDiffuse CreatePair(string diffusePath, string emissivePath, float[] diffuse, float[] emissive)
+        public static PairEmissiveDiffuse CreatePair(string diffusePath, string emissivePath, float[] diffuse, float[] emissive)
         {
             var _pair = new PairEmissiveDiffuse();
             _pair.diffusePath = diffusePath;
@@ -108,7 +157,7 @@ namespace Max2Babylon
             return _pair;
         }
 
-        public void RegisterEmissive(GLTFTextureInfo TextureInfo, BabylonStandardMaterial babylonMaterial, float[] diffuse, float[] emissive)
+        public static void RegisterEmissive(GLTFTextureInfo TextureInfo, BabylonStandardMaterial babylonMaterial, float[] diffuse, float[] emissive)
         {
             string pathDiffuse;
             string pathEmissive;
@@ -135,7 +184,7 @@ namespace Max2Babylon
             _DicoEmissiveTextureComponent.Add(_pair, TextureInfo);
         }
 
-        public GLTFTextureInfo GetRegisteredEmissive(BabylonStandardMaterial babylonMaterial, float[] diffuse, float[] emissive)
+        public static GLTFTextureInfo GetRegisteredEmissive(BabylonStandardMaterial babylonMaterial, float[] diffuse, float[] emissive)
         {
 
             string pathDiffuse;
@@ -169,56 +218,6 @@ namespace Max2Babylon
                 }
             }
             return null;
-        }
-
-
-        public class TexturesPaths
-        {
-            public string diffusePath;
-            public string opacityPath;
-            public string specularName;
-            public float[] diffuse;
-            public float opacity;
-            public float[] specular;
-            public float glossiness;
-
-            public bool Equals(TexturesPaths textpaths)
-            {
-                if((this.diffusePath == textpaths.diffusePath) && (this.opacityPath == textpaths.opacityPath) && (this.specularName == textpaths.specularName) && (this.diffuse.SequenceEqual(textpaths.diffuse)) && (this.opacity == textpaths.opacity) && (this.specular.SequenceEqual(textpaths.specular)) && (this.glossiness == textpaths.glossiness))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public class PairBaseColorMetallicRoughness
-        {
-            public GLTFTextureInfo baseColor = new GLTFTextureInfo();
-            public GLTFTextureInfo metallicRoughness = new GLTFTextureInfo();
-        }
-
-        public class PairEmissiveDiffuse
-        {
-            public string diffusePath = null;
-            public string emissivePath = null;
-            public float[] defaultEmissive = null;
-            public float[] defaultDiffuse = null;
-
-            public bool Equals(PairEmissiveDiffuse textures)
-            {
-                if ((this.diffusePath == textures.diffusePath) && (this.emissivePath == textures.emissivePath) && (this.defaultEmissive.SequenceEqual(textures.defaultEmissive)) && (this.defaultDiffuse.SequenceEqual(textures.defaultDiffuse)))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
         }
     }
 }

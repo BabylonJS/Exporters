@@ -1,6 +1,6 @@
 ﻿using GLTFExport.Entities;
 
-namespace Max2Babylon
+namespace GLTFExport.Tools
 {
     public class GLTFBufferService
     {
