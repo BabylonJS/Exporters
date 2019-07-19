@@ -8,7 +8,7 @@ namespace BabylonExport.Entities
         public string softwarePackageName;
         public string softwareVersion;
         public string exporterVersion;
-        public string outputPath;
+        public string outputPath; // The directory to store the generated files
         public string outputTexturePath;
         public string outputFormat;
         public string textureFolder;
@@ -18,11 +18,14 @@ namespace BabylonExport.Entities
         public bool exportHiddenObjects = false;
         public bool exportMaterials = true;
         public bool exportOnlySelected = false;
+        public bool bakeAnimationFrames = false;
         public bool optimizeAnimations = true;
+        public bool optimizeVertices = true;
         public bool animgroupExportNonAnimated = false;
         public bool generateManifest = false;
-        public bool autoSave3dsMaxFile = false;
+        public bool autoSaveSceneFile = false;
         public bool exportTangents = true;
+        public bool exportSkins = true;
         public bool exportMorphTangents = true;
         public bool exportMorphNormals = true;
         public long txtQuality = 100;
@@ -33,6 +36,7 @@ namespace BabylonExport.Entities
         public bool enableKHRMaterialsUnlit = false;
         public bool pbrFull = false;
         public bool pbrNoLight = false;
+        public bool createDefaultSkybox = false;
         public string pbrEnvironment;
 
         public IGLTFMaterialExporter customGLTFMaterialExporter;
