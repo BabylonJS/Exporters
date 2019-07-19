@@ -47,7 +47,8 @@ namespace Max2Babylon
                 ResetChangedTextBoxColors();
 
                 MaxNodeTree.BeginUpdate();
-                MaxNodeTree.QueueSetNodes(info.NodeHandles, false);
+                //here we garanty retrocompatibility
+                MaxNodeTree.QueueSetNodes(info.NodeGuids.ToHandles(), false);
                 List<uint> handles;
                 MaxNodeTree.ApplyQueuedChanges(out handles, false);
                 MaxNodeTree.EndUpdate();
@@ -55,7 +56,7 @@ namespace Max2Babylon
                 // if the nodes changed on max' side, even though the data has not changed, the list may be different (e.g. deleted nodes)
                 // since we haven't loaded the list before, we can't compare it to the node tree
                 // thus, we save it, and the property checks for actual differences (and set isdirty to true)
-                info.NodeHandles = handles;
+                info.NodeGuids = handles.ToGuids();
 
                 if (info.IsDirty)
                 {
@@ -159,7 +160,7 @@ namespace Max2Babylon
 
             if (nodesChanged)
             {
-                confirmedInfo.NodeHandles = newHandles;
+                confirmedInfo.NodeGuids = newHandles.ToGuids();
             }
 
             ResetChangedTextBoxColors();
