@@ -21,15 +21,8 @@ namespace Babylon2GLTF
             IGLTFMaterialExporter customMaterialExporter = exportParameters.customGLTFMaterialExporter;
             if (customMaterialExporter != null && customMaterialExporter.GetGltfMaterial(babylonMaterial, gltf, logger, out gltfMaterial))
             {
-                if (gltfMaterial == null)
-                {
-                    logger.RaiseWarning(message, 2);
-                }
-                else
-                {
-                    gltfMaterial.index = gltf.MaterialsList.Count;
-                    gltf.MaterialsList.Add(gltfMaterial);
-                }
+                gltfMaterial.index = gltf.MaterialsList.Count;
+                gltf.MaterialsList.Add(gltfMaterial);
             }
             else if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
             {

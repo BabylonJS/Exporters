@@ -56,6 +56,7 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
                 string message = string.Format("Custom glTF material exporter failed to export | Exporter: '{0}' | Material Name: '{1}' | Material Class: '{2}'",
                     materialExporter.GetType().ToString(), gameMtl.MaterialName, gameMtl.ClassName);
                 logger.RaiseWarning(message, 2);
+                return false;
             }
             return true;
         }
