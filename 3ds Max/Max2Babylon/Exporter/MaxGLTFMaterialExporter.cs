@@ -1,7 +1,9 @@
 using Autodesk.Max;
 using Max2Babylon;
+using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Reflection;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
 using Babylon2GLTF;
@@ -13,9 +15,22 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
     private ExportParameters exportParameters;
     private GLTFExporter gltfExporter;
 
-    public MaxGLTFMaterialExporter(Dictionary<ClassIDWrapper, IMaxMaterialExporter> materialExporters, ExportParameters exportParameters, GLTFExporter gltfExporter)
+    public MaxGLTFMaterialExporter(ExportParameters exportParameters, GLTFExporter gltfExporter, ILoggingProvider logger)
     {
-        this.materialExporters = materialExporters;
+        // Instantiate custom material exporters
+        this.materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
+        foreach (Type type in Tools.GetAllLoadableTypes())
+        {
+            if (type.IsAbstract || type.IsInterface || !typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                continue;
+
+            IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
+
+            if (exporter == null)
+                logger.RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+            materialExporters.Add(exporter.MaterialClassID, exporter);
+        }
         this.exportParameters = exportParameters;
         this.gltfExporter = gltfExporter;
     }

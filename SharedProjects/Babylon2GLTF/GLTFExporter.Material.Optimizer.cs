@@ -1,5 +1,4 @@
-﻿using Autodesk.Max;
-using BabylonExport.Entities;
+﻿using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

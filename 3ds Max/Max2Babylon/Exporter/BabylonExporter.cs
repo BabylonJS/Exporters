@@ -168,7 +168,7 @@ namespace Max2Babylon
             exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             // Save scene
-            if (exportParameters.autoSave3dsMaxFile)
+            if (exportParameters.autoSaveSceneFile)
             {
                 RaiseMessage("Saving 3ds max file");
                 var forceSave = Loader.Core.FileSave;
@@ -549,6 +549,7 @@ namespace Max2Babylon
                 bool generateBinary = outputFormat == "glb";
 
                 GLTFExporter gltfExporter = new GLTFExporter();
+                exportParameters.customGLTFMaterialExporter = new MaxGLTFMaterialExporter(exportParameters, gltfExporter, this);
                 gltfExporter.ExportGltf(this.exportParameters, babylonScene, tempOutputDirectory, outputFileName, generateBinary, this);
             }
             // Move files to output directory
