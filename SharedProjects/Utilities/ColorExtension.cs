@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Max2Babylon
+namespace Utilities
 {
     static class ColorExtension
     {

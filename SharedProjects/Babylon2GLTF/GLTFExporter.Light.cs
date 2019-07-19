@@ -2,9 +2,9 @@
 using GLTFExport.Entities;
 using System.Collections.Generic;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    internal partial class BabylonExporter
+    internal partial class GLTFExporter
     {
         public const string KHR_lights_punctuals = "KHR_lights_punctual";  // Name of the extension
 
@@ -49,7 +49,7 @@ namespace Max2Babylon
                     };
                     break;
                 default:
-                    RaiseError($"Unsupported light type {light.type} for glTF");
+                    logger.RaiseError($"Unsupported light type {light.type} for glTF");
                     throw new System.Exception($"Unsupported light type {light.type} for glTF");
             }
 
@@ -84,11 +84,11 @@ namespace Max2Babylon
             { 
                 if (babylonLight.type == 3) // ambient light
                 {
-                    RaiseMessage($"GLTFExporter.Light | Ambient light {babylonLight.name} is not supported in KHR_lights_punctual.");
+                    logger.RaiseMessage($"GLTFExporter.Light | Ambient light {babylonLight.name} is not supported in KHR_lights_punctual.");
                 }
                 else
                 {
-                    RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
+                    logger.RaiseMessage("GLTFExporter.Light | Export light named: " + babylonLight.name, 2);
 
                     // new light in the node extensions
                     GLTFLight light = new GLTFLight

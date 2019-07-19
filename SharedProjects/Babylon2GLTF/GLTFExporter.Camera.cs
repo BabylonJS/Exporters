@@ -1,22 +1,22 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
-    partial class BabylonExporter
+    partial class GLTFExporter
     {
         private GLTFCamera ExportCamera(ref GLTFNode gltfNode, BabylonCamera babylonCamera, GLTF gltf, GLTFNode gltfParentNode)
         {
-            RaiseMessage("GLTFExporter.Camera | Export camera named: " + babylonCamera.name, 2);
+            logger.RaiseMessage("GLTFExporter.Camera | Export camera named: " + babylonCamera.name, 2);
 
             // --- prints ---
             #region prints
 
-            RaiseVerbose("GLTFExporter.Camera | babylonCamera data", 3);
-            RaiseVerbose("GLTFExporter.Camera | babylonCamera.type=" + babylonCamera.type, 4);
-            RaiseVerbose("GLTFExporter.Camera | babylonCamera.fov=" + babylonCamera.fov, 4);
-            RaiseVerbose("GLTFExporter.Camera | babylonCamera.maxZ=" + babylonCamera.maxZ, 4);
-            RaiseVerbose("GLTFExporter.Camera | babylonCamera.minZ=" + babylonCamera.minZ, 4);
+            logger.RaiseVerbose("GLTFExporter.Camera | babylonCamera data", 3);
+            logger.RaiseVerbose("GLTFExporter.Camera | babylonCamera.type=" + babylonCamera.type, 4);
+            logger.RaiseVerbose("GLTFExporter.Camera | babylonCamera.fov=" + babylonCamera.fov, 4);
+            logger.RaiseVerbose("GLTFExporter.Camera | babylonCamera.maxZ=" + babylonCamera.maxZ, 4);
+            logger.RaiseVerbose("GLTFExporter.Camera | babylonCamera.minZ=" + babylonCamera.minZ, 4);
             #endregion
 
 
@@ -24,7 +24,7 @@ namespace Max2Babylon
             // ------- gltfCamera -------
             // --------------------------
 
-            RaiseMessage("GLTFExporter.Camera | create gltfCamera", 3);
+            logger.RaiseMessage("GLTFExporter.Camera | create gltfCamera", 3);
 
             // Camera
             var gltfCamera = new GLTFCamera { name = babylonCamera.name };
@@ -57,7 +57,7 @@ namespace Max2Babylon
                     gltfCamera.perspective = gltfCameraPerspective;
                     break;
                 default:
-                    RaiseError("GLTFExporter.Camera | camera mode not found");
+                    logger.RaiseError("GLTFExporter.Camera | camera mode not found");
                     break;
             }
             
