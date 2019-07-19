@@ -279,7 +279,7 @@ namespace Max2Babylon
                     exportHiddenObjects = chkHidden.Checked,
                     exportOnlySelected = chkOnlySelected.Checked,
                     generateManifest = chkManifest.Checked,
-                    autoSave3dsMaxFile = chkAutoSave.Checked,
+                    autoSaveSceneFile = chkAutoSave.Checked,
                     exportTangents = chkExportTangents.Checked,
                     exportMorphTangents = chkExportMorphTangents.Checked,
                     exportMorphNormals = chkExportMorphNormals.Checked,
