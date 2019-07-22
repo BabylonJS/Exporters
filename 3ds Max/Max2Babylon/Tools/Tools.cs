@@ -728,6 +728,7 @@ namespace Max2Babylon
                 Loader.Core.SetQuietMode(true);
                 containerObject.ContainerNode.AttachChild(babylonHelper,false);
                 Loader.Core.SetQuietMode(false);
+                containerObject.AddNodeToContent(babylonHelper);
             }
             return babylonHelper;
         }
