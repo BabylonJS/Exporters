@@ -120,34 +120,6 @@ namespace BabylonExport.Entities
         }
 
         /**
-
-        /**
-         * (Copy pasted from babylon)
-         * Sets the passed quaternion "result" from the passed float Euler angles (radians) (y, x, z).
-         */
-        private BabylonQuaternion RotationYawPitchRollToRefBabylon(float yaw, float pitch, float roll)
-        {
-            // Produces a quaternion from Euler angles in the z-y-x orientation (Tait-Bryan angles)
-            var halfRoll = roll * 0.5;
-            var halfPitch = pitch * 0.5;
-            var halfYaw = yaw * 0.5;
-
-            var sinRoll = Math.Sin(halfRoll);
-            var cosRoll = Math.Cos(halfRoll);
-            var sinPitch = Math.Sin(halfPitch);
-            var cosPitch = Math.Cos(halfPitch);
-            var sinYaw = Math.Sin(halfYaw);
-            var cosYaw = Math.Cos(halfYaw);
-
-            var result = new BabylonQuaternion();
-            result.X = (float)((cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll));
-            result.Y = (float)((sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll));
-            result.Z = (float)((cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll));
-            result.W = (float)((cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll));
-            return result;
-        }
-
-        /**
          * Returns a new Vector3 set from the index "countOffset" x 3 of the passed array.
          */
         public static BabylonVector3 FromArray(float[] array, int countOffset = 0)
