@@ -225,9 +225,10 @@ namespace Maya2Babylon
             Dictionary<string, float> defaultValues = new Dictionary<string, float>();
             float[] position = null;
             float[] rotationQuaternion = null;
+            BabylonVector3.EulerRotationOrder rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
             float[] rotation = null;
             float[] scaling = null;
-            GetTransform(transform, ref position, ref rotationQuaternion, ref rotation, ref scaling); // coordinate system already switched
+            GetTransform(transform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling); // coordinate system already switched
             defaultValues.Add("translateX", position[0]);
             defaultValues.Add("translateY", position[1]);
             defaultValues.Add("translateZ", position[2]);
@@ -306,7 +307,7 @@ namespace Maya2Babylon
                     {
                         BabylonVector3 eulerAngles = BabylonVector3.FromArray(babylonAnimationKey.values);
                         BabylonVector3 eulerAnglesRadians = eulerAngles * (float)(Math.PI / 180);
-                        BabylonQuaternion quaternionAngles = eulerAnglesRadians.toQuaternion();
+                        BabylonQuaternion quaternionAngles = eulerAnglesRadians.toQuaternion(rotationOrder);
                         babylonAnimationKey.values = quaternionAngles.ToArray();
                     }
                 }
