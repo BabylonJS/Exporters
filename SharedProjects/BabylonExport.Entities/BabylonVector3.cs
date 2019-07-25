@@ -52,35 +52,71 @@ namespace BabylonExport.Entities
             return new BabylonVector3 { X = a.X * b, Y = a.Y * b, Z = a.Z * b };
         }
 
-        public BabylonQuaternion toQuaternion()
+        public enum EulerRotationOrder
         {
-            return RotationYawPitchRollToRefBabylon(Y, X, Z);
+            XYZ,
+            YZX,
+            ZXY,
+            XZY,
+            YXZ,
+            ZYX
         }
 
-        /**
-         * (Copy pasted from babylon)
-         * Sets the passed quaternion "result" from the passed float Euler angles (radians) (y, x, z).
-         */
-        private BabylonQuaternion RotationYawPitchRollToRefBabylon(float yaw, float pitch, float roll)
+        // https://www.mathworks.com/matlabcentral/fileexchange/20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors?s_tid=mwa_osa_a
+        // https://github.com/mrdoob/three.js/blob/09cfc67a3f52aeb4dd0009921d82396fd5dc5172/src/math/Quaternion.js#L199-L272
+
+        public BabylonQuaternion toQuaternion(EulerRotationOrder rotationOrder = EulerRotationOrder.XYZ)
         {
-            // Produces a quaternion from Euler angles in the z-y-x orientation (Tait-Bryan angles)
-            var halfRoll = roll * 0.5;
-            var halfPitch = pitch * 0.5;
-            var halfYaw = yaw * 0.5;
+            BabylonQuaternion quaternion = new BabylonQuaternion();
 
-            var sinRoll = Math.Sin(halfRoll);
-            var cosRoll = Math.Cos(halfRoll);
-            var sinPitch = Math.Sin(halfPitch);
-            var cosPitch = Math.Cos(halfPitch);
-            var sinYaw = Math.Sin(halfYaw);
-            var cosYaw = Math.Cos(halfYaw);
+            var c1 = Math.Cos(0.5 * this.X);
+            var c2 = Math.Cos(0.5 * this.Y);
+            var c3 = Math.Cos(0.5 * this.Z);
 
-            var result = new BabylonQuaternion();
-            result.X = (float)((cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll));
-            result.Y = (float)((sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll));
-            result.Z = (float)((cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll));
-            result.W = (float)((cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll));
-            return result;
+            var s1 = Math.Sin(0.5 * this.X);
+            var s2 = Math.Sin(0.5 * this.Y);
+            var s3 = Math.Sin(0.5 * this.Z);
+
+            switch (rotationOrder)
+            {
+                case EulerRotationOrder.XYZ:
+                    quaternion.X = (float)(s1 * c2 * c3 + c1 * s2 * s3);
+                    quaternion.Y = (float)(c1 * s2 * c3 - s1 * c2 * s3);
+                    quaternion.Z = (float)(c1 * c2 * s3 + s1 * s2 * c3);
+                    quaternion.W = (float)(c1 * c2 * c3 - s1 * s2 * s3);
+                    break;
+                case EulerRotationOrder.YZX:
+                    quaternion.X = (float)(s1 * c2 * c3 + c1 * s2 * s3);
+                    quaternion.Y = (float)(c1 * s2 * c3 + s1 * c2 * s3);
+                    quaternion.Z = (float)(c1 * c2 * s3 - s1 * s2 * c3);
+                    quaternion.W = (float)(c1 * c2 * c3 - s1 * s2 * s3);
+                    break;
+                case EulerRotationOrder.ZXY:
+                    quaternion.X = (float)(s1 * c2 * c3 - c1 * s2 * s3);
+                    quaternion.Y = (float)(c1 * s2 * c3 + s1 * c2 * s3);
+                    quaternion.Z = (float)(c1 * c2 * s3 + s1 * s2 * c3);
+                    quaternion.W = (float)(c1 * c2 * c3 - s1 * s2 * s3);
+                    break;
+                case EulerRotationOrder.XZY:
+                    quaternion.X = (float)(s1 * c2 * c3 - c1 * s2 * s3);
+                    quaternion.Y = (float)(c1 * s2 * c3 - s1 * c2 * s3);
+                    quaternion.Z = (float)(c1 * c2 * s3 + s1 * s2 * c3);
+                    quaternion.W = (float)(c1 * c2 * c3 + s1 * s2 * s3);
+                    break;
+                case EulerRotationOrder.YXZ:
+                    quaternion.X = (float)(s1 * c2 * c3 + c1 * s2 * s3);
+                    quaternion.Y = (float)(c1 * s2 * c3 - s1 * c2 * s3);
+                    quaternion.Z = (float)(c1 * c2 * s3 - s1 * s2 * c3);
+                    quaternion.W = (float)(c1 * c2 * c3 + s1 * s2 * s3);
+                    break;
+                case EulerRotationOrder.ZYX:
+                    quaternion.X = (float)(s1 * c2 * c3 - c1 * s2 * s3);
+                    quaternion.Y = (float)(c1 * s2 * c3 + s1 * c2 * s3);
+                    quaternion.Z = (float)(c1 * c2 * s3 - s1 * s2 * c3);
+                    quaternion.W = (float)(c1 * c2 * c3 + s1 * s2 * s3);
+                    break;
+            }
+            return quaternion;
         }
 
         /**
