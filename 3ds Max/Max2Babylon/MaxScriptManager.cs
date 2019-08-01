@@ -25,7 +25,7 @@ namespace Max2Babylon
             Export(InitParameters(outputPath));
         }
 
-        public static void Export(ExportParameters exportParameters)
+        public static void Export(MaxExportParameters exportParameters)
         {
             if (Loader.Class_ID == null)
             {
@@ -65,11 +65,11 @@ namespace Max2Babylon
 
 
         //leave the possibility to do get the outputh path from the babylon exporter with all the settings as presaved
-        public static ExportParameters InitParameters(string outputPath)
+        public static MaxExportParameters InitParameters(string outputPath)
         {
             long txtQuality = 100;
             float scaleFactor = 1f;
-            ExportParameters exportParameters = new ExportParameters();
+            MaxExportParameters exportParameters = new MaxExportParameters();
             exportParameters.outputPath = outputPath;
             exportParameters.outputFormat = Path.GetExtension(outputPath)?.Substring(1);
             exportParameters.textureFolder = Loader.Core.RootNode.GetStringProperty("textureFolderPathProperty", string.Empty);
