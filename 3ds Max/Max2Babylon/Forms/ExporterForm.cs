@@ -94,6 +94,9 @@ namespace Max2Babylon
             string storedEnvironmentPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
             string formatedEnvironmentPath = Tools.ResolveRelativePath(storedEnvironmentPath);
             txtEnvironmentName.Text = formatedEnvironmentPath;
+
+
+            Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flatten", 1);
         }
 
         private void butModelBrowse_Click(object sender, EventArgs e)
@@ -193,6 +196,8 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
             string unformattedEnvironmentPath = PathUtilities.UnformatPath(txtEnvironmentName.Text);
             Loader.Core.RootNode.SetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, Tools.RelativePathStore(unformattedEnvironmentPath));
+
+            Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flatten");
         }
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
@@ -264,10 +269,13 @@ namespace Max2Babylon
             butCancel.Enabled = true;
 
             bool success = true;
+            bool isHolding = false;
             try
             {
-                string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : PathUtilities.UnformatPath(txtModelName.Text);
-                ExportParameters exportParameters = new MaxExportParameters
+                string modelAbsolutePath = multiExport
+                    ? exportItem.ExportFilePathAbsolute
+                    : PathUtilities.UnformatPath(txtModelName.Text);
+                MaxExportParameters exportParameters = new MaxExportParameters
                 {
                     outputPath = PathUtilities.UnformatPath(txtModelName.Text),
                     outputTexturePath = textureExportPath,
@@ -295,11 +303,18 @@ namespace Max2Babylon
                     exportNode = exportItem != null ? exportItem.Node : null,
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,
-                    pbrEnvironment = txtEnvironmentName.Text
+                    pbrEnvironment = txtEnvironmentName.Text,
+                    flattenExport = chkFlatten.Checked
+                    
                 };
 
                 exporter.callerForm = this;
 
+                if (exportParameters.useHoldFetchLogig)
+                {
+                    isHolding = true;
+                    Loader.Core.FileHold();
+                }
                 exporter.Export(exportParameters);
             }
             catch (OperationCanceledException)
@@ -318,6 +333,15 @@ namespace Max2Babylon
 
                 progressBar.Value = 0;
                 success = false;
+            }
+            finally
+            {
+                if (isHolding)
+                {
+                    Loader.Core.SetQuietMode(true);
+                    Loader.Core.FileFetch();
+                    Loader.Core.SetQuietMode(false);
+                }
             }
 
             butCancel.Enabled = false;

@@ -427,6 +427,15 @@ namespace Max2Babylon
             return new[] { value.R, value.G, value.B };
         }
 
+        public static IEnumerable<IINode> DirectChildren(this IINode node)
+        {
+            List<IINode> children = new List<IINode>();
+            for (int i = 0; i < node.NumberOfChildren; ++i)
+                if (node.GetChildNode(i) != null)
+                    children.Add(node.GetChildNode(i));
+            return children;
+        }
+
         public static IEnumerable<IINode> Nodes(this IINode node)
         {
             for (int i = 0; i < node.NumberOfChildren; ++i)
@@ -648,9 +657,64 @@ namespace Max2Babylon
             return true;
         }
 
+        public static bool IsNodeTreeAnimated(this IINode node)
+        {
+            if (node.IsAnimated) return true;
+            foreach (IINode n in node.NodeTree())
+            {
+                if (n.IsAnimated) return true;
+            }
+
+            return false;
+        }
+
+        public static void CollapseHierachy(this IINode node)
+        {
+            ////todo: replace this C# 
+            string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {node.Handle}) Editable_Poly";
+            ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
+            
+            IPolyObject polyObject = node.GetPolyObjectFromNode();
+            IEPoly flattenEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+            IINodeTab toflatten = Loader.Global.NodeTab.Create();
+            foreach (IINode n in node.NodeTree())
+            {
+                toflatten.AppendNode(n,false,1);
+            }
+
+            flattenEPoly.EpfnMultiAttach(toflatten, node, Loader.Core.Time);
+        }
+
+        public static bool IsSkinned(this IINode node)
+        {
+            IIDerivedObject derivedObject = node.ActualINode.ObjectRef as IIDerivedObject;
+
+            if (derivedObject == null)
+            {
+                return false;
+            }
+
+            for (int index = 0; index < derivedObject.NumModifiers; index++)
+            {
+                IModifier modifier = derivedObject.GetModifier(index);
+                if (modifier.ClassID.PartA == 9815843 && modifier.ClassID.PartB == 87654) // Skin
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region GUID
+
+
+        public static bool IsMarkedAsNotCollapsable(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_SkipFlatten");
+        }
 
         public static  IIContainerObject GetContainer(this IList<Guid> guids)
         {
@@ -1050,6 +1114,17 @@ namespace Max2Babylon
 
             return (endFrame!=0)? endFrame : animationGroup.FrameEnd;
         }
+
+        public static bool IsInAnimationGroups(this IINode node, AnimationGroupList animationGroupList)
+        {
+            foreach (AnimationGroup animationGroup in animationGroupList)
+            {
+                if (animationGroup.NodeGuids.Contains(node.GetIINodeGuid())) return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
 

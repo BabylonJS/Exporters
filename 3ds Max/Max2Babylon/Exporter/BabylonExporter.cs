@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Autodesk.Max.Plugins;
 using Color = System.Drawing.Color;
 using Utilities;
 
@@ -88,8 +89,101 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
+
+        private void IsMeshCollapsable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> collapsabeNodes)
+        {
+            //a node can't be flatten if:
+            //- is not a mesh
+            //- is marked as not collapsable
+            //- is hidden
+            //- is part of animation group
+            //- is skinned
+            //- is linked to animated node
+
+            if (node.IsMarkedAsNotCollapsable()) return;
+
+            if (node.IsNodeHidden(false) && !exportParameters.exportHiddenObjects) return;
+
+            if (node.IsRootNode)
+            {
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                }
+                return;
+            }
+
+            if (node.ActualINode.ObjectRef.GetMesh()==null)
+            {
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                }
+                return;
+            }
+
+            if (node.IsSkinned())
+            {
+                string message = $"{node.Name} can't be flatten, because is skinned";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                }
+                return;
+
+            }
+            
+            if (node.IsInAnimationGroups(animationGroupList))
+            {
+                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                }
+                return;
+            }
+
+            if (node.IsNodeTreeAnimated())
+            {
+                string message = $"{node.Name} can't be flatten, his hierachy contains animated node";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                }
+                return;
+            }
+
+            collapsabeNodes.Add(node);
+        }
+
+        public void FlattenHierarchy()
+        {
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+
+            List<IINode> collapsabeNodes = new List<IINode>();
+            IsMeshCollapsable(Loader.Core.RootNode, animationGroupList,ref collapsabeNodes);
+
+            foreach (IINode collapsabeINode in collapsabeNodes)
+            {
+                collapsabeINode.CollapseHierachy();
+            }
+        }
+
         public void Export(ExportParameters exportParameters)
         {
+            this.exportParameters = exportParameters;
+
+            if(exportParameters.flattenExport) FlattenHierarchy();
+
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
             var scaleFactorFloat = 1.0f;
@@ -110,8 +204,7 @@ namespace Max2Babylon
                 RaiseError("This parameter sets the quality of jpg compression.");
                 return;
             }
-
-            this.exportParameters = exportParameters;
+            
             var exportNode = (exportParameters as MaxExportParameters).exportNode;
 
             var gameConversionManger = Loader.Global.ConversionManager;
