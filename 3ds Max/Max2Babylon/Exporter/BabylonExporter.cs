@@ -112,7 +112,11 @@ namespace Max2Babylon
             }
 
             this.exportParameters = exportParameters;
-            var exportNode = (exportParameters as MaxExportParameters).exportNode;
+            IINode exportNode = null;
+            if (exportParameters is MaxExportParameters)
+            {
+                exportNode = (exportParameters as MaxExportParameters).exportNode;
+            }
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
