@@ -17,11 +17,12 @@ ECHO %source_dir%
 IF %1=="Debug" GOTO OnDebug
 IF %1=="Release" GOTO OnRelease
 
-:OnDebug
 IF "%max_location%"=="" (
 	ECHO 3DS Max %max_version% not installed. Skipping copy.
 	GOTO Close
 )
+
+:OnDebug
 SET dest_dir="%max_location%bin\assemblies"
 GOTO CopyFiles
 
