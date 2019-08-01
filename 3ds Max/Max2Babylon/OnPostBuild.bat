@@ -14,13 +14,13 @@ ECHO "Exporter version is %exporter_version%"
 SET source_dir="%~dp0%exporter_version%\bin\%1"
 ECHO %source_dir%
 
-IF %1=="Debug" GOTO OnDebug
-IF %1=="Release" GOTO OnRelease
-
 IF "%max_location%"=="" (
 	ECHO 3DS Max %max_version% not installed. Skipping copy.
 	GOTO Close
 )
+
+IF %1=="Debug" GOTO OnDebug
+IF %1=="Release" GOTO OnRelease
 
 :OnDebug
 SET dest_dir="%max_location%bin\assemblies"
