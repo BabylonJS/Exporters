@@ -164,13 +164,14 @@ namespace Max2Babylon
             collapsabeNodes.Add(node);
         }
 
-        public void FlattenHierarchy()
+        public void FlattenHierarchy(IINode node)
         {
+            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
             AnimationGroupList animationGroupList = new AnimationGroupList();
             animationGroupList.LoadFromData();
 
             List<IINode> collapsabeNodes = new List<IINode>();
-            IsMeshCollapsable(Loader.Core.RootNode, animationGroupList,ref collapsabeNodes);
+            IsMeshCollapsable(hierachyRoot, animationGroupList,ref collapsabeNodes);
 
             foreach (IINode collapsabeINode in collapsabeNodes)
             {
@@ -181,8 +182,9 @@ namespace Max2Babylon
         public void Export(ExportParameters exportParameters)
         {
             this.exportParameters = exportParameters;
+            IINode exportNode = (exportParameters as MaxExportParameters).exportNode;
 
-            if(exportParameters.flattenExport) FlattenHierarchy();
+            if(exportParameters.flattenExport) FlattenHierarchy(exportNode);
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
@@ -205,7 +207,7 @@ namespace Max2Babylon
                 return;
             }
             
-            var exportNode = (exportParameters as MaxExportParameters).exportNode;
+            
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
