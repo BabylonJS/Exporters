@@ -4,7 +4,7 @@ using ActionItem = Autodesk.Max.Plugins.ActionItem;
 
 namespace Max2Babylon
 {
-    class BabylonInvertSkipFlatten:ActionItem
+    class BabylonSkipFlattenToggle:ActionItem
     {
 
         public override bool ExecuteAction()
@@ -12,8 +12,8 @@ namespace Max2Babylon
             IINode sel = Loader.Core.GetSelNode(0);
             if (sel == null) return true;
 
-            bool skip = sel.IsMarkedAsNotCollapsable();
-            sel.SetUserPropBool("babylonjs_SkipFlatten", !skip);
+            bool doNotFlatten = sel.IsMarkedAsNotFlattenable();
+            sel.SetUserPropBool("babylonjs_DoNotFlatten", !doNotFlatten);
             return true;
         }
 
@@ -29,7 +29,7 @@ namespace Max2Babylon
 
         public override string ButtonText
         {
-            get { return "Babylon Invert Skip Flatten Status"; }
+            get { return "Babylon Toggle Skip Flatten Status"; }
         }
 
         public override string MenuText
@@ -39,21 +39,21 @@ namespace Max2Babylon
                 IINode sel = Loader.Core.GetSelNode(0);
                 if (sel == null)
                 {
-                    return "&Babylon Skip Flatten";
+                    return "&Node Flattening - Disabled";
                 }
 
-                if (!sel.IsMarkedAsNotCollapsable())
+                if (!sel.IsMarkedAsNotFlattenable())
                 {
-                    return "&Babylon Skip Flatten";
+                    return "&Node Flattening - Disabled";
                 }
 
-                return "&Babylon Reset Flatten";
+                return "&Node Flattening - Enabled";
             }
         }
 
         public override string DescriptionText
         {
-            get { return "Invert skip flatten status"; }
+            get { return "Toggle skip flatten status"; }
         }
 
         public override string CategoryText

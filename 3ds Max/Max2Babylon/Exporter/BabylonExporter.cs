@@ -90,17 +90,17 @@ namespace Max2Babylon
             }
         }
 
-        private void IsMeshCollapsable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> collapsabeNodes)
+        private void IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
         {
             //a node can't be flatten if:
             //- is not a mesh
-            //- is marked as not collapsable
+            //- is marked as not flattenable
             //- is hidden
             //- is part of animation group
             //- is skinned
             //- is linked to animated node
 
-            if (node.IsMarkedAsNotCollapsable()) return;
+            if (node.IsMarkedAsNotFlattenable()) return;
 
             if (node.IsNodeHidden(false) && !exportParameters.exportHiddenObjects) return;
 
@@ -109,17 +109,17 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
                 return;
             }
 
-            if (node.ActualINode.ObjectRef.GetMesh()==null)
+            if (node.GetTriObjectFromNode()==null)
             {
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
                 return;
             }
@@ -131,7 +131,7 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
                 return;
 
@@ -144,7 +144,7 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
                 return;
             }
@@ -156,25 +156,26 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshCollapsable(n,animationGroupList,ref collapsabeNodes);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
                 return;
             }
 
-            collapsabeNodes.Add(node);
+            flattenableNodes.Add(node);
         }
 
-        public void FlattenHierarchy()
+        public void FlattenHierarchy(IINode node)
         {
+            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
             AnimationGroupList animationGroupList = new AnimationGroupList();
             animationGroupList.LoadFromData();
 
-            List<IINode> collapsabeNodes = new List<IINode>();
-            IsMeshCollapsable(Loader.Core.RootNode, animationGroupList,ref collapsabeNodes);
+            List<IINode> flattenableNodes = new List<IINode>();
+            IsMeshFlattenable(hierachyRoot, animationGroupList,ref flattenableNodes);
 
-            foreach (IINode collapsabeINode in collapsabeNodes)
+            foreach (IINode flattenableNode in flattenableNodes)
             {
-                collapsabeINode.CollapseHierachy();
+                flattenableNode.FlattenHierarchy();
             }
         }
 
@@ -192,6 +193,7 @@ namespace Max2Babylon
         public void Export(MaxExportParameters exportParameters)
         {
             this.exportParameters = exportParameters;
+            IINode exportNode = (exportParameters as MaxExportParameters).exportNode;
 
             if (exportParameters.useHoldFetchLogig)
             {
@@ -220,7 +222,7 @@ namespace Max2Babylon
                 return;
             }
             
-            var exportNode = (exportParameters as MaxExportParameters).exportNode;
+            
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
