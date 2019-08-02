@@ -143,7 +143,7 @@ namespace Max2Babylon
                 actionTable.AppendOperation(new BabylonAnimationActionItem());
                 actionTable.AppendOperation(new BabylonSaveAnimationToContainers());
                 actionTable.AppendOperation(new BabylonLoadAnimationFromContainers());
-                actionTable.AppendOperation(new BabylonInvertSkipFlatten());
+                actionTable.AppendOperation(new BabylonSkipFlattenToggle());
 
                 actionCallback = new BabylonActionCallback();
 
@@ -261,7 +261,7 @@ namespace Max2Babylon
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Invert Skip Flatten Status";
+            menuItemBabylon.Title = "Babylon Toggle Skip Flatten Status";
             menuItemBabylon.ActionItem = actionTable[5];
             menu.AddItem(menuItemBabylon, -1);
 
