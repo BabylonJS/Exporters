@@ -8,7 +8,6 @@ namespace Max2Babylon
     {
         public static void ExecutePythonFile(string filePath)
         {
-            //Scripts.ScriptsUtilities.ExecutePythonFile(@"hello_world.py");
             if (File.Exists(filePath))
             {
                 string cmd = $@"python.ExecuteFile ""{filePath}""";
@@ -18,14 +17,12 @@ namespace Max2Babylon
 
         public static void ExecutePythonCommand(string pythonCmd)
         {
-            //Scripts.ScriptsUtilities.ExecutePythonCommand(@"print 'helloPython'");
             string cmd = $@"python.Execute ""{pythonCmd}""";
             ExecuteMaxScriptCommand(cmd);
         }
 
         public static void ExecuteMaxScriptCommand(string maxScriptCmd)
         {
-            //Scripts.ScriptsUtilities.ExecuteMaxScriptCommand(@"print ""hello""");
             if (!string.IsNullOrEmpty(maxScriptCmd))
             {
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(maxScriptCmd);

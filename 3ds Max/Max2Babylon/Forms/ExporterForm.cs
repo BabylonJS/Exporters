@@ -96,7 +96,7 @@ namespace Max2Babylon
             txtEnvironmentName.Text = formatedEnvironmentPath;
 
 
-            Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flatten", 1);
+            Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 1);
         }
 
         private void butModelBrowse_Click(object sender, EventArgs e)
@@ -140,7 +140,11 @@ namespace Max2Babylon
         {
             try
             {
-                if (chkFlatten.Checked) Loader.Core.FileHold();
+                if (chkFlatten.Checked)
+                {
+                    Loader.Core.FileHold();
+                }
+
                 await DoExport(singleExportItem);
             }
             catch{}
@@ -211,7 +215,7 @@ namespace Max2Babylon
             string unformattedEnvironmentPath = PathUtilities.UnformatPath(txtEnvironmentName.Text);
             Loader.Core.RootNode.SetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, Tools.RelativePathStore(unformattedEnvironmentPath));
 
-            Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flatten");
+            Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene");
         }
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
@@ -315,12 +319,16 @@ namespace Max2Babylon
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,
                     pbrEnvironment = txtEnvironmentName.Text,
-                    flattenExport = chkFlatten.Checked
+                    flattenScene = chkFlatten.Checked
                 };
 
                 exporter.callerForm = this;
 
-                if (!multiExport && chkFlatten.Checked) Loader.Core.FileHold();
+                if (!multiExport && chkFlatten.Checked)
+                {
+                    Loader.Core.FileHold();
+                }
+
                 exporter.Export(exportParameters);
             }
             catch (OperationCanceledException)
@@ -431,7 +439,11 @@ namespace Max2Babylon
         {
             try
             {
-                if (chkFlatten.Checked) Loader.Core.FileHold();
+                if (chkFlatten.Checked)
+                {
+                    Loader.Core.FileHold();
+                }
+
                 if (await DoExport(singleExportItem))
                 {
                     WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
@@ -600,7 +612,11 @@ namespace Max2Babylon
                 }
                 try
                 {
-                    if (chkFlatten.Checked) Loader.Core.FileHold();
+                    if (chkFlatten.Checked)
+                    {
+                        Loader.Core.FileHold();
+                    }
+
                     await DoExport(exportItemList);
                 }
                 catch{}

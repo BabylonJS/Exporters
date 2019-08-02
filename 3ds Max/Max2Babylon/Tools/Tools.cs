@@ -668,9 +668,9 @@ namespace Max2Babylon
             return false;
         }
 
-        public static void CollapseHierachy(this IINode node)
+        public static void FlattenHierarchy(this IINode node)
         {
-            ////todo: replace this C# 
+            ////todo: replace this with C# 
             string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {node.Handle}) Editable_Poly";
             ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
             
@@ -711,9 +711,9 @@ namespace Max2Babylon
         #region GUID
 
 
-        public static bool IsMarkedAsNotCollapsable(this IINode node)
+        public static bool IsMarkedAsNotFlattenable(this IINode node)
         {
-            return node.GetBoolProperty("babylonjs_SkipFlatten");
+            return node.GetBoolProperty("babylonjs_DoNotFlatten");
         }
 
         public static  IIContainerObject GetContainer(this IList<Guid> guids)
