@@ -335,17 +335,13 @@ namespace Babylon2GLTF
                         //export textures
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
-                            var baseColorFileName = babylonMaterial.name + "_baseColor" + (isAlphaInTexture ? ".png" : ".jpg");
-                            baseColorFileName = baseColorFileName.Replace(":", "_");
-                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorFileName);
+                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {
-                            var metallicRoughnessFileName = babylonMaterial.name + "_metallicRoughness" + ".jpg";
-                            metallicRoughnessFileName = metallicRoughnessFileName.Replace(":", "_");
-                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, metallicRoughnessFileName);
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap);
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
                         }
 
