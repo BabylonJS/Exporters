@@ -1,6 +1,8 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
+using System;
 using System.Collections.Generic;
+using Utilities;
 
 namespace Maya2Babylon
 {
@@ -58,9 +60,12 @@ namespace Maya2Babylon
             }
         }
 
-        private void GetTransform(MFnTransform mFnTransform, ref float[] position, ref float[] rotationQuaternion, ref float[] rotation, ref float[] scaling)
+        private void GetTransform(MFnTransform mFnTransform, ref float[] position, ref float[] rotationQuaternion, ref float[] rotation, ref BabylonVector3.EulerRotationOrder rotationOrder, ref float[] scaling)
         {
             var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
+            var mayaRotationOrder = 0;
+            MGlobal.executeCommand($"getAttr {mFnTransform.fullPathName}.rotateOrder", out mayaRotationOrder);
+            rotationOrder = Tools.ConvertMayaRotationOrder((MEulerRotation.RotationOrder)mayaRotationOrder);
 
             position = transformationMatrix.getTranslation();
             rotationQuaternion = transformationMatrix.getRotationQuaternion();
@@ -73,6 +78,7 @@ namespace Maya2Babylon
             rotationQuaternion[1] *= -1;
             rotation[0] *= -1;
             rotation[1] *= -1;
+            rotationOrder = Tools.InvertRotationOrder(rotationOrder);
         }
 
         private void GetTransform(MFnTransform mFnTransform, ref float[] position)
