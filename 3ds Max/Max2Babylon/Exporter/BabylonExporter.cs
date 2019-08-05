@@ -198,12 +198,9 @@ namespace Max2Babylon
             {
                 exportNode = (exportParameters as MaxExportParameters).exportNode;
             }
-
-            if (exportParameters.useHoldFetchLogig)
-            {
-                if(exportParameters.flattenScene) FlattenHierarchy(exportNode);
-                if(exportParameters.mergeInheritedContainers)ExportClosedContainers();
-            }
+            
+            if(exportParameters.flattenScene) FlattenHierarchy(exportNode);
+            if(exportParameters.mergeInheritedContainers)ExportClosedContainers();
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
