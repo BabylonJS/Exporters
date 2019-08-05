@@ -8,11 +8,20 @@ namespace Max2Babylon
 {
     public class Loader
     {
+
         public static IGlobal Global
         {
             get
             {
                 return GlobalInterface.Instance;
+            }
+        }
+
+        public static IInterface_ID EditablePoly
+        {
+            get
+            {
+                return  Global.Interface_ID.Create(0x092779, 0x634020);
             }
         }
 
