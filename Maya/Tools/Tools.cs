@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using BabylonExport.Entities;
 
 namespace Maya2Babylon
 {
@@ -17,6 +18,47 @@ namespace Maya2Babylon
         public static float Lerp(float min, float max, float t)
         {
             return min + (max - min) * t;
+        }
+
+        public static BabylonVector3.EulerRotationOrder ConvertMayaRotationOrder(MEulerRotation.RotationOrder mayaRotationOrder)
+        {
+            // http://download.autodesk.com/us/maya/2010help/api/class_m_transformation_matrix.html#adbf54177dae3a2015e51cd6bde8941e
+            switch (mayaRotationOrder)
+            {
+                case MEulerRotation.RotationOrder.kXYZ:
+                default:
+                    return BabylonVector3.EulerRotationOrder.XYZ;
+                case MEulerRotation.RotationOrder.kYZX:
+                    return BabylonVector3.EulerRotationOrder.YZX;
+                case MEulerRotation.RotationOrder.kZXY:
+                    return BabylonVector3.EulerRotationOrder.ZXY;
+                case MEulerRotation.RotationOrder.kXZY:
+                    return BabylonVector3.EulerRotationOrder.XZY;
+                case MEulerRotation.RotationOrder.kYXZ:
+                    return BabylonVector3.EulerRotationOrder.YXZ;
+                case MEulerRotation.RotationOrder.kZYX:
+                    return BabylonVector3.EulerRotationOrder.ZYX;
+            }
+        }
+
+        public static BabylonVector3.EulerRotationOrder InvertRotationOrder(BabylonVector3.EulerRotationOrder rotationOrder)
+        {
+            switch (rotationOrder)
+            {
+                case BabylonVector3.EulerRotationOrder.XYZ:
+                default:
+                    return BabylonVector3.EulerRotationOrder.ZYX;
+                case BabylonVector3.EulerRotationOrder.YZX:
+                    return BabylonVector3.EulerRotationOrder.XZY;
+                case BabylonVector3.EulerRotationOrder.ZXY:
+                    return BabylonVector3.EulerRotationOrder.YXZ;
+                case BabylonVector3.EulerRotationOrder.XZY:
+                    return BabylonVector3.EulerRotationOrder.YZX;
+                case BabylonVector3.EulerRotationOrder.YXZ:
+                    return BabylonVector3.EulerRotationOrder.ZXY;
+                case BabylonVector3.EulerRotationOrder.ZYX:
+                    return BabylonVector3.EulerRotationOrder.XYZ;
+            }
         }
 
         // -------------------------

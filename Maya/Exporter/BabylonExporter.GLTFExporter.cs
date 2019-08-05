@@ -512,7 +512,8 @@ namespace Maya2Babylon
                         Y = babylonNode.rotation[1],
                         Z = babylonNode.rotation[2]
                     };
-                    gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
+                    // babylon euler rotation order is YXZ
+                    gltfNode.rotation = rotationVector3.toQuaternion(BabylonVector3.EulerRotationOrder.YXZ).ToArray();
                 }
             }
             else // Light
