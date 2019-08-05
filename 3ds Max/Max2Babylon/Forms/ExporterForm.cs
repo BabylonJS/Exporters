@@ -325,16 +325,22 @@ namespace Max2Babylon
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,
                     pbrEnvironment = txtEnvironmentName.Text,
+                    usePreExportProcess = chkUsePreExportProces.Checked,
                     flattenScene = chkFlatten.Checked,
                     mergeInheritedContainers = chkMrgInheritedContainers.Checked
                 };
 
                 exporter.callerForm = this;
 
-                if (!multiExport && chkUsePreExportProces.Checked)
-                {
-                    Loader.Core.FileHold();
-                }
+                //if (exportParameters.usePreExportProcess && !m)
+                //{
+
+                //}
+
+                //if (!multiExport && chkUsePreExportProces.Checked)
+                //{
+                //    Loader.Core.FileHold();
+                //}
 
                 exporter.Export(exportParameters);
             }
@@ -355,15 +361,15 @@ namespace Max2Babylon
                 progressBar.Value = 0;
                 success = false;
             }
-            finally
-            {
-                if (!multiExport && chkUsePreExportProces.Checked)
-                {
-                    Loader.Core.SetQuietMode(true);
-                    Loader.Core.FileFetch();
-                    Loader.Core.SetQuietMode(false);
-                }
-            }
+            //finally
+            //{
+            //    if (!multiExport && chkUsePreExportProces.Checked)
+            //    {
+            //        Loader.Core.SetQuietMode(true);
+            //        Loader.Core.FileFetch();
+            //        Loader.Core.SetQuietMode(false);
+            //    }
+            //}
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
