@@ -193,11 +193,15 @@ namespace Max2Babylon
         public void Export(MaxExportParameters exportParameters)
         {
             this.exportParameters = exportParameters;
-            IINode exportNode = (exportParameters as MaxExportParameters).exportNode;
+            IINode exportNode = null;
+            if (exportParameters is MaxExportParameters)
+            {
+                exportNode = (exportParameters as MaxExportParameters).exportNode;
+            }
 
             if (exportParameters.useHoldFetchLogig)
             {
-                if(exportParameters.flattenExport) FlattenHierarchy();
+                if(exportParameters.flattenScene) FlattenHierarchy(exportNode);
                 if(exportParameters.mergeInheritedContainers)ExportClosedContainers();
             }
 
@@ -221,7 +225,7 @@ namespace Max2Babylon
                 RaiseError("This parameter sets the quality of jpg compression.");
                 return;
             }
-            
+
             
 
             var gameConversionManger = Loader.Global.ConversionManager;

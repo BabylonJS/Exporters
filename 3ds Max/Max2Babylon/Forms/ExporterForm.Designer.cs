@@ -289,6 +289,7 @@
             // chkUsePreExportProces
             // 
             this.chkUsePreExportProces.AutoSize = true;
+            this.chkUsePreExportProces.Checked = false;
             this.chkUsePreExportProces.Location = new System.Drawing.Point(11, 245);
             this.chkUsePreExportProces.Name = "chkUsePreExportProces";
             this.chkUsePreExportProces.Size = new System.Drawing.Size(138, 17);
