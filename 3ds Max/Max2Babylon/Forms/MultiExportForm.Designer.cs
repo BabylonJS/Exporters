@@ -41,7 +41,9 @@
             this.ColumnExportCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnNode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnTexturesFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SetPathFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.SetTextureFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             warningLabel = new System.Windows.Forms.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             panel_buttons = new System.Windows.Forms.Panel();
@@ -181,7 +183,8 @@
             this.ExportItemGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnExportCheckbox,
             this.ColumnNode,
-            this.ColumnFilePath});
+            this.ColumnFilePath,
+            this.ColumnTexturesFolder});
             this.ExportItemGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ExportItemGridView.Location = new System.Drawing.Point(3, 3);
             this.ExportItemGridView.Name = "ExportItemGridView";
@@ -218,6 +221,11 @@
             this.ColumnFilePath.HeaderText = "File path";
             this.ColumnFilePath.MaxInputLength = 1024;
             this.ColumnFilePath.Name = "ColumnFilePath";
+            // 
+            // ColumnTexturesFolder
+            // 
+            this.ColumnTexturesFolder.HeaderText = "Textures folder";
+            this.ColumnTexturesFolder.Name = "ColumnTexturesFolder";
             // 
             // SetPathFileDialog
             // 
@@ -262,5 +270,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExportCheckbox;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNode;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFilePath;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTexturesFolder;
+        private System.Windows.Forms.FolderBrowserDialog SetTextureFolderDialog;
     }
 }
