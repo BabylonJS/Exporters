@@ -179,7 +179,18 @@ namespace Max2Babylon
             }
         }
 
-        public void Export(ExportParameters exportParameters)
+        public void ExportClosedContainers()
+        {
+            List<IIContainerObject> sceneContainers = Tools.GetAllContainers();
+            foreach (IIContainerObject containerObject in sceneContainers)
+            {
+                if (!containerObject.IsInherited)continue;
+                bool merge = containerObject.MergeSource;
+            }
+            AnimationGroupList.LoadDataFromContainers();
+        }
+
+        public void Export(MaxExportParameters exportParameters)
         {
             this.exportParameters = exportParameters;
             IINode exportNode = null;
@@ -187,11 +198,9 @@ namespace Max2Babylon
             {
                 exportNode = (exportParameters as MaxExportParameters).exportNode;
             }
-
-            if(exportParameters.flattenScene)
-            {
-                FlattenHierarchy(exportNode);
-            }
+            
+            if(exportParameters.flattenScene) FlattenHierarchy(exportNode);
+            if(exportParameters.mergeInheritedContainers)ExportClosedContainers();
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
