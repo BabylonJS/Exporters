@@ -718,6 +718,7 @@ namespace Max2Babylon
                 }
             }
 
+            babylonScene.NodeMap[babylonNode.id] = babylonNode;
             return babylonNode;
         }
 
