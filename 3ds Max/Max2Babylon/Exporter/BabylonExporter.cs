@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Autodesk.Max.Plugins;
 using Color = System.Drawing.Color;
 using Utilities;
 
@@ -88,8 +89,110 @@ namespace Max2Babylon
                 throw new OperationCanceledException();
             }
         }
+
+        private void IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
+        {
+            //a node can't be flatten if:
+            //- is not a mesh
+            //- is marked as not flattenable
+            //- is hidden
+            //- is part of animation group
+            //- is skinned
+            //- is linked to animated node
+
+            if (node.IsMarkedAsNotFlattenable()) return;
+
+            if (node.IsNodeHidden(false) && !exportParameters.exportHiddenObjects) return;
+
+            if (node.IsRootNode)
+            {
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+            }
+
+            if (node.GetTriObjectFromNode()==null)
+            {
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+            }
+
+            if (node.IsSkinned())
+            {
+                string message = $"{node.Name} can't be flatten, because is skinned";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+
+            }
+            
+            if (node.IsInAnimationGroups(animationGroupList))
+            {
+                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+            }
+
+            if (node.IsNodeTreeAnimated())
+            {
+                string message = $"{node.Name} can't be flatten, his hierachy contains animated node";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+            }
+
+            flattenableNodes.Add(node);
+        }
+
+        public void FlattenHierarchy(IINode node)
+        {
+            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+
+            List<IINode> flattenableNodes = new List<IINode>();
+            IsMeshFlattenable(hierachyRoot, animationGroupList,ref flattenableNodes);
+
+            foreach (IINode flattenableNode in flattenableNodes)
+            {
+                flattenableNode.FlattenHierarchy();
+            }
+        }
+
         public void Export(ExportParameters exportParameters)
         {
+            this.exportParameters = exportParameters;
+            IINode exportNode = null;
+            if (exportParameters is MaxExportParameters)
+            {
+                exportNode = (exportParameters as MaxExportParameters).exportNode;
+            }
+
+            if(exportParameters.flattenScene)
+            {
+                FlattenHierarchy(exportNode);
+            }
+
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
             var scaleFactorFloat = 1.0f;
@@ -111,12 +214,7 @@ namespace Max2Babylon
                 return;
             }
 
-            this.exportParameters = exportParameters;
-            IINode exportNode = null;
-            if (exportParameters is MaxExportParameters)
-            {
-                exportNode = (exportParameters as MaxExportParameters).exportNode;
-            }
+            
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
