@@ -14,7 +14,6 @@ namespace BabylonExport.Entities
         public float scaleFactor = 1.0f;
         public bool writeTextures = true;
         public bool overwriteTextures = true;
-        public bool flattenScene = true;
         public bool exportHiddenObjects = false;
         public bool exportMaterials = true;
         public bool exportOnlySelected = false;

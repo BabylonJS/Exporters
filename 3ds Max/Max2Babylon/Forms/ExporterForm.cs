@@ -30,7 +30,7 @@ namespace Max2Babylon
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
-            
+
             // Check if the gltf-pipeline module is installed
             try
             {
@@ -97,8 +97,9 @@ namespace Max2Babylon
             string formatedEnvironmentPath = Tools.ResolveRelativePath(storedEnvironmentPath);
             txtEnvironmentName.Text = formatedEnvironmentPath;
 
-
-            Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 1);
+            Tools.PrepareCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces", 0);
+            Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
+            Tools.PrepareCheckBox(chkMrgInheritedContainers, Loader.Core.RootNode, "babylonjs_mergeinheritedcontainers",0);
         }
 
         private void butModelBrowse_Click(object sender, EventArgs e)
@@ -142,17 +143,17 @@ namespace Max2Babylon
         {
             try
             {
-                if (chkFlatten.Checked)
+                if (chkUsePreExportProces.Checked)
                 {
                     Loader.Core.FileHold();
                 }
 
-            await DoExport(singleExportItem);
-        }
+                await DoExport(singleExportItem);
+            }
             catch{}
             finally
             {
-                if (chkFlatten.Checked)
+                if (chkUsePreExportProces.Checked)
                 {
                     Loader.Core.SetQuietMode(true);
                     Loader.Core.FileFetch();
@@ -218,7 +219,9 @@ namespace Max2Babylon
             string unformattedEnvironmentPath = PathUtilities.UnformatPath(txtEnvironmentName.Text);
             Loader.Core.RootNode.SetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, Tools.RelativePathStore(unformattedEnvironmentPath));
 
+            Tools.UpdateCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces");
             Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene");
+            Tools.UpdateCheckBox(chkMrgInheritedContainers, Loader.Core.RootNode, "babylonjs_mergeinheritedcontainers");
         }
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
@@ -317,15 +320,22 @@ namespace Max2Babylon
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,
                     pbrEnvironment = txtEnvironmentName.Text,
-                    flattenScene = chkFlatten.Checked
+                    usePreExportProcess = chkUsePreExportProces.Checked,
+                    flattenScene = chkFlatten.Checked,
+                    mergeInheritedContainers = chkMrgInheritedContainers.Checked
                 };
 
                 exporter.callerForm = this;
 
-                if (!multiExport && chkFlatten.Checked)
-                {
-                    Loader.Core.FileHold();
-                }
+                //if (exportParameters.usePreExportProcess && !m)
+                //{
+
+                //}
+
+                //if (!multiExport && chkUsePreExportProces.Checked)
+                //{
+                //    Loader.Core.FileHold();
+                //}
 
                 exporter.Export(exportParameters);
             }
@@ -346,15 +356,15 @@ namespace Max2Babylon
                 progressBar.Value = 0;
                 success = false;
             }
-            finally
-            {
-                if (!multiExport && chkFlatten.Checked)
-                {
-                    Loader.Core.SetQuietMode(true);
-                    Loader.Core.FileFetch();
-                    Loader.Core.SetQuietMode(false);
-                }
-            }
+            //finally
+            //{
+            //    if (!multiExport && chkUsePreExportProces.Checked)
+            //    {
+            //        Loader.Core.SetQuietMode(true);
+            //        Loader.Core.FileFetch();
+            //        Loader.Core.SetQuietMode(false);
+            //    }
+            //}
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
@@ -407,7 +417,7 @@ namespace Max2Babylon
         {
             if (exporter != null)
             {
-                exporter.IsCancelled = true;                
+                exporter.IsCancelled = true;
             }
             babylonExportAction.Close();
         }
@@ -437,25 +447,25 @@ namespace Max2Babylon
         {
             try
             {
-                if (chkFlatten.Checked)
+                if (chkUsePreExportProces.Checked)
                 {
                     Loader.Core.FileHold();
                 }
 
-            if (await DoExport(singleExportItem))
-            {
-                WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
-                WebServer.SceneFolder = Path.GetDirectoryName(PathUtilities.UnformatPath(txtModelName.Text));
+                if (await DoExport(singleExportItem))
+                {
+                    WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
+                    WebServer.SceneFolder = Path.GetDirectoryName(PathUtilities.UnformatPath(txtModelName.Text));
 
-                Process.Start(WebServer.url + WebServer.SceneFilename);
+                    Process.Start(WebServer.url + WebServer.SceneFilename);
 
-                WindowState = FormWindowState.Minimized;
+                    WindowState = FormWindowState.Minimized;
+                }
             }
-        }
             catch{}
             finally
             {
-                if (chkFlatten.Checked)
+                if (chkUsePreExportProces.Checked)
                 {
                     Loader.Core.SetQuietMode(true);
                     Loader.Core.FileFetch();
@@ -605,23 +615,37 @@ namespace Max2Babylon
             {
                 try
                 {
-                    if	 (chkFlatten.Checked)
+                    if (chkUsePreExportProces.Checked)
                     {
                         Loader.Core.FileHold();
                     }
 
-                await DoExport(exportItemList);
+                    await DoExport(exportItemList);
                 }
                 catch{}
                 finally
                 {
-                    if (chkFlatten.Checked)
+                    if (chkUsePreExportProces.Checked)
                     {
                         Loader.Core.SetQuietMode(true);
                         Loader.Core.FileFetch();
                         Loader.Core.SetQuietMode(false);
                     }
                 }
+            }
+        }
+
+        private void chkUsePreExportProces_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkUsePreExportProces.Checked)
+            {
+                chkMrgInheritedContainers.Enabled = false;
+                chkFlatten.Enabled = false;
+            }
+            else
+            {
+                chkMrgInheritedContainers.Enabled = true;
+                chkFlatten.Enabled = true;
             }
         }
     }

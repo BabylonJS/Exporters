@@ -41,6 +41,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkWriteTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkMrgInheritedContainers = new System.Windows.Forms.CheckBox();
+            this.chkUsePreExportProces = new System.Windows.Forms.CheckBox();
             this.chkFlatten = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -82,7 +84,6 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -223,8 +224,9 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkMrgInheritedContainers);
+            this.groupBox1.Controls.Add(this.chkUsePreExportProces);
             this.groupBox1.Controls.Add(this.chkFlatten);
-            this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label7);
@@ -271,13 +273,37 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
+            // chkMrgInheritedContainers
+            // 
+            this.chkMrgInheritedContainers.AutoSize = true;
+            this.chkMrgInheritedContainers.Enabled = false;
+            this.chkMrgInheritedContainers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkMrgInheritedContainers.Location = new System.Drawing.Point(18, 281);
+            this.chkMrgInheritedContainers.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkMrgInheritedContainers.Name = "chkMrgInheritedContainers";
+            this.chkMrgInheritedContainers.Size = new System.Drawing.Size(150, 17);
+            this.chkMrgInheritedContainers.TabIndex = 37;
+            this.chkMrgInheritedContainers.Text = "Merge Inherited Containers";
+            this.chkMrgInheritedContainers.UseVisualStyleBackColor = true;
+            // 
+            // chkUsePreExportProces
+            // 
+            this.chkUsePreExportProces.AutoSize = true;
+            this.chkUsePreExportProces.Checked = false;
+            this.chkUsePreExportProces.Location = new System.Drawing.Point(11, 245);
+            this.chkUsePreExportProces.Name = "chkUsePreExportProces";
+            this.chkUsePreExportProces.Size = new System.Drawing.Size(138, 17);
+            this.chkUsePreExportProces.TabIndex = 36;
+            this.chkUsePreExportProces.Text = "Use PreExport Process:";
+            this.chkUsePreExportProces.UseVisualStyleBackColor = true;
+            this.chkUsePreExportProces.CheckedChanged += new System.EventHandler(this.chkUsePreExportProces_CheckedChanged);
+            // 
             // chkFlatten
             // 
             this.chkFlatten.AutoSize = true;
-            this.chkFlatten.Checked = true;
-            this.chkFlatten.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFlatten.Enabled = false;
             this.chkFlatten.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkFlatten.Location = new System.Drawing.Point(15, 266);
+            this.chkFlatten.Location = new System.Drawing.Point(18, 262);
             this.chkFlatten.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkFlatten.Name = "chkFlatten";
             this.chkFlatten.Size = new System.Drawing.Size(111, 17);
@@ -298,7 +324,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 300);
+            this.label8.Location = new System.Drawing.Point(3, 306);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(113, 13);
             this.label8.TabIndex = 33;
@@ -547,7 +573,7 @@
             this.chkExportMorphNormals.Checked = true;
             this.chkExportMorphNormals.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportMorphNormals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphNormals.Location = new System.Drawing.Point(163, 316);
+            this.chkExportMorphNormals.Location = new System.Drawing.Point(163, 322);
             this.chkExportMorphNormals.Name = "chkExportMorphNormals";
             this.chkExportMorphNormals.Size = new System.Drawing.Size(124, 17);
             this.chkExportMorphNormals.TabIndex = 16;
@@ -559,7 +585,7 @@
             // 
             this.chkExportMorphTangents.AutoSize = true;
             this.chkExportMorphTangents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphTangents.Location = new System.Drawing.Point(15, 316);
+            this.chkExportMorphTangents.Location = new System.Drawing.Point(15, 322);
             this.chkExportMorphTangents.Name = "chkExportMorphTangents";
             this.chkExportMorphTangents.Size = new System.Drawing.Size(129, 17);
             this.chkExportMorphTangents.TabIndex = 16;
@@ -745,16 +771,6 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 248);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(97, 13);
-            this.label9.TabIndex = 34;
-            this.label9.Text = "PreExport Process:";
-            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -843,6 +859,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox chkExportMorphNormals;
         private System.Windows.Forms.CheckBox chkFlatten;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox chkUsePreExportProces;
+        private System.Windows.Forms.CheckBox chkMrgInheritedContainers;
     }
 }
