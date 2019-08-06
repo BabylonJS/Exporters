@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Autodesk.Max;
+using BabylonExport.Entities;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Autodesk.Max;
-using BabylonExport.Entities;
 using Utilities;
 using Color = System.Drawing.Color;
 
@@ -30,7 +30,7 @@ namespace Max2Babylon
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
-            
+
             // Check if the gltf-pipeline module is installed
             try
             {
@@ -54,7 +54,7 @@ namespace Max2Babylon
 
         private void ExporterForm_Load(object sender, EventArgs e)
         {
-            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty,string.Empty);
+            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
             txtModelName.Text = userRelativePath;
             string absoluteModelPath = PathUtilities.UnformatPath(txtModelName.Text);
@@ -96,6 +96,9 @@ namespace Max2Babylon
             string storedEnvironmentPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
             string formatedEnvironmentPath = Tools.ResolveRelativePath(storedEnvironmentPath);
             txtEnvironmentName.Text = formatedEnvironmentPath;
+
+
+            Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 1);
         }
 
         private void butModelBrowse_Click(object sender, EventArgs e)
@@ -137,7 +140,25 @@ namespace Max2Babylon
 
         private async void butExport_Click(object sender, EventArgs e)
         {
-            await DoExport(singleExportItem);
+            try
+            {
+                if (chkFlatten.Checked)
+                {
+                    Loader.Core.FileHold();
+                }
+
+                await DoExport(singleExportItem);
+            }
+            catch{}
+            finally
+            {
+                if (chkFlatten.Checked)
+                {
+                    Loader.Core.SetQuietMode(true);
+                    Loader.Core.FileFetch();
+                    Loader.Core.SetQuietMode(false);
+                }
+            }
         }
 
         private async Task<bool> DoExport(ExportItemList exportItemList)
@@ -149,7 +170,7 @@ namespace Max2Babylon
             {
                 if (!item.Selected) continue;
 
-                allSucceeded = allSucceeded && await DoExport(item,true, false);
+                allSucceeded = allSucceeded && await DoExport(item, true, false);
 
                 if (exporter.IsCancelled)
                     break;
@@ -190,12 +211,14 @@ namespace Max2Babylon
             Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(unformattedPath));
 
             string unformattedTextureFolderPath = PathUtilities.UnformatPath(txtTextureName.Text);
-            Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty,Tools.RelativePathStore(unformattedTextureFolderPath));
+            Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(unformattedTextureFolderPath));
 
             Tools.UpdateCheckBox(chkFullPBR, Loader.Core.RootNode, ExportParameters.PBRFullPropertyName);
             Tools.UpdateCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
             string unformattedEnvironmentPath = PathUtilities.UnformatPath(txtEnvironmentName.Text);
             Loader.Core.RootNode.SetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, Tools.RelativePathStore(unformattedEnvironmentPath));
+
+            Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene");
         }
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
@@ -270,9 +293,9 @@ namespace Max2Babylon
             try
             {
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : PathUtilities.UnformatPath(txtModelName.Text);
-                ExportParameters exportParameters = new MaxExportParameters
+                MaxExportParameters exportParameters = new MaxExportParameters
                 {
-                    outputPath = PathUtilities.UnformatPath(txtModelName.Text),
+                    outputPath = modelAbsolutePath,
                     outputTexturePath = textureExportPath,
                     textureFolder = PathUtilities.UnformatPath(txtTextureName.Text),
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
@@ -298,10 +321,16 @@ namespace Max2Babylon
                     exportNode = exportItem != null ? exportItem.Node : null,
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,
-                    pbrEnvironment = txtEnvironmentName.Text
+                    pbrEnvironment = txtEnvironmentName.Text,
+                    flattenScene = chkFlatten.Checked
                 };
 
                 exporter.callerForm = this;
+
+                if (!multiExport && chkFlatten.Checked)
+                {
+                    Loader.Core.FileHold();
+                }
 
                 exporter.Export(exportParameters);
             }
@@ -322,6 +351,15 @@ namespace Max2Babylon
                 progressBar.Value = 0;
                 success = false;
             }
+            finally
+            {
+                if (!multiExport && chkFlatten.Checked)
+                {
+                    Loader.Core.SetQuietMode(true);
+                    Loader.Core.FileFetch();
+                    Loader.Core.SetQuietMode(false);
+                }
+            }
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
@@ -339,8 +377,8 @@ namespace Max2Babylon
 
             Invoke(new Action(() =>
             {
-                newNode = new TreeNode(text) {ForeColor = color};
-                if(rank < 0 || rank > currentRank+1)
+                newNode = new TreeNode(text) { ForeColor = color };
+                if (rank < 0 || rank > currentRank + 1)
                 {
                     rank = 0;
                     treeView.Nodes.Add(new TreeNode("Invalid rank passed to CreateTreeNode (through RaiseMessage, RaiseWarning or RaiseError)!") { ForeColor = Color.DarkOrange });
@@ -374,7 +412,7 @@ namespace Max2Babylon
         {
             if (exporter != null)
             {
-                exporter.IsCancelled = true;                
+                exporter.IsCancelled = true;
             }
             babylonExportAction.Close();
         }
@@ -402,14 +440,32 @@ namespace Max2Babylon
 
         private async void butExportAndRun_Click(object sender, EventArgs e)
         {
-            if (await DoExport(singleExportItem))
+            try
             {
-                WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
-                WebServer.SceneFolder = Path.GetDirectoryName(PathUtilities.UnformatPath(txtModelName.Text));
+                if (chkFlatten.Checked)
+                {
+                    Loader.Core.FileHold();
+                }
 
-                Process.Start(WebServer.url + WebServer.SceneFilename);
+                if (await DoExport(singleExportItem))
+                {
+                    WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
+                    WebServer.SceneFolder = Path.GetDirectoryName(PathUtilities.UnformatPath(txtModelName.Text));
 
-                WindowState = FormWindowState.Minimized;
+                    Process.Start(WebServer.url + WebServer.SceneFilename);
+
+                    WindowState = FormWindowState.Minimized;
+                }
+            }
+            catch{}
+            finally
+            {
+                if (chkFlatten.Checked)
+                {
+                    Loader.Core.SetQuietMode(true);
+                    Loader.Core.FileFetch();
+                    Loader.Core.SetQuietMode(false);
+                }
             }
         }
 
@@ -550,15 +606,32 @@ namespace Max2Babylon
                 MultiExportForm form = new MultiExportForm(exportItemList);
                 form.ShowDialog(this);
             }
-            else if(numLoadedItems > 0)
+            else if (numLoadedItems > 0)
             {
                 if (chkWriteTextures.Checked || chkOverwriteTextures.Checked)
                 {
                     MessageBox.Show("Cannot write textures with Multi-File Export");
                     return;
                 }
+                try
+                {
+                    if (chkFlatten.Checked)
+                    {
+                        Loader.Core.FileHold();
+                    }
 
-                await DoExport(exportItemList);
+                    await DoExport(exportItemList);
+                }
+                catch{}
+                finally
+                {
+                    if (chkFlatten.Checked)
+                    {
+                        Loader.Core.SetQuietMode(true);
+                        Loader.Core.FileFetch();
+                        Loader.Core.SetQuietMode(false);
+                    }
+                }
             }
         }
     }
