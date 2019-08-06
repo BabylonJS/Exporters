@@ -332,16 +332,6 @@ namespace Max2Babylon
 
                 exporter.callerForm = this;
 
-                //if (exportParameters.usePreExportProcess && !m)
-                //{
-
-                //}
-
-                //if (!multiExport && chkUsePreExportProces.Checked)
-                //{
-                //    Loader.Core.FileHold();
-                //}
-
                 exporter.Export(exportParameters);
             }
             catch (OperationCanceledException)
@@ -361,15 +351,6 @@ namespace Max2Babylon
                 progressBar.Value = 0;
                 success = false;
             }
-            //finally
-            //{
-            //    if (!multiExport && chkUsePreExportProces.Checked)
-            //    {
-            //        Loader.Core.SetQuietMode(true);
-            //        Loader.Core.FileFetch();
-            //        Loader.Core.SetQuietMode(false);
-            //    }
-            //}
 
             butCancel.Enabled = false;
             butExport.Enabled = true;
@@ -457,16 +438,16 @@ namespace Max2Babylon
                     Loader.Core.FileHold();
                 }
 
-            if (await DoExport(singleExportItem))
-            {
-                WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
-                WebServer.SceneFolder = Path.GetDirectoryName(PathUtilities.UnformatPath(txtModelName.Text));
+                if (await DoExport(singleExportItem))
+                {
+                    WebServer.SceneFilename = Path.GetFileName(PathUtilities.UnformatPath(txtModelName.Text));
+                    WebServer.SceneFolder = Path.GetDirectoryName(PathUtilities.UnformatPath(txtModelName.Text));
 
-                Process.Start(WebServer.url + WebServer.SceneFilename);
+                    Process.Start(WebServer.url + WebServer.SceneFilename);
 
-                WindowState = FormWindowState.Minimized;
+                    WindowState = FormWindowState.Minimized;
+                }
             }
-        }
             catch{}
             finally
             {
@@ -629,9 +610,8 @@ namespace Max2Babylon
                     {
                         Loader.Core.FileHold();
                     }
-
-                await DoExport(exportItemList);
-            }
+                    await DoExport(exportItemList);
+                }
                 catch{}
                 finally
                 {
