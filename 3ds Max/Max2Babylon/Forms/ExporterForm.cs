@@ -203,11 +203,6 @@ namespace Max2Babylon
             SaveOptions();
 
             exporter = new BabylonExporter();
-            var textureExportPath = "";
-            if (!string.IsNullOrWhiteSpace(txtTextureName.Text))
-            {
-                textureExportPath = PathUtilities.GetRelativePath(PathUtilities.UnformatPath(txtTextureName.Text), PathUtilities.UnformatPath(txtModelName.Text));
-            }
 
             if (clearLogs)
                 treeView.Nodes.Clear();
@@ -270,11 +265,15 @@ namespace Max2Babylon
             try
             {
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : PathUtilities.UnformatPath(txtModelName.Text);
+                string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderPath : PathUtilities.UnformatPath(txtTextureName.Text);
+                //if (!string.IsNullOrWhiteSpace(txtTextureName.Text))
+                //{
+                //    textureExportPath = PathUtilities.GetRelativePath(), PathUtilities.UnformatPath(txtModelName.Text));
+                //}
                 ExportParameters exportParameters = new MaxExportParameters
                 {
-                    outputPath = PathUtilities.UnformatPath(txtModelName.Text),
-                    outputTexturePath = textureExportPath,
-                    textureFolder = PathUtilities.UnformatPath(txtTextureName.Text),
+                    outputPath = modelAbsolutePath,
+                    textureFolder = textureExportPath,
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
                     scaleFactor = float.Parse(txtScaleFactor.Text),
                     writeTextures = chkWriteTextures.Checked,
@@ -552,12 +551,6 @@ namespace Max2Babylon
             }
             else if(numLoadedItems > 0)
             {
-                if (chkWriteTextures.Checked || chkOverwriteTextures.Checked)
-                {
-                    MessageBox.Show("Cannot write textures with Multi-File Export");
-                    return;
-                }
-
                 await DoExport(exportItemList);
             }
         }

@@ -29,6 +29,7 @@ namespace Max2Babylon
                 row.Cells.Add(new DataGridViewCheckBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
+                row.Cells.Add(new DataGridViewTextBoxCell());
                 SetRowData(row, item);
                 ExportItemGridView.Rows.Add(row);
             }
@@ -40,6 +41,7 @@ namespace Max2Babylon
             row.Cells[0].Value = item.Selected;
             row.Cells[1].Value = item.NodeName;
             row.Cells[2].Value = item.ExportFilePathAbsolute;
+            row.Cells[3].Value = item.ExportTexturesesFolderPath;
         }
 
         private string GetUniqueExportPath(string initialPath)
@@ -53,7 +55,6 @@ namespace Max2Babylon
             int fileCounter = 0;
             while (exportItemList.Find(exportItem => exportItem.ExportFilePathRelative == path) != null)
             {
-                path = Path.ChangeExtension(path, null);
                 path = Path.Combine(filepathNoExt + fileCounter.ToString());
                 path = Path.ChangeExtension(path, ext);
                 ++fileCounter;
@@ -66,6 +67,7 @@ namespace Max2Babylon
         {
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension);
             item.SetExportFilePath(GetUniqueExportPath(exportPath));
+            item.SetExportTexturesFolderPath(item.ExportTexturesesFolderPath);
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
             exportItemList.Add(item);
             return item;
@@ -82,6 +84,7 @@ namespace Max2Babylon
 
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension, nodeHandle);
             item.SetExportFilePath(GetUniqueExportPath(exportPath != null ? exportPath : item.ExportFilePathRelative));
+            item.SetExportTexturesFolderPath(item.ExportTexturesesFolderPath);
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
             exportItemList.Add(item);
             return item;
@@ -145,7 +148,23 @@ namespace Max2Babylon
                 string str = row.Cells[e.ColumnIndex].Value as string;
 
                 if (item == null) item = AddExportItem(row, str);
-                else item.SetExportFilePath(str);
+                else
+                {
+                    item.SetExportFilePath(str);
+                }
+
+                SetRowData(row, item);
+            }
+
+            if (e.ColumnIndex == ColumnTexturesFolder.Index)
+            {
+                string str = row.Cells[e.ColumnIndex].Value as string;
+
+                if (item == null) item = AddExportItem(row, str);
+                else
+                {
+                    item.SetExportTexturesFolderPath(str);
+                }
 
                 SetRowData(row, item);
             }
@@ -215,27 +234,45 @@ namespace Max2Babylon
             if (ExportItemGridView.SelectedCells.Count <= 0) return;
             
             List<DataGridViewCell> pathCells = new List<DataGridViewCell>(ExportItemGridView.SelectedCells.Count);
-            
+
+            bool chnageTextureFolderPath = false;
             foreach (DataGridViewCell selectedCell in ExportItemGridView.SelectedCells)
             {
-                DataGridViewCell matchingPathCell = selectedCell.OwningRow.Cells[ColumnFilePath.Index];
+                int cellIndex = 2;
+                if (selectedCell.OwningRow.Cells[3].Selected)
+                {
+                    cellIndex = 3;
+                    chnageTextureFolderPath = true;
+                }
+                DataGridViewCell matchingPathCell = selectedCell.OwningRow.Cells[cellIndex];
                 if(pathCells.Contains(matchingPathCell)) continue;
                 pathCells.Add(matchingPathCell);
             }
 
             if (pathCells.Count == 0) return;
 
-            string firstSelectedCellPath = pathCells[0].Value as string;
-            
-            if (string.IsNullOrWhiteSpace(firstSelectedCellPath))
+            if (chnageTextureFolderPath)
+            {
+                ShowTextureFolderDialog(pathCells);
+            }
+            else
+            {
+                ShowFileDialog(pathCells);
+            }
+        }
+
+        private void ShowFileDialog(List<DataGridViewCell> pathCells)
+        {
+            string filePath = pathCells[0].Value as string;
+            if (string.IsNullOrWhiteSpace(filePath))
             {
                 SetPathFileDialog.InitialDirectory = null;
                 SetPathFileDialog.FileName = "FileName";
             }
             else
             {
-                SetPathFileDialog.InitialDirectory = Path.GetDirectoryName(firstSelectedCellPath);
-                SetPathFileDialog.FileName = Path.GetFileName(firstSelectedCellPath);
+                SetPathFileDialog.InitialDirectory = Path.GetDirectoryName(filePath);
+                SetPathFileDialog.FileName = Path.GetFileName(filePath);
             }
 
             SetPathFileDialog.FileName = pathCells.Count <= 1 ? SetPathFileDialog.FileName : "FileName not used for multiple file path changes";
@@ -264,6 +301,47 @@ namespace Max2Babylon
                     foreach (DataGridViewCell selectedCell in pathCells)
                         funcUpdatePath(selectedCell, null);
                 else funcUpdatePath(pathCells[0], SetPathFileDialog.FileName);
+            }
+        }
+
+        private void ShowTextureFolderDialog(List<DataGridViewCell> pathCells)
+        {
+            string folderPath = pathCells[0].Value as string;
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                SetTextureFolderDialog.SelectedPath = null;
+            }
+            else
+            {
+                SetTextureFolderDialog.SelectedPath = Path.GetDirectoryName(folderPath);
+            }
+
+            if (SetTextureFolderDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string dir = SetTextureFolderDialog.SelectedPath;
+
+                Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
+                {
+                    string oldFolderName = Path.GetDirectoryName(selectedCell.Value as string);
+                        
+                    if (forcedFileName != null && string.IsNullOrWhiteSpace(oldFolderName))
+                        return;
+
+                    // change cell value, which triggers value changed event to update the export item
+                    selectedCell.Value = dir;
+                };
+
+                if (pathCells.Count > 1)
+                {
+                    foreach (DataGridViewCell selectedCell in pathCells)
+                    {
+                        funcUpdatePath(selectedCell, null);
+                    }
+                }
+                else
+                {
+                    funcUpdatePath(pathCells[0], SetTextureFolderDialog.SelectedPath);
+                }
             }
         }
 
