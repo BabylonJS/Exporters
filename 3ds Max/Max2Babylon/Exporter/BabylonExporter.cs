@@ -190,17 +190,19 @@ namespace Max2Babylon
             AnimationGroupList.LoadDataFromContainers();
         }
 
-        public void Export(MaxExportParameters exportParameters)
+        public void Export(ExportParameters exportParameters)
         {
             this.exportParameters = exportParameters;
             IINode exportNode = null;
             if (exportParameters is MaxExportParameters)
             {
-                exportNode = (exportParameters as MaxExportParameters).exportNode;
+                MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
+                exportNode = maxExporterParameters.exportNode;
+                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
+                if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
             }
             
-            if(exportParameters.flattenScene) FlattenHierarchy(exportNode);
-            if(exportParameters.mergeInheritedContainers)ExportClosedContainers();
+           
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
