@@ -43,12 +43,8 @@ namespace Max2Babylon
 
 
                     // Node
-                    BabylonNode node = babylonScene.MeshesList.FirstOrDefault(m => m.id == nodeId);
-                    if (node == null)
-                        node = babylonScene.CamerasList.FirstOrDefault(c => c.id == nodeId);
-                    if (node == null)
-                        node = babylonScene.LightsList.FirstOrDefault(l => l.id == nodeId);
-
+                    BabylonNode node = null;
+                    babylonScene.NodeMap.TryGetValue(nodeId, out node);
                     if(node != null)
                     {
                         if (node.animations != null && node.animations.Length != 0)
