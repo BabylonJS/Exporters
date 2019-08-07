@@ -179,19 +179,30 @@ namespace Max2Babylon
             }
         }
 
+        public void ExportClosedContainers()
+        {
+            List<IIContainerObject> sceneContainers = Tools.GetAllContainers();
+            foreach (IIContainerObject containerObject in sceneContainers)
+            {
+                if (!containerObject.IsInherited)continue;
+                bool merge = containerObject.MergeSource;
+            }
+            AnimationGroupList.LoadDataFromContainers();
+        }
+
         public void Export(ExportParameters exportParameters)
         {
             this.exportParameters = exportParameters;
             IINode exportNode = null;
             if (exportParameters is MaxExportParameters)
             {
-                exportNode = (exportParameters as MaxExportParameters).exportNode;
+                MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
+                exportNode = maxExporterParameters.exportNode;
+                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
+                if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
             }
-
-            if(exportParameters.flattenScene)
-            {
-                FlattenHierarchy(exportNode);
-            }
+            
+           
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
