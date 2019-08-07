@@ -53,7 +53,7 @@ namespace Babylon2GLTF
                 logger.RaiseMessage("GLTFExporter.Skin | Sharing skinning information from mesh '" + sharedSkinnedMeshesByOriginalPair.Value.Key.name + "'", 3);
                 var skeletonExportData = alreadyExportedSkeletons[babylonSkeleton];
                 gltfNode.skin = skeletonExportData.skinIndex;
-                return gltf.skins[(int)gltfNode.skin];
+                return gltf.SkinsList[(int)gltfNode.skin];
             }
 
             // otherwise create a new GLTFSkin
