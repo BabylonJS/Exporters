@@ -825,6 +825,7 @@ namespace Max2Babylon
                     var descendant = maxGameNode.GetNodeChild(i);
                     exportNodeRec(descendant, babylonScene, maxGameScene);
                 }
+                babylonScene.NodeMap[babylonNode.id] = babylonNode;
             }
 
             return babylonNode;
