@@ -38,14 +38,6 @@ namespace Utilities
             return relativePath;
         }
 
-
-        public static string UnformatPath(string formattedPath)
-        {
-            string newPath = formattedPath;
-            newPath = Regex.Replace(formattedPath, @"[()]", string.Empty);
-            return newPath;
-        }
-
         public static bool IsBelowPath(string childPath, string parentPath)
         {
             string modelFolderPath = Path.GetDirectoryName(parentPath);
