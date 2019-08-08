@@ -160,7 +160,7 @@ namespace Babylon2GLTF
                     string textureUri = name;
                     if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder))
                     {
-                        textureUri = PathUtilities.GetRelativePath(exportParameters.textureFolder, exportParameters.outputPath) + "/"+ name;
+                        textureUri = PathUtilities.GetRelativePath( exportParameters.outputPath,exportParameters.textureFolder) + "/"+ name;
                     }
                     gltfImage = new GLTFImage
                     {
