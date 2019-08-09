@@ -37,7 +37,7 @@ namespace Maya2Babylon
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
             // Animations
-            if (_bakeAnimationFrames)
+            if (exportParameters.bakeAnimationFrames)
             {
                 ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
             }
@@ -294,7 +294,7 @@ namespace Maya2Babylon
             }
 
             // Animations
-            if (_bakeAnimationFrames)
+            if (exportParameters.bakeAnimationFrames)
             {
                 ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
             }
@@ -361,7 +361,7 @@ namespace Maya2Babylon
             }
 
             // skin
-            if(_exportSkin)
+            if(exportParameters.exportSkins)
             {
                 mFnSkinCluster = getMFnSkinCluster(mFnMesh);
             }
@@ -431,15 +431,15 @@ namespace Maya2Babylon
                 }
             }
             // Export tangents if option is checked and mesh have tangents
-            bool isTangentExportSuccess = _exportTangents;
+            bool isTangentExportSuccess = exportParameters.exportTangents;
 
             // TODO - color, alpha
             //var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
             //var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
             // TODO - Add custom properties
-            //var optimizeVertices = false; // meshNode.MaxNode.GetBoolProperty("babylonjs_optimizevertices");
-            var optimizeVertices = _optimizeVertices; // global option
+            //var optimizeVertices = false; // meshNode.MaxNode.GetBoolProperty("babylonjsexportParameters.optimizeVertices");
+            var optimizeVertices = exportParameters.optimizeVertices; // global option
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
@@ -538,7 +538,7 @@ namespace Maya2Babylon
                 RaiseMessage("Morph target", 2);
                 IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mFnMesh.objectProperty);
 
-                if (_exportSkin && mFnSkinCluster != null)
+                if (exportParameters.exportSkins && mFnSkinCluster != null)
                 {
                     RaiseWarning("A mesh with both skinning and morph target is not fully supported. Please set the playhead at the frame you want to choose as the bind pose before exporting.", 3);
                 }
@@ -1187,8 +1187,8 @@ namespace Maya2Babylon
                         var targetVertices = new List<GlobalVertex>();
                         var uvSetNames = new MStringArray();
                         bool[] isUVExportSuccess = { false, false };
-                        bool isTangentExportSuccess = _exportTangents;
-                        bool optimizeVertices = _optimizeVertices;
+                        bool isTangentExportSuccess = exportParameters.exportTangents;
+                        bool optimizeVertices = exportParameters.optimizeVertices;
 
                         List<VertexData> vertexDatas = babylonMesh.VertexDatas;
                         for(int vertexIndex = 0; vertexIndex < vertexDatas.Count; vertexIndex++)
@@ -1239,13 +1239,13 @@ namespace Maya2Babylon
 
                         babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
 
-                        if (_exportMorphNormal)
+                        if (exportParameters.exportMorphNormals)
                         {
                             babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
                         }
 
                         // Tangent
-                        if (!isBabylonExported && isTangentExportSuccess && _exportMorphTangent)
+                        if (isTangentExportSuccess && exportParameters.exportMorphTangents)
                         {
                             babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
                         }

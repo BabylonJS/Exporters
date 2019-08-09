@@ -219,7 +219,7 @@ namespace Maya2Babylon
             babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
 
             // Animations
-            if (_bakeAnimationFrames)
+            if (exportParameters.bakeAnimationFrames)
             {
                 ExportNodeAnimationFrameByFrame(babylonLight, mFnTransform);
             }

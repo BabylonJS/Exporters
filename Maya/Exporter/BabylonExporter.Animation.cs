@@ -127,7 +127,10 @@ namespace Maya2Babylon
                 var keysFull = new List<BabylonAnimationKey>(keys);
 
                 // Optimization
-                OptimizeAnimations(keys, true);
+                if (exportParameters.optimizeAnimations)
+                {
+                    OptimizeAnimations(keys, true);
+                }
 
                 // Ensure animation has at least 2 frames
                 if (IsAnimationKeysRelevant(keys, babylonAnimationProperty))
@@ -180,7 +183,6 @@ namespace Maya2Babylon
             MFloatArray visibilityValues = new MFloatArray();
             MFloatArray keyTimes = new MFloatArray();
 
-            List<BabylonAnimationKey> keys = new List<BabylonAnimationKey>();
             List<BabylonAnimation> animationsObject = new List<BabylonAnimation>();
 
             //Get the animCurve
@@ -318,7 +320,7 @@ namespace Maya2Babylon
 
                 // Ensure animation has at least 2 frames
                 string babylonAnimationProperty = babylonAnimationProperties[indexAnimationProperty];
-                if (IsAnimationKeysRelevant(keys, babylonAnimationProperty))
+                if (IsAnimationKeysRelevant(babylonAnimationKeys, babylonAnimationProperty))
                 {
                     // Create BabylonAnimation
                     animationsObject.Add(new BabylonAnimation()
@@ -509,9 +511,10 @@ namespace Maya2Babylon
                         }
                     }
                 }
+                return true;
             }
 
-            return true;
+            return false;
         }
 
 
@@ -759,7 +762,7 @@ namespace Maya2Babylon
             IList<BabylonAnimationGroup> animationGroups = new List<BabylonAnimationGroup>();
 
             // Retrieve and parse animation group data
-            AnimationGroupList animationList = InitAnimationGroups();
+            AnimationGroupList animationList = AnimationGroupList.InitAnimationGroups(this);
             bool exportNonAnimated = Loader.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             foreach (AnimationGroup animGroup in animationList)
@@ -881,13 +884,29 @@ namespace Maya2Babylon
 
                 // Select usefull keys
                 var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+                bool keysInRangeAreRelevant = true;
 
                 // Optimize these keys
-                OptimizeAnimations(keys, true);
+                if (exportParameters.optimizeAnimations)
+                {
+                    OptimizeAnimations(keys, true);
+                    keysInRangeAreRelevant = IsAnimationKeysRelevant(keys, animation.property);
 
-                // 
-                animation.keys = keys.ToArray();
-                subAnimations.Add(animation);
+                    // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel if the first check fails.
+                    if (!keysInRangeAreRelevant && exportParameters.bakeAnimationFrames)
+                    {
+                        List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(nodeAnimation.keysFull);
+                        OptimizeAnimations(optimizedKeysFull, true);
+                        keysInRangeAreRelevant = IsAnimationKeysRelevant(optimizedKeysFull, nodeAnimation.property);
+                    }
+                }
+
+                // If animation keys should be included in export, add to animation list.
+                if (keysInRangeAreRelevant)
+                {
+                    animation.keys = keys.ToArray();
+                    subAnimations.Add(animation);
+                }
             }
 
             return subAnimations;
@@ -905,12 +924,30 @@ namespace Maya2Babylon
                 // Select usefull keys
                 var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
-                // Optimize these keys
-                OptimizeAnimations(keys, true);
+                bool keysInRangeAreRelevant = true;
 
-                // 
-                animation.keys = keys.ToArray();
-                subAnimations.Add(animation);
+                // Optimize these keys
+                if (exportParameters.optimizeAnimations)
+                {
+                    // Optimize these keys
+                    OptimizeAnimations(keys, true);
+                    keysInRangeAreRelevant = IsAnimationKeysRelevant(keys, animation.property);
+
+                    // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel if the first check fails.
+                    if (!keysInRangeAreRelevant && exportParameters.bakeAnimationFrames)
+                    {
+                        List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(animation.keysFull);
+                        OptimizeAnimations(optimizedKeysFull, true);
+                        keysInRangeAreRelevant = IsAnimationKeysRelevant(optimizedKeysFull, animation.property);
+                    }
+                }
+
+                // If animation keys should be included in export, add to animation list.
+                if (keysInRangeAreRelevant)
+                {
+                    animation.keys = keys.ToArray();
+                    subAnimations.Add(animation);
+                }
             }
 
             return subAnimations;
@@ -926,12 +963,31 @@ namespace Maya2Babylon
             // Select usefull keys
             var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
-            // Optimize these keys
-            OptimizeAnimations(keys, false);
+            bool keysInRangeAreRelevant = true;
 
-            // 
-            animation.keys = keys.ToArray();
-            subAnimations.Add(animation);
+            // Optimize these keys
+            if (exportParameters.optimizeAnimations)
+            {
+
+                // Optimize these keys
+                OptimizeAnimations(keys, false);
+                keysInRangeAreRelevant = IsAnimationKeysRelevant(keys, animation.property);
+
+                // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel if the first check fails.
+                if (!keysInRangeAreRelevant && exportParameters.bakeAnimationFrames)
+                {
+                    List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(animation.keysFull);
+                    OptimizeAnimations(optimizedKeysFull, true);
+                    keysInRangeAreRelevant = IsAnimationKeysRelevant(optimizedKeysFull, animation.property);
+                }
+            }
+
+            // If animation keys should be included in export, add to animation list.
+            if (keysInRangeAreRelevant)
+            {
+                animation.keys = keys.ToArray();
+                subAnimations.Add(animation);
+            }
 
             return subAnimations;
         }
