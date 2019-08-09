@@ -46,6 +46,11 @@ namespace Max2Babylon
             get { return exportPathAbsolute; }
         }
 
+        public string ExportTexturesesFolderPath
+        {
+            get { return exportTexturesFolderPath; }
+        }
+
         public string NodeName { get; private set; } = "<Invalid>";
 
         public IINode Node
@@ -67,9 +72,9 @@ namespace Max2Babylon
             }
         }
 
-        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\"";
+        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"";
         const char s_PropertySeparator = ';';
-        const string s_PropertyFormat = "{0};{1}";
+        const string s_PropertyFormat = "{0};{1};{2}";
         const string s_PropertyNamePrefix = "babylonjs_ExportItem";
 
         private string outputFileExt;
@@ -78,7 +83,7 @@ namespace Max2Babylon
         private bool selected = true;
         private string exportPathRelative = "";
         private string exportPathAbsolute = "";
-        private string exportTextureFolderPathRelative = "";
+        private string exportTexturesFolderPath = "";
 
         public ExportItem(string outputFileExt) { this.outputFileExt = outputFileExt; }
 
@@ -92,7 +97,11 @@ namespace Max2Babylon
                 string fileNameNoExt = Path.GetFileNameWithoutExtension(Loader.Core.CurFileName);
                 SetExportFilePath(string.IsNullOrEmpty(fileNameNoExt) ? "Untitled" : fileNameNoExt);
             }
-            else SetExportFilePath(NodeName);
+            else
+            {
+                SetExportFilePath(NodeName);
+            }
+            SetExportTexturesFolderPath(null);
         }
 
         public ExportItem(string outputFileExt, string propertyName)
@@ -117,7 +126,7 @@ namespace Max2Babylon
             IsDirty = true;
         }
 
-        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative); }
+        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderPath); }
 
         public void SetExportFilePath(string filePath)
         {
@@ -163,6 +172,40 @@ namespace Max2Babylon
             IsDirty = true;
         }
 
+        public void SetExportTexturesFolderPath(string textureFolderPath)
+        {
+            string dirName = textureFolderPath;
+
+            if (string.IsNullOrEmpty(dirName))
+            {
+                dirName = Loader.Core.CurFilePath;
+                if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+                    dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+                else
+                {
+                    dirName = Path.GetDirectoryName(dirName);
+                }
+
+                if (dirName.Last() != Path.AltDirectorySeparatorChar || dirName.Last() != Path.DirectorySeparatorChar)
+                    dirName += Path.DirectorySeparatorChar;
+            }
+
+            if (string.IsNullOrWhiteSpace(dirName)) // empty path
+            {
+                textureFolderPath = string.Empty;
+            }
+            else if (Path.IsPathRooted(dirName)) // absolute path
+            {
+                textureFolderPath = Path.GetFullPath(dirName);
+            }
+
+            if (textureFolderPath.Equals(exportTexturesFolderPath))
+                return;
+            exportTexturesFolderPath = textureFolderPath;
+
+            IsDirty = true;
+        }
+
         #region Serialization
 
         public string GetPropertyName() { return s_PropertyNamePrefix + exportNodeHandle.ToString(); }
@@ -198,6 +241,7 @@ namespace Max2Babylon
                 throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[0]));
 
             SetExportFilePath(properties[1]);
+            SetExportTexturesFolderPath(properties[2]);
 
             IsDirty = false;
         }
@@ -208,10 +252,13 @@ namespace Max2Babylon
             if (exportPathRelative.Contains(' ') || exportPathRelative.Contains('='))
                 throw new FormatException("Invalid character(s) in export path: " + exportPathRelative + ". Spaces and equal signs are not allowed.");
 
+            if (exportTexturesFolderPath.Contains(' ') || exportTexturesFolderPath.Contains('='))
+                throw new FormatException("Invalid character(s) in export path: " + exportTexturesFolderPath + ". Spaces and equal signs are not allowed.");
+
             IINode node = Node;
             if (node == null) return false;
 
-            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative));
+            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderPath));
 
             IsDirty = false;
             return true;

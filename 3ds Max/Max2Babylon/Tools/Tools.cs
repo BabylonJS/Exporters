@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Color = System.Drawing.Color;
 
 namespace Max2Babylon
 {
@@ -427,6 +428,15 @@ namespace Max2Babylon
             return new[] { value.R, value.G, value.B };
         }
 
+        public static IEnumerable<IINode> DirectChildren(this IINode node)
+        {
+            List<IINode> children = new List<IINode>();
+            for (int i = 0; i < node.NumberOfChildren; ++i)
+                if (node.GetChildNode(i) != null)
+                    children.Add(node.GetChildNode(i));
+            return children;
+        }
+
         public static IEnumerable<IINode> Nodes(this IINode node)
         {
             for (int i = 0; i < node.NumberOfChildren; ++i)
@@ -648,9 +658,64 @@ namespace Max2Babylon
             return true;
         }
 
+        public static bool IsNodeTreeAnimated(this IINode node)
+        {
+            if (node.IsAnimated) return true;
+            foreach (IINode n in node.NodeTree())
+            {
+                if (n.IsAnimated) return true;
+            }
+
+            return false;
+        }
+
+        public static void FlattenHierarchy(this IINode node)
+        {
+            ////todo: replace this with C# 
+            string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {node.Handle}) Editable_Poly";
+            ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
+            
+            IPolyObject polyObject = node.GetPolyObjectFromNode();
+            IEPoly flattenEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+            IINodeTab toflatten = Loader.Global.NodeTab.Create();
+            foreach (IINode n in node.NodeTree())
+            {
+                toflatten.AppendNode(n,false,1);
+            }
+
+            flattenEPoly.EpfnMultiAttach(toflatten, node, Loader.Core.Time);
+        }
+
+        public static bool IsSkinned(this IINode node)
+        {
+            IIDerivedObject derivedObject = node.ActualINode.ObjectRef as IIDerivedObject;
+
+            if (derivedObject == null)
+            {
+                return false;
+            }
+
+            for (int index = 0; index < derivedObject.NumModifiers; index++)
+            {
+                IModifier modifier = derivedObject.GetModifier(index);
+                if (modifier.ClassID.PartA == 9815843 && modifier.ClassID.PartB == 87654) // Skin
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region GUID
+
+
+        public static bool IsMarkedAsNotFlattenable(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_DoNotFlatten");
+        }
 
         public static  IIContainerObject GetContainer(this IList<Guid> guids)
         {
@@ -728,6 +793,7 @@ namespace Max2Babylon
                 Loader.Core.SetQuietMode(true);
                 containerObject.ContainerNode.AttachChild(babylonHelper,false);
                 Loader.Core.SetQuietMode(false);
+                containerObject.AddNodeToContent(babylonHelper);
             }
             return babylonHelper;
         }
@@ -1049,6 +1115,17 @@ namespace Max2Babylon
 
             return (endFrame!=0)? endFrame : animationGroup.FrameEnd;
         }
+
+        public static bool IsInAnimationGroups(this IINode node, AnimationGroupList animationGroupList)
+        {
+            foreach (AnimationGroup animationGroup in animationGroupList)
+            {
+                if (animationGroup.NodeGuids.Contains(node.GetIINodeGuid())) return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
 
@@ -1219,27 +1296,6 @@ namespace Max2Babylon
 
         #region File Path
 
-
-        public static string FormatPath(string absolutePath)
-        {
-            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
-            {
-                return absolutePath;
-            }
-
-            
-            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
-
-            if (!absolutePath.StartsWith(dirName))
-            {
-                return absolutePath;
-            }
-
-            //wrap the part of path relative to user project folder around ()
-            string relativePath = absolutePath.Remove(0, dirName.Length);
-            return string.Format(@"({0}){1}",dirName, relativePath);
-        }
-
         public static string RelativePathStore(string path)
         {
             if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
@@ -1273,8 +1329,26 @@ namespace Max2Babylon
                 return path;
             }
 
-            return string.Format(@"({0}){1}", dirName, path);
+            return string.Format(@"{0}{1}", dirName, path);
         }
+
+        public static void MaxPath(this RichTextBox box, string path)
+        {
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+            box.ResetText();
+
+            box.Text = path;
+            box.ForeColor = Color.Black;
+
+            if (path.StartsWith(dirName))
+            {
+                box.SelectionStart = 0;
+                box.SelectionLength = dirName.Length;
+                box.SelectionColor = Color.Blue;
+            }
+        }
+
+
         #endregion
     }
 }

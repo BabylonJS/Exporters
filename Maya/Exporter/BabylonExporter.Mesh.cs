@@ -967,7 +967,8 @@ namespace Maya2Babylon
             float[] rotationQuaternion = null;
             float[] rotation = null;
             float[] scaling = null;
-            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref scaling);
+            BabylonVector3.EulerRotationOrder rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
+            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling);
 
             babylonAbstractMesh.position = position;
             if (_exportQuaternionsInsteadOfEulers)
