@@ -29,6 +29,7 @@ namespace Max2Babylon
             {
                 DataGridViewRow row = new DataGridViewRow();
                 row.Cells.Add(new DataGridViewCheckBoxCell());
+                row.Cells.Add(new DataGridViewButtonCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
@@ -41,9 +42,10 @@ namespace Max2Babylon
         {
             row.Tag = item;
             row.Cells[0].Value = item.Selected;
-            row.Cells[1].Value = item.NodeName;
-            row.Cells[2].Value = item.ExportFilePathAbsolute;
-            row.Cells[3].Value = item.ExportTexturesesFolderPath;
+            row.Cells[1].Value = "test";
+            row.Cells[2].Value = item.NodeName;
+            row.Cells[3].Value = item.ExportFilePathAbsolute;
+            row.Cells[4].Value = item.ExportTexturesesFolderPath;
         }
 
         private string GetUniqueExportPath(string initialPath)
@@ -216,6 +218,52 @@ namespace Max2Babylon
                     ExportItemGridView.EndEdit();
                 }
             }
+
+
+            // double-clicked layers column cell, select some layers!
+            if(e.ColumnIndex == ColumnLayers.Index)
+            {
+                if (Loader.Core.DoHitByNameDialog(null))
+                {
+                    int highestRowIndexEdited = e.RowIndex;
+                    var selectedRow = ExportItemGridView.Rows[e.RowIndex];
+                    //ExportItem existingItem = selectedRow.Tag as ExportItem;
+                    IILayer layer = LayerUtilities.GetSelectedLayer();
+
+                    //if (existingItem == null)
+                    //    existingItem = TryAddExportItem(selectedRow, node.Handle);
+                    //else existingItem.NodeHandle = node.Handle;
+                    
+                    //// may be null after trying to add a node that already exists in another row
+                    //if(existingItem != null) SetRowData(selectedRow, existingItem);
+
+                    //// add remaining selected nodes as new rows
+                    //for (int i = 1; i < Loader.Core.SelNodeCount; ++i)
+                    //{
+                    //    int rowIndex = ExportItemGridView.Rows.Add();
+                    //    var newRow = ExportItemGridView.Rows[rowIndex];
+
+                    //    ExportItem newItem = TryAddExportItem(newRow, Loader.Core.GetSelNode(i).Handle);
+
+                    //    // may be null after trying to add a node that already exists in another row
+                    //    if (newItem == null)
+                    //        continue;
+
+                    //    SetRowData(newRow, newItem);
+                    //    highestRowIndexEdited = rowIndex;
+                    //}
+
+                    // have to explicitly set it dirty for an edge case:
+                    // when a new row is added "automatically-programmatically", through notify cell dirty and endedit(),
+                    //   if the user then clicks on the checkbox of the newly added row,
+                    //     it doesn't add a new row "automatically", whereas otherwise it will.
+                    ExportItemGridView.CurrentCell = ExportItemGridView[e.ColumnIndex, highestRowIndexEdited];
+                    ExportItemGridView.NotifyCurrentCellDirty(true);
+                    ExportItemGridView.EndEdit();
+                }
+            }
+
+
         }
 
         private void ExportItemGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -240,10 +288,10 @@ namespace Max2Babylon
             bool chnageTextureFolderPath = false;
             foreach (DataGridViewCell selectedCell in ExportItemGridView.SelectedCells)
             {
-                int cellIndex = 2;
-                if (selectedCell.OwningRow.Cells[3].Selected)
+                int cellIndex = 3;
+                if (selectedCell.OwningRow.Cells[4].Selected)
                 {
-                    cellIndex = 3;
+                    cellIndex = 4;
                     chnageTextureFolderPath = true;
                 }
                 DataGridViewCell matchingPathCell = selectedCell.OwningRow.Cells[cellIndex];

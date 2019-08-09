@@ -39,6 +39,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.ExportItemGridView = new System.Windows.Forms.DataGridView();
             this.ColumnExportCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColumnLayers = new System.Windows.Forms.DataGridViewButtonColumn();
             this.ColumnNode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnTexturesFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -181,6 +182,7 @@
             this.ExportItemGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ExportItemGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnExportCheckbox,
+            this.ColumnLayers,
             this.ColumnNode,
             this.ColumnFilePath,
             this.ColumnTexturesFolder});
@@ -204,6 +206,12 @@
             this.ColumnExportCheckbox.Name = "ColumnExportCheckbox";
             this.ColumnExportCheckbox.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.ColumnExportCheckbox.Width = 49;
+            // 
+            // ColumnLayers
+            // 
+            this.ColumnLayers.HeaderText = "Layers";
+            this.ColumnLayers.Name = "ColumnLayers";
+            this.ColumnLayers.Text = "No Layers Selected";
             // 
             // ColumnNode
             // 
@@ -267,6 +275,7 @@
         private System.Windows.Forms.SaveFileDialog SetPathFileDialog;
         private System.Windows.Forms.Button btn_change_path;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExportCheckbox;
+        private System.Windows.Forms.DataGridViewButtonColumn ColumnLayers;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNode;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFilePath;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTexturesFolder;
