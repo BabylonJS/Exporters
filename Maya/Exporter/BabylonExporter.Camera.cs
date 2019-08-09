@@ -91,13 +91,18 @@ namespace Maya2Babylon
             float[] rotationQuaternion = null;
             float[] rotation = null;
             float[] scaling = null;
-            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref scaling);
+            var rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
+            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling);
             babylonCamera.position = position;
             if (_exportQuaternionsInsteadOfEulers)
             {
                 babylonCamera.rotationQuaternion = rotationQuaternion;
             }
-            babylonCamera.rotation = rotation;
+            else
+            {
+                babylonCamera.rotation = rotation;
+            }
+            
 
             // Field of view of babylon is the vertical one
             babylonCamera.fov = (float)mFnCamera.verticalFieldOfView;

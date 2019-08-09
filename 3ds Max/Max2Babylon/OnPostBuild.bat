@@ -22,8 +22,6 @@ IF "%max_location%"=="" (
 IF %1=="Debug" GOTO OnDebug
 IF %1=="Release" GOTO OnRelease
 
-
-
 :OnDebug
 SET dest_dir="%max_location%bin\assemblies"
 GOTO CopyFiles
@@ -54,6 +52,15 @@ COPY %source_dir%\TargaImage.dll %dest_dir%\TargaImage.dll
 
 if exist %dest_dir%\TQ.Texture.dll del /f /q %dest_dir%\TQ.Texture.dll
 COPY %source_dir%\TQ.Texture.dll %dest_dir%\TQ.Texture.dll
+
+if exist %dest_dir%\Microsoft.WindowsAPICodePack.dll del /f /q %dest_dir%\Microsoft.WindowsAPICodePack.dll
+COPY %source_dir%\Microsoft.WindowsAPICodePack.dll %dest_dir%\Microsoft.WindowsAPICodePack.dll
+
+if exist %dest_dir%\Microsoft.WindowsAPICodePack.Shell.dll del /f /q %dest_dir%\Microsoft.WindowsAPICodePack.Shell.dll
+COPY %source_dir%\Microsoft.WindowsAPICodePack.Shell.dll %dest_dir%\Microsoft.WindowsAPICodePack.Shell.dll
+
+if exist %dest_dir%\Microsoft.WindowsAPICodePack.ShellExtensions.dll del /f /q %dest_dir%\Microsoft.WindowsAPICodePack.ShellExtensions.dll
+COPY %source_dir%\Microsoft.WindowsAPICodePack.ShellExtensions.dll %dest_dir%\Microsoft.WindowsAPICodePack.ShellExtensions.dll
 
 if exist %dest_dir%\Max2Babylon.dll del /f /q %dest_dir%\Max2Babylon.dll
 COPY %source_dir%\Max2Babylon.dll %dest_dir%\Max2Babylon.dll

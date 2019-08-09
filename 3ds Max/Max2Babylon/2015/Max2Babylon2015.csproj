@@ -70,6 +70,18 @@
     <Reference Include="GDImageLibrary">
       <HintPath>..\..\Refs\GDImageLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="ManagedServices">
+      <HintPath>Refs\ManagedServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions">
+      <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -116,6 +128,9 @@
     </Compile>
     <Compile Include="..\BabylonSaveAnimationToContainers.cs">
       <Link>BabylonSaveAnimationToContainers.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonSkipFlatten.cs">
+      <Link>BabylonSkipFlatten.cs</Link>
     </Compile>
     <Compile Include="..\Descriptor.cs">
       <Link>Descriptor.cs</Link>
@@ -254,6 +269,12 @@
     <Compile Include="..\MaxScriptManager.cs">
       <Link>MaxScriptManager.cs</Link>
     </Compile>
+    <Compile Include="..\Tools\MeshUtlities.cs">
+      <Link>Tools\MeshUtlities.cs</Link>
+    </Compile>
+    <Compile Include="..\Tools\ScriptsUtilities.cs">
+      <Link>Tools\ScriptsUtilities.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\Tools.cs">
       <Link>Tools\Tools.cs</Link>
     </Compile>
@@ -278,6 +299,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
+    <Content Include="Refs\ManagedServices.dll" />
     <None Include="Resources\MaxExporter.png" />
   </ItemGroup>
   <ItemGroup>

@@ -81,7 +81,8 @@ namespace Max2Babylon
                     BabylonMesh babylonMasterMesh = null;
                     foreach (var mesh in babylonMasterMeshes)
                     {
-                        if (meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(mesh.materialId))
+                        if ( mesh.materialId == null
+                         || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(mesh.materialId)))
                         {
                             babylonMasterMesh = mesh;
                         }

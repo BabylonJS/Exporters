@@ -160,7 +160,7 @@ namespace Babylon2GLTF
                     string textureUri = name;
                     if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder))
                     {
-                        textureUri = PathUtilities.GetRelativePath(exportParameters.textureFolder, exportParameters.outputPath) + "/"+ name;
+                        textureUri = PathUtilities.GetRelativePath( exportParameters.outputPath,exportParameters.textureFolder) + "/"+ name;
                     }
                     gltfImage = new GLTFImage
                     {
@@ -324,8 +324,7 @@ namespace Babylon2GLTF
                 }
             }
 
-            var name = babylonMaterial.name + "_emissive.jpg";
-            var emissiveTextureInfo = ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap, name);
+            var emissiveTextureInfo = ExportBitmapTexture(gltf, babylonTexture, emissivePremultipliedBitmap);
 
             // Register the texture for optimisation
             RegisterEmissive(emissiveTextureInfo, babylonMaterial, defaultDiffuse, defaultEmissive);

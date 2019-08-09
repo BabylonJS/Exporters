@@ -309,7 +309,7 @@ namespace Max2Babylon
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = isBabylonExported ? node.MaxNode.GetGuid().ToString()+"-bone" : node.MaxNode.GetGuid().ToString(), // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    id = node.MaxNode.GetGuid().ToString() + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
