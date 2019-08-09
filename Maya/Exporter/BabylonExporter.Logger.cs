@@ -23,7 +23,7 @@ namespace Maya2Babylon
         public event Action<string, Color, int, bool> OnMessage;
         public event Action<string, Color, int, bool> OnVerbose;
 
-        void ReportProgressChanged(int progress)
+        public void ReportProgressChanged(int progress)
         {
             if (OnExportProgressChanged != null)
             {
@@ -31,12 +31,12 @@ namespace Maya2Babylon
             }
         }
 
-        void ReportProgressChanged(float progress)
+        public void ReportProgressChanged(float progress)
         {
             ReportProgressChanged((int)progress);
         }
 
-        void RaiseError(string error, int rank = 0)
+        public void RaiseError(string error, int rank = 0)
         {
             if (OnError != null && logLevel >= LogLevel.ERROR)
             {
@@ -44,7 +44,7 @@ namespace Maya2Babylon
             }
         }
 
-        void RaiseWarning(string warning, int rank = 0)
+        public void RaiseWarning(string warning, int rank = 0)
         {
             if (OnWarning != null && logLevel >= LogLevel.WARNING)
             {
@@ -52,12 +52,12 @@ namespace Maya2Babylon
             }
         }
 
-        void RaiseMessage(string message, int rank = 0, bool emphasis = false)
+        public void RaiseMessage(string message, int rank = 0, bool emphasis = false)
         {
             RaiseMessage(message, Color.Black, rank, emphasis);
         }
 
-        void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
+        public void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
         {
             if (OnMessage != null && logLevel >= LogLevel.MESSAGE)
             {
@@ -65,12 +65,12 @@ namespace Maya2Babylon
             }
         }
 
-        void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
+        public void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
         {
             RaiseVerbose(message, Color.FromArgb(100, 100, 100), rank, emphasis);
         }
 
-        void RaiseVerbose(string message, Color color, int rank = 0, bool emphasis = false)
+        public void RaiseVerbose(string message, Color color, int rank = 0, bool emphasis = false)
         {
             if (OnVerbose != null && logLevel >= LogLevel.VERBOSE)
             {
