@@ -43,6 +43,7 @@
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnTexturesFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SetPathFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.SetTextureFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             warningLabel = new System.Windows.Forms.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             panel_buttons = new System.Windows.Forms.Panel();
@@ -270,5 +271,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNode;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFilePath;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTexturesFolder;
+        private System.Windows.Forms.FolderBrowserDialog SetTextureFolderDialog;
     }
 }
