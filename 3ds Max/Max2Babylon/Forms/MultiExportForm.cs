@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using Utilities;
 
 namespace Max2Babylon
 {
@@ -255,7 +253,7 @@ namespace Max2Babylon
 
             if (chnageTextureFolderPath)
             {
-                ShowTexturesFolderDialog(pathCells);
+                ShowTextureFolderDialog(pathCells);
             }
             else
             {
@@ -282,6 +280,7 @@ namespace Max2Babylon
             if (SetPathFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string dir = Path.GetDirectoryName(SetPathFileDialog.FileName);
+                string filename = Path.GetFileNameWithoutExtension(SetPathFileDialog.FileName);
 
                 Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
                 {
@@ -305,28 +304,21 @@ namespace Max2Babylon
             }
         }
 
-        private void ShowTexturesFolderDialog(List<DataGridViewCell> pathCells)
+        private void ShowTextureFolderDialog(List<DataGridViewCell> pathCells)
         {
-            string intialDirectory = pathCells[0].Value as string;
-
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-
-            if (!Directory.Exists(intialDirectory))
+            string folderPath = pathCells[0].Value as string;
+            if (string.IsNullOrWhiteSpace(folderPath))
             {
-                intialDirectory = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+                SetTextureFolderDialog.SelectedPath = null;
             }
-            
-            if (!Directory.Exists(intialDirectory))
+            else
             {
-                intialDirectory = null;
+                SetTextureFolderDialog.SelectedPath = Path.GetDirectoryName(folderPath);
             }
 
-            dialog.InitialDirectory = intialDirectory;
-            dialog.IsFolderPicker = true;
-
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (SetTextureFolderDialog.ShowDialog(this) == DialogResult.OK)
             {
-                string selectedFolder = dialog.FileName;
+                string dir = SetTextureFolderDialog.SelectedPath;
 
                 Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
                 {
@@ -336,7 +328,7 @@ namespace Max2Babylon
                         return;
 
                     // change cell value, which triggers value changed event to update the export item
-                    selectedCell.Value = selectedFolder;
+                    selectedCell.Value = dir;
                 };
 
                 if (pathCells.Count > 1)
@@ -348,7 +340,7 @@ namespace Max2Babylon
                 }
                 else
                 {
-                    funcUpdatePath(pathCells[0], selectedFolder);
+                    funcUpdatePath(pathCells[0], SetTextureFolderDialog.SelectedPath);
                 }
             }
         }
