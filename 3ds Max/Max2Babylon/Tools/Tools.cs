@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Color = System.Drawing.Color;
 
 namespace Max2Babylon
 {
@@ -1295,27 +1296,6 @@ namespace Max2Babylon
 
         #region File Path
 
-
-        public static string FormatPath(string absolutePath)
-        {
-            if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
-            {
-                return absolutePath;
-            }
-
-            
-            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
-
-            if (!absolutePath.StartsWith(dirName))
-            {
-                return absolutePath;
-            }
-
-            //wrap the part of path relative to user project folder around ()
-            string relativePath = absolutePath.Remove(0, dirName.Length);
-            return string.Format(@"({0}){1}",dirName, relativePath);
-        }
-
         public static string RelativePathStore(string path)
         {
             if (string.IsNullOrWhiteSpace(Loader.Core.CurFilePath))
@@ -1349,8 +1329,26 @@ namespace Max2Babylon
                 return path;
             }
 
-            return string.Format(@"({0}){1}", dirName, path);
+            return string.Format(@"{0}{1}", dirName, path);
         }
+
+        public static void MaxPath(this RichTextBox box, string path)
+        {
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+            box.ResetText();
+
+            box.Text = path;
+            box.ForeColor = Color.Black;
+
+            if (path.StartsWith(dirName))
+            {
+                box.SelectionStart = 0;
+                box.SelectionLength = dirName.Length;
+                box.SelectionColor = Color.Blue;
+            }
+        }
+
+
         #endregion
     }
 }
