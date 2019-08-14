@@ -923,7 +923,7 @@ namespace Maya2Babylon
                 BabylonAnimation animation = (BabylonAnimation)morphTargetAnimation.Clone();
 
                 // Select usefull keys
-                var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+                var keys = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
                 bool keysInRangeAreRelevant = true;
 
@@ -962,7 +962,7 @@ namespace Maya2Babylon
             BabylonAnimation animation = (BabylonAnimation)babylonBone.animation.Clone();
 
             // Select usefull keys
-            var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+            var keys = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
             bool keysInRangeAreRelevant = true;
 
