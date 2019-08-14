@@ -554,14 +554,16 @@ namespace Max2Babylon
                 }
             }
 
-            // Animation group
+            // ----------------------------
+            // ----- Animation groups -----
+            // ----------------------------
             RaiseMessage("Export animation groups");
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
 
             if (isBabylonExported)
             {
-                // if there is animationGroup, then remove animations from nodes
+                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
                 if (babylonScene.animationGroups.Count > 0)
                 {
                     foreach (BabylonNode node in babylonScene.MeshesList)
@@ -585,6 +587,7 @@ namespace Max2Babylon
                     }
                 }
 
+                // setup a default skybox for the scene for .Babylon export.
                 var sourcePath = exportParameters.pbrEnvironment;
                 if (!string.IsNullOrEmpty(sourcePath)) {
                     var fileName = Path.GetFileName(sourcePath);

@@ -390,65 +390,70 @@ namespace Maya2Babylon
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
 
-            // if there is animationGroup, then remove animations from nodes
-            if (babylonScene.animationGroups.Count > 0)
-            {
-                // add animations of each nodes in the animGroup
-                List<BabylonNode> babylonNodes = new List<BabylonNode>();
-                babylonNodes.AddRange(babylonScene.MeshesList);
-                babylonNodes.AddRange(babylonScene.CamerasList);
-                babylonNodes.AddRange(babylonScene.LightsList);
 
-                foreach (BabylonNode node in babylonNodes)
+            if (isBabylonExported)
+            {
+                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
+                if (babylonScene.animationGroups.Count > 0)
                 {
-                    node.animations = null;
-                }
-                foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
-                {
-                    foreach (BabylonBone bone in skel.bones)
+                    // add animations of each nodes in the animGroup
+                    List<BabylonNode> babylonNodes = new List<BabylonNode>();
+                    babylonNodes.AddRange(babylonScene.MeshesList);
+                    babylonNodes.AddRange(babylonScene.CamerasList);
+                    babylonNodes.AddRange(babylonScene.LightsList);
+
+                    foreach (BabylonNode node in babylonNodes)
                     {
-                        bone.animation = null;
+                        node.animations = null;
+                    }
+                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
+                    {
+                        foreach (BabylonBone bone in skel.bones)
+                        {
+                            bone.animation = null;
+                        }
+                    }
+                }
+
+                // setup a default skybox for the scene for .Babylon export.
+                var sourcePath = exportParameters.pbrEnvironment;
+                if (!string.IsNullOrEmpty(sourcePath))
+                {
+                    babylonScene.createDefaultSkybox = exportParameters.createDefaultSkybox;
+                    var fileName = Path.GetFileName(sourcePath);
+
+                    // Allow only dds file format
+                    if (!fileName.EndsWith(".dds"))
+                    {
+                        RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
+                    }
+                    else
+                    {
+                        RaiseMessage($"texture id = Max_Babylon_Default_Environment");
+                        babylonScene.environmentTexture = fileName;
+
+                        if (exportParameters.writeTextures)
+                        {
+                            try
+                            {
+                                var destPath = Path.Combine(babylonScene.OutputPath, fileName);
+                                if (File.Exists(sourcePath) && sourcePath != destPath)
+                                {
+                                    File.Copy(sourcePath, destPath, true);
+                                }
+                            }
+                            catch
+                            {
+                                // silently fails
+                                RaiseMessage($"Fail to export the default env texture", 3);
+                            }
+                        }
                     }
                 }
             }
 
             // Output
             babylonScene.Prepare(false, false);
-
-            var sourcePath = exportParameters.pbrEnvironment;
-            if (!string.IsNullOrEmpty(sourcePath))
-            {
-                babylonScene.createDefaultSkybox = exportParameters.createDefaultSkybox;
-                var fileName = Path.GetFileName(sourcePath);
-
-                // Allow only dds file format
-                if (!fileName.EndsWith(".dds"))
-                {
-                    RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
-                }
-                else
-                {
-                    RaiseMessage($"texture id = Max_Babylon_Default_Environment");
-                    babylonScene.environmentTexture = fileName;
-
-                    if (exportParameters.writeTextures)
-                    {
-                        try
-                        {
-                            var destPath = Path.Combine(babylonScene.OutputPath, fileName);
-                            if (File.Exists(sourcePath) && sourcePath != destPath)
-                            {
-                                File.Copy(sourcePath, destPath, true);
-                            }
-                        }
-                        catch
-                        {
-                            // silently fails
-                            RaiseMessage($"Fail to export the default env texture", 3);
-                        }
-                    }
-                }
-            }
 
             if (isBabylonExported)
             {
