@@ -1,4 +1,5 @@
 ﻿using Autodesk.Maya.OpenMaya;
+using Babylon2GLTF;
 using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
@@ -7,28 +8,16 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Utilities;
 
 namespace Maya2Babylon
 {
-    internal partial class BabylonExporter
+    internal partial class BabylonExporter : ILoggingProvider
     {
         // Export options
-        private bool _onlySelected;
-        private bool _exportHiddenObjects;
-        private bool _optimizeVertices;
-        private bool _exportTangents;
-        private bool ExportHiddenObjects { get; set; }
-        private bool CopyTexturesToOutput { get; set; }
-        private bool ExportQuaternionsInsteadOfEulers { get; set; } = true;
+        public ExportParameters exportParameters;
         private bool isBabylonExported;
-        private bool _exportSkin;
-        private long _quality;
-        private bool _dracoCompression;
-        private bool _exportMorphNormal;
-        private bool _exportMorphTangent;
-        private bool _exportKHRLightsPunctual;
-        private bool _exportKHRTextureTransform;
-        private bool _bakeAnimationFrames;
+        private bool ExportQuaternionsInsteadOfEulers { get; set; } = true;
 
         public bool IsCancelled { get; set; }
 
@@ -66,12 +55,10 @@ namespace Maya2Babylon
         /// <param name="exportKHRLightsPunctual">Specifies if the KHR_lights_punctual extension should be enabled</param>
         /// <param name="exportKHRTextureTransform">Specifies if the KHR_texture_transform extension should be enabled</param>
         /// <param name="bakeAnimationFrames">Specifies if animations should be exporting keyframes directly or should manually bake out animations frame by frame</param>
-        public void Export(string outputDirectory, string outputFileName, string outputFormat, bool generateManifest,
-                            bool onlySelected, bool autoSaveMayaFile, bool exportHiddenObjects, bool copyTexturesToOutput,
-                            bool optimizeVertices, bool exportTangents, string scaleFactor, bool exportSkin, string quality, bool dracoCompression,
-                            bool exportMorphNormal, bool exportMorphTangent, bool exportKHRLightsPunctual, bool exportKHRTextureTransform, bool bakeAnimationFrames,
-                            bool fullPBR, bool noAutoLight, bool defaultSkybox, string environmentName)
+        public void Export(ExportParameters exportParameters)
         {
+            this.exportParameters = exportParameters;
+
             // Check if the animation is running
             MGlobal.executeCommand("play -q - state", out int isPlayed);
             if(isPlayed == 1)
@@ -80,58 +67,16 @@ namespace Maya2Babylon
                 return;
             }
 
-            // Check input text is valid
-            var scaleFactorFloat = 1.0f;
-            try
-            {
-                scaleFactor = scaleFactor.Replace(".", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-                scaleFactor = scaleFactor.Replace(",", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-                scaleFactorFloat = float.Parse(scaleFactor);
-            }
-            catch
-            {
-                RaiseError("Scale factor is not a valid number.");
-                return;
-            }
-
-            try
-            {
-                _quality = long.Parse(quality);
-
-                if (_quality < 0 || _quality > 100)
-                {
-                    throw new Exception();
-                }
-            }
-            catch
-            {
-                RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
-                RaiseError("This parameter set the quality of jpg compression.");
-                return;
-            }
-
             RaiseMessage("Export started", Color.Blue);
             var progression = 0.0f;
             ReportProgressChanged(progression);
 
             // Store export options
-            _onlySelected = onlySelected;
-            _exportHiddenObjects = exportHiddenObjects;
-            _optimizeVertices = optimizeVertices;
-            _exportTangents = exportTangents;
-            CopyTexturesToOutput = copyTexturesToOutput;
-            isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
-            _exportSkin = exportSkin;
-            _dracoCompression = dracoCompression;
-            _exportMorphNormal = exportMorphNormal;
-            _exportMorphTangent = exportMorphTangent;
-            _exportKHRLightsPunctual = exportKHRLightsPunctual;
-            _exportKHRTextureTransform = exportKHRTextureTransform;
-            _bakeAnimationFrames = bakeAnimationFrames;
-            
+            this.isBabylonExported = exportParameters.outputFormat == "babylon" || exportParameters.outputFormat == "binary babylon";
 
+            var outputBabylonDirectory = Path.GetDirectoryName(exportParameters.outputPath);
             // Check directory exists
-            if (!Directory.Exists(outputDirectory))
+            if (!Directory.Exists(outputBabylonDirectory))
             {
                 RaiseError("Export stopped: Output folder does not exist");
                 ReportProgressChanged(100);
@@ -141,11 +86,11 @@ namespace Maya2Babylon
             var watch = new Stopwatch();
             watch.Start();
 
-            var outputBabylonDirectory = outputDirectory;
+            
             var babylonScene = new BabylonScene(outputBabylonDirectory);
 
             // Save scene
-            if (autoSaveMayaFile)
+            if (exportParameters.autoSaveSceneFile)
             {
                 RaiseMessage("Saving Maya file");
 
@@ -166,7 +111,7 @@ namespace Maya2Babylon
             }
 
             // Force output file extension to be babylon
-            outputFileName = Path.ChangeExtension(outputFileName, "babylon");
+            var outputFileName = Path.ChangeExtension(Path.GetFileName(exportParameters.outputPath), "babylon");
 
             // Store selected nodes
             MSelectionList selectedNodes = new MSelectionList();
@@ -211,6 +156,10 @@ namespace Maya2Babylon
             // TODO - Retreive colors from Maya
             //babylonScene.clearColor = Loader.Core.GetBackGround(0, Tools.Forever).ToArray();
             //babylonScene.ambientColor = Loader.Core.GetAmbient(0, Tools.Forever).ToArray();
+
+            babylonScene.TimelineStartFrame = Loader.GetMinTime();
+            babylonScene.TimelineEndFrame = Loader.GetMaxTime();
+            babylonScene.TimelineFramesPerSecond = Loader.GetFPS();
 
             // TODO - Add custom properties
             _exportQuaternionsInsteadOfEulers = true;
@@ -351,7 +300,7 @@ namespace Maya2Babylon
             }
 
             // Default light
-            if (!noAutoLight && babylonScene.LightsList.Count == 0)
+            if (!exportParameters.pbrNoLight && babylonScene.LightsList.Count == 0)
             {
                 RaiseWarning("No light defined", 1);
                 RaiseWarning("A default ambient light was added for your convenience", 1);
@@ -362,14 +311,15 @@ namespace Maya2Babylon
                 RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
             }
 
-            if (scaleFactorFloat != 1.0f)
+            var sceneScaleFactor = exportParameters.scaleFactor;
+            if (exportParameters.scaleFactor != 1.0f)
             {
                 RaiseMessage("A root node is added for scaling", 1);
 
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };
                 rootNode.isDummy = true;
-                float rootNodeScale = scaleFactorFloat;
+                float rootNodeScale = sceneScaleFactor;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
 
                 if (ExportQuaternionsInsteadOfEulers)
@@ -405,12 +355,12 @@ namespace Maya2Babylon
             GenerateMaterialDuplicationDatas(babylonScene);
             foreach (var mat in referencedMaterials)
             {
-                ExportMaterial(mat, babylonScene, fullPBR);
+                ExportMaterial(mat, babylonScene, exportParameters.pbrFull);
                 CheckCancelled();
             }
             foreach (var mat in multiMaterials)
             {
-                ExportMultiMaterial(mat.Key, mat.Value, babylonScene, fullPBR);
+                ExportMultiMaterial(mat.Key, mat.Value, babylonScene, exportParameters.pbrFull);
                 CheckCancelled();
             }
             UpdateMeshesMaterialId(babylonScene);
@@ -418,7 +368,7 @@ namespace Maya2Babylon
 
 
             // Export skeletons
-            if (_exportSkin && skins.Count > 0)
+            if (exportParameters.exportSkins && skins.Count > 0)
             {
                 progressSkin = 0;
                 progressSkinStep = 100 / skins.Count;
@@ -433,14 +383,17 @@ namespace Maya2Babylon
             // set back the frame
             Loader.SetCurrentTime(currentTime);
 
-            // Animation group
+            // ----------------------------
+            // ----- Animation groups -----
+            // ----------------------------
+            RaiseMessage("Export animation groups");
+            // add animation groups to the scene
+            babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+
             if (isBabylonExported)
             {
-                RaiseMessage("Export animation groups");
-                // add animation groups to the scene
-                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
-
-                // if there is animationGroup, then remove animations from nodes
+                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
                 if (babylonScene.animationGroups.Count > 0)
                 {
                     // add animations of each nodes in the animGroup
@@ -461,65 +414,68 @@ namespace Maya2Babylon
                         }
                     }
                 }
-            }
 
-            // Output
-            babylonScene.Prepare(false, false);
-
-            var sourcePath = environmentName;
-            if (!string.IsNullOrEmpty(sourcePath))
-            {
-                babylonScene.createDefaultSkybox = defaultSkybox;
-                var fileName = Path.GetFileName(sourcePath);
-
-                // Allow only dds file format
-                if (!fileName.EndsWith(".dds"))
+                // setup a default skybox for the scene for .Babylon export.
+                var sourcePath = exportParameters.pbrEnvironment;
+                if (!string.IsNullOrEmpty(sourcePath))
                 {
-                    RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
-                }
-                else
-                {
-                    RaiseMessage($"texture id = Max_Babylon_Default_Environment");
-                    babylonScene.environmentTexture = fileName;
+                    babylonScene.createDefaultSkybox = exportParameters.createDefaultSkybox;
+                    var fileName = Path.GetFileName(sourcePath);
 
-                    if (copyTexturesToOutput)
+                    // Allow only dds file format
+                    if (!fileName.EndsWith(".dds"))
                     {
-                        try
+                        RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
+                    }
+                    else
+                    {
+                        RaiseMessage($"texture id = Max_Babylon_Default_Environment");
+                        babylonScene.environmentTexture = fileName;
+
+                        if (exportParameters.writeTextures)
                         {
-                            var destPath = Path.Combine(babylonScene.OutputPath, fileName);
-                            if (File.Exists(sourcePath) && sourcePath != destPath)
+                            try
                             {
-                                File.Copy(sourcePath, destPath, true);
+                                var destPath = Path.Combine(babylonScene.OutputPath, fileName);
+                                if (File.Exists(sourcePath) && sourcePath != destPath)
+                                {
+                                    File.Copy(sourcePath, destPath, true);
+                                }
                             }
-                        }
-                        catch
-                        {
-                            // silently fails
-                            RaiseMessage($"Fail to export the default env texture", 3);
+                            catch
+                            {
+                                // silently fails
+                                RaiseMessage($"Fail to export the default env texture", 3);
+                            }
                         }
                     }
                 }
             }
 
+            // Output
+            babylonScene.Prepare(false, false);
+
             if (isBabylonExported)
             {
-                Write(babylonScene, outputBabylonDirectory, outputFileName, outputFormat, generateManifest);
+                Write(babylonScene, outputBabylonDirectory, outputFileName, exportParameters.outputFormat, exportParameters.generateManifest);
             }
 
             ReportProgressChanged(100);
 
             // Export glTF
-            if (outputFormat == "gltf" || outputFormat == "glb")
+            if (exportParameters.outputFormat == "gltf" || exportParameters.outputFormat == "glb")
             {
-                bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, outputDirectory, outputFileName, generateBinary);
+                bool generateBinary = exportParameters.outputFormat == "glb";
+
+                GLTFExporter gltfExporter = new GLTFExporter();
+                gltfExporter.ExportGltf(this.exportParameters, babylonScene, outputBabylonDirectory, outputFileName, generateBinary, this);
             }
 
             watch.Stop();
             RaiseMessage(string.Format("Export done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);
         }
 
-        void CheckCancelled()
+        public void CheckCancelled()
         {
             Application.DoEvents();
             if (IsCancelled)
