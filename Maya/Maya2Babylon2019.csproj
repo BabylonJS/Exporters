@@ -64,17 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BabylonExportActionItem.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.Material.Optimiser.cs" />
     <Compile Include="Exporter\BabylonExporter.Camera.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Animation.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.AbstractMesh.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Camera.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Material.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Mesh.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Skin.cs" />
-    <Compile Include="Exporter\BabylonExporter.GLTFExporter.Texture.cs" />
     <Compile Include="Exporter\BabylonExporter.Light.cs" />
     <Compile Include="Exporter\BabylonExporter.Material.cs" />
     <Compile Include="Exporter\BabylonExporter.Animation.cs" />
@@ -163,6 +154,7 @@
   <Import Project="..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="..\SharedProjects\Utilities\Extensions.projitems" Label="Shared" />
+  <Import Project="..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>setlocal enabledelayedexpansion
