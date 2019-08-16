@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BabylonExport.Entities;
 
 namespace Maya2Babylon.Forms
 {
@@ -203,14 +204,35 @@ namespace Maya2Babylon.Forms
             bool success = true;
             try
             {
-                var directoryName = Path.GetDirectoryName(txtFilename.Text);
-                var fileName = Path.GetFileName(txtFilename.Text);
-                exporter.Export(outputDirectory: directoryName, outputFileName: fileName, outputFormat: comboOutputFormat.SelectedItem.ToString(), generateManifest: chkManifest.Checked,
-                                onlySelected: chkOnlySelected.Checked, autoSaveMayaFile: chkAutoSave.Checked, exportHiddenObjects: chkHidden.Checked, copyTexturesToOutput: chkCopyTextures.Checked,
-                                optimizeVertices: chkOptimizeVertices.Checked, exportTangents: chkExportTangents.Checked, scaleFactor: txtScaleFactor.Text, exportSkin: chkExportSkin.Checked,
-                                quality: txtQuality.Text, dracoCompression: chkDracoCompression.Checked, exportMorphNormal: chkExportMorphNormal.Checked, exportMorphTangent: chkExportMorphTangent.Checked, 
-                                exportKHRLightsPunctual: chkExportKHRLightsPunctual.Checked, exportKHRTextureTransform: chkExportKHRTextureTransform.Checked, bakeAnimationFrames: chkBakeAnimationFrames.Checked,
-                                fullPBR: chkFullPBR.Checked, noAutoLight: chkNoAutoLight.Checked, defaultSkybox: chkDefaultSkybox.Checked, environmentName: txtEnvironmentName.Text);
+                var scaleFactorParsed = 1.0f;
+                var textureQualityParsed = 100L;
+                var exportParameters = new ExportParameters
+                {
+                    outputPath = txtFilename.Text,
+                    outputFormat = comboOutputFormat.SelectedItem.ToString(),
+                    generateManifest = chkManifest.Checked,
+                    exportOnlySelected = chkOnlySelected.Checked,
+                    autoSaveSceneFile = chkAutoSave.Checked,
+                    exportHiddenObjects = chkHidden.Checked,
+                    writeTextures = chkCopyTextures.Checked,
+                    overwriteTextures = chkCopyTextures.Checked,
+                    optimizeVertices = chkOptimizeVertices.Checked,
+                    exportTangents = chkExportTangents.Checked,
+                    scaleFactor = float.TryParse(txtScaleFactor.Text, out scaleFactorParsed) ? scaleFactorParsed : 1.0f,
+                    exportSkins = chkExportSkin.Checked,
+                    txtQuality = long.TryParse(txtQuality.Text, out textureQualityParsed) ? textureQualityParsed : 100,
+                    dracoCompression = chkDracoCompression.Checked,
+                    exportMorphNormals = chkExportMorphNormal.Checked,
+                    exportMorphTangents = chkExportMorphTangent.Checked,
+                    enableKHRLightsPunctual = chkExportKHRLightsPunctual.Checked,
+                    enableKHRTextureTransform = chkExportKHRTextureTransform.Checked,
+                    bakeAnimationFrames = chkBakeAnimationFrames.Checked,
+                    pbrFull = chkFullPBR.Checked,
+                    pbrNoLight = chkNoAutoLight.Checked,
+                    createDefaultSkybox = chkDefaultSkybox.Checked,
+                    pbrEnvironment = txtEnvironmentName.Text
+                };
+                exporter.Export(exportParameters);
             }
             catch (OperationCanceledException)
             {
