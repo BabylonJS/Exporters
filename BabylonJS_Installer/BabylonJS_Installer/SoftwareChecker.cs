@@ -75,7 +75,7 @@ namespace BabylonJS_Installer
             return "";
         }
 
-        public DateTime getExporterDate(string software, string path)
+        public DateTime getInstalledExporterTimestamp(string software, string path)
         {
             try
             {
