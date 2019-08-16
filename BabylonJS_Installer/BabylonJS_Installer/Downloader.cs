@@ -75,16 +75,6 @@ namespace BabylonJS_Installer
 
             try
             {
-                // Old way with Octokit (nuget package)
-                //var ghClient = new GitHubClient(new ProductHeaderValue("BJS_Installer"));
-                //var lastRelease = await ghClient.Repository.Release.GetAll("BabylonJS", "Exporters");
-                //if (lastRelease[0].Prerelease == true)
-                //{
-                //this.latestRelease = lastRelease[0].HtmlUrl.Substring(lastRelease[0].HtmlUrl.LastIndexOf("/"));
-                //this.form.log("Last release package is : " + this.latestRelease + "\n");
-                //this.download(this.latestRelease);
-                //}
-
                 // TO DO - Parse the JSON in a more beautiful way...
 
                 String responseBody = await this.GetJSONBodyRequest(this.url_github_API_releases);
