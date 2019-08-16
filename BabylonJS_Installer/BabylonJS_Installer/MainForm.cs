@@ -152,7 +152,7 @@ namespace BabylonJS_Installer
                 labelDate.Visible = true;
                 this.log("Installation found for " + soft + " " + year + "  -> " + location);
                 buttonUpdate.Visible = true;
-                expDate = this.checker.getExporterDate(soft, location);
+                expDate = this.checker.getInstalledExporterTimestamp(soft, location);
                 if (expDate > DateTime.FromFileTime(0)) // we need to use FromFileTime(0) because (FILETIME)0 is 1/1/1601, which windows returns on file not existing.
                 {
                     labelDate.Text = "Exporter last updated : " + expDate.ToShortDateString();
