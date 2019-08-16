@@ -9,7 +9,7 @@ using Utilities;
 namespace Babylon2GLTF
 {
     partial class GLTFExporter
-                        {
+    {
 
         private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
@@ -56,29 +56,16 @@ namespace Babylon2GLTF
                     GLTFAnimation gltfAnimation = new GLTFAnimation();
                     gltfAnimation.name = animGroup.name;
                     
-                    int startFrame = MathUtilities.RoundToInt(animGroup.from);
-                    int endFrame = MathUtilities.RoundToInt(animGroup.to);
+                    int minFrame = MathUtilities.RoundToInt(animGroup.from);
+                    int maxFrame = MathUtilities.RoundToInt(animGroup.to);
 
-                    var uniqueNodeIds = animGroup.targetedAnimations.Select(targetAnim => targetAnim.targetId).Distinct();
-                    foreach ( var id in uniqueNodeIds )
+                    foreach (var pair in nodeToGltfNodeMap)
                     {
-                        BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
-
-                        GLTFNode gltfNode;
-
-                        if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
-                        {
-                            ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
-                        }
-
-                        // export all bones that match this id
-                        foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
-                        {
-                            if (pair.Key.id.Equals(id))
-                            {
-                                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, pair.Key, pair.Value);
-                            }
-                        }
+                        ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
+                    }
+                    foreach (var pair in boneToGltfNodeMap)
+                    {
+                        ExportBoneAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value);
                     }
 
                     if (gltfAnimation.ChannelList.Count > 0)
