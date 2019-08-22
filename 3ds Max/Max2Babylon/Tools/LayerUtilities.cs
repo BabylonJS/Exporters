@@ -37,7 +37,7 @@ namespace Max2Babylon
             return false;
         }
 
-        public static bool HasNode(this IILayer layer,IINode node)
+        public static bool HasNode(this IILayer layer,IINode node,bool checkInChild = true)
         {
             ITab<IINode> nodes = Loader.Global.INodeTabNS.Create();
             IILayerProperties layerProperties = Loader.IIFPLayerManager.GetLayer(layer.Name);
@@ -48,7 +48,17 @@ namespace Max2Babylon
                 if (node.Handle == n.Handle) return true;
             }
 
+            for (int i = 0; i < layer.NumOfChildLayers; i++)
+            {
+                IILayer child = layer.GetChildLayer(i);
+                if (child.HasNode(node, checkInChild))
+                {
+                    return true;
+                }
+            }
+
             return false;
+
         }
 
         /// <summary>

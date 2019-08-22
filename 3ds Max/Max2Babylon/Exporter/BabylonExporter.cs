@@ -402,7 +402,7 @@ namespace Max2Babylon
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
 
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (node != null && exportNode != null)
+                if (node != null && exportNode != null && !exportNode.IsRootNode)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
 
                 progression += progressionStep;
@@ -954,9 +954,12 @@ namespace Max2Babylon
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
-                if (maxExporterParameters.exportLayers!=null && !maxExporterParameters.exportLayers.HaveNode(gameNode.MaxNode))
+                if (maxExporterParameters.exportLayers!=null && maxExporterParameters.exportLayers.Count>0)
                 {
-                    return false;
+                    if (!maxExporterParameters.exportLayers.HaveNode(gameNode.MaxNode))
+                    {
+                        return false;
+                    }
                 }
             }
             if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))

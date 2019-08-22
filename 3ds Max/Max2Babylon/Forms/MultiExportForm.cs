@@ -50,6 +50,7 @@ namespace Max2Babylon
             row.Cells[2].Value = item.NodeName;
             row.Cells[3].Value = item.ExportFilePathAbsolute;
             row.Cells[4].Value = item.ExportTexturesesFolderPath;
+            Refresh();
         }
 
         private string GetUniqueExportPath(string initialPath)
@@ -208,8 +209,18 @@ namespace Max2Babylon
                     IINode node = Loader.Core.GetSelNode(0);
 
                     if (existingItem == null)
+                    {
                         existingItem = TryAddExportItem(selectedRow, node.Handle);
-                    else existingItem.NodeHandle = node.Handle;
+                    }
+                    else
+                    {
+                        if (existingItem.Layers.Count > 0)
+                        {
+                            MessageBox.Show("You can't specify a Node when export is layer based");
+                            return;
+                        }
+                        existingItem.NodeHandle = node.Handle;
+                    }
                     
                     // may be null after trying to add a node that already exists in another row
                     if(existingItem != null) SetRowData(selectedRow, existingItem);
@@ -365,9 +376,6 @@ namespace Max2Babylon
                 {
                     string oldFileName = Path.GetFileNameWithoutExtension(selectedCell.Value as string);
                     string oldExtension = Path.GetExtension(selectedCell.Value as string);
-                        
-                    if (forcedFileName != null && string.IsNullOrWhiteSpace(oldFileName))
-                        return;
 
                     string newPath = Path.Combine(dir, forcedFileName ?? oldFileName);
                     newPath = Path.ChangeExtension(newPath, oldExtension);
