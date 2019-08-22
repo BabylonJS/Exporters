@@ -39,7 +39,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.ExportItemGridView = new System.Windows.Forms.DataGridView();
             this.ColumnExportCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ColumnLayers = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.ColumnLayers = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnNode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnTexturesFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -211,7 +211,6 @@
             // 
             this.ColumnLayers.HeaderText = "Layers";
             this.ColumnLayers.Name = "ColumnLayers";
-            this.ColumnLayers.Text = "No Layers Selected";
             // 
             // ColumnNode
             // 
@@ -275,7 +274,7 @@
         private System.Windows.Forms.SaveFileDialog SetPathFileDialog;
         private System.Windows.Forms.Button btn_change_path;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExportCheckbox;
-        private System.Windows.Forms.DataGridViewButtonColumn ColumnLayers;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLayers;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNode;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFilePath;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTexturesFolder;

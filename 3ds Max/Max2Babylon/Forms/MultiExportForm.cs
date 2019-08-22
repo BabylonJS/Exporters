@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using ExplorerFramework;
+using MaxCustomControls.SceneExplorerControls;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using SceneExplorer;
 using Utilities;
 
 namespace Max2Babylon
@@ -11,6 +14,7 @@ namespace Max2Babylon
     public partial class MultiExportForm : Form
     {
         const bool Default_ExportItemSelected = true;
+        private SceneExplorerDialog sceneExplorer;
 
         ExportItemList exportItemList;
 
@@ -29,7 +33,7 @@ namespace Max2Babylon
             {
                 DataGridViewRow row = new DataGridViewRow();
                 row.Cells.Add(new DataGridViewCheckBoxCell());
-                row.Cells.Add(new DataGridViewButtonCell());
+                row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
@@ -42,7 +46,7 @@ namespace Max2Babylon
         {
             row.Tag = item;
             row.Cells[0].Value = item.Selected;
-            row.Cells[1].Value = "test";
+            row.Cells[1].Value = item.LayersToString(item.Layers);
             row.Cells[2].Value = item.NodeName;
             row.Cells[3].Value = item.ExportFilePathAbsolute;
             row.Cells[4].Value = item.ExportTexturesesFolderPath;
@@ -89,6 +93,21 @@ namespace Max2Babylon
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension, nodeHandle);
             item.SetExportFilePath(GetUniqueExportPath(exportPath != null ? exportPath : item.ExportFilePathRelative));
             item.SetExportTexturesFolderPath(item.ExportTexturesesFolderPath);
+            item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
+            exportItemList.Add(item);
+            return item;
+        }
+
+        private ExportItem TryAddExportItem(DataGridViewRow row,List<IILayer> iLayers)
+        {
+            foreach(ExportItem existingItem in exportItemList)
+            {
+                if (existingItem.Layers == iLayers)
+                    return null;
+            }
+
+            ExportItem item = new ExportItem(iLayers);
+            item.NodeHandle = Loader.Core.RootNode.Handle;
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
             exportItemList.Add(item);
             return item;
@@ -174,6 +193,8 @@ namespace Max2Babylon
             }
         }
 
+        
+
         private void ExportItemGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             // double-clicked node column cell, select a node!
@@ -223,47 +244,56 @@ namespace Max2Babylon
             // double-clicked layers column cell, select some layers!
             if(e.ColumnIndex == ColumnLayers.Index)
             {
-                if (Loader.Core.DoHitByNameDialog(null))
+                if (sceneExplorer==null )
                 {
-                    int highestRowIndexEdited = e.RowIndex;
-                    var selectedRow = ExportItemGridView.Rows[e.RowIndex];
-                    //ExportItem existingItem = selectedRow.Tag as ExportItem;
-                    IILayer layer = LayerUtilities.GetSelectedLayer();
-
-                    //if (existingItem == null)
-                    //    existingItem = TryAddExportItem(selectedRow, node.Handle);
-                    //else existingItem.NodeHandle = node.Handle;
-                    
-                    //// may be null after trying to add a node that already exists in another row
-                    //if(existingItem != null) SetRowData(selectedRow, existingItem);
-
-                    //// add remaining selected nodes as new rows
-                    //for (int i = 1; i < Loader.Core.SelNodeCount; ++i)
-                    //{
-                    //    int rowIndex = ExportItemGridView.Rows.Add();
-                    //    var newRow = ExportItemGridView.Rows[rowIndex];
-
-                    //    ExportItem newItem = TryAddExportItem(newRow, Loader.Core.GetSelNode(i).Handle);
-
-                    //    // may be null after trying to add a node that already exists in another row
-                    //    if (newItem == null)
-                    //        continue;
-
-                    //    SetRowData(newRow, newItem);
-                    //    highestRowIndexEdited = rowIndex;
-                    //}
-
-                    // have to explicitly set it dirty for an edge case:
-                    // when a new row is added "automatically-programmatically", through notify cell dirty and endedit(),
-                    //   if the user then clicks on the checkbox of the newly added row,
-                    //     it doesn't add a new row "automatically", whereas otherwise it will.
-                    ExportItemGridView.CurrentCell = ExportItemGridView[e.ColumnIndex, highestRowIndexEdited];
-                    ExportItemGridView.NotifyCurrentCellDirty(true);
-                    ExportItemGridView.EndEdit();
+                    sceneExplorer = new SceneExplorerDialog("Layer to Export");
+                    sceneExplorer.ExplorerControl.EditingEnabled = false;
+                    sceneExplorer.Closed += SceneExplorerOnClosed;
+                    sceneExplorer.Show();
+                    layersRowIndex = e.RowIndex;
+                    layersColumnIndex = e.ColumnIndex;
+                    //todo: improve this  explorer, should display only layers
                 }
             }
+        }
+
+        private int layersRowIndex;
+        private int layersColumnIndex;
+
+        private void SceneExplorerOnClosed(object sender, EventArgs e)
+        {
+            List<IILayer> selectedLayers = LayerUtilities.GetSelectedLayers(sceneExplorer);
+
+            if (selectedLayers.Count>0)
+            {
+                int highestRowIndexEdited = layersRowIndex;
+                var selectedRow = ExportItemGridView.Rows[layersRowIndex];
 
 
+                ExportItem existingItem = selectedRow.Tag as ExportItem;
+
+                if (existingItem == null)
+                {
+                    existingItem = TryAddExportItem(selectedRow, selectedLayers);
+                }
+                else
+                {
+                    existingItem.SetExportLayers(selectedLayers);
+                }
+
+                // may be null after trying to add a node that already exists in another row
+                if (existingItem != null) SetRowData(selectedRow, existingItem);
+
+                // have to explicitly set it dirty for an edge case:
+                // when a new row is added "automatically-programmatically", through notify cell dirty and endedit(),
+                //   if the user then clicks on the checkbox of the newly added row,
+                //     it doesn't add a new row "automatically", whereas otherwise it will.
+                ExportItemGridView.CurrentCell = ExportItemGridView[layersColumnIndex, highestRowIndexEdited];
+                ExportItemGridView.NotifyCurrentCellDirty(true);
+                ExportItemGridView.EndEdit();
+            }
+
+            sceneExplorer = null;
         }
 
         private void ExportItemGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)

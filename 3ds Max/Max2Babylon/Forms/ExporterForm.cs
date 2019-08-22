@@ -370,7 +370,8 @@ namespace Max2Babylon
                     exportMaterials = chkExportMaterials.Checked,
                     optimizeAnimations = !chkDoNotOptimizeAnimations.Checked,
                     animgroupExportNonAnimated = chkAnimgroupExportNonAnimated.Checked,
-                    exportNode = exportItem != null ? exportItem.Node : null,
+                    exportNode = exportItem?.Node,
+                    exportLayers = exportItem?.Layers,
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,
                     pbrEnvironment = txtEnvironmentName.Text,
@@ -656,8 +657,8 @@ namespace Max2Babylon
                     {
                         Loader.Core.FileHold();
                     }
-                await DoExport(exportItemList);
-            }
+                    await DoExport(exportItemList);
+                }
                 catch{}
                 finally
                 {
