@@ -61,7 +61,15 @@ namespace Max2Babylon
             }
         }
 
-		public bool Selected
+        public List<IILayer> Layers
+        {
+            get
+            {
+                return exportLayers;
+            }
+        }
+
+        public bool Selected
         {
             get { return selected; }
             set
@@ -72,13 +80,15 @@ namespace Max2Babylon
             }
         }
 
-        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"";
+        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"| {4}";
         const char s_PropertySeparator = ';';
-        const string s_PropertyFormat = "{0};{1};{2}";
+        private const char s_ProperyLayerSeparator = '&';
+        const string s_PropertyFormat = "{0};{1};{2};{3}";
         const string s_PropertyNamePrefix = "babylonjs_ExportItem";
 
         private string outputFileExt;
         private IINode exportNode;
+        private List<IILayer> exportLayers;
         private uint exportNodeHandle = uint.MaxValue; // 0 is the scene root node
         private bool selected = true;
         private string exportPathRelative = "";
@@ -104,6 +114,12 @@ namespace Max2Babylon
             SetExportTexturesFolderPath(null);
         }
 
+        public ExportItem(List<IILayer> layers)
+        {
+            SetExportLayers(layers); 
+            IsDirty = true;
+        }
+
         public ExportItem(string outputFileExt, string propertyName)
         {
             this.outputFileExt = outputFileExt;
@@ -121,12 +137,19 @@ namespace Max2Babylon
             exportPathAbsolute = other.exportPathAbsolute;
             exportPathRelative = other.exportPathRelative;
             exportNodeHandle = other.exportNodeHandle;
+            exportLayers = other.exportLayers;
             NodeName = other.NodeName;
             selected = other.selected;
             IsDirty = true;
         }
 
-        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderPath); }
+        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderPath, LayersToString(exportLayers)); }
+
+        public void SetExportLayers(List<IILayer> layers)
+        {
+            exportLayers = layers;
+            IsDirty = true;
+        }
 
         public void SetExportFilePath(string filePath)
         {
@@ -240,8 +263,10 @@ namespace Max2Babylon
             if (!bool.TryParse(properties[0], out selected))
                 throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[0]));
 
+            
             SetExportFilePath(properties[1]);
             SetExportTexturesFolderPath(properties[2]);
+            SetExportLayers(StringToLayers(properties[3]));
 
             IsDirty = false;
         }
@@ -258,7 +283,7 @@ namespace Max2Babylon
             IINode node = Node;
             if (node == null) return false;
 
-            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderPath));
+            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderPath,LayersToString(exportLayers)));
 
             IsDirty = false;
             return true;
@@ -270,6 +295,39 @@ namespace Max2Babylon
             if (node == null) return;
             node.DeleteProperty(GetPropertyName());
             IsDirty = true;
+        }
+
+        public string LayersToString( List<IILayer> layers)
+        {
+            string result = string.Empty;
+            if (layers == null) return result;
+            
+            foreach (IILayer iLayer in layers)
+            {
+                if(iLayer == null) continue;
+                result += iLayer.Name;
+                result += s_ProperyLayerSeparator;
+            }
+            return result;
+        }
+
+        public List<IILayer> StringToLayers(string layersProperties)
+        {
+            List<IILayer> layers = new List<IILayer>();
+            if (!string.IsNullOrEmpty(layersProperties))
+            {
+                string[] layerNames = layersProperties.Split(s_ProperyLayerSeparator);
+
+                foreach (string layerName in layerNames)
+                {
+                    IILayer l = Loader.Core.LayerManager.GetLayer(layerName);
+                    if (l != null)
+                    {
+                        layers.Add(l);
+                    }
+                }
+            }
+            return layers;
         }
 
         #endregion

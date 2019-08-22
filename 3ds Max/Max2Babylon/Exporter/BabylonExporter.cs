@@ -201,7 +201,7 @@ namespace Max2Babylon
                 if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
                 if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
             }
-            
+
            
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
@@ -231,9 +231,15 @@ namespace Max2Babylon
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            if (exportNode == null)
+            if (exportNode == null || exportNode.IsRootNode)
+            {
                 gameScene.InitialiseIGame(false);
-            else gameScene.InitialiseIGame(exportNode, true);
+            }
+            else
+            {
+                gameScene.InitialiseIGame(exportNode, true);
+            }
+            
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
@@ -945,6 +951,14 @@ namespace Max2Babylon
 
         private bool IsNodeExportable(IIGameNode gameNode)
         {
+            if (exportParameters is MaxExportParameters)
+            {
+                MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
+                if (maxExporterParameters.exportLayers!=null && !maxExporterParameters.exportLayers.HaveNode(gameNode.MaxNode))
+                {
+                    return false;
+                }
+            }
             if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
             {
                 return false;
