@@ -13,20 +13,23 @@ namespace BabylonJS_Installer
         string latestVersionDate;
         private Dictionary<string, string[]> files = new Dictionary<string, string[]>() {
             { "Max", new string[] {
-                "GDImageLibrary",
-                "Max2Babylon",
-                "Newtonsoft.Json",
-                "SharpDX",
-                "SharpDX.Mathematics",
-                "TargaImage",
-                "TQ.Texture"
+                "GDImageLibrary.dll",
+                "Max2Babylon.dll",
+                "Microsoft.WindowsAPICodePack.dll",
+                "Microsoft.WindowsAPICodePack.Shell.dll",
+                "Microsoft.WindowsAPICodePack.ShellExtensions.dll",
+                "Newtonsoft.Json.dll",
+                "SharpDX.dll",
+                "SharpDX.Mathematics.dll",
+                "TargaImage.dll",
+                "TQ.Texture.dll"
             } },
             { "Maya", new string[] {
-                "GDImageLibrary",
-                "Maya2Babylon.nll",
-                "Newtonsoft.Json",
-                "TargaImage",
-                "TQ.Texture"
+                "GDImageLibrary.dll",
+                "Maya2Babylon.nll.dll",
+                "Newtonsoft.Json.dll",
+                "TargaImage.dll",
+                "TQ.Texture.dll"
             } }
         };
         public Dictionary<string, string> libFolder = new Dictionary<string, string>()
@@ -72,33 +75,23 @@ namespace BabylonJS_Installer
             return "";
         }
 
-        public string checkExporterDate(string software, string path)
+        public DateTime getInstalledExporterTimestamp(string software, string path)
         {
             try
             {
-                string lastUpdate = "";
-
                 switch(software)
                 {
                     case "Max":
-                        lastUpdate = File.GetLastWriteTime(path + "bin\\assemblies\\Max2Babylon.dll").ToString();
-                        break;
+                        return File.GetLastWriteTime(path + "bin\\assemblies\\Max2Babylon.dll");
                     case "Maya":
-                        lastUpdate = File.GetLastWriteTime(path + "bin\\plug-ins\\Maya2Babylon.nll.dll").ToString();
-                        break;
-                    default:
-                        this.form.error("Error : software not found");
-                        break;
+                        return File.GetLastWriteTime(path + "bin\\plug-ins\\Maya2Babylon.nll.dll");
                 }
-
-                if (lastUpdate.Substring(0, 10) == "01/01/1601") lastUpdate = "";
-                return lastUpdate;
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return "";
             }
+            return DateTime.MinValue;
         }
 
         public void uninstallExporter(string soft, string version, string path)
@@ -106,26 +99,48 @@ namespace BabylonJS_Installer
             this.form.goTab("");
             this.form.log("\n----- UNINSTALLING " + soft + " v" + version + " EXPORTER -----\n");
             int errors = 0;
+            bool needElevatedProgram = false;
+            string fileFullPath;
 
             foreach (string file in this.files[soft])
             {
+                fileFullPath = path + this.libFolder[soft] + "\\" + file;
                 try
                 {
-                    System.IO.File.Delete(path + this.libFolder[soft] + "\\" + file + ".dll");
-                    this.form.log(file + ".dll deleted.");
+                    System.IO.File.Delete(fileFullPath);
+                    this.form.log(file + " deleted.");
                 }
-                catch(Exception ex)
+                catch (UnauthorizedAccessException ex)
+                {
+                    needElevatedProgram = true;
+                    errors++;
+                    this.form.error("Cannot access file: " + fileFullPath);
+                }
+                catch (Exception ex)
                 {
                     errors++;
                     this.form.error(
-                        "Error while deleting the file : " + file + ".dll \n"
-                        + "At : " + path + this.libFolder[soft] + "\\" + "\n"
-                        + ex.Message);
+                        ex.GetType().ToString() + " error while deleting the file : " + file + "\n"
+                        + "     At : " + path + this.libFolder[soft] + "\\" + "\n"
+                        + "     " + ex.Message);
                 }
             }
 
-            if(errors == 0) this.form.log("\n----- UNINSTALLING COMPLETE -----\n");
-            else this.form.log("\n----- UNINSTALLING COMPLETE with " + errors + "errors -----\n");
+            if (errors == 0)
+            {
+                this.form.log("\n----- UNINSTALLING COMPLETE -----\n");
+            }
+            else
+            {
+                this.form.log("\n----- UNINSTALL FAILED with " + errors + " errors -----\n");
+                if (needElevatedProgram)
+                {
+                    this.form.error(
+                    "Please try to run this tool in ADMINISTRATOR MODE. It's necessary to remove files in \"Program Files\" folder (or other protected folders).\n\n"
+                    + String.Format("If you are already running as administrator, Please close {0} {1} and retry uninstalling.\n", soft, version)
+                    );
+                }
+            }
 
             this.form.displayInstall(soft, version);
         }

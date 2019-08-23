@@ -15,18 +15,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2019", "Maya2Ba
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "..\SharedProjects\Utilities\Utilities.shproj", "{DAED1281-4757-4A4E-B252-B879B43193A3}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Babylon2GLTF", "..\SharedProjects\Babylon2GLTF\Babylon2GLTF.shproj", "{CC8BFA12-AFF1-4F9F-9EE4-C4A3A5D86237}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{00356433-4277-48bb-ac33-92d3c47fe28b}*SharedItemsImports = 13
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
 		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
 		..\SharedProjects\Utilities\Extensions.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2a678a75-f8c2-41ba-814a-53e611f5eb96}*SharedItemsImports = 13
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
 		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
 		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
 		..\SharedProjects\Utilities\Extensions.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{cc8bfa12-aff1-4f9f-9ee4-c4a3a5d86237}*SharedItemsImports = 13
 		..\SharedProjects\Utilities\Extensions.projitems*{daed1281-4757-4a4e-b252-b879b43193a3}*SharedItemsImports = 13
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
 	EndGlobalSection

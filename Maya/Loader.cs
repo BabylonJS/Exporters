@@ -1,5 +1,6 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,6 @@ namespace Maya2Babylon
                 return global;
             }
         }
-
 
         public static int GetMinTime()
         {
@@ -50,7 +50,6 @@ namespace Maya2Babylon
             MGlobal.executeCommand("currentTimeUnitToFPS", out double framePerSecond);
             return (int)framePerSecond;
         }
-
 
         /// <summary>
         /// Using MEL command, it return the visibility of a Maya object.

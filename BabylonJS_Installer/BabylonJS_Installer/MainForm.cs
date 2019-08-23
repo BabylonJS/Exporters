@@ -143,7 +143,7 @@ namespace BabylonJS_Installer
             Button buttonUninstall = this.buttons[soft][year][1];
             Button buttonLocate = this.buttons[soft][year][2];
             string location = this.locations[soft][year];
-            string expDate;
+            DateTime expDate;
 
             if (location != null && location != "")
             {
@@ -152,24 +152,25 @@ namespace BabylonJS_Installer
                 labelDate.Visible = true;
                 this.log("Installation found for " + soft + " " + year + "  -> " + location);
                 buttonUpdate.Visible = true;
-                expDate = this.checker.checkExporterDate(soft, location);
-                if (expDate != "")
+                expDate = this.checker.getInstalledExporterTimestamp(soft, location);
+                if (expDate > DateTime.FromFileTime(0)) // we need to use FromFileTime(0) because (FILETIME)0 is 1/1/1601, which windows returns on file not existing.
                 {
-                    labelDate.Text = "Exporter last update : " + expDate;
-                    this.log("Exporter last update : " + version);
+                    labelDate.Text = "Exporter last updated : " + expDate.ToShortDateString();
+                    this.log(String.Format("Exporter for {0} {1} last updated : {2}", soft, year, expDate.ToString()));
                     buttonUninstall.Visible = true;
-                    
+
+                    var isLatest = this.checker.isLatestVersionInstalled(soft, version, location);
+                    this.latestInstalled[soft][version] = isLatest;
+                    buttonUpdate.Enabled = !isLatest;
+                    buttonUpdate.Text = "Update";
                 }
                 else
                 {
                     labelDate.Text = "Exporter not installed.";
                     this.log("No exporter installed for " + soft + " " + year);
                     buttonUninstall.Visible = false;
+                    buttonUpdate.Text = "Install";
                 }
-
-                var isLatest = this.checker.isLatestVersionInstalled(soft, version, location);
-                this.latestInstalled[soft][version] = isLatest;
-                buttonUpdate.Enabled = !isLatest;
             }
             else
             {
