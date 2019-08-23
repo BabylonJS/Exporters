@@ -80,6 +80,7 @@
     <Reference Include="ManagedServices, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Refs\ManagedServices.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MaxCustomControls">
       <HintPath>Refs\MaxCustomControls.dll</HintPath>

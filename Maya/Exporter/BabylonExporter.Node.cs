@@ -28,12 +28,12 @@ namespace Maya2Babylon
             //    return false;
             //}
             
-            if (_onlySelected && !selectedNodeFullPaths.Contains(mDagPath.fullPathName))
+            if (exportParameters.exportOnlySelected && !selectedNodeFullPaths.Contains(mDagPath.fullPathName))
             {
                 return false;
             }
             
-            if (!_exportHiddenObjects && !mDagPath.isVisible)
+            if (!exportParameters.exportHiddenObjects && !mDagPath.isVisible)
             {
                 return false;
             }

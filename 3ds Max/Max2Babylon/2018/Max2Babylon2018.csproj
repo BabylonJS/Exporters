@@ -76,6 +76,7 @@
     </Reference>
     <Reference Include="ManagedServices">
       <HintPath>Refs\ManagedServices.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>

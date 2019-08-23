@@ -202,7 +202,7 @@ namespace Maya2Babylon
             babylonTexture.hasAlpha = useOpacityMap;
             babylonTexture.getAlphaFromRGB = false;
 
-            if (CopyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var baseColorBitmap = LoadTexture(sourcePath);
@@ -300,7 +300,7 @@ namespace Maya2Babylon
 
 
             // --- Merge metallic, roughness, ambient occlusion maps ---
-            if (CopyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var metallicBitmap = LoadTexture(metallicTextureDependencyNode);
@@ -383,7 +383,7 @@ namespace Maya2Babylon
 
             // --- Merge base color and opacity maps ---
 
-            if (CopyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var intensityBitmap = LoadTexture(intensityTextureDependencyNode);
@@ -462,7 +462,7 @@ namespace Maya2Babylon
 
             // --- Merge base color and opacity maps ---
 
-            if (CopyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 // Load bitmaps
                 var baseColorBitmap = LoadTexture(baseColorTextureDependencyNode);
@@ -917,7 +917,7 @@ namespace Maya2Babylon
         /// <param name="invalidFormats"></param>
         private void _copyTexture(string sourcePath, string destPath, List<string> validFormats, List<string> invalidFormats)
         {
-            if (CopyTexturesToOutput)
+            if (exportParameters.writeTextures)
             {
                 try
                 {
@@ -1037,7 +1037,7 @@ namespace Maya2Babylon
                 {
                     // Create an Encoder object based on the GUID for the Quality parameter category
                     EncoderParameters encoderParameters = new EncoderParameters(1);
-                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, _quality);
+                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, exportParameters.txtQuality);
                     encoderParameters.Param[0] = encoderQualityParameter;
 
                     bitmap.Save(fs, encoder, encoderParameters);
