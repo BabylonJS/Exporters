@@ -67,6 +67,9 @@ namespace Max2Babylon
         public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
         {
             for (int i = 0; i < tab.Count; i++)
+                #if MAX2015
+                yield return tab[(IntPtr)i];
+                #endif
                 yield return tab[i];
         }
     }

@@ -71,6 +71,9 @@
       <HintPath>..\..\..\..\..\Repos\Babylon.js\Exporters\3ds Max\Max2Babylon\2015\Refs\Autodesk.Max.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ExplorerFramework">
+      <HintPath>Refs\ExplorerFramework.dll</HintPath>
+    </Reference>
     <Reference Include="GDImageLibrary">
       <HintPath>..\..\Refs\GDImageLibrary.dll</HintPath>
     </Reference>
@@ -78,6 +81,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Refs\ManagedServices.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="MaxCustomControls">
+      <HintPath>Refs\MaxCustomControls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -90,6 +96,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SceneExplorer">
+      <HintPath>Refs\SceneExplorer.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.3.1.1\lib\net45\SharpDX.dll</HintPath>
@@ -274,6 +283,9 @@
     </Compile>
     <Compile Include="..\MaxScriptManager.cs">
       <Link>MaxScriptManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Tools\LayerUtilities.cs">
+      <Link>Tools\LayerUtilities.cs</Link>
     </Compile>
     <Compile Include="..\Tools\MeshUtlities.cs">
       <Link>Tools\MeshUtlities.cs</Link>
