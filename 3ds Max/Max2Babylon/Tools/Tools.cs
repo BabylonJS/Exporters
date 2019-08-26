@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 
@@ -781,6 +782,46 @@ namespace Max2Babylon
             }
             return containersList;
         }
+
+        private static IIContainerObject GetConflictingContainer(this IIContainerObject container)
+        {
+            string guidStr = container.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
+            List<IIContainerObject> containers = GetAllContainers();
+            foreach (IIContainerObject iContainerObject in containers)
+            {
+                if (container.ContainerNode.Handle == iContainerObject.ContainerNode.Handle) continue;
+                string compareGuid = iContainerObject.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
+                if (compareGuid == guidStr && iContainerObject.ContainerNode.Name == container.ContainerNode.Name)
+                {
+                    return iContainerObject;
+                }
+            }
+            return null;
+        }   
+
+
+        public static void ResolveContainer(this IIContainerObject container)
+        {
+            int id = 1;
+            while (container.GetConflictingContainer()!=null) //container with same guid  && same name exist)
+            {
+                bool hasID = Regex.IsMatch(container.ContainerNode.Name, @"_ID_\d+");
+                if (hasID)
+                {
+                    int index = container.ContainerNode.Name.LastIndexOf("_");
+                    string containerName = container.ContainerNode.Name.Remove(index + 1);
+                    containerName = containerName + id;
+                    container.ContainerNode.Name = containerName;
+                }
+                else
+                {
+                    container.ContainerNode.Name = container.ContainerNode.Name + "_ID_" + id;
+                }
+                container.ContainerNode.SetUserPropInt("babylonjs_ContainerID",id);
+                id++;
+            }
+        }
+
 
         public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
         {
