@@ -58,7 +58,19 @@ namespace Max2Babylon
             }
 
             return false;
+        }
 
+        public static bool ContainLayer(this List<IILayer> layers, IILayer layer)
+        {
+            foreach (IILayer iLayer in layers)
+            {
+                if (iLayer.Name == layer.Name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -83,7 +95,7 @@ namespace Max2Babylon
         public static List<IILayer> RootLayers()
         {
             List<IILayer> rootILayers = new List<IILayer>();
-            int layerCount = Loader.Core.LayerManager.LayerCount;
+            int layerCount = Loader.IIFPLayerManager.Count;
             for (int i = 0; i < layerCount; i++)
             {
                 IILayerProperties l = Loader.IIFPLayerManager.GetLayer(i);
