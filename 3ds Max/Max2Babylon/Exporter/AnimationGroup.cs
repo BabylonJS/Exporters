@@ -552,6 +552,7 @@ namespace Max2Babylon
             string[] animationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
             foreach (string guidStr in animationGroupGuid)
             {
+                if (string.IsNullOrEmpty(guidStr)) continue;
                 Guid newAnimGroupGuid = Guid.NewGuid();
                 helperPropBuffer = helperPropBuffer.Replace(guidStr, newAnimGroupGuid.ToString());
             }
