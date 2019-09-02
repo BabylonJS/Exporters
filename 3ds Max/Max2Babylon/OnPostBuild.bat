@@ -75,7 +75,7 @@ ECHO "No Configuaration"
 GOTO Close
 
 :DebugOnMax
-START /d "%max_location%" 3dsmax.exe "C:\Users\lpierabella\Desktop\asdasd.max"
+START /d "%max_location%" 3dsmax.exe
 GOTO Close
 
 :Close
