@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using Utilities;
 
 namespace Max2Babylon
@@ -151,6 +152,7 @@ namespace Max2Babylon
 
         public void SetExportLayers(List<IILayer> layers)
         {
+            NodeHandle = 0;
             exportLayers = layers;
             IsDirty = true;
         }
@@ -249,10 +251,13 @@ namespace Max2Babylon
        
             
             string itemGuidStr = propertyName.Remove(0, s_PropertyNamePrefix.Length);
-            
-        
+
+
             if (!Guid.TryParse(itemGuidStr, out itemGuid))
-                throw new Exception("Invalid ID, can't deserialize.");
+            {
+                MessageBox.Show("Error: Invalid ID, can't deserialize.");
+                return;
+            }
 
             IINode iNode = Tools.GetINodeByGuid(itemGuid);
             if (iNode == null)
