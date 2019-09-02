@@ -226,6 +226,14 @@
       <Link>Forms\ExporterForm.Designer.cs</Link>
       <DependentUpon>ExporterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\Forms\LayerSelector.cs">
+      <Link>Forms\LayerSelector.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\LayerSelector.designer.cs">
+      <Link>Forms\LayerSelector.designer.cs</Link>
+      <DependentUpon>LayerSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\Forms\LightPropertiesForm.cs">
       <Link>Forms\LightPropertiesForm.cs</Link>
       <SubType>Form</SubType>
@@ -335,6 +343,10 @@
     <EmbeddedResource Include="..\Forms\ExporterForm.resx">
       <Link>Forms\ExporterForm.resx</Link>
       <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\LayerSelector.resx">
+      <Link>Forms\LayerSelector.resx</Link>
+      <DependentUpon>LayerSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\LightPropertiesForm.resx">
       <Link>Forms\LightPropertiesForm.resx</Link>

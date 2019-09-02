@@ -79,5 +79,21 @@ namespace Max2Babylon
 #endif
                 
         }
+
+        public static List<IILayer> RootLayers()
+        {
+            List<IILayer> rootILayers = new List<IILayer>();
+            int layerCount = Loader.Core.LayerManager.LayerCount;
+            for (int i = 0; i < layerCount; i++)
+            {
+                IILayerProperties l = Loader.IIFPLayerManager.GetLayer(i);
+                if (l.ParentLayerProperties == null)
+                {
+                    rootILayers.Add(Loader.Core.LayerManager.GetLayer(i));
+                }
+            }
+
+            return rootILayers;
+        }
     }
 }

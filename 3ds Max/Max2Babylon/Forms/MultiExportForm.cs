@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using ExplorerFramework;
+using Max2Babylon.Forms;
 using MaxCustomControls.SceneExplorerControls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using SceneExplorer;
@@ -14,7 +15,6 @@ namespace Max2Babylon
     public partial class MultiExportForm : Form
     {
         const bool Default_ExportItemSelected = true;
-        private SceneExplorerDialog sceneExplorer;
 
         ExportItemList exportItemList;
 
@@ -195,6 +195,9 @@ namespace Max2Babylon
         }
 
         
+        private LayerSelector layerSelector;
+        private int layersRowIndex;
+        private int layersColumnIndex;
 
         private void ExportItemGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -255,25 +258,17 @@ namespace Max2Babylon
             // double-clicked layers column cell, select some layers!
             if(e.ColumnIndex == ColumnLayers.Index)
             {
-                if (sceneExplorer==null )
-                {
-                    sceneExplorer = new SceneExplorerDialog("Layer to Export");
-                    sceneExplorer.ExplorerControl.EditingEnabled = false;
-                    sceneExplorer.Closed += SceneExplorerOnClosed;
-                    sceneExplorer.Show();
-                    layersRowIndex = e.RowIndex;
-                    layersColumnIndex = e.ColumnIndex;
-                    //todo: improve this  explorer, should display only layers
-                }
+                layerSelector = new LayerSelector();
+                layersRowIndex = e.RowIndex;
+                layersColumnIndex = e.ColumnIndex;
+                layerSelector.Show();
+                layerSelector.OnConfirmButtonClicked += SceneExplorerOnClosed;
             }
         }
 
-        private int layersRowIndex;
-        private int layersColumnIndex;
-
         private void SceneExplorerOnClosed(object sender, EventArgs e)
         {
-            List<IILayer> selectedLayers = LayerUtilities.GetSelectedLayers(sceneExplorer);
+            List<IILayer> selectedLayers = layerSelector.selectedLayers;
 
             if (selectedLayers.Count>0)
             {
@@ -303,8 +298,6 @@ namespace Max2Babylon
                 ExportItemGridView.NotifyCurrentCellDirty(true);
                 ExportItemGridView.EndEdit();
             }
-
-            sceneExplorer = null;
         }
 
         private void ExportItemGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
