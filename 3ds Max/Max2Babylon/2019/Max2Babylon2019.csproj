@@ -69,6 +69,7 @@
     </Reference>
     <Reference Include="ExplorerFramework">
       <HintPath>Refs\ExplorerFramework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="GDImageLibrary">
       <HintPath>..\..\Refs\GDImageLibrary.dll</HintPath>
@@ -80,6 +81,7 @@
     </Reference>
     <Reference Include="MaxCustomControls">
       <HintPath>Refs\MaxCustomControls.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,6 +100,7 @@
     </Reference>
     <Reference Include="SceneExplorer">
       <HintPath>Refs\SceneExplorer.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.3.1.1\lib\net45\SharpDX.dll</HintPath>
