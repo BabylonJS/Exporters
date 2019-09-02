@@ -254,8 +254,8 @@ namespace Max2Babylon
 
 
             if (!Guid.TryParse(itemGuidStr, out itemGuid))
-            {
-                MessageBox.Show("Error: Invalid ID, can't deserialize.");
+            {   
+                Loader.Core.PushPrompt("Error: Invalid ID, can't deserialize.");
                 return;
             }
 
