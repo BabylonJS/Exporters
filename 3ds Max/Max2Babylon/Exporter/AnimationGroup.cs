@@ -549,37 +549,39 @@ namespace Max2Babylon
             //replace animationList guid to have distinct list of AnimationGroup for each container
             string animationListStr = string.Empty;
             container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
-            string[] animationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
-            foreach (string guidStr in animationGroupGuid)
+            if (!string.IsNullOrEmpty(animationListStr))
             {
-                if (string.IsNullOrEmpty(guidStr)) continue;
-                Guid newAnimGroupGuid = Guid.NewGuid();
-                helperPropBuffer = helperPropBuffer.Replace(guidStr, newAnimGroupGuid.ToString());
-            }
-
-            container.BabylonContainerHelper().SetUserPropBuffer(helperPropBuffer);
-
-            //add ID of container to animationGroup name to identify animation in viewer
-            container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
-            string[] newAnimationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
-            int containerID = 0;
-            container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
-            if (containerID > 0)
-            {
-                foreach (string guidStr in newAnimationGroupGuid)
+                string[] animationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
+                foreach (string guidStr in animationGroupGuid)
                 {
-                    string propertiesString = string.Empty;
-                    if (!container.BabylonContainerHelper().GetUserPropString(guidStr, ref propertiesString))
-                        return;
+                    Guid newAnimGroupGuid = Guid.NewGuid();
+                    helperPropBuffer = helperPropBuffer.Replace(guidStr, newAnimGroupGuid.ToString());
+                }
+            
+                container.BabylonContainerHelper().SetUserPropBuffer(helperPropBuffer);
 
-                    string[] properties = propertiesString.Split(AnimationGroup.s_PropertySeparator);
-                    if (properties.Length < 4)
-                        throw new Exception("Invalid number of properties, can't deserialize.");
+                //add ID of container to animationGroup name to identify animation in viewer
+                container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
+                string[] newAnimationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
+                int containerID = 0;
+                container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
+                if (containerID > 0)
+                {
+                    foreach (string guidStr in newAnimationGroupGuid)
+                    {
+                        string propertiesString = string.Empty;
+                        if (!container.BabylonContainerHelper().GetUserPropString(guidStr, ref propertiesString))
+                            return;
 
-                    string name = properties[0];
-                    propertiesString = propertiesString.Replace(name, name + "_ID_" + containerID);
+                        string[] properties = propertiesString.Split(AnimationGroup.s_PropertySeparator);
+                        if (properties.Length < 4)
+                            throw new Exception("Invalid number of properties, can't deserialize.");
 
-                    container.BabylonContainerHelper().SetUserPropString(guidStr, propertiesString);
+                        string name = properties[0];
+                        propertiesString = propertiesString.Replace(name, name + "_ID_" + containerID);
+
+                        container.BabylonContainerHelper().SetUserPropString(guidStr, propertiesString);
+                    }
                 }
             }
         }
