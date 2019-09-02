@@ -23,14 +23,31 @@ namespace Max2Babylon.Forms
             FillTreeView();
         }
 
+        public LayerSelector(List<IILayer> previoslySelected)
+        {
+            if (previoslySelected != null)
+            {
+                selectedLayers = previoslySelected;
+            }
+            InitializeComponent();
+            FillTreeView();
+        }
+
         private void FillTreeView()
         {
             layerTreeView.Nodes.Clear();
             List<IILayer> rootLayers = LayerUtilities.RootLayers();
             for (int i = 0; i < rootLayers.Count; i++)
             {
-                layerTreeView.Nodes.Add(rootLayers[i].Name);
-                BuildLayerTreeRecusively(rootLayers[i],i,layerTreeView.Nodes);
+                IILayer layer = rootLayers[i];
+                TreeNode layerNode = layerTreeView.Nodes.Add(layer.Name);
+
+                if (selectedLayers.Contains(layer))
+                {
+                    layerNode.Checked = true;
+                }
+
+                BuildLayerTreeRecusively(layer,i,layerTreeView.Nodes);
             }
         }
 
@@ -38,9 +55,14 @@ namespace Max2Babylon.Forms
         {
             for (int i = 0; i < layer.NumOfChildLayers; i++)
             {
-                IILayer l = layer.GetChildLayer(i);
-                treeNodeCollection[index].Nodes.Add(l.Name);
-                BuildLayerTreeRecusively(l, i, treeNodeCollection[index].Nodes);
+                IILayer childLayer = layer.GetChildLayer(i);
+                TreeNode layerNode = treeNodeCollection[index].Nodes.Add(childLayer.Name);
+
+                if (selectedLayers.Contains(layer))
+                {
+                    layerNode.Checked = true;
+                }
+                BuildLayerTreeRecusively(childLayer, i, treeNodeCollection[index].Nodes);
             }
         }
 
@@ -65,5 +87,6 @@ namespace Max2Babylon.Forms
         {
             Dispose();
         }
+
     }
 }

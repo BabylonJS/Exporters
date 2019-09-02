@@ -258,9 +258,19 @@ namespace Max2Babylon
             // double-clicked layers column cell, select some layers!
             if(e.ColumnIndex == ColumnLayers.Index)
             {
-                layerSelector = new LayerSelector();
                 layersRowIndex = e.RowIndex;
                 layersColumnIndex = e.ColumnIndex;
+                ExportItem existingItem = ExportItemGridView.Rows[layersRowIndex].Tag as ExportItem;
+                
+                if (existingItem != null)
+                {
+                    layerSelector = new LayerSelector(existingItem.Layers);
+                }
+                else
+                {
+                    layerSelector = new LayerSelector();
+                }
+                
                 layerSelector.Show();
                 layerSelector.OnConfirmButtonClicked += SceneExplorerOnClosed;
             }
