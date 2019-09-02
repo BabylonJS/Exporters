@@ -828,6 +828,8 @@ namespace Max2Babylon
             IINode babylonHelper = containerObject.ContainerNode.FindChildNode("BabylonAnimationHelper");
             if (babylonHelper == null)
             {
+                MessageBox.Show($"Container {containerObject.ContainerNode.Name} has no Babylon Animation Helper, " +
+                                $"a default one has been created, this process should be done on the container source");
                 IDummyObject dummy = Loader.Global.DummyObject.Create();
                 babylonHelper = Loader.Core.CreateObjectNode(dummy, "BabylonAnimationHelper");
 
