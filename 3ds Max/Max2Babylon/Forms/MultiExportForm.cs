@@ -3,7 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using ExplorerFramework;
+using Max2Babylon.Forms;
+using MaxCustomControls.SceneExplorerControls;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using SceneExplorer;
 using Utilities;
 
 namespace Max2Babylon
@@ -32,6 +36,7 @@ namespace Max2Babylon
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
+                row.Cells.Add(new DataGridViewTextBoxCell());
                 SetRowData(row, item);
                 ExportItemGridView.Rows.Add(row);
             }
@@ -41,9 +46,11 @@ namespace Max2Babylon
         {
             row.Tag = item;
             row.Cells[0].Value = item.Selected;
-            row.Cells[1].Value = item.NodeName;
-            row.Cells[2].Value = item.ExportFilePathAbsolute;
-            row.Cells[3].Value = item.ExportTexturesesFolderPath;
+            row.Cells[1].Value = item.LayersToString(item.Layers);
+            row.Cells[2].Value = item.NodeName;
+            row.Cells[3].Value = item.ExportFilePathAbsolute;
+            row.Cells[4].Value = item.ExportTexturesesFolderPath;
+            Refresh();
         }
 
         private string GetUniqueExportPath(string initialPath)
@@ -87,6 +94,21 @@ namespace Max2Babylon
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension, nodeHandle);
             item.SetExportFilePath(GetUniqueExportPath(exportPath != null ? exportPath : item.ExportFilePathRelative));
             item.SetExportTexturesFolderPath(item.ExportTexturesesFolderPath);
+            item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
+            exportItemList.Add(item);
+            return item;
+        }
+
+        private ExportItem TryAddExportItem(DataGridViewRow row,List<IILayer> iLayers)
+        {
+            foreach(ExportItem existingItem in exportItemList)
+            {
+                if (existingItem.Layers == iLayers)
+                    return null;
+            }
+
+            ExportItem item = new ExportItem(iLayers);
+            item.NodeHandle = Loader.Core.RootNode.Handle;
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
             exportItemList.Add(item);
             return item;
@@ -172,6 +194,11 @@ namespace Max2Babylon
             }
         }
 
+        
+        private LayerSelector layerSelector;
+        private int layersRowIndex;
+        private int layersColumnIndex;
+
         private void ExportItemGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             // double-clicked node column cell, select a node!
@@ -185,8 +212,18 @@ namespace Max2Babylon
                     IINode node = Loader.Core.GetSelNode(0);
 
                     if (existingItem == null)
+                    {
                         existingItem = TryAddExportItem(selectedRow, node.Handle);
-                    else existingItem.NodeHandle = node.Handle;
+                    }
+                    else
+                    {
+                        if (existingItem.Layers.Count > 0)
+                        {
+                            MessageBox.Show("You can't specify a Node when export is layer based");
+                            return;
+                        }
+                        existingItem.NodeHandle = node.Handle;
+                    }
                     
                     // may be null after trying to add a node that already exists in another row
                     if(existingItem != null) SetRowData(selectedRow, existingItem);
@@ -216,6 +253,61 @@ namespace Max2Babylon
                     ExportItemGridView.EndEdit();
                 }
             }
+
+
+            // double-clicked layers column cell, select some layers!
+            if(e.ColumnIndex == ColumnLayers.Index)
+            {
+                layersRowIndex = e.RowIndex;
+                layersColumnIndex = e.ColumnIndex;
+                ExportItem existingItem = ExportItemGridView.Rows[layersRowIndex].Tag as ExportItem;
+                
+                if (existingItem != null)
+                {
+                    layerSelector = new LayerSelector(existingItem.Layers);
+                }
+                else
+                {
+                    layerSelector = new LayerSelector();
+                }
+                
+                layerSelector.Show();
+                layerSelector.OnConfirmButtonClicked += SceneExplorerOnClosed;
+            }
+        }
+
+        private void SceneExplorerOnClosed(object sender, EventArgs e)
+        {
+            List<IILayer> selectedLayers = layerSelector.selectedLayers;
+
+            if (selectedLayers.Count>0)
+            {
+                int highestRowIndexEdited = layersRowIndex;
+                var selectedRow = ExportItemGridView.Rows[layersRowIndex];
+
+
+                ExportItem existingItem = selectedRow.Tag as ExportItem;
+
+                if (existingItem == null)
+                {
+                    existingItem = TryAddExportItem(selectedRow, selectedLayers);
+                }
+                else
+                {
+                    existingItem.SetExportLayers(selectedLayers);
+                }
+
+                // may be null after trying to add a node that already exists in another row
+                if (existingItem != null) SetRowData(selectedRow, existingItem);
+
+                // have to explicitly set it dirty for an edge case:
+                // when a new row is added "automatically-programmatically", through notify cell dirty and endedit(),
+                //   if the user then clicks on the checkbox of the newly added row,
+                //     it doesn't add a new row "automatically", whereas otherwise it will.
+                ExportItemGridView.CurrentCell = ExportItemGridView[layersColumnIndex, highestRowIndexEdited];
+                ExportItemGridView.NotifyCurrentCellDirty(true);
+                ExportItemGridView.EndEdit();
+            }
         }
 
         private void ExportItemGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -240,10 +332,10 @@ namespace Max2Babylon
             bool chnageTextureFolderPath = false;
             foreach (DataGridViewCell selectedCell in ExportItemGridView.SelectedCells)
             {
-                int cellIndex = 2;
-                if (selectedCell.OwningRow.Cells[3].Selected)
+                int cellIndex = 3;
+                if (selectedCell.OwningRow.Cells[4].Selected)
                 {
-                    cellIndex = 3;
+                    cellIndex = 4;
                     chnageTextureFolderPath = true;
                 }
                 DataGridViewCell matchingPathCell = selectedCell.OwningRow.Cells[cellIndex];
@@ -287,9 +379,6 @@ namespace Max2Babylon
                 {
                     string oldFileName = Path.GetFileNameWithoutExtension(selectedCell.Value as string);
                     string oldExtension = Path.GetExtension(selectedCell.Value as string);
-                        
-                    if (forcedFileName != null && string.IsNullOrWhiteSpace(oldFileName))
-                        return;
 
                     string newPath = Path.Combine(dir, forcedFileName ?? oldFileName);
                     newPath = Path.ChangeExtension(newPath, oldExtension);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using Utilities;
 
 namespace Max2Babylon
@@ -10,6 +11,23 @@ namespace Max2Babylon
     public class ExportItem
     {
         public bool IsDirty { get; private set; } = true;
+
+
+        private Guid itemGuid;
+
+        /*item guid is the same of node
+        except when an exportItem is using the rootNode*/
+        public Guid ItemGuid
+        {
+            get
+            {
+                if (Node != null && !Node.IsRootNode)
+                {
+                    return Node.GetGuid();
+                }
+                return itemGuid;
+            }
+        }
 
         public uint NodeHandle
         {
@@ -61,7 +79,15 @@ namespace Max2Babylon
             }
         }
 
-		public bool Selected
+        public List<IILayer> Layers
+        {
+            get
+            {
+                return exportLayers;
+            }
+        }
+
+        public bool Selected
         {
             get { return selected; }
             set
@@ -72,20 +98,25 @@ namespace Max2Babylon
             }
         }
 
-        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"";
+        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"| {4}";
         const char s_PropertySeparator = ';';
-        const string s_PropertyFormat = "{0};{1};{2}";
+        private const char s_ProperyLayerSeparator = '&';
+        const string s_PropertyFormat = "{0};{1};{2};{3}";
         const string s_PropertyNamePrefix = "babylonjs_ExportItem";
 
         private string outputFileExt;
         private IINode exportNode;
+        private List<IILayer> exportLayers;
         private uint exportNodeHandle = uint.MaxValue; // 0 is the scene root node
         private bool selected = true;
         private string exportPathRelative = "";
         private string exportPathAbsolute = "";
         private string exportTexturesFolderPath = "";
 
-        public ExportItem(string outputFileExt) { this.outputFileExt = outputFileExt; }
+        public ExportItem(string outputFileExt)
+        {
+            this.outputFileExt = outputFileExt;
+        }
 
         public ExportItem(string outputFileExt, uint nodeHandle)
         {
@@ -104,29 +135,27 @@ namespace Max2Babylon
             SetExportTexturesFolderPath(null);
         }
 
+        public ExportItem(List<IILayer> layers)
+        {
+            itemGuid = Guid.NewGuid();
+            SetExportLayers(layers); 
+            IsDirty = true;
+        }
+
         public ExportItem(string outputFileExt, string propertyName)
         {
             this.outputFileExt = outputFileExt;
             LoadFromData(propertyName);
         }
 
-        public ExportItem(ExportItem other)
-        {
-            DeepCopyFrom(other);
-        }
+        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderPath, LayersToString(exportLayers)); }
 
-        public void DeepCopyFrom(ExportItem other)
+        public void SetExportLayers(List<IILayer> layers)
         {
-            outputFileExt = other.outputFileExt;
-            exportPathAbsolute = other.exportPathAbsolute;
-            exportPathRelative = other.exportPathRelative;
-            exportNodeHandle = other.exportNodeHandle;
-            NodeName = other.NodeName;
-            selected = other.selected;
+            NodeHandle = 0;
+            exportLayers = layers;
             IsDirty = true;
         }
-
-        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderPath); }
 
         public void SetExportFilePath(string filePath)
         {
@@ -208,28 +237,42 @@ namespace Max2Babylon
 
         #region Serialization
 
-        public string GetPropertyName() { return s_PropertyNamePrefix + exportNodeHandle.ToString(); }
+        public string GetPropertyName()
+        {
+            return s_PropertyNamePrefix + ItemGuid;
+        }
 
         public void LoadFromData(string propertyName)
         {
             if (!propertyName.StartsWith(s_PropertyNamePrefix))
+            {
                 throw new Exception("Invalid property name, can't deserialize.");
-            string uintStr = propertyName.Remove(0, s_PropertyNamePrefix.Length);
+            }
+       
+            
+            string itemGuidStr = propertyName.Remove(0, s_PropertyNamePrefix.Length);
 
-            uint handle;
-            if (!uint.TryParse(uintStr, out handle))
-                throw new Exception("Invalid ID, can't deserialize.");
+
+            if (!Guid.TryParse(itemGuidStr, out itemGuid))
+            {   
+                Loader.Core.PushPrompt("Error: Invalid ID, can't deserialize.");
+                return;
+            }
+
+            IINode iNode = Tools.GetINodeByGuid(itemGuid);
+            if (iNode == null)
+            {
+                iNode = Loader.Core.RootNode;
+            }
 
             // set dirty explicitly just before we start loading, set to false when loading is done
             // if any exception is thrown, it will have a correct value
             IsDirty = true;
 
-            NodeHandle = handle;
-            IINode node = Node;
-            if (node==null) return; // node was deleted
+            NodeHandle = iNode.Handle;
 
             string propertiesString = string.Empty;
-            if (!node.GetUserPropString(propertyName, ref propertiesString))
+            if (!iNode.GetUserPropString(propertyName, ref propertiesString))
                 return; // node has no properties yet
 
             string[] properties = propertiesString.Split(s_PropertySeparator);
@@ -240,8 +283,10 @@ namespace Max2Babylon
             if (!bool.TryParse(properties[0], out selected))
                 throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[0]));
 
+            
             SetExportFilePath(properties[1]);
             SetExportTexturesFolderPath(properties[2]);
+            SetExportLayers(StringToLayers(properties[3]));
 
             IsDirty = false;
         }
@@ -258,7 +303,7 @@ namespace Max2Babylon
             IINode node = Node;
             if (node == null) return false;
 
-            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderPath));
+            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderPath,LayersToString(exportLayers)));
 
             IsDirty = false;
             return true;
@@ -270,6 +315,41 @@ namespace Max2Babylon
             if (node == null) return;
             node.DeleteProperty(GetPropertyName());
             IsDirty = true;
+        }
+
+        public string LayersToString( List<IILayer> layers)
+        {
+            string result = string.Empty;
+            if (layers == null) return result;
+            List<string> layersName = new List<string>();
+
+            foreach (IILayer iLayer in layers)
+            {
+                if(iLayer == null) continue;
+                layersName.Add(iLayer.Name);
+            }
+
+            result = string.Join(s_ProperyLayerSeparator.ToString(), layersName);
+            return result;
+        }
+
+        public List<IILayer> StringToLayers(string layersProperties)
+        {
+            List<IILayer> layers = new List<IILayer>();
+            if (!string.IsNullOrEmpty(layersProperties))
+            {
+                string[] layerNames = layersProperties.Split(s_ProperyLayerSeparator);
+
+                foreach (string layerName in layerNames)
+                {
+                    IILayer l = Loader.Core.LayerManager.GetLayer(layerName);
+                    if (l != null)
+                    {
+                        layers.Add(l);
+                    }
+                }
+            }
+            return layers;
         }
 
         #endregion
@@ -312,7 +392,10 @@ namespace Max2Babylon
                         RemoveAt(i);
                         --i;
                     }
-					else exportItemPropertyNameList.Add(this[i].GetPropertyName());
+                    else
+                    {
+                        exportItemPropertyNameList.Add(this[i].GetPropertyName());
+                    }
                 }
                 else exportItemPropertyNameList.Add(this[i].GetPropertyName());
             }
