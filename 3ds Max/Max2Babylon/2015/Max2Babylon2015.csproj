@@ -67,11 +67,19 @@
       <HintPath>..\..\..\..\..\Repos\Babylon.js\Exporters\3ds Max\Max2Babylon\2015\Refs\Autodesk.Max.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ExplorerFramework">
+      <HintPath>Refs\ExplorerFramework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="GDImageLibrary">
       <HintPath>..\..\Refs\GDImageLibrary.dll</HintPath>
     </Reference>
     <Reference Include="ManagedServices">
       <HintPath>Refs\ManagedServices.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MaxCustomControls">
+      <HintPath>Refs\MaxCustomControls.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
@@ -85,6 +93,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SceneExplorer">
+      <HintPath>Refs\SceneExplorer.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.3.1.1\lib\net45\SharpDX.dll</HintPath>
@@ -213,6 +225,14 @@
       <Link>Forms\ExporterForm.Designer.cs</Link>
       <DependentUpon>ExporterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\Forms\LayerSelector.cs">
+      <Link>Forms\LayerSelector.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\Forms\LayerSelector.designer.cs">
+      <Link>Forms\LayerSelector.designer.cs</Link>
+      <DependentUpon>LayerSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\Forms\LightPropertiesForm.cs">
       <Link>Forms\LightPropertiesForm.cs</Link>
       <SubType>Form</SubType>
@@ -270,6 +290,9 @@
     <Compile Include="..\MaxScriptManager.cs">
       <Link>MaxScriptManager.cs</Link>
     </Compile>
+    <Compile Include="..\Tools\LayerUtilities.cs">
+      <Link>Tools\LayerUtilities.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\MeshUtlities.cs">
       <Link>Tools\MeshUtlities.cs</Link>
     </Compile>
@@ -319,6 +342,10 @@
     <EmbeddedResource Include="..\Forms\ExporterForm.resx">
       <Link>Forms\ExporterForm.resx</Link>
       <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\LayerSelector.resx">
+      <Link>Forms\LayerSelector.resx</Link>
+      <DependentUpon>LayerSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\LightPropertiesForm.resx">
       <Link>Forms\LightPropertiesForm.resx</Link>
