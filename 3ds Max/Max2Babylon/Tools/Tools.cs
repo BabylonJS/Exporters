@@ -841,6 +841,16 @@ namespace Max2Babylon
             return babylonHelper;
         }
 
+        public static bool IsBabylonContainerHelper(this IINode node)
+        {
+            if (node.Name == "BabylonAnimationHelper")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static List<Guid> ToGuids(this IList<uint> handles)
         {
             List<Guid> guids = new List<Guid>();
