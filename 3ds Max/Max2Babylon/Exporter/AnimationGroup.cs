@@ -534,7 +534,7 @@ namespace Max2Babylon
             List<IINode> containerHierarchy = new List<IINode>() { container.ContainerNode };
             containerHierarchy.AddRange(container.ContainerNode.NodeTree());
 
-            int containerID = 0;
+            int containerID = 1;
             container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
 
             //manage multiple containers inherithed from the same source
@@ -549,7 +549,7 @@ namespace Max2Babylon
                 Guid newGuid = n.GetGuid();
                 helperPropBuffer = helperPropBuffer.Replace(oldGuid, newGuid.ToString());
 
-                if (containerID > 0 && !n.Name.EndsWith("_ID_" +containerID))
+                if (containerID > 1 && !n.Name.EndsWith("_ID_" +containerID))
                 {
                     n.Name = $"{n.Name}_ID_{containerID}";
                 }
@@ -573,7 +573,7 @@ namespace Max2Babylon
                 container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
                 string[] newAnimationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
                 
-                if (containerID > 0)
+                if (containerID > 1)
                 {
                     foreach (string guidStr in newAnimationGroupGuid)
                     {
