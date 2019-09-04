@@ -534,9 +534,14 @@ namespace Max2Babylon
             List<IINode> containerHierarchy = new List<IINode>() { container.ContainerNode };
             containerHierarchy.AddRange(container.ContainerNode.NodeTree());
 
+            int containerID = 0;
+            container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
+
             //manage multiple containers inherithed from the same source
             foreach (IINode n in containerHierarchy)
             {
+                if (n.IsBabylonContainerHelper()) continue;
+
                 //change the guid of the node
                 //replace the guid in the babylon helper
                 string oldGuid = n.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
@@ -544,6 +549,10 @@ namespace Max2Babylon
                 Guid newGuid = n.GetGuid();
                 helperPropBuffer = helperPropBuffer.Replace(oldGuid, newGuid.ToString());
 
+                if (containerID > 0 && !n.Name.EndsWith("_ID_" +containerID))
+                {
+                    n.Name = $"{n.Name}_ID_{containerID}";
+                }
             }
 
             //replace animationList guid to have distinct list of AnimationGroup for each container
@@ -563,8 +572,7 @@ namespace Max2Babylon
                 //add ID of container to animationGroup name to identify animation in viewer
                 container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
                 string[] newAnimationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
-                int containerID = 0;
-                container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
+                
                 if (containerID > 0)
                 {
                     foreach (string guidStr in newAnimationGroupGuid)
@@ -578,9 +586,11 @@ namespace Max2Babylon
                             throw new Exception("Invalid number of properties, can't deserialize.");
 
                         string name = properties[0];
-                        propertiesString = propertiesString.Replace(name, name + "_ID_" + containerID);
-
-                        container.BabylonContainerHelper().SetUserPropString(guidStr, propertiesString);
+                        if (!string.IsNullOrEmpty(name) && !name.EndsWith("_ID_" + containerID))
+                        {
+                            propertiesString = propertiesString.Replace(name, name + "_ID_" + containerID);
+                            container.BabylonContainerHelper().SetUserPropString(guidStr, propertiesString);
+                        }
                     }
                 }
             }
