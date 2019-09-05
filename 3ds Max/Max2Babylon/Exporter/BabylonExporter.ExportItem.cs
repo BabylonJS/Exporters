@@ -286,7 +286,13 @@ namespace Max2Babylon
             
             SetExportFilePath(properties[1]);
             SetExportTexturesFolderPath(properties[2]);
-            SetExportLayers(StringToLayers(properties[3]));
+            List<IILayer> layers = StringToLayers(properties[3]);
+            if (layers.Count > 0)
+            {
+                SetExportLayers(layers);
+            }
+
+            
 
             IsDirty = false;
         }
