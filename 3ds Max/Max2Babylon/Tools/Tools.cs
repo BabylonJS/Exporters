@@ -802,7 +802,7 @@ namespace Max2Babylon
 
         public static void ResolveContainer(this IIContainerObject container)
         {
-            int id = 1;
+            int id = 2;
             while (container.GetConflictingContainer()!=null) //container with same guid  && same name exist)
             {
                 bool hasID = Regex.IsMatch(container.ContainerNode.Name, @"_ID_\d+");
@@ -839,6 +839,16 @@ namespace Max2Babylon
                 containerObject.AddNodeToContent(babylonHelper);
             }
             return babylonHelper;
+        }
+
+        public static bool IsBabylonContainerHelper(this IINode node)
+        {
+            if (node.Name == "BabylonAnimationHelper")
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static List<Guid> ToGuids(this IList<uint> handles)
