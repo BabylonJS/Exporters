@@ -217,7 +217,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                        if (existingItem.Layers.Count > 0)
+                        if (existingItem.Layers!= null && existingItem.Layers.Count > 0)
                         {
                             MessageBox.Show("You can't specify a Node when export is layer based");
                             return;
@@ -262,23 +262,18 @@ namespace Max2Babylon
                 layersColumnIndex = e.ColumnIndex;
                 ExportItem existingItem = ExportItemGridView.Rows[layersRowIndex].Tag as ExportItem;
                 
-                if (existingItem != null)
-                {
-                    layerSelector = new LayerSelector(existingItem.Layers);
-                }
-                else
-                {
-                    layerSelector = new LayerSelector();
-                }
-                
+                layerSelector = new LayerSelector();
                 layerSelector.Show();
+                layerSelector.FillLayerSelector(existingItem?.Layers);
+                
+                
                 layerSelector.OnConfirmButtonClicked += SceneExplorerOnClosed;
             }
         }
 
         private void SceneExplorerOnClosed(object sender, EventArgs e)
         {
-            List<IILayer> selectedLayers = layerSelector.selectedLayers;
+            List<IILayer> selectedLayers = layerSelector.SelectedLayers;
 
             if (selectedLayers.Count>0)
             {

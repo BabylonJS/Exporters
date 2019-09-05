@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.Max;
 
@@ -13,27 +7,17 @@ namespace Max2Babylon.Forms
 {
     public partial class LayerSelector : Form
     {
-        public List<IILayer> selectedLayers = new List<IILayer>();
+        public List<IILayer> SelectedLayers { get; private set; }
 
         public event EventHandler OnConfirmButtonClicked;
 
         public LayerSelector()
         {
             InitializeComponent();
-            FillTreeView();
+            SelectedLayers = new List<IILayer>();
         }
 
-        public LayerSelector(List<IILayer> previoslySelected)
-        {
-            if (previoslySelected != null)
-            {
-                selectedLayers = previoslySelected;
-            }
-            InitializeComponent();
-            FillTreeView();
-        }
-
-        private void FillTreeView()
+        public void FillLayerSelector(List<IILayer> previoslySelected)
         {
             layerTreeView.Nodes.Clear();
             List<IILayer> rootLayers = LayerUtilities.RootLayers();
@@ -42,7 +26,7 @@ namespace Max2Babylon.Forms
                 IILayer layer = rootLayers[i];
                 TreeNode layerNode = layerTreeView.Nodes.Add(layer.Name);
 
-                if (selectedLayers.Contains(layer))
+                if (previoslySelected!=null && previoslySelected.Contains(layer))
                 {
                     layerNode.Checked = true;
                 }
@@ -58,7 +42,7 @@ namespace Max2Babylon.Forms
                 IILayer childLayer = layer.GetChildLayer(i);
                 TreeNode layerNode = treeNodeCollection[index].Nodes.Add(childLayer.Name);
 
-                if (selectedLayers.Contains(layer))
+                if (SelectedLayers.Contains(layer))
                 {
                     layerNode.Checked = true;
                 }
@@ -74,7 +58,7 @@ namespace Max2Babylon.Forms
                 if (nodeLayer.Checked)
                 {
                     IILayer l = Loader.Core.LayerManager.GetLayer(nodeLayer.Text);
-                    selectedLayers.Add(l);
+                    SelectedLayers.Add(l);
                 }
             }
 
