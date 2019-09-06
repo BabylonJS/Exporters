@@ -25,6 +25,31 @@ namespace Max2Babylon
             }
         }
 
+        /// <summary>
+        /// Gets the NodeLayerProperties interface
+        /// </summary>
+        public static IInterface_ID NodeLayerProperties
+        {
+            get
+            {
+                return Global.Interface_ID.Create(0x44e025f8, 0x6b071e44);
+
+            }
+        }
+
+        /// <summary>
+        /// Gets the Function-Published layer manager.
+        /// </summary>
+        public static IIFPLayerManager IIFPLayerManager
+        {
+            get 
+            {
+                IInterface_ID iIFPLayerManagerID = Global.Interface_ID.Create((uint)BuiltInInterfaceIDA.LAYERMANAGER_INTERFACE,(uint)BuiltInInterfaceIDB.LAYERMANAGER_INTERFACE);
+                return (IIFPLayerManager) Global.GetCOREInterface(iIFPLayerManagerID);
+            }
+        }
+
+
         public static IInterface14 Core
         {
             get

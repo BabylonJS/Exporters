@@ -38,11 +38,12 @@
             this.btn_change_path = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ExportItemGridView = new System.Windows.Forms.DataGridView();
+            this.SetPathFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ColumnExportCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColumnLayers = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnNode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnTexturesFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SetPathFileDialog = new System.Windows.Forms.SaveFileDialog();
             warningLabel = new System.Windows.Forms.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             panel_buttons = new System.Windows.Forms.Panel();
@@ -88,7 +89,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tableLayoutPanel1.Size = new System.Drawing.Size(758, 80);
+            tableLayoutPanel1.Size = new System.Drawing.Size(927, 80);
             tableLayoutPanel1.TabIndex = 12;
             // 
             // panel_buttons
@@ -98,7 +99,7 @@
             panel_buttons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             panel_buttons.Controls.Add(this.btn_accept);
             panel_buttons.Controls.Add(this.btn_cancel);
-            panel_buttons.Location = new System.Drawing.Point(509, 43);
+            panel_buttons.Location = new System.Drawing.Point(678, 43);
             panel_buttons.MinimumSize = new System.Drawing.Size(94, 34);
             panel_buttons.Name = "panel_buttons";
             panel_buttons.Padding = new System.Windows.Forms.Padding(3);
@@ -143,7 +144,7 @@
             panel2.MinimumSize = new System.Drawing.Size(94, 34);
             panel2.Name = "panel2";
             panel2.Padding = new System.Windows.Forms.Padding(3);
-            panel2.Size = new System.Drawing.Size(315, 34);
+            panel2.Size = new System.Drawing.Size(484, 34);
             panel2.TabIndex = 10;
             // 
             // btn_change_path
@@ -151,7 +152,7 @@
             this.btn_change_path.AutoSize = true;
             this.btn_change_path.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btn_change_path.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btn_change_path.Location = new System.Drawing.Point(154, 3);
+            this.btn_change_path.Location = new System.Drawing.Point(323, 3);
             this.btn_change_path.Name = "btn_change_path";
             this.btn_change_path.Size = new System.Drawing.Size(158, 28);
             this.btn_change_path.TabIndex = 7;
@@ -167,7 +168,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(3);
-            this.panel1.Size = new System.Drawing.Size(764, 341);
+            this.panel1.Size = new System.Drawing.Size(933, 341);
             this.panel1.TabIndex = 0;
             // 
             // ExportItemGridView
@@ -181,6 +182,7 @@
             this.ExportItemGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ExportItemGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnExportCheckbox,
+            this.ColumnLayers,
             this.ColumnNode,
             this.ColumnFilePath,
             this.ColumnTexturesFolder});
@@ -189,13 +191,21 @@
             this.ExportItemGridView.Name = "ExportItemGridView";
             this.ExportItemGridView.RowHeadersWidth = 27;
             this.ExportItemGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.ExportItemGridView.Size = new System.Drawing.Size(758, 255);
+            this.ExportItemGridView.Size = new System.Drawing.Size(927, 255);
             this.ExportItemGridView.TabIndex = 8;
             this.ExportItemGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ExportItemGridView_CellContentClick);
             this.ExportItemGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ExportItemGridView_CellDoubleClick);
             this.ExportItemGridView.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.ExportItemGridView_CellValidating);
             this.ExportItemGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ExportItemGridView_CellValueChanged);
             this.ExportItemGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExportItemGridView_KeyDown);
+            // 
+            // SetPathFileDialog
+            // 
+            this.SetPathFileDialog.FileName = "FileNameUnused";
+            this.SetPathFileDialog.Filter = "All Files|*.*";
+            this.SetPathFileDialog.OverwritePrompt = false;
+            this.SetPathFileDialog.RestoreDirectory = true;
+            this.SetPathFileDialog.Title = "Set multi-export file path.";
             // 
             // ColumnExportCheckbox
             // 
@@ -204,6 +214,14 @@
             this.ColumnExportCheckbox.Name = "ColumnExportCheckbox";
             this.ColumnExportCheckbox.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.ColumnExportCheckbox.Width = 49;
+            // 
+            // ColumnLayers
+            // 
+            this.ColumnLayers.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ColumnLayers.HeaderText = "Layers";
+            this.ColumnLayers.Name = "ColumnLayers";
+            this.ColumnLayers.ReadOnly = true;
+            this.ColumnLayers.Width = 63;
             // 
             // ColumnNode
             // 
@@ -226,21 +244,13 @@
             this.ColumnTexturesFolder.HeaderText = "Textures folder";
             this.ColumnTexturesFolder.Name = "ColumnTexturesFolder";
             // 
-            // SetPathFileDialog
-            // 
-            this.SetPathFileDialog.FileName = "FileNameUnused";
-            this.SetPathFileDialog.Filter = "All Files|*.*";
-            this.SetPathFileDialog.OverwritePrompt = false;
-            this.SetPathFileDialog.RestoreDirectory = true;
-            this.SetPathFileDialog.Title = "Set multi-export file path.";
-            // 
             // MultiExportForm
             // 
             this.AcceptButton = this.btn_accept;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_cancel;
-            this.ClientSize = new System.Drawing.Size(764, 341);
+            this.ClientSize = new System.Drawing.Size(933, 341);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "MultiExportForm";
@@ -267,6 +277,7 @@
         private System.Windows.Forms.SaveFileDialog SetPathFileDialog;
         private System.Windows.Forms.Button btn_change_path;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExportCheckbox;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLayers;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNode;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFilePath;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTexturesFolder;

@@ -77,7 +77,7 @@ namespace BabylonExport.Entities
             maxSimultaneousLights = 4;
             emissive = new[] { 0f, 0f, 0f };
             occlusionStrength = 1.0f;
-            alphaCutOff = 0.4f;
+            alphaCutOff = 0.5f;
             transparencyMode = (int)TransparencyMode.OPAQUE;
 
             clearCoat = new BabylonPBRClearCoat();
