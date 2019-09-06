@@ -574,18 +574,30 @@ namespace Babylon2GLTF
 
         private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
         {
-            if (babylonMaterial.alpha != 1.0f ||
-                (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) ||
-                 babylonMaterial.opacityTexture != null)
-            {
-                // Babylon standard material is assumed to useAlphaFromDiffuseTexture. If not, the alpha mode is a mask.
-                alphaMode = GLTFMaterial.AlphaMode.BLEND.ToString();
-            }
-            else
-            {
-                alphaMode = GLTFMaterial.AlphaMode.OPAQUE.ToString();
-            }
+            // TODO: maybe we want to be able to handle both BabylonStandardMaterial and BabylonPBRMetallicRoughnessMaterial via the relevant fields being dropped to BabylonMaterial?
+            // Serialization is going to be tricky, as we dont want BabylonStandardMaterial.alphaMode and BabylonStandardMaterial.alphaCutoff to be serialized (till we support it officially in-engine)
+            alphaMode = null;
             alphaCutoff = null;
+            switch (babylonMaterial.transparencyMode)
+            {
+                case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE: // reuse the BabylonPBRMaterialMetallicRoughness enum.
+                    alphaMode = GLTFMaterial.AlphaMode.OPAQUE.ToString();
+                    break;
+                case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND:
+                    alphaMode = GLTFMaterial.AlphaMode.BLEND.ToString();
+                    break;
+                case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST:
+                    alphaCutoff = babylonMaterial.alphaCutOff;
+                    alphaMode = GLTFMaterial.AlphaMode.MASK.ToString();
+                    break;
+                case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATESTANDBLEND:
+                    logger.RaiseWarning("GLTFExporter.Material | Alpha test and blend mode is not supported in glTF. Alpha blend is used instead.", 3);
+                    alphaMode = GLTFMaterial.AlphaMode.BLEND.ToString();
+                    break;
+                default:
+                    logger.RaiseWarning("GLTFExporter.Material | Unsupported transparency mode: " + babylonMaterial.transparencyMode, 3);
+                    break;
+            }
         }
 
         private void getAlphaMode(BabylonPBRMetallicRoughnessMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
