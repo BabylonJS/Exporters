@@ -23,6 +23,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public int alphaMode { get; set; }
 
+
+
         public bool isUnlit = false;
 
         public BabylonMaterial(string id)

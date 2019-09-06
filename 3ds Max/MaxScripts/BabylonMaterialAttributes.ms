@@ -20,6 +20,7 @@ version:1
 -- Add Babylon Attributes to all materials used in the scene
 for mat in scenematerials do
 (
+	print ("Adding attributes to " + mat.name)
 	defs = custAttributes.getDefs mat;
 	if defs != undefined then
 	(
