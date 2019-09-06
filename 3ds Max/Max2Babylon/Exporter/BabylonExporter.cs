@@ -201,7 +201,7 @@ namespace Max2Babylon
                 if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
                 if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
             }
-            
+
            
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
@@ -231,9 +231,15 @@ namespace Max2Babylon
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            if (exportNode == null)
+            if (exportNode == null || exportNode.IsRootNode)
+            {
                 gameScene.InitialiseIGame(false);
-            else gameScene.InitialiseIGame(exportNode, true);
+            }
+            else
+            {
+                gameScene.InitialiseIGame(exportNode, true);
+            }
+            
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
@@ -396,7 +402,7 @@ namespace Max2Babylon
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
 
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (node != null && exportNode != null)
+                if (node != null && exportNode != null && !exportNode.IsRootNode)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
 
                 progression += progressionStep;
@@ -554,14 +560,16 @@ namespace Max2Babylon
                 }
             }
 
-            // Animation group
+            // ----------------------------
+            // ----- Animation groups -----
+            // ----------------------------
             RaiseMessage("Export animation groups");
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
 
             if (isBabylonExported)
             {
-                // if there is animationGroup, then remove animations from nodes
+                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
                 if (babylonScene.animationGroups.Count > 0)
                 {
                     foreach (BabylonNode node in babylonScene.MeshesList)
@@ -585,6 +593,7 @@ namespace Max2Babylon
                     }
                 }
 
+                // setup a default skybox for the scene for .Babylon export.
                 var sourcePath = exportParameters.pbrEnvironment;
                 if (!string.IsNullOrEmpty(sourcePath)) {
                     var fileName = Path.GetFileName(sourcePath);
@@ -945,6 +954,17 @@ namespace Max2Babylon
 
         private bool IsNodeExportable(IIGameNode gameNode)
         {
+            if (exportParameters is MaxExportParameters)
+            {
+                MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
+                if (maxExporterParameters.exportLayers!=null && maxExporterParameters.exportLayers.Count>0)
+                {
+                    if (!maxExporterParameters.exportLayers.HaveNode(gameNode.MaxNode))
+                    {
+                        return false;
+                    }
+                }
+            }
             if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
             {
                 return false;

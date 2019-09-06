@@ -9,7 +9,7 @@ using Utilities;
 namespace Babylon2GLTF
 {
     partial class GLTFExporter
-                        {
+    {
 
         private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
@@ -67,15 +67,15 @@ namespace Babylon2GLTF
                         GLTFNode gltfNode;
 
                         if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
-                        {
+                    {
                             ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
-                        }
+                    }
 
                         // export all bones that match this id
                         foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
                         {
                             if (pair.Key.id.Equals(id))
-                            {
+                    {
                                 ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, pair.Key, pair.Value);
                             }
                         }

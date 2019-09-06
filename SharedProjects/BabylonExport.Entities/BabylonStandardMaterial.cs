@@ -82,6 +82,8 @@ namespace BabylonExport.Entities
 
         // Used for gltf
         public float selfIllum;
+        public int transparencyMode;
+        public float alphaCutOff;
 
         public BabylonStandardMaterial(string id) : base(id)
         {

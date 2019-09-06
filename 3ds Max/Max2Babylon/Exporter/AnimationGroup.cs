@@ -506,6 +506,9 @@ namespace Max2Babylon
                     MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be loaded because Container is closed");
                     continue;
                 }
+
+                ResolveMultipleInheritedContainer(iContainerObject);
+
                 //on container added in scene try retrieve info from containers
                 string[] sceneAnimationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
                 string[] containerAnimationPropertyNames = iContainerObject.BabylonContainerHelper().GetStringArrayProperty(s_AnimationListPropertyName);
@@ -521,6 +524,79 @@ namespace Max2Babylon
                 }
             }
         }
+
+        
+        private static void ResolveMultipleInheritedContainer(IIContainerObject container)
+        {
+            string helperPropBuffer = string.Empty;
+            container.BabylonContainerHelper().GetUserPropBuffer(ref helperPropBuffer);
+
+            List<IINode> containerHierarchy = new List<IINode>() { container.ContainerNode };
+            containerHierarchy.AddRange(container.ContainerNode.NodeTree());
+
+            int containerID = 1;
+            container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
+
+            //manage multiple containers inherithed from the same source
+            foreach (IINode n in containerHierarchy)
+            {
+                if (n.IsBabylonContainerHelper()) continue;
+
+                //change the guid of the node
+                //replace the guid in the babylon helper
+                string oldGuid = n.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
+                n.DeleteProperty("babylonjs_GUID");
+                Guid newGuid = n.GetGuid();
+                helperPropBuffer = helperPropBuffer.Replace(oldGuid, newGuid.ToString());
+
+                if (containerID > 1 && !n.Name.EndsWith("_ID_" +containerID))
+                {
+                    n.Name = $"{n.Name}_ID_{containerID}";
+                }
+            }
+
+            //replace animationList guid to have distinct list of AnimationGroup for each container
+            string animationListStr = string.Empty;
+            container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
+            if (!string.IsNullOrEmpty(animationListStr))
+            {
+                string[] animationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
+                foreach (string guidStr in animationGroupGuid)
+                {
+                    Guid newAnimGroupGuid = Guid.NewGuid();
+                    helperPropBuffer = helperPropBuffer.Replace(guidStr, newAnimGroupGuid.ToString());
+                }
+            
+                container.BabylonContainerHelper().SetUserPropBuffer(helperPropBuffer);
+
+                //add ID of container to animationGroup name to identify animation in viewer
+                container.BabylonContainerHelper().GetUserPropString(s_AnimationListPropertyName, ref animationListStr);
+                string[] newAnimationGroupGuid = animationListStr.Split(AnimationGroup.s_PropertySeparator);
+                
+                if (containerID > 1)
+                {
+                    foreach (string guidStr in newAnimationGroupGuid)
+                    {
+                        string propertiesString = string.Empty;
+                        if (!container.BabylonContainerHelper().GetUserPropString(guidStr, ref propertiesString))
+                            return;
+
+                        string[] properties = propertiesString.Split(AnimationGroup.s_PropertySeparator);
+                        if (properties.Length < 4)
+                            throw new Exception("Invalid number of properties, can't deserialize.");
+
+                        string name = properties[0];
+                        if (!string.IsNullOrEmpty(name) && !name.EndsWith("_ID_" + containerID))
+                        {
+                            propertiesString = propertiesString.Replace(name, name + "_ID_" + containerID);
+                            container.BabylonContainerHelper().SetUserPropString(guidStr, propertiesString);
+                        }
+                    }
+                }
+            }
+        }
+
+
 
         public static void RemoveDataOnContainer(IIContainerObject containerObject)
         {
