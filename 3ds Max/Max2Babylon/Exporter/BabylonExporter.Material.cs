@@ -266,6 +266,17 @@ namespace Max2Babylon
                     }
                 }
 
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) || babylonMaterial.opacityTexture != null)
+                {
+                    var alphaTestProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTest");
+                    var alphaTestPercentProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTestPercent");
+                    bool isAlphaTest = alphaTestProperty != null ? alphaTestProperty.GetBoolValue() : false;
+                    float alphaTestPercent = alphaTestPercentProperty != null ? alphaTestPercentProperty.GetFloatValue() : 0.5f; // default alpha test cutoff is 50%
+
+                    babylonMaterial.transparencyMode = isAlphaTest ? (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST : (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    babylonMaterial.alphaCutOff = alphaTestPercent;
+                }
+
                 // Constraints
                 if (babylonMaterial.diffuseTexture != null)
                 {
@@ -436,13 +447,15 @@ namespace Max2Babylon
                     babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
                 }
 
-
                 if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
                     var alphaTestProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTest");
+                    var alphaTestPercentProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTestPercent");
                     bool isAlphaTest = alphaTestProperty != null ? alphaTestProperty.GetBoolValue() : false;
+                    float alphaTestPercent = alphaTestPercentProperty != null ? alphaTestPercentProperty.GetFloatValue() : 0.5f; // default alpha test cutoff is 50%
 
                     babylonMaterial.transparencyMode = isAlphaTest ? (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST : (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    babylonMaterial.alphaCutOff = alphaTestPercent;
                 }
 
                 if (babylonMaterial.emissiveTexture != null)
@@ -623,7 +636,13 @@ namespace Max2Babylon
 
                 if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
-                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    var alphaTestProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTest");
+                    var alphaTestPercentProperty = materialNode.IPropertyContainer.QueryProperty("BabylonAlphaTestPercent");
+                    bool isAlphaTest = alphaTestProperty != null ? alphaTestProperty.GetBoolValue() : false;
+                    float alphaTestPercent = alphaTestPercentProperty != null ? alphaTestPercentProperty.GetFloatValue() : 0.5f; // default alpha test cutoff is 50%
+
+                    babylonMaterial.transparencyMode = isAlphaTest ? (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST : (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    babylonMaterial.alphaCutOff = alphaTestPercent;
                 }
 
                 if (babylonMaterial.metallicRoughnessTexture != null)
