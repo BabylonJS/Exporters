@@ -89,6 +89,25 @@ namespace BabylonJS_Installer
             }
         }
 
+        public void goTab(string soft)
+        {
+            switch (soft)
+            {
+                case "Max":
+                    this.mainTabControl.SelectTab(0);
+                    break;
+                case "Maya":
+                    this.mainTabControl.SelectTab(1);
+                    break;
+                default:
+                    this.mainTabControl.SelectTab(2);
+                    break;
+            }
+        }
+
+
+        #region ---------- CONSOLE
+
         public void log(string text)
         {
             this.log_text.SelectionColor = Color.Blue;
@@ -107,23 +126,9 @@ namespace BabylonJS_Installer
             this.log_text.AppendText(text + "\n");
         }
 
-        public void goTab(string soft)
-        {
-            switch(soft)
-            {
-                case "Max":
-                    this.mainTabControl.SelectTab(0);
-                    break;
-                case "Maya":
-                    this.mainTabControl.SelectTab(1);
-                    break;
-                default:
-                    this.mainTabControl.SelectTab(2);
-                    break;
-            }
-        }
+        #endregion
+        #region ---------- Check the installation folders
 
-        // Check the installation folders
         private void checkInstall (string soft)
         {
             this.locations[soft] = new Dictionary<string, string>();
@@ -186,14 +191,8 @@ namespace BabylonJS_Installer
             button_All_Update.Enabled = !oneEnabled;
         }
 
-        // ---------- UI CLICKS ----------
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        // ---------- UPDATE
+        #endregion
+        #region ---------- UPDATE
 
         private void button_update(string soft, string year)
         {
@@ -249,7 +248,8 @@ namespace BabylonJS_Installer
             this.button_update("Maya", "2017");
         }
 
-        // ---------- DELETE
+        #endregion
+        #region ---------- DELETE
 
         private void button_delete(string soft, string year)
         {
@@ -304,7 +304,8 @@ namespace BabylonJS_Installer
             this.button_delete("Maya", "2017");
         }
 
-        // ---------- LOCATE
+        #endregion
+        #region ---------- LOCATE
 
         private void button_locate(string soft, string year)
         {
@@ -356,5 +357,7 @@ namespace BabylonJS_Installer
         {
             this.button_locate("Maya", "2017");
         }
+
+        #endregion
     }
 }
