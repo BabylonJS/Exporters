@@ -57,7 +57,11 @@ namespace Babylon2GLTF
                 // no minVersion
             };
 
-            gltf.asset.generator = $"babylon.js glTF exporter for {exportParameters.softwarePackageName} {exportParameters.softwareVersion} v{exportParameters.exporterVersion}";
+            var softwarePackageName = babylonScene.producer != null ? babylonScene.producer.name : "";
+            var softwareVersion = babylonScene.producer != null ? babylonScene.producer.version : "";
+            var exporterVersion = babylonScene.producer != null ? babylonScene.producer.exporter_version : "";
+
+            gltf.asset.generator = $"babylon.js glTF exporter for {softwarePackageName} {softwareVersion} v{exporterVersion}";
 
             // Scene
             gltf.scene = 0;
