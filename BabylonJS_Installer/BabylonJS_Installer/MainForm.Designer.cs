@@ -665,7 +665,7 @@
             this.soft_version.Name = "soft_version";
             this.soft_version.Size = new System.Drawing.Size(98, 20);
             this.soft_version.TabIndex = 3;
-            this.soft_version.Text = "  v1.1";
+            this.soft_version.Text = "  v1.1.1";
             this.soft_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // button_All_Update
@@ -709,7 +709,6 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js Exporters";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.mainTabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
