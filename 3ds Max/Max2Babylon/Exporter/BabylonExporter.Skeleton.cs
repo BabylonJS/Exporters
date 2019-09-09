@@ -51,7 +51,7 @@ namespace Max2Babylon
         /// All nodes needed for the skeleton hierarchy
         /// </returns>
         private Dictionary<IIGameSkin, List<IIGameNode>> relevantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
-        private List<IIGameNode> GetRelevantNodes(IIGameSkin skin)
+        private List<IIGameNode> GetSkinnedBones(IIGameSkin skin)
         {
             int logRank = 2;
             
@@ -256,7 +256,7 @@ namespace Max2Babylon
             }
 
             List<int> nodeIndex = new List<int>();
-            List<IIGameNode> revelantNodes = GetRelevantNodes(skin);
+            List<IIGameNode> revelantNodes = GetSkinnedBones(skin);
 
             for (int index = 0; index < revelantNodes.Count; index++)
             {
@@ -300,7 +300,7 @@ namespace Max2Babylon
         {
             List<BabylonBone> bones = new List<BabylonBone>();
             List<int> nodeIndices = GetNodeIndices(skin);
-            List<IIGameNode> revelantNodes = GetRelevantNodes(skin);
+            List<IIGameNode> revelantNodes = GetSkinnedBones(skin);
 
             foreach (IIGameNode node in revelantNodes)
             {
