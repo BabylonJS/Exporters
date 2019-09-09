@@ -21,9 +21,6 @@ namespace BabylonExport.Entities
         public float[] matrix { get; set; }
 
         [DataMember]
-        public float[] worldMatrix { get; set; }
-
-        [DataMember]
         public BabylonAnimation animation { get; set; }
 
         [DataMember]

@@ -124,10 +124,9 @@ namespace Babylon2GLTF
                 //printMatrix("boneLocalMatrix[" + babylonBone.name + "]", boneLocalMatrix);
 
                 BabylonMatrix boneWorldMatrix = null;
-                
                 if (babylonBone.parentBoneIndex == -1)
                 {
-                    boneWorldMatrix = _getBoneWorldMatrix(babylonBone, bones);
+                    boneWorldMatrix = boneLocalMatrix;
                 }
                 else
                 {
@@ -185,13 +184,13 @@ namespace Babylon2GLTF
                 gltfParentNode.ChildrenList.Add(gltfNode.index);
                 gltfNode.parent = gltfParentNode;
             }
-            //else
-            //{
-            //    // It's a root node
-            //    // Only root nodes are listed in a gltf scene
-            //    logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
-            //    gltf.scenes[0].NodesList.Add(gltfNode.index);
-            //}
+            else
+            {
+                // It's a root node
+                // Only root nodes are listed in a gltf scene
+                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
+                gltf.scenes[0].NodesList.Add(gltfNode.index);
+            }
 
             // Transform
             // Bones transform are exported through translation/rotation/scale (TRS) rather than matrix
@@ -240,13 +239,9 @@ namespace Babylon2GLTF
         {
             var boneLocalMatrix = new BabylonMatrix();
             boneLocalMatrix.m = babylonBone.matrix;
-
-            var  boneWorldMatrix = new BabylonMatrix();
-            boneWorldMatrix.m = babylonBone.worldMatrix;
-            //top root node of skeleton could have non joint parent
             if (babylonBone.parentBoneIndex == -1)
             {
-                return boneWorldMatrix;
+                return boneLocalMatrix;
             }
             else
             {
