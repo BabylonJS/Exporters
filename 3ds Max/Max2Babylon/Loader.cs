@@ -49,6 +49,15 @@ namespace Max2Babylon
             }
         }
 
+        public static IIObjXRefManager18 IIObjXRefManager
+        {
+            get
+            {
+                return Loader.Global.IObjXRefManager18.Instance_;
+
+            }
+        }
+
 
         public static IInterface14 Core
         {
