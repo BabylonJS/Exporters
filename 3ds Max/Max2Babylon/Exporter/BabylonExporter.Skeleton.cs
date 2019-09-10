@@ -312,10 +312,11 @@ namespace Max2Babylon
             {
                 int parentIndex = (node.NodeParent == null) ? -1 : nodeIndices.IndexOf(node.NodeParent.NodeID);
 
+                string boneId = node.MaxNode.GetGuid().ToString();
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = node.MaxNode.GetGuid().ToString(),
+                    id = (isGltfExported)?boneId:boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
