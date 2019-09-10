@@ -4,8 +4,6 @@ using GLTFExport.Tools;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Autodesk.Max;
-using Max2Babylon;
 
 namespace Babylon2GLTF
 {
