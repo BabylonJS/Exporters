@@ -53,6 +53,12 @@ namespace Max2Babylon
         private Dictionary<IIGameSkin, List<IIGameNode>> relevantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
         private List<IIGameNode> GetSkinnedBones(IIGameSkin skin)
         {
+
+            if (skin == null)
+            {
+                return new List<IIGameNode>();
+            }
+
             int logRank = 2;
             
             // For optimization
@@ -309,7 +315,7 @@ namespace Max2Babylon
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = node.MaxNode.GetGuid().ToString() + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    id = node.MaxNode.GetGuid().ToString(),
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,

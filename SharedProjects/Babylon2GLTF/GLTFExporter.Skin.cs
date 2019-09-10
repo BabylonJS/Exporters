@@ -4,6 +4,8 @@ using GLTFExport.Tools;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Autodesk.Max;
+using Max2Babylon;
 
 namespace Babylon2GLTF
 {
@@ -75,7 +77,8 @@ namespace Babylon2GLTF
             {
                 if (!bonesWorldMatrices.ContainsKey(babylonBone.index))
                 {
-                    BabylonMatrix boneWorldMatrix = _getBoneWorldMatrix(babylonBone, bones);
+                    var nodePair = nodeToGltfNodeMap.First(pair => pair.Key.id.Equals(babylonBone.id));
+                    BabylonMatrix boneWorldMatrix = _getNodeWorldMatrix(nodePair.Value);
                     bonesWorldMatrices.Add(babylonBone.index, boneWorldMatrix);
                 }
             }
@@ -153,29 +156,31 @@ namespace Babylon2GLTF
 
         private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
         {
-            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
-            if (nodeNodePair.Key != null)
-            {
-                return nodeNodePair.Value;
-            }
-
             var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
             if (boneNodePair.Key != null)
             {
                 return boneNodePair.Value;
             }
 
-            // Node
-            var gltfNode = new GLTFNode
+            GLTFNode gltfNode = null;
+            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
+            if (nodeNodePair.Key != null)
+            {
+                return nodeNodePair.Value;
+            }
+
+
+            // A node is a bone and has not been exported yet in gltf node list
+            gltfNode = new GLTFNode
             {
                 name = babylonBone.name,
                 index = gltf.NodesList.Count
             };
             gltf.NodesList.Add(gltfNode);
-            
             boneToGltfNodeMap.Add(babylonBone, gltfNode);
 
             // Hierarchy
+
             if (babylonBone.parentBoneIndex >= 0)
             {
                 var babylonParentBone = bones.Find(_babylonBone => _babylonBone.index == babylonBone.parentBoneIndex);
