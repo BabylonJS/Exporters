@@ -93,7 +93,15 @@ namespace Babylon2GLTF
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
                 progression += progressionStep;
-                logger.ReportProgressChanged((int)progression);
+                //logger.ReportProgressChanged((int)progression);
+                logger.CheckCancelled();
+            });
+
+            babylonRootNodes.ForEach(babylonNode =>
+            {
+                exportNodeTypeRec(babylonNode, gltf, babylonScene);
+                progression += progressionStep;
+                //logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             });
 
@@ -299,9 +307,35 @@ namespace Babylon2GLTF
 
         private void exportNodeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
+            GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
+
+            if (gltfNode != null)
+            {
+                logger.CheckCancelled();
+
+                // export its tag
+                if(!string.IsNullOrEmpty(babylonNode.tags))
+                {
+                    if (gltfNode.extras == null)
+                    {
+                        gltfNode.extras = new Dictionary<string, object>();
+                    }
+                    gltfNode.extras["tags"] = babylonNode.tags;
+                }
+
+                // ...export its children
+                List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
+                babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));
+            }
+        }
+
+        
+        private void exportNodeTypeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
+        {
             var type = babylonNode.GetType();
 
-            GLTFNode gltfNode = ExportNode(babylonNode, gltf, babylonScene, gltfParentNode);
+            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
+            GLTFNode gltfNode = nodeNodePair.Value;
 
             if (gltfNode != null)
             {
@@ -327,21 +361,14 @@ namespace Babylon2GLTF
 
                 logger.CheckCancelled();
 
-                // export its tag
-                if(babylonNode.tags != null && babylonNode.tags != "")
-                {
-                    if (gltfNode.extras == null)
-                    {
-                        gltfNode.extras = new Dictionary<string, object>();
-                    }
-                    gltfNode.extras["tags"] = babylonNode.tags;
-                }
-
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
-                babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));
+                babylonDescendants.ForEach(descendant => exportNodeTypeRec(descendant, gltf, babylonScene, gltfNode));
             }
         }
+
+
+
 
         private List<BabylonNode> getDescendants(BabylonNode babylonNode)
         {
@@ -460,12 +487,6 @@ namespace Babylon2GLTF
             if (nodeNodePair.Key != null)
             {
                 return nodeNodePair.Value;
-            }
-
-            var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
-            if (boneNodePair.Key != null)
-            {
-                return boneNodePair.Value;
             }
 
             // Node
