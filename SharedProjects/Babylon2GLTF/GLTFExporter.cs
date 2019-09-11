@@ -83,8 +83,10 @@ namespace Babylon2GLTF
 
             // Root nodes
             logger.RaiseMessage("GLTFExporter | Exporting nodes");
+            progression = 30.0f;
+            logger.ReportProgressChanged((int)progression);
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
-            progressionStep = 40.0f / babylonRootNodes.Count;
+            progressionStep = 30.0f / babylonRootNodes.Count;
             alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
             nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
             boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
@@ -93,19 +95,26 @@ namespace Babylon2GLTF
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
                 progression += progressionStep;
-                //logger.ReportProgressChanged((int)progression);
+                logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             });
 
+            //Skin bones and Cameras
+            logger.RaiseMessage("GLTFExporter | Exporting bones and cameras");
+            progression = 50.0f;
+            logger.ReportProgressChanged((int)progression);
+            progressionStep = 50.0f / babylonRootNodes.Count;
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeTypeRec(babylonNode, gltf, babylonScene);
                 progression += progressionStep;
-                //logger.ReportProgressChanged((int)progression);
+                logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             });
 
             // Materials
+            progression = 70.0f;
+            logger.ReportProgressChanged((int)progression);
             logger.RaiseMessage("GLTFExporter | Exporting materials");
             foreach (var babylonMaterial in babylonMaterialsToExport)
             {
@@ -115,6 +124,8 @@ namespace Babylon2GLTF
             logger.RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
 
             // Animations
+            progression = 90.0f;
+            logger.ReportProgressChanged((int)progression);
             logger.RaiseMessage("GLTFExporter | Exporting Animations");
             ExportAnimationGroups(gltf, babylonScene);
 
@@ -333,6 +344,7 @@ namespace Babylon2GLTF
         private void exportNodeTypeRec(BabylonNode babylonNode, GLTF gltf, BabylonScene babylonScene, GLTFNode gltfParentNode = null)
         {
             var type = babylonNode.GetType();
+            logger.RaiseMessage($"GLTFExporter | ExportNode {babylonNode.name} of Type {type.ToString()}", 1);
 
             var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonNode.id));
             GLTFNode gltfNode = nodeNodePair.Value;
