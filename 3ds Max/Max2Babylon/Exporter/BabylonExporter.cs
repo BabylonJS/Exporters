@@ -192,8 +192,12 @@ namespace Max2Babylon
 
         public void Export(ExportParameters exportParameters)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             this.exportParameters = exportParameters;
             IINode exportNode = null;
+            
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
@@ -202,7 +206,12 @@ namespace Max2Babylon
                 if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
             }
 
-           
+            string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
+            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
+
+
+            var t1 = watch.ElapsedMilliseconds / 1000.0;
+            RaiseMessage(string.Format("Containers merged in {0:0.00}s", t1 ), Color.Blue);
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
@@ -246,10 +255,7 @@ namespace Max2Babylon
 
             IsCancelled = false;
 
-            string fileExportString = exportNode != null
-                ? $"{exportNode.NodeName} | {exportParameters.outputPath}"
-                : exportParameters.outputPath;
-            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
+            
             ReportProgressChanged(0);
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -275,8 +281,7 @@ namespace Max2Babylon
 
             var rawScene = Loader.Core.RootNode;
 
-            var watch = new Stopwatch();
-            watch.Start();
+           
 
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
@@ -559,6 +564,9 @@ namespace Max2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
+            
+            var t2 = watch.ElapsedMilliseconds / 1000.0 -t1;
+            RaiseMessage(string.Format("Noded exported in {0:0.00}s", t2), Color.Blue);
 
             // ----------------------------
             // ----- Animation groups -----
@@ -566,6 +574,9 @@ namespace Max2Babylon
             RaiseMessage("Export animation groups");
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+
+            var t3 = watch.ElapsedMilliseconds / 1000.0 -t2;
+            RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", t3), Color.Blue);
 
             if (isBabylonExported)
             {
@@ -627,7 +638,6 @@ namespace Max2Babylon
                     }
                 }
             }
-
 
             // Output
             babylonScene.Prepare(false, false);
