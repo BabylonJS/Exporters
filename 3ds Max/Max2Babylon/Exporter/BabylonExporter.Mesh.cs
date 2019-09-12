@@ -741,13 +741,14 @@ namespace Max2Babylon
             var vertex = new GlobalVertex
             {
                 BaseIndex = vertexIndex,
-                Position = mesh.GetVertex(vertexIndex, false), // world space
+                Position = mesh.GetVertex(vertexIndex, true), // retrieve in object space to keep precision
                 Normal = mesh.GetNormal((int)face.Norm[facePart], true) // object space (world space was somehow bugged for normal)
             };
             //System.Diagnostics.Debug.WriteLine("vertex normal: " + string.Join(", ", vertex.Normal.ToArray().Select(v => Math.Round(v, 3))));
+                       
 
-            // position (from world to local/node space)
-            vertex.Position = invertedWorldMatrix.PointTransform(vertex.Position);
+            // convert from object to local/node space
+            vertex.Position = offsetTM.PointTransform(vertex.Position);
 
             // normal (from object to local/node space)
             vertex.Normal = offsetTM.VectorTransform(vertex.Normal).Normalize;
