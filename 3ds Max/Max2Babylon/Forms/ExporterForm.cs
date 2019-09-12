@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Utilities;
 using Color = System.Drawing.Color;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Collections.Generic;
 
 namespace Max2Babylon
 {
@@ -282,6 +283,14 @@ namespace Max2Babylon
         {
             SaveOptions();
 
+            //store layer visibility status and force visibility on
+            Dictionary<IILayer, bool> layerState =  new Dictionary<IILayer, bool>();
+            foreach (IILayer layer in exportItem.Layers)
+            {
+                layerState.Add(layer, layer.PrimaryVisibility);
+                layer.PrimaryVisibility = true;
+            }
+
             exporter = new BabylonExporter();
 
             if (clearLogs)
@@ -408,6 +417,12 @@ namespace Max2Babylon
             butExportAndRun.Enabled = WebServer.IsSupported;
 
             BringToFront();
+
+            //re-store layer visibility status
+            foreach (IILayer layer in exportItem.Layers)
+            {
+                layer.PrimaryVisibility = layerState[layer];
+            }
 
             return success;
         }
