@@ -287,8 +287,8 @@ namespace Max2Babylon
             Dictionary<IILayer, bool> layerState =  new Dictionary<IILayer, bool>();
             foreach (IILayer layer in exportItem.Layers)
             {
-                layerState.Add(layer, layer.PrimaryVisibility);
-                layer.PrimaryVisibility = true;
+                layerState.Add(layer, layer.IsHidden(false));
+                layer.Hide(false,false);
             }
 
             exporter = new BabylonExporter();
@@ -421,7 +421,7 @@ namespace Max2Babylon
             //re-store layer visibility status
             foreach (IILayer layer in exportItem.Layers)
             {
-                layer.PrimaryVisibility = layerState[layer];
+                layer.Hide(layerState[layer], false);
             }
 
             return success;
