@@ -287,7 +287,12 @@ namespace Max2Babylon
             Dictionary<IILayer, bool> layerState =  new Dictionary<IILayer, bool>();
             foreach (IILayer layer in exportItem.Layers)
             {
+#if MAX2015
+                layerState.Add(layer, layer.IsHidden);
+#else
                 layerState.Add(layer, layer.IsHidden(false));
+#endif
+
                 layer.Hide(false,false);
             }
 
