@@ -678,7 +678,11 @@ namespace Max2Babylon
             
             IPolyObject polyObject = node.GetPolyObjectFromNode();
             IEPoly flattenEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+#if MAX2020
+            IINodeTab toflatten = Loader.Global.INodeTab.Create();
+#else
             IINodeTab toflatten = Loader.Global.NodeTab.Create();
+#endif
             foreach (IINode n in node.NodeTree())
             {
                 toflatten.AppendNode(n,false,1);
@@ -708,9 +712,9 @@ namespace Max2Babylon
             return false;
         }
 
-        #endregion
+#endregion
 
-        #region GUID
+#region GUID
 
 
         public static void MergeAllXrefRecords()
@@ -1009,10 +1013,10 @@ namespace Max2Babylon
             }
             return uid;
         }
-        #endregion
+#endregion
 
 
-        #region UserProperties
+#region UserProperties
 
         public static void SetStringProperty(this IINode node, string propertyName, string defaultState)
         {
@@ -1142,9 +1146,9 @@ namespace Max2Babylon
             return false;
         }
 
-        #endregion
+#endregion
 
-        #region AnimationGroup Helpers
+#region AnimationGroup Helpers
         public static int CalculateEndFrameFromAnimationGroupNodes(AnimationGroup animationGroup)
         {
             int endFrame = 0;
@@ -1189,10 +1193,10 @@ namespace Max2Babylon
             return false;
         }
 
-        #endregion
+#endregion
 
 
-        #region Windows.Forms.Control Serialization
+#region Windows.Forms.Control Serialization
 
         public static bool PrepareCheckBox(CheckBox checkBox, IINode node, string propertyName, int defaultState = 0)
         {
@@ -1337,10 +1341,10 @@ namespace Max2Babylon
                 UpdateComboBox(comboBox, node, propertyName);
             }
         }
-        #endregion
+#endregion
 
 
-        #region Windows.Forms Helpers
+#region Windows.Forms Helpers
 
         /// <summary>
         /// Enumerates the whole tree, excluding the given node.
@@ -1355,9 +1359,9 @@ namespace Max2Babylon
             }
         }
 
-        #endregion
+#endregion
 
-        #region File Path
+#region File Path
 
         public static string RelativePathStore(string path)
         {
@@ -1412,7 +1416,7 @@ namespace Max2Babylon
         }
 
 
-        #endregion
+#endregion
 
         
     }
