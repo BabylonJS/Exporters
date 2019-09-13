@@ -15,8 +15,8 @@ namespace Max2Babylon
     public partial class MultiExportForm : Form
     {
         const bool Default_ExportItemSelected = true;
-
-        ExportItemList exportItemList;
+        private CommonOpenFileDialog setTexturesFolderDialog;
+        private ExportItemList exportItemList;
 
         public MultiExportForm(ExportItemList exportItemList)
         {
@@ -365,7 +365,7 @@ namespace Max2Babylon
             }
 
             SetPathFileDialog.FileName = pathCells.Count <= 1 ? SetPathFileDialog.FileName : "FileName not used for multiple file path changes";
-
+            
             if (SetPathFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string dir = Path.GetDirectoryName(SetPathFileDialog.FileName);
@@ -373,10 +373,12 @@ namespace Max2Babylon
                 Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
                 {
                     string oldFileName = Path.GetFileNameWithoutExtension(selectedCell.Value as string);
-                    string oldExtension = Path.GetExtension(selectedCell.Value as string);
-
                     string newPath = Path.Combine(dir, forcedFileName ?? oldFileName);
-                    newPath = Path.ChangeExtension(newPath, oldExtension);
+                    
+                    string oldExtension = Path.GetExtension(selectedCell.Value as string);
+                    string newExtension = (string.IsNullOrWhiteSpace(oldExtension)) ? exportItemList.OutputFileExtension : oldExtension;
+                    
+                    newPath = Path.ChangeExtension(newPath, newExtension);
 
                     // change cell value, which triggers value changed event to update the export item
                     selectedCell.Value = newPath;
@@ -391,26 +393,39 @@ namespace Max2Babylon
 
         private void ShowTexturesFolderDialog(List<DataGridViewCell> pathCells)
         {
-            string intialDirectory = pathCells[0].Value as string;
+            
+            if (setTexturesFolderDialog != null)
+            {                
+                return;
+            }
+            
 
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+           string intialDirectory = pathCells[0].Value as string;
 
             if (!Directory.Exists(intialDirectory))
             {
                 intialDirectory = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
             }
-            
+
             if (!Directory.Exists(intialDirectory))
             {
                 intialDirectory = null;
             }
 
-            dialog.InitialDirectory = intialDirectory;
-            dialog.IsFolderPicker = true;
-
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            setTexturesFolderDialog = new CommonOpenFileDialog()
             {
-                string selectedFolder = dialog.FileName;
+                EnsurePathExists = true,
+                EnsureFileExists = false,
+                AllowNonFileSystemItems = false,
+                DefaultFileName = "Textures",
+                Title = "Select Texture folder. This will be used as output folder for textures of exported item",
+                InitialDirectory = intialDirectory,
+                IsFolderPicker = true
+            };
+
+            if (setTexturesFolderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string selectedFolder = setTexturesFolderDialog.FileName;
 
                 Action<DataGridViewCell, string> funcUpdatePath = (DataGridViewCell selectedCell, string forcedFileName) => 
                 {
@@ -421,6 +436,7 @@ namespace Max2Babylon
 
                     // change cell value, which triggers value changed event to update the export item
                     selectedCell.Value = selectedFolder;
+                    setTexturesFolderDialog = null;
                 };
 
                 if (pathCells.Count > 1)
