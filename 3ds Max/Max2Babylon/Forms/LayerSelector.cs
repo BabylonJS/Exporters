@@ -50,17 +50,26 @@ namespace Max2Babylon.Forms
             }
         }
 
-        private void confirmButton_Click(object sender, EventArgs e)
+        private void CalculateSelectedLayers(TreeNodeCollection nodeLayers)
         {
-            for (int i = 0; i <  layerTreeView.Nodes.Count; i++)
+            for (int i = 0; i < nodeLayers.Count; i++)
             {
-                TreeNode nodeLayer = layerTreeView.Nodes[i];
-                if (nodeLayer.Checked)
+                TreeNode nodeLayer = nodeLayers[i];
+                if (!nodeLayer.Checked && nodeLayer.Nodes != null)
+                {
+                    CalculateSelectedLayers(nodeLayer.Nodes);
+                }
+                else
                 {
                     IILayer l = Loader.Core.LayerManager.GetLayer(nodeLayer.Text);
                     SelectedLayers.Add(l);
                 }
             }
+        }
+
+        private void confirmButton_Click(object sender, EventArgs e)
+        {
+            CalculateSelectedLayers(layerTreeView.Nodes);
 
             OnConfirmButtonClicked?.Invoke(this,EventArgs.Empty);
             Dispose();

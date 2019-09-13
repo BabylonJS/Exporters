@@ -261,17 +261,24 @@ namespace Max2Babylon
                 layersRowIndex = e.RowIndex;
                 layersColumnIndex = e.ColumnIndex;
                 ExportItem existingItem = ExportItemGridView.Rows[layersRowIndex].Tag as ExportItem;
+                if (layerSelector == null || layerSelector.IsDisposed)
+                {
+                    layerSelector = new LayerSelector();
+                    layerSelector.Show();
+                    layerSelector.FillLayerSelector(existingItem?.Layers);
+
+                    layerSelector.OnConfirmButtonClicked += LayerExplorerClosed;
+                }
+                else
+                {
+                    layerSelector.Focus();
+                }
                 
-                layerSelector = new LayerSelector();
-                layerSelector.Show();
-                layerSelector.FillLayerSelector(existingItem?.Layers);
-                
-                
-                layerSelector.OnConfirmButtonClicked += SceneExplorerOnClosed;
+
             }
         }
 
-        private void SceneExplorerOnClosed(object sender, EventArgs e)
+        private void LayerExplorerClosed(object sender, EventArgs e)
         {
             List<IILayer> selectedLayers = layerSelector.SelectedLayers;
 
