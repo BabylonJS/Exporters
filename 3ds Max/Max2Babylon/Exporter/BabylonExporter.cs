@@ -136,18 +136,6 @@ namespace Max2Babylon
                 return;
 
             }
-            
-            if (node.IsInAnimationGroups(animationGroupList))
-            {
-                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
-                RaiseMessage(message, 0);
-                for (int i = 0; i < node.NumChildren; i++)
-                {
-                    IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
-                }
-                return;
-            }
 
             if (node.IsNodeTreeAnimated())
             {
@@ -157,6 +145,18 @@ namespace Max2Babylon
                 {
                     IINode n = node.GetChildNode(i);
                     IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+            }
+
+            if (node.IsInAnimationGroups(animationGroupList))
+            {
+                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
                 }
                 return;
             }
@@ -205,6 +205,8 @@ namespace Max2Babylon
                 if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
                 if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
             }
+
+            Tools.InitializeGuidNodesMap();
 
             string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
@@ -399,7 +401,7 @@ namespace Max2Babylon
             var progression = 10.0f;
             ReportProgressChanged((int)progression);
             referencedMaterials.Clear();
-            Tools.guids.Clear();
+
             // Reseting is optionnal. It makes each morph target manager export starts from id = 0.
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)
