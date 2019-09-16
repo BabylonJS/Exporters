@@ -803,6 +803,7 @@ namespace Max2Babylon
 
         public static void ResolveContainer(this IIContainerObject container)
         {
+            guids = new Dictionary<Guid, IAnimatable>();
             int id = 2;
             while (container.GetConflictingContainer()!=null) //container with same guid  && same name exist)
             {
