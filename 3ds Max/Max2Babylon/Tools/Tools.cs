@@ -714,6 +714,16 @@ namespace Max2Babylon
         #region GUID
 
 
+        public static void MergeAllXrefRecords()
+        {
+            for (uint i = 0; i < Loader.IIObjXRefManager.RecordCount; i++)
+            {
+                var record = Loader.IIObjXRefManager.GetRecord(i);
+                Loader.IIObjXRefManager.MergeRecordIntoScene(record);
+            }
+        }
+
+
         public static bool IsMarkedAsNotFlattenable(this IINode node)
         {
             return node.GetBoolProperty("babylonjs_DoNotFlatten");
@@ -1439,5 +1449,7 @@ namespace Max2Babylon
 
 
         #endregion
+
+        
     }
 }
