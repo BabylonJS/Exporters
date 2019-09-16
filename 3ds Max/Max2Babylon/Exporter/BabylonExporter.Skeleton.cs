@@ -320,7 +320,7 @@ namespace Max2Babylon
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
-                    matrix = node.GetLocalTM(0).ToArray()
+                    matrix = (parentIndex==-1)?node.GetWorldTM(0).ToArray():node.GetLocalTM(0).ToArray()
                 };
 
                 // export its animation
