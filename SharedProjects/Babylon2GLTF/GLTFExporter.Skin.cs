@@ -105,7 +105,7 @@ namespace Babylon2GLTF
                 if (!babylonSkeletonExportData.nodeByBone.ContainsKey(babylonBone))
                 {
                     // Export bone as a new node
-                    gltfBoneNode = _exportBone(babylonBone, gltf, babylonSkeleton, bones);
+                    gltfBoneNode = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id)).Value;//_exportBone(babylonBone, gltf, babylonSkeleton, bones);
                     babylonSkeletonExportData.nodeByBone.Add(babylonBone, gltfBoneNode);
                 }
                 gltfBoneNode = babylonSkeletonExportData.nodeByBone[babylonBone];
