@@ -100,7 +100,7 @@ namespace Max2Babylon
 
         const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"| {4}";
         const char s_PropertySeparator = ';';
-        private const char s_ProperyLayerSeparator = '&';
+        private const char s_ProperyLayerSeparator = '~';
         const string s_PropertyFormat = "{0};{1};{2};{3}";
         const string s_PropertyNamePrefix = "babylonjs_ExportItem";
 
