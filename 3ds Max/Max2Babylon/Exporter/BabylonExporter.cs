@@ -199,7 +199,11 @@ namespace Max2Babylon
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
                 exportNode = maxExporterParameters.exportNode;
                 if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
-                if(maxExporterParameters.mergeInheritedContainers)ExportClosedContainers();
+                if (maxExporterParameters.mergeContainersAndXRef)
+                {
+                    ExportClosedContainers();
+                    Tools.MergeAllXrefRecords();
+                }
             }
 
            
