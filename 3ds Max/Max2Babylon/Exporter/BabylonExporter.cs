@@ -211,9 +211,10 @@ namespace Max2Babylon
             string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
 
-
+#if DEBUG
             var t1 = watch.ElapsedMilliseconds / 1000.0;
             RaiseMessage(string.Format("Containers merged in {0:0.00}s", t1 ), Color.Blue);
+#endif
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
@@ -566,9 +567,11 @@ namespace Max2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
-            
+
+#if DEBUG
             var t2 = watch.ElapsedMilliseconds / 1000.0 -t1;
             RaiseMessage(string.Format("Noded exported in {0:0.00}s", t2), Color.Blue);
+#endif
 
             // ----------------------------
             // ----- Animation groups -----
@@ -576,9 +579,10 @@ namespace Max2Babylon
             RaiseMessage("Export animation groups");
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
-
+#if DEBUG
             var t3 = watch.ElapsedMilliseconds / 1000.0 -t2;
             RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", t3), Color.Blue);
+#endif
 
             if (isBabylonExported)
             {
