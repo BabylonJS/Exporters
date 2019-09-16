@@ -102,12 +102,39 @@ namespace BabylonJS_Installer
             bool needElevatedProgram = false;
             string fileFullPath;
 
+            if(soft == "Max")
+            {
+                Directory.CreateDirectory(path + "scripts\\Startup");
+                File.WriteAllText(
+                    path + "scripts\\Startup\\BabylonCleanUp.ms",
+                    "/* Remove menu \"Babylon\" from Main menu bar */\n" +
+                    "try (menuMan.unRegisterMenu(menuMan.findMenu \"Babylon\")) catch ()\n" +
+                    "/* Remove item \"Babylon...\" from quad */\n" +
+                    "try (\n" +
+                        "quadMenu = menuMan.getViewportRightClickMenu #nonePressed\n" +
+                        "menu = quadMenu.getMenu 1\n" +
+                        "nbItems = menu.numItems()\n" +
+                        "for i = 1 to nbItems do \n" +
+                                             "(\n" +
+                                                "item = menu.getItem i\n" +
+                            "title = item.getTitle()\n" +
+                            "if title == \"Babylon...\" do menu.removeItemByPosition i\n" +
+                        ")\n" +
+                    ")\n" +
+                    "catch ()\n" +
+                    "/* Self destruction */\n" +
+                    "root = getdir #maxroot\n" +
+                    "filePath = root + \"scripts\\Startup\\BabylonCleanUp.ms\"\n" +
+                    "deleteFile filePath"
+                );
+            }
+
             foreach (string file in this.files[soft])
             {
                 fileFullPath = path + this.libFolder[soft] + "\\" + file;
                 try
                 {
-                    System.IO.File.Delete(fileFullPath);
+                    File.Delete(fileFullPath);
                     this.form.log(file + " deleted.");
                 }
                 catch (UnauthorizedAccessException ex)
