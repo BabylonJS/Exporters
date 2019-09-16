@@ -284,16 +284,20 @@ namespace Max2Babylon
             SaveOptions();
 
             //store layer visibility status and force visibility on
+            
             Dictionary<IILayer, bool> layerState =  new Dictionary<IILayer, bool>();
-            foreach (IILayer layer in exportItem.Layers)
+            if (exportItem.Layers != null)
             {
+                foreach (IILayer layer in exportItem.Layers)
+                {
 #if MAX2015
                 layerState.Add(layer, layer.IsHidden);
 #else
-                layerState.Add(layer, layer.IsHidden(false));
+                    layerState.Add(layer, layer.IsHidden(false));
 #endif
 
-                layer.Hide(false,false);
+                    layer.Hide(false,false);
+                }
             }
 
             exporter = new BabylonExporter();
@@ -424,9 +428,12 @@ namespace Max2Babylon
             BringToFront();
 
             //re-store layer visibility status
-            foreach (IILayer layer in exportItem.Layers)
+            if (exportItem.Layers != null)
             {
-                layer.Hide(layerState[layer], false);
+                foreach (IILayer layer in exportItem.Layers)
+                {
+                    layer.Hide(layerState[layer], false);
+                }
             }
 
             return success;
