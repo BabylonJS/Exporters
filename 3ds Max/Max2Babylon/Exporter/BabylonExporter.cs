@@ -216,8 +216,8 @@ namespace Max2Babylon
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
 
 #if DEBUG
-            var t1 = watch.ElapsedMilliseconds / 1000.0;
-            RaiseMessage(string.Format("Containers merged in {0:0.00}s", t1 ), Color.Blue);
+            var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
+            RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
 #endif
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
@@ -573,8 +573,8 @@ namespace Max2Babylon
             }
 
 #if DEBUG
-            var t2 = watch.ElapsedMilliseconds / 1000.0 -t1;
-            RaiseMessage(string.Format("Noded exported in {0:0.00}s", t2), Color.Blue);
+            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -containersXrefMergeTime;
+            RaiseMessage(string.Format("Noded exported in {0:0.00}s", nodesExportTime), Color.Blue);
 #endif
 
             // ----------------------------
@@ -584,8 +584,8 @@ namespace Max2Babylon
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
 #if DEBUG
-            var t3 = watch.ElapsedMilliseconds / 1000.0 -t2;
-            RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", t3), Color.Blue);
+            var animationGroupExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
+            RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", animationGroupExportTime), Color.Blue);
 #endif
 
             if (isBabylonExported)
