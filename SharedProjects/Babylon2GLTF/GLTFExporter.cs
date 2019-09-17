@@ -33,7 +33,11 @@ namespace Babylon2GLTF
             this.logger = logger;
 
             logger.RaiseMessage("GLTFExporter | Exportation started", Color.Blue);
-            
+#if DEBUG
+            var watch = new Stopwatch();
+            watch.Start();
+#endif
+
             // Force output file extension to be gltf
             outputFileName = Path.ChangeExtension(outputFileName, "gltf");
 
@@ -83,6 +87,10 @@ namespace Babylon2GLTF
                 logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             }
+#if DEBUG
+            var meshesExportTime = watch.ElapsedMilliseconds / 1000.0;
+            logger.RaiseMessage(string.Format("GLTFMeshes exported in {0:0.00}s", meshesExportTime), Color.Blue);
+#endif
  
 
             // Root nodes
@@ -100,7 +108,10 @@ namespace Babylon2GLTF
                 logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             });
-
+#if DEBUG
+            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -meshesExportTime;
+            logger.RaiseMessage(string.Format("GLTFNodes exported in {0:0.00}s", nodesExportTime), Color.Blue);
+#endif
             // Materials
             logger.RaiseMessage("GLTFExporter | Exporting materials");
             foreach (var babylonMaterial in babylonMaterialsToExport)
@@ -109,11 +120,17 @@ namespace Babylon2GLTF
                 logger.CheckCancelled();
             };
             logger.RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
-
+#if DEBUG
+            var materialsExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
+            logger.RaiseMessage(string.Format("GLTFMaterials exported in {0:0.00}s", materialsExportTime), Color.Blue);
+#endif
             // Animations
             logger.RaiseMessage("GLTFExporter | Exporting Animations");
             ExportAnimationGroups(gltf, babylonScene);
-
+#if DEBUG
+            var animationGroupsExportTime = watch.ElapsedMilliseconds / 1000.0 -materialsExportTime;
+            logger.RaiseMessage(string.Format("GLTFAnimations exported in {0:0.00}s", animationGroupsExportTime), Color.Blue);
+#endif
             // Prepare buffers
             gltf.BuffersList.ForEach(buffer =>
             {

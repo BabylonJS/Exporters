@@ -21,7 +21,7 @@ namespace Max2Babylon
         public AnimationForm(BabylonAnimationActionItem babylonAnimationAction)
         {
             InitializeComponent();
-
+            Tools.InitializeGuidNodesMap();
             this.babylonAnimationAction = babylonAnimationAction;
         }
 
