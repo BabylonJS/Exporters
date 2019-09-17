@@ -136,18 +136,6 @@ namespace Max2Babylon
                 return;
 
             }
-            
-            if (node.IsInAnimationGroups(animationGroupList))
-            {
-                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
-                RaiseMessage(message, 0);
-                for (int i = 0; i < node.NumChildren; i++)
-                {
-                    IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
-                }
-                return;
-            }
 
             if (node.IsNodeTreeAnimated())
             {
@@ -157,6 +145,18 @@ namespace Max2Babylon
                 {
                     IINode n = node.GetChildNode(i);
                     IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                }
+                return;
+            }
+
+            if (node.IsInAnimationGroups(animationGroupList))
+            {
+                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
                 }
                 return;
             }
@@ -192,8 +192,12 @@ namespace Max2Babylon
 
         public void Export(ExportParameters exportParameters)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             this.exportParameters = exportParameters;
             IINode exportNode = null;
+            
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
@@ -206,7 +210,15 @@ namespace Max2Babylon
                 }
             }
 
-           
+            Tools.InitializeGuidNodesMap();
+
+            string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
+            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
+
+#if DEBUG
+            var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
+            RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
+#endif
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
@@ -250,10 +262,7 @@ namespace Max2Babylon
 
             IsCancelled = false;
 
-            string fileExportString = exportNode != null
-                ? $"{exportNode.NodeName} | {exportParameters.outputPath}"
-                : exportParameters.outputPath;
-            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
+            
             ReportProgressChanged(0);
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -279,8 +288,7 @@ namespace Max2Babylon
 
             var rawScene = Loader.Core.RootNode;
 
-            var watch = new Stopwatch();
-            watch.Start();
+           
 
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
@@ -398,7 +406,7 @@ namespace Max2Babylon
             var progression = 10.0f;
             ReportProgressChanged((int)progression);
             referencedMaterials.Clear();
-            Tools.guids.Clear();
+
             // Reseting is optionnal. It makes each morph target manager export starts from id = 0.
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)
@@ -564,12 +572,21 @@ namespace Max2Babylon
                 }
             }
 
+#if DEBUG
+            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -containersXrefMergeTime;
+            RaiseMessage(string.Format("Noded exported in {0:0.00}s", nodesExportTime), Color.Blue);
+#endif
+
             // ----------------------------
             // ----- Animation groups -----
             // ----------------------------
             RaiseMessage("Export animation groups");
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+#if DEBUG
+            var animationGroupExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
+            RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", animationGroupExportTime), Color.Blue);
+#endif
 
             if (isBabylonExported)
             {
@@ -631,7 +648,6 @@ namespace Max2Babylon
                     }
                 }
             }
-
 
             // Output
             babylonScene.Prepare(false, false);
