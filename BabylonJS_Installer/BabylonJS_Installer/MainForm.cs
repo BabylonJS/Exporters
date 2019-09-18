@@ -26,6 +26,7 @@ namespace BabylonJS_Installer
 
             this.versions = new Dictionary<string, Dictionary<string, string>>();
             this.versions["Max"] = new Dictionary<string, string>();
+            this.versions["Max"].Add("2020", "22");
             this.versions["Max"].Add("2019", "21");
             this.versions["Max"].Add("2018", "20");
             this.versions["Max"].Add("2017", "19");
@@ -47,6 +48,7 @@ namespace BabylonJS_Installer
 
             this.labels = new Dictionary<string, Dictionary<string, Label[]>>();
             this.labels["Max"] = new Dictionary<string, Label[]>();
+            this.labels["Max"].Add("2020", new[] { this.label_Max20_Info, this.label_Max20_ExpDate });
             this.labels["Max"].Add("2019", new[] { this.label_Max19_Info, this.label_Max19_ExpDate });
             this.labels["Max"].Add("2018", new[] { this.label_Max18_Info, this.label_Max18_ExpDate });
             this.labels["Max"].Add("2017", new[] { this.label_Max17_Info, this.label_Max17_ExpDate });
@@ -58,6 +60,7 @@ namespace BabylonJS_Installer
 
             this.buttons = new Dictionary<string, Dictionary<string, Button[]>>();
             this.buttons["Max"] = new Dictionary<string, Button[]>();
+            this.buttons["Max"].Add("2020", new[] { this.button_Max20_Update, this.button_Max20_Delete, this.button_Max20_Locate });
             this.buttons["Max"].Add("2019", new[] { this.button_Max19_Update, this.button_Max19_Delete, this.button_Max19_Locate });
             this.buttons["Max"].Add("2018", new[] { this.button_Max18_Update, this.button_Max18_Delete, this.button_Max18_Locate });
             this.buttons["Max"].Add("2017", new[] { this.button_Max17_Update, this.button_Max17_Delete, this.button_Max17_Locate });
@@ -213,6 +216,11 @@ namespace BabylonJS_Installer
             }
         }
 
+        private void Button_Max20_Update_Click(object sender, EventArgs e)
+        {
+            this.button_update("Max", "2020");
+        }
+
         private void Button_Max19_Update_Click(object sender, EventArgs e)
         {
             this.button_update("Max", "2019");
@@ -269,6 +277,11 @@ namespace BabylonJS_Installer
             }
         }
 
+        private void Button_Max20_Delete_Click(object sender, EventArgs e)
+        {
+            this.button_delete("Max", "2020");
+        }
+
         private void Button_Max19_Delete_Click(object sender, EventArgs e)
         {
             this.button_delete("Max", "2019");
@@ -323,6 +336,11 @@ namespace BabylonJS_Installer
             }
         }
 
+        private void Button_Max20_Locate_Click(object sender, EventArgs e)
+        {
+            this.button_locate("Max", "2020");
+        }
+
         private void Button_Max19_Locate_Click(object sender, EventArgs e)
         {
             this.button_locate("Max", "2019");
@@ -359,5 +377,6 @@ namespace BabylonJS_Installer
         }
 
         #endregion
+
     }
 }
