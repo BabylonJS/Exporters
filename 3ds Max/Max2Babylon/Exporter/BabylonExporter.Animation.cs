@@ -28,9 +28,9 @@ namespace Max2Babylon
                 };
 
                 // add animations of each nodes contained in the animGroup
-                foreach(Guid nodeGuid in animGroup.NodeGuids)
+                foreach (Guid guid in animGroup.NodeGuids)
                 {
-                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeGuid);
+                    IINode maxNode = Tools.GetINodeByGuid(guid);
 
                     // node could have been deleted, silently ignore it
                     if (maxNode == null)
@@ -38,14 +38,14 @@ namespace Max2Babylon
 
 
                     // Helpers can be exported as dummies and as bones
-                    string nodeId = maxNode.GetGuid().ToString();
-                    string boneId = maxNode.GetGuid().ToString()+"-bone";   // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    string nodeId = guid.ToString();
+                    string boneId = guid.ToString()+"-bone";   // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
 
 
                     // Node
                     BabylonNode node = null;
                     babylonScene.NodeMap.TryGetValue(nodeId, out node);
-                    if(node != null)
+                    if (node != null)
                     {
                         if (node.animations != null && node.animations.Length != 0)
                         {
@@ -76,14 +76,14 @@ namespace Max2Babylon
                     // bone
                     BabylonBone bone = null;
                     int index = 0;
-                    while(index < babylonScene.SkeletonsList.Count && bone == null)
+                    while (index < babylonScene.SkeletonsList.Count && bone == null)
                     {
                         BabylonSkeleton skel = babylonScene.SkeletonsList[index];
                         bone = skel.bones.FirstOrDefault(b => b.id == boneId);
                         index++;
                     }
 
-                    if(bone != null)
+                    if (bone != null)
                     {
                         if (bone.animation != null)
                         {

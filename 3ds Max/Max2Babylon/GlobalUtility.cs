@@ -63,7 +63,7 @@ namespace Max2Babylon
                 if (contaner != null)
                 {
                     // a generic operation on a container is done (open/inherit)
-                    Tools.guids = new Dictionary<Guid, IAnimatable>();
+                    contaner.ResolveContainer();
                 }
             }
             catch
@@ -81,10 +81,9 @@ namespace Max2Babylon
                 n.GetGuid(); // force to assigne a new guid if not exist yet for this node
 
                 IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
-                if (contaner!=null)
+                if (contaner != null)
                 {
                     // a generic operation on a container is done (open/inherit)
-                    Tools.guids = new Dictionary<Guid, IAnimatable>();
                     contaner.ResolveContainer();
                 }
             }
