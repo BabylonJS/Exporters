@@ -217,11 +217,10 @@
             // 
             // ColumnLayers
             // 
-            this.ColumnLayers.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ColumnLayers.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnLayers.HeaderText = "Layers";
             this.ColumnLayers.Name = "ColumnLayers";
             this.ColumnLayers.ReadOnly = true;
-            this.ColumnLayers.Width = 63;
             // 
             // ColumnNode
             // 
@@ -241,6 +240,7 @@
             // 
             // ColumnTexturesFolder
             // 
+            this.ColumnTexturesFolder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnTexturesFolder.HeaderText = "Textures folder";
             this.ColumnTexturesFolder.Name = "ColumnTexturesFolder";
             // 
