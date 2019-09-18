@@ -3,6 +3,7 @@ using Max2Babylon.Extensions;
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -678,7 +679,11 @@ namespace Max2Babylon
             
             IPolyObject polyObject = node.GetPolyObjectFromNode();
             IEPoly flattenEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+#if MAX2020
+            IINodeTab toflatten = Loader.Global.INodeTab.Create();
+#else
             IINodeTab toflatten = Loader.Global.NodeTab.Create();
+#endif
             foreach (IINode n in node.NodeTree())
             {
                 toflatten.AppendNode(n,false,1);
@@ -708,9 +713,19 @@ namespace Max2Babylon
             return false;
         }
 
-        #endregion
+#endregion
 
-        #region GUID
+#region GUID
+
+
+        public static void MergeAllXrefRecords()
+        {
+            for (uint i = 0; i < Loader.IIObjXRefManager.RecordCount; i++)
+            {
+                var record = Loader.IIObjXRefManager.GetRecord(i);
+                Loader.IIObjXRefManager.MergeRecordIntoScene(record);
+            }
+        }
 
 
         public static bool IsMarkedAsNotFlattenable(this IINode node)
@@ -802,6 +817,7 @@ namespace Max2Babylon
 
         public static void ResolveContainer(this IIContainerObject container)
         {
+            guids = new Dictionary<Guid, IAnimatable>();
             int id = 2;
             while (container.GetConflictingContainer()!=null) //container with same guid  && same name exist)
             {
@@ -877,21 +893,24 @@ namespace Max2Babylon
             return handles;
         }
 
+        public static IDictionary<Guid, IAnimatable> guids = new Dictionary<Guid, IAnimatable>();
+
         public static IINode GetINodeByGuid(Guid guid)
+        {
+            if (guid.Equals(Guid.Empty)) return null;
+            IAnimatable result = null;
+            guids.TryGetValue(guid,out result);
+            return result as IINode;
+        }
+
+        public static void InitializeGuidNodesMap()
         {
             IINode root = Loader.Core.RootNode;
             foreach (IINode iNode in root.NodeTree())
             {
-                if (iNode.GetGuid().Equals(guid))
-                {
-                    return iNode;
-                }
+                iNode.GetGuid();
             }
-
-            return null;
         }
-
-        public static IDictionary<Guid, IAnimatable> guids = new Dictionary<Guid, IAnimatable>();
 
         public static Guid GetGuid<T>(this T animatable) where T: IAnimatable
         {
@@ -999,10 +1018,10 @@ namespace Max2Babylon
             }
             return uid;
         }
-        #endregion
+#endregion
 
 
-        #region UserProperties
+#region UserProperties
 
         public static void SetStringProperty(this IINode node, string propertyName, string defaultState)
         {
@@ -1089,6 +1108,37 @@ namespace Max2Babylon
             node.SetStringProperty(propertyName, builder.ToString());
         }
 
+
+        public static void SetDictionaryProperty<T1, T2>(this IINode node, string propertyName, IDictionary<T1,T2> stringDictionary)
+        {
+            //myProp = "key:value";"key:value"
+            StringBuilder builder = new StringBuilder();
+            bool first = true;           
+
+            foreach (KeyValuePair<T1, T2> keyValue in stringDictionary)
+            {
+                if (first) first = false;
+                else builder.Append(';');
+
+                builder.AppendFormat("{0}:{1}",keyValue.Key.ToString(),keyValue.Value.ToString());
+            }
+
+            node.SetStringProperty(propertyName, builder.ToString());
+        }
+
+        public static Dictionary<string, string> GetDictionaryProperty(this IINode node, string propertyName)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            string stringDictionaryProp = node.GetStringProperty(propertyName, string.Empty);
+            string[] stringkeyValuePairs = stringDictionaryProp.Split(';');
+            foreach (string pair in stringkeyValuePairs)
+            {
+                string[] p = pair.Split(':');
+                result.Add(p[0], p[1]);
+            }
+            return result;
+        }
+
         /// <summary>
         /// Removes all properties with the given name found in the UserBuffer. Returns true if a property was found and removed.
         /// </summary>
@@ -1132,9 +1182,9 @@ namespace Max2Babylon
             return false;
         }
 
-        #endregion
+#endregion
 
-        #region AnimationGroup Helpers
+#region AnimationGroup Helpers
         public static int CalculateEndFrameFromAnimationGroupNodes(AnimationGroup animationGroup)
         {
             int endFrame = 0;
@@ -1179,10 +1229,10 @@ namespace Max2Babylon
             return false;
         }
 
-        #endregion
+#endregion
 
 
-        #region Windows.Forms.Control Serialization
+#region Windows.Forms.Control Serialization
 
         public static bool PrepareCheckBox(CheckBox checkBox, IINode node, string propertyName, int defaultState = 0)
         {
@@ -1327,10 +1377,10 @@ namespace Max2Babylon
                 UpdateComboBox(comboBox, node, propertyName);
             }
         }
-        #endregion
+#endregion
 
 
-        #region Windows.Forms Helpers
+#region Windows.Forms Helpers
 
         /// <summary>
         /// Enumerates the whole tree, excluding the given node.
@@ -1345,9 +1395,9 @@ namespace Max2Babylon
             }
         }
 
-        #endregion
+#endregion
 
-        #region File Path
+#region File Path
 
         public static string RelativePathStore(string path)
         {
@@ -1402,6 +1452,8 @@ namespace Max2Babylon
         }
 
 
-        #endregion
+#endregion
+
+        
     }
 }
