@@ -66,18 +66,6 @@
   <PropertyGroup>
     <ApplicationManifest>Custom.manifest</ApplicationManifest>
   </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>F1B0989C29BFCDFD7FEA2C541A125167DDFF3C74</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>BabylonJS_Installer_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
