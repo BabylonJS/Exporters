@@ -294,6 +294,7 @@ namespace Babylon2GLTF
                     GLTFAccessor.TypeEnum.VEC3
                 );
                 meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.NORMAL.ToString(), accessorNormals.index);
+
                 // Populate accessor
                 List<float> normals = globalVerticesSubMesh.SelectMany(v => v.Normal.ToArray()).ToList();
                 normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
@@ -573,7 +574,6 @@ namespace Babylon2GLTF
                     }
                     accessorTargetTangents.count = babylonSubMesh.verticesCount;
                 }
-
 
                 gltfMorphTargets.Add(gltfMorphTarget);
             }
