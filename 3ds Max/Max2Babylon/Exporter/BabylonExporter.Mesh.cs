@@ -42,7 +42,11 @@ namespace Max2Babylon
             RaiseMessage(meshNode.Name, 1);
 
             // Instances
+#if MAX2020
+            var tabs = Loader.Global.INodeTab.Create();
+#else
             var tabs = Loader.Global.NodeTab.Create();
+#endif
             Loader.Global.IInstanceMgr.InstanceMgr.GetInstances(meshNode.MaxNode, tabs);
             if (tabs.Count > 1)
             {
@@ -55,7 +59,7 @@ namespace Max2Babylon
                 var index = 0;
                 while (index < tabs.Count)
                 {
-#if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                     var tab = tabs[index];
 #else
                     var tab = tabs[new IntPtr(index)];
@@ -166,7 +170,7 @@ namespace Max2Babylon
             }
 
             // Misc.
-#if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
             babylonMesh.isVisible = meshNode.MaxNode.Renderable;
             babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows;
             babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics;
@@ -320,11 +324,11 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-                #if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                     var channelNum = mappingChannels[i];
-                #else
+#else
                     var channelNum = mappingChannels[new IntPtr(i)];
-                #endif
+#endif
                     if (channelNum == 1)
                     {
                         hasUV = true;
@@ -637,11 +641,11 @@ namespace Max2Babylon
                         if (storeFaceIndexes)
                         {
                             // Retreive face
-                            #if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                             face = materialFaces[j];
-                            #else
+#else
                             face = materialFaces[new IntPtr(j)];
-                            #endif
+#endif
 
                             // Store face index
                             faceIndexes.Add(face.MeshFaceIndex);

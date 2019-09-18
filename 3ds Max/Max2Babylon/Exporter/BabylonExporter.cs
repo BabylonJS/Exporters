@@ -311,7 +311,9 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2019
+#if MAX2020
+                version = "2020",
+#elif MAX2019
                 version = "2019",
 #elif MAX2018
                 version = "2018",
@@ -961,7 +963,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                     var item = tab[i];
 #else
                     var item = tab[new IntPtr(i)];
