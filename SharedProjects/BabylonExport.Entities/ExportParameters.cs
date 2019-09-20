@@ -3,6 +3,13 @@ using GLTFExport.Entities;
 
 namespace BabylonExport.Entities
 {
+    public enum AnimationExportType
+    {
+        Export = 0,
+        NotExport = 1,
+        ExportOnly = 2
+    }
+
     public class ExportParameters
     {
         public string softwarePackageName;
@@ -13,6 +20,7 @@ namespace BabylonExport.Entities
         public string textureFolder;
         public float scaleFactor = 1.0f;
         public bool writeTextures = true;
+        public AnimationExportType animationExportType = AnimationExportType.Export;
         public bool overwriteTextures = true;
         public bool exportHiddenObjects = false;
         public bool exportMaterials = true;

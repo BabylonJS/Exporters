@@ -358,6 +358,7 @@ namespace Max2Babylon
                 babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
             }
 
+            
             // Instantiate custom material exporters
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
@@ -523,47 +524,55 @@ namespace Max2Babylon
                 babylonScene.MeshesList.Add(rootNode);
             }
 
-            // Materials
-            if (exportParameters.exportMaterials)
+            if (exportParameters.animationExportType != AnimationExportType.ExportOnly)
             {
-                RaiseMessage("Exporting materials");
-                var matsToExport = referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
-                foreach (var mat in matsToExport)
+                // Materials
+                if (exportParameters.exportMaterials)
                 {
-                    ExportMaterial(mat, babylonScene);
-                    CheckCancelled();
+                    RaiseMessage("Exporting materials");
+                    var matsToExport =
+                        referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
+                    foreach (var mat in matsToExport)
+                    {
+                        ExportMaterial(mat, babylonScene);
+                        CheckCancelled();
+                    }
+
+                    RaiseMessage(
+                        string.Format("Total: {0}",
+                            babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
                 }
-                RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
-            }
-            else
-            {
-                RaiseMessage("Skipping material export.");
-            }
-
-            // Fog
-            for (var index = 0; index < Loader.Core.NumAtmospheric; index++)
-            {
-                var atmospheric = Loader.Core.GetAtmospheric(index);
-
-                if (atmospheric.Active(0) && atmospheric.ClassName == "Fog")
+                else
                 {
-                    var fog = atmospheric as IStdFog;
+                    RaiseMessage("Skipping material export.");
+                }
+            
 
-                    RaiseMessage("Exporting fog");
+                // Fog
+                for (var index = 0; index < Loader.Core.NumAtmospheric; index++)
+                {
+                    var atmospheric = Loader.Core.GetAtmospheric(index);
 
-                    if (fog != null)
+                    if (atmospheric.Active(0) && atmospheric.ClassName == "Fog")
                     {
-                        babylonScene.fogColor = fog.GetColor(0).ToArray();
-                        babylonScene.fogMode = 3;
-                    }
-                    if (babylonMainCamera != null)
-                    {
-                        babylonScene.fogStart = maxMainCameraObject.GetEnvRange(0, 0, Tools.Forever);
-                        babylonScene.fogEnd = maxMainCameraObject.GetEnvRange(0, 1, Tools.Forever);
+                        var fog = atmospheric as IStdFog;
+
+                        RaiseMessage("Exporting fog");
+
+                        if (fog != null)
+                        {
+                            babylonScene.fogColor = fog.GetColor(0).ToArray();
+                            babylonScene.fogMode = 3;
+                        }
+                        if (babylonMainCamera != null)
+                        {
+                            babylonScene.fogStart = maxMainCameraObject.GetEnvRange(0, 0, Tools.Forever);
+                            babylonScene.fogEnd = maxMainCameraObject.GetEnvRange(0, 1, Tools.Forever);
+                        }
                     }
                 }
             }
-
+            
             // Skeletons
             if (skins.Count > 0)
             {
@@ -574,26 +583,31 @@ namespace Max2Babylon
                 }
             }
 
+            if (exportParameters.animationExportType == AnimationExportType.Export)
+            {
 #if DEBUG
             var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -containersXrefMergeTime;
             RaiseMessage(string.Format("Noded exported in {0:0.00}s", nodesExportTime), Color.Blue);
 #endif
 
-            // ----------------------------
-            // ----- Animation groups -----
-            // ----------------------------
-            RaiseMessage("Export animation groups");
-            // add animation groups to the scene
-            babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+                // ----------------------------
+                // ----- Animation groups -----
+                // ----------------------------
+            
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
 #if DEBUG
-            var animationGroupExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
-            RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", animationGroupExportTime), Color.Blue);
+                var animationGroupExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
+                RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", animationGroupExportTime), Color.Blue);
 #endif
+            }
+
 
             if (isBabylonExported)
             {
                 // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
-                if (babylonScene.animationGroups.Count > 0)
+                if (babylonScene.animationGroups?.Count > 0)
                 {
                     foreach (BabylonNode node in babylonScene.MeshesList)
                     {
@@ -812,25 +826,28 @@ namespace Max2Babylon
         private BabylonNode exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
         {
             BabylonNode babylonNode = null;
-            switch (maxGameNode.IGameObject.IGameType)
+            if (exportParameters.animationExportType != AnimationExportType.ExportOnly)
             {
-                case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
-                    babylonNode = ExportMesh(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Camera:
-                    babylonNode = ExportCamera(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Light:
-                    babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
-                    // Create a dummy (empty mesh) when type is unknown
-                    // An example of unknown type object is the target of target light or camera
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                default:
-                    // The type of node is not exportable (helper, spline, xref...)
-                    break;
+                switch (maxGameNode.IGameObject.IGameType)
+                {
+                    case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
+                        babylonNode = ExportMesh(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Camera:
+                        babylonNode = ExportCamera(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Light:
+                        babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
+                        // Create a dummy (empty mesh) when type is unknown
+                        // An example of unknown type object is the target of target light or camera
+                        babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    default:
+                        // The type of node is not exportable (helper, spline, xref...)
+                        break;
+                }
             }
             CheckCancelled();
 

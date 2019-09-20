@@ -84,6 +84,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.PrepareCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.PrepareCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials", 1);
+            Tools.PrepareComboBox(cmbExportAnimationType, Loader.Core.RootNode, "babylonjs_export_animations_type",AnimationExportType.Export.ToString());
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
 
@@ -262,6 +263,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
             Tools.UpdateCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
+            Tools.UpdateComboBox(cmbExportAnimationType, Loader.Core.RootNode, "babylonjs_export_animations_type");
             Tools.UpdateCheckBox(chkAnimgroupExportNonAnimated, Loader.Core.RootNode, "babylonjs_animgroupexportnonanimated");
             Tools.UpdateCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.UpdateCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
@@ -386,6 +388,7 @@ namespace Max2Babylon
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
                     exportMaterials = chkExportMaterials.Checked,
+                    animationExportType = (AnimationExportType)cmbExportAnimationType.SelectedIndex,
                     optimizeAnimations = !chkDoNotOptimizeAnimations.Checked,
                     animgroupExportNonAnimated = chkAnimgroupExportNonAnimated.Checked,
                     exportNode = exportItem?.Node,
@@ -710,6 +713,51 @@ namespace Max2Babylon
             {
                 chkMrgContainersAndXref.Enabled = true;
                 chkFlatten.Enabled = true;
+            }
+        }
+
+        private void cmbExportAnimationType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch ((AnimationExportType)cmbExportAnimationType.SelectedIndex)
+            {
+                case AnimationExportType.NotExport:
+                    chkDoNotOptimizeAnimations.Enabled = false;
+                    chkAnimgroupExportNonAnimated.Enabled = false;
+                    chkExportMorphTangents.Enabled = false;
+                    chkExportMorphNormals.Enabled = false;
+                    chkWriteTextures.Enabled = true;
+                    chkOverwriteTextures.Enabled = true;
+                    chkExportMaterials.Enabled = true;
+                    chkMergeAOwithMR.Enabled = true;
+                    chkDracoCompression.Enabled = true;
+                    chkExportTangents.Enabled = true;
+                    break;
+                case AnimationExportType.Export:
+                    chkWriteTextures.Enabled = true;
+                    chkOverwriteTextures.Enabled = true;
+                    chkExportMaterials.Enabled = true;
+                    chkMergeAOwithMR.Enabled = true;
+                    chkDracoCompression.Enabled = true;
+                    chkExportTangents.Enabled = true;
+                    chkDoNotOptimizeAnimations.Enabled = true;
+                    chkAnimgroupExportNonAnimated.Enabled = true;
+                    chkExportMorphTangents.Enabled = true;
+                    chkExportMorphNormals.Enabled = true;
+                    break;
+                case AnimationExportType.ExportOnly:
+                    chkDoNotOptimizeAnimations.Enabled = true;
+                    chkAnimgroupExportNonAnimated.Enabled = true;
+                    chkExportMorphTangents.Enabled = true;
+                    chkExportMorphNormals.Enabled = true;
+                    chkWriteTextures.Enabled = false;
+                    chkOverwriteTextures.Enabled = false;
+                    chkExportMaterials.Enabled = false;
+                    chkMergeAOwithMR.Enabled = false;
+                    chkDracoCompression.Enabled = false;
+                    chkExportTangents.Enabled = false;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

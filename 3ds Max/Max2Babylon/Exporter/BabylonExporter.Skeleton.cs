@@ -316,28 +316,31 @@ namespace Max2Babylon
                     matrix = node.GetLocalTM(0).ToArray()
                 };
 
-                // export its animation
-                var babylonAnimation = ExportMatrixAnimation("_matrix", key =>
+                if (exportParameters.animationExportType != AnimationExportType.NotExport)
                 {
-                    var objectTM = node.GetObjectTM(key);
-                    var parentNode = node.NodeParent;
-                    IGMatrix mat;
-                    if (parentNode == null || bone.parentBoneIndex == -1)
-                    {
-                        mat = objectTM;
-                    }
-                    else
-                    {
-                        mat = node.GetLocalTM(key);
-                    }
-                    return mat.ToArray();
-                },
-                false); // Do not remove linear animation keys for bones
+                    // export its animation
+                    var babylonAnimation = ExportMatrixAnimation("_matrix", key =>
+                        {
+                            var objectTM = node.GetObjectTM(key);
+                            var parentNode = node.NodeParent;
+                            IGMatrix mat;
+                            if (parentNode == null || bone.parentBoneIndex == -1)
+                            {
+                                mat = objectTM;
+                            }
+                            else
+                            {
+                                mat = node.GetLocalTM(key);
+                            }
+                            return mat.ToArray();
+                        },
+                        false); // Do not remove linear animation keys for bones
 
-                if (babylonAnimation != null)
-                {
-                    babylonAnimation.name = node.Name + "Animation"; // override default animation name
-                    bone.animation = babylonAnimation;
+                    if (babylonAnimation != null)
+                    {
+                        babylonAnimation.name = node.Name + "Animation"; // override default animation name
+                        bone.animation = babylonAnimation;
+                    }
                 }
 
                 bones.Add(bone);
