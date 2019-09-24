@@ -143,9 +143,9 @@
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(12, 441);
+            this.treeView.Location = new System.Drawing.Point(12, 444);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 289);
+            this.treeView.Size = new System.Drawing.Size(810, 237);
             this.treeView.TabIndex = 102;
             // 
             // butCancel
