@@ -733,6 +733,11 @@ namespace Max2Babylon
             return node.GetBoolProperty("babylonjs_DoNotFlatten");
         }
 
+        public static bool IsMarkedAsObjectToBakeAnimation(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_BakeAnimation");
+        }
+
         public static  IIContainerObject GetContainer(this IList<Guid> guids)
         {
             foreach (Guid guid in guids)
