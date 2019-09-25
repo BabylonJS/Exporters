@@ -179,6 +179,58 @@ namespace Max2Babylon
             }
         }
 
+        public void BakeAnimationsFrame(IINode node,BakeAnimationType bakeAnimationType)
+        {
+            if (bakeAnimationType == BakeAnimationType.DoNotBakeAnimation) return;
+
+            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
+            
+            IINodeTab tobake = Loader.Global.NodeTab.Create();
+            foreach (IINode iNode in hierachyRoot.NodeTree())
+            {
+                tobake.AppendNode(iNode,false,Loader.Core.Time);
+            }
+            if (!hierachyRoot.IsRootNode) tobake.AppendNode(hierachyRoot,false,Loader.Core.Time);
+
+            Loader.Core.SelectNodeTab(tobake,true,false);
+
+            if (bakeAnimationType == BakeAnimationType.BakeAllAnimations)
+            {
+                for (int i = 0; i < tobake.Count; i++)
+                {
+                   tobake[i].SetUserPropBool("babylonjs_BakeAnimation", true);
+                }
+            }
+
+            ScriptsUtilities.ExecuteMaxScriptCommand(@"
+                for obj in selection do 
+                (
+                    if obj.isAnimated == false then continue
+                    tag = getUserProp n 'babylonjs_BakeAnimation'
+                    if tag!='true' then continue
+
+                    tmp = Point()
+                    --store anim to a point
+                    for t = animationRange.start to animationRange.end do (
+                       with animate on at time t tmp.transform = obj.transform
+                       )
+
+                    --remove constraint on original object
+                    obj.pos.controller = Position_XYZ ()
+                    obj.rotation.controller = Euler_XYZ ()
+                    obj.scale.controller = bezier_scale ()
+                    obj.transform = tmp.transform
+
+                    --copy back anim from point
+                    for t = animationRange.start to animationRange.end do (
+                       with animate on at time t obj.transform = tmp.transform
+                       )
+                    delete tmp
+                )
+             ");
+
+        }
+
         public void ExportClosedContainers()
         {
             List<IIContainerObject> sceneContainers = Tools.GetAllContainers();
@@ -202,11 +254,15 @@ namespace Max2Babylon
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
                 exportNode = maxExporterParameters.exportNode;
-                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
-                if (maxExporterParameters.mergeContainersAndXRef)
+                if (maxExporterParameters.usePreExportProcess)
                 {
-                    ExportClosedContainers();
-                    Tools.MergeAllXrefRecords();
+                    if (maxExporterParameters.mergeContainersAndXRef)
+                    {
+                        ExportClosedContainers();
+                        Tools.MergeAllXrefRecords();
+                    }
+                    if (maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
+                    BakeAnimationsFrame(exportNode,maxExporterParameters.bakeAnimationType);
                 }
             }
 
