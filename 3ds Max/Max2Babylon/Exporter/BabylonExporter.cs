@@ -184,8 +184,12 @@ namespace Max2Babylon
             if (bakeAnimationType == BakeAnimationType.DoNotBakeAnimation) return;
 
             IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
-            
-            IINodeTab tobake = Loader.Global.NodeTab.Create();
+
+#if MAX2020
+            var tobake = Loader.Global.INodeTab.Create();
+#else
+            var tobake = Loader.Global.NodeTab.Create();
+#endif
             foreach (IINode iNode in hierachyRoot.NodeTree())
             {
                 tobake.AppendNode(iNode,false,Loader.Core.Time);
@@ -196,9 +200,9 @@ namespace Max2Babylon
 
             if (bakeAnimationType == BakeAnimationType.BakeAllAnimations)
             {
-                for (int i = 0; i < tobake.Count; i++)
+                foreach (IINode n in Tools.ITabToIEnumerable(tobake))
                 {
-                   tobake[i].SetUserPropBool("babylonjs_BakeAnimation", true);
+                    n.SetUserPropBool("babylonjs_BakeAnimation", true);
                 }
             }
 
