@@ -145,6 +145,9 @@
     <Compile Include="..\BabylonSkipFlatten.cs">
       <Link>BabylonSkipFlatten.cs</Link>
     </Compile>
+    <Compile Include="..\BabylonToogleBakeAnimation.cs">
+      <Link>BabylonToogleBakeAnimation.cs</Link>
+    </Compile>
     <Compile Include="..\Descriptor.cs">
       <Link>Descriptor.cs</Link>
     </Compile>
