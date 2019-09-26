@@ -206,8 +206,8 @@ namespace Max2Babylon
                 for obj in selection do 
                 (
                     if obj.isAnimated == false then continue
-                    tag = getUserProp n 'babylonjs_BakeAnimation'
-                    if tag!='true' then continue
+                    tag = getUserProp obj ""babylonjs_BakeAnimation""
+                    if tag!=true then continue
 
                     tmp = Point()
                     --store anim to a point

@@ -1299,6 +1299,11 @@ namespace Max2Babylon
             comboBox.SelectedItem = node.GetStringProperty(propertyName, defaultValue);
         }
 
+        public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, int defaultValue)
+        {
+            comboBox.SelectedIndex = (int)node.GetFloatProperty(propertyName,defaultValue);
+        }
+
         public static void UpdateCheckBox(CheckBox checkBox, IINode node, string propertyName)
         {
             if (checkBox.CheckState != CheckState.Indeterminate)
@@ -1373,6 +1378,12 @@ namespace Max2Babylon
         {
             var value = comboBox.SelectedItem.ToString();
             node.SetUserPropString(propertyName, value);
+        }
+
+        public static void UpdateComboBoxByIndex(ComboBox comboBox, IINode node, string propertyName)
+        {
+            var value = comboBox.SelectedIndex;
+            node.SetUserPropInt(propertyName, value);
         }
 
         public static void UpdateComboBox(ComboBox comboBox, List<IINode> nodes, string propertyName)
