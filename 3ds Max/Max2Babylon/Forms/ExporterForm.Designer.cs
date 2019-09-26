@@ -797,6 +797,7 @@
             // lblBakeAnimation
             // 
             this.lblBakeAnimation.AutoSize = true;
+            this.lblBakeAnimation.Enabled = false;
             this.lblBakeAnimation.Location = new System.Drawing.Point(195, 264);
             this.lblBakeAnimation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblBakeAnimation.Name = "lblBakeAnimation";
@@ -807,6 +808,7 @@
             // cmbBakeAnimationOptions
             // 
             this.cmbBakeAnimationOptions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBakeAnimationOptions.Enabled = false;
             this.cmbBakeAnimationOptions.Items.AddRange(new object[] {
             "Do not bake animations",
             "Bake all animations",

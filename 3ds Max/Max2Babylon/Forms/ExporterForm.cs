@@ -86,7 +86,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials", 1);
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
-            Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAniamtions", BakeAnimationType.DoNotBakeAnimation.ToString());
+            Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
             Tools.PrepareCheckBox(chkKeepChangement, Loader.Core.RootNode, "babylonjs_keepChangement", 0);
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
@@ -268,7 +268,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.UpdateCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
             Tools.UpdateCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals");
-            Tools.UpdateComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAniamtions");
+            Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
             Tools.UpdateCheckBox(chkKeepChangement,Loader.Core.RootNode, "babylonjs_keepChangement");
 
             Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelName.Text));
@@ -385,7 +385,7 @@ namespace Max2Babylon
                     exportMorphNormals = chkExportMorphNormals.Checked,
                     txtQuality = long.Parse(txtQuality.Text),
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
-                    bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedItem,
+                    bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
                     dracoCompression = chkDracoCompression.Checked,
                     enableKHRLightsPunctual = chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
