@@ -67,15 +67,15 @@ namespace Babylon2GLTF
                         GLTFNode gltfNode;
 
                         if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
-                    {
+                        {
                             ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
-                    }
+                        }
 
                         // export all bones that match this id
                         foreach (KeyValuePair<BabylonBone, GLTFNode> pair in boneToGltfNodeMap)
                         {
                             if (pair.Key.id.Equals(id))
-                    {
+                            {
                                 ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, pair.Key, pair.Value);
                             }
                         }
@@ -418,7 +418,7 @@ namespace Babylon2GLTF
             return accessorOutput;
         }
 
-        private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList, int startFrame, int endFrame, BabylonScene babylonScene)
+        private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList, int startFrame, int endFrame, BabylonScene babylonScene, bool offsetToStartAtFrameZero = true)
         {
             if (!_isBabylonMorphTargetManagerAnimationValid(babylonMorphTargetManager))
             {
@@ -463,7 +463,9 @@ namespace Babylon2GLTF
                     continue;
 
                 numKeys++;
-                var inputValue = frame / (float)babylonScene.TimelineFramesPerSecond;
+                float inputValue = frame;
+                if (offsetToStartAtFrameZero) inputValue -= startFrame;
+                inputValue /= (float)babylonScene.TimelineFramesPerSecond;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values
