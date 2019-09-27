@@ -228,7 +228,7 @@ namespace Max2Babylon
                 if (node != null)
                 {
                     string name = node.Name;
-                    string parentName =  Tools.GetINodeByGuid(nodeGuid).ParentNode.Name;
+                    string parentName = node.ParentNode.Name;
                     AnimationGroupNode nodeData = new AnimationGroupNode(nodeGuid, name, parentName);
                     AnimationGroupNodes.Add(nodeData);
                 }
