@@ -162,7 +162,7 @@ namespace Max2Babylon
 
                     foreach (var meshNode in maxScene.NodesListBySuperClass(SClass_ID.Geomobject))
                     {
-#if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                         if (meshNode.CastShadows)
 #else
                         if (meshNode.CastShadows == 1)
