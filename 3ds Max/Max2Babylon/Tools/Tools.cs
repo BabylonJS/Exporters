@@ -678,7 +678,7 @@ namespace Max2Babylon
             foreach (IINode node in Loader.Core.RootNode.NodeTree())
             {
                 node.DeleteProperty("babylonjs_flattened");
-                if (node.GetBoolProperty("babylonjs_temp"))
+                if (node.GetBoolProperty("babylonjs_flatteningTemp"))
                 {
                     toDelete.Add(node);
                 }
@@ -736,7 +736,7 @@ namespace Max2Babylon
                 nodeEPoly.EpfnAttach(n, ref undo, result, Loader.Core.Time);
             }
 
-            result.SetUserPropBool("babylonjs_temp",true);
+            result.SetUserPropBool("babylonjs_flatteningTemp",true);
 
             return result;
         }
@@ -774,6 +774,17 @@ namespace Max2Babylon
                 var record = Loader.IIObjXRefManager.GetRecord(i);
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
             }
+        }
+
+        public static bool IsNodeSelected(this IINode node)
+        {
+#if MAX2020
+            IINodeTab selection = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab selection = Loader.Global.INodeTabNS.Create();
+#endif
+            Loader.Core.GetSelNodeTab(selection);
+            return selection.Contains(node);
         }
 
 
