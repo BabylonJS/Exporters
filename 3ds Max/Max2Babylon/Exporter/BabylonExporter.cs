@@ -93,16 +93,14 @@ namespace Max2Babylon
         private void IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
         {
             //a node can't be flatten if:
-            //- is not a mesh
             //- is marked as not flattenable
             //- is hidden
+            //- is not selected when exportOnlyselected is checked
             //- is part of animation group
             //- is skinned
             //- is linked to animated node
 
             if (node.IsMarkedAsNotFlattenable()) return;
-
-            if (node.IsNodeHidden(false) && !exportParameters.exportHiddenObjects) return;
 
             if (node.IsRootNode)
             {
@@ -114,15 +112,9 @@ namespace Max2Babylon
                 return;
             }
 
-            if (node.GetTriObjectFromNode()==null)
-            {
-                for (int i = 0; i < node.NumChildren; i++)
-                {
-                    IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
-                }
-                return;
-            }
+            if (!exportParameters.exportHiddenObjects && node.IsNodeHidden(false)) return;
+
+            if (exportParameters.exportOnlySelected && !node.IsNodeSelected()) return;
 
             if (node.IsSkinned())
             {
@@ -1006,6 +998,11 @@ namespace Max2Babylon
 
         private bool IsNodeExportable(IIGameNode gameNode)
         {
+            if (gameNode.MaxNode.GetBoolProperty("babylonjs_flatteningTemp"))
+            {
+                return true;
+            }
+
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
