@@ -187,7 +187,7 @@ namespace Max2Babylon
                 if (!containerObject.IsInherited)continue;
                 bool merge = containerObject.MergeSource;
             }
-            AnimationGroupList.LoadDataFromContainers();
+            AnimationGroupList.LoadDataFromAllContainers();
         }
 
         public void Export(ExportParameters exportParameters)

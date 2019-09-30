@@ -453,75 +453,69 @@ namespace Max2Babylon
             
         }
 
-        public static void SaveDataToContainers()
+        public static void SaveDataToContainer(IIContainerObject iContainerObject)
         {
-            //on scene close automatically move serialization to affected containers
-            // look on each animation group if all node are in same container
-            // copy property to container
-
-            List<IIContainerObject> containers = Tools.GetAllContainers();
-            if (containers.Count<=0) return;
+            if (!iContainerObject.IsOpen)
+            {
+                MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be saved because Container is closed");
+                return;
+            }
 
             AnimationGroupList animationGroupList = new AnimationGroupList();
             animationGroupList.LoadFromData();
 
-            foreach (IIContainerObject iContainerObject in containers)
+            RemoveDataOnContainer(iContainerObject); //cleanup for a new serialization
+            List<string> animationPropertyNameList = new List<string>();
+            foreach (AnimationGroup animationGroup in animationGroupList)
             {
-                if (!iContainerObject.IsOpen)
+                IIContainerObject containerObject = animationGroup.NodeGuids.InSameContainer();
+                if (containerObject!=null && containerObject.ContainerNode.Handle == iContainerObject.ContainerNode.Handle)
                 {
-                    MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be saved because Container is closed");
-                    continue;
+                    string prop = Loader.Core.RootNode.GetStringProperty(animationGroup.GetPropertyName(),"");
+                    containerObject.BabylonContainerHelper().SetStringProperty(animationGroup.GetPropertyName(), prop);
+                    animationPropertyNameList.Add(animationGroup.GetPropertyName());
                 }
+            }
 
-                RemoveDataOnContainer(iContainerObject); //cleanup for a new serialization
-                List<string> animationPropertyNameList = new List<string>();
-                foreach (AnimationGroup animationGroup in animationGroupList)
-                {
-                    IIContainerObject containerObject = animationGroup.NodeGuids.InSameContainer();
-                    if (containerObject!=null && containerObject.ContainerNode.Handle == iContainerObject.ContainerNode.Handle)
-                    {
-                        string prop = Loader.Core.RootNode.GetStringProperty(animationGroup.GetPropertyName(),"");
-                        containerObject.BabylonContainerHelper().SetStringProperty(animationGroup.GetPropertyName(), prop);
-                        animationPropertyNameList.Add(animationGroup.GetPropertyName());
-                    }
-                }
-
-                if (animationPropertyNameList.Count > 0)
-                {
-                    iContainerObject.BabylonContainerHelper().SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
-                }
-
+            if (animationPropertyNameList.Count > 0)
+            {
+                iContainerObject.BabylonContainerHelper().SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
             }
         }
 
-        public static void LoadDataFromContainers()
+        public static void LoadDataFromAllContainers()
         {
             List<IIContainerObject> containers = Tools.GetAllContainers();
             if (containers.Count<=0) return;
 
             foreach (IIContainerObject iContainerObject in containers)
             {
-                if (!iContainerObject.IsOpen)
-                {
-                    MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be loaded because Container is closed");
-                    continue;
-                }
+                LoadDataFromContainer(iContainerObject);
+            }
+        }
 
-                ResolveMultipleInheritedContainer(iContainerObject);
+        public static void LoadDataFromContainer(IIContainerObject iContainerObject)
+        {
+            if (!iContainerObject.IsOpen)
+            {
+                MessageBox.Show("Animations of " + iContainerObject.ContainerNode.Name +" cannot be loaded because Container is closed");
+                return;
+            }
 
-                //on container added in scene try retrieve info from containers
-                string[] sceneAnimationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
-                string[] containerAnimationPropertyNames = iContainerObject.BabylonContainerHelper().GetStringArrayProperty(s_AnimationListPropertyName);
-                string[] mergedAnimationPropertyNames = sceneAnimationPropertyNames.Concat(containerAnimationPropertyNames).Distinct().ToArray();
+            ResolveMultipleInheritedContainer(iContainerObject);
 
-                Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, mergedAnimationPropertyNames);
+            //on container added in scene try retrieve info from containers
+            string[] sceneAnimationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+            string[] containerAnimationPropertyNames = iContainerObject.BabylonContainerHelper().GetStringArrayProperty(s_AnimationListPropertyName);
+            string[] mergedAnimationPropertyNames = sceneAnimationPropertyNames.Concat(containerAnimationPropertyNames).Distinct().ToArray();
 
-                foreach (string propertyNameStr in containerAnimationPropertyNames)
-                {
-                    //copy
-                    string prop = iContainerObject.BabylonContainerHelper().GetStringProperty(propertyNameStr,"");
-                    Loader.Core.RootNode.SetStringProperty(propertyNameStr, prop);
-                }
+            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, mergedAnimationPropertyNames);
+
+            foreach (string propertyNameStr in containerAnimationPropertyNames)
+            {
+                //copy
+                string prop = iContainerObject.BabylonContainerHelper().GetStringProperty(propertyNameStr,"");
+                Loader.Core.RootNode.SetStringProperty(propertyNameStr, prop);
             }
         }
 
