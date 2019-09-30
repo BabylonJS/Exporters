@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Autodesk.Max;
 using ActionItem = Autodesk.Max.Plugins.ActionItem;
@@ -26,7 +27,13 @@ namespace Max2Babylon
 
             for (int i = 0; i < selection.Count; i++)
             {
-                IIContainerObject containerObject  = Loader.Global.ContainerManagerInterface.IsContainerNode(selection[i]);
+#if MAX2015
+                var selectedNode = selection[(IntPtr)i];
+#else
+                var selectedNode = selection[i];
+#endif
+                
+                IIContainerObject containerObject  = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
                 if (containerObject != null)
                 {
                     selectedContainers.Add(containerObject);
