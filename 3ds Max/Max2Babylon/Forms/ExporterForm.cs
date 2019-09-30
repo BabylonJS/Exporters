@@ -214,9 +214,9 @@ namespace Max2Babylon
             {
                 if (chkUsePreExportProces.Checked)
                 {
-                    //Loader.Core.SetQuietMode(true);
-                    //Loader.Core.FileFetch();
-                    //Loader.Core.SetQuietMode(false);
+                    Loader.Core.SetQuietMode(true);
+                    Loader.Core.FileFetch();
+                    Loader.Core.SetQuietMode(false);
                 }
             }
         }
