@@ -526,7 +526,7 @@ namespace Max2Babylon
             container.BabylonContainerHelper().GetUserPropBuffer(ref helperPropBuffer);
 
             List<IINode> containerHierarchy = new List<IINode>() { container.ContainerNode };
-            containerHierarchy.AddRange(container.ContainerNode.NodeTree());
+            containerHierarchy.AddRange(container.ContainerNode.ContainerNodeTree(false));
 
             int containerID = 1;
             container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
