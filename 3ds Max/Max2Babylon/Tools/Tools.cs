@@ -671,25 +671,68 @@ namespace Max2Babylon
             return false;
         }
 
-        public static void FlattenHierarchy(this IINode node)
+
+        public static void RemoveFlattenModification()
         {
-            ////todo: replace this with C# 
-            string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {node.Handle}) Editable_Poly";
+            foreach (IINode node in Loader.Core.RootNode.NodeTree())
+            {
+                node.DeleteProperty("babylonjs_flattened");
+                if (node.GetBoolProperty("babylonjs_temp"))
+                {
+                    Loader.Core.DeleteNode(node, false, true);
+                }
+            }
+        }
+
+
+        public static IINode FlattenHierarchy(this IINode node)
+        {
+            node.SetUserPropBool("babylonjs_flattened", true);
+            node.NodeTree().ToList().ForEach(x => x.SetUserPropBool("babylonjs_flattened",true));
+            IClass_ID cid = Loader.Global.Class_ID.Create((uint)BuiltInClassIDA.SPHERE_CLASS_ID, 0);
+            object obj = Loader.Core.CreateInstance(SClass_ID.Geomobject, cid as IClass_ID);
+            IINode result = Loader.Core.CreateObjectNode((IObject)obj);
+            string name = node.Name;
+            Loader.Core.MakeNameUnique(ref name);
+            result.Name = name;
+            string scale = $"scale (maxOps.getNodeByHandle {result.Handle}) [0.1,0.1,0.1]";
+            ScriptsUtilities.ExecuteMaxScriptCommand(scale);
+            result.ResetTransform(Loader.Core.Time,false);
+            string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {result.Handle}) Editable_Poly";
             ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
-            
-            IPolyObject polyObject = node.GetPolyObjectFromNode();
-            IEPoly flattenEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+
+            IPolyObject polyObject = result.GetPolyObjectFromNode();
+            IEPoly nodeEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+
 #if MAX2020
             IINodeTab toflatten = Loader.Global.INodeTab.Create();
+            IINodeTab resultTarget = Loader.Global.INodeTab.Create();
 #else
             IINodeTab toflatten = Loader.Global.NodeTab.Create();
+            IINodeTab resultTarget = Loader.Global.NodeTab.Create();
 #endif
-            foreach (IINode n in node.NodeTree())
+            toflatten.AppendNode(node,false,1);
+
+            var offset = Loader.Global.Point3.Create(0, 0, 0);
+            Loader.Core.CloneNodes(toflatten, offset, true, CloneType.Copy, null, resultTarget);
+
+            bool undo = false;
+            for (int i = 0; i < resultTarget.Count; i++)
             {
-                toflatten.AppendNode(n,false,1);
+                IINode n = resultTarget[i];
+                Loader.Core.RootNode.AttachChild(n,true);
+                if (n.GetPolyObjectFromNode() == null)
+                {
+                    Loader.Core.DeleteNode(n, false, false);
+                    continue;
+                }
+                n.ResetTransform(Loader.Core.Time, false);
+                nodeEPoly.EpfnAttach(n, ref undo, result, Loader.Core.Time);
             }
 
-            flattenEPoly.EpfnMultiAttach(toflatten, node, Loader.Core.Time);
+            result.SetUserPropBool("babylonjs_temp",true);
+
+            return result;
         }
 
         public static bool IsSkinned(this IINode node)
