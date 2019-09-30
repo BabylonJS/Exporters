@@ -798,6 +798,24 @@ namespace Max2Babylon
             return containersList;
         }
 
+        public static IEnumerable<IINode> ContainerNodeTree(this IINode containerNode, bool includeSubContainer)
+        {
+            foreach (IINode x in containerNode.Nodes())
+            {
+                IIContainerObject nestedContainerObject =Loader.Global.ContainerManagerInterface.IsContainerNode(x);
+                if (nestedContainerObject != null && includeSubContainer)
+                {
+                    yield return x;
+                }
+                else
+                {
+                    continue;
+                }
+                foreach (var y in x.ContainerNodeTree(includeSubContainer))
+                    yield return y;
+            }
+        }
+
         private static IIContainerObject GetConflictingContainer(this IIContainerObject container)
         {
             string guidStr = container.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
@@ -841,7 +859,15 @@ namespace Max2Babylon
 
         public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
         {
-            IINode babylonHelper = containerObject.ContainerNode.FindChildNode("BabylonAnimationHelper");
+            IINode babylonHelper = null;
+            foreach (IINode directChild in containerObject.ContainerNode.DirectChildren())
+            {
+                if (directChild.Name == "BabylonAnimationHelper")
+                {
+                    babylonHelper = directChild;
+                }
+            }
+
             if (babylonHelper == null)
             {
                 MessageBox.Show($"Container {containerObject.ContainerNode.Name} has no Babylon Animation Helper, " +
