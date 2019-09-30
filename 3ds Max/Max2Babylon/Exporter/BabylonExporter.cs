@@ -166,7 +166,20 @@ namespace Max2Babylon
 
         public void FlattenHierarchy(IINode node)
         {
-            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
+            IINode hierachyRoot = null;
+            if (node == null)
+            {
+                hierachyRoot = Loader.Core.RootNode;
+                string message = "Flattening nodes of scene...";
+                RaiseMessage(message, 0);
+            }
+            else
+            {
+                hierachyRoot = node;
+                string message = $"Flattening child nodes of {node.Name}...";
+                RaiseMessage(message, 0);
+            }
+
             AnimationGroupList animationGroupList = new AnimationGroupList();
             animationGroupList.LoadFromData();
 
@@ -197,17 +210,29 @@ namespace Max2Babylon
 
             this.exportParameters = exportParameters;
             IINode exportNode = null;
-            
+            double flattenTime = 0;
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
                 exportNode = maxExporterParameters.exportNode;
-                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
                 if (maxExporterParameters.mergeContainersAndXRef)
                 {
+                    string message = "Merging containers and Xref...";
+                    RaiseMessage(message, 0);
                     ExportClosedContainers();
                     Tools.MergeAllXrefRecords();
+#if DEBUG
+                    var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
+                    RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
+#endif
                 }
+
+                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
+
+#if DEBUG
+                flattenTime = watch.ElapsedMilliseconds / 1000.0;
+                RaiseMessage(string.Format("Nodes falattened in {0:0.00}s", flattenTime ), Color.Blue);
+#endif
             }
 
             Tools.InitializeGuidNodesMap();
@@ -215,10 +240,6 @@ namespace Max2Babylon
             string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
 
-#if DEBUG
-            var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
-            RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
-#endif
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
@@ -575,7 +596,7 @@ namespace Max2Babylon
             }
 
 #if DEBUG
-            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -containersXrefMergeTime;
+            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 - flattenTime;
             RaiseMessage(string.Format("Noded exported in {0:0.00}s", nodesExportTime), Color.Blue);
 #endif
 
@@ -773,6 +794,15 @@ namespace Max2Babylon
             RaiseMessage(string.Format("Exportation done in {0:0.00}s: {1}", watch.ElapsedMilliseconds / 1000.0, fileExportString), Color.Blue);
             IUTF8Str max_notification = Autodesk.Max.GlobalInterface.Instance.UTF8Str.Create("BabylonExportComplete");
             Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, max_notification);
+
+            if (exportParameters is MaxExportParameters)
+            {
+                MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
+                if (maxExporterParameters.flattenScene)
+                {
+                    Tools.RemoveFlattenModification();
+                }
+            }
         }
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
@@ -987,6 +1017,13 @@ namespace Max2Babylon
                     }
                 }
             }
+
+            if (gameNode.MaxNode.GetBoolProperty("babylonjs_flattened"))
+            {
+                return false;
+            }
+
+
             if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
             {
                 return false;
@@ -1145,6 +1182,7 @@ namespace Max2Babylon
                     }
                 }
             }
+
         }
 
         private void SetNodePosition(ref BabylonNode node, ref BabylonScene babylonScene, float[] newPosition)
