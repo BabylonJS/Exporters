@@ -674,13 +674,19 @@ namespace Max2Babylon
 
         public static void RemoveFlattenModification()
         {
+            List<IINode> toDelete = new List<IINode>();
             foreach (IINode node in Loader.Core.RootNode.NodeTree())
             {
                 node.DeleteProperty("babylonjs_flattened");
                 if (node.GetBoolProperty("babylonjs_temp"))
                 {
-                    Loader.Core.DeleteNode(node, false, true);
+                    toDelete.Add(node);
                 }
+            }
+
+            foreach (IINode iNode in toDelete)
+            {
+                Loader.Core.DeleteNode(iNode, false, true);
             }
         }
 
