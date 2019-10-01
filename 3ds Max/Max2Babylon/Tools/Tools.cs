@@ -698,9 +698,7 @@ namespace Max2Babylon
             IClass_ID cid = Loader.Global.Class_ID.Create((uint)BuiltInClassIDA.SPHERE_CLASS_ID, 0);
             object obj = Loader.Core.CreateInstance(SClass_ID.Geomobject, cid as IClass_ID);
             IINode result = Loader.Core.CreateObjectNode((IObject)obj);
-            string name = node.Name;
-            Loader.Core.MakeNameUnique(ref name);
-            result.Name = name;
+            result.Name = node.Name;
             string scale = $"scale (maxOps.getNodeByHandle {result.Handle}) [0.1,0.1,0.1]";
             ScriptsUtilities.ExecuteMaxScriptCommand(scale);
             result.ResetTransform(Loader.Core.Time,false);
