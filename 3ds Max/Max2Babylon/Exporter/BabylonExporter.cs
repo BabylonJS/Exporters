@@ -156,10 +156,14 @@ namespace Max2Babylon
             flattenableNodes.Add(node);
         }
 
-        public void FlattenHierarchy(IINode node)
+        public void FlattenItem(ref IINode itemNode)
         {
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData();
+            
+                
             IINode hierachyRoot = null;
-            if (node == null)
+            if (itemNode == null)
             {
                 hierachyRoot = Loader.Core.RootNode;
                 string message = "Flattening nodes of scene...";
@@ -167,20 +171,27 @@ namespace Max2Babylon
             }
             else
             {
-                hierachyRoot = node;
-                string message = $"Flattening child nodes of {node.Name}...";
+                hierachyRoot = itemNode;
+                string message = $"Flattening child nodes of {itemNode.Name}...";
                 RaiseMessage(message, 0);
             }
 
-            AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
-
             List<IINode> flattenableNodes = new List<IINode>();
+            List<IINode> flattenedNodes = new List<IINode>();
             IsMeshFlattenable(hierachyRoot, animationGroupList,ref flattenableNodes);
 
             foreach (IINode flattenableNode in flattenableNodes)
             {
-                flattenableNode.FlattenHierarchy();
+                flattenedNodes.Add(flattenableNode.FlattenHierarchy());
+            }
+
+            if (exportParameters is MaxExportParameters)
+            {
+                MaxExportParameters maxParams = (exportParameters as MaxExportParameters);
+                if (maxParams.useMultiExporter)
+                {
+                    itemNode = flattenedNodes?[0];
+                }
             }
         }
 
@@ -219,7 +230,7 @@ namespace Max2Babylon
 #endif
                 }
 
-                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
+                if(maxExporterParameters.flattenScene) FlattenItem(ref exportNode);
 
 #if DEBUG
                 flattenTime = watch.ElapsedMilliseconds / 1000.0;
