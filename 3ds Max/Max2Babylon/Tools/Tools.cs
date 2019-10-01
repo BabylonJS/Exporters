@@ -723,7 +723,11 @@ namespace Max2Babylon
             bool undo = false;
             for (int i = 0; i < resultTarget.Count; i++)
             {
+#if MAX2015
+                IINode n = resultTarget[(IntPtr)i];
+#else
                 IINode n = resultTarget[i];
+#endif
                 Loader.Core.RootNode.AttachChild(n,true);
                 if (n.GetPolyObjectFromNode() == null)
                 {
