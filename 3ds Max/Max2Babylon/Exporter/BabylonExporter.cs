@@ -1037,6 +1037,11 @@ namespace Max2Babylon
                 return false;
             }
 
+            if (gameNode.MaxNode.IsBabylonContainerHelper())
+            {
+                return false;
+            }
+
             if (exportParameters.exportOnlySelected && !gameNode.MaxNode.Selected)
             {
                 return false;
