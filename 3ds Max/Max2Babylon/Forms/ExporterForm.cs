@@ -285,6 +285,7 @@ namespace Max2Babylon
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
         {
+            new BabylonAnimationActionItem().Close(); 
             SaveOptions();
 
             //store layer visibility status and force visibility on

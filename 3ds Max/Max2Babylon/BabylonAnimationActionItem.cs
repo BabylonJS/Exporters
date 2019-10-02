@@ -7,7 +7,7 @@ namespace Max2Babylon
 	public class BabylonAnimationActionItem : ActionItem
 	{
         NativeWindow parentWindow;
-        private AnimationForm form;
+        public static AnimationForm form;
 
 		public override bool ExecuteAction()
 		{
