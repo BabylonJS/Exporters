@@ -1,4 +1,7 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using Autodesk.Max;
 using ActionItem = Autodesk.Max.Plugins.ActionItem;
 
 namespace Max2Babylon
@@ -8,7 +11,44 @@ namespace Max2Babylon
 
         public override bool ExecuteAction()
         {
-            AnimationGroupList.LoadDataFromContainers();
+            if (Loader.Core.SelNodeCount == 0)
+            {
+                MessageBox.Show("No Container selected");
+                return false;
+            }
+#if MAX2020
+            IINodeTab selection = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab selection = Loader.Global.INodeTabNS.Create();
+#endif
+            Loader.Core.GetSelNodeTab(selection);
+            List<IIContainerObject> selectedContainers = new List<IIContainerObject>();
+
+            for (int i = 0; i < selection.Count; i++)
+            {
+#if MAX2015
+                var selectedNode = selection[(IntPtr)i];
+#else
+                var selectedNode = selection[i];
+#endif
+                IIContainerObject containerObject  = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
+                if (containerObject != null)
+                {
+                    selectedContainers.Add(containerObject);
+                }
+            }
+
+            if (selectedContainers.Count <= 0)
+            {
+                MessageBox.Show("No Container selected");
+                return false;
+            }
+
+            foreach (IIContainerObject containerObject in selectedContainers)
+            {
+                AnimationGroupList.LoadDataFromContainer(containerObject);
+            }
+
             return true;
         }
 
@@ -24,12 +64,12 @@ namespace Max2Babylon
 
         public override string ButtonText
         {
-            get { return "Babylon Load Animation From Containers"; }
+            get { return "Babylon Load Animation From Selected Containers"; }
         }
 
         public override string MenuText
         {
-            get { return "&Babylon Load Animation From Containers..."; }
+            get { return "&Babylon Load Animation From Selected Containers..."; }
         }
 
         public override string DescriptionText

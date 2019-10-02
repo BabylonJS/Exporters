@@ -201,9 +201,9 @@ namespace Max2Babylon
             foreach (IIContainerObject containerObject in sceneContainers)
             {
                 if (!containerObject.IsInherited)continue;
-                bool merge = containerObject.MergeSource;
+                bool makeUnique = containerObject.MakeUnique;
             }
-            AnimationGroupList.LoadDataFromContainers();
+            AnimationGroupList.LoadDataFromAllContainers();
         }
 
         public void Export(ExportParameters exportParameters)
