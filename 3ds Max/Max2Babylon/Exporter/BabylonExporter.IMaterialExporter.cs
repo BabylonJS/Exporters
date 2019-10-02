@@ -82,6 +82,7 @@ namespace Max2Babylon
         public static readonly ClassIDWrapper Two_Sided_Material = new ClassIDWrapper(0x7e73161f, 0x7ffd6281);
 
         public static readonly ClassIDWrapper Editable_Poly = new ClassIDWrapper(469250957, 422535320);
+        public static readonly ClassIDWrapper Sphere = new ClassIDWrapper(17,0);
 
         private uint partA, partB;
         public ClassIDWrapper(IClass_ID classID) { partA = classID.PartA; partB = classID.PartB; }

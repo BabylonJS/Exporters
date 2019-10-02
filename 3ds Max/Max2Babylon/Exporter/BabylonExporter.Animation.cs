@@ -627,6 +627,12 @@ namespace Max2Babylon
                 ExportVector3Animation("position", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
+
+                    if (float.IsNaN(localMatrix.Determinant))
+                    {
+                        RaiseError($"Determinant of {gameNode.Name} of position animation at {key} localMatrix is NaN ");
+                    }
+
                     var tm_babylon = new BabylonMatrix();
                     tm_babylon.m = localMatrix.ToArray();
 
@@ -653,6 +659,12 @@ namespace Max2Babylon
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
+
+                    if (float.IsNaN(localMatrix.Determinant))
+                    {
+                        RaiseError($"Determinant of {gameNode.Name} of rotation animation at {key} localMatrix is NaN ");
+                    }
+
                     var tm_babylon = new BabylonMatrix();
                     tm_babylon.m = localMatrix.ToArray();
 
@@ -678,6 +690,12 @@ namespace Max2Babylon
                 ExportVector3Animation("scaling", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
+
+                    if (float.IsNaN(localMatrix.Determinant))
+                    {
+                        RaiseError($"Determinant of {gameNode.Name} of scale animation at {key} localMatrix is NaN ");
+                    }
+
                     var tm_babylon = new BabylonMatrix();
                     tm_babylon.m = localMatrix.ToArray();
 
