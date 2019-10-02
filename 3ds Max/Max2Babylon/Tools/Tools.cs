@@ -798,22 +798,28 @@ namespace Max2Babylon
             return containersList;
         }
 
-        public static IEnumerable<IINode> ContainerNodeTree(this IINode containerNode, bool includeSubContainer)
+        public static List<IINode> ContainerNodeTree(this IINode containerNode, bool includeSubContainer)
         {
+            List<IINode> containersChildren = new List<IINode>();
+
             foreach (IINode x in containerNode.Nodes())
             {
                 IIContainerObject nestedContainerObject =Loader.Global.ContainerManagerInterface.IsContainerNode(x);
-                if (nestedContainerObject != null && includeSubContainer)
+                if (nestedContainerObject != null)
                 {
-                    yield return x;
+                    if (includeSubContainer)
+                    {
+                        containersChildren.AddRange(ContainerNodeTree(nestedContainerObject.ContainerNode, includeSubContainer));
+                    }
                 }
                 else
                 {
-                    continue;
+                    containersChildren.Add(x);
+                    containersChildren.AddRange(ContainerNodeTree(x,includeSubContainer));
                 }
-                foreach (var y in x.ContainerNodeTree(includeSubContainer))
-                    yield return y;
             }
+
+            return containersChildren;
         }
 
         private static IIContainerObject GetConflictingContainer(this IIContainerObject container)
