@@ -292,7 +292,7 @@ namespace Max2Babylon
                 foreach (IILayer layer in exportItem.Layers)
                 {
 #if MAX2015
-                layerState.Add(layer, layer.IsHidden);
+                    layerState.Add(layer, layer.IsHidden);
 #else
                     layerState.Add(layer, layer.IsHidden(false));
 #endif
@@ -321,6 +321,7 @@ namespace Max2Babylon
                 }
                 catch
                 {
+                    //do nothing
                 }
                 Application.DoEvents();
             };
@@ -334,6 +335,7 @@ namespace Max2Babylon
                 }
                 catch
                 {
+                    //do nothing
                 }
                 Application.DoEvents();
             };
@@ -351,6 +353,7 @@ namespace Max2Babylon
                 }
                 catch
                 {
+                    //do nothing
                 }
                 Application.DoEvents();
             };
@@ -396,7 +399,8 @@ namespace Max2Babylon
                     pbrEnvironment = txtEnvironmentName.Text,
                     usePreExportProcess = chkUsePreExportProces.Checked,
                     flattenScene = chkFlatten.Checked,
-                    mergeContainersAndXRef = chkMrgContainersAndXref.Checked
+                    mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
+                    useMultiExporter = multiExport
                 };
 
                 exporter.callerForm = this;
@@ -705,12 +709,10 @@ namespace Max2Babylon
             if (!chkUsePreExportProces.Checked)
             {
                 chkMrgContainersAndXref.Enabled = false;
-                chkFlatten.Enabled = false;
             }
             else
             {
                 chkMrgContainersAndXref.Enabled = true;
-                chkFlatten.Enabled = true;
             }
         }
     }
