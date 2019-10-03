@@ -11,11 +11,6 @@ namespace Max2Babylon
 
         public override bool ExecuteAction()
         {
-            if (Loader.Core.SelNodeCount == 0)
-            {
-                MessageBox.Show("No Container selected");
-                return false;
-            }
 
 #if MAX2020
             IINodeTab selection = Loader.Global.INodeTab.Create();
@@ -32,8 +27,8 @@ namespace Max2Babylon
 #else
                 var selectedNode = selection[i];
 #endif
-                
-                IIContainerObject containerObject  = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
+
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
                 if (containerObject != null)
                 {
                     selectedContainers.Add(containerObject);
@@ -42,16 +37,15 @@ namespace Max2Babylon
 
             if (selectedContainers.Count <= 0)
             {
-                MessageBox.Show("No Container selected");
-                return false;
+                AnimationGroupList.SaveDataToAnimationHelper();
+                return true;
             }
 
             foreach (IIContainerObject containerObject in selectedContainers)
             {
-                AnimationGroupList.SaveDataToContainer(containerObject);
+                AnimationGroupList.SaveDataToContainerHelper(containerObject);
             }
 
-            
             return true;
         }
 
@@ -67,17 +61,17 @@ namespace Max2Babylon
 
         public override string ButtonText
         {
-            get { return "Babylon Save Animation To Selected Containers"; }
+            get { return "Babylon Store AnimationGroups..."; }
         }
 
         public override string MenuText
         {
-            get { return "&Babylon Save Animation To Selected Containers..."; }
+            get { return "&Babylon Store AnimationGroups..."; }
         }
 
         public override string DescriptionText
         {
-            get { return "Copy animation group to their specific containers"; }
+            get { return "Copy AnimationGroups into a BabylonAnimationHelper or a BabylonContainerHelper"; }
         }
 
         public override string CategoryText

@@ -168,7 +168,7 @@ namespace Max2Babylon
         {
             IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
 
             List<IINode> flattenableNodes = new List<IINode>();
             IsMeshFlattenable(hierachyRoot, animationGroupList,ref flattenableNodes);
@@ -992,7 +992,7 @@ namespace Max2Babylon
                 return false;
             }
 
-            if (gameNode.MaxNode.IsBabylonContainerHelper())
+            if (gameNode.MaxNode.IsBabylonContainerHelper() || gameNode.MaxNode.IsBabylonAnimationHelper())
             {
                 return false;
             }

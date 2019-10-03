@@ -11,11 +11,7 @@ namespace Max2Babylon
 
         public override bool ExecuteAction()
         {
-            if (Loader.Core.SelNodeCount == 0)
-            {
-                MessageBox.Show("No Container selected");
-                return false;
-            }
+
 #if MAX2020
             IINodeTab selection = Loader.Global.INodeTab.Create();
 #else
@@ -31,7 +27,8 @@ namespace Max2Babylon
 #else
                 var selectedNode = selection[i];
 #endif
-                IIContainerObject containerObject  = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
+
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
                 if (containerObject != null)
                 {
                     selectedContainers.Add(containerObject);
@@ -40,13 +37,13 @@ namespace Max2Babylon
 
             if (selectedContainers.Count <= 0)
             {
-                MessageBox.Show("No Container selected");
-                return false;
+                AnimationGroupList.LoadDataFromAnimationHelpers();
+                return true;
             }
 
             foreach (IIContainerObject containerObject in selectedContainers)
             {
-                AnimationGroupList.LoadDataFromContainer(containerObject);
+                AnimationGroupList.LoadDataFromContainerHelper(containerObject);
             }
 
             return true;
@@ -64,17 +61,17 @@ namespace Max2Babylon
 
         public override string ButtonText
         {
-            get { return "Babylon Load Animation From Selected Containers"; }
+            get { return "Babylon Load AnimationGroups"; }
         }
 
         public override string MenuText
         {
-            get { return "&Babylon Load Animation From Selected Containers..."; }
+            get { return "&Babylon Load AnimationGroups"; }
         }
 
         public override string DescriptionText
         {
-            get { return "Load animation group from each containers"; }
+            get { return "Load AnimationGroups from Scnene or selected Containers"; }
         }
 
         public override string CategoryText
