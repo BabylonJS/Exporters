@@ -134,9 +134,6 @@ namespace BabylonExport.Entities
         public bool twoSidedLighting { get; set; }
 
         [DataMember]
-        public int maxSimultaneousLights { get; set; }
-
-        [DataMember]
         public float alphaCutOff { get; set; }
 
         [DataMember]
@@ -165,7 +162,6 @@ namespace BabylonExport.Entities
             cameraContrast = 1.0f;
             indexOfRefraction = 0.66f;
             twoSidedLighting = false;
-            maxSimultaneousLights = 4;
             useRadianceOverAlpha = true;
             useSpecularOverAlpha = true;
             usePhysicalLightFalloff = true;
@@ -218,8 +214,6 @@ namespace BabylonExport.Entities
             ambient = new[] { 0f, 0f, 0f };
             reflectivity = new[] { 1f, 1f, 1f };
             reflection = new[] { 1f, 1f, 1f };
-
-            maxSimultaneousLights = 4;
 
             albedoTexture = origin.baseTexture;
             alpha = origin.alpha;

@@ -86,11 +86,32 @@ namespace Maya2Babylon
                 {
                     // TODO - Currently return the last shading engine node
                     babylonAttributesDependencyNode = new MFnDependencyNode(destinationObject);
+
+                    // Ensure all attributes are setup
+                    if (babylonAttributesDependencyNode.hasAttribute("alphaMode") == false)
+                    {
+                        MGlobal.executeCommand($"addAttr -ln \"alphaMode\" -nn \"Alpha Mode\" - at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
+                        MGlobal.executeCommand($"setAttr -e-keyable true {babylonAttributesDependencyNode.name}.alphaMode;");
+
+                        // TODO - Init alpha mode value based on material opacity
+                    }
+                    if (babylonAttributesDependencyNode.hasAttribute("backfaceCulling") == false)
+                    {
+                        MGlobal.executeCommand($"addAttr -ln \"backfaceCulling\" -nn \"Backface Culling\" - at bool {babylonAttributesDependencyNode.name};");
+                        MGlobal.executeCommand($"setAttr -e-keyable true {babylonAttributesDependencyNode.name}.backfaceCulling;");
+                        MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.backfaceCulling\" 1;");
+                    }
+                    if (babylonAttributesDependencyNode.hasAttribute("unlit") == false)
+                    {
+                        MGlobal.executeCommand($"addAttr -ln \"unlit\" -nn \"Unlit\" - at bool {babylonAttributesDependencyNode.name};");
+                        MGlobal.executeCommand($"setAttr -e-keyable true {babylonAttributesDependencyNode.name}.unlit;");
+                    }
+                    if (babylonAttributesDependencyNode.hasAttribute("maxSimultaneousLights") == false)
+                    {
+                        MGlobal.executeCommand($"addAttr -ln \"maxSimultaneousLights\" -nn \"Max Simultaneous Lights\" - at long  -min 1 -dv 4 {babylonAttributesDependencyNode.name};");
+                        MGlobal.executeCommand($"setAttr -e-keyable true {babylonAttributesDependencyNode.name}.maxSimultaneousLights;");
+                    }
                 }
-            }
-            if (babylonAttributesDependencyNode != null)
-            {
-                RaiseVerbose("Babylon Attributes of " + babylonAttributesDependencyNode.name, 2);
             }
 
             // Standard material
@@ -133,11 +154,13 @@ namespace Maya2Babylon
 
                 if (babylonAttributesDependencyNode != null)
                 {
+                    RaiseVerbose("Babylon Attributes of " + babylonAttributesDependencyNode.name, 2);
+
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
 
                     // TODO
                     //int alphaMode = babylonAttributesDependencyNode.findPlug("alphaMode").asInt();
-                    //RaiseVerbose("alphaMode=" + alphaMode, 2);
+                    //RaiseVerbose("alphaMode=" + alphaMode, 3);
                     //babylonMaterial.alphaMode = alphaMode;
                 }
 
@@ -224,16 +247,13 @@ namespace Maya2Babylon
                     {
                         RaiseWarning("Material is unlit. Emission is discarded and replaced by diffuse", 2);
                     }
-                    // Move diffuse to emissive
+                    // Copy diffuse to emissive
                     babylonMaterial.emissive = babylonMaterial.diffuse;
                     babylonMaterial.emissiveTexture = babylonMaterial.diffuseTexture;
                     babylonMaterial.emissiveFresnelParameters = babylonMaterial.diffuseFresnelParameters;
-                    // Reset diffuse
-                    babylonMaterial.diffuse = new[] { 1.0f, 1.0f, 1.0f };
-                    babylonMaterial.diffuseTexture = null;
-                    babylonMaterial.diffuseFresnelParameters = null;
 
                     babylonMaterial.disableLighting = true;
+                    babylonMaterial.linkEmissiveWithDiffuse = false;
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
@@ -592,19 +612,19 @@ namespace Maya2Babylon
             }
         }
 
-        private void ExportCommonBabylonAttributes(MFnDependencyNode babylonAttributesDependencyNode, BabylonMaterial baseBabylonMaterial)
+        private void ExportCommonBabylonAttributes(MFnDependencyNode babylonAttributesDependencyNode, BabylonMaterial babylonMaterial)
         {
             bool backfaceCulling = babylonAttributesDependencyNode.findPlug("backfaceCulling").asBool();
-            RaiseVerbose("backfaceCulling=" + backfaceCulling, 2);
-            baseBabylonMaterial.backFaceCulling = backfaceCulling;
+            RaiseVerbose("backfaceCulling=" + backfaceCulling, 3);
+            babylonMaterial.backFaceCulling = backfaceCulling;
 
             int maxSimultaneousLights = babylonAttributesDependencyNode.findPlug("maxSimultaneousLights").asInt();
-            RaiseVerbose("maxSimultaneousLights=" + maxSimultaneousLights, 2);
-            baseBabylonMaterial.maxSimultaneousLights = maxSimultaneousLights;
+            RaiseVerbose("maxSimultaneousLights=" + maxSimultaneousLights, 3);
+            babylonMaterial.maxSimultaneousLights = maxSimultaneousLights;
 
             bool unlit = babylonAttributesDependencyNode.findPlug("unlit").asBool();
-            RaiseVerbose("unlit=" + unlit, 2);
-            baseBabylonMaterial.isUnlit = unlit;
+            RaiseVerbose("unlit=" + unlit, 3);
+            babylonMaterial.isUnlit = unlit;
         }
 
         private bool isStingrayPBSMaterial(MFnDependencyNode materialDependencyNode)

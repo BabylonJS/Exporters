@@ -32,9 +32,6 @@ namespace BabylonExport.Entities
         public BabylonTexture metallicRoughnessTexture { get; set; }
 
         [DataMember]
-        public int maxSimultaneousLights { get; set; }
-
-        [DataMember]
         public bool disableLighting { get; set; }
 
         [DataMember]
@@ -73,8 +70,7 @@ namespace BabylonExport.Entities
         public BabylonPBRMetallicRoughnessMaterial(string id) : base(id)
         {
             customType = "BABYLON.PBRMetallicRoughnessMaterial";
-
-            maxSimultaneousLights = 4;
+            
             emissive = new[] { 0f, 0f, 0f };
             occlusionStrength = 1.0f;
             alphaCutOff = 0.5f;

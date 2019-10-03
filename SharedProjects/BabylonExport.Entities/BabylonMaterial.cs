@@ -23,16 +23,18 @@ namespace BabylonExport.Entities
         [DataMember]
         public int alphaMode { get; set; }
 
+        [DataMember]
+        public int maxSimultaneousLights { get; set; }
+
         public bool isUnlit = false;
 
         public BabylonMaterial(string id)
         {
             this.id = id;
             backFaceCulling = true;
-
             alpha = 1.0f;
-
             alphaMode = 2;
+            maxSimultaneousLights = 4;
         }
 
         public BabylonMaterial(BabylonMaterial original)
@@ -43,6 +45,7 @@ namespace BabylonExport.Entities
             wireframe = original.wireframe;
             alpha = original.alpha;
             alphaMode = original.alphaMode;
+            maxSimultaneousLights = 4;
             isUnlit = original.isUnlit;
         }
     }
