@@ -66,12 +66,32 @@ namespace Maya2Babylon
             var id = materialDependencyNode.uuid().asString();
 
             RaiseMessage(name, 1);
-
+            
             RaiseVerbose("materialObject.hasFn(MFn.Type.kBlinn)=" + materialObject.hasFn(MFn.Type.kBlinn), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhong)=" + materialObject.hasFn(MFn.Type.kPhong), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhongExplorer)=" + materialObject.hasFn(MFn.Type.kPhongExplorer), 2);
 
             Print(materialDependencyNode, 2, "Print ExportMaterial materialDependencyNode");
+
+            // Retreive Babylon Attributes dependency node
+            MPlug connectionOutColor = materialDependencyNode.getConnection("outColor");
+            MPlugArray destinations = new MPlugArray();
+            connectionOutColor.destinations(destinations);
+            MFnDependencyNode babylonAttributesDependencyNode = null;
+            foreach (MPlug destination in destinations)
+            {
+                MObject destinationObject = destination.node;
+
+                if (destinationObject != null && destinationObject.hasFn(MFn.Type.kShadingEngine))
+                {
+                    // TODO - Currently return the last shading engine node
+                    babylonAttributesDependencyNode = new MFnDependencyNode(destinationObject);
+                }
+            }
+            if (babylonAttributesDependencyNode != null)
+            {
+                RaiseVerbose("Babylon Attributes of " + babylonAttributesDependencyNode.name, 2);
+            }
 
             // Standard material
             if (materialObject.hasFn(MFn.Type.kLambert))
@@ -104,12 +124,22 @@ namespace Maya2Babylon
                 RaiseVerbose("diffuseCoeff=" + lambertShader.diffuseCoeff, 2);
                 RaiseVerbose("translucenceCoeff=" + lambertShader.translucenceCoeff, 2);
 
-                var babylonMaterial = new BabylonStandardMaterial(id)
+                BabylonStandardMaterial babylonMaterial = new BabylonStandardMaterial(id)
                 {
                     name = name,
                     diffuse = lambertShader.color.toArrayRGB(),
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
+
+                if (babylonAttributesDependencyNode != null)
+                {
+                    ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
+
+                    // TODO
+                    //int alphaMode = babylonAttributesDependencyNode.findPlug("alphaMode").asInt();
+                    //RaiseVerbose("alphaMode=" + alphaMode, 2);
+                    //babylonMaterial.alphaMode = alphaMode;
+                }
 
                 // Maya ambient <=> babylon emissive
                 babylonMaterial.emissive = lambertShader.ambientColor.toArrayRGB();
@@ -184,6 +214,26 @@ namespace Maya2Babylon
                 if (babylonMaterial.emissiveTexture != null)
                 {
                     babylonMaterial.emissive = new float[] { 0, 0, 0 };
+                }
+
+                if (babylonMaterial.isUnlit)
+                {
+                    if ( (babylonMaterial.emissive != null && (babylonMaterial.emissive[0] != 0 || babylonMaterial.emissive[1] != 0 || babylonMaterial.emissive[2] != 0))
+                        || (babylonMaterial.emissiveTexture != null)
+                        || (babylonMaterial.emissiveFresnelParameters != null))
+                    {
+                        RaiseWarning("Material is unlit. Emission is discarded and replaced by diffuse", 2);
+                    }
+                    // Move diffuse to emissive
+                    babylonMaterial.emissive = babylonMaterial.diffuse;
+                    babylonMaterial.emissiveTexture = babylonMaterial.diffuseTexture;
+                    babylonMaterial.emissiveFresnelParameters = babylonMaterial.diffuseFresnelParameters;
+                    // Reset diffuse
+                    babylonMaterial.diffuse = new[] { 1.0f, 1.0f, 1.0f };
+                    babylonMaterial.diffuseTexture = null;
+                    babylonMaterial.diffuseFresnelParameters = null;
+
+                    babylonMaterial.disableLighting = true;
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
@@ -540,6 +590,21 @@ namespace Maya2Babylon
             {
                 RaiseWarning("Unsupported material type '" + materialObject.apiType + "' for material named '" + materialDependencyNode.name + "'", 2);
             }
+        }
+
+        private void ExportCommonBabylonAttributes(MFnDependencyNode babylonAttributesDependencyNode, BabylonMaterial baseBabylonMaterial)
+        {
+            bool backfaceCulling = babylonAttributesDependencyNode.findPlug("backfaceCulling").asBool();
+            RaiseVerbose("backfaceCulling=" + backfaceCulling, 2);
+            baseBabylonMaterial.backFaceCulling = backfaceCulling;
+
+            int maxSimultaneousLights = babylonAttributesDependencyNode.findPlug("maxSimultaneousLights").asInt();
+            RaiseVerbose("maxSimultaneousLights=" + maxSimultaneousLights, 2);
+            baseBabylonMaterial.maxSimultaneousLights = maxSimultaneousLights;
+
+            bool unlit = babylonAttributesDependencyNode.findPlug("unlit").asBool();
+            RaiseVerbose("unlit=" + unlit, 2);
+            baseBabylonMaterial.isUnlit = unlit;
         }
 
         private bool isStingrayPBSMaterial(MFnDependencyNode materialDependencyNode)
