@@ -862,13 +862,12 @@ namespace Max2Babylon
             }
         }
 
-
-        public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
+        public static IINode BabylonAnimationHelper()
         {
             IINode babylonHelper = null;
-            foreach (IINode directChild in containerObject.ContainerNode.DirectChildren())
+            foreach (IINode directChild in Loader.Core.RootNode.DirectChildren())
             {
-                if (directChild.Name == "BabylonAnimationHelper")
+                if (directChild.IsBabylonAnimationHelper())
                 {
                     babylonHelper = directChild;
                 }
@@ -876,10 +875,31 @@ namespace Max2Babylon
 
             if (babylonHelper == null)
             {
-                MessageBox.Show($"Container {containerObject.ContainerNode.Name} has no Babylon Animation Helper, " +
-                                $"a default one has been created, this process should be done on the container source");
                 IDummyObject dummy = Loader.Global.DummyObject.Create();
-                babylonHelper = Loader.Core.CreateObjectNode(dummy, "BabylonAnimationHelper");
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonAnimationHelper_{Random.Next(0,99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_AnimationHelper",true);
+            }
+
+            return babylonHelper;
+        }
+
+
+        public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
+        {
+            IINode babylonHelper = null;
+            foreach (IINode directChild in containerObject.ContainerNode.DirectChildren())
+            {
+                if (directChild.IsBabylonContainerHelper())
+                {
+                    babylonHelper = directChild;
+                }
+            }
+
+            if (babylonHelper == null)
+            {
+                IDummyObject dummy = Loader.Global.DummyObject.Create();
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonContainerHelper_{Random.Next(0,99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_ContainerHelper",true);
 
                 Loader.Core.SetQuietMode(true);
                 containerObject.ContainerNode.AttachChild(babylonHelper,false);
@@ -889,14 +909,21 @@ namespace Max2Babylon
             return babylonHelper;
         }
 
+        public static bool IsBabylonAnimationHelper(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_AnimationHelper", 0);
+        }
+
         public static bool IsBabylonContainerHelper(this IINode node)
         {
+            //to keep retrocompatibility
             if (node.Name == "BabylonAnimationHelper")
             {
-                return true;
+                node.Name = $"BabylonContainerHelper_{Random.Next(0, 99999)}";
+                node.SetUserPropBool("babylonjs_ContainerHelper",true);
             }
 
-            return false;
+            return node.GetBoolProperty("babylonjs_ContainerHelper", 0);
         }
 
         public static List<Guid> ToGuids(this IList<uint> handles)

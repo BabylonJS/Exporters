@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ using Utilities;
 
 namespace Max2Babylon
 {
+
     [DataContract]
     public class AnimationGroupNode
     {
@@ -168,13 +170,13 @@ namespace Max2Babylon
 
         public string GetPropertyName() { return serializedId.ToString(); }
 
-        public void LoadFromData(string propertyName)
+        public void LoadFromData(string propertyName,IINode dataNode)
         {
             if (!Guid.TryParse(propertyName, out serializedId))
                 throw new Exception("Invalid ID, can't deserialize.");
 
             string propertiesString = string.Empty;
-            if (!Loader.Core.RootNode.GetUserPropString(propertyName, ref propertiesString))
+            if (!dataNode.GetUserPropString(propertyName, ref propertiesString))
                 return;
 
             string[] properties = propertiesString.Split(s_PropertySeparator);
@@ -240,7 +242,7 @@ namespace Max2Babylon
             IsDirty = false;
         }
 
-        public void SaveToData()
+        public void SaveToData(IINode dataNode)
         {
             // ' ' and '=' are not allowed by max, ';' is our data separator
             if (name.Contains(' ') || name.Contains('=') || name.Contains(s_PropertySeparator))
@@ -250,14 +252,14 @@ namespace Max2Babylon
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendFormat(s_PropertyFormat, name, TicksStart, TicksEnd, nodes);
 
-            Loader.Core.RootNode.SetStringProperty(GetPropertyName(), stringBuilder.ToString());
+            dataNode.SetStringProperty(GetPropertyName(), stringBuilder.ToString());
 
             IsDirty = false;
         }
 
-        public void DeleteFromData()
+        public void DeleteFromData(IINode dataNode)
         {
-            Loader.Core.RootNode.DeleteProperty(GetPropertyName());
+            dataNode.DeleteProperty(GetPropertyName());
             IsDirty = true;
         }
 
@@ -273,9 +275,9 @@ namespace Max2Babylon
             return this.First(animationGroup => animationGroup.Name == name);
         }
 
-        public void LoadFromData()
+        public void LoadFromData(IINode dataNode)
         {
-            string[] animationPropertyNames = Loader.Core.RootNode.GetStringArrayProperty(s_AnimationListPropertyName);
+            string[] animationPropertyNames = dataNode.GetStringArrayProperty(s_AnimationListPropertyName);
 
             if (Capacity < animationPropertyNames.Length)
                 Capacity = animationPropertyNames.Length;
@@ -283,7 +285,7 @@ namespace Max2Babylon
             foreach (string propertyNameStr in animationPropertyNames)
             {
                 AnimationGroup info = new AnimationGroup();
-                info.LoadFromData(propertyNameStr);
+                info.LoadFromData(propertyNameStr,dataNode);
                 Add(info);
             }
         }
@@ -291,7 +293,7 @@ namespace Max2Babylon
         public static AnimationGroupList InitAnimationGroups(ILoggingProvider logger)
         {
             AnimationGroupList animationList = new AnimationGroupList();
-            animationList.LoadFromData();
+            animationList.LoadFromData(Loader.Core.RootNode);
 
             if (animationList.Count > 0)
             {
@@ -341,17 +343,17 @@ namespace Max2Babylon
             return animationList;
         }
 
-        public void SaveToData()
+        public void SaveToData(IINode dataNode)
         {
             List<string> animationPropertyNameList = new List<string>();
             for(int i = 0; i < Count; ++i)
             {
                 if(this[i].IsDirty)
-                    this[i].SaveToData();
+                    this[i].SaveToData(dataNode);
                 animationPropertyNameList.Add(this[i].GetPropertyName());
             }
             
-            Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+            dataNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
         }
 
         public void SaveToJson(string filePath, List<AnimationGroup> exportList)
@@ -449,11 +451,31 @@ namespace Max2Babylon
 
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
 
-            LoadFromData();
+            LoadFromData(Loader.Core.RootNode);
             
         }
 
-        public static void SaveDataToContainer(IIContainerObject iContainerObject)
+        public static void SaveDataToAnimationHelper()
+        {
+            AnimationGroupList animationGroupList = new AnimationGroupList();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
+
+            List<string> animationPropertyNameList = new List<string>();
+            var helper = Tools.BabylonAnimationHelper();
+            foreach (AnimationGroup animationGroup in animationGroupList)
+            {
+                string prop = Loader.Core.RootNode.GetStringProperty(animationGroup.GetPropertyName(),"");
+                helper.SetStringProperty(animationGroup.GetPropertyName(), prop);
+                animationPropertyNameList.Add(animationGroup.GetPropertyName());
+            }
+
+            if (animationPropertyNameList.Count > 0)
+            {
+                helper.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
+            }
+        }
+
+        public static void SaveDataToContainerHelper(IIContainerObject iContainerObject)
         {
             if (!iContainerObject.IsOpen)
             {
@@ -462,7 +484,7 @@ namespace Max2Babylon
             }
 
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
 
             RemoveDataOnContainer(iContainerObject); //cleanup for a new serialization
             List<string> animationPropertyNameList = new List<string>();
@@ -483,6 +505,30 @@ namespace Max2Babylon
             }
         }
 
+        public static void LoadDataFromAnimationHelpers()
+        {
+            AnimationGroupList sceneAnimationGroupList = new AnimationGroupList();
+            sceneAnimationGroupList.LoadFromData(Loader.Core.RootNode);
+
+            foreach (IINode node in Loader.Core.RootNode.DirectChildren())
+            {
+                if (node.IsBabylonAnimationHelper())
+                {
+                    AnimationGroupList helperAnimationGroupList = new AnimationGroupList();
+                    helperAnimationGroupList.LoadFromData(node);
+                    //merge
+
+                    foreach (AnimationGroup animationGroup in helperAnimationGroupList)
+                    {
+                        
+                    }
+                }
+            }
+
+            sceneAnimationGroupList.SaveToData(Loader.Core.RootNode);
+        }
+
+
         public static void LoadDataFromAllContainers()
         {
             List<IIContainerObject> containers = Tools.GetAllContainers();
@@ -490,11 +536,11 @@ namespace Max2Babylon
 
             foreach (IIContainerObject iContainerObject in containers)
             {
-                LoadDataFromContainer(iContainerObject);
+                LoadDataFromContainerHelper(iContainerObject);
             }
         }
 
-        public static void LoadDataFromContainer(IIContainerObject iContainerObject)
+        public static void LoadDataFromContainerHelper(IIContainerObject iContainerObject)
         {
             if (!iContainerObject.IsOpen)
             {

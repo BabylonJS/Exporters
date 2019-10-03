@@ -135,7 +135,7 @@ namespace Max2Babylon
         public AnimationGroup GetAnimationGroupByName(string name)
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
 
             foreach (AnimationGroup animationGroup in animationGroupList)
             {
@@ -151,7 +151,7 @@ namespace Max2Babylon
         public AnimationGroup CreateAnimationGroup()
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
 
             AnimationGroup info = new AnimationGroup();
 
@@ -182,7 +182,7 @@ namespace Max2Babylon
 
             // save info and animation list entry
             animationGroupList.Add(info);
-            animationGroupList.SaveToData();
+            animationGroupList.SaveToData(Loader.Core.RootNode);
             Loader.Global.SetSaveRequiredFlag(true, false);
             return info;
         }
@@ -190,7 +190,7 @@ namespace Max2Babylon
         public string RenameAnimationGroup(AnimationGroup info,string name)
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
 
             AnimationGroup animGroupToRename = animationGroupList.GetAnimationGroupByName(info.Name);
 
@@ -215,7 +215,7 @@ namespace Max2Babylon
             animGroupToRename.Name = baseName;
 
             // save info and animation list entry
-            animationGroupList.SaveToData();
+            animationGroupList.SaveToData(Loader.Core.RootNode);
             Loader.Global.SetSaveRequiredFlag(true, false);
             return baseName;
         }
@@ -234,7 +234,7 @@ namespace Max2Babylon
             List<Guid> newGuids = info.NodeGuids.ToList();
             newGuids.Add(node.GetGuid());
             info.NodeGuids = newGuids;
-            info.SaveToData();
+            info.SaveToData(Loader.Core.RootNode);
         }
 
         public void SetAnimationGroupTimeRange(AnimationGroup info, int start,int end)
@@ -244,7 +244,7 @@ namespace Max2Babylon
 
             info.FrameStart = start;
             info.FrameEnd = end;
-            info.SaveToData();
+            info.SaveToData(Loader.Core.RootNode);
         }
 
         public void RemoveAllNodeFromAnimationGroup(AnimationGroup info)
@@ -253,7 +253,7 @@ namespace Max2Babylon
                 return;
 
             info.NodeGuids = new List<Guid>();
-            info.SaveToData();
+            info.SaveToData(Loader.Core.RootNode);
         }
 
         public void RemoveNodeFromAnimationGroup(AnimationGroup info, uint nodeHandle)
@@ -270,7 +270,7 @@ namespace Max2Babylon
             List<Guid> newGuids = info.NodeGuids.ToList();
             newGuids.Remove(node.GetGuid());
             info.NodeGuids = newGuids;
-            info.SaveToData();
+            info.SaveToData(Loader.Core.RootNode);
         }
     }
 }
