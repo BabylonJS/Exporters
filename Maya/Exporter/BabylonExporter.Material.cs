@@ -213,7 +213,6 @@ namespace Maya2Babylon
                 }
 
                 // TODO
-                //babylonMaterial.backFaceCulling = !stdMat.TwoSided;
                 //babylonMaterial.wireframe = stdMat.Wire;
 
                 // --- Textures ---
@@ -226,6 +225,11 @@ namespace Maya2Babylon
                 {
                     babylonMaterial.specularTexture = ExportTexture(materialDependencyNode, "specularColor", babylonScene);
                     babylonMaterial.reflectionTexture = ExportTexture(materialDependencyNode, "reflectedColor", babylonScene, true, false, true);
+                }
+
+                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) || babylonMaterial.opacityTexture != null)
+                {
+                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
 
                 // Constraints
@@ -245,7 +249,7 @@ namespace Maya2Babylon
                         || (babylonMaterial.emissiveTexture != null)
                         || (babylonMaterial.emissiveFresnelParameters != null))
                     {
-                        RaiseWarning("Material is unlit. Emission is discarded and replaced by diffuse", 2);
+                        RaiseWarning("Material is unlit. Emission is discarded and replaced by diffuse.", 2);
                     }
                     // Copy diffuse to emissive
                     babylonMaterial.emissive = babylonMaterial.diffuse;
