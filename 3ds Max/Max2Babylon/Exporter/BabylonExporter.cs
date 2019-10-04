@@ -160,7 +160,7 @@ namespace Max2Babylon
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
             animationGroupList.LoadFromData();
-            
+
                 
             IINode hierachyRoot = null;
             if (itemNode == null)
@@ -193,6 +193,62 @@ namespace Max2Babylon
                     itemNode = flattenedNodes?[0];
                 }
             }
+        }
+
+        public void BakeAnimationsFrame(IINode node,BakeAnimationType bakeAnimationType)
+        {
+            if (bakeAnimationType == BakeAnimationType.DoNotBakeAnimation) return;
+
+            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
+
+#if MAX2020
+            var tobake = Loader.Global.INodeTab.Create();
+#else
+            var tobake = Loader.Global.NodeTab.Create();
+#endif
+            foreach (IINode iNode in hierachyRoot.NodeTree())
+            {
+                tobake.AppendNode(iNode,false,Loader.Core.Time);
+            }
+            if (!hierachyRoot.IsRootNode) tobake.AppendNode(hierachyRoot,false,Loader.Core.Time);
+
+            Loader.Core.SelectNodeTab(tobake,true,false);
+
+            if (bakeAnimationType == BakeAnimationType.BakeAllAnimations)
+            {
+                foreach (IINode n in Tools.ITabToIEnumerable(tobake))
+                {
+                    n.SetUserPropBool("babylonjs_BakeAnimation", true);
+                }
+            }
+
+            ScriptsUtilities.ExecuteMaxScriptCommand(@"
+                for obj in selection do 
+                (
+                    if obj.isAnimated == false then continue
+                    tag = getUserProp obj ""babylonjs_BakeAnimation""
+                    if tag!=true then continue
+
+                    tmp = Point()
+                    --store anim to a point
+                    for t = animationRange.start to animationRange.end do (
+                       with animate on at time t tmp.transform = obj.transform
+                       )
+
+                    --remove constraint on original object
+                    obj.pos.controller = Position_XYZ ()
+                    obj.rotation.controller = Euler_XYZ ()
+                    obj.scale.controller = bezier_scale ()
+                    obj.transform = tmp.transform
+
+                    --copy back anim from point
+                    for t = animationRange.start to animationRange.end do (
+                       with animate on at time t obj.transform = tmp.transform
+                       )
+                    delete tmp
+                )
+             ");
+
         }
 
         public void ExportClosedContainers()
@@ -804,7 +860,7 @@ namespace Max2Babylon
                 if (maxExporterParameters.flattenScene)
                 {
                     Tools.RemoveFlattenModification();
-                }
+        }
             }
         }
 

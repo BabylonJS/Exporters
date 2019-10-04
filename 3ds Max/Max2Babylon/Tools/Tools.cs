@@ -795,6 +795,11 @@ namespace Max2Babylon
             return node.GetBoolProperty("babylonjs_DoNotFlatten");
         }
 
+        public static bool IsMarkedAsObjectToBakeAnimation(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_BakeAnimation");
+        }
+
         public static  IIContainerObject GetContainer(this IList<Guid> guids)
         {
             foreach (Guid guid in guids)
@@ -1388,6 +1393,11 @@ namespace Max2Babylon
             comboBox.SelectedItem = node.GetStringProperty(propertyName, defaultValue);
         }
 
+        public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, int defaultValue)
+        {
+            comboBox.SelectedIndex = (int)node.GetFloatProperty(propertyName,defaultValue);
+        }
+
         public static void UpdateCheckBox(CheckBox checkBox, IINode node, string propertyName)
         {
             if (checkBox.CheckState != CheckState.Indeterminate)
@@ -1462,6 +1472,12 @@ namespace Max2Babylon
         {
             var value = comboBox.SelectedItem.ToString();
             node.SetUserPropString(propertyName, value);
+        }
+
+        public static void UpdateComboBoxByIndex(ComboBox comboBox, IINode node, string propertyName)
+        {
+            var value = comboBox.SelectedIndex;
+            node.SetUserPropInt(propertyName, value);
         }
 
         public static void UpdateComboBox(ComboBox comboBox, List<IINode> nodes, string propertyName)
@@ -1548,6 +1564,24 @@ namespace Max2Babylon
 
 #endregion
 
+/// <summary>
+/// Converts the ITab to a more convenient IEnumerable.
+/// </summary>
+public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
+{
+#if MAX2015
+            for (int i = 0; i < tab.Count; i++)
+            {
+                yield return tab[(IntPtr)i];
+            }
+#else
+    for (int i = 0; i < tab.Count; i++)
+    {
+        yield return tab[i];
+    }
+#endif
+                
+}
         
     }
 }
