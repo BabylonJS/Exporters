@@ -30,6 +30,9 @@ namespace Max2Babylon
         private static bool filePreOpenCallback = false;
         private GlobalDelegates.Delegate5 m_FilePreOpenDelegate;
 
+        private static bool filePreSaveCallback = false;
+        private GlobalDelegates.Delegate5 m_FilePreSaveDelegate;
+
         private static bool postSceneResetCallback = false;
         private GlobalDelegates.Delegate5 m_PostSceneResetCallback;
 
@@ -50,6 +53,11 @@ namespace Max2Babylon
         private void InitializeBabylonGuids(IntPtr objPtr, INotifyInfo infoPtr)
         {
             Tools.guids = new Dictionary<Guid, IAnimatable>();
+        }
+
+        private void OnPreSave(IntPtr objPtr, INotifyInfo infoPtr)
+        {
+            Tools.UnloadAllContainers();
         }
 
 #if MAX2015
@@ -180,6 +188,7 @@ namespace Max2Babylon
                 RegisterFilePreOpen();
                 RegisterPostSceneReset();
                 RegisterNodeAddedCallback();
+                RegisterFilePreSave();
 
                 return 0;
             }
@@ -193,6 +202,17 @@ namespace Max2Babylon
                 GlobalInterface.Instance.RegisterNotification(this.m_FilePreOpenDelegate, null, SystemNotificationCode.FilePreOpen );
 
                 filePreOpenCallback = true;
+            }
+        }
+
+        public void RegisterFilePreSave()
+        {
+            if (!filePreSaveCallback)
+            {
+                m_FilePreSaveDelegate = new GlobalDelegates.Delegate5(this.OnPreSave);
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePreSaveDelegate, null, SystemNotificationCode.FilePreSave );
+
+                filePreSaveCallback = true;
             }
         }
 
