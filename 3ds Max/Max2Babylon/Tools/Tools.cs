@@ -762,6 +762,34 @@ namespace Max2Babylon
             return null;
         }
 
+        public static List<IIContainerObject> GetContainerInSelection()
+        {
+#if MAX2020
+            IINodeTab selection = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab selection = Loader.Global.INodeTabNS.Create();
+#endif
+            Loader.Core.GetSelNodeTab(selection);
+            List<IIContainerObject> selectedContainers = new List<IIContainerObject>();
+
+            for (int i = 0; i < selection.Count; i++)
+            {
+#if MAX2015
+                var selectedNode = selection[(IntPtr)i];
+#else
+                var selectedNode = selection[i];
+#endif
+
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
+                if (containerObject != null)
+                {
+                    selectedContainers.Add(containerObject);
+                }
+            }
+
+            return selectedContainers;
+        }
+
         public static IIContainerObject InSameContainer(this IList<Guid> guids)
         {
             List<IIContainerObject> containers = new List<IIContainerObject>();

@@ -6,36 +6,13 @@ using ActionItem = Autodesk.Max.Plugins.ActionItem;
 
 namespace Max2Babylon
 {
-    class BabylonLoadAnimationFromContainers:ActionItem
+    class BabylonLoadAnimations:ActionItem
     {
-
         public override bool ExecuteAction()
         {
+            var selectedContainers = Tools.GetContainerInSelection();
 
-#if MAX2020
-            IINodeTab selection = Loader.Global.INodeTab.Create();
-#else
-            IINodeTab selection = Loader.Global.INodeTabNS.Create();
-#endif
-            Loader.Core.GetSelNodeTab(selection);
-            List<IIContainerObject> selectedContainers = new List<IIContainerObject>();
-
-            for (int i = 0; i < selection.Count; i++)
-            {
-#if MAX2015
-                var selectedNode = selection[(IntPtr)i];
-#else
-                var selectedNode = selection[i];
-#endif
-
-                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
-                if (containerObject != null)
-                {
-                    selectedContainers.Add(containerObject);
-                }
-            }
-
-            if (selectedContainers.Count <= 0)
+            if (selectedContainers?.Count <= 0)
             {
                 AnimationGroupList.LoadDataFromAnimationHelpers();
                 return true;
@@ -66,7 +43,18 @@ namespace Max2Babylon
 
         public override string MenuText
         {
-            get { return "&Babylon Load AnimationGroups"; }
+            get
+            {
+                var selectedContainers = Tools.GetContainerInSelection();
+                if (selectedContainers?.Count > 0)
+                {
+                    return "&Babylon Load AnimationGroups from selected containers";
+                }
+                else
+                {
+                    return "&(Xref/Merge) Babylon Load AnimationGroups";
+                }
+            }
         }
 
         public override string DescriptionText
