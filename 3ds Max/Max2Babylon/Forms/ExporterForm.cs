@@ -86,6 +86,8 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials", 1);
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
+            Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
+            Tools.PrepareCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess", 0);
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
@@ -212,7 +214,7 @@ namespace Max2Babylon
             catch{}
             finally
             {
-                if (chkUsePreExportProces.Checked)
+                if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
                 {
                     Loader.Core.SetQuietMode(true);
                     Loader.Core.FileFetch();
@@ -266,6 +268,8 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.UpdateCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
             Tools.UpdateCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals");
+            Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
+            Tools.UpdateCheckBox(chkApplyPreprocessToScene,Loader.Core.RootNode, "babylonjs_applyPreprocess");
 
             Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelName.Text));
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(txtTextureName.Text));
@@ -292,7 +296,7 @@ namespace Max2Babylon
                 foreach (IILayer layer in exportItem.Layers)
                 {
 #if MAX2015
-                    layerState.Add(layer, layer.IsHidden);
+                layerState.Add(layer, layer.IsHidden);
 #else
                     layerState.Add(layer, layer.IsHidden(false));
 #endif
@@ -385,6 +389,7 @@ namespace Max2Babylon
                     exportMorphNormals = chkExportMorphNormals.Checked,
                     txtQuality = long.Parse(txtQuality.Text),
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
+                    bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
                     dracoCompression = chkDracoCompression.Checked,
                     enableKHRLightsPunctual = chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
@@ -533,7 +538,7 @@ namespace Max2Babylon
             catch{}
             finally
             {
-                if (chkUsePreExportProces.Checked)
+                if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
                 {
                     Loader.Core.SetQuietMode(true);
                     Loader.Core.FileFetch();
@@ -694,7 +699,7 @@ namespace Max2Babylon
                 catch{}
                 finally
                 {
-                    if (chkUsePreExportProces.Checked)
+                    if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
                     {
                         Loader.Core.SetQuietMode(true);
                         Loader.Core.FileFetch();
@@ -709,10 +714,16 @@ namespace Max2Babylon
             if (!chkUsePreExportProces.Checked)
             {
                 chkMrgContainersAndXref.Enabled = false;
+                cmbBakeAnimationOptions.Enabled = false;
+                lblBakeAnimation.Enabled = false;
+                chkApplyPreprocessToScene.Enabled = false;
             }
             else
             {
                 chkMrgContainersAndXref.Enabled = true;
+                cmbBakeAnimationOptions.Enabled = true;
+                lblBakeAnimation.Enabled = true;
+                chkApplyPreprocessToScene.Enabled = true;
             }
         }
     }
