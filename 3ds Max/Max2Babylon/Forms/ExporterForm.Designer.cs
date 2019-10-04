@@ -334,7 +334,7 @@
             // chkUsePreExportProces
             // 
             this.chkUsePreExportProces.AutoSize = true;
-            this.chkUsePreExportProces.Location = new System.Drawing.Point(11, 245);
+            this.chkUsePreExportProces.Location = new System.Drawing.Point(9, 265);
             this.chkUsePreExportProces.Name = "chkUsePreExportProces";
             this.chkUsePreExportProces.Size = new System.Drawing.Size(138, 17);
             this.chkUsePreExportProces.TabIndex = 36;
@@ -345,9 +345,8 @@
             // chkFlatten
             // 
             this.chkFlatten.AutoSize = true;
-            this.chkFlatten.Enabled = false;
             this.chkFlatten.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkFlatten.Location = new System.Drawing.Point(18, 262);
+            this.chkFlatten.Location = new System.Drawing.Point(18, 240);
             this.chkFlatten.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkFlatten.Name = "chkFlatten";
             this.chkFlatten.Size = new System.Drawing.Size(111, 17);

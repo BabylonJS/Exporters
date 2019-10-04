@@ -325,6 +325,7 @@ namespace Max2Babylon
                 }
                 catch
                 {
+                    //do nothing
                 }
                 Application.DoEvents();
             };
@@ -338,6 +339,7 @@ namespace Max2Babylon
                 }
                 catch
                 {
+                    //do nothing
                 }
                 Application.DoEvents();
             };
@@ -355,6 +357,7 @@ namespace Max2Babylon
                 }
                 catch
                 {
+                    //do nothing
                 }
                 Application.DoEvents();
             };
@@ -401,7 +404,8 @@ namespace Max2Babylon
                     pbrEnvironment = txtEnvironmentName.Text,
                     usePreExportProcess = chkUsePreExportProces.Checked,
                     flattenScene = chkFlatten.Checked,
-                    mergeContainersAndXRef = chkMrgContainersAndXref.Checked
+                    mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
+                    useMultiExporter = multiExport
                 };
 
                 exporter.callerForm = this;
@@ -710,7 +714,6 @@ namespace Max2Babylon
             if (!chkUsePreExportProces.Checked)
             {
                 chkMrgContainersAndXref.Enabled = false;
-                chkFlatten.Enabled = false;
                 cmbBakeAnimationOptions.Enabled = false;
                 lblBakeAnimation.Enabled = false;
                 chkApplyPreprocessToScene.Enabled = false;
@@ -718,7 +721,6 @@ namespace Max2Babylon
             else
             {
                 chkMrgContainersAndXref.Enabled = true;
-                chkFlatten.Enabled = true;
                 cmbBakeAnimationOptions.Enabled = true;
                 lblBakeAnimation.Enabled = true;
                 chkApplyPreprocessToScene.Enabled = true;
