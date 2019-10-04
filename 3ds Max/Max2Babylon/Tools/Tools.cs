@@ -717,6 +717,13 @@ namespace Max2Babylon
 
 #region GUID
 
+        public static void UnloadAllContainers()
+        {
+            foreach (IIContainerObject iContainerObject in GetAllContainers())
+            {
+                bool unload = iContainerObject.UnloadContainer;
+            }
+        }
 
         public static void MergeAllXrefRecords()
         {
