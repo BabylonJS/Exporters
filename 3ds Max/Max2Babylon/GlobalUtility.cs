@@ -60,6 +60,11 @@ namespace Max2Babylon
             Tools.UnloadAllContainers();
         }
 
+        private void OnPreSave(IntPtr objPtr, IntPtr infoPtr)
+        {
+            Tools.UnloadAllContainers();
+        }
+
 #if MAX2015
         private void OnNodeAdded(IntPtr param0, IntPtr param1)
         {
