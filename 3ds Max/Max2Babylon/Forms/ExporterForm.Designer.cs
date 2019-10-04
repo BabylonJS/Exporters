@@ -41,7 +41,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.chkWriteTextures = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkKeepChangement = new System.Windows.Forms.CheckBox();
+            this.lblBakeAnimation = new System.Windows.Forms.Label();
+            this.cmbBakeAnimationOptions = new System.Windows.Forms.ComboBox();
+            this.chkApplyPreprocessToScene = new System.Windows.Forms.CheckBox();
             this.chkMrgContainersAndXref = new System.Windows.Forms.CheckBox();
             this.chkUsePreExportProces = new System.Windows.Forms.CheckBox();
             this.chkFlatten = new System.Windows.Forms.CheckBox();
@@ -84,8 +86,6 @@
             this.saveOptionBtn = new System.Windows.Forms.Button();
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.lblBakeAnimation = new System.Windows.Forms.Label();
-            this.cmbBakeAnimationOptions = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -230,7 +230,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.lblBakeAnimation);
             this.groupBox1.Controls.Add(this.cmbBakeAnimationOptions);
-            this.groupBox1.Controls.Add(this.chkKeepChangement);
+            this.groupBox1.Controls.Add(this.chkApplyPreprocessToScene);
             this.groupBox1.Controls.Add(this.chkMrgContainersAndXref);
             this.groupBox1.Controls.Add(this.chkUsePreExportProces);
             this.groupBox1.Controls.Add(this.chkFlatten);
@@ -280,18 +280,43 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
-            // chkKeepChangement
+            // lblBakeAnimation
             // 
-            this.chkKeepChangement.AutoSize = true;
-            this.chkKeepChangement.Enabled = false;
-            this.chkKeepChangement.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKeepChangement.Location = new System.Drawing.Point(18, 302);
-            this.chkKeepChangement.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkKeepChangement.Name = "chkKeepChangement";
-            this.chkKeepChangement.Size = new System.Drawing.Size(111, 17);
-            this.chkKeepChangement.TabIndex = 39;
-            this.chkKeepChangement.Text = "Keep Changement";
-            this.chkKeepChangement.UseVisualStyleBackColor = true;
+            this.lblBakeAnimation.AutoSize = true;
+            this.lblBakeAnimation.Enabled = false;
+            this.lblBakeAnimation.Location = new System.Drawing.Point(195, 264);
+            this.lblBakeAnimation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblBakeAnimation.Name = "lblBakeAnimation";
+            this.lblBakeAnimation.Size = new System.Drawing.Size(125, 13);
+            this.lblBakeAnimation.TabIndex = 40;
+            this.lblBakeAnimation.Text = "Bake animations options:";
+            // 
+            // cmbBakeAnimationOptions
+            // 
+            this.cmbBakeAnimationOptions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBakeAnimationOptions.Enabled = false;
+            this.cmbBakeAnimationOptions.Items.AddRange(new object[] {
+            "Do not bake animations",
+            "Bake all animations",
+            "Selective bake"});
+            this.cmbBakeAnimationOptions.Location = new System.Drawing.Point(328, 261);
+            this.cmbBakeAnimationOptions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.cmbBakeAnimationOptions.Name = "cmbBakeAnimationOptions";
+            this.cmbBakeAnimationOptions.Size = new System.Drawing.Size(178, 21);
+            this.cmbBakeAnimationOptions.TabIndex = 41;
+            // 
+            // chkApplyPreprocessToScene
+            // 
+            this.chkApplyPreprocessToScene.AutoSize = true;
+            this.chkApplyPreprocessToScene.Enabled = false;
+            this.chkApplyPreprocessToScene.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkApplyPreprocessToScene.Location = new System.Drawing.Point(18, 302);
+            this.chkApplyPreprocessToScene.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkApplyPreprocessToScene.Name = "chkApplyPreprocessToScene";
+            this.chkApplyPreprocessToScene.Size = new System.Drawing.Size(155, 17);
+            this.chkApplyPreprocessToScene.TabIndex = 39;
+            this.chkApplyPreprocessToScene.Text = "Apply Preprocess To Scene";
+            this.chkApplyPreprocessToScene.UseVisualStyleBackColor = true;
             // 
             // chkMrgContainersAndXref
             // 
@@ -794,31 +819,6 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
-            // lblBakeAnimation
-            // 
-            this.lblBakeAnimation.AutoSize = true;
-            this.lblBakeAnimation.Enabled = false;
-            this.lblBakeAnimation.Location = new System.Drawing.Point(195, 264);
-            this.lblBakeAnimation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblBakeAnimation.Name = "lblBakeAnimation";
-            this.lblBakeAnimation.Size = new System.Drawing.Size(125, 13);
-            this.lblBakeAnimation.TabIndex = 40;
-            this.lblBakeAnimation.Text = "Bake animations options:";
-            // 
-            // cmbBakeAnimationOptions
-            // 
-            this.cmbBakeAnimationOptions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBakeAnimationOptions.Enabled = false;
-            this.cmbBakeAnimationOptions.Items.AddRange(new object[] {
-            "Do not bake animations",
-            "Bake all animations",
-            "Selective bake"});
-            this.cmbBakeAnimationOptions.Location = new System.Drawing.Point(328, 261);
-            this.cmbBakeAnimationOptions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.cmbBakeAnimationOptions.Name = "cmbBakeAnimationOptions";
-            this.cmbBakeAnimationOptions.Size = new System.Drawing.Size(178, 21);
-            this.cmbBakeAnimationOptions.TabIndex = 41;
-            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -907,7 +907,7 @@
         private System.Windows.Forms.CheckBox chkFlatten;
         private System.Windows.Forms.CheckBox chkUsePreExportProces;
         private System.Windows.Forms.CheckBox chkMrgContainersAndXref;
-        private System.Windows.Forms.CheckBox chkKeepChangement;
+        private System.Windows.Forms.CheckBox chkApplyPreprocessToScene;
         private System.Windows.Forms.Label lblBakeAnimation;
         private System.Windows.Forms.ComboBox cmbBakeAnimationOptions;
     }

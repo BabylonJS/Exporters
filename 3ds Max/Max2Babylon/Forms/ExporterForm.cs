@@ -87,7 +87,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
             Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
-            Tools.PrepareCheckBox(chkKeepChangement, Loader.Core.RootNode, "babylonjs_keepChangement", 0);
+            Tools.PrepareCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess", 0);
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
@@ -214,7 +214,7 @@ namespace Max2Babylon
             catch{}
             finally
             {
-                if (chkUsePreExportProces.Checked && !chkKeepChangement.Checked)
+                if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
                 {
                     Loader.Core.SetQuietMode(true);
                     Loader.Core.FileFetch();
@@ -269,7 +269,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
             Tools.UpdateCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals");
             Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
-            Tools.UpdateCheckBox(chkKeepChangement,Loader.Core.RootNode, "babylonjs_keepChangement");
+            Tools.UpdateCheckBox(chkApplyPreprocessToScene,Loader.Core.RootNode, "babylonjs_applyPreprocess");
 
             Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelName.Text));
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(txtTextureName.Text));
@@ -534,7 +534,7 @@ namespace Max2Babylon
             catch{}
             finally
             {
-                if (chkUsePreExportProces.Checked && !chkKeepChangement.Checked)
+                if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
                 {
                     Loader.Core.SetQuietMode(true);
                     Loader.Core.FileFetch();
@@ -695,7 +695,7 @@ namespace Max2Babylon
                 catch{}
                 finally
                 {
-                    if (chkUsePreExportProces.Checked && !chkKeepChangement.Checked)
+                    if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
                     {
                         Loader.Core.SetQuietMode(true);
                         Loader.Core.FileFetch();
@@ -713,7 +713,7 @@ namespace Max2Babylon
                 chkFlatten.Enabled = false;
                 cmbBakeAnimationOptions.Enabled = false;
                 lblBakeAnimation.Enabled = false;
-                chkKeepChangement.Enabled = false;
+                chkApplyPreprocessToScene.Enabled = false;
             }
             else
             {
@@ -721,7 +721,7 @@ namespace Max2Babylon
                 chkFlatten.Enabled = true;
                 cmbBakeAnimationOptions.Enabled = true;
                 lblBakeAnimation.Enabled = true;
-                chkKeepChangement.Enabled = true;
+                chkApplyPreprocessToScene.Enabled = true;
             }
         }
     }
