@@ -725,6 +725,7 @@ namespace Max2Babylon
                 var record = Loader.IIObjXRefManager.GetRecord(i);
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
             }
+            AnimationGroupList.LoadDataFromAnimationHelpers();
         }
 
 

@@ -161,6 +161,12 @@ namespace Max2Babylon
             IsDirty = true;
         }
 
+        public void MergeFrom(AnimationGroup other)
+        {
+            nodeGuids.AddRange(other.nodeGuids);
+            IsDirty = true;
+        }
+
         public override string ToString()
         {
             return string.Format(s_DisplayNameFormat, name, FrameStart, FrameEnd);
@@ -226,7 +232,8 @@ namespace Max2Babylon
             AnimationGroupNodes = new List<AnimationGroupNode>();
             foreach (Guid nodeGuid in nodeGuids)
             {
-                var node = Tools.GetINodeByGuid(nodeGuid);
+                IINode node = Tools.GetINodeByGuid(nodeGuid);
+
                 if (node != null)
                 {
                     string name = node.Name;
@@ -242,8 +249,9 @@ namespace Max2Babylon
             IsDirty = false;
         }
 
-        public void SaveToData(IINode dataNode)
+        public void SaveToData(IINode dataNode = null)
         {
+            dataNode = dataNode ?? Loader.Core.RootNode;
             // ' ' and '=' are not allowed by max, ';' is our data separator
             if (name.Contains(' ') || name.Contains('=') || name.Contains(s_PropertySeparator))
                 throw new FormatException("Invalid character(s) in animation Name: " + name + ". Spaces, equal signs and the separator '" + s_PropertySeparator + "' are not allowed.");
@@ -257,8 +265,9 @@ namespace Max2Babylon
             IsDirty = false;
         }
 
-        public void DeleteFromData(IINode dataNode)
+        public void DeleteFromData(IINode dataNode = null)
         {
+            dataNode = dataNode ?? Loader.Core.RootNode;
             dataNode.DeleteProperty(GetPropertyName());
             IsDirty = true;
         }
@@ -275,8 +284,10 @@ namespace Max2Babylon
             return this.First(animationGroup => animationGroup.Name == name);
         }
 
-        public void LoadFromData(IINode dataNode)
+        public void LoadFromData(IINode dataNode = null)
         {
+            dataNode = dataNode ?? Loader.Core.RootNode;
+
             string[] animationPropertyNames = dataNode.GetStringArrayProperty(s_AnimationListPropertyName);
 
             if (Capacity < animationPropertyNames.Length)
@@ -343,8 +354,9 @@ namespace Max2Babylon
             return animationList;
         }
 
-        public void SaveToData(IINode dataNode)
+        public void SaveToData(IINode dataNode = null)
         {
+            dataNode = dataNode ?? Loader.Core.RootNode;
             List<string> animationPropertyNameList = new List<string>();
             for(int i = 0; i < Count; ++i)
             {
@@ -508,7 +520,7 @@ namespace Max2Babylon
         public static void LoadDataFromAnimationHelpers()
         {
             AnimationGroupList sceneAnimationGroupList = new AnimationGroupList();
-            sceneAnimationGroupList.LoadFromData(Loader.Core.RootNode);
+            sceneAnimationGroupList.LoadFromData();
 
             foreach (IINode node in Loader.Core.RootNode.DirectChildren())
             {
@@ -516,16 +528,26 @@ namespace Max2Babylon
                 {
                     AnimationGroupList helperAnimationGroupList = new AnimationGroupList();
                     helperAnimationGroupList.LoadFromData(node);
-                    //merge
 
+                    //merge
                     foreach (AnimationGroup animationGroup in helperAnimationGroupList)
                     {
-                        
+                        AnimationGroup toMerge = sceneAnimationGroupList.Find(a => a.Name==animationGroup.Name);
+                        if (toMerge != null)
+                        {
+                            toMerge.MergeFrom(animationGroup);
+                        }
+                        else
+                        {
+                            AnimationGroup newAnimationGroup = new AnimationGroup();
+                            newAnimationGroup.DeepCopyFrom(animationGroup);
+                            sceneAnimationGroupList.Add(newAnimationGroup);
+                        }
                     }
                 }
             }
-
-            sceneAnimationGroupList.SaveToData(Loader.Core.RootNode);
+            sceneAnimationGroupList.SaveToData();
+            Loader.Global.SetSaveRequiredFlag(true, false);
         }
 
 
