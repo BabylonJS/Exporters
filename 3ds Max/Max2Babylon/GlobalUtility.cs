@@ -172,6 +172,7 @@ namespace Max2Babylon
                 actionTable.AppendOperation(new BabylonSaveAnimations());
                 actionTable.AppendOperation(new BabylonLoadAnimations());
                 actionTable.AppendOperation(new BabylonSkipFlattenToggle());
+                actionTable.AppendOperation(new BabylonToggleBakeAnimation());
 
                 actionCallback = new BabylonActionCallback();
 
@@ -321,8 +322,13 @@ namespace Max2Babylon
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.Title = "Babylon Toggle Bake Animation Status";
             menuItemBabylon.ActionItem = actionTable[6];
+            menu.AddItem(menuItemBabylon, -1);
+
+            menuItemBabylon = Loader.Global.IMenuItem;
+            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.ActionItem = actionTable[7];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItem = Loader.Global.IMenuItem;
