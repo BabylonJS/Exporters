@@ -1356,19 +1356,20 @@ namespace Max2Babylon
                 if (node.IsAnimated && node.TMController != null)
                 {
                     int lastKey = 0;
-                    if (node.TMController.PositionController != null)
+                    if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys>0 )
                     {
                         int posKeys = node.TMController.PositionController.NumKeys;
-                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(0));
+                        
                     }
 
-                    if (node.TMController.RotationController != null)
+                    if (node.TMController.RotationController != null && node.TMController.RotationController.NumKeys>0)
                     {
                         int rotKeys = node.TMController.RotationController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.RotationController.GetKeyTime(rotKeys - 1));
                     }
 
-                    if (node.TMController.ScaleController != null)
+                    if (node.TMController.ScaleController != null && node.TMController.ScaleController.NumKeys>0)
                     {
                         int scaleKeys = node.TMController.ScaleController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.ScaleController.GetKeyTime(scaleKeys - 1));
