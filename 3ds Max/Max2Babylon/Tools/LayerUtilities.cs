@@ -47,7 +47,7 @@ namespace Max2Babylon
             IILayerProperties layerProperties = Loader.IIFPLayerManager.GetLayer(layer.Name);
             layerProperties.Nodes(nodes);
 
-            foreach (IINode n in ITabToIEnumerable(nodes))
+            foreach (IINode n in Tools.ITabToIEnumerable(nodes))
             {
                 if (node.Handle == n.Handle) return true;
             }
@@ -75,25 +75,6 @@ namespace Max2Babylon
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Converts the ITab to a more convenient IEnumerable.
-        /// </summary>
-        public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
-        {
-#if MAX2015
-            for (int i = 0; i < tab.Count; i++)
-            {
-                yield return tab[(IntPtr)i];
-            }
-#else
-            for (int i = 0; i < tab.Count; i++)
-            {
-                yield return tab[i];
-            }
-#endif
-                
         }
 
         public static List<IILayer> RootLayers()
