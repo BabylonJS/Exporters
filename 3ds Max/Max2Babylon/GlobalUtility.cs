@@ -36,6 +36,9 @@ namespace Max2Babylon
         private static bool nodeAddedCallback = false;
         private GlobalDelegates.Delegate5 m_NodeAddedDelegate;
 
+        private static bool nodeDeleteCallback = false;
+        private GlobalDelegates.Delegate5 m_NodeDeleteDelegate;
+
 
         private void MenuSystemStartupHandler(IntPtr objPtr, INotifyInfo infoPtr)
         {
@@ -82,6 +85,23 @@ namespace Max2Babylon
         }
 #endif
 
+#if MAX2015
+        private void OnNodeDeleted(IntPtr objPtr, IntPtr param1)
+        {
+            try
+            {
+                INotifyInfo obj = Loader.Global.NotifyInfo.Marshal(param1);
+
+                IINode n = (IINode) obj.CallParam;
+                Tools.guids.Remove(n.GetGuid());
+            }
+            catch
+            {
+                // Fails silently
+            }
+        }
+#endif
+
         private void OnNodeAdded(IntPtr objPtr, INotifyInfo infoPtr)
         {
             try
@@ -101,6 +121,19 @@ namespace Max2Babylon
                     // a generic operation on a container is done (open/inherit)
                     contaner.ResolveContainer();
                 }
+            }
+            catch
+            {
+                // Fails silently
+            }
+        }
+
+        private void OnNodeDeleted(IntPtr objPtr, INotifyInfo infoPtr)
+        {
+            try
+            {
+                IINode n = (IINode)infoPtr.CallParam;
+                Tools.guids.Remove(n.GetGuid());
             }
             catch
             {
@@ -181,7 +214,7 @@ namespace Max2Babylon
                 RegisterFilePreOpen();
                 RegisterPostSceneReset();
                 RegisterNodeAddedCallback();
-
+                RegisterNodeDeletedCallback();
                 return 0;
             }
         }
@@ -221,6 +254,16 @@ namespace Max2Babylon
                 GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.SceneAddedNode );
 #endif
                 nodeAddedCallback = true;
+            }
+        }
+
+        public void RegisterNodeDeletedCallback()
+        {
+            if (!nodeDeleteCallback)
+            {
+                m_NodeDeleteDelegate = new GlobalDelegates.Delegate5(this.OnNodeDeleted);
+                GlobalInterface.Instance.RegisterNotification(this.m_NodeDeleteDelegate, null, SystemNotificationCode.ScenePreDeletedNode);
+                nodeDeleteCallback = true;
             }
         }
 
