@@ -30,6 +30,9 @@ namespace Max2Babylon
         private static bool filePreOpenCallback = false;
         private GlobalDelegates.Delegate5 m_FilePreOpenDelegate;
 
+        private static bool postSceneResetCallback = false;
+        private GlobalDelegates.Delegate5 m_PostSceneResetCallback;
+
         private static bool nodeAddedCallback = false;
         private GlobalDelegates.Delegate5 m_NodeAddedDelegate;
 
@@ -57,7 +60,13 @@ namespace Max2Babylon
                 INotifyInfo obj = Loader.Global.NotifyInfo.Marshal(param1);
 
                 IINode n = (IINode) obj.CallParam;
-                n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+                //todo replace this with something like isXREFNODE
+                //to have a distinction between added xref node and max node
+                string guid = n.GetStringProperty("babylonjs_GUID", string.Empty);
+                if (string.IsNullOrEmpty(guid))
+                {
+                    n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+                }
 
                 IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
                 if (contaner != null)
@@ -78,7 +87,13 @@ namespace Max2Babylon
             try
             {
                 IINode n = (IINode)infoPtr.CallParam;
-                n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+                //todo replace this with something like isXREFNODE
+                //to have a distinction between added xref node and max node
+                string guid = n.GetStringProperty("babylonjs_GUID", string.Empty);
+                if (string.IsNullOrEmpty(guid))
+                {
+                    n.GetGuid(); // force to assigne a new guid if not exist yet for this node
+                }
 
                 IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
                 if (contaner != null)
@@ -141,8 +156,8 @@ namespace Max2Babylon
                 actionTable.AppendOperation(babylonExportActionItem);
                 actionTable.AppendOperation(new BabylonPropertiesActionItem()); // Babylon Properties forms are modals => no need to store reference
                 actionTable.AppendOperation(new BabylonAnimationActionItem());
-                actionTable.AppendOperation(new BabylonSaveAnimationToContainers());
-                actionTable.AppendOperation(new BabylonLoadAnimationFromContainers());
+                actionTable.AppendOperation(new BabylonSaveAnimations());
+                actionTable.AppendOperation(new BabylonLoadAnimations());
                 actionTable.AppendOperation(new BabylonSkipFlattenToggle());
                 actionTable.AppendOperation(new BabylonToggleBakeAnimation());
 
@@ -151,16 +166,20 @@ namespace Max2Babylon
                 actionManager.RegisterActionTable(actionTable);
                 actionManager.ActivateActionTable(actionCallback as ActionCallback, idActionTable);
 
+                
+
                 // Set up menus
 #if MAX2018 || MAX2019
                 var global = GlobalInterface.Instance;
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
+
                 
 #else
                 InstallMenus();
 #endif
                 RegisterFilePreOpen();
+                RegisterPostSceneReset();
                 RegisterNodeAddedCallback();
 
                 return 0;
@@ -175,6 +194,17 @@ namespace Max2Babylon
                 GlobalInterface.Instance.RegisterNotification(this.m_FilePreOpenDelegate, null, SystemNotificationCode.FilePreOpen );
 
                 filePreOpenCallback = true;
+            }
+        }
+
+        public void RegisterPostSceneReset()
+        {
+            if (!postSceneResetCallback)
+            {
+                m_PostSceneResetCallback = new GlobalDelegates.Delegate5(this.InitializeBabylonGuids);
+                GlobalInterface.Instance.RegisterNotification(this.m_PostSceneResetCallback, null, SystemNotificationCode.PostSceneReset);
+
+                postSceneResetCallback = true;
             }
         }
         
