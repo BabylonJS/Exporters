@@ -197,17 +197,6 @@ namespace Max2Babylon
             }
         }
 
-        public void RegisterFilePreSave()
-        {
-            if (!filePreSaveCallback)
-            {
-                m_FilePreSaveDelegate = new GlobalDelegates.Delegate5(this.OnPreSave);
-                GlobalInterface.Instance.RegisterNotification(this.m_FilePreSaveDelegate, null, SystemNotificationCode.FilePreSave );
-
-                filePreSaveCallback = true;
-            }
-        }
-
         public void RegisterPostSceneReset()
         {
             if (!postSceneResetCallback)
