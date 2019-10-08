@@ -18,6 +18,7 @@ namespace Max2Babylon
 {
     internal partial class BabylonExporter : ILoggingProvider
     {
+        Dictionary<Type, IBabylonExtensionExporter> extensionExporters;
         public event Action<int> OnImportProgressChanged;
         public event Action<string, int> OnWarning;
         public event Action<string, Color, int, bool> OnMessage;
@@ -321,7 +322,24 @@ namespace Max2Babylon
                 return;
             }
 
-            
+            //load all custom Type with extension
+            if (MaxGLTFExtensionExporter.extendedBabylonType != null)
+            {
+                // Instantiate custom extension exporters
+                extensionExporters = new Dictionary<Type, IBabylonExtensionExporter>();
+                foreach (Type type in MaxGLTFExtensionExporter.extendedBabylonType)
+                {
+                    if (type.IsAbstract || type.IsInterface )
+                        continue;
+
+                    IBabylonExtensionExporter exporter = Activator.CreateInstance(type) as IBabylonExtensionExporter;
+
+                    if (exporter == null)
+                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+                    extensionExporters.Add(type, exporter);
+                }
+            }
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;

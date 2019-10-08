@@ -44,5 +44,7 @@ namespace BabylonExport.Entities
 
 		// Animations exported for glTF but not for Babylon
         public List<BabylonAnimation> extraAnimations;
+        // To leave the possibility to expand BabylonEntities 
+        public List<BabylonExtension> extraExtension;
     }
 }

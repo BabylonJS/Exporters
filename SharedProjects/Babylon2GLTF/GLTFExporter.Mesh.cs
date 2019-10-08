@@ -427,6 +427,17 @@ namespace Babylon2GLTF
                 alreadyExportedSkinnedMeshes.Add(babylonMesh);
             }
 
+            GLTFExtensions nodeExtensions = new GLTFExtensions();
+            if (babylonMesh.extraExtension != null && babylonMesh.extraExtension.Count>0)
+            {
+                foreach (var extension in babylonMesh.extraExtension)
+                {
+                    nodeExtensions.Add(extension.ExtensionName,extension.ExtensionObject);
+                }
+
+                gltfMesh.extensions = nodeExtensions;
+            }
+
             return gltfMesh;
         }
 
