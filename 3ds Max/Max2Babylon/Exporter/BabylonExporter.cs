@@ -322,25 +322,6 @@ namespace Max2Babylon
                 return;
             }
 
-            //load all custom Type with extension
-            if (MaxGLTFExtensionExporter.extendedBabylonType != null)
-            {
-                // Instantiate custom extension exporters
-                extensionExporters = new Dictionary<Type, IBabylonExtensionExporter>();
-                foreach (Type type in MaxGLTFExtensionExporter.extendedBabylonType)
-                {
-                    if (type.IsAbstract || type.IsInterface )
-                        continue;
-
-                    IBabylonExtensionExporter exporter = Activator.CreateInstance(type) as IBabylonExtensionExporter;
-
-                    if (exporter == null)
-                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
-
-                    extensionExporters.Add(type, exporter);
-                }
-            }
-
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
@@ -458,17 +439,32 @@ namespace Max2Babylon
 
             // Instantiate custom material exporters
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
+            extensionExporters = new Dictionary<Type, IBabylonExtensionExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
             {
-                if (type.IsAbstract || type.IsInterface || !typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                if (type.IsAbstract || type.IsInterface )
                     continue;
 
-                IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
+                if (typeof(IBabylonExtensionExporter).IsAssignableFrom(type))
+                {
+                    IBabylonExtensionExporter exporter = Activator.CreateInstance(type) as IBabylonExtensionExporter;
 
-                if (exporter == null)
-                    RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+                    if (exporter == null)
+                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
 
-                materialExporters.Add(exporter.MaterialClassID, exporter);
+                    Type t = exporter.GetBabylonExtendedType();
+                    extensionExporters.Add(t, exporter);
+                }
+
+                if (typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                {
+                    IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
+
+                    if (exporter == null)
+                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+                    materialExporters.Add(exporter.MaterialClassID, exporter);
+                }
             }
 
             // Sounds

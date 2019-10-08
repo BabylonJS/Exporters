@@ -9,6 +9,7 @@ namespace Max2Babylon
 {
     public interface IBabylonExtensionExporter
     {
+        Type GetBabylonExtendedType();
         BabylonExtension ExportBabylonExtension();
     }
 }

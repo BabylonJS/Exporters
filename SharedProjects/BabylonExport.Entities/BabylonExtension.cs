@@ -8,5 +8,11 @@ namespace BabylonExport.Entities
     {
         public string ExtensionName;
         public object ExtensionObject;
+
+        public BabylonExtension(string extensionName,object extensionObject)
+        {
+            ExtensionName = extensionName;
+            ExtensionObject = extensionObject;
+        }
     }
 }
