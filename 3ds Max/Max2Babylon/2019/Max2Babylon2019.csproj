@@ -137,17 +137,17 @@
     <Compile Include="..\BabylonExportActionItem.cs">
       <Link>BabylonExportActionItem.cs</Link>
     </Compile>
-    <Compile Include="..\BabylonLoadAnimationFromContainers.cs">
-      <Link>BabylonLoadAnimationFromContainers.cs</Link>
+    <Compile Include="..\BabylonLoadAnimations.cs">
+      <Link>BabylonLoadAnimations.cs</Link>
     </Compile>
     <Compile Include="..\BabylonPropertiesActionItem.cs">
       <Link>BabylonPropertiesActionItem.cs</Link>
     </Compile>
-    <Compile Include="..\BabylonSaveAnimationToContainers.cs">
-      <Link>BabylonSaveAnimationToContainers.cs</Link>
-    </Compile>
     <Compile Include="..\BabylonSkipFlatten.cs">
       <Link>BabylonSkipFlatten.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonStoreAnimations.cs">
+      <Link>BabylonStoreAnimations.cs</Link>
     </Compile>
     <Compile Include="..\BabylonToggleBakeAnimation.cs">
       <Link>BabylonToggleBakeAnimation.cs</Link>
