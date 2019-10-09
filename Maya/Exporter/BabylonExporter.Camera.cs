@@ -94,6 +94,7 @@ namespace Maya2Babylon
             var rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
             GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling);
             babylonCamera.position = position;
+            babylonCamera.scaling = scaling;
             if (_exportQuaternionsInsteadOfEulers)
             {
                 babylonCamera.rotationQuaternion = rotationQuaternion;

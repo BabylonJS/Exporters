@@ -768,6 +768,13 @@ namespace Max2Babylon
 
 #region GUID
 
+        public static void UnloadAllContainers()
+        {
+            foreach (IIContainerObject iContainerObject in GetAllContainers())
+            {
+                bool unload = iContainerObject.UnloadContainer;
+            }
+        }
 
         public static void MergeAllXrefRecords()
         {
@@ -776,6 +783,7 @@ namespace Max2Babylon
                 var record = Loader.IIObjXRefManager.GetRecord(i);
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
             }
+            AnimationGroupList.LoadDataFromAnimationHelpers();
         }
 
         public static bool IsNodeSelected(this IINode node)
@@ -826,6 +834,34 @@ namespace Max2Babylon
                 }
             }
             return null;
+        }
+
+        public static List<IIContainerObject> GetContainerInSelection()
+        {
+#if MAX2020
+            IINodeTab selection = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab selection = Loader.Global.INodeTabNS.Create();
+#endif
+            Loader.Core.GetSelNodeTab(selection);
+            List<IIContainerObject> selectedContainers = new List<IIContainerObject>();
+
+            for (int i = 0; i < selection.Count; i++)
+            {
+#if MAX2015
+                var selectedNode = selection[(IntPtr)i];
+#else
+                var selectedNode = selection[i];
+#endif
+
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
+                if (containerObject != null)
+                {
+                    selectedContainers.Add(containerObject);
+                }
+            }
+
+            return selectedContainers;
         }
 
         public static IIContainerObject InSameContainer(this IList<Guid> guids)
@@ -929,13 +965,12 @@ namespace Max2Babylon
             }
         }
 
-
-        public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
+        public static IINode BabylonAnimationHelper()
         {
             IINode babylonHelper = null;
-            foreach (IINode directChild in containerObject.ContainerNode.DirectChildren())
+            foreach (IINode directChild in Loader.Core.RootNode.DirectChildren())
             {
-                if (directChild.Name == "BabylonAnimationHelper")
+                if (directChild.IsBabylonAnimationHelper())
                 {
                     babylonHelper = directChild;
                 }
@@ -943,10 +978,31 @@ namespace Max2Babylon
 
             if (babylonHelper == null)
             {
-                MessageBox.Show($"Container {containerObject.ContainerNode.Name} has no Babylon Animation Helper, " +
-                                $"a default one has been created, this process should be done on the container source");
                 IDummyObject dummy = Loader.Global.DummyObject.Create();
-                babylonHelper = Loader.Core.CreateObjectNode(dummy, "BabylonAnimationHelper");
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonAnimationHelper_{Random.Next(0,99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_AnimationHelper",true);
+            }
+
+            return babylonHelper;
+        }
+
+
+        public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
+        {
+            IINode babylonHelper = null;
+            foreach (IINode directChild in containerObject.ContainerNode.DirectChildren())
+            {
+                if (directChild.IsBabylonContainerHelper())
+                {
+                    babylonHelper = directChild;
+                }
+            }
+
+            if (babylonHelper == null)
+            {
+                IDummyObject dummy = Loader.Global.DummyObject.Create();
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonContainerHelper_{Random.Next(0,99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_ContainerHelper",true);
 
                 Loader.Core.SetQuietMode(true);
                 containerObject.ContainerNode.AttachChild(babylonHelper,false);
@@ -956,14 +1012,21 @@ namespace Max2Babylon
             return babylonHelper;
         }
 
+        public static bool IsBabylonAnimationHelper(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_AnimationHelper", 0);
+        }
+
         public static bool IsBabylonContainerHelper(this IINode node)
         {
+            //to keep retrocompatibility
             if (node.Name == "BabylonAnimationHelper")
             {
-                return true;
+                node.Name = $"BabylonContainerHelper_{Random.Next(0, 99999)}";
+                node.SetUserPropBool("babylonjs_ContainerHelper",true);
             }
 
-            return false;
+            return node.GetBoolProperty("babylonjs_ContainerHelper", 0);
         }
 
         public static List<Guid> ToGuids(this IList<uint> handles)
@@ -1293,19 +1356,20 @@ namespace Max2Babylon
                 if (node.IsAnimated && node.TMController != null)
                 {
                     int lastKey = 0;
-                    if (node.TMController.PositionController != null)
+                    if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys>0 )
                     {
                         int posKeys = node.TMController.PositionController.NumKeys;
-                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(0));
+                        
                     }
 
-                    if (node.TMController.RotationController != null)
+                    if (node.TMController.RotationController != null && node.TMController.RotationController.NumKeys>0)
                     {
                         int rotKeys = node.TMController.RotationController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.RotationController.GetKeyTime(rotKeys - 1));
                     }
 
-                    if (node.TMController.ScaleController != null)
+                    if (node.TMController.ScaleController != null && node.TMController.ScaleController.NumKeys>0)
                     {
                         int scaleKeys = node.TMController.ScaleController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.ScaleController.GetKeyTime(scaleKeys - 1));
