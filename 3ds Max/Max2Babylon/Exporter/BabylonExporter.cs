@@ -159,8 +159,8 @@ namespace Max2Babylon
         public void FlattenItem(ref IINode itemNode)
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
-
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
+            
                 
             IINode hierachyRoot = null;
             if (itemNode == null)
@@ -860,7 +860,7 @@ namespace Max2Babylon
                 if (maxExporterParameters.flattenScene)
                 {
                     Tools.RemoveFlattenModification();
-        }
+                }
             }
         }
 
@@ -1093,7 +1093,7 @@ namespace Max2Babylon
                 return false;
             }
 
-            if (gameNode.MaxNode.IsBabylonContainerHelper())
+            if (gameNode.MaxNode.IsBabylonContainerHelper() || gameNode.MaxNode.IsBabylonAnimationHelper())
             {
                 return false;
             }
