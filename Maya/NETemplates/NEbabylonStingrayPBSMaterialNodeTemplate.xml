@@ -1,0 +1,11 @@
+
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+	<using package='maya'/>
+	<template name='NEbabylonStingrayPBSMaterialNode'>
+	</template>
+	<view name='NEDefault' template='NEbabylonStingrayPBSMaterialNode'>
+	</view>
+	<view name='NEDefaultSoloOutput' template='NEbabylonStingrayPBSMaterialNode'>
+	</view>
+</templates>

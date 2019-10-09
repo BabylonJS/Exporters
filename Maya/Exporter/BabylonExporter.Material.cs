@@ -439,10 +439,27 @@ namespace Maya2Babylon
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
                     babylonMaterial.doubleSided = !babylonMaterial.backFaceCulling;
 
+                    // Update displayed Transparency mode value based on StingrayPBS preset material
+                    MGlobal.executeCommand($"setAttr - l false {{ \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" }}"); // Unlock attribute
+                    int babylonTransparencyMode = 0;
+                    if (materialDependencyNode.hasAttribute("mask_threshold"))
+                    {
+                        babylonTransparencyMode = 1;
+                    }
+                    else if (materialDependencyNode.hasAttribute("use_opacity_map"))
+                    {
+                        babylonTransparencyMode = 2;
+                    }
+                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonTransparencyMode};");
+                    MGlobal.executeCommand($"setAttr - l true {{ \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" }}"); // Lock it afterwards
+
+                    // TODO - Does babylon material node definition override the one of stingrayPBS material for transparency mode ?
+                    /*
                     // Transparency mode
                     int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
                     RaiseVerbose("transparencyMode=" + transparencyMode, 3);
                     babylonMaterial.transparencyMode = transparencyMode;
+                    */
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);

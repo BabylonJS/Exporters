@@ -12,10 +12,14 @@ global proc AEbabylonStingrayPBSMaterialNodeTemplate ( string $nodeName )
 	editorTemplate -suppress "varyingParameters";
 	editorTemplate -suppress "uniformParameters";
 	
-	editorTemplate -beginLayout "Babylon Attributes" -collapse 0;
-		editorTemplate -addControl "babylonTransparencyMode";
+	editorTemplate -beginLayout "Common Attributes" -collapse 0;
+		editorTemplate -annotation "Read only" -addControl "babylonTransparencyMode";
 		editorTemplate -addControl "babylonBackfaceCulling";
+	editorTemplate -endLayout;
+	editorTemplate -beginLayout "Extension Attributes" -collapse 0;
 		editorTemplate -addControl "babylonUnlit";
+	editorTemplate -endLayout;
+	editorTemplate -beginLayout "Babylon.js Attributes" -collapse 0;
 		editorTemplate -addControl "babylonMaxSimultaneousLights";
 	editorTemplate -endLayout;
 		

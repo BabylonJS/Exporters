@@ -38,9 +38,13 @@ namespace Maya2Babylon
             MGlobal.executeCommand($"connectAttr -f {materialDependencyNode.name}.outColor {babylonMaterialNodeName}.outTransparency;");
         }
 
+        /// <summary>
+        /// Ensure all attributes are setup
+        /// </summary>
+        /// <param name="babylonAttributesDependencyNode"></param>
+        /// <param name="babylonMaterial"></param>
         public static void Init(MFnDependencyNode babylonAttributesDependencyNode, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
-            // Ensure all attributes are setup
             if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode") == false)
             {
                 MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Transparency Mode\" - at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
