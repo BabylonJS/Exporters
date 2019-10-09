@@ -17,6 +17,22 @@ namespace MayaBabylon
         public float[] WeightsExtra { get; set; } // Vec4
         public float[] Color { get; set; } // Vec4
 
+        public GlobalVertex(GlobalVertex other)
+        {
+            this.BaseIndex = other.BaseIndex;
+            this.CurrentIndex = other.CurrentIndex;
+            this.Position = other.Position;
+            this.Normal = other.Normal;
+            this.Tangent = other.Tangent;
+            this.UV = other.UV;
+            this.UV2 = other.UV2;
+            this.BonesIndices = other.BonesIndices;
+            this.Weights = other.Weights;
+            this.BonesIndicesExtra = other.BonesIndicesExtra;
+            this.WeightsExtra = other.WeightsExtra;
+            this.Color = other.Color;
+        }
+
         public override int GetHashCode()
         {
             return base.GetHashCode();
