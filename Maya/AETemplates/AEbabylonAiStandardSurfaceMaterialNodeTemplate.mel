@@ -1,0 +1,23 @@
+global proc AEbabylonAiStandardSurfaceMaterialNodeTemplate ( string $nodeName )
+{
+	editorTemplate -beginScrollLayout;
+	
+	editorTemplate -suppress "caching";
+	editorTemplate -suppress "frozen";
+	editorTemplate -suppress "nodeState";
+	editorTemplate -suppress "outTransparency";
+	editorTemplate -suppress "outGlowColor";
+	editorTemplate -suppress "outMatteOpacity";
+	editorTemplate -suppress "enableHwShading";
+	editorTemplate -suppress "varyingParameters";
+	editorTemplate -suppress "uniformParameters";
+	
+	editorTemplate -beginLayout "Babylon Attributes" -collapse 0;
+		editorTemplate -addControl "babylonTransparencyMode";
+		editorTemplate -addControl "babylonBackfaceCulling";
+		editorTemplate -addControl "babylonUnlit";
+		editorTemplate -addControl "babylonMaxSimultaneousLights";
+	editorTemplate -endLayout;
+		
+	editorTemplate -endScrollLayout;
+}
