@@ -274,24 +274,31 @@ namespace Max2Babylon
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
                 exportNode = maxExporterParameters.exportNode;
-                if (maxExporterParameters.mergeContainersAndXRef)
+
+                if (maxExporterParameters.usePreExportProcess)
                 {
-                    string message = "Merging containers and Xref...";
-                    RaiseMessage(message, 0);
-                    ExportClosedContainers();
-                    Tools.MergeAllXrefRecords();
+                    if (maxExporterParameters.mergeContainersAndXRef)
+                    {
+                        string message = "Merging containers and Xref...";
+                        RaiseMessage(message, 0);
+                        ExportClosedContainers();
+                        Tools.MergeAllXrefRecords();
 #if DEBUG
-                    var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
-                    RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
+                        var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
+                        RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
 #endif
+                    }
+                    BakeAnimationsFrame(exportNode,maxExporterParameters.bakeAnimationType);
                 }
 
-                if(maxExporterParameters.flattenScene) FlattenItem(ref exportNode);
-
+                if (maxExporterParameters.flattenScene)
+                {
+                    FlattenItem(ref exportNode);
 #if DEBUG
-                flattenTime = watch.ElapsedMilliseconds / 1000.0;
-                RaiseMessage(string.Format("Nodes falattened in {0:0.00}s", flattenTime ), Color.Blue);
+                    flattenTime = watch.ElapsedMilliseconds / 1000.0;
+                    RaiseMessage(string.Format("Nodes flattened in {0:0.00}s", flattenTime ), Color.Blue);
 #endif
+                }
             }
 
             Tools.InitializeGuidNodesMap();
@@ -625,7 +632,7 @@ namespace Max2Babylon
             {
                 var atmospheric = Loader.Core.GetAtmospheric(index);
 
-                if (atmospheric.Active(0) && atmospheric.ClassName == "Fog")
+                if (atmospheric!=null && atmospheric.Active(0) && atmospheric.ClassName == "Fog")
                 {
                     var fog = atmospheric as IStdFog;
 
