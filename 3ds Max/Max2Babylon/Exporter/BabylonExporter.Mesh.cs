@@ -907,14 +907,16 @@ namespace Max2Babylon
                 else
                 {
                     verticesAlreadyExported[vertex] = new List<GlobalVertex>();
-                    verticesAlreadyExported[vertex].Add(vertex);
-                    vertex.CurrentIndex = vertices.Count;
+                    var modifiedVertex = new GlobalVertex(vertex);
+                    modifiedVertex.CurrentIndex = vertices.Count;
+                    verticesAlreadyExported[vertex].Add(modifiedVertex);
+                    vertex = modifiedVertex;
                 }
             }
 
             vertices.Add(vertex);
 
-            return vertex.CurrentIndex;
+            return vertices.Count -1;
         }
 
         private void exportNode(BabylonAbstractMesh babylonAbstractMesh, IIGameNode maxGameNode, IIGameScene maxGameScene, BabylonScene babylonScene)

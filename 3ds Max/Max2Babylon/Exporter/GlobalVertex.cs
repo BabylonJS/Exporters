@@ -5,6 +5,7 @@ namespace Max2Babylon
 {
     public struct GlobalVertex
     {
+
         public int BaseIndex { get; set; }
         public int CurrentIndex { get; set; }
         public IPoint3 Position { get; set; }
@@ -18,8 +19,39 @@ namespace Max2Babylon
         public IPoint4 WeightsExtra { get; set; }
         public float[] Color { get; set; }
 
+        public GlobalVertex(GlobalVertex other)
+        {
+            this.BaseIndex = other.BaseIndex;
+            this.CurrentIndex = other.CurrentIndex;
+            this.Position = other.Position;
+            this.Normal = other.Normal;
+            this.Tangent = other.Tangent;
+            this.UV = other.UV;
+            this.UV2 = other.UV2;
+            this.BonesIndices = other.BonesIndices;
+            this.Weights = other.Weights;
+            this.BonesIndicesExtra = other.BonesIndicesExtra;
+            this.WeightsExtra = other.WeightsExtra;
+            this.Color = other.Color;
+        }
+
         public override int GetHashCode()
         {
+            /*
+            return string.Format("{0}-{1}-{2}-{3}-{4}-{5}-{6}-{7}-{8}-{9}",
+                                    BaseIndex,
+                                    CurrentIndex,
+                                    Position != null ? Position.ToArray() : null,
+                                    Normal != null ? Normal.ToArray() : null,
+                                    Tangent,
+                                    UV != null ? UV.ToArray() : null,
+                                    UV2 != null ? UV.ToArray() : null,
+                                    BonesIndices,
+                                    Weights != null ? Weights.ToArray() : null,
+                                    BonesIndicesExtra,
+                                    WeightsExtra != null ? WeightsExtra.ToArray() : null,
+                                    Color).GetHashCode();
+            */
             return base.GetHashCode();
         }
 

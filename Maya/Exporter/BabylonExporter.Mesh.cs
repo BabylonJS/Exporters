@@ -669,11 +669,13 @@ namespace Maya2Babylon
                                 else
                                 {
                                     // add the stored vertex
-                                    vertex.CurrentIndex = vertices.Count;
                                     verticesAlreadyExported[vertex] = new List<GlobalVertex>();
-                                    verticesAlreadyExported[vertex].Add(vertex);
+                                    var modifiedVertex = new GlobalVertex(vertex);
+                                    modifiedVertex.CurrentIndex = vertices.Count;
+                                    verticesAlreadyExported[vertex].Add(modifiedVertex);
+                                    vertex = modifiedVertex;
                                     vertices.Add(vertex);
-
+                                    
                                     // Store vertex data
                                     babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
                                 }
