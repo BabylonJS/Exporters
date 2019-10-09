@@ -584,11 +584,11 @@ namespace Maya2Babylon
         /// <param name="optimizeVertices"></param>
         private void ExtractGeometry(BabylonMesh babylonMesh, MFnMesh mFnMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess, bool optimizeVertices)
         {
-            List<GlobalVertex>[] verticesAlreadyExported = null;
+            Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported = null;
 
             if (optimizeVertices)
             {
-                verticesAlreadyExported = new List<GlobalVertex>[mFnMesh.numVertices];
+                verticesAlreadyExported = new Dictionary<GlobalVertex, List<GlobalVertex>>();
             }
 
             MIntArray triangleCounts = new MIntArray();
@@ -659,37 +659,23 @@ namespace Maya2Babylon
                             // Optimize vertices
                             if (verticesAlreadyExported != null)
                             {
-                                if (verticesAlreadyExported[vertexIndexGlobal] != null)
+                                // If a stored vertex is similar to current vertex
+                                if (verticesAlreadyExported.ContainsKey(vertex))
                                 {
-                                    var index = verticesAlreadyExported[vertexIndexGlobal].IndexOf(vertex);
-
-                                    // If a stored vertex is similar to current vertex
-                                    if (index > -1)
-                                    {
-                                        // Use stored vertex instead of current one
-                                        vertex = verticesAlreadyExported[vertexIndexGlobal][index];
-                                    }
-                                    else
-                                    {
-                                        vertex.CurrentIndex = vertices.Count;
-                                        verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
-                                        vertices.Add(vertex);
-
-                                        // Store vertex data
-                                        babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
-                                    }
+                                    // Use stored vertex instead of current one
+                                    verticesAlreadyExported[vertex].Add(vertex);
+                                    vertex = verticesAlreadyExported[vertex].ElementAt(0);
                                 }
                                 else
                                 {
-                                    verticesAlreadyExported[vertexIndexGlobal] = new List<GlobalVertex>();
-
+                                    // add the stored vertex
                                     vertex.CurrentIndex = vertices.Count;
-                                    verticesAlreadyExported[vertexIndexGlobal].Add(vertex);
+                                    verticesAlreadyExported[vertex] = new List<GlobalVertex>();
+                                    verticesAlreadyExported[vertex].Add(vertex);
                                     vertices.Add(vertex);
 
                                     // Store vertex data
                                     babylonMesh.VertexDatas.Add(new VertexData(polygonId, vertexIndexGlobal, vertexIndexLocal));
-
                                 }
                             }
                             else
