@@ -545,17 +545,27 @@ namespace Babylon2GLTF
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
 
+            ExportGLTFExtension(babylonNode.extraExtension, ref gltfNode);
+            
+            return gltfNode;
+        }
+
+        private void ExportGLTFExtension<T>(List<BabylonExtension> extraExtensions, ref T gltfObject) where T:GLTFProperty
+        {
             GLTFExtensions nodeExtensions = new GLTFExtensions();
-            if (babylonNode.extraExtension != null && babylonNode.extraExtension.Count>0)
+            if (extraExtensions != null && extraExtensions.Count>0)
             {
-                foreach (var extension in babylonNode.extraExtension)
+                foreach (var extension in extraExtensions)
                 {
+                    if(extension.ExtensionType!=gltfObject.GetType()) continue;
                     nodeExtensions.Add(extension.ExtensionName,extension.ExtensionObject);
                 }
 
-                gltfNode.extensions = nodeExtensions;
+                if (nodeExtensions.Count > 0)
+                {
+                    gltfObject.extensions = nodeExtensions;
+                }
             }
-            return gltfNode;
         }
     }
 }

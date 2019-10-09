@@ -504,17 +504,8 @@ namespace Max2Babylon
             exportAnimation(babylonMesh, meshNode);
 
             babylonScene.MeshesList.Add(babylonMesh);
-            if(extensionExporters!=null && extensionExporters.ContainsKey(babylonMesh.GetType()))
-            {
-                var babylonExtensionsExportsOfType = extensionExporters.Where(t => t.Key == babylonMesh.GetType()).Select(k=>k.Value);
-                List<BabylonExtension> babylonExtensions = new List<BabylonExtension>();
-                foreach (IBabylonExtensionExporter extensionOfType in babylonExtensionsExportsOfType)
-                {
-                    babylonExtensions.Add(extensionOfType.ExportBabylonExtension());
-                }
-                babylonMesh.extraExtension = babylonExtensions;
-            }
-            
+
+            BabylonToGLTFExtension(babylonMesh);
             
             return babylonMesh;
         }

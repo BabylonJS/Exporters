@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -508,7 +509,7 @@ namespace Max2Babylon
             foreach (var maxRootNode in maxRootNodes)
             {
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
-
+                BabylonToGLTFExtension(node);
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
                 if (node != null && exportNode != null && !exportNode.IsRootNode)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
@@ -528,6 +529,7 @@ namespace Max2Babylon
             {
                 BabylonCamera camera = babylonScene.CamerasList[index];
                 FixCamera(ref camera, ref babylonScene);
+                BabylonToGLTFExtension(camera);
             }
 
             // Light for glTF
@@ -1284,6 +1286,24 @@ namespace Max2Babylon
                         key.values[1] + offset[1],
                         key.values[2] + offset[2] };
                 }
+            }
+        }
+
+        private void BabylonToGLTFExtension<TBabylon>(TBabylon babylonObject) where TBabylon: BabylonNode 
+        {
+            if(extensionExporters!=null && extensionExporters.ContainsKey(babylonObject.GetType()))
+            {
+                var babylonExtensionsExportsOfType = extensionExporters.Where(t => t.Key == babylonObject.GetType()).Select(k=>k.Value);
+                List<BabylonExtension> babylonExtensions = new List<BabylonExtension>();
+                foreach (IBabylonExtensionExporter extensionOfType in babylonExtensionsExportsOfType)
+                {
+                    BabylonExtension ext = extensionOfType.ExportBabylonExtension(babylonObject);
+                    if (ext != null)
+                    {
+                        babylonExtensions.Add(ext);
+                    }
+                }
+                babylonObject.extraExtension = babylonExtensions;
             }
         }
     }
