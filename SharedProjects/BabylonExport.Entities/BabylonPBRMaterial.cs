@@ -133,8 +133,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool twoSidedLighting { get; set; }
 
-        [DataMember]
-        public float alphaCutOff { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public float? alphaCutOff { get; set; }
 
         [DataMember]
         public int transparencyMode { get; set; }
@@ -186,7 +186,6 @@ namespace BabylonExport.Entities
             invertNormalMapX = false;
             invertNormalMapY = false;
             ambientTextureStrength = 1.0f;
-            alphaCutOff = 0.4f;
             transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE;
 
             clearCoat = new BabylonPBRClearCoat();

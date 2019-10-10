@@ -114,18 +114,34 @@ namespace Maya2Babylon
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
 
+                bool isTransparencyModeFromBabylonMaterialNode = false;
+                if (babylonAttributesDependencyNode != null)
+                {
+                    // Transparency mode
+                    if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode"))
+                    {
+                        int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
+                        babylonMaterial.transparencyMode = transparencyMode;
+
+                        isTransparencyModeFromBabylonMaterialNode = true;
+                    }
+                }
+
                 // Maya ambient <=> babylon emissive
                 babylonMaterial.emissive = lambertShader.ambientColor.toArrayRGB();
                 babylonMaterial.linkEmissiveWithDiffuse = true; // Incandescence (or Illumination) is not exported
 
-                // If transparency is not a shade of grey (shade of grey <=> R=G=B)
-                if (lambertShader.transparency[0] != lambertShader.transparency[1] ||
-                    lambertShader.transparency[0] != lambertShader.transparency[2])
+                if (isTransparencyModeFromBabylonMaterialNode == false || babylonMaterial.transparencyMode != 0)
                 {
-                    RaiseWarning("Transparency color is not a shade of grey. Only it's R channel is used.", 2);
+                    // If transparency is not a shade of grey (shade of grey <=> R=G=B)
+                    if (lambertShader.transparency[0] != lambertShader.transparency[1] ||
+                        lambertShader.transparency[0] != lambertShader.transparency[2])
+                    {
+                        RaiseWarning("Transparency color is not a shade of grey. Only it's R channel is used.", 2);
+                    }
+                    // Convert transparency to opacity
+                    babylonMaterial.alpha = 1.0f - lambertShader.transparency[0];
                 }
-                // Convert transparency to opacity
-                babylonMaterial.alpha = 1.0f - lambertShader.transparency[0];
 
                 // Specular power
                 if (materialObject.hasFn(MFn.Type.kReflect))
@@ -170,14 +186,17 @@ namespace Maya2Babylon
                 babylonMaterial.diffuseTexture = ExportTexture(materialDependencyNode, "color", babylonScene);
                 babylonMaterial.emissiveTexture = ExportTexture(materialDependencyNode, "ambientColor", babylonScene); // Maya ambient <=> babylon emissive
                 babylonMaterial.bumpTexture = ExportTexture(materialDependencyNode, "normalCamera", babylonScene);
-                babylonMaterial.opacityTexture = ExportTexture(materialDependencyNode, "transparency", babylonScene, false, true);
+                if (isTransparencyModeFromBabylonMaterialNode == false || babylonMaterial.transparencyMode != 0)
+                {
+                    babylonMaterial.opacityTexture = ExportTexture(materialDependencyNode, "transparency", babylonScene, false, true);
+                }
                 if (materialObject.hasFn(MFn.Type.kReflect))
                 {
                     babylonMaterial.specularTexture = ExportTexture(materialDependencyNode, "specularColor", babylonScene);
                     babylonMaterial.reflectionTexture = ExportTexture(materialDependencyNode, "reflectedColor", babylonScene, true, false, true);
                 }
 
-                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) || babylonMaterial.opacityTexture != null)
+                if (isTransparencyModeFromBabylonMaterialNode == false && (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) || babylonMaterial.opacityTexture != null))
                 {
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
                 }
@@ -213,9 +232,12 @@ namespace Maya2Babylon
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
 
                     // Transparency mode
-                    int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
-                    RaiseVerbose("transparencyMode=" + transparencyMode, 3);
-                    babylonMaterial.transparencyMode = transparencyMode;
+                    if (isTransparencyModeFromBabylonMaterialNode == false)
+                    {
+                        int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
+                        RaiseVerbose("transparencyMode=" + transparencyMode, 3);
+                        babylonMaterial.transparencyMode = transparencyMode;
+                    }
 
                     // Special treatment for Unlit
                     if (babylonMaterial.isUnlit)
@@ -234,22 +256,13 @@ namespace Maya2Babylon
                         babylonMaterial.disableLighting = true;
                         babylonMaterial.linkEmissiveWithDiffuse = false;
                     }
-
                     // Special treatment for "Alpha test" transparency mode
-                    if (babylonMaterial.transparencyMode == 1)
+                    if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
                     {
                         // Base color and alpha files need to be merged into a single file
-                        Color defaultColor = Color.FromArgb((int)babylonMaterial.diffuse[0] * 255, (int)babylonMaterial.diffuse[1] * 255, (int)babylonMaterial.diffuse[2] * 255);
+                        Color defaultColor = Color.FromArgb((int)(babylonMaterial.diffuse[0] * 255), (int)(babylonMaterial.diffuse[1] * 255), (int)(babylonMaterial.diffuse[2] * 255));
                         MFnDependencyNode baseColorTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "color");
                         MFnDependencyNode opacityTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "transparency");
-                        if (opacityTextureDependencyNode == null)
-                        {
-                            RaiseMessage("opacityTextureDependencyNode is null", 2);
-                        }
-                        else
-                        {
-                            RaiseMessage("opacityTextureDependencyNode is NOT null", 2);
-                        }
                         babylonMaterial.diffuseTexture = ExportBaseColorAlphaTexture(baseColorTextureDependencyNode, opacityTextureDependencyNode, babylonScene, name, defaultColor, babylonMaterial.alpha);
                         babylonMaterial.opacityTexture = null;
                         babylonMaterial.alpha = 1.0f;
@@ -301,12 +314,58 @@ namespace Maya2Babylon
                 {
                     useOpacityMap = materialDependencyNode.findPlug(useOpacityMapAttributeName).asBool();
                 }
-                if (useColorMap || useOpacityMap)
+                if (materialDependencyNode.hasAttribute("mask_threshold")) // Preset "Masked"
                 {
-                    // TODO - Force non use map to default value ?
-                    // Ex: if useOpacityMap == false, force alpha = 255 for all pixels.
-                    //babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(materialDependencyNode, useColorMap, useOpacityMap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene);
-                    babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "TEX_color_map", babylonScene, false, useOpacityMap);
+                    if (useColorMap && useOpacityMap)
+                    {
+                        // Texture is assumed to be already merged
+                        babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "TEX_color_map", babylonScene, false, true);
+                    }
+                    else if (useColorMap || useOpacityMap)
+                    {
+                        // Merge Diffuse and Mask
+                        Color defaultColor = Color.FromArgb((int)(babylonMaterial.baseColor[0] * 255), (int)(babylonMaterial.baseColor[1] * 255), (int)(babylonMaterial.baseColor[2] * 255));
+                        // In Maya, a Masked StingrayPBS material without opacity or mask textures is counted as being fully transparent
+                        // Such material is visible only when the mask threshold is set to 0
+                        float defaultOpacity = 0;
+
+                        // Either use the color map
+                        MFnDependencyNode baseColorTextureDependencyNode = null;
+                        if (useColorMap)
+                        {
+                            baseColorTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "TEX_color_map");
+                        }
+                        // Or the opacity map
+                        MFnDependencyNode opacityTextureDependencyNode = null;
+                        if (useOpacityMap)
+                        {
+                            opacityTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "TEX_color_map");
+                        }
+
+                        // Merge default value and texture
+                        babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTextureDependencyNode, opacityTextureDependencyNode, babylonScene, babylonMaterial.name, defaultColor, defaultOpacity);
+                    }
+                    else
+                    {
+                        // In Maya, a Masked StingrayPBS material without opacity or mask textures is counted as being fully transparent
+                        // Such material is visible only when the mask threshold is set to 0
+                        babylonMaterial.alpha = 0;
+                    }
+                }
+                else
+                {
+                    if (useColorMap || useOpacityMap)
+                    {
+                        // Force non use map to default value
+                        // Ex: if useOpacityMap == false, force alpha = 255 for all pixels.
+                        babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "TEX_color_map", babylonScene, false, useOpacityMap);
+                    }
+                }
+
+                // Alpha cuttoff
+                if (materialDependencyNode.hasAttribute("mask_threshold")) // Preset "Masked"
+                {
+                    babylonMaterial.alphaCutOff = materialDependencyNode.findPlug("mask_threshold").asFloat();
                 }
 
                 // Metallic, roughness, ambient occlusion
@@ -438,6 +497,7 @@ namespace Maya2Babylon
                     // Common attributes
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
                     babylonMaterial.doubleSided = !babylonMaterial.backFaceCulling;
+                    babylonMaterial._unlit = babylonMaterial.isUnlit;
 
                     // Update displayed Transparency mode value based on StingrayPBS preset material
                     MGlobal.executeCommand($"setAttr - l false {{ \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" }}"); // Unlock attribute
@@ -575,7 +635,7 @@ namespace Maya2Babylon
                     else
                     {
                         // Base color and alpha files need to be merged into a single file
-                        Color _baseColor = Color.FromArgb((int)baseColor[0] * 255, (int)baseColor[1] * 255, (int)baseColor[2] * 255);
+                        Color _baseColor = Color.FromArgb((int)(baseColor[0] * 255), (int)(baseColor[1] * 255), (int)(baseColor[2] * 255));
                         babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTextureDependencyNode, opacityTextureDependencyNode, babylonScene, name, _baseColor, babylonMaterial.alpha);
                     }
                 }
@@ -665,6 +725,7 @@ namespace Maya2Babylon
                     // Common attributes
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
                     babylonMaterial.doubleSided = !babylonMaterial.backFaceCulling;
+                    babylonMaterial._unlit = babylonMaterial.isUnlit;
 
                     // Transparency mode
                     int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
