@@ -556,7 +556,9 @@ namespace Babylon2GLTF
 
         private void ExportGLTFExtension<T1,T2>(T1 babylonObject, ref T2 gltfObject) where T2:GLTFProperty
         {
-            GLTFExtensions nodeExtensions = new GLTFExtensions();
+            GLTFExtensions nodeExtensions = gltfObject.extensions;
+            if (nodeExtensions == null)nodeExtensions = new GLTFExtensions();
+            
             foreach (KeyValuePair<Type, IBabylonExtensionExporter> extensionExporter in babylonScene.BabylonToGLTFExtensions)
             {
                 if (extensionExporter.Key == typeof(T2))

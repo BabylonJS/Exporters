@@ -137,17 +137,17 @@
     <Compile Include="..\BabylonExportActionItem.cs">
       <Link>BabylonExportActionItem.cs</Link>
     </Compile>
-    <Compile Include="..\BabylonLoadAnimationFromContainers.cs">
-      <Link>BabylonLoadAnimationFromContainers.cs</Link>
+    <Compile Include="..\BabylonLoadAnimations.cs">
+      <Link>BabylonLoadAnimations.cs</Link>
     </Compile>
     <Compile Include="..\BabylonPropertiesActionItem.cs">
       <Link>BabylonPropertiesActionItem.cs</Link>
     </Compile>
-    <Compile Include="..\BabylonSaveAnimationToContainers.cs">
-      <Link>BabylonSaveAnimationToContainers.cs</Link>
-    </Compile>
     <Compile Include="..\BabylonSkipFlatten.cs">
       <Link>BabylonSkipFlatten.cs</Link>
+    </Compile>
+    <Compile Include="..\BabylonStoreAnimations.cs">
+      <Link>BabylonStoreAnimations.cs</Link>
     </Compile>
     <Compile Include="..\BabylonToggleBakeAnimation.cs">
       <Link>BabylonToggleBakeAnimation.cs</Link>
@@ -166,6 +166,9 @@
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.cs">
       <Link>Exporter\BabylonExporter.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.IExtensionExporter.cs">
+      <Link>Exporter\BabylonExporter.IExtensionExporter.cs</Link>
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.IMaterialExporter.cs">
       <Link>Exporter\BabylonExporter.IMaterialExporter.cs</Link>
@@ -321,7 +324,6 @@
     <Compile Include="..\Exporter\BabylonExporter.WorldModifiers.cs">
       <Link>Exporter\BabylonExporter.WorldModifiers.Skin.cs</Link>
     </Compile>
-    <Compile Include="Exporter\BabylonExporter.IExtensionExporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
