@@ -565,7 +565,10 @@ namespace Babylon2GLTF
                 {
                     string extensionName = extensionExporter.Value.GetGLTFExtensionName();
                     object extensionObject = extensionExporter.Value.ExportBabylonExtension(babylonObject);
-                    nodeExtensions.Add(extensionName,extensionObject);
+                    if (extensionObject != null && !string.IsNullOrEmpty(extensionName))
+                    {
+                        nodeExtensions.Add(extensionName,extensionObject);
+                    }
                 }
             }
             if (nodeExtensions.Count > 0)
