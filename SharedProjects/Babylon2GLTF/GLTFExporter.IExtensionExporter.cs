@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
 
-namespace Max2Babylon
+namespace Babylon2GLTF
 {
     public interface IBabylonExtensionExporter
     {

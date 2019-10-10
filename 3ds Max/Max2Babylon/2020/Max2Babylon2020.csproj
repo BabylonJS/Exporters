@@ -167,9 +167,6 @@
     <Compile Include="..\Exporter\BabylonExporter.cs">
       <Link>Exporter\BabylonExporter.cs</Link>
     </Compile>
-    <Compile Include="..\Exporter\BabylonExporter.IExtensionExporter.cs">
-      <Link>Exporter\BabylonExporter.IExtensionExporter.cs</Link>
-    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.IMaterialExporter.cs">
       <Link>Exporter\BabylonExporter.IMaterialExporter.cs</Link>
     </Compile>
