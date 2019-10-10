@@ -570,6 +570,8 @@ namespace Babylon2GLTF
                     gltfMaterial.extensions["KHR_materials_unlit"] = new object();
                 }
             }
+
+            ExportGLTFExtension(babylonMaterial, ref gltfMaterial);
         }
 
         private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)

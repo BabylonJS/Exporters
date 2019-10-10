@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Autodesk.Max.Plugins;
+using GLTFExport.Entities;
 using Color = System.Drawing.Color;
 using Utilities;
 
@@ -19,7 +20,6 @@ namespace Max2Babylon
 {
     internal partial class BabylonExporter : ILoggingProvider
     {
-        Dictionary<Type, IBabylonExtensionExporter> extensionExporters;
         public event Action<int> OnImportProgressChanged;
         public event Action<string, int> OnWarning;
         public event Action<string, Color, int, bool> OnMessage;
@@ -440,7 +440,6 @@ namespace Max2Babylon
 
             // Instantiate custom material exporters
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
-            extensionExporters = new Dictionary<Type, IBabylonExtensionExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
             {
                 if (type.IsAbstract || type.IsInterface )
@@ -453,8 +452,8 @@ namespace Max2Babylon
                     if (exporter == null)
                         RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
 
-                    Type t = exporter.GetBabylonExtendedType();
-                    extensionExporters.Add(t, exporter);
+                    Type t = exporter.GetGLTFExtendedType();
+                    babylonScene.BabylonToGLTFExtensions.Add(t,exporter);
                 }
 
                 if (typeof(IMaxMaterialExporter).IsAssignableFrom(type))
@@ -509,7 +508,6 @@ namespace Max2Babylon
             foreach (var maxRootNode in maxRootNodes)
             {
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
-                BabylonToGLTFExtension(node);
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
                 if (node != null && exportNode != null && !exportNode.IsRootNode)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
@@ -529,7 +527,6 @@ namespace Max2Babylon
             {
                 BabylonCamera camera = babylonScene.CamerasList[index];
                 FixCamera(ref camera, ref babylonScene);
-                BabylonToGLTFExtension(camera);
             }
 
             // Light for glTF
@@ -1286,24 +1283,6 @@ namespace Max2Babylon
                         key.values[1] + offset[1],
                         key.values[2] + offset[2] };
                 }
-            }
-        }
-
-        private void BabylonToGLTFExtension<TBabylon>(TBabylon babylonObject) where TBabylon: BabylonNode 
-        {
-            if(extensionExporters!=null && extensionExporters.ContainsKey(babylonObject.GetType()))
-            {
-                var babylonExtensionsExportsOfType = extensionExporters.Where(t => t.Key == babylonObject.GetType()).Select(k=>k.Value);
-                List<BabylonExtension> babylonExtensions = new List<BabylonExtension>();
-                foreach (IBabylonExtensionExporter extensionOfType in babylonExtensionsExportsOfType)
-                {
-                    BabylonExtension ext = extensionOfType.ExportBabylonExtension(babylonObject);
-                    if (ext != null)
-                    {
-                        babylonExtensions.Add(ext);
-                    }
-                }
-                babylonObject.extraExtension = babylonExtensions;
             }
         }
     }

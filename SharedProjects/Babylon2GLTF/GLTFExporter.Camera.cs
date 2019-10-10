@@ -61,6 +61,8 @@ namespace Babylon2GLTF
                     break;
             }
             
+            ExportGLTFExtension(babylonCamera, ref gltfCamera);
+
             return gltfCamera;
         }
     }
