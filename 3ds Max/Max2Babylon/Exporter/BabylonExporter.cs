@@ -90,7 +90,7 @@ namespace Max2Babylon
             }
         }
 
-        private void IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
+        private bool IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
         {
             //a node can't be flatten if:
             //- is marked as not flattenable
@@ -100,21 +100,21 @@ namespace Max2Babylon
             //- is skinned
             //- is linked to animated node
 
-            if (node.IsMarkedAsNotFlattenable()) return;
+            if (node.IsMarkedAsNotFlattenable()) return false;
 
             if (node.IsRootNode)
             {
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
-                return;
+                return false;
             }
 
-            if (!exportParameters.exportHiddenObjects && node.IsNodeHidden(false)) return;
+            if (!exportParameters.exportHiddenObjects && node.IsNodeHidden(false)) return false;
 
-            if (exportParameters.exportOnlySelected && !node.IsNodeSelected()) return;
+            if (exportParameters.exportOnlySelected && !node.IsNodeSelected()) return false;
 
             if (node.IsSkinned())
             {
@@ -123,9 +123,9 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
-                return;
+                return false;
 
             }
 
@@ -136,9 +136,9 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
-                return;
+                return false;
             }
 
             if (node.IsInAnimationGroups(animationGroupList))
@@ -148,50 +148,36 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
+                    return IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
                 }
-                return;
+                return false;
             }
 
             flattenableNodes.Add(node);
+            return true;
         }
 
         public void FlattenItem(ref IINode itemNode)
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
             animationGroupList.LoadFromData(Loader.Core.RootNode);
-            
-                
-            IINode hierachyRoot = null;
+
             if (itemNode == null)
             {
-                hierachyRoot = Loader.Core.RootNode;
-                string message = "Flattening nodes of scene...";
+                string message = "Flattening nodes of scene not supported...";
                 RaiseMessage(message, 0);
             }
             else
             {
-                hierachyRoot = itemNode;
                 string message = $"Flattening child nodes of {itemNode.Name}...";
                 RaiseMessage(message, 0);
-            }
-
-            List<IINode> flattenableNodes = new List<IINode>();
-            List<IINode> flattenedNodes = new List<IINode>();
-            IsMeshFlattenable(hierachyRoot, animationGroupList,ref flattenableNodes);
-
-            foreach (IINode flattenableNode in flattenableNodes)
-            {
-                flattenedNodes.Add(flattenableNode.FlattenHierarchy());
-            }
-
-            if (exportParameters is MaxExportParameters)
-            {
-                MaxExportParameters maxParams = (exportParameters as MaxExportParameters);
-                if (maxParams.useMultiExporter)
+                List<IINode> flattenableNodes = new List<IINode>();
+                if(IsMeshFlattenable(itemNode, animationGroupList,ref flattenableNodes))
                 {
-                    itemNode = flattenedNodes?[0];
+                    itemNode = itemNode.FlattenHierarchy();
                 }
+
+                
             }
         }
 
@@ -274,24 +260,31 @@ namespace Max2Babylon
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
                 exportNode = maxExporterParameters.exportNode;
-                if (maxExporterParameters.mergeContainersAndXRef)
+
+                if (maxExporterParameters.usePreExportProcess)
                 {
-                    string message = "Merging containers and Xref...";
-                    RaiseMessage(message, 0);
-                    ExportClosedContainers();
-                    Tools.MergeAllXrefRecords();
+                    if (maxExporterParameters.mergeContainersAndXRef)
+                    {
+                        string message = "Merging containers and Xref...";
+                        RaiseMessage(message, 0);
+                        ExportClosedContainers();
+                        Tools.MergeAllXrefRecords();
 #if DEBUG
-                    var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
-                    RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
+                        var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
+                        RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
 #endif
+                    }
+                    BakeAnimationsFrame(exportNode,maxExporterParameters.bakeAnimationType);
                 }
 
-                if(maxExporterParameters.flattenScene) FlattenItem(ref exportNode);
-
+                if (maxExporterParameters.flattenScene && maxExporterParameters.useMultiExporter)
+                {
+                    FlattenItem(ref exportNode);
 #if DEBUG
-                flattenTime = watch.ElapsedMilliseconds / 1000.0;
-                RaiseMessage(string.Format("Nodes falattened in {0:0.00}s", flattenTime ), Color.Blue);
+                    flattenTime = watch.ElapsedMilliseconds / 1000.0;
+                    RaiseMessage(string.Format("Nodes flattened in {0:0.00}s", flattenTime ), Color.Blue);
 #endif
+                }
             }
 
             Tools.InitializeGuidNodesMap();
@@ -625,7 +618,7 @@ namespace Max2Babylon
             {
                 var atmospheric = Loader.Core.GetAtmospheric(index);
 
-                if (atmospheric.Active(0) && atmospheric.ClassName == "Fog")
+                if (atmospheric!=null && atmospheric.Active(0) && atmospheric.ClassName == "Fog")
                 {
                     var fog = atmospheric as IStdFog;
 
