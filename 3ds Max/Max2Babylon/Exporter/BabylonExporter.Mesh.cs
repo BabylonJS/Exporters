@@ -588,11 +588,11 @@ namespace Max2Babylon
 
         private void ExtractGeometry(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, List<int> boneIds, IIGameSkin skin, IIGameMesh unskinnedMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, bool optimizeVertices, int multiMatsCount, IIGameNode meshNode, ref List<int> faceIndexes)
         {
-            List<GlobalVertex>[] verticesAlreadyExported = null;
+            Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported = null;
 
             if (optimizeVertices)
             {
-                verticesAlreadyExported = new List<GlobalVertex>[unskinnedMesh.NumberOfVerts];
+                verticesAlreadyExported = new Dictionary<GlobalVertex, List<GlobalVertex>>();
             }
 
             var indexStart = 0;
@@ -672,7 +672,7 @@ namespace Max2Babylon
             }
         }
 
-        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
+        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>>verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
@@ -736,7 +736,7 @@ namespace Max2Babylon
         }
 
 
-        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, List<GlobalVertex>[] verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
+        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
 
@@ -896,29 +896,27 @@ namespace Max2Babylon
                 }
             }
 
+            // if we are optmizing our exported vertices, check that a hash-equivalent vertex was already exported.
             if (verticesAlreadyExported != null)
             {
-                if (verticesAlreadyExported[vertexIndex] != null)
+                if (verticesAlreadyExported.ContainsKey(vertex))
                 {
-                    var index = verticesAlreadyExported[vertexIndex].IndexOf(vertex);
-
-                    if (index > -1)
-                    {
-                        return verticesAlreadyExported[vertexIndex][index].CurrentIndex;
-                    }
+                    verticesAlreadyExported[vertex].Add(vertex);
+                    return verticesAlreadyExported[vertex].ElementAt(0).CurrentIndex;
                 }
                 else
                 {
-                    verticesAlreadyExported[vertexIndex] = new List<GlobalVertex>();
+                    verticesAlreadyExported[vertex] = new List<GlobalVertex>();
+                    var modifiedVertex = new GlobalVertex(vertex);
+                    modifiedVertex.CurrentIndex = vertices.Count;
+                    verticesAlreadyExported[vertex].Add(modifiedVertex);
+                    vertex = modifiedVertex;
                 }
-
-                vertex.CurrentIndex = vertices.Count;
-                verticesAlreadyExported[vertexIndex].Add(vertex);
             }
 
             vertices.Add(vertex);
 
-            return vertices.Count - 1;
+            return vertices.Count -1;
         }
 
         private void exportNode(BabylonAbstractMesh babylonAbstractMesh, IIGameNode maxGameNode, IIGameScene maxGameScene, BabylonScene babylonScene)
