@@ -693,12 +693,15 @@ namespace Max2Babylon
 
         public static IINode FlattenHierarchy(this IINode node)
         {
+            string activeLayer =$"(LayerManager.getLayerFromName (maxOps.getNodeByHandle {node.Handle}).layer.name).current = true";
+            ScriptsUtilities.ExecuteMaxScriptCommand(activeLayer);
             node.SetUserPropBool("babylonjs_flattened", true);
             node.NodeTree().ToList().ForEach(x => x.SetUserPropBool("babylonjs_flattened",true));
             IClass_ID cid = Loader.Global.Class_ID.Create((uint)BuiltInClassIDA.SPHERE_CLASS_ID, 0);
             object obj = Loader.Core.CreateInstance(SClass_ID.Geomobject, cid as IClass_ID);
             IINode result = Loader.Core.CreateObjectNode((IObject)obj);
             result.Name = node.Name;
+            result.SetTMController(node.TMController);
             string scale = $"scale (maxOps.getNodeByHandle {result.Handle}) [0.1,0.1,0.1]";
             ScriptsUtilities.ExecuteMaxScriptCommand(scale);
             result.ResetTransform(Loader.Core.Time,false);

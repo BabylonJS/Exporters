@@ -161,6 +161,22 @@ namespace Max2Babylon
             if (nodesChanged)
             {
                 confirmedInfo.NodeGuids = newHandles.ToGuids();
+                if (confirmedInfo.AnimationGroupNodes == null)
+                {
+                    confirmedInfo.AnimationGroupNodes = new List<AnimationGroupNode>();
+                }
+                
+                foreach (uint handle in newHandles)
+                {
+                    IINode node = Loader.Core.GetINodeByHandle(handle);
+                    if (node != null)
+                    {
+                        string name = node.Name;
+                        string parentName = node.ParentNode.Name;
+                        AnimationGroupNode nodeData = new AnimationGroupNode(node.GetGuid(), name, parentName);
+                        confirmedInfo.AnimationGroupNodes.Add(nodeData);
+                    }
+                }
             }
 
             ResetChangedTextBoxColors();
