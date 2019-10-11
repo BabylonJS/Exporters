@@ -559,11 +559,11 @@ namespace Babylon2GLTF
             GLTFExtensions nodeExtensions = gltfObject.extensions;
             if (nodeExtensions == null)nodeExtensions = new GLTFExtensions();
             
-            foreach (KeyValuePair<Type, IBabylonExtensionExporter> extensionExporter in babylonScene.BabylonToGLTFExtensions)
+            foreach (var extensionExporter in babylonScene.BabylonToGLTFExtensions)
             {
                 if (extensionExporter.Key == typeof(T2))
                 {
-                    string extensionName = extensionExporter.Value.GetGLTFExtensionName();
+                    string extensionName = extensionExporter.Value.Item1;
                     object extensionObject = extensionExporter.Value.ExportBabylonExtension(babylonObject);
                     if (extensionObject != null && !string.IsNullOrEmpty(extensionName))
                     {

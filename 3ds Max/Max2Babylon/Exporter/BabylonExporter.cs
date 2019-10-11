@@ -453,7 +453,9 @@ namespace Max2Babylon
                         RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
 
                     Type t = exporter.GetGLTFExtendedType();
-                    babylonScene.BabylonToGLTFExtensions.Add(t,exporter);
+                    string extensionName = exporter.GetGLTFExtensionName();
+                    Tuple<string,IBabylonExtensionExporter> extensionExporter = new Tuple<string, IBabylonExtensionExporter>(extensionName,exporter);
+                    babylonScene.BabylonToGLTFExtensions.Add(t,extensionExporter);
                 }
 
                 if (typeof(IMaxMaterialExporter).IsAssignableFrom(type))
