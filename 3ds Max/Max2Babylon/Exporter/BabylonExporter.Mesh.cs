@@ -504,7 +504,7 @@ namespace Max2Babylon
             exportAnimation(babylonMesh, meshNode);
 
             babylonScene.MeshesList.Add(babylonMesh);
-            
+
             return babylonMesh;
         }
 
