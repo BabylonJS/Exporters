@@ -10,7 +10,6 @@ using System.Text;
 using Color = System.Drawing.Color;
 using System.Linq;
 using System.Diagnostics;
-using Max2Babylon;
 using Utilities;
 
 namespace Babylon2GLTF

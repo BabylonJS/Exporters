@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using Babylon2GLTF;
 using GLTFExport.Entities;
-using Max2Babylon;
 
 namespace BabylonExport.Entities
 {
