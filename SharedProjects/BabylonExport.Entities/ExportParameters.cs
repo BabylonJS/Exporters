@@ -45,8 +45,10 @@ namespace BabylonExport.Entities
         public bool pbrNoLight = false;
         public bool createDefaultSkybox = false;
         public string pbrEnvironment;
+        
 
         public IGLTFMaterialExporter customGLTFMaterialExporter;
+        public bool useMultiExporter = false;
 
         public const string ModelFilePathProperty = "modelFilePathProperty";
         public const string TextureFolderPathProperty = "textureFolderPathProperty";
