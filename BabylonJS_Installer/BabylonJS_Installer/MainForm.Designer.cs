@@ -82,6 +82,12 @@
             this.soft_version = new System.Windows.Forms.Label();
             this.button_All_Update = new System.Windows.Forms.Button();
             this.button_All_Delete = new System.Windows.Forms.Button();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.button_Max20_Locate = new System.Windows.Forms.Button();
+            this.button_Max20_Delete = new System.Windows.Forms.Button();
+            this.label_Max20_ExpDate = new System.Windows.Forms.Label();
+            this.button_Max20_Update = new System.Windows.Forms.Button();
+            this.label_Max20_Info = new System.Windows.Forms.Label();
             this.mainTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -95,6 +101,7 @@
             this.groupBox7.SuspendLayout();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bjs_logo)).BeginInit();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainTabControl
@@ -104,21 +111,21 @@
             this.mainTabControl.Controls.Add(this.tabPage3);
             this.mainTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
             this.mainTabControl.Location = new System.Drawing.Point(9, 124);
-            this.mainTabControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.mainTabControl.Margin = new System.Windows.Forms.Padding(2);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.Padding = new System.Drawing.Point(0, 0);
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(524, 383);
+            this.mainTabControl.Size = new System.Drawing.Size(539, 383);
             this.mainTabControl.TabIndex = 0;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Location = new System.Drawing.Point(4, 27);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tabPage1.Size = new System.Drawing.Size(516, 352);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPage1.Size = new System.Drawing.Size(531, 352);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Autodesk - 3DsMax";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -129,10 +136,11 @@
             this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
+            this.panel1.Controls.Add(this.groupBox8);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(710, 349);
+            this.panel1.Size = new System.Drawing.Size(531, 347);
             this.panel1.TabIndex = 0;
             // 
             // groupBox4
@@ -142,7 +150,7 @@
             this.groupBox4.Controls.Add(this.button_Max15_Update);
             this.groupBox4.Controls.Add(this.label_Max15_ExpDate);
             this.groupBox4.Controls.Add(this.label_Max15_Info);
-            this.groupBox4.Location = new System.Drawing.Point(5, 268);
+            this.groupBox4.Location = new System.Drawing.Point(5, 356);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(507, 81);
             this.groupBox4.TabIndex = 3;
@@ -208,7 +216,7 @@
             this.groupBox3.Controls.Add(this.button_Max17_Update);
             this.groupBox3.Controls.Add(this.label_Max17_ExpDate);
             this.groupBox3.Controls.Add(this.label_Max17_Info);
-            this.groupBox3.Location = new System.Drawing.Point(5, 180);
+            this.groupBox3.Location = new System.Drawing.Point(5, 269);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(507, 81);
             this.groupBox3.TabIndex = 4;
@@ -274,7 +282,7 @@
             this.groupBox2.Controls.Add(this.button_Max18_Update);
             this.groupBox2.Controls.Add(this.label_Max18_ExpDate);
             this.groupBox2.Controls.Add(this.label_Max18_Info);
-            this.groupBox2.Location = new System.Drawing.Point(5, 93);
+            this.groupBox2.Location = new System.Drawing.Point(5, 182);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(507, 81);
             this.groupBox2.TabIndex = 5;
@@ -340,7 +348,7 @@
             this.groupBox1.Controls.Add(this.label_Max19_ExpDate);
             this.groupBox1.Controls.Add(this.button_Max19_Update);
             this.groupBox1.Controls.Add(this.label_Max19_Info);
-            this.groupBox1.Location = new System.Drawing.Point(5, 5);
+            this.groupBox1.Location = new System.Drawing.Point(5, 94);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(507, 81);
             this.groupBox1.TabIndex = 2;
@@ -405,9 +413,9 @@
             this.tabPage2.Controls.Add(this.groupBox6);
             this.tabPage2.Controls.Add(this.groupBox7);
             this.tabPage2.Location = new System.Drawing.Point(4, 27);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
             this.tabPage2.Size = new System.Drawing.Size(516, 352);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Autodesk - Maya";
@@ -615,9 +623,9 @@
             // 
             this.tabPage3.Controls.Add(this.log_text);
             this.tabPage3.Location = new System.Drawing.Point(4, 27);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(516, 352);
+            this.tabPage3.Size = new System.Drawing.Size(516, 435);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Logs";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -627,7 +635,7 @@
             this.log_text.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.log_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
             this.log_text.Location = new System.Drawing.Point(2, 2);
-            this.log_text.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.log_text.Margin = new System.Windows.Forms.Padding(2);
             this.log_text.Name = "log_text";
             this.log_text.ReadOnly = true;
             this.log_text.Size = new System.Drawing.Size(514, 348);
@@ -639,7 +647,7 @@
             this.bjs_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.bjs_logo.Image = global::BabylonJS_Installer.Properties.Resources.BJS_logo_4_0;
             this.bjs_logo.Location = new System.Drawing.Point(9, 10);
-            this.bjs_logo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bjs_logo.Margin = new System.Windows.Forms.Padding(2);
             this.bjs_logo.Name = "bjs_logo";
             this.bjs_logo.Size = new System.Drawing.Size(93, 102);
             this.bjs_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -665,7 +673,7 @@
             this.soft_version.Name = "soft_version";
             this.soft_version.Size = new System.Drawing.Size(98, 20);
             this.soft_version.TabIndex = 3;
-            this.soft_version.Text = "  v1.1.1";
+            this.soft_version.Text = "  v1.2.0";
             this.soft_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // button_All_Update
@@ -690,11 +698,77 @@
             this.button_All_Delete.UseVisualStyleBackColor = true;
             this.button_All_Delete.Click += new System.EventHandler(this.Button_All_Delete_Click);
             // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.button_Max20_Locate);
+            this.groupBox8.Controls.Add(this.button_Max20_Delete);
+            this.groupBox8.Controls.Add(this.label_Max20_ExpDate);
+            this.groupBox8.Controls.Add(this.button_Max20_Update);
+            this.groupBox8.Controls.Add(this.label_Max20_Info);
+            this.groupBox8.Location = new System.Drawing.Point(5, 7);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(507, 81);
+            this.groupBox8.TabIndex = 2;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "3ds Max 2020";
+            // 
+            // button_Max20_Locate
+            // 
+            this.button_Max20_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_Max20_Locate.Location = new System.Drawing.Point(352, 50);
+            this.button_Max20_Locate.Name = "button_Max20_Locate";
+            this.button_Max20_Locate.Size = new System.Drawing.Size(71, 25);
+            this.button_Max20_Locate.TabIndex = 1;
+            this.button_Max20_Locate.Text = "(re)Locate";
+            this.button_Max20_Locate.UseVisualStyleBackColor = true;
+            this.button_Max20_Locate.Click += new System.EventHandler(this.Button_Max20_Locate_Click);
+            // 
+            // button_Max20_Delete
+            // 
+            this.button_Max20_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_Max20_Delete.Location = new System.Drawing.Point(430, 50);
+            this.button_Max20_Delete.Name = "button_Max20_Delete";
+            this.button_Max20_Delete.Size = new System.Drawing.Size(71, 25);
+            this.button_Max20_Delete.TabIndex = 3;
+            this.button_Max20_Delete.Text = "Uninstall";
+            this.button_Max20_Delete.UseVisualStyleBackColor = true;
+            this.button_Max20_Delete.Click += new System.EventHandler(this.Button_Max20_Delete_Click);
+            // 
+            // label_Max20_ExpDate
+            // 
+            this.label_Max20_ExpDate.AutoSize = true;
+            this.label_Max20_ExpDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.label_Max20_ExpDate.Location = new System.Drawing.Point(6, 50);
+            this.label_Max20_ExpDate.Name = "label_Max20_ExpDate";
+            this.label_Max20_ExpDate.Size = new System.Drawing.Size(53, 15);
+            this.label_Max20_ExpDate.TabIndex = 5;
+            this.label_Max20_ExpDate.Text = "Exporter";
+            // 
+            // button_Max20_Update
+            // 
+            this.button_Max20_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_Max20_Update.Location = new System.Drawing.Point(275, 50);
+            this.button_Max20_Update.Name = "button_Max20_Update";
+            this.button_Max20_Update.Size = new System.Drawing.Size(71, 25);
+            this.button_Max20_Update.TabIndex = 2;
+            this.button_Max20_Update.Text = "Update";
+            this.button_Max20_Update.UseVisualStyleBackColor = true;
+            this.button_Max20_Update.Click += new System.EventHandler(this.Button_Max20_Update_Click);
+            // 
+            // label_Max20_Info
+            // 
+            this.label_Max20_Info.AutoSize = true;
+            this.label_Max20_Info.Location = new System.Drawing.Point(6, 20);
+            this.label_Max20_Info.Name = "label_Max20_Info";
+            this.label_Max20_Info.Size = new System.Drawing.Size(165, 18);
+            this.label_Max20_Info.TabIndex = 3;
+            this.label_Max20_Info.Text = "No installation detected.";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(543, 516);
+            this.ClientSize = new System.Drawing.Size(549, 601);
             this.Controls.Add(this.button_All_Delete);
             this.Controls.Add(this.button_All_Update);
             this.Controls.Add(this.soft_version);
@@ -703,9 +777,9 @@
             this.Controls.Add(this.mainTabControl);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.MaximumSize = new System.Drawing.Size(559, 555);
-            this.MinimumSize = new System.Drawing.Size(559, 555);
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximumSize = new System.Drawing.Size(565, 640);
+            this.MinimumSize = new System.Drawing.Size(565, 555);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js Exporters";
@@ -729,6 +803,8 @@
             this.groupBox7.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bjs_logo)).EndInit();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -789,6 +865,12 @@
         private System.Windows.Forms.Button button_Maya19_Update;
         private System.Windows.Forms.Button button_All_Update;
         private System.Windows.Forms.Button button_All_Delete;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.Button button_Max20_Locate;
+        private System.Windows.Forms.Button button_Max20_Delete;
+        private System.Windows.Forms.Label label_Max20_ExpDate;
+        private System.Windows.Forms.Button button_Max20_Update;
+        private System.Windows.Forms.Label label_Max20_Info;
     }
 }
 
