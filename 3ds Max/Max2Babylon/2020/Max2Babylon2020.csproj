@@ -149,9 +149,6 @@
     <Compile Include="..\BabylonStoreAnimations.cs">
       <Link>BabylonStoreAnimations.cs</Link>
     </Compile>
-    <Compile Include="..\BabylonToggleBakeAnimation.cs">
-      <Link>BabylonToggleBakeAnimation.cs</Link>
-    </Compile>
     <Compile Include="..\Descriptor.cs">
       <Link>Descriptor.cs</Link>
     </Compile>
