@@ -28,9 +28,9 @@ namespace Max2Babylon
                 };
 
                 // add animations of each nodes contained in the animGroup
-                foreach(Guid nodeGuid in animGroup.NodeGuids)
+                foreach (Guid guid in animGroup.NodeGuids)
                 {
-                    IINode maxNode = Loader.Core.RootNode.FindChildNode(nodeGuid);
+                    IINode maxNode = Tools.GetINodeByGuid(guid);
 
                     // node could have been deleted, silently ignore it
                     if (maxNode == null)
@@ -45,7 +45,7 @@ namespace Max2Babylon
                     // Node
                     BabylonNode node = null;
                     babylonScene.NodeMap.TryGetValue(nodeId, out node);
-                    if(node != null)
+                    if (node != null)
                     {
                         if (node.animations != null && node.animations.Length != 0)
                         {
@@ -76,14 +76,14 @@ namespace Max2Babylon
                     // bone
                     BabylonBone bone = null;
                     int index = 0;
-                    while(index < babylonScene.SkeletonsList.Count && bone == null)
+                    while (index < babylonScene.SkeletonsList.Count && bone == null)
                     {
                         BabylonSkeleton skel = babylonScene.SkeletonsList[index];
                         bone = skel.bones.FirstOrDefault(b => b.id == boneId);
                         index++;
                     }
 
-                    if(bone != null)
+                    if (bone != null)
                     {
                         if (bone.animation != null)
                         {
@@ -298,7 +298,7 @@ namespace Max2Babylon
             var keys = new List<BabylonAnimationKey>();
             for (int indexKey = 0; indexKey < gameKeyTab.Count; indexKey++)
             {
-#if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                 var gameKey = gameKeyTab[indexKey];
 #else
                 var gameKey = gameKeyTab[new IntPtr(indexKey)];
@@ -627,6 +627,12 @@ namespace Max2Babylon
                 ExportVector3Animation("position", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
+
+                    if (float.IsNaN(localMatrix.Determinant))
+                    {
+                        RaiseError($"Determinant of {gameNode.Name} of position animation at {key} localMatrix is NaN ");
+                    }
+
                     var tm_babylon = new BabylonMatrix();
                     tm_babylon.m = localMatrix.ToArray();
 
@@ -653,6 +659,12 @@ namespace Max2Babylon
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
+
+                    if (float.IsNaN(localMatrix.Determinant))
+                    {
+                        RaiseError($"Determinant of {gameNode.Name} of rotation animation at {key} localMatrix is NaN ");
+                    }
+
                     var tm_babylon = new BabylonMatrix();
                     tm_babylon.m = localMatrix.ToArray();
 
@@ -678,6 +690,12 @@ namespace Max2Babylon
                 ExportVector3Animation("scaling", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
+
+                    if (float.IsNaN(localMatrix.Determinant))
+                    {
+                        RaiseError($"Determinant of {gameNode.Name} of scale animation at {key} localMatrix is NaN ");
+                    }
+
                     var tm_babylon = new BabylonMatrix();
                     tm_babylon.m = localMatrix.ToArray();
 

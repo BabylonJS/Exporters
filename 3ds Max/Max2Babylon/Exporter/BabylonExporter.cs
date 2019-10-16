@@ -90,39 +90,31 @@ namespace Max2Babylon
             }
         }
 
-        private void IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
+        private bool IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
         {
             //a node can't be flatten if:
-            //- is not a mesh
             //- is marked as not flattenable
             //- is hidden
+            //- is not selected when exportOnlyselected is checked
             //- is part of animation group
             //- is skinned
             //- is linked to animated node
 
-            if (node.IsMarkedAsNotFlattenable()) return;
-
-            if (node.IsNodeHidden(false) && !exportParameters.exportHiddenObjects) return;
+            if (node.IsMarkedAsNotFlattenable()) return false;
 
             if (node.IsRootNode)
             {
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
-                return;
+                return false;
             }
 
-            if (node.GetTriObjectFromNode()==null)
-            {
-                for (int i = 0; i < node.NumChildren; i++)
-                {
-                    IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
-                }
-                return;
-            }
+            if (!exportParameters.exportHiddenObjects && node.IsNodeHidden(false)) return false;
+
+            if (exportParameters.exportOnlySelected && !node.IsNodeSelected()) return false;
 
             if (node.IsSkinned())
             {
@@ -131,22 +123,10 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
-                return;
+                return false;
 
-            }
-            
-            if (node.IsInAnimationGroups(animationGroupList))
-            {
-                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
-                RaiseMessage(message, 0);
-                for (int i = 0; i < node.NumChildren; i++)
-                {
-                    IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
-                }
-                return;
             }
 
             if (node.IsNodeTreeAnimated())
@@ -156,27 +136,105 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
-                return;
+                return false;
+            }
+
+            if (node.IsInAnimationGroups(animationGroupList))
+            {
+                string message = $"{node.Name} can't be flatten, because is part of an AnimationGroup";
+                RaiseMessage(message, 0);
+                for (int i = 0; i < node.NumChildren; i++)
+                {
+                    IINode n = node.GetChildNode(i);
+                    return IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
+                }
+                return false;
             }
 
             flattenableNodes.Add(node);
+            return true;
         }
 
-        public void FlattenHierarchy(IINode node)
+        public void FlattenItem(ref IINode itemNode)
         {
-            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData();
+            animationGroupList.LoadFromData(Loader.Core.RootNode);
 
-            List<IINode> flattenableNodes = new List<IINode>();
-            IsMeshFlattenable(hierachyRoot, animationGroupList,ref flattenableNodes);
-
-            foreach (IINode flattenableNode in flattenableNodes)
+            if (itemNode == null)
             {
-                flattenableNode.FlattenHierarchy();
+                string message = "Flattening nodes of scene not supported...";
+                RaiseMessage(message, 0);
             }
+            else
+            {
+                string message = $"Flattening child nodes of {itemNode.Name}...";
+                RaiseMessage(message, 0);
+                List<IINode> flattenableNodes = new List<IINode>();
+                if(IsMeshFlattenable(itemNode, animationGroupList,ref flattenableNodes))
+                {
+                    itemNode = itemNode.FlattenHierarchy();
+                }
+
+                
+            }
+        }
+
+        public void BakeAnimationsFrame(IINode node,BakeAnimationType bakeAnimationType)
+        {
+            if (bakeAnimationType == BakeAnimationType.DoNotBakeAnimation) return;
+
+            IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
+
+#if MAX2020
+            var tobake = Loader.Global.INodeTab.Create();
+#else
+            var tobake = Loader.Global.NodeTab.Create();
+#endif
+            foreach (IINode iNode in hierachyRoot.NodeTree())
+            {
+                tobake.AppendNode(iNode,false,Loader.Core.Time);
+            }
+            if (!hierachyRoot.IsRootNode) tobake.AppendNode(hierachyRoot,false,Loader.Core.Time);
+
+            Loader.Core.SelectNodeTab(tobake,true,false);
+
+            if (bakeAnimationType == BakeAnimationType.BakeAllAnimations)
+            {
+                foreach (IINode n in Tools.ITabToIEnumerable(tobake))
+                {
+                    n.SetUserPropBool("babylonjs_BakeAnimation", true);
+                }
+            }
+
+            ScriptsUtilities.ExecuteMaxScriptCommand(@"
+                for obj in selection do 
+                (
+                    if obj.isAnimated == false then continue
+                    tag = getUserProp obj ""babylonjs_BakeAnimation""
+                    if tag!=true then continue
+
+                    tmp = Point()
+                    --store anim to a point
+                    for t = animationRange.start to animationRange.end do (
+                       with animate on at time t tmp.transform = obj.transform
+                       )
+
+                    --remove constraint on original object
+                    obj.pos.controller = Position_XYZ ()
+                    obj.rotation.controller = Euler_XYZ ()
+                    obj.scale.controller = bezier_scale ()
+                    obj.transform = tmp.transform
+
+                    --copy back anim from point
+                    for t = animationRange.start to animationRange.end do (
+                       with animate on at time t obj.transform = tmp.transform
+                       )
+                    delete tmp
+                )
+             ");
+
         }
 
         public void ExportClosedContainers()
@@ -185,28 +243,55 @@ namespace Max2Babylon
             foreach (IIContainerObject containerObject in sceneContainers)
             {
                 if (!containerObject.IsInherited)continue;
-                bool merge = containerObject.MergeSource;
+                bool makeUnique = containerObject.MakeUnique;
             }
-            AnimationGroupList.LoadDataFromContainers();
+            AnimationGroupList.LoadDataFromAllContainers();
         }
 
         public void Export(ExportParameters exportParameters)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             this.exportParameters = exportParameters;
             IINode exportNode = null;
+            double flattenTime = 0;
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
                 exportNode = maxExporterParameters.exportNode;
-                if(maxExporterParameters.flattenScene) FlattenHierarchy(exportNode);
-                if (maxExporterParameters.mergeContainersAndXRef)
+
+                if (maxExporterParameters.usePreExportProcess)
                 {
-                    ExportClosedContainers();
-                    Tools.MergeAllXrefRecords();
+                    if (maxExporterParameters.mergeContainersAndXRef)
+                    {
+                        string message = "Merging containers and Xref...";
+                        RaiseMessage(message, 0);
+                        ExportClosedContainers();
+                        Tools.MergeAllXrefRecords();
+#if DEBUG
+                        var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
+                        RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
+#endif
+                    }
+                    BakeAnimationsFrame(exportNode,maxExporterParameters.bakeAnimationType);
+                }
+
+                if (maxExporterParameters.flattenScene && maxExporterParameters.useMultiExporter)
+                {
+                    FlattenItem(ref exportNode);
+#if DEBUG
+                    flattenTime = watch.ElapsedMilliseconds / 1000.0;
+                    RaiseMessage(string.Format("Nodes flattened in {0:0.00}s", flattenTime ), Color.Blue);
+#endif
                 }
             }
 
-           
+            Tools.InitializeGuidNodesMap();
+
+            string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
+            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
+
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
@@ -250,10 +335,7 @@ namespace Max2Babylon
 
             IsCancelled = false;
 
-            string fileExportString = exportNode != null
-                ? $"{exportNode.NodeName} | {exportParameters.outputPath}"
-                : exportParameters.outputPath;
-            RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
+            
             ReportProgressChanged(0);
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -279,8 +361,7 @@ namespace Max2Babylon
 
             var rawScene = Loader.Core.RootNode;
 
-            var watch = new Stopwatch();
-            watch.Start();
+           
 
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
@@ -303,7 +384,9 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2019
+#if MAX2020
+                version = "2020",
+#elif MAX2019
                 version = "2019",
 #elif MAX2018
                 version = "2018",
@@ -398,7 +481,7 @@ namespace Max2Babylon
             var progression = 10.0f;
             ReportProgressChanged((int)progression);
             referencedMaterials.Clear();
-            Tools.guids.Clear();
+
             // Reseting is optionnal. It makes each morph target manager export starts from id = 0.
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)
@@ -535,7 +618,7 @@ namespace Max2Babylon
             {
                 var atmospheric = Loader.Core.GetAtmospheric(index);
 
-                if (atmospheric.Active(0) && atmospheric.ClassName == "Fog")
+                if (atmospheric!=null && atmospheric.Active(0) && atmospheric.ClassName == "Fog")
                 {
                     var fog = atmospheric as IStdFog;
 
@@ -564,12 +647,21 @@ namespace Max2Babylon
                 }
             }
 
+#if DEBUG
+            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 - flattenTime;
+            RaiseMessage(string.Format("Noded exported in {0:0.00}s", nodesExportTime), Color.Blue);
+#endif
+
             // ----------------------------
             // ----- Animation groups -----
             // ----------------------------
             RaiseMessage("Export animation groups");
             // add animation groups to the scene
             babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+#if DEBUG
+            var animationGroupExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
+            RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", animationGroupExportTime), Color.Blue);
+#endif
 
             if (isBabylonExported)
             {
@@ -631,7 +723,6 @@ namespace Max2Babylon
                     }
                 }
             }
-
 
             // Output
             babylonScene.Prepare(false, false);
@@ -755,6 +846,15 @@ namespace Max2Babylon
             RaiseMessage(string.Format("Exportation done in {0:0.00}s: {1}", watch.ElapsedMilliseconds / 1000.0, fileExportString), Color.Blue);
             IUTF8Str max_notification = Autodesk.Max.GlobalInterface.Instance.UTF8Str.Create("BabylonExportComplete");
             Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, max_notification);
+
+            if (exportParameters is MaxExportParameters)
+            {
+                MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
+                if (maxExporterParameters.flattenScene)
+                {
+                    Tools.RemoveFlattenModification();
+                }
+            }
         }
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
@@ -945,7 +1045,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017 || MAX2018 || MAX2019
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020
                     var item = tab[i];
 #else
                     var item = tab[new IntPtr(i)];
@@ -958,6 +1058,11 @@ namespace Max2Babylon
 
         private bool IsNodeExportable(IIGameNode gameNode)
         {
+            if (gameNode.MaxNode.GetBoolProperty("babylonjs_flatteningTemp"))
+            {
+                return true;
+            }
+
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
@@ -969,7 +1074,19 @@ namespace Max2Babylon
                     }
                 }
             }
+
+            if (gameNode.MaxNode.GetBoolProperty("babylonjs_flattened"))
+            {
+                return false;
+            }
+
+
             if (gameNode.MaxNode.GetBoolProperty("babylonjs_noexport"))
+            {
+                return false;
+            }
+
+            if (gameNode.MaxNode.IsBabylonContainerHelper() || gameNode.MaxNode.IsBabylonAnimationHelper())
             {
                 return false;
             }
@@ -1127,6 +1244,7 @@ namespace Max2Babylon
                     }
                 }
             }
+
         }
 
         private void SetNodePosition(ref BabylonNode node, ref BabylonScene babylonScene, float[] newPosition)

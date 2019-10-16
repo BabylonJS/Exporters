@@ -1,14 +1,19 @@
 ﻿using System.Windows.Forms;
+using Autodesk.Max;
 using ActionItem = Autodesk.Max.Plugins.ActionItem;
 
 namespace Max2Babylon
 {
-    class BabylonSaveAnimationToContainers:ActionItem
+    class BabylonToggleBakeAnimation:ActionItem
     {
 
         public override bool ExecuteAction()
         {
-            AnimationGroupList.SaveDataToContainers();
+            IINode sel = Loader.Core.GetSelNode(0);
+            if (sel == null) return true;
+
+            bool bakeAnimation = sel.IsMarkedAsObjectToBakeAnimation();
+            sel.SetUserPropBool("babylonjs_BakeAnimation", !bakeAnimation);
             return true;
         }
 
@@ -24,17 +29,31 @@ namespace Max2Babylon
 
         public override string ButtonText
         {
-            get { return "Babylon Save Animation To Containers"; }
+            get { return "Babylon Toggle Bake Animation Status"; }
         }
 
         public override string MenuText
         {
-            get { return "&Babylon Save Animation To Containers..."; }
+            get
+            {
+                IINode sel = Loader.Core.GetSelNode(0);
+                if (sel == null)
+                {
+                    return "&Bake Animation - Disabled";
+                }
+
+                if (!sel.IsMarkedAsObjectToBakeAnimation())
+                {
+                    return "&Bake Animation - Disabled";
+                }
+
+                return "&Bake Animation - Enabled";
+            }
         }
 
         public override string DescriptionText
         {
-            get { return "Copy animation group to their specific containers"; }
+            get { return "Toggle Bake Animation status"; }
         }
 
         public override string CategoryText

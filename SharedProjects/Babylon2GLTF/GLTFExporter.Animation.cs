@@ -37,8 +37,8 @@ namespace Babylon2GLTF
                     }
                     else
                     {
-                        ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
-                    }
+                    ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
+                }
                 }
 
                 if (gltfAnimation.ChannelList.Count > 0)
@@ -70,13 +70,13 @@ namespace Babylon2GLTF
                         GLTFNode gltfNode;
 
                         if (babylonNode != null && nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
-                        {
+                    {
                             if (babylonNode.animations != null && babylonNode.animations[0].property == "_matrix")
                             {
                                 ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode);
-                            }
+                    }
                             else
-                            {
+                        {
                                 ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
                             }
                         }
@@ -419,7 +419,7 @@ namespace Babylon2GLTF
             return accessorOutput;
         }
 
-        private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList, int startFrame, int endFrame, BabylonScene babylonScene)
+        private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList, int startFrame, int endFrame, BabylonScene babylonScene, bool offsetToStartAtFrameZero = true)
         {
             if (!_isBabylonMorphTargetManagerAnimationValid(babylonMorphTargetManager))
             {
@@ -464,7 +464,9 @@ namespace Babylon2GLTF
                     continue;
 
                 numKeys++;
-                var inputValue = frame / (float)babylonScene.TimelineFramesPerSecond;
+                float inputValue = frame;
+                if (offsetToStartAtFrameZero) inputValue -= startFrame;
+                inputValue /= (float)babylonScene.TimelineFramesPerSecond;
                 // Store values as bytes
                 accessorInput.bytesList.AddRange(BitConverter.GetBytes(inputValue));
                 // Update min and max values
