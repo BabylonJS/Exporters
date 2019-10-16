@@ -317,6 +317,7 @@ namespace Max2Babylon
                 BabylonBone bone = new BabylonBone()
                 {
                     id = (isGltfExported)?boneId:boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    parentNodeId = (parentIndex!=-1)?node.NodeParent.MaxNode.GetGuid().ToString():null,
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
