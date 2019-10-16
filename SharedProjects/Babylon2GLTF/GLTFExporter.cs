@@ -75,7 +75,13 @@ namespace Babylon2GLTF
             GLTFScene[] scenes = { scene };
             gltf.scenes = scenes;
 
+            alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
+            boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
+            NbNodesByName = new Dictionary<string, int>();
+
             double meshesExportTime = 0;
+            double materialsExportTime = 0;
             if (exportParameters.animationExportType != AnimationExportType.ExportOnly)
             {
                 // Meshes
@@ -94,16 +100,11 @@ namespace Babylon2GLTF
                 meshesExportTime = watch.ElapsedMilliseconds / 1000.0;
                 logger.RaiseMessage(string.Format("GLTFMeshes exported in {0:0.00}s", meshesExportTime), Color.Blue);
 #endif
-            }
 
             // Root nodes
             logger.RaiseMessage("GLTFExporter | Exporting nodes");
             List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
             progressionStep = 40.0f / babylonRootNodes.Count;
-            alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
-            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
-            boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
-            NbNodesByName = new Dictionary<string, int>();
             babylonRootNodes.ForEach(babylonNode =>
             {
                 exportNodeRec(babylonNode, gltf, babylonScene);
@@ -111,25 +112,34 @@ namespace Babylon2GLTF
                 logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             });
+            
 #if DEBUG
             var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -meshesExportTime;
             logger.RaiseMessage(string.Format("GLTFNodes exported in {0:0.00}s", nodesExportTime), Color.Blue);
 #endif
-            double materialsExportTime = 0;
-            if (exportParameters.animationExportType != AnimationExportType.ExportOnly)
+            
+            // Materials
+            logger.RaiseMessage("GLTFExporter | Exporting materials");
+            foreach (var babylonMaterial in babylonMaterialsToExport)
             {
-                // Materials
-                logger.RaiseMessage("GLTFExporter | Exporting materials");
-                foreach (var babylonMaterial in babylonMaterialsToExport)
-                {
-                    ExportMaterial(babylonMaterial, gltf);
-                    logger.CheckCancelled();
-                };
-                logger.RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
+                ExportMaterial(babylonMaterial, gltf);
+                logger.CheckCancelled();
+            };
+            logger.RaiseMessage(string.Format("GLTFExporter | Nb materials exported: {0}", gltf.MaterialsList.Count), Color.Gray, 1);
 #if DEBUG
-                materialsExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
-                logger.RaiseMessage(string.Format("GLTFMaterials exported in {0:0.00}s", materialsExportTime), Color.Blue);
+            materialsExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
+            logger.RaiseMessage(string.Format("GLTFMaterials exported in {0:0.00}s", materialsExportTime), Color.Blue);
 #endif
+            }
+            else
+            {
+                foreach (BabylonSkeleton babylonSkeleton in babylonScene.SkeletonsList)
+                {
+                    foreach (BabylonBone babylonSkeletonBone in babylonSkeleton.bones )
+                    {
+                        _exportBone(babylonSkeletonBone, gltf, babylonSkeleton, babylonSkeleton.bones.ToList());
+                    }
+                }
             }
 
             if (exportParameters.animationExportType != AnimationExportType.NotExport)

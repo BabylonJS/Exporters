@@ -487,11 +487,18 @@ namespace Max2Babylon
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)
             {
-                BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
+                if (isGltfExported && exportParameters.animationExportType == AnimationExportType.ExportOnly)
+                {
+                    calculateSkeletonList(maxRootNode);
+                }
+                else
+                {
+                    BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
 
-                // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (node != null && exportNode != null && !exportNode.IsRootNode)
-                    SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
+                    // if we're exporting from a specific node, reset the pivot to {0,0,0}
+                    if (node != null && exportNode != null && !exportNode.IsRootNode)
+                        SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
+                }
 
                 progression += progressionStep;
                 ReportProgressChanged((int)progression);
@@ -597,23 +604,19 @@ namespace Max2Babylon
                 babylonScene.MeshesList.Add(rootNode);
             }
 
-            if (exportParameters.animationExportType != AnimationExportType.ExportOnly)
-            {
             // Materials
             if (exportParameters.exportMaterials)
             {
                 RaiseMessage("Exporting materials");
-                    var matsToExport =
-                        referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
+                var matsToExport =
+                    referencedMaterials.ToArray(); // Snapshot because multimaterials can export new materials
                 foreach (var mat in matsToExport)
                 {
                     ExportMaterial(mat, babylonScene);
                     CheckCancelled();
                 }
 
-                    RaiseMessage(
-                        string.Format("Total: {0}",
-                            babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
+                RaiseMessage(string.Format("Total: {0}",babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
             }
             else
             {
@@ -644,7 +647,6 @@ namespace Max2Babylon
                     }
                 }
             }
-            }
 
             // Skeletons
             if (skins.Count > 0)
@@ -655,9 +657,6 @@ namespace Max2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
-
-            if (exportParameters.animationExportType == AnimationExportType.Export)
-            {
 #if DEBUG
             var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 - flattenTime;
             RaiseMessage(string.Format("Noded exported in {0:0.00}s", nodesExportTime), Color.Blue);
@@ -674,7 +673,6 @@ namespace Max2Babylon
             var animationGroupExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
             RaiseMessage(string.Format("Animation groups exported in {0:0.00}s", animationGroupExportTime), Color.Blue);
 #endif
-            }
 
 
             if (isBabylonExported)
@@ -908,8 +906,6 @@ namespace Max2Babylon
         private BabylonNode exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
         {
             BabylonNode babylonNode = null;
-            if (exportParameters.animationExportType != AnimationExportType.ExportOnly)
-            {
             switch (maxGameNode.IGameObject.IGameType)
             {
                 case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
@@ -929,7 +925,6 @@ namespace Max2Babylon
                 default:
                     // The type of node is not exportable (helper, spline, xref...)
                     break;
-            }
             }
             CheckCancelled();
 
@@ -959,6 +954,37 @@ namespace Max2Babylon
             }
 
             return babylonNode;
+        }
+
+        private void calculateSkeletonList(IIGameNode maxGameNode )
+        {
+            if (maxGameNode.IGameObject.IGameType is Autodesk.Max.IGameObject.ObjectTypes.Mesh)
+            {
+                var gameMesh = maxGameNode.IGameObject.AsGameMesh();
+                // Skin
+                var isSkinned = gameMesh.IsObjectSkinned;
+                var skin = gameMesh.IGameSkin;
+                IGMatrix skinInitPoseMatrix = Loader.Global.GMatrix.Create(Loader.Global.Matrix3.Create(true));
+
+                if (isSkinned && GetRelevantNodes(skin).Count > 0)  // if the mesh has a skin with at least one bone
+                {
+                    var skinAlreadyStored = skins.Find(_skin => IsSkinEqualTo(_skin, skin));
+                    if (skinAlreadyStored == null)
+                    {
+                        skins.Add(skin);
+                    }
+
+                    skin.GetInitSkinTM(skinInitPoseMatrix);
+                }
+            }
+
+            for (int i = 0; i < maxGameNode.ChildCount; i++)
+            {
+                var descendant = maxGameNode.GetNodeChild(i);
+                calculateSkeletonList(descendant);
+            }
+
+            
         }
 
         /// <summary>
