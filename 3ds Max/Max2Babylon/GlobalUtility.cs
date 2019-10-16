@@ -115,11 +115,11 @@ namespace Max2Babylon
                     n.GetGuid(); // force to assigne a new guid if not exist yet for this node
                 }
 
-                IIContainerObject contaner = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
-                if (contaner != null)
+                IIContainerObject container = Loader.Global.ContainerManagerInterface.IsContainerNode(n);
+                if (container != null)
                 {
                     // a generic operation on a container is done (open/inherit)
-                    contaner.ResolveContainer();
+                    container.ResolveContainer();
                 }
             }
             catch
@@ -192,7 +192,6 @@ namespace Max2Babylon
                 actionTable.AppendOperation(new BabylonSaveAnimations());
                 actionTable.AppendOperation(new BabylonLoadAnimations());
                 actionTable.AppendOperation(new BabylonSkipFlattenToggle());
-                actionTable.AppendOperation(new BabylonToggleBakeAnimation());
 
                 actionCallback = new BabylonActionCallback();
 
@@ -340,13 +339,8 @@ namespace Max2Babylon
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Toggle Bake Animation Status";
-            menuItemBabylon.ActionItem = actionTable[6];
-            menu.AddItem(menuItemBabylon, -1);
-
-            menuItemBabylon = Loader.Global.IMenuItem;
             menuItemBabylon.Title = "Babylon Actions Builder";
-            menuItemBabylon.ActionItem = actionTable[7];
+            menuItemBabylon.ActionItem = actionTable[6];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItem = Loader.Global.IMenuItem;
