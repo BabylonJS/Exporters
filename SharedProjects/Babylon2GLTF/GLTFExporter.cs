@@ -25,7 +25,6 @@ namespace Babylon2GLTF
 
         // from BabylonNode to GLTFNode
         Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
-        Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
 
         public void ExportGltf(ExportParameters exportParameters, BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary, ILoggingProvider logger)
         {
@@ -44,8 +43,6 @@ namespace Babylon2GLTF
             var progression = 0.0f;
             logger.ReportProgressChanged((int)progression);
 
-            // Initialization
-            initBabylonNodes(babylonScene);
             babylonMaterialsToExport = new List<BabylonMaterial>();
 
             var gltf = new GLTF(outputFile);
@@ -71,6 +68,28 @@ namespace Babylon2GLTF
             GLTFScene[] scenes = { scene };
             gltf.scenes = scenes;
 
+            // Initialization
+            initBabylonNodes(babylonScene,gltf);            
+ 
+
+            // Root nodes
+            logger.RaiseMessage("GLTFExporter | Exporting nodes");
+            progression = 30.0f;
+            logger.ReportProgressChanged((int)progression);
+            List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
+            progressionStep = 30.0f / babylonRootNodes.Count;
+            alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
+            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
+            NbNodesByName = new Dictionary<string, int>();
+            babylonRootNodes.ForEach(babylonNode =>
+            {
+                exportNodeRec(babylonNode, gltf, babylonScene);
+                progression += progressionStep;
+                logger.ReportProgressChanged((int)progression);
+                logger.CheckCancelled();
+            });
+
+
             // Meshes
             logger.RaiseMessage("GLTFExporter | Exporting meshes");
             progression = 10.0f;
@@ -83,28 +102,9 @@ namespace Babylon2GLTF
                 logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             }
- 
 
-            // Root nodes
-            logger.RaiseMessage("GLTFExporter | Exporting nodes");
-            progression = 30.0f;
-            logger.ReportProgressChanged((int)progression);
-            List<BabylonNode> babylonRootNodes = babylonNodes.FindAll(node => node.parentId == null);
-            progressionStep = 30.0f / babylonRootNodes.Count;
-            alreadyExportedSkeletons = new Dictionary<BabylonSkeleton, BabylonSkeletonExportData>();
-            nodeToGltfNodeMap = new Dictionary<BabylonNode, GLTFNode>();
-            boneToGltfNodeMap = new Dictionary<BabylonBone, GLTFNode>();
-            NbNodesByName = new Dictionary<string, int>();
-            babylonRootNodes.ForEach(babylonNode =>
-            {
-                exportNodeRec(babylonNode, gltf, babylonScene);
-                progression += progressionStep;
-                logger.ReportProgressChanged((int)progression);
-                logger.CheckCancelled();
-            });
-
-            //Skin bones and Cameras
-            logger.RaiseMessage("GLTFExporter | Exporting bones and cameras");
+            //Mesh Skins, light and Cameras
+            logger.RaiseMessage("GLTFExporter | Exporting skins, lights and cameras");
             progression = 50.0f;
             logger.ReportProgressChanged((int)progression);
             progressionStep = 50.0f / babylonRootNodes.Count;
@@ -285,7 +285,7 @@ namespace Babylon2GLTF
             logger.ReportProgressChanged(100);
         }
 
-        private List<BabylonNode> initBabylonNodes(BabylonScene babylonScene)
+        private List<BabylonNode> initBabylonNodes(BabylonScene babylonScene,GLTF gltf)
         {
             babylonNodes = new List<BabylonNode>();
             if (babylonScene.meshes != null)
@@ -317,6 +317,22 @@ namespace Babylon2GLTF
             {
                 babylonNodes.AddRange(babylonScene.cameras);
             }
+
+            if (babylonScene.SkeletonsList != null)
+            {
+                foreach (BabylonSkeleton babylonSkeleton in babylonScene.SkeletonsList)
+                {
+                    foreach (BabylonBone babylonSkeletonBone in babylonSkeleton.bones)
+                    {
+                        if(!babylonNodes.Exists(x => x.id == babylonSkeletonBone.id))
+                        {
+                            babylonNodes.Add(BoneToNode(babylonSkeletonBone));
+                        }
+                    }
+                   
+                }
+            }
+
             return babylonNodes;
         }
 
@@ -370,9 +386,13 @@ namespace Babylon2GLTF
                         ExportLight(ref gltfNode, babylonNode as BabylonLight, gltf, gltfParentNode, babylonScene);
                     }
                 }
+                else if (type == typeof(BabylonNode))
+                {
+                    logger.RaiseVerbose($"Node named {babylonNode.name} already exported as gltfNode", 1);
+                }
                 else
                 {
-                    logger.RaiseError($"Node named {babylonNode.name} as no exporter", 1);
+                    logger.RaiseError($"Node named {babylonNode.name} has no exporter", 1);
                 }
 
                 logger.CheckCancelled();
