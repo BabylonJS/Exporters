@@ -671,25 +671,79 @@ namespace Max2Babylon
             return false;
         }
 
-        public static void FlattenHierarchy(this IINode node)
+
+        public static void RemoveFlattenModification()
         {
-            ////todo: replace this with C# 
-            string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {node.Handle}) Editable_Poly";
-            ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
-            
-            IPolyObject polyObject = node.GetPolyObjectFromNode();
-            IEPoly flattenEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
-#if MAX2020
-            IINodeTab toflatten = Loader.Global.INodeTab.Create();
-#else
-            IINodeTab toflatten = Loader.Global.NodeTab.Create();
-#endif
-            foreach (IINode n in node.NodeTree())
+            List<IINode> toDelete = new List<IINode>();
+            foreach (IINode node in Loader.Core.RootNode.NodeTree())
             {
-                toflatten.AppendNode(n,false,1);
+                node.DeleteProperty("babylonjs_flattened");
+                if (node.GetBoolProperty("babylonjs_flatteningTemp"))
+                {
+                    toDelete.Add(node);
+                }
             }
 
-            flattenEPoly.EpfnMultiAttach(toflatten, node, Loader.Core.Time);
+            foreach (IINode iNode in toDelete)
+            {
+                Loader.Core.DeleteNode(iNode, false, true);
+            }
+        }
+
+
+        public static IINode FlattenHierarchy(this IINode node)
+        {
+            string activeLayer =$"(LayerManager.getLayerFromName (maxOps.getNodeByHandle {node.Handle}).layer.name).current = true";
+            ScriptsUtilities.ExecuteMaxScriptCommand(activeLayer);
+            node.SetUserPropBool("babylonjs_flattened", true);
+            node.NodeTree().ToList().ForEach(x => x.SetUserPropBool("babylonjs_flattened",true));
+            IClass_ID cid = Loader.Global.Class_ID.Create((uint)BuiltInClassIDA.SPHERE_CLASS_ID, 0);
+            object obj = Loader.Core.CreateInstance(SClass_ID.Geomobject, cid as IClass_ID);
+            IINode result = Loader.Core.CreateObjectNode((IObject)obj);
+            result.Name = node.Name;
+            result.SetTMController(node.TMController);
+            string scale = $"scale (maxOps.getNodeByHandle {result.Handle}) [0.1,0.1,0.1]";
+            ScriptsUtilities.ExecuteMaxScriptCommand(scale);
+            result.ResetTransform(Loader.Core.Time,false);
+            string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {result.Handle}) Editable_Poly";
+            ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
+
+            IPolyObject polyObject = result.GetPolyObjectFromNode();
+            IEPoly nodeEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
+
+#if MAX2020
+            IINodeTab toflatten = Loader.Global.INodeTab.Create();
+            IINodeTab resultTarget = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab toflatten = Loader.Global.NodeTab.Create();
+            IINodeTab resultTarget = Loader.Global.NodeTab.Create();
+#endif
+            toflatten.AppendNode(node,false,1);
+
+            var offset = Loader.Global.Point3.Create(0, 0, 0);
+            Loader.Core.CloneNodes(toflatten, offset, true, CloneType.Copy, null, resultTarget);
+
+            bool undo = false;
+            for (int i = 0; i < resultTarget.Count; i++)
+            {
+#if MAX2015
+                IINode n = resultTarget[(IntPtr)i];
+#else
+                IINode n = resultTarget[i];
+#endif
+                Loader.Core.RootNode.AttachChild(n,true);
+                if (n.GetPolyObjectFromNode() == null)
+                {
+                    Loader.Core.DeleteNode(n, false, false);
+                    continue;
+                }
+                n.ResetTransform(Loader.Core.Time, false);
+                nodeEPoly.EpfnAttach(n, ref undo, result, Loader.Core.Time);
+            }
+
+            result.SetUserPropBool("babylonjs_flatteningTemp",true);
+
+            return result;
         }
 
         public static bool IsSkinned(this IINode node)
@@ -717,6 +771,13 @@ namespace Max2Babylon
 
 #region GUID
 
+        public static void UnloadAllContainers()
+        {
+            foreach (IIContainerObject iContainerObject in GetAllContainers())
+            {
+                bool unload = iContainerObject.UnloadContainer;
+            }
+        }
 
         public static void MergeAllXrefRecords()
         {
@@ -725,12 +786,29 @@ namespace Max2Babylon
                 var record = Loader.IIObjXRefManager.GetRecord(i);
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
             }
+            AnimationGroupList.LoadDataFromAnimationHelpers();
+        }
+
+        public static bool IsNodeSelected(this IINode node)
+        {
+#if MAX2020
+            IINodeTab selection = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab selection = Loader.Global.INodeTabNS.Create();
+#endif
+            Loader.Core.GetSelNodeTab(selection);
+            return selection.Contains(node);
         }
 
 
         public static bool IsMarkedAsNotFlattenable(this IINode node)
         {
             return node.GetBoolProperty("babylonjs_DoNotFlatten");
+        }
+
+        public static bool IsMarkedAsObjectToBakeAnimation(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_BakeAnimation");
         }
 
         public static  IIContainerObject GetContainer(this IList<Guid> guids)
@@ -759,6 +837,34 @@ namespace Max2Babylon
                 }
             }
             return null;
+        }
+
+        public static List<IIContainerObject> GetContainerInSelection()
+        {
+#if MAX2020
+            IINodeTab selection = Loader.Global.INodeTab.Create();
+#else
+            IINodeTab selection = Loader.Global.INodeTabNS.Create();
+#endif
+            Loader.Core.GetSelNodeTab(selection);
+            List<IIContainerObject> selectedContainers = new List<IIContainerObject>();
+
+            for (int i = 0; i < selection.Count; i++)
+            {
+#if MAX2015
+                var selectedNode = selection[(IntPtr)i];
+#else
+                var selectedNode = selection[i];
+#endif
+
+                IIContainerObject containerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(selectedNode);
+                if (containerObject != null)
+                {
+                    selectedContainers.Add(containerObject);
+                }
+            }
+
+            return selectedContainers;
         }
 
         public static IIContainerObject InSameContainer(this IList<Guid> guids)
@@ -796,6 +902,30 @@ namespace Max2Babylon
                 }
             }
             return containersList;
+        }
+
+        public static List<IINode> ContainerNodeTree(this IINode containerNode, bool includeSubContainer)
+        {
+            List<IINode> containersChildren = new List<IINode>();
+
+            foreach (IINode x in containerNode.Nodes())
+            {
+                IIContainerObject nestedContainerObject =Loader.Global.ContainerManagerInterface.IsContainerNode(x);
+                if (nestedContainerObject != null)
+                {
+                    if (includeSubContainer)
+                    {
+                        containersChildren.AddRange(ContainerNodeTree(nestedContainerObject.ContainerNode, includeSubContainer));
+                    }
+                }
+                else
+                {
+                    containersChildren.Add(x);
+                    containersChildren.AddRange(ContainerNodeTree(x,includeSubContainer));
+                }
+            }
+
+            return containersChildren;
         }
 
         private static IIContainerObject GetConflictingContainer(this IIContainerObject container)
@@ -838,16 +968,44 @@ namespace Max2Babylon
             }
         }
 
+        public static IINode BabylonAnimationHelper()
+        {
+            IINode babylonHelper = null;
+            foreach (IINode directChild in Loader.Core.RootNode.DirectChildren())
+            {
+                if (directChild.IsBabylonAnimationHelper())
+                {
+                    babylonHelper = directChild;
+                }
+            }
+
+            if (babylonHelper == null)
+            {
+                IDummyObject dummy = Loader.Global.DummyObject.Create();
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonAnimationHelper_{Random.Next(0,99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_AnimationHelper",true);
+            }
+
+            return babylonHelper;
+        }
+
 
         public static IINode BabylonContainerHelper(this IIContainerObject containerObject)
         {
-            IINode babylonHelper = containerObject.ContainerNode.FindChildNode("BabylonAnimationHelper");
+            IINode babylonHelper = null;
+            foreach (IINode directChild in containerObject.ContainerNode.DirectChildren())
+            {
+                if (directChild.IsBabylonContainerHelper())
+                {
+                    babylonHelper = directChild;
+                }
+            }
+
             if (babylonHelper == null)
             {
-                MessageBox.Show($"Container {containerObject.ContainerNode.Name} has no Babylon Animation Helper, " +
-                                $"a default one has been created, this process should be done on the container source");
                 IDummyObject dummy = Loader.Global.DummyObject.Create();
-                babylonHelper = Loader.Core.CreateObjectNode(dummy, "BabylonAnimationHelper");
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonContainerHelper_{Random.Next(0,99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_ContainerHelper",true);
 
                 Loader.Core.SetQuietMode(true);
                 containerObject.ContainerNode.AttachChild(babylonHelper,false);
@@ -857,14 +1015,21 @@ namespace Max2Babylon
             return babylonHelper;
         }
 
+        public static bool IsBabylonAnimationHelper(this IINode node)
+        {
+            return node.GetBoolProperty("babylonjs_AnimationHelper", 0);
+        }
+
         public static bool IsBabylonContainerHelper(this IINode node)
         {
+            //to keep retrocompatibility
             if (node.Name == "BabylonAnimationHelper")
             {
-                return true;
+                node.Name = $"BabylonContainerHelper_{Random.Next(0, 99999)}";
+                node.SetUserPropBool("babylonjs_ContainerHelper",true);
             }
 
-            return false;
+            return node.GetBoolProperty("babylonjs_ContainerHelper", 0);
         }
 
         public static List<Guid> ToGuids(this IList<uint> handles)
@@ -1194,19 +1359,20 @@ namespace Max2Babylon
                 if (node.IsAnimated && node.TMController != null)
                 {
                     int lastKey = 0;
-                    if (node.TMController.PositionController != null)
+                    if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys>0 )
                     {
                         int posKeys = node.TMController.PositionController.NumKeys;
-                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(0));
+                        
                     }
 
-                    if (node.TMController.RotationController != null)
+                    if (node.TMController.RotationController != null && node.TMController.RotationController.NumKeys>0)
                     {
                         int rotKeys = node.TMController.RotationController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.RotationController.GetKeyTime(rotKeys - 1));
                     }
 
-                    if (node.TMController.ScaleController != null)
+                    if (node.TMController.ScaleController != null && node.TMController.ScaleController.NumKeys>0)
                     {
                         int scaleKeys = node.TMController.ScaleController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.ScaleController.GetKeyTime(scaleKeys - 1));
@@ -1294,6 +1460,11 @@ namespace Max2Babylon
             comboBox.SelectedItem = node.GetStringProperty(propertyName, defaultValue);
         }
 
+        public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, int defaultValue)
+        {
+            comboBox.SelectedIndex = (int)node.GetFloatProperty(propertyName,defaultValue);
+        }
+
         public static void UpdateCheckBox(CheckBox checkBox, IINode node, string propertyName)
         {
             if (checkBox.CheckState != CheckState.Indeterminate)
@@ -1368,6 +1539,12 @@ namespace Max2Babylon
         {
             var value = comboBox.SelectedItem.ToString();
             node.SetUserPropString(propertyName, value);
+        }
+
+        public static void UpdateComboBoxByIndex(ComboBox comboBox, IINode node, string propertyName)
+        {
+            var value = comboBox.SelectedIndex;
+            node.SetUserPropInt(propertyName, value);
         }
 
         public static void UpdateComboBox(ComboBox comboBox, List<IINode> nodes, string propertyName)
@@ -1454,6 +1631,24 @@ namespace Max2Babylon
 
 #endregion
 
+/// <summary>
+/// Converts the ITab to a more convenient IEnumerable.
+/// </summary>
+public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
+{
+#if MAX2015
+            for (int i = 0; i < tab.Count; i++)
+            {
+                yield return tab[(IntPtr)i];
+            }
+#else
+    for (int i = 0; i < tab.Count; i++)
+    {
+        yield return tab[i];
+    }
+#endif
+                
+}
         
     }
 }
