@@ -243,6 +243,7 @@ namespace Max2Babylon
             foreach (IIContainerObject containerObject in sceneContainers)
             {
                 if (!containerObject.IsInherited)continue;
+                ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).LoadContainer()");
                 bool update = containerObject.UpdateContainer();
                 bool makeUnique = containerObject.MakeUnique;
                 RaiseMessage($"Update and merge container {containerObject.ContainerNode.Name}...");
