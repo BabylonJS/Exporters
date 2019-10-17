@@ -295,8 +295,9 @@ namespace Max2Babylon
             {
                 foreach (IILayer layer in exportItem.Layers)
                 {
+                    
 #if MAX2015
-                layerState.Add(layer, layer.IsHidden);
+                    layerState.Add(layer, layer.IsHidden);
 #else
                     layerState.Add(layer, layer.IsHidden(false));
 #endif

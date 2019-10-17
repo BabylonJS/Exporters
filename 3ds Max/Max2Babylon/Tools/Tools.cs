@@ -781,9 +781,9 @@ namespace Max2Babylon
 
         public static void MergeAllXrefRecords()
         {
-            for (uint i = 0; i < Loader.IIObjXRefManager.RecordCount; i++)
+            while (Loader.IIObjXRefManager.RecordCount>0)
             {
-                var record = Loader.IIObjXRefManager.GetRecord(i);
+                var record = Loader.IIObjXRefManager.GetRecord(0);
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
             }
             AnimationGroupList.LoadDataFromAnimationHelpers();
