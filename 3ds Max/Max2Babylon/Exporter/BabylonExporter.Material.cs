@@ -39,58 +39,7 @@ namespace Max2Babylon
                 RaiseVerbose("materialNode.MaterialClass=" + materialNode.MaterialClass, 2);
                 RaiseVerbose("materialNode.NumberOfTextureMaps=" + materialNode.NumberOfTextureMaps, 2);
 
-                var propertyContainer = materialNode.IPropertyContainer;
-                RaiseVerbose("propertyContainer=" + propertyContainer, 2);
-                if (propertyContainer != null)
-                {
-                    RaiseVerbose("propertyContainer.NumberOfProperties=" + propertyContainer.NumberOfProperties, 3);
-                    for (int i = 0; i < propertyContainer.NumberOfProperties; i++)
-                    {
-                        var prop = propertyContainer.GetProperty(i);
-                        if (prop != null)
-                        {
-                            RaiseVerbose("propertyContainer.GetProperty(" + i + ")=" + prop.Name, 3);
-                            switch (prop.GetType_)
-                            {
-                                case PropType.StringProp:
-                                    string propertyString = "";
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyString, 0)=" + prop.GetPropertyValue(ref propertyString, 0), 4);
-                                    RaiseVerbose("propertyString=" + propertyString, 4);
-                                    break;
-                                case PropType.IntProp:
-                                    int propertyInt = 0;
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyInt, 0)=" + prop.GetPropertyValue(ref propertyInt, 0), 4);
-                                    RaiseVerbose("propertyInt=" + propertyInt, 4);
-                                    break;
-                                case PropType.FloatProp:
-                                    float propertyFloat = 0;
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0, true)=" + prop.GetPropertyValue(ref propertyFloat, 0, true), 4);
-                                    RaiseVerbose("propertyFloat=" + propertyFloat, 4);
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyFloat, 0, false)=" + prop.GetPropertyValue(ref propertyFloat, 0, false), 4);
-                                    RaiseVerbose("propertyFloat=" + propertyFloat, 4);
-                                    break;
-                                case PropType.Point3Prop:
-                                    IPoint3 propertyPoint3 = Loader.Global.Point3.Create(0, 0, 0);
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyPoint3, 0)=" + prop.GetPropertyValue(propertyPoint3, 0), 4);
-                                    RaiseVerbose("propertyPoint3=" + Point3ToString(propertyPoint3), 4);
-                                    break;
-                                case PropType.Point4Prop:
-                                    IPoint4 propertyPoint4 = Loader.Global.Point4.Create(0, 0, 0, 0);
-                                    RaiseVerbose("prop.GetPropertyValue(ref propertyPoint4, 0)=" + prop.GetPropertyValue(propertyPoint4, 0), 4);
-                                    RaiseVerbose("propertyPoint4=" + Point4ToString(propertyPoint4), 4);
-                                    break;
-                                case PropType.UnknownProp:
-                                default:
-                                    RaiseVerbose("Unknown property type", 4);
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            RaiseVerbose("propertyContainer.GetProperty(" + i + ") IS NULL", 3);
-                        }
-                    }
-                }
+                Print(materialNode.IPropertyContainer, 2);
             }
             #endregion
 
@@ -140,7 +89,6 @@ namespace Max2Babylon
             IMaxMaterialExporter materialExporter;
             materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter);
 
-            
             var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
 
             if (isBabylonExported && materialExporter != null && materialExporter is IMaxBabylonMaterialExporter)
@@ -199,7 +147,7 @@ namespace Max2Babylon
                     babylonMaterial.linkEmissiveWithDiffuse = !isSelfIllumColor;
                     // useEmissiveAsIllumination attribute tells the Babylon engine to use pre-multiplied emissive as illumination
                     babylonMaterial.useEmissiveAsIllumination = isSelfIllumColor;
-                
+
                     // Store the emissive value (before multiplication) for gltf
                     babylonMaterial.selfIllum = materialNode.MaxMaterial.GetSelfIllum(0, false);
                 }
@@ -420,7 +368,7 @@ namespace Max2Babylon
                                     else
                                     {
                                         babylonMaterial.occlusionTexture = ormTexture;
-                                    } 
+                                    }
                                 }
                                 else
                                 {
@@ -550,7 +498,7 @@ namespace Max2Babylon
                 ITexmap colorTexmap = _getTexMap(materialNode, 1);
                 ITexmap alphaTexmap = _getTexMap(materialNode, 10);
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
-                
+
                 if (isUnlit == false)
                 {
                     // Metallic, roughness
@@ -707,7 +655,7 @@ namespace Max2Babylon
             if (isShellMaterial(materialNode))
             {
                 var bakedMaterial = GetBakedMaterialFromShellMaterial(materialNode);
-                if(bakedMaterial == null)
+                if (bakedMaterial == null)
                 {
                     return materialNode;
                 }
@@ -737,7 +685,7 @@ namespace Max2Babylon
             {
                 // Standard material
                 var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
-                
+
                 if (stdMat != null)
                 {
                     return null;
@@ -794,7 +742,7 @@ namespace Max2Babylon
                 {
                     RaiseWarning($"DirectX material property for {materialNode.MaterialName} is null...", 2);
                 }
-                
+
             }
 
             return renderMaterial;
@@ -809,7 +757,7 @@ namespace Max2Babylon
                 // Baked Material => used for the export
                 IMtl bakedMtl = materialNode.IPropertyContainer.GetProperty(1).MaxParamBlock2.GetMtl(3, 0, 0);
 
-                if(bakedMtl != null)
+                if (bakedMtl != null)
                 {
                     Guid guid = bakedMtl.GetGuid();
 
@@ -825,40 +773,6 @@ namespace Max2Babylon
             }
 
             return null;
-        }
-
-        // -------------------------
-        // --------- Utils ---------
-        // -------------------------
-
-        private string ColorToString(IColor color)
-        {
-            if (color == null)
-            {
-                return "";
-            }
-
-            return "{ r=" + color.R + ", g=" + color.G + ", b=" + color.B + " }";
-        }
-
-        private string Point3ToString(IPoint3 point)
-        {
-            if (point == null)
-            {
-                return "";
-            }
-
-            return "{ x=" + point.X + ", y=" + point.Y + ", z=" + point.Z + " }";
-        }
-
-        private string Point4ToString(IPoint4 point)
-        {
-            if (point == null)
-            {
-                return "";
-            }
-
-            return "{ x=" + point.X + ", y=" + point.Y + ", z=" + point.Z + ", w=" + point.W + " }";
         }
     }
 }
