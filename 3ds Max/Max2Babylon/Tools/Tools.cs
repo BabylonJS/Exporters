@@ -1362,7 +1362,7 @@ namespace Max2Babylon
                     if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys>0 )
                     {
                         int posKeys = node.TMController.PositionController.NumKeys;
-                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(0));
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
                         
                     }
 
