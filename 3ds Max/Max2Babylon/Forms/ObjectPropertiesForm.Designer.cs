@@ -33,6 +33,8 @@
             this.butCancel = new System.Windows.Forms.Button();
             this.butOK = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tagLabel = new System.Windows.Forms.Label();
+            this.tagInput = new System.Windows.Forms.TextBox();
             this.nupAlphaIndex = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.chkNoExport = new System.Windows.Forms.CheckBox();
@@ -84,8 +86,7 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chkAutoPlay = new System.Windows.Forms.CheckBox();
             this.ofdOpenSound = new System.Windows.Forms.OpenFileDialog();
-            this.tagInput = new System.Windows.Forms.TextBox();
-            this.tagLabel = new System.Windows.Forms.Label();
+            this.chkBakeAnimationNode = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupAlphaIndex)).BeginInit();
@@ -177,6 +178,22 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc.";
             // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(18, 124);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.TabIndex = 18;
+            this.tagLabel.Text = "Tag:";
+            // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(89, 121);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.TabIndex = 19;
+            // 
             // nupAlphaIndex
             // 
             this.nupAlphaIndex.Location = new System.Drawing.Point(89, 95);
@@ -260,6 +277,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkBakeAnimationNode);
             this.groupBox3.Controls.Add(this.grpAutoAnimate);
             this.groupBox3.Controls.Add(this.chkAutoAnimate);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -831,21 +849,16 @@
             // 
             this.ofdOpenSound.Filter = "Sound files|*.wav;*.mp3";
             // 
-            // tagInput
+            // chkBakeAnimationNode
             // 
-            this.tagInput.Location = new System.Drawing.Point(89, 121);
-            this.tagInput.Name = "tagInput";
-            this.tagInput.Size = new System.Drawing.Size(100, 20);
-            this.tagInput.TabIndex = 19;
-            // 
-            // tagLabel
-            // 
-            this.tagLabel.AutoSize = true;
-            this.tagLabel.Location = new System.Drawing.Point(18, 124);
-            this.tagLabel.Name = "tagLabel";
-            this.tagLabel.Size = new System.Drawing.Size(29, 13);
-            this.tagLabel.TabIndex = 18;
-            this.tagLabel.Text = "Tag:";
+            this.chkBakeAnimationNode.AutoSize = true;
+            this.chkBakeAnimationNode.Location = new System.Drawing.Point(121, 28);
+            this.chkBakeAnimationNode.Name = "chkBakeAnimationNode";
+            this.chkBakeAnimationNode.Size = new System.Drawing.Size(129, 17);
+            this.chkBakeAnimationNode.TabIndex = 24;
+            this.chkBakeAnimationNode.Text = "Bake Node Animation";
+            this.chkBakeAnimationNode.ThreeState = true;
+            this.chkBakeAnimationNode.UseVisualStyleBackColor = true;
             // 
             // ObjectPropertiesForm
             // 
@@ -960,5 +973,6 @@
         private System.Windows.Forms.Button cmdFileBrowse;
         private System.Windows.Forms.Label tagLabel;
         private System.Windows.Forms.TextBox tagInput;
+        private System.Windows.Forms.CheckBox chkBakeAnimationNode;
     }
 }
