@@ -244,7 +244,7 @@ namespace Max2Babylon
             {
                 if (!containerObject.IsInherited)continue;
                 ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).LoadContainer()");
-                bool update = containerObject.UpdateContainer();
+                ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).UpdateContainer()");
                 bool makeUnique = containerObject.MakeUnique;
                 RaiseMessage($"Update and merge container {containerObject.ContainerNode.Name}...");
             }
