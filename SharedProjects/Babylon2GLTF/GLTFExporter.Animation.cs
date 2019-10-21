@@ -204,6 +204,12 @@ namespace Babylon2GLTF
                         sampler = gltfAnimationSampler.index,
                         target = gltfTarget
                     };
+
+                    if (exportParameters.enableASBAnimationRetargeting)
+                    {
+                        ASOBOAnimationRetargetingExtension(ref gltf, ref gltfChannel,ref gltfNode,babylonNode);
+                    }
+
                     channelList.Add(gltfChannel);
                 }
             }
@@ -317,6 +323,12 @@ namespace Babylon2GLTF
                         sampler = gltfAnimationSampler.index,
                         target = gltfTarget
                     };
+
+                    if (exportParameters.enableASBAnimationRetargeting)
+                    {
+                        ASOBOAnimationRetargetingExtension(ref gltf, ref gltfChannel,ref gltfNode,babylonNode);
+                    }
+
                     channelList.Add(gltfChannel);
                 }
             }
