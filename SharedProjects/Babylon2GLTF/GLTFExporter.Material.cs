@@ -571,7 +571,7 @@ namespace Babylon2GLTF
                 }
             }
 
-            ExportGLTFExtension(babylonMaterial, ref gltfMaterial);
+            ExportGLTFExtension(babylonMaterial, ref gltfMaterial,gltf);
         }
 
         private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)

@@ -75,7 +75,7 @@ namespace Babylon2GLTF
                 }
             }
 
-            ExportGLTFExtension(babylonLight, ref light);
+            ExportGLTFExtension(babylonLight, ref light, gltf);
 
             return KHR_lightsExtension["lights"].Count - 1; // the index of the light
         }
@@ -105,7 +105,7 @@ namespace Babylon2GLTF
                     gltfNode.extensions[KHR_lights_punctuals] = light;
                 }
             }
-            ExportGLTFExtension(babylonLight, ref gltfNode);
+            ExportGLTFExtension(babylonLight, ref gltfNode,gltf);
 
             return gltfNode;
         }

@@ -74,7 +74,7 @@ namespace Babylon2GLTF
 
             // Scenes
             GLTFScene scene = new GLTFScene();
-            ExportGLTFExtension( babylonScene, ref scene);
+            ExportGLTFExtension( babylonScene, ref scene,gltf);
             GLTFScene[] scenes = { scene };
             gltf.scenes = scenes;
 
@@ -548,15 +548,15 @@ namespace Babylon2GLTF
             gltfNode.rotation[0] *= -1;
             gltfNode.rotation[1] *= -1;
 
-            ExportGLTFExtension(babylonNode,ref gltfNode);
+            ExportGLTFExtension(babylonNode,ref gltfNode, gltf);
             
             return gltfNode;
         }
 
-        private void ExportGLTFExtension<T1,T2>(T1 babylonObject, ref T2 gltfObject) where T2:GLTFProperty
+        private void ExportGLTFExtension<T1,T2>(T1 babylonObject, ref T2 gltfObject, GLTF gltf) where T2:GLTFProperty
         {
             GLTFExtensions nodeExtensions = gltfObject.extensions;
-            if (nodeExtensions == null)nodeExtensions = new GLTFExtensions();
+            if (nodeExtensions == null) nodeExtensions = new GLTFExtensions();
             
             foreach (var extensionExporter in babylonScene.BabylonToGLTFExtensions)
             {
@@ -573,7 +573,22 @@ namespace Babylon2GLTF
             if (nodeExtensions.Count > 0)
             {
                 gltfObject.extensions = nodeExtensions;
+
+                if (gltf.extensionsUsed == null)
+                {
+                    gltf.extensionsUsed = new System.Collections.Generic.List<string>();
+                }
+
+                foreach (KeyValuePair<string, object> extension in gltfObject.extensions)
+                {
+                    if (!gltf.extensionsUsed.Contains(extension.Key))
+                    {
+                        gltf.extensionsUsed.Add(extension.Key);
+                    }
+                }
             }
+
+            
         }
     }
 }
