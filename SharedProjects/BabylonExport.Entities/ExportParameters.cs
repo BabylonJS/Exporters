@@ -21,6 +21,7 @@ namespace BabylonExport.Entities
         public float scaleFactor = 1.0f;
         public bool writeTextures = true;
         public AnimationExportType animationExportType = AnimationExportType.Export;
+        public bool enableASBAnimationRetargeting = false;
         public bool overwriteTextures = true;
         public bool exportHiddenObjects = false;
         public bool exportMaterials = true;
