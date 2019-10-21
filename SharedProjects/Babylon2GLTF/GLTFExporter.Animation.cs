@@ -321,7 +321,7 @@ namespace Babylon2GLTF
                 }
             }
 
-            ExportGLTFExtension(babylonBone, ref gltfAnimation,gltf);
+            ExportGLTFExtension(babylonNode, ref gltfAnimation,gltf);
         }
 
         private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame, int endFrame, BabylonScene babylonScene)
