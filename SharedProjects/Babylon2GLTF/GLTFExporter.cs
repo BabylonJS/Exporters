@@ -96,10 +96,6 @@ namespace Babylon2GLTF
                 logger.CheckCancelled();
             });
 
-#if DEBUG
-            var meshesExportTime = watch.ElapsedMilliseconds / 1000.0;
-            logger.RaiseMessage(string.Format("GLTFMeshes exported in {0:0.00}s", meshesExportTime), Color.Blue);
-#endif
             // Meshes
             logger.RaiseMessage("GLTFExporter | Exporting meshes");
             progression = 10.0f;
