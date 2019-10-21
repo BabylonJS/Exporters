@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Animation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.IExtensionExporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Light.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Material.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFExporter.Mesh.cs" />

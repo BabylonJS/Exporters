@@ -219,6 +219,8 @@ namespace Babylon2GLTF
                     ExportMorphTargetWeightAnimation(babylonMorphTargetManager, gltf, gltfNode, channelList, samplerList, startFrame, endFrame, babylonScene);
                 }
             }
+
+            ExportGLTFExtension(babylonNode, ref gltfAnimation,gltf);
         }
 
         private void ExportBoneAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonNode babylonNode, GLTFNode gltfNode)
@@ -318,6 +320,8 @@ namespace Babylon2GLTF
                     channelList.Add(gltfChannel);
                 }
             }
+
+            ExportGLTFExtension(babylonBone, ref gltfAnimation,gltf);
         }
 
         private BabylonAnimation GetDummyAnimation(GLTFNode gltfNode, int startFrame, int endFrame, BabylonScene babylonScene)

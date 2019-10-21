@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Autodesk.Max.Plugins;
+using GLTFExport.Entities;
 using Color = System.Drawing.Color;
 using Utilities;
 
@@ -171,7 +173,7 @@ namespace Max2Babylon
             {
                 string message = $"Flattening child nodes of {itemNode.Name}...";
                 RaiseMessage(message, 0);
-            List<IINode> flattenableNodes = new List<IINode>();
+                List<IINode> flattenableNodes = new List<IINode>();
                 if(IsMeshFlattenable(itemNode, animationGroupList,ref flattenableNodes))
                 {
                     itemNode = itemNode.FlattenHierarchy();
@@ -203,10 +205,10 @@ namespace Max2Babylon
             if (bakeAnimationType == BakeAnimationType.BakeAllAnimations)
             {
                 foreach (IINode n in Tools.ITabToIEnumerable(tobake))
-            {
+                {
                     n.SetUserPropBool("babylonjs_BakeAnimation", true);
+                }
             }
-        }
 
             ScriptsUtilities.ExecuteMaxScriptCommand(@"
                 for obj in selection do 
@@ -263,19 +265,19 @@ namespace Max2Babylon
 
                 if (maxExporterParameters.usePreExportProcess)
                 {
-                if (maxExporterParameters.mergeContainersAndXRef)
-                {
+                    if (maxExporterParameters.mergeContainersAndXRef)
+                    {
                         string message = "Merging containers and Xref...";
                         RaiseMessage(message, 0);
-                    ExportClosedContainers();
-                    Tools.MergeAllXrefRecords();
+                        ExportClosedContainers();
+                        Tools.MergeAllXrefRecords();
 #if DEBUG
                         var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
                         RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
 #endif
-                }
+                    }
                     BakeAnimationsFrame(exportNode,maxExporterParameters.bakeAnimationType);
-            }
+                }
 
                 if (maxExporterParameters.flattenScene && maxExporterParameters.useMultiExporter)
                 {
@@ -313,8 +315,6 @@ namespace Max2Babylon
                 RaiseError("This parameter sets the quality of jpg compression.");
                 return;
             }
-
-            
 
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
@@ -436,15 +436,29 @@ namespace Max2Babylon
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
             {
-                if (type.IsAbstract || type.IsInterface || !typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                if (type.IsAbstract || type.IsInterface )
                     continue;
 
+                if (typeof(IBabylonExtensionExporter).IsAssignableFrom(type))
+                {
+                    IBabylonExtensionExporter exporter = Activator.CreateInstance(type) as IBabylonExtensionExporter;
+
+                    if (exporter == null)
+                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+                    Type t = exporter.GetGLTFExtendedType();
+                    babylonScene.BabylonToGLTFExtensions.Add(exporter,t);
+                }
+
+                if (typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                {
                 IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
 
                 if (exporter == null)
                     RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
 
                 materialExporters.Add(exporter.MaterialClassID, exporter);
+            }
             }
 
             // Sounds
@@ -493,11 +507,10 @@ namespace Max2Babylon
                 }
                 else
                 {
-                    BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
-
-                    // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                    if (node != null && exportNode != null && !exportNode.IsRootNode)
-                        SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
+                BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
+                // if we're exporting from a specific node, reset the pivot to {0,0,0}
+                if (node != null && exportNode != null && !exportNode.IsRootNode)
+                    SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
                 }
 
                 progression += progressionStep;
@@ -866,7 +879,7 @@ namespace Max2Babylon
                 {
                     Tools.RemoveFlattenModification();
                 }
-        }
+            }
         }
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
