@@ -13,42 +13,50 @@ namespace Babylon2GLTF
     #region Serializable glTF Objects
 
     [DataContract]
-    class ASBAnimationRetargeting: GLTFExtensions
+    class ASBAnimationRetargeting: GLTFProperty
     {
         [DataMember(EmitDefaultValue = false)]
         public string id { get; set; }
     }
+
     #endregion
 
     internal partial class GLTFExporter
     {
+        private const string AsoboAnimationRetargeting = "ASB_animation_retargeting";
+
         public void ASOBOAnimationRetargetingExtension(ref GLTF gltf,ref GLTFChannel gltfChannel, ref GLTFNode gltfNode,BabylonNode babylonNode )
         {
-            ASBAnimationRetargeting extension = new ASBAnimationRetargeting();
-            extension.id = babylonNode.name;
-
-            if (gltfChannel.extensions == null)
+            ASBAnimationRetargeting extensionObject = new ASBAnimationRetargeting
             {
-                gltfChannel.extensions = new GLTFExtensions();
-            }
-            gltfChannel.extensions["ASB_animation_retargeting"] = extension;
+                id = babylonNode.name
+            };
 
-
-            if (gltfNode.extensions == null)
+            if (gltfChannel != null)
             {
-                gltfNode.extensions = new GLTFExtensions();
+                if (gltfChannel.extensions == null)
+                {
+                    gltfChannel.extensions = new GLTFExtensions();
+                }
+                gltfChannel.extensions[AsoboAnimationRetargeting] = extensionObject;
             }
 
-            //gltfNode.extensions["ASB_animation_retargeting"] = extension;
-
+            if (gltfNode != null)
+            {
+                if (gltfNode.extensions == null)
+                {
+                    gltfNode.extensions = new GLTFExtensions();
+                }
+                gltfNode.extensions[AsoboAnimationRetargeting] = extensionObject;
+            }
 
             if (gltf.extensionsUsed == null)
             {
                 gltf.extensionsUsed = new List<string>();
             }
-            if (!gltf.extensionsUsed.Contains("ASB_animation_retargeting"))
+            if (!gltf.extensionsUsed.Contains(AsoboAnimationRetargeting))
             {
-                gltf.extensionsUsed.Add("ASB_animation_retargeting");
+                gltf.extensionsUsed.Add(AsoboAnimationRetargeting);
             }
         }
     }
