@@ -613,7 +613,14 @@ namespace Max2Babylon
 
                 if (containerID > 1 && !n.Name.EndsWith("_ID_" +containerID))
                 {
+                    string originalName = n.Name;
                     n.Name = $"{n.Name}_ID_{containerID}";
+                    IINode source = Loader.Core.GetINodeByName(originalName);
+                    IMtl mat = source.Mtl;
+                    if (mat != null)
+                    {
+                        n.Mtl = mat;
+                    }
                 }
             }
 
