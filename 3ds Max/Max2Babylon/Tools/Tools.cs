@@ -42,7 +42,7 @@ namespace Max2Babylon
             }
         }
 
-        #region IIPropertyContainer
+        #region IIGameProperty
 
         public static string GetStringProperty(this IIGameProperty property)
         {
@@ -83,6 +83,36 @@ namespace Max2Babylon
             property.GetPropertyValue(value, 0);
             return value;
         }
+
+        #endregion
+
+        #region IIPropertyContainer
+
+        public static string GetStringProperty(this IIPropertyContainer propertyContainer, string propName, string defaultValue = null)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetStringProperty() : defaultValue;
+        }
+
+        public static int GetIntProperty(this IIPropertyContainer propertyContainer, string propName, int defaultValue = 0)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetIntValue() : defaultValue;
+        }
+
+        public static bool GetBoolProperty(this IIPropertyContainer propertyContainer, string propName, bool defaultValue = false)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetBoolValue() : defaultValue;
+        }
+
+        public static float GetFloatProperty(this IIPropertyContainer propertyContainer, string propName, float defaultValue = 0f)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetFloatValue() : defaultValue;
+        }
+
+        // ---
 
         public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {

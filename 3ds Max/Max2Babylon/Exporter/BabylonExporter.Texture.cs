@@ -23,6 +23,17 @@ namespace Max2Babylon
         private static List<string> invalidFormats = new List<string>(new string[] { "dds", "tif", "tiff" });
         private Dictionary<string, BabylonTexture> textureMap = new Dictionary<string, BabylonTexture>();
 
+
+        public ITexmap GetSubTexmap(IStdMat2 stdMat, int index)
+        {
+            if (!stdMat.MapEnabled(index))
+            {
+                return null;
+            }
+
+            return stdMat.GetSubTexmap(index);
+        }
+
         // -------------------------------
         // --- "public" export methods ---
         // -------------------------------
