@@ -199,9 +199,24 @@ namespace Max2Babylon
             foreach (IIContainerObject containerObject in sceneContainers)
             {
                 if (!containerObject.IsInherited)continue;
+                ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).LoadContainer()");
+                ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).UpdateContainer()");
                 bool makeUnique = containerObject.MakeUnique;
+                RaiseMessage($"Update and merge container {containerObject.ContainerNode.Name}...");
             }
             AnimationGroupList.LoadDataFromAllContainers();
+        }
+
+        public void MergeAllXrefRecords()
+        {
+            while (Loader.IIObjXRefManager.RecordCount>0)
+            {
+                var record = Loader.IIObjXRefManager.GetRecord(0);
+                RaiseMessage($"Merge XRef record {record.SrcFile.FileName}...");
+                Loader.IIObjXRefManager.MergeRecordIntoScene(record);
+                
+            }
+            AnimationGroupList.LoadDataFromAnimationHelpers();
         }
 
         public void Export(ExportParameters exportParameters)
@@ -224,7 +239,7 @@ namespace Max2Babylon
                         string message = "Merging containers and Xref...";
                         RaiseMessage(message, 0);
                         ExportClosedContainers();
-                        Tools.MergeAllXrefRecords();
+                        MergeAllXrefRecords();
 #if DEBUG
                         var containersXrefMergeTime = watch.ElapsedMilliseconds / 1000.0;
                         RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
