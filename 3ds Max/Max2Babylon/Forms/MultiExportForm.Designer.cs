@@ -224,18 +224,15 @@
             // 
             // ColumnNode
             // 
-            this.ColumnNode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ColumnNode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnNode.HeaderText = "Root node";
-            this.ColumnNode.MaxInputLength = 1024;
             this.ColumnNode.Name = "ColumnNode";
             this.ColumnNode.ReadOnly = true;
-            this.ColumnNode.Width = 82;
             // 
             // ColumnFilePath
             // 
             this.ColumnFilePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnFilePath.HeaderText = "File path";
-            this.ColumnFilePath.MaxInputLength = 1024;
             this.ColumnFilePath.Name = "ColumnFilePath";
             // 
             // ColumnTexturesFolder
