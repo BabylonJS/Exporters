@@ -46,10 +46,7 @@ namespace Maya2Babylon
                 MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Transparency Mode\" - at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
 
                 // Init alpha mode value based on material opacity
-                if (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) || babylonMaterial.opacityTexture != null)
-                {
-                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" 2;");
-                }
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
             }
             if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling") == false)
             {

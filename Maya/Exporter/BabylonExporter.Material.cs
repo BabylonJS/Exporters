@@ -110,8 +110,7 @@ namespace Maya2Babylon
                 BabylonStandardMaterial babylonMaterial = new BabylonStandardMaterial(id)
                 {
                     name = name,
-                    diffuse = lambertShader.color.toArrayRGB(),
-                    alpha = 1.0f - lambertShader.transparency[0]
+                    diffuse = lambertShader.color.toArrayRGB()
                 };
 
                 bool isTransparencyModeFromBabylonMaterialNode = false;
@@ -230,14 +229,6 @@ namespace Maya2Babylon
                     
                     // Common attributes
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
-
-                    // Transparency mode
-                    if (isTransparencyModeFromBabylonMaterialNode == false)
-                    {
-                        int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
-                        RaiseVerbose("transparencyMode=" + transparencyMode, 3);
-                        babylonMaterial.transparencyMode = transparencyMode;
-                    }
 
                     // Special treatment for Unlit
                     if (babylonMaterial.isUnlit)
@@ -512,14 +503,6 @@ namespace Maya2Babylon
                     }
                     MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonTransparencyMode};");
                     MGlobal.executeCommand($"setAttr - l true {{ \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" }}"); // Lock it afterwards
-
-                    // TODO - Does babylon material node definition override the one of stingrayPBS material for transparency mode ?
-                    /*
-                    // Transparency mode
-                    int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
-                    RaiseVerbose("transparencyMode=" + transparencyMode, 3);
-                    babylonMaterial.transparencyMode = transparencyMode;
-                    */
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
@@ -536,6 +519,17 @@ namespace Maya2Babylon
 
                 // --- Global ---
 
+                bool isTransparencyModeFromBabylonMaterialNode = false;
+                if (babylonAttributesDependencyNode != null)
+                {
+                    // Transparency mode
+                    if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode"))
+                    {
+                        babylonMaterial.transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
+                        isTransparencyModeFromBabylonMaterialNode = true;
+                    }
+                }
+
                 // Color3
                 float baseWeight = materialDependencyNode.findPlug("base").asFloat();
                 float[] baseColor = materialDependencyNode.findPlug("baseColor").asFloatArray();
@@ -544,7 +538,7 @@ namespace Maya2Babylon
                 // Alpha
                 MaterialDuplicationData materialDuplicationData = materialDuplicationDatas[id];
                 // If at least one mesh is Transparent and is using this material either directly or as a sub material
-                if (materialDuplicationData.isArnoldTransparent())
+                if ((isTransparencyModeFromBabylonMaterialNode == false || babylonMaterial.transparencyMode != 0) && materialDuplicationData.isArnoldTransparent())
                 {
                     float[] opacityAttributeValue = materialDependencyNode.findPlug("opacity").asFloatArray();
                     babylonMaterial.alpha = opacityAttributeValue[0];
@@ -621,7 +615,7 @@ namespace Maya2Babylon
                 // --- Textures ---
 
                 // Base color & alpha
-                if (materialDuplicationData.isArnoldTransparent())
+                if ((isTransparencyModeFromBabylonMaterialNode == false || babylonMaterial.transparencyMode != 0) && materialDuplicationData.isArnoldTransparent())
                 {
                     MFnDependencyNode baseColorTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "baseColor");
                     MFnDependencyNode opacityTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "opacity");
@@ -693,7 +687,10 @@ namespace Maya2Babylon
                 // If this material is containing alpha data
                 if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
                 {
-                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    if (isTransparencyModeFromBabylonMaterialNode == false)
+                    {
+                        babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    }
 
                     // If this material is assigned to both Transparent and Opaque meshes (either directly or as a sub material)
                     if (materialDuplicationData.isDuplicationRequired())
@@ -726,11 +723,6 @@ namespace Maya2Babylon
                     ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
                     babylonMaterial.doubleSided = !babylonMaterial.backFaceCulling;
                     babylonMaterial._unlit = babylonMaterial.isUnlit;
-
-                    // Transparency mode
-                    int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
-                    RaiseVerbose("transparencyMode=" + transparencyMode, 3);
-                    babylonMaterial.transparencyMode = transparencyMode;
                 }
 
                 if (fullPBR)
