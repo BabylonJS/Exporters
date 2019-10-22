@@ -779,15 +779,7 @@ namespace Max2Babylon
             }
         }
 
-        public static void MergeAllXrefRecords()
-        {
-            for (uint i = 0; i < Loader.IIObjXRefManager.RecordCount; i++)
-            {
-                var record = Loader.IIObjXRefManager.GetRecord(i);
-                Loader.IIObjXRefManager.MergeRecordIntoScene(record);
-            }
-            AnimationGroupList.LoadDataFromAnimationHelpers();
-        }
+        
 
         public static bool IsNodeSelected(this IINode node)
         {

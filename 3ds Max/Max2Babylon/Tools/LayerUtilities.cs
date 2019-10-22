@@ -92,5 +92,15 @@ namespace Max2Babylon
 
             return rootILayers;
         }
+
+        public static IEnumerable<IILayer> LayerTree(this IILayer layer)
+        {
+            for (int i = 0; i < layer.NumOfChildLayers; i++)
+            {
+                yield return layer.GetChildLayer(i);
+                foreach (var y in layer.GetChildLayer(i).LayerTree())
+                    yield return y;
+            }
+        }
     }
 }
