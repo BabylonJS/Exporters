@@ -17,6 +17,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public int parentBoneIndex { get; set; }
 
+        public string parentNodeId { get; set; }
+
         [DataMember]
         public float[] matrix { get; set; }
 

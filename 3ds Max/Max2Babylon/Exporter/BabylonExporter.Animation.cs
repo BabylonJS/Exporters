@@ -38,8 +38,8 @@ namespace Max2Babylon
 
 
                     // Helpers can be exported as dummies and as bones
-                    string nodeId = guid.ToString();
-                    string boneId = guid.ToString()+"-bone";   // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    string nodeId = maxNode.GetGuid().ToString();
+                    string boneId = isGltfExported?maxNode.GetGuid().ToString(): maxNode.GetGuid().ToString()+"-bone";   // the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
 
 
                     // Node

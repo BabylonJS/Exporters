@@ -51,8 +51,14 @@ namespace Max2Babylon
         /// All nodes needed for the skeleton hierarchy
         /// </returns>
         private Dictionary<IIGameSkin, List<IIGameNode>> relevantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
-        private List<IIGameNode> GetRelevantNodes(IIGameSkin skin)
+        private List<IIGameNode> GetSkinnedBones(IIGameSkin skin)
         {
+
+            if (skin == null)
+            {
+                return new List<IIGameNode>();
+            }
+
             int logRank = 2;
             
             // For optimization
@@ -256,7 +262,7 @@ namespace Max2Babylon
             }
 
             List<int> nodeIndex = new List<int>();
-            List<IIGameNode> revelantNodes = GetRelevantNodes(skin);
+            List<IIGameNode> revelantNodes = GetSkinnedBones(skin);
 
             for (int index = 0; index < revelantNodes.Count; index++)
             {
@@ -300,20 +306,22 @@ namespace Max2Babylon
         {
             List<BabylonBone> bones = new List<BabylonBone>();
             List<int> nodeIndices = GetNodeIndices(skin);
-            List<IIGameNode> revelantNodes = GetRelevantNodes(skin);
+            List<IIGameNode> revelantNodes = GetSkinnedBones(skin);
 
             foreach (IIGameNode node in revelantNodes)
             {
                 int parentIndex = (node.NodeParent == null) ? -1 : nodeIndices.IndexOf(node.NodeParent.NodeID);
 
+                string boneId = node.MaxNode.GetGuid().ToString();
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = node.MaxNode.GetGuid().ToString() + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    id = (isGltfExported)?boneId:boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    parentNodeId = (parentIndex!=-1)?node.NodeParent.MaxNode.GetGuid().ToString():null,
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
-                    matrix = node.GetLocalTM(0).ToArray()
+                    matrix = (parentIndex==-1)?node.GetWorldTM(0).ToArray():node.GetLocalTM(0).ToArray()
                 };
 
                 // export its animation
