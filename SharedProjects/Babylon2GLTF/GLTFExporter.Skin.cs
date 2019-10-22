@@ -75,7 +75,8 @@ namespace Babylon2GLTF
             {
                 if (!bonesWorldMatrices.ContainsKey(babylonBone.index))
                 {
-                    BabylonMatrix boneWorldMatrix = _getBoneWorldMatrix(babylonBone, bones);
+                    var nodePair = nodeToGltfNodeMap.First(pair => pair.Key.id.Equals(babylonBone.id));
+                    BabylonMatrix boneWorldMatrix = _getNodeWorldMatrix(nodePair.Value);
                     bonesWorldMatrices.Add(babylonBone.index, boneWorldMatrix);
                 }
             }
@@ -104,7 +105,7 @@ namespace Babylon2GLTF
                 if (!babylonSkeletonExportData.nodeByBone.ContainsKey(babylonBone))
                 {
                     // Export bone as a new node
-                    gltfBoneNode = _exportBone(babylonBone, gltf, babylonSkeleton, bones);
+                    gltfBoneNode = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id)).Value;//_exportBone(babylonBone, gltf, babylonSkeleton, bones);
                     babylonSkeletonExportData.nodeByBone.Add(babylonBone, gltfBoneNode);
                 }
                 gltfBoneNode = babylonSkeletonExportData.nodeByBone[babylonBone];
@@ -153,67 +154,27 @@ namespace Babylon2GLTF
             return gltfSkin;
         }
 
-        private GLTFNode _exportBone(BabylonBone babylonBone, GLTF gltf, BabylonSkeleton babylonSkeleton, List<BabylonBone> bones)
+        private BabylonNode BoneToNode(BabylonBone babylonBone)
         {
-            var nodeNodePair = nodeToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
-            if (nodeNodePair.Key != null)
-            {
-                return nodeNodePair.Value;
-            }
-
-            var boneNodePair = boneToGltfNodeMap.FirstOrDefault(pair => pair.Key.id.Equals(babylonBone.id));
-            if (boneNodePair.Key != null)
-            {
-                return boneNodePair.Value;
-            }
-
-            // Node
-            var gltfNode = new GLTFNode
-            {
-                name = babylonBone.name,
-                index = gltf.NodesList.Count
-            };
-            gltf.NodesList.Add(gltfNode);
+            BabylonNode babylonNode = new BabylonNode();
+            babylonNode.id = babylonBone.id;
+            babylonNode.parentId = babylonBone.parentNodeId;
+            babylonNode.name = babylonBone.name;
             
-            boneToGltfNodeMap.Add(babylonBone, gltfNode);
+            
+            babylonNode.animations = new[] {babylonBone.animation};
 
-            // Hierarchy
-            if (babylonBone.parentBoneIndex >= 0)
-            {
-                var babylonParentBone = bones.Find(_babylonBone => _babylonBone.index == babylonBone.parentBoneIndex);
-                var gltfParentNode = _exportBone(babylonParentBone, gltf, babylonSkeleton, bones);
-                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as child to " + gltfParentNode.name, 3);
-                gltfParentNode.ChildrenList.Add(gltfNode.index);
-                gltfNode.parent = gltfParentNode;
-            }
-            else
-            {
-                // It's a root node
-                // Only root nodes are listed in a gltf scene
-                logger.RaiseMessage("GLTFExporter.Skin | Add " + babylonBone.name + " as root node to scene", 3);
-                gltf.scenes[0].NodesList.Add(gltfNode.index);
-            }
+            var tm_babylon = new BabylonMatrix();
+            tm_babylon.m = babylonBone.matrix.ToArray();
+            var s_babylon = new BabylonVector3();
+            var q_babylon = new BabylonQuaternion();
+            var t_babylon = new BabylonVector3();
+            tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
+            babylonNode.position = t_babylon.ToArray();
+            babylonNode.rotationQuaternion = q_babylon.ToArray();
+            babylonNode.scaling = s_babylon.ToArray();
 
-            // Transform
-            // Bones transform are exported through translation/rotation/scale (TRS) rather than matrix
-            // Because gltf node animation can only target TRS properties, not the matrix one
-            // Create matrix from array
-            var babylonMatrix = new BabylonMatrix();
-            babylonMatrix.m = babylonBone.matrix;
-            // Decompose matrix into TRS
-            var translationBabylon = new BabylonVector3();
-            var rotationQuatBabylon = new BabylonQuaternion();
-            var scaleBabylon = new BabylonVector3();
-            babylonMatrix.decompose(scaleBabylon, rotationQuatBabylon, translationBabylon);
-            // Store TRS values
-            gltfNode.translation = translationBabylon.ToArray();
-            gltfNode.rotation = rotationQuatBabylon.ToArray();
-            gltfNode.scale = scaleBabylon.ToArray();
-
-            // Animations
-            //ExportBoneAnimation(babylonBone, gltf, gltfNode);
-
-            return gltfNode;
+            return babylonNode;
         }
 
         private BabylonMatrix _getNodeLocalMatrix(GLTFNode gltfNode)
