@@ -427,6 +427,8 @@ namespace Babylon2GLTF
                 alreadyExportedSkinnedMeshes.Add(babylonMesh);
             }
 
+            ExportGLTFExtension(babylonMesh, ref gltfMesh,gltf);
+
             return gltfMesh;
         }
 
