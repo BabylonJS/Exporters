@@ -8,6 +8,28 @@ using System.Threading.Tasks;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
 
+namespace BabylonExport.Entities
+{
+    public partial class BabylonNode
+    {
+        private string animationTargetId;
+        public string AnimationTargetId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(animationTargetId))
+                {
+                    return name;
+                }
+
+                return AnimationTargetId;
+            }
+            set => animationTargetId = value;
+        }
+    }
+
+}
+
 namespace Babylon2GLTF
 {
     #region Serializable glTF Objects
@@ -23,13 +45,13 @@ namespace Babylon2GLTF
 
     internal partial class GLTFExporter
     {
-        private const string AsoboAnimationRetargeting = "ASB_animation_retargeting";
+        private const string AsoboAnimationRetargeting = "ASOBO_animation_retargeting";
 
-        public void ASOBOAnimationRetargetingExtension(ref GLTF gltf,ref GLTFChannel gltfChannel, ref GLTFNode gltfNode,BabylonNode babylonNode )
+        public void ASOBOAnimationRetargetingTargetExtension(ref GLTF gltf,ref GLTFChannelTarget gltfChannel, BabylonNode babylonNode )
         {
             ASBAnimationRetargeting extensionObject = new ASBAnimationRetargeting
             {
-                id = babylonNode.name
+                id = babylonNode.AnimationTargetId
             };
 
             if (gltfChannel != null)
@@ -40,6 +62,23 @@ namespace Babylon2GLTF
                 }
                 gltfChannel.extensions[AsoboAnimationRetargeting] = extensionObject;
             }
+
+            if (gltf.extensionsUsed == null)
+            {
+                gltf.extensionsUsed = new List<string>();
+            }
+            if (!gltf.extensionsUsed.Contains(AsoboAnimationRetargeting))
+            {
+                gltf.extensionsUsed.Add(AsoboAnimationRetargeting);
+            }
+        }
+
+        public void ASOBOAnimationRetargetingNodeExtension(ref GLTF gltf, ref GLTFNode gltfNode,BabylonNode babylonNode )
+        {
+            ASBAnimationRetargeting extensionObject = new ASBAnimationRetargeting
+            {
+                id = babylonNode.AnimationTargetId
+            };
 
             if (gltfNode != null)
             {

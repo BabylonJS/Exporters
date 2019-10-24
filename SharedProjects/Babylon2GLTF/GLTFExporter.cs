@@ -379,6 +379,12 @@ namespace Babylon2GLTF
                     gltfNode.extras["tags"] = babylonNode.tags;
                 }
 
+                //export extensions
+                if (exportParameters.enableASBAnimationRetargeting)
+                {
+                    ASOBOAnimationRetargetingNodeExtension(ref gltf,ref gltfNode,babylonNode);
+                }
+
                 // ...export its children
                 List<BabylonNode> babylonDescendants = getDescendants(babylonNode);
                 babylonDescendants.ForEach(descendant => exportNodeRec(descendant, gltf, babylonScene, gltfNode));

@@ -869,7 +869,7 @@
             this.chkASBAnimationRetargeting.Name = "chkASBAnimationRetargeting";
             this.chkASBAnimationRetargeting.Size = new System.Drawing.Size(151, 17);
             this.chkASBAnimationRetargeting.TabIndex = 42;
-            this.chkASBAnimationRetargeting.Text = "ASB_animation_retargeting";
+            this.chkASBAnimationRetargeting.Text = "ASOBO_animation_retargeting";
             this.chkASBAnimationRetargeting.UseVisualStyleBackColor = true;
             // 
             // ExporterForm

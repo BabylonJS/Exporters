@@ -207,7 +207,7 @@ namespace Babylon2GLTF
 
                     if (exportParameters.enableASBAnimationRetargeting)
                     {
-                        ASOBOAnimationRetargetingExtension(ref gltf, ref gltfChannel,ref gltfNode,babylonNode);
+                        ASOBOAnimationRetargetingTargetExtension(ref gltf, ref gltfTarget,babylonNode);
                     }
 
                     channelList.Add(gltfChannel);
@@ -326,7 +326,7 @@ namespace Babylon2GLTF
 
                     if (exportParameters.enableASBAnimationRetargeting)
                     {
-                        ASOBOAnimationRetargetingExtension(ref gltf, ref gltfChannel,ref gltfNode,babylonNode);
+                        ASOBOAnimationRetargetingTargetExtension(ref gltf, ref gltfTarget,babylonNode);
                     }
 
                     channelList.Add(gltfChannel);
