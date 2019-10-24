@@ -972,7 +972,7 @@ namespace Max2Babylon
         /// <param name="attributesContainer">Name of the object containing babylon attributes</param>
         private void AddAiStandardSurfaceBabylonAttributes(string attributesContainer, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
-            string cmdCreateBabylonAttributes = "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x4f890715, 0x24da1759)"
+            string cmdCreateBabylonAttributes = "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x7c15a5ea, 0x5fc4d835)"
                         + "\r\n" + "("
                         + "\r\n" + "parameters main rollout:params"
                         + "\r\n" + "("
