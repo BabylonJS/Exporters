@@ -40,6 +40,9 @@ namespace Max2Babylon
                 SetRowData(row, item);
                 ExportItemGridView.Rows.Add(row);
             }
+            ExportItemGridView.AutoResizeColumns();
+            ExportItemGridView.AllowUserToOrderColumns = true;
+            ExportItemGridView.AllowUserToResizeColumns = true;
         }
 
         private void SetRowData(DataGridViewRow row, ExportItem item)

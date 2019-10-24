@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Autodesk.Max.Plugins;
+using GLTFExport.Entities;
 using Color = System.Drawing.Color;
 using Utilities;
 
@@ -285,8 +287,6 @@ namespace Max2Babylon
                 return;
             }
 
-            
-
             var gameConversionManger = Loader.Global.ConversionManager;
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
@@ -406,15 +406,29 @@ namespace Max2Babylon
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
             {
-                if (type.IsAbstract || type.IsInterface || !typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                if (type.IsAbstract || type.IsInterface )
                     continue;
 
-                IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
+                if (typeof(IBabylonExtensionExporter).IsAssignableFrom(type))
+                {
+                    IBabylonExtensionExporter exporter = Activator.CreateInstance(type) as IBabylonExtensionExporter;
 
-                if (exporter == null)
-                    RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+                    if (exporter == null)
+                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
 
-                materialExporters.Add(exporter.MaterialClassID, exporter);
+                    Type t = exporter.GetGLTFExtendedType();
+                    babylonScene.BabylonToGLTFExtensions.Add(exporter,t);
+                }
+
+                if (typeof(IMaxMaterialExporter).IsAssignableFrom(type))
+                {
+                    IMaxMaterialExporter exporter = Activator.CreateInstance(type) as IMaxMaterialExporter;
+
+                    if (exporter == null)
+                        RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
+
+                    materialExporters.Add(exporter.MaterialClassID, exporter);
+                }
             }
 
             // Sounds
@@ -458,7 +472,6 @@ namespace Max2Babylon
             foreach (var maxRootNode in maxRootNodes)
             {
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
-
                 // if we're exporting from a specific node, reset the pivot to {0,0,0}
                 if (node != null && exportNode != null && !exportNode.IsRootNode)
                     SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
