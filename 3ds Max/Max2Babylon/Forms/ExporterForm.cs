@@ -9,6 +9,7 @@ using Utilities;
 using Color = System.Drawing.Color;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -296,13 +297,19 @@ namespace Max2Babylon
             {
                 foreach (IILayer layer in exportItem.Layers)
                 {
-#if MAX2015
-                layerState.Add(layer, layer.IsHidden);
-#else
-                    layerState.Add(layer, layer.IsHidden(false));
-#endif
+                    List<IILayer> treeLayers = layer.LayerTree().ToList();
+                    treeLayers.Add(layer);
 
-                    layer.Hide(false,false);
+                    foreach (IILayer l in treeLayers)
+                    {
+#if MAX2015
+                        layerState.Add( l,  l.IsHidden);
+#else
+                        layerState.Add( l,  l.IsHidden(false));
+#endif
+                        l.Hide(false,false);
+                    }
+
                 }
             }
 
@@ -445,7 +452,12 @@ namespace Max2Babylon
             {
                 foreach (IILayer layer in exportItem.Layers)
                 {
-                    layer.Hide(layerState[layer], false);
+                    List<IILayer> treeLayers = layer.LayerTree().ToList();
+                    treeLayers.Add(layer);
+                    foreach (IILayer l in treeLayers)
+                    {
+                        l.Hide(layerState[l], false);
+                    }
                 }
             }
 
