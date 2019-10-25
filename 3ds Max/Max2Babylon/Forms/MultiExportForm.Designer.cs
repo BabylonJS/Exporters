@@ -38,12 +38,12 @@
             this.btn_change_path = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ExportItemGridView = new System.Windows.Forms.DataGridView();
-            this.SetPathFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ColumnExportCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnLayers = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnNode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnTexturesFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SetPathFileDialog = new System.Windows.Forms.SaveFileDialog();
             warningLabel = new System.Windows.Forms.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             panel_buttons = new System.Windows.Forms.Panel();
@@ -199,14 +199,6 @@
             this.ExportItemGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ExportItemGridView_CellValueChanged);
             this.ExportItemGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExportItemGridView_KeyDown);
             // 
-            // SetPathFileDialog
-            // 
-            this.SetPathFileDialog.FileName = "FileNameUnused";
-            this.SetPathFileDialog.Filter = "All Files|*.*";
-            this.SetPathFileDialog.OverwritePrompt = false;
-            this.SetPathFileDialog.RestoreDirectory = true;
-            this.SetPathFileDialog.Title = "Set multi-export file path.";
-            // 
             // ColumnExportCheckbox
             // 
             this.ColumnExportCheckbox.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
@@ -224,18 +216,15 @@
             // 
             // ColumnNode
             // 
-            this.ColumnNode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ColumnNode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnNode.HeaderText = "Root node";
-            this.ColumnNode.MaxInputLength = 1024;
             this.ColumnNode.Name = "ColumnNode";
             this.ColumnNode.ReadOnly = true;
-            this.ColumnNode.Width = 82;
             // 
             // ColumnFilePath
             // 
             this.ColumnFilePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnFilePath.HeaderText = "File path";
-            this.ColumnFilePath.MaxInputLength = 1024;
             this.ColumnFilePath.Name = "ColumnFilePath";
             // 
             // ColumnTexturesFolder
@@ -243,6 +232,14 @@
             this.ColumnTexturesFolder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ColumnTexturesFolder.HeaderText = "Textures folder";
             this.ColumnTexturesFolder.Name = "ColumnTexturesFolder";
+            // 
+            // SetPathFileDialog
+            // 
+            this.SetPathFileDialog.FileName = "FileNameUnused";
+            this.SetPathFileDialog.Filter = "All Files|*.*";
+            this.SetPathFileDialog.OverwritePrompt = false;
+            this.SetPathFileDialog.RestoreDirectory = true;
+            this.SetPathFileDialog.Title = "Set multi-export file path.";
             // 
             // MultiExportForm
             // 

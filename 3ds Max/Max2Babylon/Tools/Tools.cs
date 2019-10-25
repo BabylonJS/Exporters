@@ -779,15 +779,7 @@ namespace Max2Babylon
             }
         }
 
-        public static void MergeAllXrefRecords()
-        {
-            for (uint i = 0; i < Loader.IIObjXRefManager.RecordCount; i++)
-            {
-                var record = Loader.IIObjXRefManager.GetRecord(i);
-                Loader.IIObjXRefManager.MergeRecordIntoScene(record);
-            }
-            AnimationGroupList.LoadDataFromAnimationHelpers();
-        }
+        
 
         public static bool IsNodeSelected(this IINode node)
         {
@@ -1362,7 +1354,7 @@ namespace Max2Babylon
                     if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys>0 )
                     {
                         int posKeys = node.TMController.PositionController.NumKeys;
-                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(0));
+                        lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
                         
                     }
 
