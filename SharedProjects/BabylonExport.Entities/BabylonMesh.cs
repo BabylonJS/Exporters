@@ -84,9 +84,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool applyFog { get; set; }
 
-        [DataMember]
-        public object metadata { get; set; }
-
         [DataMember(EmitDefaultValue = false)]
         public int? morphTargetManagerId { get; set; }
 
@@ -98,6 +95,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public float[] lodCoverages { get; set; }
+
+        [DataMember]
+        public Dictionary<string, object> metadata { get; set; } = new Dictionary<string, object>();
 
         public bool isDummy = false;
 

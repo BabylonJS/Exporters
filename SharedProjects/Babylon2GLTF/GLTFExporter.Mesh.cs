@@ -38,6 +38,7 @@ namespace Babylon2GLTF
             bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
             bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
+            bool hasMetadata = babylonMesh.metadata != null && babylonMesh.metadata.Count > 0;
 
             logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
@@ -45,6 +46,7 @@ namespace Babylon2GLTF
             logger.RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasMetadata=" + hasMetadata, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -128,6 +130,16 @@ namespace Babylon2GLTF
             if (hasBones)
             {
                 gltfMesh.idBabylonSkeleton = babylonMesh.skeletonId;
+            }
+
+            //Metadata
+            if (hasMetadata)
+            {
+                if (gltfMesh.extras == null)
+                {
+                    gltfMesh.extras = new Dictionary<string, object>();
+                }
+                gltfMesh.extras["BABYLON_user_custom_attributes"] = babylonMesh.metadata;
             }
 
             // --------------------------
