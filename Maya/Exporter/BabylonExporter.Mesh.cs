@@ -25,7 +25,7 @@ namespace Maya2Babylon
         private BabylonNode ExportDummy(MDagPath mDagPath, BabylonScene babylonScene)
         {
             RaiseMessage(mDagPath.partialPathName, 1);
-            
+
             MFnTransform mFnTransform = new MFnTransform(mDagPath);
 
             Print(mFnTransform, 2, "Print ExportDummy mFnTransform");
@@ -273,12 +273,72 @@ namespace Maya2Babylon
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
-            // Misc.
-            // TODO - Retreive from Maya
-            //babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows == 1;
-            //babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics == 1;
+            MStringArray customAttributeNames = new MStringArray();
 
-            if (mFnMesh.numPolygons < 1)
+            MGlobal.executeCommand($"listAttr -ud {mFnTransform.name}", customAttributeNames);
+
+            foreach (string name in customAttributeNames)
+            {
+                MStringArray type = new MStringArray();
+
+                MGlobal.executeCommand($"getAttr -type {mFnTransform.name}.{name}", type);
+
+                /*MCommandResult attrValue = new MCommandResult();
+                MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", attrValue);
+                babylonMesh.metadata.Add(name, attrValue);*/
+
+                switch (type[0])
+                {
+                    case "double":
+                        double floatValue = 0;
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", out floatValue);
+                        babylonMesh.metadata.Add(name, floatValue);
+                        break;
+                    case "bool":
+                        int boolBinValue = 0;
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", out boolBinValue);
+                        babylonMesh.metadata.Add(name, boolBinValue);
+                        break;
+                    case "long":
+                        int intValue = 0;
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", out intValue);
+                        babylonMesh.metadata.Add(name, intValue);
+                        break;
+                    case "string":
+                        string stringValue = "";
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", out stringValue);
+                        babylonMesh.metadata.Add(name, stringValue);
+                        break;
+                    case "enum":
+                        int enumValue = 0;
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", out enumValue);
+                        babylonMesh.metadata.Add(name, enumValue);
+                        break;
+                    case "double3":
+                        MDoubleArray vectorValue = new MDoubleArray();
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", vectorValue);
+                        babylonMesh.metadata.Add(name, vectorValue);
+                        break;
+                    default:
+                        RaiseWarning(type[0],1);
+                        MCommandResult attrValue = new MCommandResult();
+                        MGlobal.executeCommand($"getAttr {mFnTransform.name}.{name}", attrValue);
+                        babylonMesh.metadata.Add(name, attrValue);
+                        break;
+                }
+            }
+
+            foreach (string name in customAttributeNames)
+            {
+                if (babylonMesh.metadata.ContainsKey(name+"X") && babylonMesh.metadata.ContainsKey(name + "Y") && babylonMesh.metadata.ContainsKey(name + "Z"))
+                {
+                    babylonMesh.metadata.Remove(name + "X");
+                    babylonMesh.metadata.Remove(name + "Y");
+                    babylonMesh.metadata.Remove(name + "Z");
+                }
+            }
+
+                if (mFnMesh.numPolygons < 1)
             {
                 RaiseError($"Mesh {babylonMesh.name} has no face", 2);
             }
