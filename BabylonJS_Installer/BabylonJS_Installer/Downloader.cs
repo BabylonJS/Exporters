@@ -80,8 +80,8 @@ namespace BabylonJS_Installer
                 String responseBody = await this.GetJSONBodyRequest(this.url_github_API_releases);
 
                 String lastestReleaseInfos = responseBody.Substring(responseBody.IndexOf("\"prerelease\":") + "\"prerelease\":".Length);
-                //Ensure we are on Prerelease version
-                if (lastestReleaseInfos.StartsWith("true"))
+                //Ensure we are on release version
+                if (lastestReleaseInfos.StartsWith("false"))
                 {
                     //We parse the array to find the dowload URL
                     this.latestRelease = lastestReleaseInfos.Substring(lastestReleaseInfos.IndexOf("\"browser_download_url\":") + "\"browser_download_url\": ".Length);
