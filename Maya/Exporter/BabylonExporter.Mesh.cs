@@ -549,7 +549,7 @@ namespace Maya2Babylon
                 }
 
                 // Morph Target Manager
-                BabylonMorphTargetManager babylonMorphTargetManager = new BabylonMorphTargetManager();
+                BabylonMorphTargetManager babylonMorphTargetManager = new BabylonMorphTargetManager(babylonMesh);
                 babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
                 babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
 

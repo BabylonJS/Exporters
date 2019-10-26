@@ -439,7 +439,7 @@ namespace Max2Babylon
                     RaiseMessage("Export morph targets", 2);
                     
                     // Morph Target Manager
-                    var babylonMorphTargetManager = new BabylonMorphTargetManager();
+                    var babylonMorphTargetManager = new BabylonMorphTargetManager(babylonMesh);
                     babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
                     babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
 
