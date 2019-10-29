@@ -312,10 +312,6 @@ namespace Max2Babylon
 
             this.scaleFactor = Tools.GetScaleFactorToMeters();
 
-            var scaleFactorFloat = 1.0f;
-            // Check input text is valid
-            float scaleFactor = exportParameters.scaleFactor;
-
             long quality = exportParameters.txtQuality;
             try
             {
@@ -588,14 +584,14 @@ namespace Max2Babylon
                 RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
             }
 
-            if (scaleFactorFloat != 1.0f)
+            if (exportParameters.scaleFactor != 1.0f)
             {
                 RaiseMessage("A root node is added for scaling", 1);
 
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
                 rootNode.isDummy = true;
-                float rootNodeScale = scaleFactorFloat;
+                float rootNodeScale = exportParameters.scaleFactor;
                 rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
 
                 if (ExportQuaternionsInsteadOfEulers)
