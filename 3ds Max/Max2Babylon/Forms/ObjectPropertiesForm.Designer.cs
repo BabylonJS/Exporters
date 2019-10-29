@@ -43,6 +43,7 @@
             this.chkOptimize = new System.Windows.Forms.CheckBox();
             this.chkPickable = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkBakeAnimationNode = new System.Windows.Forms.CheckBox();
             this.grpAutoAnimate = new System.Windows.Forms.GroupBox();
             this.chkLoop = new System.Windows.Forms.CheckBox();
             this.nupTo = new System.Windows.Forms.NumericUpDown();
@@ -86,7 +87,8 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chkAutoPlay = new System.Windows.Forms.CheckBox();
             this.ofdOpenSound = new System.Windows.Forms.OpenFileDialog();
-            this.chkBakeAnimationNode = new System.Windows.Forms.CheckBox();
+            this.lblAsbAnimationTargetID = new System.Windows.Forms.Label();
+            this.txtASBAnimationTargetID = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupAlphaIndex)).BeginInit();
@@ -139,7 +141,7 @@
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(508, 488);
+            this.butCancel.Location = new System.Drawing.Point(508, 523);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(75, 23);
             this.butCancel.TabIndex = 101;
@@ -151,7 +153,7 @@
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(415, 488);
+            this.butOK.Location = new System.Drawing.Point(415, 523);
             this.butOK.Name = "butOK";
             this.butOK.Size = new System.Drawing.Size(75, 23);
             this.butOK.TabIndex = 100;
@@ -277,16 +279,29 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.lblAsbAnimationTargetID);
             this.groupBox3.Controls.Add(this.chkBakeAnimationNode);
+            this.groupBox3.Controls.Add(this.txtASBAnimationTargetID);
             this.groupBox3.Controls.Add(this.grpAutoAnimate);
             this.groupBox3.Controls.Add(this.chkAutoAnimate);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox3.Location = new System.Drawing.Point(12, 237);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(319, 156);
+            this.groupBox3.Size = new System.Drawing.Size(319, 192);
             this.groupBox3.TabIndex = 20;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Animations";
+            // 
+            // chkBakeAnimationNode
+            // 
+            this.chkBakeAnimationNode.AutoSize = true;
+            this.chkBakeAnimationNode.Location = new System.Drawing.Point(121, 28);
+            this.chkBakeAnimationNode.Name = "chkBakeAnimationNode";
+            this.chkBakeAnimationNode.Size = new System.Drawing.Size(129, 17);
+            this.chkBakeAnimationNode.TabIndex = 24;
+            this.chkBakeAnimationNode.Text = "Bake Node Animation";
+            this.chkBakeAnimationNode.ThreeState = true;
+            this.chkBakeAnimationNode.UseVisualStyleBackColor = true;
             // 
             // grpAutoAnimate
             // 
@@ -297,7 +312,7 @@
             this.grpAutoAnimate.Controls.Add(this.label1);
             this.grpAutoAnimate.Enabled = false;
             this.grpAutoAnimate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grpAutoAnimate.Location = new System.Drawing.Point(21, 51);
+            this.grpAutoAnimate.Location = new System.Drawing.Point(21, 82);
             this.grpAutoAnimate.Name = "grpAutoAnimate";
             this.grpAutoAnimate.Size = new System.Drawing.Size(292, 99);
             this.grpAutoAnimate.TabIndex = 23;
@@ -380,7 +395,7 @@
             this.groupBox4.Controls.Add(this.nupMass);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox4.Location = new System.Drawing.Point(12, 399);
+            this.groupBox4.Location = new System.Drawing.Point(12, 435);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(319, 156);
             this.groupBox4.TabIndex = 30;
@@ -849,16 +864,21 @@
             // 
             this.ofdOpenSound.Filter = "Sound files|*.wav;*.mp3";
             // 
-            // chkBakeAnimationNode
+            // lblAsbAnimationTargetID
             // 
-            this.chkBakeAnimationNode.AutoSize = true;
-            this.chkBakeAnimationNode.Location = new System.Drawing.Point(121, 28);
-            this.chkBakeAnimationNode.Name = "chkBakeAnimationNode";
-            this.chkBakeAnimationNode.Size = new System.Drawing.Size(129, 17);
-            this.chkBakeAnimationNode.TabIndex = 24;
-            this.chkBakeAnimationNode.Text = "Bake Node Animation";
-            this.chkBakeAnimationNode.ThreeState = true;
-            this.chkBakeAnimationNode.UseVisualStyleBackColor = true;
+            this.lblAsbAnimationTargetID.AutoSize = true;
+            this.lblAsbAnimationTargetID.Location = new System.Drawing.Point(18, 54);
+            this.lblAsbAnimationTargetID.Name = "lblAsbAnimationTargetID";
+            this.lblAsbAnimationTargetID.Size = new System.Drawing.Size(101, 13);
+            this.lblAsbAnimationTargetID.TabIndex = 20;
+            this.lblAsbAnimationTargetID.Text = "Animation TargetID:";
+            // 
+            // txtASBAnimationTargetID
+            // 
+            this.txtASBAnimationTargetID.Location = new System.Drawing.Point(125, 51);
+            this.txtASBAnimationTargetID.Name = "txtASBAnimationTargetID";
+            this.txtASBAnimationTargetID.Size = new System.Drawing.Size(167, 20);
+            this.txtASBAnimationTargetID.TabIndex = 21;
             // 
             // ObjectPropertiesForm
             // 
@@ -866,7 +886,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(667, 567);
+            this.ClientSize = new System.Drawing.Size(667, 602);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -974,5 +994,7 @@
         private System.Windows.Forms.Label tagLabel;
         private System.Windows.Forms.TextBox tagInput;
         private System.Windows.Forms.CheckBox chkBakeAnimationNode;
+        private System.Windows.Forms.Label lblAsbAnimationTargetID;
+        private System.Windows.Forms.TextBox txtASBAnimationTargetID;
     }
 }

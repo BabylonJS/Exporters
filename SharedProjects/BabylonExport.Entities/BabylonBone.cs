@@ -3,7 +3,7 @@
 namespace BabylonExport.Entities
 {
     [DataContract]
-    public class BabylonBone
+    public partial class BabylonBone
     {
         [DataMember]
         public string id { get; set; }

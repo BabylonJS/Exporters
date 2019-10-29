@@ -17,12 +17,30 @@ namespace BabylonExport.Entities
         {
             get
             {
-                if (string.IsNullOrEmpty(animationTargetId))
+                if (string.IsNullOrWhiteSpace(animationTargetId))
                 {
                     return name;
                 }
 
-                return AnimationTargetId;
+                return animationTargetId;
+            }
+            set => animationTargetId = value;
+        }
+    }
+
+    public partial class BabylonBone
+    {
+        private string animationTargetId;
+        public string AnimationTargetId
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(animationTargetId))
+                {
+                    return name;
+                }
+
+                return animationTargetId;
             }
             set => animationTargetId = value;
         }

@@ -968,6 +968,8 @@ namespace Max2Babylon
                     babylonNode.tags = tag;
                 }
 
+                babylonNode.AnimationTargetId= maxGameNode.MaxNode.GetStringProperty("babylonjs_asb_anim_targetID", "");
+
                 // Export its children
                 for (int i = 0; i < maxGameNode.ChildCount; i++)
                 {

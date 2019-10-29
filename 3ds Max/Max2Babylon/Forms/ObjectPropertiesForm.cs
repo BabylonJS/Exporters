@@ -53,6 +53,7 @@ namespace Max2Babylon
             Tools.UpdateTextBox(txtSound, objects, "babylonjs_sound_filename");
 
             Tools.UpdateTextBox(tagInput, objects, "babylonjs_tag");
+            Tools.UpdateTextBox(txtASBAnimationTargetID, objects,"babylonjs_asb_anim_targetID");
         }
 
         private void ObjectPropertiesForm_Load(object sender, EventArgs e)
@@ -110,6 +111,8 @@ namespace Max2Babylon
             Tools.PrepareTextBox(txtSound, objects[0], "babylonjs_sound_filename");
 
             Tools.PrepareTextBox(tagInput, objects, "babylonjs_tag");
+
+            Tools.PrepareTextBox(txtASBAnimationTargetID, objects,"babylonjs_asb_anim_targetID");
         }
 
         private void chkAutoAnimate_CheckedChanged(object sender, EventArgs e)

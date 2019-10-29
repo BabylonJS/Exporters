@@ -313,10 +313,12 @@ namespace Max2Babylon
                 int parentIndex = (node.NodeParent == null) ? -1 : nodeIndices.IndexOf(node.NodeParent.NodeID);
 
                 string boneId = node.MaxNode.GetGuid().ToString();
+                string animationTargetID = node.MaxNode.GetStringProperty("babylonjs_asb_anim_targetID", "");
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
                     id = (isGltfExported)?boneId:boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    AnimationTargetId = animationTargetID,
                     parentNodeId = (parentIndex!=-1)?node.NodeParent.MaxNode.GetGuid().ToString():null,
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),

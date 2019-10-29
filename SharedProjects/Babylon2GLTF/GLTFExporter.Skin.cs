@@ -160,7 +160,7 @@ namespace Babylon2GLTF
             babylonNode.id = babylonBone.id;
             babylonNode.parentId = babylonBone.parentNodeId;
             babylonNode.name = babylonBone.name;
-            
+            babylonNode.AnimationTargetId = babylonBone.AnimationTargetId;
             
             babylonNode.animations = new[] {babylonBone.animation};
 
