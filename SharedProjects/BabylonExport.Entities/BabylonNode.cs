@@ -43,7 +43,7 @@ namespace BabylonExport.Entities
         public string tags { get; set; }
 
         [DataMember]
-        public Dictionary<string, object> metadata { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> metadata { get; set; }
 
         // Animations exported for glTF but not for Babylon
         public List<BabylonAnimation> extraAnimations;
