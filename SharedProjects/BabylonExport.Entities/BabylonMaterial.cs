@@ -27,6 +27,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public int maxSimultaneousLights { get; set; }
 
+        [DataMember]
+        public Dictionary<string, object> metadata { get; set; } = new Dictionary<string, object>();
+
         public bool isUnlit = false;
 
         public BabylonMaterial(string id)
@@ -48,6 +51,7 @@ namespace BabylonExport.Entities
             alphaMode = original.alphaMode;
             maxSimultaneousLights = 4;
             isUnlit = original.isUnlit;
+            metadata = new Dictionary<string, object>(original.metadata);
         }
     }
 }

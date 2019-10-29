@@ -315,6 +315,17 @@ namespace Max2Babylon
                     }
                 }
 
+                // List all babylon material attributes
+                // Those attributes are currently stored into the native material
+                // They should not be exported as extra attributes
+                List<string> excludeAttributes = new List<string>();
+                excludeAttributes.Add("babylonUnlit");
+                excludeAttributes.Add("babylonMaxSimultaneousLights");
+                excludeAttributes.Add("babylonTransparencyMode");
+
+                // Export the custom attributes of this material
+                babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
+
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
             else if (isPhysicalMaterial(materialNode))
@@ -511,6 +522,18 @@ namespace Max2Babylon
                     babylonMaterial.backFaceCulling = backFaceCulling;
                     babylonMaterial.doubleSided = !backFaceCulling;
                 }
+
+                // List all babylon material attributes
+                // Those attributes are currently stored into the native material
+                // They should not be exported as extra attributes
+                List<string> excludeAttributes = new List<string>();
+                excludeAttributes.Add("babylonUnlit");
+                excludeAttributes.Add("babylonBackfaceCulling");
+                excludeAttributes.Add("babylonMaxSimultaneousLights");
+                excludeAttributes.Add("babylonTransparencyMode");
+
+                // Export the custom attributes of this material
+                babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
             }
@@ -724,6 +747,18 @@ namespace Max2Babylon
                     babylonMaterial.backFaceCulling = backFaceCulling;
                     babylonMaterial.doubleSided = !backFaceCulling;
                 }
+
+                // List all babylon material attributes
+                // Those attributes are currently stored into the native material
+                // They should not be exported as extra attributes
+                List<string> excludeAttributes = new List<string>();
+                excludeAttributes.Add("babylonUnlit");
+                excludeAttributes.Add("babylonBackfaceCulling");
+                excludeAttributes.Add("babylonMaxSimultaneousLights");
+                excludeAttributes.Add("babylonTransparencyMode");
+
+                // Export the custom attributes of this material
+                babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
 
                 if (exportParameters.pbrFull)
                 {

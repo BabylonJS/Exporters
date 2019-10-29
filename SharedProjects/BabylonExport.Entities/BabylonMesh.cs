@@ -96,9 +96,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public float[] lodCoverages { get; set; }
 
-        [DataMember]
-        public Dictionary<string, object> metadata { get; set; } = new Dictionary<string, object>();
-
         public bool isDummy = false;
 
         public List<VertexData> VertexDatas { get; set; } = new List<VertexData>();

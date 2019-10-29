@@ -123,6 +123,9 @@ namespace Max2Babylon
             // Position / rotation / scaling / hierarchy
             exportNode(babylonMesh, meshNode, scene, babylonScene);
 
+            // Export the custom attributes of this mesh
+            babylonMesh.metadata = ExportExtraAttributes(meshNode, babylonScene);
+
             // Sounds
             var soundName = meshNode.MaxNode.GetStringProperty("babylonjs_sound_filename", "");
             if (!string.IsNullOrEmpty(soundName))
@@ -523,6 +526,9 @@ namespace Max2Babylon
                 showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox"),
                 alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000)
             };
+
+            // Export the custom attributes of this mesh
+            babylonInstanceMesh.metadata = ExportExtraAttributes(meshNode, babylonScene);
 
             // Physics
             var impostorText = meshNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");

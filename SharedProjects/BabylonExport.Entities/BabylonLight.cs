@@ -47,9 +47,6 @@ namespace BabylonExport.Entities
         public string[] includedOnlyMeshesIds { get; set; }
 
         [DataMember]
-        public object metadata { get; set; }
-
-        [DataMember]
         public int? lightmapMode { get; set; }
 
         [DataMember]

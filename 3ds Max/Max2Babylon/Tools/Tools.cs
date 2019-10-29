@@ -112,6 +112,18 @@ namespace Max2Babylon
             return gameProperty != null ? gameProperty.GetFloatValue() : defaultValue;
         }
 
+        public static IPoint3 GetPoint3Property(this IIPropertyContainer propertyContainer, string propName, IPoint3 defaultValue = null)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetPoint3Property() : defaultValue;
+        }
+
+        public static IPoint4 GetPoint4Property(this IIPropertyContainer propertyContainer, string propName, IPoint4 defaultValue = null)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetPoint4Property() : defaultValue;
+        }
+
         // ---
 
         public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)

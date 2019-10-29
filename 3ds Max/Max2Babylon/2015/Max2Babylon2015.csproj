@@ -157,6 +157,9 @@
     <Compile Include="..\Exporter\BabylonExporter.Camera.cs">
       <Link>Exporter\BabylonExporter.Camera.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.CustomAttributes.cs">
+      <Link>Exporter\BabylonExporter.CustomAttributes.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.cs">
       <Link>Exporter\BabylonExporter.cs</Link>
     </Compile>
