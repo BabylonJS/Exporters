@@ -133,6 +133,9 @@ namespace Babylon2GLTF
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
 
+                //Custom user properties
+                gltfMaterial.extras = babylonStandardMaterial.metadata;
+
                 // Alpha
                 string alphaMode;
                 getAlphaMode(babylonStandardMaterial, out alphaMode);

@@ -113,7 +113,8 @@ namespace Maya2Babylon
                     diffuse = lambertShader.color.toArrayRGB()
                 };
 
-                bool isTransparencyModeFromBabylonMaterialNode = false;
+                // User custom attributes
+                babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);                bool isTransparencyModeFromBabylonMaterialNode = false;
                 if (babylonAttributesDependencyNode != null)
                 {
                     // Transparency mode

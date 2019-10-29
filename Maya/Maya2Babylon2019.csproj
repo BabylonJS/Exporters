@@ -77,6 +77,7 @@
     <Compile Include="Exporter\BabylonExporter.Logger.cs" />
     <Compile Include="Exporter\BabylonExporter.cs" />
     <Compile Include="Exporter\AnimationGroup.cs" />
+    <Compile Include="Exporter\BabylonExporter.CustomAttributes.cs" />
     <Compile Include="Exporter\GlobalVertex.cs" />
     <Compile Include="Exporter\GLTFGlobalVertex.cs" />
     <Compile Include="Exporter\BabylonExporter.Material.Duplication.cs" />
