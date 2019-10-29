@@ -317,7 +317,7 @@ namespace Max2Babylon
             if (clearLogs)
                 treeView.Nodes.Clear();
 
-            exporter.OnImportProgressChanged += progress =>
+            exporter.OnExportProgressChanged += progress =>
             {
                 progressBar.Value = progress;
                 Application.DoEvents();
@@ -352,6 +352,24 @@ namespace Max2Babylon
             };
 
             exporter.OnMessage += (message, color, rank, emphasis) =>
+            {
+                try
+                {
+                    currentNode = CreateTreeNode(rank, message, color);
+
+                    if (emphasis)
+                    {
+                        currentNode.EnsureVisible();
+                    }
+                }
+                catch
+                {
+                    //do nothing
+                }
+                Application.DoEvents();
+            };
+
+            exporter.OnVerbose += (message, color, rank, emphasis) =>
             {
                 try
                 {

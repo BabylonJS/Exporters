@@ -138,10 +138,8 @@ namespace Babylon2GLTF
 
                 // Alpha
                 string alphaMode;
-                float? alphaCutoff;
-                getAlphaMode(babylonStandardMaterial, out alphaMode, out alphaCutoff);
+                getAlphaMode(babylonStandardMaterial, out alphaMode);
                 gltfMaterial.alphaMode = alphaMode;
-                gltfMaterial.alphaCutoff = alphaCutoff;
 
                 // DoubleSided
                 gltfMaterial.doubleSided = !babylonMaterial.backFaceCulling;
@@ -338,13 +336,15 @@ namespace Babylon2GLTF
                         //export textures
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
-                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap);
+                            string baseColorTextureName = name + "_baseColor" + ".png"; // TODO - unsafe name, may conflict with another texture name
+                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorTextureName);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {
-                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap);
+                            string metallicRoughnessTextureName = name + "_metallicRoughness" + ".jpg"; // TODO - unsafe name, may conflict with another texture name
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, metallicRoughnessTextureName);
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
                         }
 
@@ -448,7 +448,10 @@ namespace Babylon2GLTF
                 float? alphaCutoff;
                 getAlphaMode(babylonPBRMetallicRoughnessMaterial, out alphaMode, out alphaCutoff);
                 gltfMaterial.alphaMode = alphaMode;
-                gltfMaterial.alphaCutoff = alphaCutoff;
+                if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f)
+                {
+                    gltfMaterial.alphaCutoff = alphaCutoff;
+                }
 
                 // DoubleSided
                 gltfMaterial.doubleSided = babylonPBRMetallicRoughnessMaterial.doubleSided;
@@ -573,16 +576,13 @@ namespace Babylon2GLTF
                     gltfMaterial.extensions["KHR_materials_unlit"] = new object();
                 }
             }
-
-            ExportGLTFExtension(babylonMaterial, ref gltfMaterial,gltf);
         }
 
-        private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
+        private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode)
         {
             // TODO: maybe we want to be able to handle both BabylonStandardMaterial and BabylonPBRMetallicRoughnessMaterial via the relevant fields being dropped to BabylonMaterial?
             // Serialization is going to be tricky, as we dont want BabylonStandardMaterial.alphaMode and BabylonStandardMaterial.alphaCutoff to be serialized (till we support it officially in-engine)
             alphaMode = null;
-            alphaCutoff = null;
             switch (babylonMaterial.transparencyMode)
             {
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE: // reuse the BabylonPBRMaterialMetallicRoughness enum.
@@ -592,7 +592,6 @@ namespace Babylon2GLTF
                     alphaMode = GLTFMaterial.AlphaMode.BLEND.ToString();
                     break;
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST:
-                    alphaCutoff = babylonMaterial.alphaCutOff;
                     alphaMode = GLTFMaterial.AlphaMode.MASK.ToString();
                     break;
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATESTANDBLEND:
@@ -608,7 +607,7 @@ namespace Babylon2GLTF
         private void getAlphaMode(BabylonPBRMetallicRoughnessMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
         {
             alphaMode = null;
-            alphaCutoff = null;
+            alphaCutoff = 0.5f;
             switch (babylonMaterial.transparencyMode)
             {
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE:

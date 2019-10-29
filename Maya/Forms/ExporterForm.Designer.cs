@@ -53,6 +53,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.chkExportKHRTextureTransform = new System.Windows.Forms.CheckBox();
             this.chkExportKHRLightsPunctual = new System.Windows.Forms.CheckBox();
+            this.chkExportKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.chkExportMorphNormal = new System.Windows.Forms.CheckBox();
             this.chkExportMorphTangent = new System.Windows.Forms.CheckBox();
@@ -207,6 +208,7 @@
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.chkBakeAnimationFrames);
             this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.chkExportKHRMaterialsUnlit);
             this.groupBox1.Controls.Add(this.chkExportKHRTextureTransform);
             this.groupBox1.Controls.Add(this.chkExportKHRLightsPunctual);
             this.groupBox1.Controls.Add(this.label6);
@@ -583,6 +585,17 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
+            // chkExportKHRMaterialsUnlit
+            // 
+            this.chkExportKHRMaterialsUnlit.AutoSize = true;
+            this.chkExportKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(320, 256);
+            this.chkExportKHRMaterialsUnlit.Name = "chkExportKHRMaterialsUnlit";
+            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
+            this.chkExportKHRMaterialsUnlit.TabIndex = 25;
+            this.chkExportKHRMaterialsUnlit.Text = "KHR_materials_unlit";
+            this.chkExportKHRMaterialsUnlit.UseVisualStyleBackColor = true;
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -650,6 +663,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox chkExportKHRTextureTransform;
         private System.Windows.Forms.CheckBox chkExportKHRLightsPunctual;
+        private System.Windows.Forms.CheckBox chkExportKHRMaterialsUnlit;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox chkBakeAnimationFrames;
         private System.Windows.Forms.Label label9;

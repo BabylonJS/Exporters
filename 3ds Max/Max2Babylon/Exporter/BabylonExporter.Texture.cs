@@ -23,6 +23,17 @@ namespace Max2Babylon
         private static List<string> invalidFormats = new List<string>(new string[] { "dds", "tif", "tiff" });
         private Dictionary<string, BabylonTexture> textureMap = new Dictionary<string, BabylonTexture>();
 
+
+        public ITexmap GetSubTexmap(IStdMat2 stdMat, int index)
+        {
+            if (!stdMat.MapEnabled(index))
+            {
+                return null;
+            }
+
+            return stdMat.GetSubTexmap(index);
+        }
+
         // -------------------------------
         // --- "public" export methods ---
         // -------------------------------
@@ -290,7 +301,7 @@ namespace Max2Babylon
         }
 
         /// <returns></returns>
-        private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName)
+        private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName, bool isOpacity = false)
         {
             // --- Babylon texture ---
 
@@ -425,8 +436,13 @@ namespace Max2Babylon
                             if (alphaBitmap != null)
                             {
                                 // Retreive alpha from alpha texture
-                                var alphaColor = alphaBitmap.GetPixel(x, y);
-                                var alphaAtPixel = 255 - (getAlphaFromRGB ? alphaColor.R : alphaColor.A);
+                                Color alphaColor = alphaBitmap.GetPixel(x, y);
+                                int alphaAtPixel = getAlphaFromRGB ? alphaColor.R : alphaColor.A;
+                                if (isOpacity == false)
+                                {
+                                    // Convert transparency to opacity
+                                    alphaAtPixel = 255 - alphaAtPixel;
+                                }
                                 baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
                             }
                             else if (baseColorTexture != null && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE) // Alpha source is 'Image Alpha'
