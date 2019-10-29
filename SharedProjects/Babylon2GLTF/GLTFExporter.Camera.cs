@@ -33,6 +33,9 @@ namespace Babylon2GLTF
             gltfNode.camera = gltfCamera.index;
             gltfCamera.gltfNode = gltfNode;
 
+            // Custom user properties
+            gltfCamera.extras = babylonCamera.metadata;
+
             // Camera type
             switch (babylonCamera.mode)
             {

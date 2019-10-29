@@ -551,6 +551,7 @@ namespace Babylon2GLTF
                 name = GetUniqueNodeName(babylonNode.name),
                 index = gltf.NodesList.Count
             };
+            gltfNode.extras = babylonNode.metadata;
             gltf.NodesList.Add(gltfNode);   // add the node to the gltf list
             nodeToGltfNodeMap.Add(babylonNode, gltfNode);   // add the node to the global map
 

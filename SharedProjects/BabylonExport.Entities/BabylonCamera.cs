@@ -89,9 +89,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool isStereoscopicSideBySide;
 
-        [DataMember]
-        public object metadata { get; set; }
-
         public BabylonCamera()
         {
             // Default values

@@ -132,16 +132,6 @@ namespace Babylon2GLTF
                 gltfMesh.idBabylonSkeleton = babylonMesh.skeletonId;
             }
 
-            //Metadata
-            if (hasMetadata)
-            {
-                if (gltfMesh.extras == null)
-                {
-                    gltfMesh.extras = new Dictionary<string, object>();
-                }
-                gltfMesh.extras["BABYLON_user_custom_attributes"] = babylonMesh.metadata;
-            }
-
             // --------------------------
             // ---- glTF primitives -----
             // --------------------------

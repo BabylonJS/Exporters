@@ -24,6 +24,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public int alphaMode { get; set; }
 
+        [DataMember]
+        public Dictionary<string, object> metadata { get; set; } = new Dictionary<string, object>();
+
         public bool isUnlit = false;
 
         public BabylonMaterial(string id)

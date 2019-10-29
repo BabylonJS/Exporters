@@ -111,6 +111,9 @@ namespace Maya2Babylon
                     alpha = 1.0f - lambertShader.transparency[0]
                 };
 
+                // User custom attributes
+                babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);
+
                 // Maya ambient <=> babylon emissive
                 babylonMaterial.emissive = lambertShader.ambientColor.toArrayRGB();
                 babylonMaterial.linkEmissiveWithDiffuse = true; // Incandescence (or Illumination) is not exported
