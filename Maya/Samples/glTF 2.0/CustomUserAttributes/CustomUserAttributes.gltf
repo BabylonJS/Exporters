@@ -9,7 +9,8 @@
       "nodes": [
         0,
         1,
-        4
+        2,
+        5
       ],
       "extensions": {}
     }
@@ -48,9 +49,41 @@
       }
     },
     {
-      "children": [
+      "mesh": 0,
+      "translation": [
         2,
-        3
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "pCube2",
+      "extras": {
+        "vect": [
+          4,
+          5,
+          6
+        ],
+        "int": 8,
+        "string": "test instance",
+        "float": 10.5,
+        "bool": 0,
+        "enum": 0
+      }
+    },
+    {
+      "children": [
+        3,
+        4
       ],
       "translation": [
         0,
@@ -68,8 +101,7 @@
         1,
         1
       ],
-      "name": "camera1_group",
-      "extras": {}
+      "name": "camera1_group"
     },
     {
       "translation": [
@@ -88,8 +120,7 @@
         1,
         1
       ],
-      "name": "camera1_aim",
-      "extras": {}
+      "name": "camera1_aim"
     },
     {
       "camera": 0,
@@ -333,7 +364,7 @@
   ],
   "buffers": [
     {
-      "uri": "test01.bin",
+      "uri": "CustomUserAttributes.bin",
       "byteLength": 1296
     }
   ],
@@ -376,14 +407,14 @@
         {
           "sampler": 0,
           "target": {
-            "node": 3,
+            "node": 4,
             "path": "rotation"
           }
         },
         {
           "sampler": 1,
           "target": {
-            "node": 3,
+            "node": 4,
             "path": "translation"
           }
         }

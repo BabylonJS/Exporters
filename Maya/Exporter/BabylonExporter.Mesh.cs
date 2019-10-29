@@ -264,6 +264,9 @@ namespace Maya2Babylon
                 // Export transform / hierarchy / animations
                 ExportNode(babylonInstanceMesh, mFnTransform, babylonScene);
 
+                // Extra attributes
+                babylonInstanceMesh.metadata = ExportCustomAttributeFromTransform(mFnTransform);
+
                 // Animations
                 ExportNodeAnimation(babylonInstanceMesh, mFnTransform);
 
