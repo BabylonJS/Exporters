@@ -194,6 +194,9 @@
     <Compile Include="..\Exporter\MaxGLTFMaterialExporter.cs">
       <Link>Exporter\MaxGLTFMaterialExporter.cs</Link>
     </Compile>
+    <Compile Include="..\Extensions\ASOBOAnimationRetargetingExtension.cs">
+      <Link>Extensions\ASOBOAnimationRetargetingExtension.cs</Link>
+    </Compile>
     <Compile Include="..\Extensions\ScaleSystem.cs">
       <Link>Extensions\ScaleSystem.cs</Link>
     </Compile>

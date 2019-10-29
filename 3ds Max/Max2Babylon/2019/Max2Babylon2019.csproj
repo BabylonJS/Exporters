@@ -194,6 +194,9 @@
     <Compile Include="..\Exporter\MaxGLTFMaterialExporter.cs">
       <Link>Exporter\MaxGLTFMaterialExporter.cs</Link>
     </Compile>
+    <Compile Include="..\Extensions\ASOBOAnimationRetargetingExtension.cs">
+      <Link>Extensions\ASOBOAnimationRetargetingExtension.cs</Link>
+    </Compile>
     <Compile Include="..\Extensions\ScaleSystem.cs">
       <Link>Extensions\ScaleSystem.cs</Link>
     </Compile>
@@ -318,7 +321,6 @@
     <Compile Include="..\Exporter\BabylonExporter.WorldModifiers.cs">
       <Link>Exporter\BabylonExporter.WorldModifiers.Skin.cs</Link>
     </Compile>
-    <Compile Include="Extensions\ASOBOAnimationRetargetingExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
