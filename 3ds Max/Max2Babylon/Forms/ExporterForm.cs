@@ -591,6 +591,7 @@ namespace Max2Babylon
                     chkKHRMaterialsUnlit.Enabled = false;
                     chkKHRLightsPunctual.Enabled = false;
                     chkKHRTextureTransform.Enabled = false;
+                    chkASBAnimationRetargeting.Enabled = false;
                     break;
                 case "gltf":
                     this.saveFileDialog.DefaultExt = "gltf";
@@ -611,6 +612,7 @@ namespace Max2Babylon
                     chkKHRMaterialsUnlit.Enabled = true;
                     chkKHRLightsPunctual.Enabled = true;
                     chkKHRTextureTransform.Enabled = true;
+                    chkASBAnimationRetargeting.Enabled = true;
                     break;
                 case "glb":
                     this.saveFileDialog.DefaultExt = "glb";
@@ -634,6 +636,7 @@ namespace Max2Babylon
                     chkKHRMaterialsUnlit.Enabled = true;
                     chkKHRLightsPunctual.Enabled = true;
                     chkKHRTextureTransform.Enabled = true;
+                    chkASBAnimationRetargeting.Enabled = true;
                     break;
             }
 
