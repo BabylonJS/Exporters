@@ -432,7 +432,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 340);
+            this.label8.Location = new System.Drawing.Point(6, 89);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(113, 13);
             this.label8.TabIndex = 33;
@@ -442,7 +442,7 @@
             // 
             this.chkExportMorphTangents.AutoSize = true;
             this.chkExportMorphTangents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphTangents.Location = new System.Drawing.Point(18, 356);
+            this.chkExportMorphTangents.Location = new System.Drawing.Point(18, 105);
             this.chkExportMorphTangents.Name = "chkExportMorphTangents";
             this.chkExportMorphTangents.Size = new System.Drawing.Size(129, 17);
             this.chkExportMorphTangents.TabIndex = 16;
@@ -456,7 +456,7 @@
             this.chkExportMorphNormals.Checked = true;
             this.chkExportMorphNormals.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportMorphNormals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphNormals.Location = new System.Drawing.Point(166, 356);
+            this.chkExportMorphNormals.Location = new System.Drawing.Point(166, 105);
             this.chkExportMorphNormals.Name = "chkExportMorphNormals";
             this.chkExportMorphNormals.Size = new System.Drawing.Size(124, 17);
             this.chkExportMorphNormals.TabIndex = 16;
