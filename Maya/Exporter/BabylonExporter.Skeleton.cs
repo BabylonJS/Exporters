@@ -353,18 +353,21 @@ namespace Maya2Babylon
                 string currentFullPathName = dagNode.fullPathName;
                 int index = indexByFullPathName[currentFullPathName];
                 int parentIndex = -1;
-
+                string parentId = null;
                 // find the parent node to get its index
                 if (! dagNode.parent(0).hasFn(MFn.Type.kWorld))
                 {
                     MFnTransform firstParentTransform = new MFnTransform(dagNode.parent(0));
+                    parentId = firstParentTransform.uuid().asString();
                     parentIndex = indexByFullPathName[firstParentTransform.fullPathName];
                 }
 
+                string boneId = currentNodeTransform.uuid().asString();
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = currentNodeTransform.uuid().asString(),
+                    id = (!isBabylonExported)?boneId:boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    parentNodeId = parentId,
                     name = dagNode.name,
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,

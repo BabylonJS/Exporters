@@ -328,7 +328,7 @@ namespace Maya2Babylon
                     {
                         dataType = indexAnimationProperty == 1 ? (int)BabylonAnimation.DataType.Quaternion : (int)BabylonAnimation.DataType.Vector3,
                         name = babylonAnimationProperty + " animation",
-                        framePerSecond = 30,
+                        framePerSecond = Loader.GetFPS(),
                         loopBehavior = (int)BabylonAnimation.LoopBehavior.Cycle,
                         property = babylonAnimationProperty,
                         keys = babylonAnimationKeys.ToArray(),

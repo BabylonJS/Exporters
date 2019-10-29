@@ -26,19 +26,39 @@ namespace Babylon2GLTF
                 GLTFAnimation gltfAnimation = new GLTFAnimation();
                 gltfAnimation.name = "All Animations";
                 
-                int minFrame = babylonScene.TimelineStartFrame;
-                int maxFrame = babylonScene.TimelineEndFrame;
+                int startFrame = babylonScene.TimelineStartFrame;
+                int endFrame = babylonScene.TimelineEndFrame;
 
                 foreach (var pair in nodeToGltfNodeMap)
                 {
-                    if (pair.Key.animations == null || pair.Key.animations.Length <= 0 || pair.Key.animations[0] == null) continue;
-                    if (pair.Key.animations[0].property == "_matrix")
+                    BabylonNode node = pair.Key;
+                    GLTFNode gltfNode = pair.Value;
+                    bool nodeHasAnimations = node.animations != null && node.animations.Length > 0 && node.animations[0] != null;
+                    BabylonMesh meshNode = node as BabylonMesh;
+                    BabylonMorphTargetManager morphTargetManager = null;
+                    bool nodeHasAnimatedMorphTargets = false;
+                    if (meshNode != null && meshNode.morphTargetManagerId != null)
                     {
-                        ExportBoneAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value);
+                        morphTargetManager = GetBabylonMorphTargetManager(babylonScene, meshNode);
+                        if (morphTargetManager != null)
+                        {
+                            nodeHasAnimatedMorphTargets = morphTargetManager.targets.Any(target => target.animations != null && target.animations.Length > 0 && target.animations[0] != null);
+                        }
+                    }
+
+                    if (!nodeHasAnimations && !nodeHasAnimatedMorphTargets) continue;
+                    if (nodeHasAnimations && node.animations[0].property == "_matrix")
+                    {
+                        ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, node, pair.Value);
                     }
                     else
                     {
-                        ExportNodeAnimation(gltfAnimation, minFrame, maxFrame, gltf, pair.Key, pair.Value, babylonScene);
+                        ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, node, gltfNode, babylonScene);
+                    }
+
+                    if (nodeHasAnimatedMorphTargets)
+                    {
+                        ExportMorphTargetWeightAnimation(morphTargetManager, gltf, gltfNode, gltfAnimation.ChannelList, gltfAnimation.SamplerList, startFrame, endFrame, babylonScene);
                     }
                 }
 
@@ -67,18 +87,42 @@ namespace Babylon2GLTF
                     foreach ( var id in uniqueNodeIds )
                     {
                         BabylonNode babylonNode = babylonNodes.Find(node => node.id.Equals(id));
-
-                        GLTFNode gltfNode;
-
-                        if (babylonNode == null || !nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode)) continue;
-                        if (babylonNode.animations == null || babylonNode.animations.Length <= 0 ||babylonNode.animations[0] == null) continue;
-                        if (babylonNode.animations[0].property == "_matrix")
+                        GLTFNode gltfNode = null;
+                        // search the babylon scene id map for the babylon node that matches this id
+                        if (babylonNode != null)
                         {
-                            ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode);
+                            BabylonMorphTargetManager morphTargetManager = null;
+
+                            // search our babylon->gltf node mapping to see if this node is included in the exported gltf scene
+                            if(!nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
+                            {
+                                continue;
+                            }
+
+                            bool nodeHasAnimations = babylonNode.animations != null && babylonNode.animations.Length > 0 && babylonNode.animations[0] != null;
+                            if (!nodeHasAnimations) continue;
+
+                            if (babylonNode.animations[0].property == "_matrix") //TODO: Is this check accurate for deciphering between bones and nodes?
+                            {
+                                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode);
+                            }
+                            else
+                            {
+                                ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
+                            }
                         }
                         else
                         {
-                            ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
+                            // if the node isn't found in the scene id map, check if it is the id for a morph target
+                            BabylonMorphTargetManager morphTargetManager = babylonScene.morphTargetManagers.FirstOrDefault(mtm => mtm.targets.Any(target => target.animations != null && target.animations.Length > 0 && target.animations[0] != null));
+                            if (morphTargetManager != null)
+                            {
+                                BabylonMesh mesh = morphTargetManager.sourceMesh;
+                                if (mesh != null && nodeToGltfNodeMap.TryGetValue(mesh, out gltfNode))
+                                {
+                                    ExportMorphTargetWeightAnimation(morphTargetManager, gltf, gltfNode, gltfAnimation.ChannelList, gltfAnimation.SamplerList, startFrame, endFrame, babylonScene);
+                                }
+                            }
                         }
                     }
 
@@ -90,6 +134,8 @@ namespace Babylon2GLTF
                     {
                         logger.RaiseMessage("No data exported for this animation, it is ignored.", 2);
                     }
+                    // clear the exported morph target cache, since we are exporting a new animation group. //TODO: we should probably do this more elegantly.
+                    exportedMorphTargets.Clear();
                 }
             }
         }
@@ -211,18 +257,6 @@ namespace Babylon2GLTF
                     }
 
                     channelList.Add(gltfChannel);
-                }
-            }
-
-            if (babylonNode.GetType() == typeof(BabylonMesh))
-            {
-                var babylonMesh = babylonNode as BabylonMesh;
-
-                // Morph targets
-                var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
-                if (babylonMorphTargetManager != null)
-                {
-                    ExportMorphTargetWeightAnimation(babylonMorphTargetManager, gltf, gltfNode, channelList, samplerList, startFrame, endFrame, babylonScene);
                 }
             }
 
@@ -436,9 +470,10 @@ namespace Babylon2GLTF
             return accessorOutput;
         }
 
+        private List<BabylonMorphTargetManager> exportedMorphTargets = new List<BabylonMorphTargetManager>();
         private bool ExportMorphTargetWeightAnimation(BabylonMorphTargetManager babylonMorphTargetManager, GLTF gltf, GLTFNode gltfNode, List<GLTFChannel> channelList, List<GLTFAnimationSampler> samplerList, int startFrame, int endFrame, BabylonScene babylonScene, bool offsetToStartAtFrameZero = true)
         {
-            if (!_isBabylonMorphTargetManagerAnimationValid(babylonMorphTargetManager))
+            if ( exportedMorphTargets.Contains(babylonMorphTargetManager) || !_isBabylonMorphTargetManagerAnimationValid(babylonMorphTargetManager))
             {
                 return false;
             }
@@ -539,6 +574,8 @@ namespace Babylon2GLTF
             };
             channelList.Add(gltfChannel);
 
+            // Mark this morph target as exported.
+            exportedMorphTargets.Add(babylonMorphTargetManager);
             return true;
         }
 
