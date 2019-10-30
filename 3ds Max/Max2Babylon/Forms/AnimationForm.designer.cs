@@ -71,12 +71,12 @@
             panel1.Size = new System.Drawing.Size(171, 56);
             panel1.TabIndex = 4;
             // 
-            // mergeBtn
+            // MergeBtn
             // 
             this.MergeBtn.AutoSize = true;
             this.MergeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.MergeBtn.Location = new System.Drawing.Point(109, 30);
-            this.MergeBtn.Name = "mergeBtn";
+            this.MergeBtn.Name = "MergeBtn";
             this.MergeBtn.Size = new System.Drawing.Size(47, 23);
             this.MergeBtn.TabIndex = 6;
             this.MergeBtn.Text = "Merge";
