@@ -423,6 +423,47 @@ namespace Max2Babylon
             return Loader.Global.Point3.Create(value.X, value.Y, value.Z);
         }
 
+        public static IPoint2 Clone(this IPoint2 value)
+        {
+            return Loader.Global.Point2.Create(value.X, value.Y);
+        }
+
+        public static IPoint3 Clone(this IPoint3 value)
+        {
+            return Loader.Global.Point3.Create(value.X, value.Y, value.Z);
+        }
+
+        public static IPoint4 Clone(this IPoint4 value)
+        {
+            return Loader.Global.Point4.Create(value.X, value.Y, value.Z, value.W);
+        }
+
+        public static float[] Clone2(this float[] value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            return value.ToList().ToArray();
+        }
+
+        public static float[] MultiplyBy(this float[] array, float value)
+        {
+            if (array == null)
+            {
+                return null;
+            }
+            else
+            {
+                float[] result = new float[array.Length];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    result[i] = array[i] * value;
+                }
+                return result;
+            }
+        }
+
         public static Vector3 ToVector3(this IPoint3 value)
         {
             return new Vector3(value.X, value.Y, value.Z);

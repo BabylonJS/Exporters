@@ -784,6 +784,11 @@ namespace Max2Babylon
             return ClassIDWrapper.Physical_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
 
+        public bool isDoubleSidedMaterial(IIGameMaterial materialNode)
+        {
+            return ClassIDWrapper.Double_Sided_Material.Equals(materialNode.MaxMaterial.ClassID);
+        }
+
         public bool isMultiSubObjectMaterial(IIGameMaterial materialNode)
         {
             return ClassIDWrapper.Multi_Sub_Object_Material.Equals(materialNode.MaxMaterial.ClassID);
@@ -838,6 +843,12 @@ namespace Max2Babylon
 
                 // Multi/sub-object material
                 if (isMultiSubObjectMaterial(materialNode))
+                {
+                    return null;
+                }
+
+                // Double sided material
+                if (isDoubleSidedMaterial(materialNode))
                 {
                     return null;
                 }
