@@ -51,7 +51,7 @@ namespace BabylonExport.Entities
             alphaMode = original.alphaMode;
             maxSimultaneousLights = 4;
             isUnlit = original.isUnlit;
-            metadata = new Dictionary<string, object>(original.metadata);
+            metadata = original.metadata != null ? new Dictionary<string, object>(original.metadata) : null;
         }
     }
 }
