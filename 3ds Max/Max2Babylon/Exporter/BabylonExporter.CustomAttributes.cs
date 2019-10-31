@@ -84,7 +84,11 @@ namespace Max2Babylon
             foreach (string parameter in parameters)
             {
                 string[] customAttribute = parameter.Split(new string[] { "_$€PType_" }, StringSplitOptions.RemoveEmptyEntries);
-                customAttributesTypeByName.Add(customAttribute[0], customAttribute[1]);
+                string key = customAttribute[0];
+                if (customAttributesTypeByName.ContainsKey(key) == false)
+                {
+                    customAttributesTypeByName.Add(key, customAttribute[1]);
+                }
             }
 
             // Remove preset custom attributes
