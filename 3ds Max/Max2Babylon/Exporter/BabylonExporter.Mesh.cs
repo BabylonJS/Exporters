@@ -682,7 +682,7 @@ namespace Max2Babylon
                         // WARNING - Nested multimaterial and double sided material are not supported
 
                         minVertexIndex = vertices.Count;
-                        maxVertexIndex = vertices.Count * 2;
+                        maxVertexIndex = vertices.Count * 2 - 1;
 
                         // Vertices
                         int nbVertices = vertices.Count;
