@@ -28,7 +28,7 @@ namespace BabylonExport.Entities
         public int maxSimultaneousLights { get; set; }
 
         [DataMember]
-        public Dictionary<string, object> metadata { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> metadata { get; set; }
 
         public bool isUnlit = false;
 

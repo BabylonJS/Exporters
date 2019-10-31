@@ -58,11 +58,10 @@
       ],
       "excludedMeshesIds": null,
       "includedOnlyMeshesIds": null,
-      "metadata": null,
       "lightmapMode": null,
       "falloffType": null,
       "name": "Default light",
-      "id": "d6263f91-83e9-4af1-8909-ac17a346f86e",
+      "id": "8632db4d-f9c7-4fbe-aa2d-0aeb8a6f74df",
       "parentId": null,
       "position": [
         0.0,
@@ -73,7 +72,8 @@
       "autoAnimate": false,
       "autoAnimateFrom": 0,
       "autoAnimateTo": 0,
-      "autoAnimateLoop": false
+      "autoAnimateLoop": false,
+      "metadata": null
     }
   ],
   "meshes": [
@@ -102,7 +102,6 @@
       "skeletonId": -1,
       "numBoneInfluencers": 4,
       "applyFog": true,
-      "metadata": null,
       "lodMeshIds": null,
       "lodDistances": null,
       "lodCoverages": null,
@@ -141,6 +140,7 @@
       "autoAnimateFrom": 0,
       "autoAnimateTo": 100,
       "autoAnimateLoop": true,
+      "metadata": null,
       "boundingBoxMinimum": [
         -1.0,
         -1.0,
@@ -211,7 +211,6 @@
       "skeletonId": -1,
       "numBoneInfluencers": 4,
       "applyFog": true,
-      "metadata": null,
       "lodMeshIds": null,
       "lodDistances": null,
       "lodCoverages": null,
@@ -250,6 +249,7 @@
       "autoAnimateFrom": 0,
       "autoAnimateTo": 100,
       "autoAnimateLoop": true,
+      "metadata": null,
       "boundingBoxMinimum": [
         -1.0,
         -1.0,
@@ -320,7 +320,6 @@
       "skeletonId": -1,
       "numBoneInfluencers": 4,
       "applyFog": true,
-      "metadata": null,
       "lodMeshIds": null,
       "lodDistances": null,
       "lodCoverages": null,
@@ -359,6 +358,7 @@
       "autoAnimateFrom": 0,
       "autoAnimateTo": 100,
       "autoAnimateLoop": true,
+      "metadata": null,
       "boundingBoxMinimum": [
         -1.0,
         -1.0,
@@ -477,13 +477,15 @@
       "linkEmissiveWithDiffuse": true,
       "twoSidedLighting": false,
       "useGlossinessFromSpecularMapAlpha": false,
-      "name": "Material #27",
+      "alphaCutOff": 0.5,
+      "name": "RedMat",
       "id": "814decf0-a4ea-454e-a404-277528478ef5",
       "backFaceCulling": true,
       "wireframe": false,
       "alpha": 1.0,
       "alphaMode": 2,
-      "maxSimultaneousLights": 4
+      "maxSimultaneousLights": 4,
+      "metadata": {}
     },
     {
       "customType": "BABYLON.PBRMetallicRoughnessMaterial",
@@ -536,6 +538,7 @@
       "emissiveTexture": null,
       "occlusionStrength": 1.0,
       "occlusionTexture": null,
+      "alphaCutOff": 0.5,
       "transparencyMode": 1,
       "doubleSided": false,
       "clearCoat": {
@@ -560,7 +563,8 @@
       "wireframe": false,
       "alpha": 1.0,
       "alphaMode": 2,
-      "maxSimultaneousLights": 4
+      "maxSimultaneousLights": 4,
+      "metadata": {}
     },
     {
       "customType": "BABYLON.PBRMetallicRoughnessMaterial",
@@ -613,6 +617,7 @@
       "emissiveTexture": null,
       "occlusionStrength": 1.0,
       "occlusionTexture": null,
+      "alphaCutOff": 0.5,
       "transparencyMode": 1,
       "doubleSided": false,
       "clearCoat": {
@@ -637,7 +642,8 @@
       "wireframe": false,
       "alpha": 1.0,
       "alphaMode": 2,
-      "maxSimultaneousLights": 4
+      "maxSimultaneousLights": 4,
+      "metadata": {}
     }
   ],
   "multiMaterials": [],

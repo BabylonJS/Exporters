@@ -77,10 +77,12 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool useGlossinessFromSpecularMapAlpha { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public float? alphaCutOff { get; set; }
+
         // Used for gltf
         public float selfIllum;
         public int transparencyMode;
-        public float alphaCutOff;
 
         public BabylonStandardMaterial(string id) : base(id)
         {

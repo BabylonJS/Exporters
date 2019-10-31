@@ -138,8 +138,13 @@ namespace Babylon2GLTF
 
                 // Alpha
                 string alphaMode;
-                getAlphaMode(babylonStandardMaterial, out alphaMode);
+                float? alphaCutoff;
+                getAlphaMode(babylonStandardMaterial, out alphaMode, out alphaCutoff);
                 gltfMaterial.alphaMode = alphaMode;
+                if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f) // do not export glTF default value
+                {
+                    gltfMaterial.alphaCutoff = alphaCutoff;
+                }
 
                 // DoubleSided
                 gltfMaterial.doubleSided = !babylonMaterial.backFaceCulling;
@@ -250,7 +255,16 @@ namespace Babylon2GLTF
                             Bitmap diffuseBitmap = null;
                             if (babylonStandardMaterial.diffuseTexture != null)
                             {
-                                diffuseBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath, logger);
+                                if (babylonStandardMaterial.diffuseTexture.bitmap != null)
+                                {
+                                    // Diffuse color map has been computed by the exporter
+                                    diffuseBitmap = babylonStandardMaterial.diffuseTexture.bitmap;
+                                }
+                                else
+                                {
+                                    // Diffuse color map is straight input
+                                    diffuseBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath, logger);
+                                }
                             }
 
                             // Specular
@@ -448,7 +462,7 @@ namespace Babylon2GLTF
                 float? alphaCutoff;
                 getAlphaMode(babylonPBRMetallicRoughnessMaterial, out alphaMode, out alphaCutoff);
                 gltfMaterial.alphaMode = alphaMode;
-                if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f)
+                if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f) // do not export glTF default value
                 {
                     gltfMaterial.alphaCutoff = alphaCutoff;
                 }
@@ -578,11 +592,12 @@ namespace Babylon2GLTF
             }
         }
 
-        private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode)
+        private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
         {
             // TODO: maybe we want to be able to handle both BabylonStandardMaterial and BabylonPBRMetallicRoughnessMaterial via the relevant fields being dropped to BabylonMaterial?
             // Serialization is going to be tricky, as we dont want BabylonStandardMaterial.alphaMode and BabylonStandardMaterial.alphaCutoff to be serialized (till we support it officially in-engine)
             alphaMode = null;
+            alphaCutoff = 0.5f;
             switch (babylonMaterial.transparencyMode)
             {
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE: // reuse the BabylonPBRMaterialMetallicRoughness enum.
@@ -592,6 +607,7 @@ namespace Babylon2GLTF
                     alphaMode = GLTFMaterial.AlphaMode.BLEND.ToString();
                     break;
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST:
+                    alphaCutoff = babylonMaterial.alphaCutOff;
                     alphaMode = GLTFMaterial.AlphaMode.MASK.ToString();
                     break;
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATESTANDBLEND:

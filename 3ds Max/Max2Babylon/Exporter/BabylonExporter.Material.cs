@@ -275,6 +275,14 @@ namespace Max2Babylon
                     RaiseWarning("If you do not want this behavior, just set Alpha Source = None on your diffuse texture", 2);
                 }
 
+
+                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                {
+                    // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                    // Use the glTF default value rather than the babylon one
+                    babylonMaterial.alphaCutOff = 0.5f;
+                }
+
                 // Add babylon attributes
                 AddStandardBabylonAttributes(materialNode.MaterialName, babylonMaterial);
 
@@ -505,6 +513,13 @@ namespace Max2Babylon
                     babylonMaterial.roughness = 1.0f;
                 }
 
+                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                {
+                    // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                    // Use the glTF default value rather than the babylon one
+                    babylonMaterial.alphaCutOff = 0.5f;
+                }
+
                 // Add babylon attributes
                 AddPhysicalBabylonAttributes(materialNode.MaterialName, babylonMaterial);
 
@@ -728,6 +743,13 @@ namespace Max2Babylon
                 {
                     babylonMaterial.metallic = 1.0f;
                     babylonMaterial.roughness = 1.0f;
+                }
+
+                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                {
+                    // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                    // Use the glTF default value rather than the babylon one
+                    babylonMaterial.alphaCutOff = 0.5f;
                 }
 
                 // Add babylon attributes
