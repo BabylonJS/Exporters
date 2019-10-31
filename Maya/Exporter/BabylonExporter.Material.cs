@@ -114,7 +114,9 @@ namespace Maya2Babylon
                 };
 
                 // User custom attributes
-                babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);                bool isTransparencyModeFromBabylonMaterialNode = false;
+                babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);
+
+                bool isTransparencyModeFromBabylonMaterialNode = false;
                 if (babylonAttributesDependencyNode != null)
                 {
                     // Transparency mode
@@ -210,6 +212,13 @@ namespace Maya2Babylon
                 if (babylonMaterial.emissiveTexture != null)
                 {
                     babylonMaterial.emissive = new float[] { 0, 0, 0 };
+                }
+
+                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                {
+                    // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                    // Use the glTF default value rather than the babylon one
+                    babylonMaterial.alphaCutOff = 0.5f;
                 }
 
                 if (babylonAttributesDependencyNode == null)
@@ -352,6 +361,13 @@ namespace Maya2Babylon
                         // Ex: if useOpacityMap == false, force alpha = 255 for all pixels.
                         babylonMaterial.baseTexture = ExportTexture(materialDependencyNode, "TEX_color_map", babylonScene, false, useOpacityMap);
                     }
+                }
+
+                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                {
+                    // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                    // Use the glTF default value rather than the babylon one
+                    babylonMaterial.alphaCutOff = 0.5f;
                 }
 
                 // Alpha cuttoff
@@ -702,6 +718,13 @@ namespace Maya2Babylon
                         // Store duplicated material too
                         babylonScene.MaterialsList.Add(babylonMaterialCloned);
                     }
+                }
+
+                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                {
+                    // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                    // Use the glTF default value rather than the babylon one
+                    babylonMaterial.alphaCutOff = 0.5f;
                 }
 
                 if (babylonAttributesDependencyNode == null)
