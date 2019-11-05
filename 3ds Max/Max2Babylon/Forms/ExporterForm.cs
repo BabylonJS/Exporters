@@ -453,7 +453,12 @@ namespace Max2Babylon
                     treeLayers.Add(layer);
                     foreach (IILayer l in treeLayers)
                     {
-                        l.Hide(layerState[l], false);
+                        bool exist;
+                        layerState.TryGetValue(l, out exist);
+                        if (exist)
+                        {
+                            l.Hide(layerState[l], false);
+                        }
                     }
                 }
             }
