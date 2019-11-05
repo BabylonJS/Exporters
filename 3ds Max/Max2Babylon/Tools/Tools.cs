@@ -704,7 +704,7 @@ namespace Max2Babylon
             result.SetTMController(node.TMController);
             string scale = $"scale (maxOps.getNodeByHandle {result.Handle}) [0.1,0.1,0.1]";
             ScriptsUtilities.ExecuteMaxScriptCommand(scale);
-            result.ResetTransform(Loader.Core.Time,false);
+            result.ResetTransform(Loader.Core.Time,true);
             string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {result.Handle}) Editable_Poly";
             ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
 
