@@ -255,12 +255,14 @@ namespace Max2Babylon
 
         public void MergeAllXrefRecords()
         {
+            if (Loader.IIObjXRefManager.RecordCount <= 0) return;
             while (Loader.IIObjXRefManager.RecordCount>0)
             {
                 var record = Loader.IIObjXRefManager.GetRecord(0);
                 RaiseMessage($"Merge XRef record {record.SrcFile.FileName}...");
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
-                
+                //todo: load data from animation helper of xref scene merged
+                //to prevent to load animations from helper created without intenction
             }
             AnimationGroupList.LoadDataFromAnimationHelpers();
         }
