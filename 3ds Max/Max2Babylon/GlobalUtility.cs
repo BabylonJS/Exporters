@@ -198,7 +198,7 @@ namespace Max2Babylon
                 actionManager.RegisterActionTable(actionTable);
                 actionManager.ActivateActionTable(actionCallback as ActionCallback, idActionTable);
 
-                
+
 
                 // Set up menus
 #if MAX2018 || MAX2019
@@ -206,7 +206,7 @@ namespace Max2Babylon
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
 
-                
+
 #else
                 InstallMenus();
 #endif
@@ -223,7 +223,7 @@ namespace Max2Babylon
             if (!filePreOpenCallback)
             {
                 m_FilePreOpenDelegate = new GlobalDelegates.Delegate5(this.InitializeBabylonGuids);
-                GlobalInterface.Instance.RegisterNotification(this.m_FilePreOpenDelegate, null, SystemNotificationCode.FilePreOpen );
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePreOpenDelegate, null, SystemNotificationCode.FilePreOpen);
 
                 filePreOpenCallback = true;
             }
@@ -239,7 +239,7 @@ namespace Max2Babylon
                 postSceneResetCallback = true;
             }
         }
-        
+
 
         public void RegisterNodeAddedCallback()
         {
@@ -250,7 +250,7 @@ namespace Max2Babylon
                 //bug on Autodesk API  SystemNotificationCode.SceneAddedNode doesn't work for max 2015-2016
                 GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.NodeLinked );
 #else
-                GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.SceneAddedNode );
+                GlobalInterface.Instance.RegisterNotification(this.m_NodeAddedDelegate, null, SystemNotificationCode.SceneAddedNode);
 #endif
                 nodeAddedCallback = true;
             }
