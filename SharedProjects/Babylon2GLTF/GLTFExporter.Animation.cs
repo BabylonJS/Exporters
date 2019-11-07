@@ -178,7 +178,7 @@ namespace Babylon2GLTF
                 foreach (BabylonAnimation babylonAnimation in babylonAnimations)
                 {
 
-                    var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame > startFrame && key.frame < endFrame);
+                    var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
                     if (babylonAnimationKeysInRange.Count() <= 0)
                         continue;
 
@@ -266,7 +266,7 @@ namespace Babylon2GLTF
 
                 var babylonAnimation = babylonNode.animations[0];
 
-                var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame > startFrame && key.frame < endFrame);
+                var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
                 if (babylonAnimationKeysInRange.Count() <= 0)
                     return;
 
@@ -377,7 +377,7 @@ namespace Babylon2GLTF
 
         private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation, int startFrame, int endFrame, bool offsetToStartAtFrameZero = true)
         {
-            var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame > startFrame && key.frame < endFrame);
+            var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
             if (babylonAnimationKeysInRange.Count() <= 0) // do not make empty accessors, so bail out.
                 return null;
 
@@ -463,7 +463,7 @@ namespace Babylon2GLTF
             var influencesPerFrame = _getTargetManagerAnimationsData(babylonMorphTargetManager);
             var frames = new List<int>(influencesPerFrame.Keys);
 
-            var framesInRange = frames.Where(frame => frame > startFrame && frame < endFrame).ToList();
+            var framesInRange = frames.Where(frame => frame >= startFrame && frame <= endFrame).ToList();
             framesInRange.Sort(); // Mandatory to sort otherwise gltf loader of babylon doesn't understand
             if (framesInRange.Count() <= 0)
                 return false;
