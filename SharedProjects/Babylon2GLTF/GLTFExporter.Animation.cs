@@ -177,6 +177,11 @@ namespace Babylon2GLTF
 
                 foreach (BabylonAnimation babylonAnimation in babylonAnimations)
                 {
+
+                    var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
+                    if (babylonAnimationKeysInRange.Count() <= 0)
+                        continue;
+
                     // Target
                     var gltfTarget = new GLTFChannelTarget
                     {
@@ -194,14 +199,8 @@ namespace Babylon2GLTF
 
                     // Populate accessor
                     int numKeys = 0;
-                    foreach (var babylonAnimationKey in babylonAnimation.keys)
+                    foreach (var babylonAnimationKey in babylonAnimationKeysInRange)
                     {
-                        if (babylonAnimationKey.frame < startFrame)
-                            continue;
-
-                        if (babylonAnimationKey.frame > endFrame)
-                            continue;
-
                         numKeys++;
 
                         // copy data before changing it in case animation groups overlap
@@ -229,11 +228,10 @@ namespace Babylon2GLTF
                         }
                     };
                     accessorOutput.count = numKeys;
-
-                    // bail out if no keyframes to export (?)
-                    // todo [KeyInterpolation]: bail out only when there are no keyframes at all (?) and otherwise add the appropriate (interpolated) keyframes
-                    if (numKeys == 0)
-                        continue;
+                    if (accessorOutput.count == 0)
+                    {
+                        logger.RaiseWarning(String.Format("GLTFExporter.Animation | No frames to export in node animation \"{1}\" of node named \"{0}\". This will cause an error in the output gltf.", babylonNode.name, babylonAnimation.name));
+                    }
 
                     // Animation sampler
                     var gltfAnimationSampler = new GLTFAnimationSampler
@@ -268,6 +266,10 @@ namespace Babylon2GLTF
 
                 var babylonAnimation = babylonNode.animations[0];
 
+                var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
+                if (babylonAnimationKeysInRange.Count() <= 0)
+                    return;
+
                 // --- Input ---
                 var accessorInput = _createAndPopulateInput(gltf, babylonAnimation, startFrame, endFrame);
                 if (accessorInput == null)
@@ -284,14 +286,8 @@ namespace Babylon2GLTF
                 }
 
                 // Populate accessors
-                foreach (var babylonAnimationKey in babylonAnimation.keys)
+                foreach (var babylonAnimationKey in babylonAnimationKeysInRange)
                 {
-                    if (babylonAnimationKey.frame < startFrame)
-                        continue;
-
-                    if (babylonAnimationKey.frame > endFrame)
-                        continue;
-
                     var matrix = new BabylonMatrix();
                     matrix.m = babylonAnimationKey.values;
 
@@ -381,6 +377,10 @@ namespace Babylon2GLTF
 
         private GLTFAccessor _createAndPopulateInput(GLTF gltf, BabylonAnimation babylonAnimation, int startFrame, int endFrame, bool offsetToStartAtFrameZero = true)
         {
+            var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
+            if (babylonAnimationKeysInRange.Count() <= 0) // do not make empty accessors, so bail out.
+                return null;
+
             var buffer = GLTFBufferService.Instance.GetBuffer(gltf);
             var accessorInput = GLTFBufferService.Instance.CreateAccessor(
                 gltf,
@@ -394,14 +394,8 @@ namespace Babylon2GLTF
             accessorInput.max = new float[] { float.MinValue };
 
             int numKeys = 0;
-            foreach (var babylonAnimationKey in babylonAnimation.keys)
+            foreach (var babylonAnimationKey in babylonAnimationKeysInRange)
             {
-                if (babylonAnimationKey.frame < startFrame)
-                    continue;
-
-                if (babylonAnimationKey.frame > endFrame)
-                    continue;
-
                 numKeys++;
                 float inputValue = babylonAnimationKey.frame;
                 if (offsetToStartAtFrameZero) inputValue -= startFrame;
@@ -413,10 +407,10 @@ namespace Babylon2GLTF
             };
             accessorInput.count = numKeys;
 
-            // bail out if there are no keys
-            // todo [KeyInterpolation]: bail out only when there are no keyframes at all (?) and otherwise add the appropriate (interpolated) keyframes
-            if (numKeys == 0)
-                return null;
+            if (accessorInput.count == 0)
+            {
+                logger.RaiseWarning(String.Format("GLTFExporter.Animation | No input frames in GLTF Accessor for animation \"{0}\". This will cause an error in the output gltf.", babylonAnimation.name));
+            }
 
             return accessorInput;
         }
@@ -466,6 +460,14 @@ namespace Babylon2GLTF
                 return false;
             }
 
+            var influencesPerFrame = _getTargetManagerAnimationsData(babylonMorphTargetManager);
+            var frames = new List<int>(influencesPerFrame.Keys);
+
+            var framesInRange = frames.Where(frame => frame >= startFrame && frame <= endFrame).ToList();
+            framesInRange.Sort(); // Mandatory to sort otherwise gltf loader of babylon doesn't understand
+            if (framesInRange.Count() <= 0)
+                return false;
+
             logger.RaiseMessage("GLTFExporter.Animation | Export animation of morph target manager with id: " + babylonMorphTargetManager.id, 2);
             
             // Target
@@ -490,19 +492,9 @@ namespace Babylon2GLTF
             accessorInput.min = new float[] { float.MaxValue };
             accessorInput.max = new float[] { float.MinValue };
 
-            var influencesPerFrame = _getTargetManagerAnimationsData(babylonMorphTargetManager);
-            var frames = new List<int>(influencesPerFrame.Keys);
-            frames.Sort(); // Mandatory otherwise gltf loader of babylon doesn't understand
-
             int numKeys = 0;
-            foreach (var frame in frames)
+            foreach (var frame in framesInRange)
             {
-                if (frame < startFrame)
-                    continue;
-
-                if (frame > endFrame)
-                    continue;
-
                 numKeys++;
                 float inputValue = frame;
                 if (offsetToStartAtFrameZero) inputValue -= startFrame;
@@ -514,10 +506,10 @@ namespace Babylon2GLTF
             }
             accessorInput.count = numKeys;
 
-            // bail out if we have no keys to export (?)
-            // todo [KeyInterpolation]: bail out only when there are no keyframes at all (?) and otherwise add the appropriate (interpolated) keyframes
-            if (numKeys == 0)
-                return false;
+            if (accessorInput.count == 0)
+            {
+                logger.RaiseWarning(String.Format("GLTFExporter.Animation | No frames to export in morph target animation \"weight\" for mesh named \"{0}\". This will cause an error in the output gltf.", babylonMorphTargetManager.sourceMesh.name));
+            }
 
             // --- Output ---
             GLTFAccessor accessorOutput = GLTFBufferService.Instance.CreateAccessor(
@@ -528,14 +520,8 @@ namespace Babylon2GLTF
                 GLTFAccessor.TypeEnum.SCALAR
             );
             // Populate accessor
-            foreach (var frame in frames)
+            foreach (var frame in framesInRange)
             {
-                if (frame < startFrame)
-                    continue;
-
-                if (frame > endFrame)
-                    continue;
-
                 var outputValues = influencesPerFrame[frame];
                 // Store values as bytes
                 foreach (var outputValue in outputValues)
