@@ -28,14 +28,21 @@ namespace BabylonJS_Installer
             this.version = version;
             this.installDir = installDir;
 
+            Action logPostInstall = () =>
+            {
+                if (software == "Max" && version == "2020")
+                {
+                    this.form.warn("\nWARNING: Max2Babylon 2020 only supports 3dsMax 2020.2 or later. Earlier versions of 3dsMax WILL crash!");
+                }
+            };
+
             if (this.pingSite(this.url_github))
             {
                 this.form.log("Info : Connection to GitHub OK");
                 if (this.latestRelease == "")
-                    this.getLatestRelease();
+                    this.getLatestRelease(logPostInstall);
                 else
-                    this.download(this.latestRelease);
-
+                    if (this.tryDownload(this.latestRelease)) logPostInstall();
             }
         }
 
@@ -69,7 +76,7 @@ namespace BabylonJS_Installer
             }
         }
 
-        private async void getLatestRelease()
+        private async void getLatestRelease(Action OnSuccess)
         {
             this.form.log("Trying to get the last version ...");
 
@@ -90,10 +97,13 @@ namespace BabylonJS_Installer
                     this.latestRelease = this.latestRelease.Split('"')[0];
                     this.latestRelease = this.latestRelease.Remove(this.latestRelease.LastIndexOf("/"));
                     this.latestRelease = this.latestRelease.Substring(this.latestRelease.LastIndexOf("/"));
-                    this.download(this.latestRelease);
+                    this.tryDownload(this.latestRelease);
                 }
                 else
+                {
                     this.form.error("Error : Can't find the last release package.");
+                    return;
+                }
             }
             catch(Exception ex)
             {
@@ -103,10 +113,13 @@ namespace BabylonJS_Installer
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
+                return;
             }
+
+            OnSuccess();
         }
 
-        private void download(string releaseName)
+        private bool tryDownload(string releaseName)
         {
             var downloadVersion = this.version;
             if (this.software.Equals("Maya") && (this.version.Equals("2017") || this.version.Equals("2018")))
@@ -137,12 +150,13 @@ namespace BabylonJS_Installer
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
+                return false;
             }
 
-            this.downloadComplete(downloadVersion);
+            return this.tryInstallDownload(downloadVersion);
         }
 
-        private void downloadComplete(string downloadVersion)
+        private bool tryInstallDownload(string downloadVersion)
         {
             this.form.log(
                 "Download complete.\n"
@@ -168,6 +182,7 @@ namespace BabylonJS_Installer
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
+                return false;
             }
 
             this.form.log(
@@ -187,9 +202,11 @@ namespace BabylonJS_Installer
                     + "Error message : \n"
                     + "\"" + ex.Message + "\""
                     );
+                return false;
             }
 
             this.form.displayInstall(this.software, this.version);
+            return true;
         }
 
         public async Task<string> GetJSONBodyRequest(string requestURI)
