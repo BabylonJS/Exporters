@@ -945,7 +945,7 @@ namespace Max2Babylon
             }
             catch (Exception e)
             {
-                this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", maxGameNode.Name, e.Message, e.InnerException), 2);
+                this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 2);
             }
 
             CheckCancelled();
