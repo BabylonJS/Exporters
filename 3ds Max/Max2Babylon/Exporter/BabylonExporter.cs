@@ -942,12 +942,14 @@ namespace Max2Babylon
                         // The type of node is not exportable (helper, spline, xref...)
                         break;
                 }
-                CheckCancelled();
             }
             catch (Exception e)
             {
                 this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", maxGameNode.Name, e.Message, e.InnerException), 2);
             }
+
+            CheckCancelled();
+
             // If node is not exported successfully but is significant
             if (babylonNode == null &&
                 isNodeRelevantToExport(maxGameNode))
