@@ -210,21 +210,28 @@ namespace Maya2Babylon
             foreach (MDagPath mDagPath in nodes)
             {
                 BabylonNode babylonNode = null;
-                
-                switch (getApiTypeOfDirectDescendants(mDagPath))
+
+                try
                 {
-                    case MFn.Type.kMesh:
-                        babylonNode = ExportMesh(mDagPath, babylonScene);
-                        break;
-                    case MFn.Type.kCamera:
-                        babylonNode = ExportCamera(mDagPath, babylonScene);
-                        break;
-                    case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
-                        babylonNode = ExportLight(mDagPath, babylonScene);
-                        break;
-                    case MFn.Type.kLocator: // Camera target
-                        babylonNode = ExportDummy(mDagPath, babylonScene);
-                        break;
+                    switch (getApiTypeOfDirectDescendants(mDagPath))
+                    {
+                        case MFn.Type.kMesh:
+                            babylonNode = ExportMesh(mDagPath, babylonScene);
+                            break;
+                        case MFn.Type.kCamera:
+                            babylonNode = ExportCamera(mDagPath, babylonScene);
+                            break;
+                        case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                            babylonNode = ExportLight(mDagPath, babylonScene);
+                            break;
+                        case MFn.Type.kLocator: // Camera target
+                            babylonNode = ExportDummy(mDagPath, babylonScene);
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 2);
                 }
 
                 // If node is not exported successfully
