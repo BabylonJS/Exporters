@@ -120,7 +120,6 @@ namespace Max2Babylon
                 {
                     // a generic operation on a container is done (open/inherit)
                     container.ResolveContainer();
-                    Tools.InitializeGuidNodesMap();
                 }
             }
             catch
