@@ -130,6 +130,27 @@ namespace Max2Babylon
             return Assembly.Load("Autodesk.Max.Wrappers, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         }
 
+        public struct VersionNumber
+        {
+            public int Major;
+            public int Minor;
+            public int Revision;
+            public int BuildNumber;
+        }
+ 
+        public static VersionNumber GetMaxVersion()
+        {
+            // https://getcoreinterface.typepad.com/blog/2017/02/querying-the-3ds-max-version.html
+            var versionString = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery("getFileVersion \"$max/3dsmax.exe\"");
+            var versionSplit = versionString.Split(',');
+            int major, minor, revision, buildNumber = 0;
+            int.TryParse(versionSplit[0], out major);
+            int.TryParse(versionSplit[1], out minor);
+            int.TryParse(versionSplit[2], out revision);
+            int.TryParse(versionSplit[3], out buildNumber);
+            return new VersionNumber { Major = major, Minor = minor, Revision = revision, BuildNumber = buildNumber };
+        }
+
         public static IIGameCamera AsGameCamera(this IIGameObject obj)
         {
             var type = GetWrappersAssembly().GetType("Autodesk.Max.Wrappers.IGameCamera");
