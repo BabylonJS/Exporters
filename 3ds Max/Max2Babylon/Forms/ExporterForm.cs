@@ -104,7 +104,17 @@ namespace Max2Babylon
 
             Tools.PrepareCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces", 0);
             Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
-            Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref",0);
+            Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
+
+            var maxVersion = Tools.GetMaxVersion();
+            if (maxVersion.Major == 22 && maxVersion.Minor < 2)
+            {
+                CreateErrorMessage("You must update 3dsMax 2020 to version 2020.2 to use Max2Babylon. Unpatched versions of 3dsMax will crash during export.", 0);
+            }
+            else
+            {
+                CreateMessage(String.Format("Using Max2Babylon for 3dsMax version v{0}.{1}.{2}.{3}", maxVersion.Major, maxVersion.Minor, maxVersion.Revision, maxVersion.BuildNumber), Color.Black, 0, true);
+            }
         }
 
         private void butModelBrowse_Click(object sender, EventArgs e)
@@ -323,51 +333,11 @@ namespace Max2Babylon
                 Application.DoEvents();
             };
 
-            exporter.OnWarning += (warning, rank) =>
-            {
-                try
-                {
-                    currentNode = CreateTreeNode(rank, warning, Color.DarkOrange);
-                    currentNode.EnsureVisible();
-                }
-                catch
-                {
-                    //do nothing
-                }
-                Application.DoEvents();
-            };
+            exporter.OnWarning += (warning, rank) => CreateWarningMessage(warning, rank);
 
-            exporter.OnError += (error, rank) =>
-            {
-                try
-                {
-                    currentNode = CreateTreeNode(rank, error, Color.Red);
-                    currentNode.EnsureVisible();
-                }
-                catch
-                {
-                    //do nothing
-                }
-                Application.DoEvents();
-            };
+            exporter.OnError += (error, rank) => CreateErrorMessage(error, rank);
 
-            exporter.OnMessage += (message, color, rank, emphasis) =>
-            {
-                try
-                {
-                    currentNode = CreateTreeNode(rank, message, color);
-
-                    if (emphasis)
-                    {
-                        currentNode.EnsureVisible();
-                    }
-                }
-                catch
-                {
-                    //do nothing
-                }
-                Application.DoEvents();
-            };
+            exporter.OnMessage += (message, color, rank, emphasis) => CreateMessage(message, color, rank, emphasis);
 
             butExport.Enabled = false;
             butExportAndRun.Enabled = false;
@@ -464,6 +434,52 @@ namespace Max2Babylon
             }
 
             return success;
+        }
+
+        void CreateWarningMessage(string warning, int rank)
+        {
+            try
+            {
+                currentNode = CreateTreeNode(rank, warning, Color.DarkOrange);
+                currentNode.EnsureVisible();
+            }
+            catch
+            {
+                //do nothing
+            }
+            Application.DoEvents();
+        }
+
+        void CreateErrorMessage(string error, int rank)
+        {
+            try
+            {
+                currentNode = CreateTreeNode(rank, error, Color.Red);
+                currentNode.EnsureVisible();
+            }
+            catch
+            {
+                //do nothing
+            }
+            Application.DoEvents();
+        }
+
+        void CreateMessage(string message, Color color, int rank, bool emphasis)
+        {
+            try
+            {
+                currentNode = CreateTreeNode(rank, message, color);
+
+                if (emphasis)
+                {
+                    currentNode.EnsureVisible();
+                }
+            }
+            catch
+            {
+                //do nothing
+            }
+            Application.DoEvents();
         }
 
         private TreeNode CreateTreeNode(int rank, string text, Color color)
