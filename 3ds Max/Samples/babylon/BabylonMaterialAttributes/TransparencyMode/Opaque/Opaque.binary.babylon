@@ -58,11 +58,10 @@
       ],
       "excludedMeshesIds": null,
       "includedOnlyMeshesIds": null,
-      "metadata": null,
       "lightmapMode": null,
       "falloffType": null,
       "name": "Default light",
-      "id": "b091c5ef-8b92-42d7-a560-95e557e661de",
+      "id": "4850b65e-9674-4644-baee-48c0a6eb1577",
       "parentId": null,
       "position": [
         0.0,
@@ -73,7 +72,8 @@
       "autoAnimate": false,
       "autoAnimateFrom": 0,
       "autoAnimateTo": 0,
-      "autoAnimateLoop": false
+      "autoAnimateLoop": false,
+      "metadata": null
     }
   ],
   "meshes": [
@@ -102,7 +102,6 @@
       "skeletonId": -1,
       "numBoneInfluencers": 4,
       "applyFog": true,
-      "metadata": null,
       "lodMeshIds": null,
       "lodDistances": null,
       "lodCoverages": null,
@@ -128,7 +127,7 @@
       "physicsMass": 0.0,
       "physicsFriction": 0.0,
       "physicsRestitution": 0.0,
-      "name": "Sphere001",
+      "name": "StandardMesh",
       "id": "113f2dbc-dce1-4faa-be71-35277504433b",
       "parentId": null,
       "position": [
@@ -141,6 +140,7 @@
       "autoAnimateFrom": 0,
       "autoAnimateTo": 100,
       "autoAnimateLoop": true,
+      "metadata": null,
       "boundingBoxMinimum": [
         -1.0,
         -1.0,
@@ -151,7 +151,7 @@
         1.0,
         1.0
       ],
-      "delayLoadingFile": "Opaque.Sphere001.113f2dbc-dce1-4faa-be71-35277504433b.babylonbinarymeshdata",
+      "delayLoadingFile": "Opaque.StandardMesh.113f2dbc-dce1-4faa-be71-35277504433b.babylonbinarymeshdata",
       "hasUVs": true,
       "_binaryInfo": {
         "positionsAttrDesc": {
@@ -211,7 +211,6 @@
       "skeletonId": -1,
       "numBoneInfluencers": 4,
       "applyFog": true,
-      "metadata": null,
       "lodMeshIds": null,
       "lodDistances": null,
       "lodCoverages": null,
@@ -237,7 +236,7 @@
       "physicsMass": 0.0,
       "physicsFriction": 0.0,
       "physicsRestitution": 0.0,
-      "name": "Sphere002",
+      "name": "PhysicalMesh",
       "id": "311381f0-8487-4fc5-89fa-7d01dfda5e2f",
       "parentId": null,
       "position": [
@@ -250,6 +249,7 @@
       "autoAnimateFrom": 0,
       "autoAnimateTo": 100,
       "autoAnimateLoop": true,
+      "metadata": null,
       "boundingBoxMinimum": [
         -1.0,
         -1.0,
@@ -260,7 +260,7 @@
         1.0,
         1.0
       ],
-      "delayLoadingFile": "Opaque.Sphere002.311381f0-8487-4fc5-89fa-7d01dfda5e2f.babylonbinarymeshdata",
+      "delayLoadingFile": "Opaque.PhysicalMesh.311381f0-8487-4fc5-89fa-7d01dfda5e2f.babylonbinarymeshdata",
       "hasUVs": true,
       "_binaryInfo": {
         "positionsAttrDesc": {
@@ -296,7 +296,7 @@
       }
     },
     {
-      "materialId": "21006084-7a66-4fb3-9835-48193f2ce19a",
+      "materialId": "cde211a5-1bb2-4457-b84b-b72fec1b95e2",
       "isEnabled": true,
       "isVisible": true,
       "positions": null,
@@ -320,7 +320,6 @@
       "skeletonId": -1,
       "numBoneInfluencers": 4,
       "applyFog": true,
-      "metadata": null,
       "lodMeshIds": null,
       "lodDistances": null,
       "lodCoverages": null,
@@ -346,7 +345,7 @@
       "physicsMass": 0.0,
       "physicsFriction": 0.0,
       "physicsRestitution": 0.0,
-      "name": "Sphere003",
+      "name": "StandardSurfaceMesh",
       "id": "57bbf667-4bf9-4453-8787-dd1f8673b543",
       "parentId": null,
       "position": [
@@ -359,6 +358,7 @@
       "autoAnimateFrom": 0,
       "autoAnimateTo": 100,
       "autoAnimateLoop": true,
+      "metadata": null,
       "boundingBoxMinimum": [
         -1.0,
         -1.0,
@@ -369,7 +369,7 @@
         1.0,
         1.0
       ],
-      "delayLoadingFile": "Opaque.Sphere003.57bbf667-4bf9-4453-8787-dd1f8673b543.babylonbinarymeshdata",
+      "delayLoadingFile": "Opaque.StandardSurfaceMesh.57bbf667-4bf9-4453-8787-dd1f8673b543.babylonbinarymeshdata",
       "hasUVs": true,
       "_binaryInfo": {
         "positionsAttrDesc": {
@@ -449,13 +449,14 @@
       "linkEmissiveWithDiffuse": true,
       "twoSidedLighting": false,
       "useGlossinessFromSpecularMapAlpha": false,
-      "name": "Material #27",
+      "name": "StandardMaterialOpaque",
       "id": "814decf0-a4ea-454e-a404-277528478ef5",
       "backFaceCulling": true,
       "wireframe": false,
       "alpha": 1.0,
       "alphaMode": 2,
-      "maxSimultaneousLights": 4
+      "maxSimultaneousLights": 4,
+      "metadata": {}
     },
     {
       "customType": "BABYLON.PBRMetallicRoughnessMaterial",
@@ -498,13 +499,14 @@
         "tintThickness": 1.0,
         "tintTexture": null
       },
-      "name": "Material #28",
+      "name": "PhysicalMaterialOpaque",
       "id": "e8d366dc-9a25-4d46-80f2-60a95ec88505",
       "backFaceCulling": true,
       "wireframe": false,
       "alpha": 1.0,
       "alphaMode": 2,
-      "maxSimultaneousLights": 4
+      "maxSimultaneousLights": 4,
+      "metadata": {}
     },
     {
       "customType": "BABYLON.PBRMetallicRoughnessMaterial",
@@ -515,7 +517,7 @@
       ],
       "baseTexture": null,
       "metallic": 0.0,
-      "roughness": 0.2,
+      "roughness": 0.1,
       "metallicRoughnessTexture": null,
       "disableLighting": false,
       "invertNormalMapX": false,
@@ -547,13 +549,14 @@
         "tintThickness": 1.0,
         "tintTexture": null
       },
-      "name": "Material #29",
-      "id": "21006084-7a66-4fb3-9835-48193f2ce19a",
+      "name": "StandardSurfaceMaterialOpaque",
+      "id": "cde211a5-1bb2-4457-b84b-b72fec1b95e2",
       "backFaceCulling": true,
       "wireframe": false,
       "alpha": 1.0,
       "alphaMode": 2,
-      "maxSimultaneousLights": 4
+      "maxSimultaneousLights": 4,
+      "metadata": {}
     }
   ],
   "multiMaterials": [],
