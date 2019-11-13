@@ -66,7 +66,8 @@ namespace Maya2Babylon
             var id = materialDependencyNode.uuid().asString();
 
             RaiseMessage(name, 1);
-            
+            RaiseMessage(materialObject.apiType.ToString(), 1);
+
             RaiseVerbose("materialObject.hasFn(MFn.Type.kBlinn)=" + materialObject.hasFn(MFn.Type.kBlinn), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhong)=" + materialObject.hasFn(MFn.Type.kPhong), 2);
             RaiseVerbose("materialObject.hasFn(MFn.Type.kPhongExplorer)=" + materialObject.hasFn(MFn.Type.kPhongExplorer), 2);
@@ -786,8 +787,8 @@ namespace Maya2Babylon
             string graphAttribute = "graph";
             if (materialDependencyNode.hasAttribute(graphAttribute))
             {
-                    string graphValue = materialDependencyNode.findPlug(graphAttribute).asString();
-                    return graphValue.Contains("stingray");
+                string graphValue = materialDependencyNode.findPlug(graphAttribute).asString();
+                return graphValue.Contains("stingray");
             }
             else
             {
@@ -807,22 +808,46 @@ namespace Maya2Babylon
 
         private MFnDependencyNode getBabylonMaterialNode(MFnDependencyNode materialDependencyNode)
         {
-            // Retreive Babylon Attributes dependency node
+            // Retreive connection
             MPlug connectionOutColor = materialDependencyNode.getConnection("outColor");
             MPlugArray destinations = new MPlugArray();
             connectionOutColor.destinations(destinations);
-            MFnDependencyNode babylonAttributesDependencyNode = null;
+
+            // Retreive all Babylon Attributes dependency nodes
+            List<MFnDependencyNode> babylonAttributesNodes = new List<MFnDependencyNode>();
+            
             foreach (MPlug destination in destinations)
             {
                 MObject destinationObject = destination.node;
 
                 if (destinationObject != null && destinationObject.hasFn(MFn.Type.kPluginHardwareShader))
                 {
-                    // TODO - Currently return the last shading engine node
-                    babylonAttributesDependencyNode = new MFnDependencyNode(destinationObject);
+                    MFnDependencyNode babylonAttributesDependencyNode = new MFnDependencyNode(destinationObject);
+
+                    if (babylonAttributesDependencyNode.typeId.id == babylonStandardMaterialNode.id
+                    || babylonAttributesDependencyNode.typeId.id == babylonStingrayPBSMaterialNode.id
+                    || babylonAttributesDependencyNode.typeId.id == babylonAiStandardSurfaceMaterialNode.id)
+                    {
+                        babylonAttributesNodes.Add(babylonAttributesDependencyNode);
+                    }
                 }
             }
-            return babylonAttributesDependencyNode;
+
+            if(babylonAttributesNodes.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                // Occurs only if the user explicitly create a connection with several babylon attributes nodes.
+                if(babylonAttributesNodes.Count > 1)
+                {
+                    RaiseWarning("Babylon attributes node attached to a material should be unique. The first one is going to be used.", 2);
+                }
+
+                // Return the first shading engine node
+                return babylonAttributesNodes[0];
+            }
         }
 
         public string GetMultimaterialUUID(List<MFnDependencyNode> materials)
