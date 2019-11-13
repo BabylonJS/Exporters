@@ -159,7 +159,6 @@ namespace BabylonJS_Installer
                 labelPath.Text = "Path : " + location;
                 labelDate.Visible = true;
                 this.log("Installation found for " + soft + " " + year + "  -> " + location);
-                buttonUpdate.Visible = true;
                 expDate = this.checker.getInstalledExporterTimestamp(soft, location);
                 if (expDate > DateTime.FromFileTime(0)) // we need to use FromFileTime(0) because (FILETIME)0 is 1/1/1601, which windows returns on file not existing.
                 {
@@ -170,6 +169,7 @@ namespace BabylonJS_Installer
                     var isLatest = this.checker.isLatestVersionInstalled(soft, version, location);
                     this.latestInstalled[soft][version] = isLatest;
                     buttonUpdate.Enabled = !isLatest;
+                    buttonUpdate.Visible = true;
                     buttonUpdate.Text = "Update";
                 }
                 else
@@ -178,6 +178,8 @@ namespace BabylonJS_Installer
                     this.log("No exporter installed for " + soft + " " + year);
                     buttonUninstall.Visible = false;
                     buttonUpdate.Text = "Install";
+                    buttonUpdate.Visible = true;
+                    buttonUpdate.Enabled = true;
                 }
             }
             else
@@ -199,7 +201,7 @@ namespace BabylonJS_Installer
 
         private void button_update(string soft, string year)
         {
-            this.downloader.init(soft, year, this.locations[soft][year] + this.checker.libFolder[soft]);
+            this.downloader.init(soft, year, this.locations[soft][year], this.checker.libFolder[soft]);
         }
 
         private void Button_All_Update_Click(object sender, EventArgs e)
