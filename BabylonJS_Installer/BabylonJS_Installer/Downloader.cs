@@ -15,11 +15,12 @@ namespace BabylonJS_Installer
         private string software = "";
         private string version = "";
         private string installDir = "";
+        private string installLibSubDir = "";
         private string latestRelease = "";
 
         public MainForm form;
 
-        public void init(string software, string version, string installDir)
+        public void init(string software, string version, string installDir, string installLibSubDir)
         {
             this.form.goTab("");
             this.form.log("\n----- INSTALLING / DOWNLOADING " + software + " v" + version + " EXPORTER -----\n");
@@ -27,6 +28,7 @@ namespace BabylonJS_Installer
             this.software = software;
             this.version = version;
             this.installDir = installDir;
+            this.installLibSubDir = installLibSubDir;
 
             Action logPostInstall = () =>
             {
@@ -170,7 +172,7 @@ namespace BabylonJS_Installer
                 {
                     foreach (ZipArchiveEntry entry in myZip.Entries)
                     {
-                        entry.ExtractToFile(this.installDir + "/" + entry.Name, true);
+                        entry.ExtractToFile(this.installDir + this.installLibSubDir + "/" + entry.Name, true);
                     }
                 }
             }
@@ -203,6 +205,17 @@ namespace BabylonJS_Installer
                     + "\"" + ex.Message + "\""
                     );
                 return false;
+            }
+
+            try
+            {
+                string uninstallScriptPath = this.installDir + "scripts\\Startup\\BabylonCleanUp.ms";
+                File.Delete(uninstallScriptPath);
+                this.form.log("\nRemoving " + uninstallScriptPath + ".\n");
+            }
+            catch (Exception ex)
+            {
+
             }
 
             this.form.displayInstall(this.software, this.version);
