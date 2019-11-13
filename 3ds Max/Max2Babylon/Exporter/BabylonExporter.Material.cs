@@ -978,14 +978,20 @@ namespace Max2Babylon
         /// <param name="attributesContainer">Name of the object containing babylon attributes</param>
         private void AddStandardBabylonAttributes(string attributesContainer, BabylonStandardMaterial babylonMaterial)
         {
-            string cmdCreateBabylonAttributes = "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x360393c4, 0x6cfefa59)"
+            string cmdCreateBabylonAttributes = GetStandardBabylonAttributesDataCA(babylonMaterial.transparencyMode);
+            AddBabylonAttributes(attributesContainer, cmdCreateBabylonAttributes);
+        }
+
+        public static string GetStandardBabylonAttributesDataCA(int babylonTransparencyMode = 0)
+        {
+            return "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x360393c4, 0x6cfefa59)"
                         + "\r\n" + "("
                         + "\r\n" + "parameters main rollout:params"
                         + "\r\n" + "("
                         + "\r\n" + "babylonUnlit type:#boolean ui:babylonUnlit_ui"
                         //+ "\r\n" + "babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:true"
                         + "\r\n" + "babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4"
-                        + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonMaterial.transparencyMode
+                        + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonTransparencyMode
                         + "\r\n" + ")"
                         + "\r\n" + " "
                         + "\r\n" + "rollout params \"Babylon Attributes\""
@@ -997,7 +1003,6 @@ namespace Max2Babylon
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
                         + "\r\n" + ");";
-            AddBabylonAttributes(attributesContainer, cmdCreateBabylonAttributes);
         }
 
         /// <summary>
@@ -1009,14 +1014,20 @@ namespace Max2Babylon
         /// <param name="attributesContainer">Name of the object containing babylon attributes</param>
         private void AddPhysicalBabylonAttributes(string attributesContainer, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
-            string cmdCreateBabylonAttributes = "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x4f890715, 0x24da1759)"
+            string cmdCreateBabylonAttributes = GetPhysicalBabylonAttributesDataCA(babylonMaterial.transparencyMode);
+            AddBabylonAttributes(attributesContainer, cmdCreateBabylonAttributes);
+        }
+
+        public static string GetPhysicalBabylonAttributesDataCA(int babylonTransparencyMode = 0)
+        {
+            return "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x4f890715, 0x24da1759)"
                         + "\r\n" + "("
                         + "\r\n" + "parameters main rollout:params"
                         + "\r\n" + "("
                         + "\r\n" + "babylonUnlit type:#boolean ui:babylonUnlit_ui"
                         + "\r\n" + "babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:true"
                         + "\r\n" + "babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4"
-                        + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonMaterial.transparencyMode
+                        + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonTransparencyMode
                         + "\r\n" + ")"
                         + "\r\n" + " "
                         + "\r\n" + "rollout params \"Babylon Attributes\""
@@ -1028,7 +1039,6 @@ namespace Max2Babylon
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
                         + "\r\n" + ");";
-            AddBabylonAttributes(attributesContainer, cmdCreateBabylonAttributes);
         }
 
         /// <summary>
@@ -1040,14 +1050,20 @@ namespace Max2Babylon
         /// <param name="attributesContainer">Name of the object containing babylon attributes</param>
         private void AddAiStandardSurfaceBabylonAttributes(string attributesContainer, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
-            string cmdCreateBabylonAttributes = "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x7c15a5ea, 0x5fc4d835)"
+            string cmdCreateBabylonAttributes = GetAiStandardSurfaceBabylonAttributesDataCA(babylonMaterial.transparencyMode);
+            AddBabylonAttributes(attributesContainer, cmdCreateBabylonAttributes);
+        }
+
+        public static string GetAiStandardSurfaceBabylonAttributesDataCA(int babylonTransparencyMode = 0)
+        {
+            return "babylonAttributesDataCA = attributes \"Babylon Attributes\" attribID:#(0x7c15a5ea, 0x5fc4d835)"
                         + "\r\n" + "("
                         + "\r\n" + "parameters main rollout:params"
                         + "\r\n" + "("
                         + "\r\n" + "babylonUnlit type:#boolean ui:babylonUnlit_ui"
                         + "\r\n" + "babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:true"
                         + "\r\n" + "babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4"
-                        + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonMaterial.transparencyMode
+                        + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonTransparencyMode
                         + "\r\n" + ")"
                         + "\r\n" + " "
                         + "\r\n" + "rollout params \"Babylon Attributes\""
@@ -1059,7 +1075,6 @@ namespace Max2Babylon
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
                         + "\r\n" + ");";
-            AddBabylonAttributes(attributesContainer, cmdCreateBabylonAttributes);
         }
 
         private void AddBabylonAttributes(string attributesContainer, string cmdCreateBabylonAttributes)

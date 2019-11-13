@@ -31,7 +31,7 @@ namespace Babylon2GLTF
             };
 
             // Custom user properties
-            //light.extras = babylonLight.metadata;
+            light.extras = babylonLight.metadata;
 
             switch (babylonLight.type)
             {

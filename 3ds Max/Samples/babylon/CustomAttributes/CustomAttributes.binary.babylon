@@ -156,7 +156,7 @@
       "includedOnlyMeshesIds": [],
       "lightmapMode": null,
       "falloffType": null,
-      "name": "FDirect001",
+      "name": "DirectLight",
       "id": "4998978b-8790-43f4-90b5-a871203cc57b",
       "parentId": null,
       "position": [
@@ -332,7 +332,7 @@
           "physicsMass": 0.0,
           "physicsFriction": 0.0,
           "physicsRestitution": 0.0,
-          "name": "Box002",
+          "name": "InstanceMesh",
           "id": "2c43f650-0e93-4dcb-bc64-43db21436905",
           "parentId": null,
           "position": [
@@ -425,7 +425,7 @@
       "physicsMass": 0.0,
       "physicsFriction": 0.0,
       "physicsRestitution": 0.0,
-      "name": "Box001",
+      "name": "MasterMesh",
       "id": "730e2753-eb4e-48a1-b445-9aed74763d95",
       "parentId": null,
       "position": [
@@ -498,7 +498,7 @@
         1.0,
         0.5
       ],
-      "delayLoadingFile": "CustomAttributes.Box001.730e2753-eb4e-48a1-b445-9aed74763d95.babylonbinarymeshdata",
+      "delayLoadingFile": "CustomAttributes.MasterMesh.730e2753-eb4e-48a1-b445-9aed74763d95.babylonbinarymeshdata",
       "hasUVs": true,
       "_binaryInfo": {
         "positionsAttrDesc": {
