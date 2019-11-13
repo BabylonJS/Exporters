@@ -37,10 +37,6 @@ namespace Babylon2GLTF
             // Custom user properties
             if(babylonCamera.metadata.Count != 0)
             {
-                if(gltfCamera.extras == null)
-                {
-                    gltfCamera.extras = new Dictionary<string, object>();
-                }
                 gltfCamera.extras = babylonCamera.metadata;
             }
 

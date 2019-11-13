@@ -89,10 +89,6 @@ namespace Babylon2GLTF
             // Custom user properties
             if (babylonLight.metadata.Count != 0)
             {
-                if (gltfNode.extras == null)
-                {
-                    gltfNode.extras = new Dictionary<string, object>();
-                }
                 gltfNode.extras = babylonLight.metadata;
             }
 

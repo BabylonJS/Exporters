@@ -137,10 +137,6 @@ namespace Babylon2GLTF
                 //Custom user properties
                 if (babylonStandardMaterial.metadata.Count != 0)
                 {
-                    if (gltfMaterial.extras == null)
-                    {
-                        gltfMaterial.extras = new Dictionary<string, object>();
-                    }
                     gltfMaterial.extras = babylonStandardMaterial.metadata;
                 }
 

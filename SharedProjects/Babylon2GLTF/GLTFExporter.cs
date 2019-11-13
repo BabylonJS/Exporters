@@ -555,10 +555,6 @@ namespace Babylon2GLTF
             // User Custom Attributes
             if (babylonNode.metadata != null && babylonNode.metadata.Count != 0)
             {
-                if (gltfNode.extras == null)
-                {
-                    gltfNode.extras = new Dictionary<string, object>();
-                }
                 gltfNode.extras = babylonNode.metadata;
             }
 
