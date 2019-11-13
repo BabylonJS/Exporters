@@ -87,7 +87,14 @@ namespace Babylon2GLTF
         {
 
             // Custom user properties
-            gltfNode.extras = babylonLight.metadata;
+            if (babylonLight.metadata.Count != 0)
+            {
+                if (gltfNode.extras == null)
+                {
+                    gltfNode.extras = new Dictionary<string, object>();
+                }
+                gltfNode.extras = babylonLight.metadata;
+            }
 
             if (exportParameters.enableKHRLightsPunctual)
             { 
