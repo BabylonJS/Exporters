@@ -35,7 +35,7 @@ namespace Babylon2GLTF
             gltfCamera.gltfNode = gltfNode;
 
             // Custom user properties
-            if(babylonCamera.metadata.Count != 0)
+            if(babylonCamera.metadata != null && babylonCamera.metadata.Count != 0)
             {
                 gltfCamera.extras = babylonCamera.metadata;
             }

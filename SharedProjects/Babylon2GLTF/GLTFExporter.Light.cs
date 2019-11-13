@@ -31,7 +31,10 @@ namespace Babylon2GLTF
             };
 
             // Custom user properties
-            light.extras = babylonLight.metadata;
+            if (babylonLight.metadata != null && babylonLight.metadata.Count != 0)
+            {
+                light.extras = babylonLight.metadata;
+            }
 
             switch (babylonLight.type)
             {
@@ -87,7 +90,7 @@ namespace Babylon2GLTF
         {
 
             // Custom user properties
-            if (babylonLight.metadata.Count != 0)
+            if (babylonLight.metadata != null && babylonLight.metadata.Count != 0)
             {
                 gltfNode.extras = babylonLight.metadata;
             }

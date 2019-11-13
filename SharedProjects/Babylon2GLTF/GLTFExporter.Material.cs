@@ -135,7 +135,7 @@ namespace Babylon2GLTF
                 gltf.MaterialsList.Add(gltfMaterial);
 
                 //Custom user properties
-                if (babylonStandardMaterial.metadata.Count != 0)
+                if (babylonStandardMaterial.metadata != null && babylonStandardMaterial.metadata.Count != 0)
                 {
                     gltfMaterial.extras = babylonStandardMaterial.metadata;
                 }
@@ -460,6 +460,12 @@ namespace Babylon2GLTF
                 gltfMaterial.id = babylonMaterial.id;
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
+
+                //Custom user properties
+                if (babylonMaterial.metadata != null && babylonMaterial.metadata.Count != 0)
+                {
+                    gltfMaterial.extras = babylonMaterial.metadata;
+                }
 
                 // Alpha
                 string alphaMode;

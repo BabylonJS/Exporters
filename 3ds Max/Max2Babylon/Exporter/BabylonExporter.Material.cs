@@ -45,6 +45,10 @@ namespace Max2Babylon
                 RaiseVerbose("materialNode.NumberOfTextureMaps=" + materialNode.NumberOfTextureMaps, 2);
 
                 Print(materialNode.IPropertyContainer, 2);
+                for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
+                {
+                    RaiseVerbose("Texture[" + i + "] is named '" + materialNode.MaxMaterial.GetSubTexmapSlotName(i) + "'", 2);
+                }
             }
             #endregion
 
@@ -99,8 +103,16 @@ namespace Max2Babylon
             // check custom exporters first, to allow custom exporters of supported material classes
             IMaxMaterialExporter materialExporter;
             materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter);
-
-            var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
+            
+            IStdMat2 stdMat = null;
+            if (materialNode.MaxMaterial != null && materialNode.MaxMaterial.NumParamBlocks > 0)
+            {
+                var paramBlock = materialNode.MaxMaterial.GetParamBlock(0);
+                if (paramBlock != null && paramBlock.Owner != null)
+                {
+                    stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+                }
+            }
 
             if (isBabylonExported && materialExporter != null && materialExporter is IMaxBabylonMaterialExporter)
             {
@@ -577,7 +589,7 @@ namespace Max2Babylon
                 if (isTransparencyModeFromBabylonAttributes == false || babylonMaterial.transparencyMode != 0)
                 {
                     // Retreive alpha value from R channel of opacity color
-                    babylonMaterial.alpha = propertyContainer.GetPoint3Property(125)[0];
+                    babylonMaterial.alpha = propertyContainer.GetPoint3Property("opacity")[0];
                 }
 
                 // Color: base * weight
@@ -647,7 +659,7 @@ namespace Max2Babylon
                 ITexmap alphaTexmap = null;
                 if (isTransparencyModeFromBabylonAttributes == false || babylonMaterial.transparencyMode != 0)
                 {
-                    alphaTexmap = _getTexMap(materialNode, 40);
+                    alphaTexmap = _getTexMap(materialNode, "opacity");
                 }
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name, true);
 
@@ -878,7 +890,15 @@ namespace Max2Babylon
             else
             {
                 // Standard material
-                var stdMat = materialNode.MaxMaterial.NumParamBlocks > 0 ? materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2 : null;
+                IStdMat2 stdMat = null;
+                if (materialNode.MaxMaterial != null && materialNode.MaxMaterial.NumParamBlocks > 0)
+                {
+                    var paramBlock = materialNode.MaxMaterial.GetParamBlock(0);
+                    if (paramBlock != null && paramBlock.Owner != null)
+                    {
+                        stdMat = materialNode.MaxMaterial.GetParamBlock(0).Owner as IStdMat2;
+                    }
+                }
 
                 if (stdMat != null)
                 {
