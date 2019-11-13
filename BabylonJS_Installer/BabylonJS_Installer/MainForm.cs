@@ -201,7 +201,7 @@ namespace BabylonJS_Installer
 
         private void button_update(string soft, string year)
         {
-            this.downloader.init(soft, year, this.locations[soft][year] + this.checker.libFolder[soft]);
+            this.downloader.init(soft, year, this.locations[soft][year], this.checker.libFolder[soft]);
         }
 
         private void Button_All_Update_Click(object sender, EventArgs e)
