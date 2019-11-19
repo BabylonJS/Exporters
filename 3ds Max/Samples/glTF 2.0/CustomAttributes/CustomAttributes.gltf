@@ -3,6 +3,9 @@
     "version": "2.0",
     "generator": "babylon.js glTF exporter for 3dsmax 2019 v1.5.0"
   },
+  "extensionsUsed": [
+    "KHR_lights_punctual"
+  ],
   "scene": 0,
   "scenes": [
     {
@@ -54,7 +57,7 @@
         1,
         1
       ],
-      "name": "Box001",
+      "name": "MasterMesh",
       "extras": {
         "myAngle": 3.14159274,
         "myArray": 3,
@@ -124,7 +127,7 @@
         1,
         1
       ],
-      "name": "Box002",
+      "name": "InstanceMesh",
       "extras": {
         "myAngle": 3.14159274,
         "myArray": 3,
@@ -193,7 +196,12 @@
         1,
         0.99999994
       ],
-      "name": "FDirect001",
+      "name": "DirectLight",
+      "extensions": {
+        "KHR_lights_punctual": {
+          "light": 0
+        }
+      },
       "extras": {
         "myAngle": 6.28318548,
         "myArray": 2,
@@ -391,7 +399,7 @@
           "material": 0
         }
       ],
-      "name": "Box001"
+      "name": "MasterMesh"
     }
   ],
   "accessors": [
@@ -532,5 +540,70 @@
         "myWorldUnits": 10
       }
     }
-  ]
+  ],
+  "extensions": {
+    "KHR_lights_punctual": {
+      "lights": [
+        {
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "intensity": 1,
+          "type": "directional",
+          "extras": {
+            "myAngle": 6.28318548,
+            "myArray": 2,
+            "myBoolean": true,
+            "myColor": [
+              0.992157,
+              0.8666668,
+              0.03137255
+            ],
+            "myFloat": 10,
+            "myFRGBA": [
+              0.9921569,
+              0.866666734,
+              0.03137255,
+              0.5019608
+            ],
+            "myInteger": 10,
+            "myPercent": 0.099999994,
+            "MyString": "Hello",
+            "myTextureMap": {
+              "name": "gradation_horizontal.jpg",
+              "level": 1,
+              "hasAlpha": true,
+              "getAlphaFromRGB": false,
+              "coordinatesMode": 0,
+              "isCube": false,
+              "uOffset": 0,
+              "vOffset": 0,
+              "uScale": 1,
+              "vScale": -1,
+              "uRotationCenter": 0,
+              "vRotationCenter": 0,
+              "wRotationCenter": 0.5,
+              "invertY": false,
+              "uAng": 0,
+              "vAng": 0,
+              "wAng": 0,
+              "wrapU": 1,
+              "wrapV": 1,
+              "coordinatesIndex": 0,
+              "isRenderTarget": false,
+              "renderTargetSize": 0,
+              "mirrorPlane": null,
+              "renderList": null,
+              "animations": [],
+              "extensions": null,
+              "samplingMode": 3
+            },
+            "myWorldUnits": 10
+          }
+        }
+      ]
+    }
+  }
 }

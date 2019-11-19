@@ -1060,6 +1060,18 @@ namespace Max2Babylon
             return texMap;
         }
 
+        private ITexmap _getTexMap(IIGameMaterial materialNode, string name)
+        {
+            for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
+            {
+                if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == name)
+                {
+                    return _getTexMap(materialNode, i);
+                }
+            }
+            return null;
+        }
+
         private bool isTextureOk(ITexmap texMap)
         {
             var texture = _getBitmapTex(texMap);

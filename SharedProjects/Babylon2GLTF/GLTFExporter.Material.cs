@@ -4,6 +4,7 @@ using GLTFExport.Entities;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Collections.Generic;
 using Utilities;
 
 namespace Babylon2GLTF
@@ -134,7 +135,10 @@ namespace Babylon2GLTF
                 gltf.MaterialsList.Add(gltfMaterial);
 
                 //Custom user properties
-                gltfMaterial.extras = babylonStandardMaterial.metadata;
+                if (babylonStandardMaterial.metadata != null && babylonStandardMaterial.metadata.Count != 0)
+                {
+                    gltfMaterial.extras = babylonStandardMaterial.metadata;
+                }
 
                 // Alpha
                 string alphaMode;
@@ -456,6 +460,12 @@ namespace Babylon2GLTF
                 gltfMaterial.id = babylonMaterial.id;
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
+
+                //Custom user properties
+                if (babylonMaterial.metadata != null && babylonMaterial.metadata.Count != 0)
+                {
+                    gltfMaterial.extras = babylonMaterial.metadata;
+                }
 
                 // Alpha
                 string alphaMode;

@@ -1,14 +1,14 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
 
-[assembly: MPxNodeClass(typeof(Maya2Babylon.babylonAiStandardSurfaceMaterialNode), "babylonAiStandardSurfaceMaterialNode", 0x0008106d,
+[assembly: MPxNodeClass(typeof(Maya2Babylon.babylonAiStandardSurfaceMaterialNode), "babylonAiStandardSurfaceMaterialNode", 0x0008106d, //528493 in decimal // TODO - Ask Autodesk for a unique ID
     NodeType = MPxNode.NodeType.kHardwareShader, Classification = "shader/surface/utility")]
 
 namespace Maya2Babylon
 {
     public class babylonAiStandardSurfaceMaterialNode : MPxNode
     {
-        public static MTypeId sId = new MTypeId(0xF3560C32); // TODO - Ask Autodesk for a unique ID
+        public static int id = 528493;
 
         [MPxNodeInitializer()]
         public static bool initialize()
