@@ -38,7 +38,7 @@ namespace Maya2Babylon
             MGlobal.executeCommand($"connectAttr -f {materialDependencyNode.name}.outColor {babylonMaterialNodeName}.outTransparency;");
         }
 
-        public static void Init(MFnDependencyNode babylonAttributesDependencyNode, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
+        public static void Init(MFnDependencyNode babylonAttributesDependencyNode, BabylonPBRMetallicRoughnessMaterial babylonMaterial = null)
         {
             // Ensure all attributes are setup
             if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode") == false)
@@ -46,7 +46,8 @@ namespace Maya2Babylon
                 MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Opacity Mode\" - at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
 
                 // Init alpha mode value based on material opacity
-                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
+                if(babylonMaterial != null)
+                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
             }
             if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling") == false)
             {
@@ -61,6 +62,15 @@ namespace Maya2Babylon
             {
                 MGlobal.executeCommand($"addAttr -ln \"babylonMaxSimultaneousLights\" -nn \"Max Simultaneous Lights\" - at long  -min 1 -dv 4 {babylonAttributesDependencyNode.name};");
             }
+        }
+
+        public override bool connectionMade(MPlug plug, MPlug otherPlug, bool asSrc)
+        {
+            MFnDependencyNode sourceNodePlug = new MFnDependencyNode(plug.node);
+
+            Init(sourceNodePlug);
+
+            return base.connectionMade(plug, otherPlug, asSrc);
         }
     }
 }
