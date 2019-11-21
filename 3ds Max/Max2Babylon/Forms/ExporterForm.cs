@@ -59,11 +59,11 @@ namespace Max2Babylon
         {
             string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string absoluteModelPath = Tools.ResolveRelativePath(storedModelPath);
-            txtModelName.MaxPath(absoluteModelPath);
+            txtModelPath.MaxPath(absoluteModelPath);
 
             string storedFolderPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.TextureFolderPathProperty, string.Empty);
             string absoluteTexturesFolderPath = Tools.ResolveRelativePath(storedFolderPath);
-            txtTextureName.MaxPath(absoluteTexturesFolderPath);
+            txtTexturesPath.MaxPath(absoluteTexturesFolderPath);
 
             singleExportItem = new ExportItem(absoluteModelPath);
 
@@ -119,9 +119,9 @@ namespace Max2Babylon
 
         private void butModelBrowse_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtModelName.Text))
+            if (!string.IsNullOrEmpty(txtModelPath.Text))
             {
-                string intialDirectory = Path.GetDirectoryName(txtModelName.Text);
+                string intialDirectory = Path.GetDirectoryName(txtModelPath.Text);
 
                 if (!Directory.Exists(intialDirectory))
                 {
@@ -138,13 +138,18 @@ namespace Max2Babylon
 
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                txtModelName.MaxPath(saveFileDialog.FileName);
+                txtModelPath.MaxPath(saveFileDialog.FileName);
+                if (string.IsNullOrWhiteSpace(txtTexturesPath.Text))
+                {
+                    string defaultTexturesDir = Path.GetDirectoryName(txtModelPath.Text);
+                    txtTexturesPath.MaxPath(defaultTexturesDir);
+                }
             }
         }
 
         private void btnTextureBrowse_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtModelName.Text))
+            if (string.IsNullOrWhiteSpace(txtModelPath.Text))
             {
                 MessageBox.Show("Select model file path first");
                 return;
@@ -152,11 +157,11 @@ namespace Max2Babylon
 
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
 
-            string intialDirectory = txtTextureName.Text;
+            string intialDirectory = txtTexturesPath.Text;
 
             if (!Directory.Exists(intialDirectory))
             {
-                intialDirectory = Path.GetDirectoryName(txtModelName.Text);
+                intialDirectory = Path.GetDirectoryName(txtModelPath.Text);
             }
 
             if (!Directory.Exists(intialDirectory))
@@ -175,14 +180,14 @@ namespace Max2Babylon
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 string selectedFolderPath = dialog.FileName;
-                string absoluteModelPath = txtModelName.Text;
+                string absoluteModelPath = txtModelPath.Text;
 
                 if (!PathUtilities.IsBelowPath(selectedFolderPath, absoluteModelPath))
                 {
-                    MessageBox.Show("WARNING: folderPath should be below model file path");
+                    CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderer support this feature",0);
                 }
 
-                txtTextureName.MaxPath(selectedFolderPath);
+                txtTexturesPath.MaxPath(selectedFolderPath);
             }
         }
 
@@ -282,8 +287,8 @@ namespace Max2Babylon
             Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
             Tools.UpdateCheckBox(chkApplyPreprocessToScene,Loader.Core.RootNode, "babylonjs_applyPreprocess");
 
-            Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelName.Text));
-            Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(txtTextureName.Text));
+            Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelPath.Text));
+            Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(txtTexturesPath.Text));
 
             Tools.UpdateCheckBox(chkFullPBR, Loader.Core.RootNode, ExportParameters.PBRFullPropertyName);
             Tools.UpdateCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
@@ -347,8 +352,8 @@ namespace Max2Babylon
             bool success = true;
             try
             {
-                string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : txtModelName.Text;
-                string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderPath : txtTextureName.Text;
+                string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : txtModelPath.Text;
+                string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderPath : txtTexturesPath.Text;
                 MaxExportParameters exportParameters = new MaxExportParameters
                 {
                     outputPath = modelAbsolutePath,
@@ -530,7 +535,7 @@ namespace Max2Babylon
 
         private void txtFilename_TextChanged(object sender, EventArgs e)
         {
-            butExport.Enabled = !string.IsNullOrEmpty(txtModelName.Text.Trim());
+            butExport.Enabled = !string.IsNullOrEmpty(txtModelPath.Text.Trim());
             butExportAndRun.Enabled = butExport.Enabled && WebServer.IsSupported;
         }
 
@@ -560,8 +565,8 @@ namespace Max2Babylon
 
             if (await DoExport(singleExportItem))
             {
-                WebServer.SceneFilename = Path.GetFileName(txtModelName.Text);
-                WebServer.SceneFolder = Path.GetDirectoryName(txtModelName.Text);
+                WebServer.SceneFilename = Path.GetFileName(txtModelPath.Text);
+                WebServer.SceneFolder = Path.GetDirectoryName(txtModelPath.Text);
 
                 Process.Start(WebServer.url + WebServer.SceneFilename);
 
@@ -598,8 +603,8 @@ namespace Max2Babylon
                     chkDracoCompression.Enabled = false;
                     chkWriteTextures.Enabled = true;
                     chkOverwriteTextures.Enabled = true;
-                    txtTextureName.Text = string.Empty;
-                    txtTextureName.Enabled = false;
+                    txtTexturesPath.Text = string.Empty;
+                    txtTexturesPath.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
                     chkNoAutoLight.Enabled = true;
@@ -616,7 +621,7 @@ namespace Max2Babylon
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkWriteTextures.Enabled = true;
                     chkOverwriteTextures.Enabled = true;
-                    txtTextureName.Enabled = true;
+                    txtTexturesPath.Enabled = true;
                     textureLabel.Enabled = true;
                     btnTxtBrowse.Enabled = true;
                     chkNoAutoLight.Enabled = false;
@@ -638,8 +643,8 @@ namespace Max2Babylon
                     chkWriteTextures.Enabled = false;
                     chkOverwriteTextures.Checked = true;
                     chkOverwriteTextures.Enabled = false;
-                    txtTextureName.Text = string.Empty;
-                    txtTextureName.Enabled = false;
+                    txtTexturesPath.Text = string.Empty;
+                    txtTexturesPath.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
                     chkNoAutoLight.Enabled = false;
@@ -655,8 +660,8 @@ namespace Max2Babylon
                     break;
             }
 
-            string newModelPath = Path.ChangeExtension(txtModelName.Text, this.saveFileDialog.DefaultExt);
-            this.txtModelName.MaxPath(newModelPath);
+            string newModelPath = Path.ChangeExtension(txtModelPath.Text, this.saveFileDialog.DefaultExt);
+            this.txtModelPath.MaxPath(newModelPath);
         }
 
         /// <summary>

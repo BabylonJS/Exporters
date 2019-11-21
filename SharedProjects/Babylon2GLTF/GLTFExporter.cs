@@ -482,7 +482,7 @@ namespace Babylon2GLTF
 
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
-                var path = Path.Combine(gltf.OutputFolder, Uri.UnescapeDataString(gltfImage.uri));
+                var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
                 byte[] imageBytes = File.ReadAllBytes(path);
 
                 // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
