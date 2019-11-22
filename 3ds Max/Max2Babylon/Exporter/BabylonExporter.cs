@@ -255,12 +255,14 @@ namespace Max2Babylon
 
         public void MergeAllXrefRecords()
         {
+            if (Loader.IIObjXRefManager.RecordCount <= 0) return;
             while (Loader.IIObjXRefManager.RecordCount>0)
             {
                 var record = Loader.IIObjXRefManager.GetRecord(0);
                 RaiseMessage($"Merge XRef record {record.SrcFile.FileName}...");
                 Loader.IIObjXRefManager.MergeRecordIntoScene(record);
-                
+                //todo: load data from animation helper of xref scene merged
+                //to prevent to load animations from helper created without intenction
             }
             AnimationGroupList.LoadDataFromAnimationHelpers();
         }
@@ -930,26 +932,34 @@ namespace Max2Babylon
         private BabylonNode exportNodeRec(IIGameNode maxGameNode, BabylonScene babylonScene, IIGameScene maxGameScene)
         {
             BabylonNode babylonNode = null;
-            switch (maxGameNode.IGameObject.IGameType)
+            try
             {
-                case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
-                    babylonNode = ExportMesh(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Camera:
-                    babylonNode = ExportCamera(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Light:
-                    babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
-                    // Create a dummy (empty mesh) when type is unknown
-                    // An example of unknown type object is the target of target light or camera
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-                    break;
-                default:
-                    // The type of node is not exportable (helper, spline, xref...)
-                    break;
+                switch (maxGameNode.IGameObject.IGameType)
+                {
+                    case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
+                        babylonNode = ExportMesh(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Camera:
+                        babylonNode = ExportCamera(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Light:
+                        babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
+                        // Create a dummy (empty mesh) when type is unknown
+                        // An example of unknown type object is the target of target light or camera
+                        babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    default:
+                        // The type of node is not exportable (helper, spline, xref...)
+                        break;
+                }
             }
+            catch (Exception e)
+            {
+                this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 2);
+            }
+
             CheckCancelled();
 
             // If node is not exported successfully but is significant
