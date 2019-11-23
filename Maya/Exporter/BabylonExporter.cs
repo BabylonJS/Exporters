@@ -321,7 +321,7 @@ namespace Maya2Babylon
             var sceneScaleFactor = exportParameters.scaleFactor;
             if (exportParameters.scaleFactor != 1.0f)
             {
-                RaiseMessage("A root node is added for scaling", 1);
+                RaiseMessage(String.Format("A root node is added to globally scale the scene by {0}", sceneScaleFactor), 1);
 
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Tools.GenerateUUID() };

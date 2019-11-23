@@ -349,12 +349,31 @@ namespace Max2Babylon
             {
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : txtModelName.Text;
                 string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderPath : txtTextureName.Text;
+
+                var scaleFactorParsed = 1.0f;
+                var textureQualityParsed = 100L;
+                try
+                {
+                    scaleFactorParsed = float.Parse(txtScaleFactor.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Scale Factor value: {0}", txtScaleFactor.Text));
+                }
+                try
+                {
+                    textureQualityParsed = long.Parse(txtQuality.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Texture Quality value: {0}", txtScaleFactor.Text));
+                }
                 MaxExportParameters exportParameters = new MaxExportParameters
                 {
                     outputPath = modelAbsolutePath,
                     textureFolder = textureExportPath,
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
-                    scaleFactor = float.Parse(txtScaleFactor.Text),
+                    scaleFactor = scaleFactorParsed,
                     writeTextures = chkWriteTextures.Checked,
                     overwriteTextures = chkOverwriteTextures.Checked,
                     exportHiddenObjects = chkHidden.Checked,
@@ -364,7 +383,7 @@ namespace Max2Babylon
                     exportTangents = chkExportTangents.Checked,
                     exportMorphTangents = chkExportMorphTangents.Checked,
                     exportMorphNormals = chkExportMorphNormals.Checked,
-                    txtQuality = long.Parse(txtQuality.Text),
+                    txtQuality = textureQualityParsed,
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
                     bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
                     dracoCompression = chkDracoCompression.Checked,

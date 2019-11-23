@@ -206,6 +206,23 @@ namespace Maya2Babylon.Forms
             {
                 var scaleFactorParsed = 1.0f;
                 var textureQualityParsed = 100L;
+                try
+                {
+                    scaleFactorParsed = float.Parse(txtScaleFactor.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Scale Factor value: {0}", txtScaleFactor.Text));
+                }
+                try
+                {
+                    textureQualityParsed = long.Parse(txtQuality.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Texture Quality value: {0}", txtScaleFactor.Text));
+                }
+    
                 var exportParameters = new ExportParameters
                 {
                     outputPath = txtFilename.Text,
@@ -218,9 +235,9 @@ namespace Maya2Babylon.Forms
                     overwriteTextures = chkCopyTextures.Checked,
                     optimizeVertices = chkOptimizeVertices.Checked,
                     exportTangents = chkExportTangents.Checked,
-                    scaleFactor = float.TryParse(txtScaleFactor.Text, out scaleFactorParsed) ? scaleFactorParsed : 1.0f,
+                    scaleFactor = scaleFactorParsed,
                     exportSkins = chkExportSkin.Checked,
-                    txtQuality = long.TryParse(txtQuality.Text, out textureQualityParsed) ? textureQualityParsed : 100,
+                    txtQuality = textureQualityParsed,
                     dracoCompression = chkDracoCompression.Checked,
                     exportMorphNormals = chkExportMorphNormal.Checked,
                     exportMorphTangents = chkExportMorphTangent.Checked,
@@ -241,9 +258,10 @@ namespace Maya2Babylon.Forms
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
-
+                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message, Color.Red);
+                currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
+
                 progressBar.Value = 0;
                 success = false;
             }
