@@ -144,6 +144,11 @@ namespace Max2Babylon
                     string defaultTexturesDir = Path.GetDirectoryName(txtModelPath.Text);
                     txtTexturesPath.MaxPath(defaultTexturesDir);
                 }
+
+                if (!PathUtilities.IsBelowPath(txtTexturesPath.Text, txtModelPath.Text))
+                {
+                    CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderers support this feature", 0);
+                }
             }
         }
 
@@ -184,7 +189,7 @@ namespace Max2Babylon
 
                 if (!PathUtilities.IsBelowPath(selectedFolderPath, absoluteModelPath))
                 {
-                    CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderer support this feature",0);
+                    CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderers support this feature",0);
                 }
 
                 txtTexturesPath.MaxPath(selectedFolderPath);
