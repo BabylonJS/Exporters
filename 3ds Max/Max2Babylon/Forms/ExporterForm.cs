@@ -27,9 +27,37 @@ namespace Max2Babylon
 
         private ExportItem singleExportItem;
 
+
+        private  bool filePostOpenCallback = false;
+        private GlobalDelegates.Delegate5 m_FilePostOpenDelegate;
+
+        private void RegisterFilePreOpen()
+        {
+            if (!filePostOpenCallback)
+            {
+                m_FilePostOpenDelegate = new GlobalDelegates.Delegate5(OnFilePostOpen);
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePostOpenDelegate, null, SystemNotificationCode.FilePostOpen );
+
+                filePostOpenCallback = true;
+            }
+        }
+
+        private void OnFilePostOpen(IntPtr param0, IntPtr param1)
+        {
+            LoadOptions();
+        }
+
+        private void OnFilePostOpen(IntPtr param0, INotifyInfo param1)
+        {
+            LoadOptions();
+        }
+
         public ExporterForm(BabylonExportActionItem babylonExportAction)
         {
             InitializeComponent();
+            RegisterFilePreOpen();
+
+
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
@@ -55,7 +83,7 @@ namespace Max2Babylon
             groupBox1.MouseMove += groupBox1_MouseMove;
         }
 
-        private void ExporterForm_Load(object sender, EventArgs e)
+        private void LoadOptions()
         {
             string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string absoluteModelPath = Tools.ResolveRelativePath(storedModelPath);
@@ -105,6 +133,11 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces", 0);
             Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
             Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
+        }
+
+        private void ExporterForm_Load(object sender, EventArgs e)
+        {
+            LoadOptions();
 
             var maxVersion = Tools.GetMaxVersion();
             if (maxVersion.Major == 22 && maxVersion.Minor < 2)
