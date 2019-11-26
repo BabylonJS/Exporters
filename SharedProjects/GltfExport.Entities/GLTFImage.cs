@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace GLTFExport.Entities
@@ -12,14 +13,7 @@ namespace GLTFExport.Entities
             get { return _uri; }
             set
             {
-                if (value == null)
-                {
-                    _uri = null;
-                }
-                else
-                {
-                    _uri = Uri.EscapeDataString(value);
-                }
+                _uri = value;
             }
         }
 

@@ -470,7 +470,11 @@ namespace Babylon2GLTF
             // Use the bounded writer in case some values are infinity ()
             using (var jsonWriter = new JsonTextWriterBounded(sw))
             {
+#if DEBUG
+                jsonWriter.Formatting = Formatting.Indented;
+#else
                 jsonWriter.Formatting = Formatting.None;
+#endif
                 jsonSerializer.Serialize(jsonWriter, gltf);
             }
             return sb.ToString();
@@ -482,7 +486,7 @@ namespace Babylon2GLTF
 
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
-                var path = Path.Combine(gltf.OutputFolder, Uri.UnescapeDataString(gltfImage.uri));
+                var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
                 byte[] imageBytes = File.ReadAllBytes(path);
 
                 // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
