@@ -27,9 +27,37 @@ namespace Max2Babylon
 
         private ExportItem singleExportItem;
 
+
+        private  bool filePostOpenCallback = false;
+        private GlobalDelegates.Delegate5 m_FilePostOpenDelegate;
+
+        private void RegisterFilePreOpen()
+        {
+            if (!filePostOpenCallback)
+            {
+                m_FilePostOpenDelegate = new GlobalDelegates.Delegate5(OnFilePostOpen);
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePostOpenDelegate, null, SystemNotificationCode.FilePostOpen );
+
+                filePostOpenCallback = true;
+            }
+        }
+
+        private void OnFilePostOpen(IntPtr param0, IntPtr param1)
+        {
+            LoadOptions();
+        }
+
+        private void OnFilePostOpen(IntPtr param0, INotifyInfo param1)
+        {
+            LoadOptions();
+        }
+
         public ExporterForm(BabylonExportActionItem babylonExportAction)
         {
             InitializeComponent();
+            RegisterFilePreOpen();
+
+
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
@@ -55,7 +83,7 @@ namespace Max2Babylon
             groupBox1.MouseMove += groupBox1_MouseMove;
         }
 
-        private void ExporterForm_Load(object sender, EventArgs e)
+        private void LoadOptions()
         {
             string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string absoluteModelPath = Tools.ResolveRelativePath(storedModelPath);
@@ -105,6 +133,11 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces", 0);
             Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
             Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
+        }
+
+        private void ExporterForm_Load(object sender, EventArgs e)
+        {
+            LoadOptions();
 
             var maxVersion = Tools.GetMaxVersion();
             if (maxVersion.Major == 22 && maxVersion.Minor < 2)
@@ -356,15 +389,35 @@ namespace Max2Babylon
 
             bool success = true;
             try
-            {
+            {                
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : txtModelPath.Text;
                 string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderPath : txtTexturesPath.Text;
+
+                var scaleFactorParsed = 1.0f;
+                var textureQualityParsed = 100L;
+                try
+                {
+                    scaleFactorParsed = float.Parse(txtScaleFactor.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Scale Factor value: {0}", txtScaleFactor.Text));
+                }
+                try
+                {
+                    textureQualityParsed = long.Parse(txtQuality.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Texture Quality value: {0}", txtScaleFactor.Text));
+                }
+
                 MaxExportParameters exportParameters = new MaxExportParameters
                 {
                     outputPath = modelAbsolutePath,
                     textureFolder = textureExportPath,
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
-                    scaleFactor = float.Parse(txtScaleFactor.Text),
+                    scaleFactor = scaleFactorParsed,
                     writeTextures = chkWriteTextures.Checked,
                     overwriteTextures = chkOverwriteTextures.Checked,
                     exportHiddenObjects = chkHidden.Checked,
@@ -374,7 +427,7 @@ namespace Max2Babylon
                     exportTangents = chkExportTangents.Checked,
                     exportMorphTangents = chkExportMorphTangents.Checked,
                     exportMorphNormals = chkExportMorphNormals.Checked,
-                    txtQuality = long.Parse(txtQuality.Text),
+                    txtQuality = textureQualityParsed,
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
                     bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
                     dracoCompression = chkDracoCompression.Checked,
