@@ -172,6 +172,7 @@ namespace BabylonJS_Installer
                 {
                     foreach (ZipArchiveEntry entry in myZip.Entries)
                     {
+                        if (entry.IsDirectory()) continue;
                         if (entry.Name.Substring(0, 9) == "AEbabylon") entry.ExtractToFile(this.installDir + "scripts\\AETemplates" + "/" + entry.Name, true);
                         else if (entry.Name.Substring(0, 9) == "NEbabylon") entry.ExtractToFile(this.installDir + "scripts\\NETemplates" + "/" + entry.Name, true);
                         else entry.ExtractToFile(this.installDir + this.installLibSubDir + "/" + entry.Name, true);
@@ -236,6 +237,14 @@ namespace BabylonJS_Installer
         public string GetURLGitHubAPI()
         {
             return this.url_github_API_releases;
+        }
+    }
+
+    public static class ZipArchiveEntryExtension
+    {
+        public static bool IsDirectory(this ZipArchiveEntry entry)
+        {
+            return entry.FullName.EndsWith("/");
         }
     }
 }
