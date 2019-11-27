@@ -51,13 +51,13 @@ namespace Max2Babylon
             };
             exporter.OnMessage += (message, color, rank, emphasis) =>
             {
-                // TODO - Add a log level parameter (Error, Warning, Message, Verbose)
-                if (rank < 1)
-                {
-                    Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
-                }
+                Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
             };
-            
+            exporter.OnVerbose += (message, color, rank, emphasis) =>
+            {
+                Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
+            };
+
             // Start export
             exporter.Export(exportParameters);
         }

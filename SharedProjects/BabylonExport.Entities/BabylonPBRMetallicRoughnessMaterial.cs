@@ -32,9 +32,6 @@ namespace BabylonExport.Entities
         public BabylonTexture metallicRoughnessTexture { get; set; }
 
         [DataMember]
-        public int maxSimultaneousLights { get; set; }
-
-        [DataMember]
         public bool disableLighting { get; set; }
 
         [DataMember]
@@ -58,8 +55,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public BabylonTexture occlusionTexture { get; set; }
 
-        [DataMember]
-        public float alphaCutOff { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public float? alphaCutOff { get; set; }
 
         [DataMember]
         public int transparencyMode { get; set; }
@@ -70,15 +67,17 @@ namespace BabylonExport.Entities
         [DataMember]
         public BabylonPBRClearCoat clearCoat { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public bool _unlit { get; set; }
+
         public BabylonPBRMetallicRoughnessMaterial(string id) : base(id)
         {
             customType = "BABYLON.PBRMetallicRoughnessMaterial";
-
-            maxSimultaneousLights = 4;
+            
             emissive = new[] { 0f, 0f, 0f };
             occlusionStrength = 1.0f;
-            alphaCutOff = 0.5f;
             transparencyMode = (int)TransparencyMode.OPAQUE;
+            _unlit = false;
 
             clearCoat = new BabylonPBRClearCoat();
         }
@@ -104,6 +103,7 @@ namespace BabylonExport.Entities
             transparencyMode = original.transparencyMode;
             doubleSided = original.doubleSided;
             clearCoat = original.clearCoat;
+            _unlit = original._unlit;
         }
     }
 }

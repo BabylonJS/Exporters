@@ -125,6 +125,9 @@ namespace Maya2Babylon
             // Hierarchy
             ExportHierarchy(babylonLight, mFnTransform);
 
+            // User custom attributes
+            babylonLight.metadata = ExportCustomAttributeFromTransform(mFnTransform);
+
             // Position
             //RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
             float[] position = null;

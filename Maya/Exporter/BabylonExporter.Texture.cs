@@ -471,7 +471,8 @@ namespace Maya2Babylon
                 // Merge bitmaps
                 Bitmap[] bitmaps = new Bitmap[] { baseColorBitmap, baseColorBitmap, baseColorBitmap, opacityBitmap };
                 int[] defaultValues = new int[] { defaultBaseColor.R, defaultBaseColor.G, defaultBaseColor.B, (int)(defaultOpacity * 255) };
-                Bitmap baseColorAlphaBitmap = MergeBitmaps(bitmaps, defaultValues, "Base color and opacity");
+                bool isAlphaFromRGB = opacityTextureDependencyNode != null && !opacityTextureDependencyNode.findPlug("fileHasAlpha").asBool();
+                Bitmap baseColorAlphaBitmap = MergeBitmaps(bitmaps, defaultValues, "Base color and opacity", isAlphaFromRGB);
 
                 // Write bitmap
                 if (isBabylonExported)
@@ -1082,8 +1083,9 @@ namespace Maya2Babylon
         /// <param name="bitmaps">R, G, B, A bitmaps to merge</param>
         /// <param name="defaultValues">Default R, G, B, A values if related bitmap is null. Base 255.</param>
         /// <param name="sizeErrorMessage">Map names to display when maps don't have same size</param>
+        /// <param name="isAlphaFromRGB">True if the resulting bitmap alpha is retreive from R channel of input bitmap</param>
         /// <returns></returns>
-        private Bitmap MergeBitmaps(Bitmap[] bitmaps, int[] defaultValues, string sizeErrorMessage)
+        private Bitmap MergeBitmaps(Bitmap[] bitmaps, int[] defaultValues, string sizeErrorMessage, bool isAlphaFromRGB = false)
         {
             // Retreive dimensions
             int width = 0;
@@ -1103,7 +1105,7 @@ namespace Maya2Babylon
                     var r = bitmaps[0] != null ? bitmaps[0].GetPixel(x, y).R : defaultValues[0];
                     var g = bitmaps[1] != null ? bitmaps[1].GetPixel(x, y).G : defaultValues[1];
                     var b = bitmaps[2] != null ? bitmaps[2].GetPixel(x, y).B : defaultValues[2];
-                    var a = bitmaps[3] != null ? bitmaps[3].GetPixel(x, y).A : defaultValues[3];
+                    var a = bitmaps[3] != null ? (isAlphaFromRGB ? bitmaps[3].GetPixel(x, y).R : bitmaps[3].GetPixel(x, y).A) : defaultValues[3];
                     mergedBitmap.SetPixel(x, y, Color.FromArgb(a, r, g, b));
                 }
             }

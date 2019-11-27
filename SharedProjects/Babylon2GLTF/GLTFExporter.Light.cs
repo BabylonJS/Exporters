@@ -30,6 +30,12 @@ namespace Babylon2GLTF
                 intensity = babylonLight.intensity,
             };
 
+            // Custom user properties
+            if (babylonLight.metadata != null && babylonLight.metadata.Count != 0)
+            {
+                light.extras = babylonLight.metadata;
+            }
+
             switch (babylonLight.type)
             {
                 case (0): // point
@@ -82,6 +88,13 @@ namespace Babylon2GLTF
 
         private GLTFNode ExportLight(ref GLTFNode gltfNode, BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
+
+            // Custom user properties
+            if (babylonLight.metadata != null && babylonLight.metadata.Count != 0)
+            {
+                gltfNode.extras = babylonLight.metadata;
+            }
+
             if (exportParameters.enableKHRLightsPunctual)
             { 
                 if (babylonLight.type == 3) // ambient light

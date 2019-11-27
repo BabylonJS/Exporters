@@ -29,13 +29,21 @@ namespace BabylonJS_Installer
                 "Maya2Babylon.nll.dll",
                 "Newtonsoft.Json.dll",
                 "TargaImage.dll",
-                "TQ.Texture.dll"
+                "TQ.Texture.dll",
+                "AEbabylonAiStandardSurfaceMaterialNodeTemplate.mel",
+                "AEbabylonStandardMaterialNodeTemplate.mel",
+                "AEbabylonStingrayPBSMaterialNodeTemplate.mel",
+                "NEbabylonAiStandardSurfaceMaterialNodeTemplate.xml",
+                "NEbabylonStandardMaterialNodeTemplate.xml",
+                "NEbabylonStingrayPBSMaterialNodeTemplate.xml"
             } }
         };
         public Dictionary<string, string> libFolder = new Dictionary<string, string>()
         {
             { "Max", "bin\\assemblies" },
-            { "Maya", "bin\\plug-ins" }
+            { "Maya", "bin\\plug-ins" },
+            { "MayaAE", "scripts\\AETemplates" },
+            { "MayaNE", "scripts\\NETemplates" }
         };
 
         public MainForm form;
@@ -131,7 +139,10 @@ namespace BabylonJS_Installer
 
             foreach (string file in this.files[soft])
             {
-                fileFullPath = path + this.libFolder[soft] + "\\" + file;
+                if (file.Substring(0, 9) == "AEbabylon") fileFullPath = path + this.libFolder[soft + "AE"] + "\\" + file;
+                else if (file.Substring(0, 9) == "NEbabylon") fileFullPath = path + this.libFolder[soft + "NE"] + "\\" + file;
+                else fileFullPath = path + this.libFolder[soft] + "\\" + file;
+
                 try
                 {
                     File.Delete(fileFullPath);
@@ -148,7 +159,7 @@ namespace BabylonJS_Installer
                     errors++;
                     this.form.error(
                         ex.GetType().ToString() + " error while deleting the file : " + file + "\n"
-                        + "     At : " + path + this.libFolder[soft] + "\\" + "\n"
+                        + "     At : " + fileFullPath + "\\" + "\n"
                         + "     " + ex.Message);
                 }
             }

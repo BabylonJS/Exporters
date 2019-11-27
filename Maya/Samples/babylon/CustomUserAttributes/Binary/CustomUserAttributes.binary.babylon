@@ -1,0 +1,696 @@
+{
+  "producer": {
+    "name": "Maya",
+    "version": "2018",
+    "exporter_version": "1.4.0",
+    "file": "CustomUserAttributes.babylon"
+  },
+  "autoClear": true,
+  "clearColor": [
+    0.2,
+    0.2,
+    0.3
+  ],
+  "ambientColor": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "fogMode": 0,
+  "fogColor": null,
+  "fogStart": 0.0,
+  "fogEnd": 0.0,
+  "fogDensity": 0.0,
+  "gravity": [
+    0.0,
+    0.0,
+    -0.9
+  ],
+  "physicsEngine": null,
+  "physicsEnabled": false,
+  "physicsGravity": null,
+  "cameras": [
+    {
+      "isStereoscopicSideBySide": false,
+      "lockedTargetId": "9D22FC8F-4E96-CA90-DA62-EEB4A0C4BC9B",
+      "type": "FreeCamera",
+      "rotation": null,
+      "rotationQuaternion": [
+        0.243,
+        -0.1908,
+        0.0488,
+        0.9498
+      ],
+      "fov": 0.6606,
+      "minZ": 0.1,
+      "maxZ": 10000.0,
+      "speed": 1.0,
+      "inertia": 0.9,
+      "interaxialDistance": 0.0637,
+      "checkCollisions": false,
+      "applyGravity": false,
+      "ellipsoid": null,
+      "mode": 0,
+      "orthoLeft": null,
+      "orthoRight": null,
+      "orthoBottom": null,
+      "orthoTop": null,
+      "name": "camera1",
+      "id": "926F38F2-489F-8954-56FC-3A9C140247DA",
+      "parentId": "46271F21-417B-4B87-A0BD-F2922B98595B",
+      "position": [
+        3.448,
+        4.8982,
+        -8.2607
+      ],
+      "animations": [
+        {
+          "name": "rotationQuaternion animation",
+          "property": "rotationQuaternion",
+          "dataType": 2,
+          "enableBlending": false,
+          "blendingSpeed": 0.01,
+          "loopBehavior": 1,
+          "framePerSecond": 24,
+          "keys": [
+            {
+              "frame": 1,
+              "values": [
+                0.243,
+                -0.1908,
+                0.0488,
+                0.9498
+              ]
+            },
+            {
+              "frame": 200,
+              "values": [
+                0.243,
+                -0.1908,
+                0.0488,
+                0.9498
+              ]
+            }
+          ]
+        },
+        {
+          "name": "position animation",
+          "property": "position",
+          "dataType": 1,
+          "enableBlending": false,
+          "blendingSpeed": 0.01,
+          "loopBehavior": 1,
+          "framePerSecond": 24,
+          "keys": [
+            {
+              "frame": 1,
+              "values": [
+                3.448,
+                4.8982,
+                -8.2607
+              ]
+            },
+            {
+              "frame": 200,
+              "values": [
+                3.448,
+                4.8982,
+                -8.2607
+              ]
+            }
+          ]
+        },
+        {
+          "name": "visibility animation",
+          "property": "visibility",
+          "dataType": 0,
+          "enableBlending": false,
+          "blendingSpeed": 0.01,
+          "loopBehavior": 1,
+          "framePerSecond": 24,
+          "keys": [
+            {
+              "frame": 1,
+              "values": [
+                1.0
+              ]
+            },
+            {
+              "frame": 200,
+              "values": [
+                1.0
+              ]
+            }
+          ]
+        }
+      ],
+      "autoAnimate": true,
+      "autoAnimateFrom": 1,
+      "autoAnimateTo": 200,
+      "autoAnimateLoop": true,
+      "metadata": {
+        "vect": [
+          5.0,
+          4.0,
+          3.0
+        ],
+        "int": 2,
+        "string": "test",
+        "float": 1.5,
+        "bool": 1,
+        "enum": 1
+      }
+    }
+  ],
+  "activeCameraID": "926F38F2-489F-8954-56FC-3A9C140247DA",
+  "lights": [
+    {
+      "direction": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "type": 0,
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "intensity": 1.0241,
+      "range": 3.40282347E+38,
+      "exponent": 0.0,
+      "angle": 0.0,
+      "groundColor": null,
+      "excludedMeshesIds": null,
+      "includedOnlyMeshesIds": [
+        "9B24696A-4279-EAD8-5E67-F3B48328961B",
+        "9C75F1A5-49D0-5822-B5FD-DA816DCF0CB2"
+      ],
+      "lightmapMode": null,
+      "falloffType": null,
+      "name": "pointLight1",
+      "id": "FA3DB035-4030-0F3F-037B-2B8BBB882BC7",
+      "parentId": null,
+      "position": [
+        2.4253,
+        2.8104,
+        -1.8836
+      ],
+      "animations": [],
+      "autoAnimate": true,
+      "autoAnimateFrom": 1,
+      "autoAnimateTo": 200,
+      "autoAnimateLoop": true,
+      "metadata": {
+        "float": 2.3,
+        "vect": [
+          5.0,
+          4.0,
+          3.2
+        ],
+        "int": 5,
+        "string": "test",
+        "bool": 1,
+        "enum": 1
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "materialId": "88258896-47E7-C049-5878-B1A9F78DF165",
+      "isEnabled": true,
+      "isVisible": true,
+      "positions": null,
+      "normals": null,
+      "tangents": [
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.0,
+        0.0,
+        0.0,
+        -1.0,
+        -1.0,
+        0.0,
+        0.0,
+        -1.0,
+        -1.0,
+        0.0,
+        0.0,
+        -1.0,
+        -1.0,
+        0.0,
+        0.0,
+        -1.0,
+        -1.0
+      ],
+      "uvs": null,
+      "uvs2": null,
+      "colors": null,
+      "hasVertexAlpha": false,
+      "matricesIndices": null,
+      "matricesWeights": null,
+      "matricesIndicesExtra": null,
+      "matricesWeightsExtra": null,
+      "indices": null,
+      "receiveShadows": false,
+      "infiniteDistance": false,
+      "billboardMode": 0,
+      "visibility": 1.0,
+      "subMeshes": null,
+      "instances": [
+        {
+          "rotation": null,
+          "scaling": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "rotationQuaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "actions": null,
+          "checkCollisions": false,
+          "pickable": false,
+          "showBoundingBox": false,
+          "showSubMeshesBoundingBox": false,
+          "alphaIndex": 0,
+          "physicsImpostor": 0,
+          "physicsMass": 0.0,
+          "physicsFriction": 0.0,
+          "physicsRestitution": 0.0,
+          "name": "pCube2",
+          "id": "9C75F1A5-49D0-5822-B5FD-DA816DCF0CB2",
+          "parentId": null,
+          "position": [
+            2.0,
+            0.0,
+            0.0
+          ],
+          "animations": [],
+          "autoAnimate": true,
+          "autoAnimateFrom": 1,
+          "autoAnimateTo": 200,
+          "autoAnimateLoop": true,
+          "metadata": {
+            "vect": [
+              4.0,
+              5.0,
+              6.0
+            ],
+            "int": 8,
+            "string": "test instance",
+            "float": 10.5,
+            "bool": 0,
+            "enum": 0
+          }
+        }
+      ],
+      "skeletonId": -1,
+      "numBoneInfluencers": 4,
+      "applyFog": false,
+      "lodMeshIds": null,
+      "lodDistances": null,
+      "lodCoverages": null,
+      "rotation": null,
+      "scaling": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotationQuaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "actions": null,
+      "checkCollisions": false,
+      "pickable": true,
+      "showBoundingBox": false,
+      "showSubMeshesBoundingBox": false,
+      "alphaIndex": 0,
+      "physicsImpostor": 0,
+      "physicsMass": 0.0,
+      "physicsFriction": 0.0,
+      "physicsRestitution": 0.0,
+      "name": "pCube1",
+      "id": "9B24696A-4279-EAD8-5E67-F3B48328961B",
+      "parentId": null,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animations": [],
+      "autoAnimate": true,
+      "autoAnimateFrom": 1,
+      "autoAnimateTo": 200,
+      "autoAnimateLoop": true,
+      "metadata": {
+        "vect": [
+          1.0,
+          2.0,
+          3.0
+        ],
+        "int": 4,
+        "string": "test",
+        "float": 5.5,
+        "bool": 1,
+        "enum": 1
+      },
+      "boundingBoxMinimum": [
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "boundingBoxMaximum": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "delayLoadingFile": "CustomUserAttributes.pCube1.9B24696A-4279-EAD8-5E67-F3B48328961B.babylonbinarymeshdata",
+      "hasUVs": true,
+      "_binaryInfo": {
+        "positionsAttrDesc": {
+          "count": 72,
+          "stride": 3,
+          "offset": 0,
+          "dataType": 1
+        },
+        "normalsAttrDesc": {
+          "count": 72,
+          "stride": 3,
+          "offset": 288,
+          "dataType": 1
+        },
+        "uvsAttrDesc": {
+          "count": 48,
+          "stride": 2,
+          "offset": 576,
+          "dataType": 1
+        },
+        "indicesAttrDesc": {
+          "count": 36,
+          "stride": 1,
+          "offset": 768,
+          "dataType": 0
+        },
+        "subMeshesAttrDesc": {
+          "count": 1,
+          "stride": 5,
+          "offset": 912,
+          "dataType": 0
+        }
+      }
+    },
+    {
+      "materialId": null,
+      "isEnabled": true,
+      "isVisible": true,
+      "positions": null,
+      "normals": null,
+      "tangents": null,
+      "uvs": null,
+      "uvs2": null,
+      "colors": null,
+      "hasVertexAlpha": false,
+      "matricesIndices": null,
+      "matricesWeights": null,
+      "matricesIndicesExtra": null,
+      "matricesWeightsExtra": null,
+      "indices": null,
+      "receiveShadows": false,
+      "infiniteDistance": false,
+      "billboardMode": 0,
+      "visibility": 1.0,
+      "subMeshes": null,
+      "instances": null,
+      "skeletonId": -1,
+      "numBoneInfluencers": 4,
+      "applyFog": false,
+      "lodMeshIds": null,
+      "lodDistances": null,
+      "lodCoverages": null,
+      "rotation": null,
+      "scaling": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotationQuaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "actions": null,
+      "checkCollisions": false,
+      "pickable": true,
+      "showBoundingBox": false,
+      "showSubMeshesBoundingBox": false,
+      "alphaIndex": 0,
+      "physicsImpostor": 0,
+      "physicsMass": 0.0,
+      "physicsFriction": 0.0,
+      "physicsRestitution": 0.0,
+      "name": "camera1_group",
+      "id": "46271F21-417B-4B87-A0BD-F2922B98595B",
+      "parentId": null,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animations": [],
+      "autoAnimate": true,
+      "autoAnimateFrom": 1,
+      "autoAnimateTo": 200,
+      "autoAnimateLoop": true,
+      "metadata": {}
+    },
+    {
+      "materialId": null,
+      "isEnabled": true,
+      "isVisible": true,
+      "positions": null,
+      "normals": null,
+      "tangents": null,
+      "uvs": null,
+      "uvs2": null,
+      "colors": null,
+      "hasVertexAlpha": false,
+      "matricesIndices": null,
+      "matricesWeights": null,
+      "matricesIndicesExtra": null,
+      "matricesWeightsExtra": null,
+      "indices": null,
+      "receiveShadows": false,
+      "infiniteDistance": false,
+      "billboardMode": 0,
+      "visibility": 1.0,
+      "subMeshes": null,
+      "instances": null,
+      "skeletonId": -1,
+      "numBoneInfluencers": 4,
+      "applyFog": false,
+      "lodMeshIds": null,
+      "lodDistances": null,
+      "lodCoverages": null,
+      "rotation": null,
+      "scaling": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotationQuaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "actions": null,
+      "checkCollisions": false,
+      "pickable": true,
+      "showBoundingBox": false,
+      "showSubMeshesBoundingBox": false,
+      "alphaIndex": 0,
+      "physicsImpostor": 0,
+      "physicsMass": 0.0,
+      "physicsFriction": 0.0,
+      "physicsRestitution": 0.0,
+      "name": "camera1_aim",
+      "id": "9D22FC8F-4E96-CA90-DA62-EEB4A0C4BC9B",
+      "parentId": "46271F21-417B-4B87-A0BD-F2922B98595B",
+      "position": [
+        0.0035,
+        0.0145,
+        -0.0309
+      ],
+      "animations": [],
+      "autoAnimate": true,
+      "autoAnimateFrom": 1,
+      "autoAnimateTo": 200,
+      "autoAnimateLoop": true,
+      "metadata": {}
+    }
+  ],
+  "sounds": [],
+  "materials": [
+    {
+      "customType": "BABYLON.StandardMaterial",
+      "ambient": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "diffuse": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "emissive": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "specularPower": 25.6,
+      "diffuseTexture": null,
+      "diffuseFresnelParameters": null,
+      "ambientTexture": null,
+      "opacityTexture": null,
+      "opacityFresnelParameters": null,
+      "reflectionTexture": null,
+      "reflectionFresnelParameters": null,
+      "emissiveTexture": null,
+      "lightmapTexture": null,
+      "useLightmapAsShadowmap": false,
+      "emissiveFresnelParameters": null,
+      "specularTexture": null,
+      "bumpTexture": null,
+      "useSpecularOverAlpha": true,
+      "disableLighting": false,
+      "useEmissiveAsIllumination": false,
+      "linkEmissiveWithDiffuse": true,
+      "twoSidedLighting": false,
+      "maxSimultaneousLights": 4,
+      "useGlossinessFromSpecularMapAlpha": false,
+      "name": "lambert1",
+      "id": "88258896-47E7-C049-5878-B1A9F78DF165",
+      "backFaceCulling": true,
+      "wireframe": false,
+      "alpha": 1.0,
+      "alphaMode": 2,
+      "metadata": {
+        "vect": [
+          1.0,
+          2.0,
+          3.5
+        ],
+        "int": 2,
+        "string": "test",
+        "float": 4.0,
+        "bool": 0,
+        "enum": 1
+      }
+    }
+  ],
+  "multiMaterials": [],
+  "particleSystems": null,
+  "lensFlareSystems": null,
+  "shadowGenerators": [],
+  "skeletons": [],
+  "actions": null,
+  "metadata": null,
+  "workerCollisions": false,
+  "useDelayedTextureLoading": true
+}

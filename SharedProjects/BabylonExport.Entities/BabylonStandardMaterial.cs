@@ -75,15 +75,14 @@ namespace BabylonExport.Entities
         public bool twoSidedLighting { get; set; }
 
         [DataMember]
-        public int maxSimultaneousLights { get; set; }
-
-        [DataMember]
         public bool useGlossinessFromSpecularMapAlpha { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public float? alphaCutOff { get; set; }
 
         // Used for gltf
         public float selfIllum;
         public int transparencyMode;
-        public float alphaCutOff;
 
         public BabylonStandardMaterial(string id) : base(id)
         {
@@ -93,7 +92,6 @@ namespace BabylonExport.Entities
             specular = new[] { 0f, 0f, 0f };
             emissive = new[] { 0f, 0f, 0f };
             specularPower = 25.6f; // 10%
-            maxSimultaneousLights = 4;
             useSpecularOverAlpha = true;
             useEmissiveAsIllumination = false;
             linkEmissiveWithDiffuse = false;

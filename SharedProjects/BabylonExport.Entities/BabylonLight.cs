@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -45,9 +46,6 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public string[] includedOnlyMeshesIds { get; set; }
-
-        [DataMember]
-        public object metadata { get; set; }
 
         [DataMember]
         public int? lightmapMode { get; set; }

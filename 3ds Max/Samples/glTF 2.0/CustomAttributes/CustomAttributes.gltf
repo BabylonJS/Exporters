@@ -1,0 +1,609 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "babylon.js glTF exporter for 3dsmax 2019 v1.5.0"
+  },
+  "extensionsUsed": [
+    "KHR_lights_punctual"
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "extensions": {}
+    }
+  ],
+  "nodes": [
+    {
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "Camera001.Target"
+    },
+    {
+      "mesh": 0,
+      "translation": [
+        0,
+        -0.5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "MasterMesh",
+      "extras": {
+        "myAngle": 3.14159274,
+        "myArray": 3,
+        "myBoolean": true,
+        "myColor": [
+          0.03137255,
+          1,
+          0.305882365
+        ],
+        "myFloat": 20,
+        "myFRGBA": [
+          0.0980392247,
+          0.03137255,
+          1,
+          0.5
+        ],
+        "myInteger": 20,
+        "myPercent": 0.199999988,
+        "MyString": "Hi",
+        "myTextureMap": {
+          "name": "gradation_vertical.jpg",
+          "level": 1,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0,
+          "vOffset": 0,
+          "uScale": 1,
+          "vScale": -1,
+          "uRotationCenter": 0,
+          "vRotationCenter": 0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0,
+          "vAng": 0,
+          "wAng": 0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 20
+      }
+    },
+    {
+      "mesh": 0,
+      "translation": [
+        1.5051012,
+        -0.5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "InstanceMesh",
+      "extras": {
+        "myAngle": 3.14159274,
+        "myArray": 3,
+        "myBoolean": true,
+        "myColor": [
+          0.03137255,
+          1,
+          0.305882365
+        ],
+        "myFloat": 20,
+        "myFRGBA": [
+          0.0980392247,
+          0.03137255,
+          1,
+          0.5
+        ],
+        "myInteger": 20,
+        "myPercent": 0.199999988,
+        "MyString": "Hi",
+        "myTextureMap": {
+          "name": "gradation_vertical.jpg",
+          "level": 1,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0,
+          "vOffset": 0,
+          "uScale": 1,
+          "vScale": -1,
+          "uRotationCenter": 0,
+          "vRotationCenter": 0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0,
+          "vAng": 0,
+          "wAng": 0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 20
+      }
+    },
+    {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "rotation": [
+        0.862729967,
+        0.0435778722,
+        -0.07547909,
+        0.49809736
+      ],
+      "scale": [
+        0.99999994,
+        1,
+        0.99999994
+      ],
+      "name": "DirectLight",
+      "extensions": {
+        "KHR_lights_punctual": {
+          "light": 0
+        }
+      },
+      "extras": {
+        "myAngle": 6.28318548,
+        "myArray": 2,
+        "myBoolean": true,
+        "myColor": [
+          0.992157,
+          0.8666668,
+          0.03137255
+        ],
+        "myFloat": 10,
+        "myFRGBA": [
+          0.9921569,
+          0.866666734,
+          0.03137255,
+          0.5019608
+        ],
+        "myInteger": 10,
+        "myPercent": 0.099999994,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0,
+          "vOffset": 0,
+          "uScale": 1,
+          "vScale": -1,
+          "uRotationCenter": 0,
+          "vRotationCenter": 0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0,
+          "vAng": 0,
+          "wAng": 0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10
+      }
+    },
+    {
+      "camera": 0,
+      "translation": [
+        1.01967847,
+        1.85228419,
+        5
+      ],
+      "rotation": [
+        -0.172344267,
+        0.098900944,
+        0.0173945539,
+        0.97990483
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "Camera001",
+      "extras": {
+        "myAngle": 6.28318548,
+        "myArray": 2,
+        "myBoolean": true,
+        "myColor": [
+          0.992157,
+          0.8666668,
+          0.03137255
+        ],
+        "myFloat": 10,
+        "myFRGBA": [
+          0.9921569,
+          0.866666734,
+          0.03137255,
+          0.5
+        ],
+        "myInteger": 10,
+        "myPercent": 0.099999994,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0,
+          "vOffset": 0,
+          "uScale": 1,
+          "vScale": -1,
+          "uRotationCenter": 0,
+          "vRotationCenter": 0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0,
+          "vAng": 0,
+          "wAng": 0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10
+      }
+    }
+  ],
+  "cameras": [
+    {
+      "perspective": {
+        "yfov": 0.6024157,
+        "zfar": 10000,
+        "znear": 0.1
+      },
+      "type": "perspective",
+      "name": "Camera001",
+      "extras": {
+        "myAngle": 6.28318548,
+        "myArray": 2,
+        "myBoolean": true,
+        "myColor": [
+          0.992157,
+          0.8666668,
+          0.03137255
+        ],
+        "myFloat": 10,
+        "myFRGBA": [
+          0.9921569,
+          0.866666734,
+          0.03137255,
+          0.5
+        ],
+        "myInteger": 10,
+        "myPercent": 0.099999994,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0,
+          "vOffset": 0,
+          "uScale": 1,
+          "vScale": -1,
+          "uRotationCenter": 0,
+          "vRotationCenter": 0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0,
+          "vAng": 0,
+          "wAng": 0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "NORMAL": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 0,
+          "mode": 4,
+          "material": 0
+        }
+      ],
+      "name": "MasterMesh"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "count": 36,
+      "type": "SCALAR",
+      "name": "accessorIndices"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 36,
+      "max": [
+        0.5,
+        1,
+        0.5
+      ],
+      "min": [
+        -0.5,
+        0,
+        -0.5
+      ],
+      "type": "VEC3",
+      "name": "accessorPositions"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 432,
+      "componentType": 5126,
+      "count": 36,
+      "type": "VEC3",
+      "name": "accessorNormals"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 36,
+      "type": "VEC2",
+      "name": "accessorUVs"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 72,
+      "name": "bufferViewScalar"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 72,
+      "byteLength": 864,
+      "byteStride": 12,
+      "name": "bufferViewFloatVec3"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 936,
+      "byteLength": 288,
+      "byteStride": 8,
+      "name": "bufferViewFloatVec2"
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "CustomAttributes.bin",
+      "byteLength": 1224
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5,
+          0,
+          0,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.450053632
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "name": "MyMaterial",
+      "extras": {
+        "myAngle": 6.28318548,
+        "myArray": 1,
+        "myBoolean": true,
+        "myColor": [
+          0.992157,
+          0.8666668,
+          0.03137255
+        ],
+        "myFloat": 10,
+        "myFRGBA": [
+          0.9921569,
+          0.866666734,
+          0.03137255,
+          0.5019608
+        ],
+        "myInteger": 10,
+        "myPercent": 0.099999994,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0,
+          "vOffset": 0,
+          "uScale": 1,
+          "vScale": -1,
+          "uRotationCenter": 0,
+          "vRotationCenter": 0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0,
+          "vAng": 0,
+          "wAng": 0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10
+      }
+    }
+  ],
+  "extensions": {
+    "KHR_lights_punctual": {
+      "lights": [
+        {
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "intensity": 1,
+          "type": "directional",
+          "extras": {
+            "myAngle": 6.28318548,
+            "myArray": 2,
+            "myBoolean": true,
+            "myColor": [
+              0.992157,
+              0.8666668,
+              0.03137255
+            ],
+            "myFloat": 10,
+            "myFRGBA": [
+              0.9921569,
+              0.866666734,
+              0.03137255,
+              0.5019608
+            ],
+            "myInteger": 10,
+            "myPercent": 0.099999994,
+            "MyString": "Hello",
+            "myTextureMap": {
+              "name": "gradation_horizontal.jpg",
+              "level": 1,
+              "hasAlpha": true,
+              "getAlphaFromRGB": false,
+              "coordinatesMode": 0,
+              "isCube": false,
+              "uOffset": 0,
+              "vOffset": 0,
+              "uScale": 1,
+              "vScale": -1,
+              "uRotationCenter": 0,
+              "vRotationCenter": 0,
+              "wRotationCenter": 0.5,
+              "invertY": false,
+              "uAng": 0,
+              "vAng": 0,
+              "wAng": 0,
+              "wrapU": 1,
+              "wrapV": 1,
+              "coordinatesIndex": 0,
+              "isRenderTarget": false,
+              "renderTargetSize": 0,
+              "mirrorPlane": null,
+              "renderList": null,
+              "animations": [],
+              "extensions": null,
+              "samplingMode": 3
+            },
+            "myWorldUnits": 10
+          }
+        }
+      ]
+    }
+  }
+}

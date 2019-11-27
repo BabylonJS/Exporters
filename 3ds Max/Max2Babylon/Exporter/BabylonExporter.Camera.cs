@@ -32,6 +32,9 @@ namespace Max2Babylon
                 babylonCamera.parentId = cameraNode.NodeParent.MaxNode.GetGuid().ToString();
             }
 
+            // Export the custom attributes of this camera
+            babylonCamera.metadata = ExportExtraAttributes(cameraNode, babylonScene);
+
             babylonCamera.fov = Tools.ConvertFov(maxCamera.GetFOV(0, Tools.Forever));
 
             if (maxCamera.ManualClip == 1)
