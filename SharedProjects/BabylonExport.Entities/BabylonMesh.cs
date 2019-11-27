@@ -84,9 +84,6 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool applyFog { get; set; }
 
-        [DataMember]
-        public object metadata { get; set; }
-
         [DataMember(EmitDefaultValue = false)]
         public int? morphTargetManagerId { get; set; }
 
