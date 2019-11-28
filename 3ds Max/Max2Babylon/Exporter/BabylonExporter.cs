@@ -20,11 +20,6 @@ namespace Max2Babylon
 {
     internal partial class BabylonExporter : ILoggingProvider
     {
-        public event Action<int> OnImportProgressChanged;
-        public event Action<string, int> OnWarning;
-        public event Action<string, Color, int, bool> OnMessage;
-        public event Action<string, int> OnError;
-
         public Form callerForm;
 
         public ExportParameters exportParameters;
@@ -43,45 +38,6 @@ namespace Max2Babylon
 
         public const int MaxSceneTicksPerSecond = 4800; //https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/MAXScript-Help/files/GUID-141213A1-B5A8-457B-8838-E602022C8798-htm.html
 
-        public void ReportProgressChanged(int progress)
-        {
-            OnImportProgressChanged?.Invoke(progress);
-        }
-
-        public void RaiseError(string error, int rank = 0)
-        {
-            if (OnError != null)
-            {
-                OnError(error, rank);
-            }
-        }
-
-        public void RaiseWarning(string warning, int rank = 0)
-        {
-            if (OnWarning != null)
-            {
-                OnWarning(warning, rank);
-            }
-        }
-
-        public void RaiseMessage(string message, int rank = 0, bool emphasis = false)
-        {
-            RaiseMessage(message, Color.Black, rank, emphasis);
-        }
-
-        public void RaiseMessage(string message, Color color, int rank = 0, bool emphasis = false)
-        {
-            if (OnMessage != null)
-            {
-                OnMessage(message, color, rank, emphasis);
-            }
-        }
-
-        // For debug purpose
-        public void RaiseVerbose(string message, int rank = 0, bool emphasis = false)
-        {
-            //RaiseMessage(message, Color.DarkGray, rank, emphasis);
-        }
 
         public void CheckCancelled()
         {
@@ -596,7 +552,7 @@ namespace Max2Babylon
 
             if (exportParameters.scaleFactor != 1.0f)
             {
-                RaiseMessage("A root node is added for scaling", 1);
+                RaiseMessage(String.Format("A root node is added to globally scale the scene by {0}", exportParameters.scaleFactor), 1);
 
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };

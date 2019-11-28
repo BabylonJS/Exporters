@@ -30,6 +30,12 @@ namespace Babylon2GLTF
                 intensity = babylonLight.intensity,
             };
 
+            // Custom user properties
+            if (babylonLight.metadata != null && babylonLight.metadata.Count != 0)
+            {
+                light.extras = babylonLight.metadata;
+            }
+
             switch (babylonLight.type)
             {
                 case (0): // point
@@ -45,7 +51,7 @@ namespace Babylon2GLTF
                     light.spot = new GLTFLight.Spot
                     {
                         //innerConeAngle = 0, Babylon doesn't support the innerConeAngle
-                        outerConeAngle = babylonLight.angle
+                        outerConeAngle = babylonLight.angle / 2 // divide by 2 as glTF measures light outer angle from the light's center, while Babylon's light angle measures the whole light's cone angle.
                     };
                     break;
                 default:
@@ -82,6 +88,13 @@ namespace Babylon2GLTF
 
         private GLTFNode ExportLight(ref GLTFNode gltfNode, BabylonLight babylonLight, GLTF gltf, GLTFNode gltfParentNode, BabylonScene babylonScene)
         {
+
+            // Custom user properties
+            if (babylonLight.metadata != null && babylonLight.metadata.Count != 0)
+            {
+                gltfNode.extras = babylonLight.metadata;
+            }
+
             if (exportParameters.enableKHRLightsPunctual)
             { 
                 if (babylonLight.type == 3) // ambient light

@@ -1,0 +1,437 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "babylon.js glTF exporter for Maya 2018 v1.4.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0,
+        1,
+        2,
+        5
+      ],
+      "extensions": {}
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "pCube1",
+      "extras": {
+        "vect": [
+          1,
+          2,
+          3
+        ],
+        "int": 4,
+        "string": "test",
+        "float": 5.5,
+        "bool": 1,
+        "enum": 1
+      }
+    },
+    {
+      "mesh": 0,
+      "translation": [
+        2,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "pCube2",
+      "extras": {
+        "vect": [
+          4,
+          5,
+          6
+        ],
+        "int": 8,
+        "string": "test instance",
+        "float": 10.5,
+        "bool": 0,
+        "enum": 0
+      }
+    },
+    {
+      "children": [
+        3,
+        4
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "camera1_group"
+    },
+    {
+      "translation": [
+        0.003538094,
+        0.0144712785,
+        0.0308891125
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "camera1_aim"
+    },
+    {
+      "camera": 0,
+      "translation": [
+        3.447969,
+        4.898194,
+        8.26071548
+      ],
+      "rotation": [
+        -0.242964819,
+        0.190752387,
+        0.04879348,
+        0.9498425
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "camera1",
+      "extras": {
+        "vect": [
+          5,
+          4,
+          3
+        ],
+        "int": 2,
+        "string": "test",
+        "float": 1.5,
+        "bool": 1,
+        "enum": 1
+      }
+    },
+    {
+      "translation": [
+        2.425304,
+        2.810355,
+        1.88360775
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "name": "pointLight1",
+      "extras": {
+        "float": 2.3,
+        "vect": [
+          5,
+          4,
+          3.2
+        ],
+        "int": 5,
+        "string": "test",
+        "bool": 1,
+        "enum": 1
+      }
+    }
+  ],
+  "cameras": [
+    {
+      "perspective": {
+        "yfov": 0.6605947,
+        "zfar": 10000,
+        "znear": 0.1
+      },
+      "type": "perspective",
+      "name": "camera1",
+      "extras": {
+        "vect": [
+          5,
+          4,
+          3
+        ],
+        "int": 2,
+        "string": "test",
+        "float": 1.5,
+        "bool": 1,
+        "enum": 1
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "TANGENT": 2,
+            "NORMAL": 3,
+            "TEXCOORD_0": 4
+          },
+          "indices": 0,
+          "mode": 4,
+          "material": 0
+        }
+      ],
+      "name": "pCube1"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "count": 36,
+      "type": "SCALAR",
+      "name": "accessorIndices"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 24,
+      "max": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "min": [
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "type": "VEC3",
+      "name": "accessorPositions"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC4",
+      "name": "accessorTangents"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 288,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3",
+      "name": "accessorNormals"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC2",
+      "name": "accessorUVs"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 2,
+      "max": [
+        8.291667
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR",
+      "name": "accessorAnimationInput"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 2,
+      "type": "VEC4",
+      "name": "accessorAnimationRotations"
+    },
+    {
+      "bufferView": 4,
+      "byteOffset": 8,
+      "componentType": 5126,
+      "count": 2,
+      "max": [
+        8.291667
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR",
+      "name": "accessorAnimationInput"
+    },
+    {
+      "bufferView": 6,
+      "componentType": 5126,
+      "count": 2,
+      "type": "VEC3",
+      "name": "accessorAnimationPositions"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 72,
+      "name": "bufferViewScalar"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 72,
+      "byteLength": 576,
+      "byteStride": 12,
+      "name": "bufferViewFloatVec3"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 648,
+      "byteLength": 384,
+      "byteStride": 16,
+      "name": "bufferViewFloatVec4"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1032,
+      "byteLength": 192,
+      "byteStride": 8,
+      "name": "bufferViewFloatVec2"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1224,
+      "byteLength": 16,
+      "name": "bufferViewAnimationFloatScalar"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1240,
+      "byteLength": 32,
+      "name": "bufferViewAnimationFloatVec4"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1272,
+      "byteLength": 24,
+      "name": "bufferViewAnimationFloatVec3"
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "CustomUserAttributes.bin",
+      "byteLength": 1296
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.25,
+          0.25,
+          0.25,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.450053632
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "name": "lambert1",
+      "extras": {
+        "vect": [
+          1,
+          2,
+          3.5
+        ],
+        "int": 2,
+        "string": "test",
+        "float": 4,
+        "bool": 0,
+        "enum": 1
+      }
+    }
+  ],
+  "animations": [
+    {
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 4,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 1,
+          "target": {
+            "node": 4,
+            "path": "translation"
+          }
+        }
+      ],
+      "samplers": [
+        {
+          "input": 5,
+          "interpolation": "LINEAR",
+          "output": 6
+        },
+        {
+          "input": 7,
+          "interpolation": "LINEAR",
+          "output": 8
+        }
+      ],
+      "name": "All Animations"
+    }
+  ]
+}

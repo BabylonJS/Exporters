@@ -1,0 +1,649 @@
+{
+  "producer": {
+    "name": "3dsmax",
+    "version": "2019",
+    "exporter_version": "1.5.0",
+    "file": "CustomAttributes.babylon"
+  },
+  "autoClear": true,
+  "clearColor": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "ambientColor": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "fogMode": 0,
+  "fogColor": null,
+  "fogStart": 0.0,
+  "fogEnd": 0.0,
+  "fogDensity": 0.0,
+  "gravity": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "physicsEngine": null,
+  "physicsEnabled": false,
+  "physicsGravity": null,
+  "cameras": [
+    {
+      "isStereoscopicSideBySide": false,
+      "lockedTargetId": "7a6d2ccd-8751-4519-beec-a95b0c38177c",
+      "type": "FreeCamera",
+      "rotation": [
+        0.3482,
+        -0.2012,
+        0.0
+      ],
+      "rotationQuaternion": [
+        0.1723,
+        -0.0989,
+        0.0174,
+        0.9799
+      ],
+      "fov": 0.6024,
+      "minZ": 0.1,
+      "maxZ": 10000.0,
+      "speed": 1.0,
+      "inertia": 0.9,
+      "interaxialDistance": 0.0637,
+      "checkCollisions": false,
+      "applyGravity": false,
+      "ellipsoid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mode": 0,
+      "orthoLeft": null,
+      "orthoRight": null,
+      "orthoBottom": null,
+      "orthoTop": null,
+      "name": "Camera001",
+      "id": "29603712-f5f4-45e2-9a4b-20d80ba85c7e",
+      "parentId": null,
+      "position": [
+        1.0197,
+        1.8523,
+        -5.0
+      ],
+      "animations": [],
+      "autoAnimate": false,
+      "autoAnimateFrom": 0,
+      "autoAnimateTo": 0,
+      "autoAnimateLoop": false,
+      "metadata": {
+        "myAngle": 6.2832,
+        "myArray": 2,
+        "myBoolean": true,
+        "myColor": [
+          0.9922,
+          0.8667,
+          0.0314
+        ],
+        "myFloat": 10.0,
+        "myFRGBA": [
+          0.9922,
+          0.8667,
+          0.0314,
+          0.5
+        ],
+        "myInteger": 10,
+        "myPercent": 0.1,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1.0,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0.0,
+          "vOffset": 0.0,
+          "uScale": 1.0,
+          "vScale": -1.0,
+          "uRotationCenter": 0.0,
+          "vRotationCenter": 0.0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0.0,
+          "vAng": 0.0,
+          "wAng": 0.0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10.0
+      }
+    }
+  ],
+  "activeCameraID": "29603712-f5f4-45e2-9a4b-20d80ba85c7e",
+  "lights": [
+    {
+      "direction": [
+        -0.0868,
+        -0.866,
+        0.4924
+      ],
+      "type": 1,
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "intensity": 1.0,
+      "range": 3.40282347E+38,
+      "exponent": 0.0,
+      "angle": 0.0,
+      "groundColor": null,
+      "excludedMeshesIds": [],
+      "includedOnlyMeshesIds": [],
+      "lightmapMode": null,
+      "falloffType": null,
+      "name": "DirectLight",
+      "id": "4998978b-8790-43f4-90b5-a871203cc57b",
+      "parentId": null,
+      "position": [
+        0.0,
+        2.0,
+        0.0
+      ],
+      "animations": [],
+      "autoAnimate": false,
+      "autoAnimateFrom": 0,
+      "autoAnimateTo": 0,
+      "autoAnimateLoop": false,
+      "metadata": {
+        "myAngle": 6.2832,
+        "myArray": 2,
+        "myBoolean": true,
+        "myColor": [
+          0.9922,
+          0.8667,
+          0.0314
+        ],
+        "myFloat": 10.0,
+        "myFRGBA": [
+          0.9922,
+          0.8667,
+          0.0314,
+          0.502
+        ],
+        "myInteger": 10,
+        "myPercent": 0.1,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1.0,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0.0,
+          "vOffset": 0.0,
+          "uScale": 1.0,
+          "vScale": -1.0,
+          "uRotationCenter": 0.0,
+          "vRotationCenter": 0.0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0.0,
+          "vAng": 0.0,
+          "wAng": 0.0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10.0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "materialId": null,
+      "isEnabled": true,
+      "isVisible": true,
+      "positions": null,
+      "normals": null,
+      "tangents": null,
+      "uvs": null,
+      "uvs2": null,
+      "colors": null,
+      "hasVertexAlpha": false,
+      "matricesIndices": null,
+      "matricesWeights": null,
+      "matricesIndicesExtra": null,
+      "matricesWeightsExtra": null,
+      "indices": null,
+      "receiveShadows": false,
+      "infiniteDistance": false,
+      "billboardMode": 0,
+      "visibility": 1.0,
+      "subMeshes": null,
+      "instances": null,
+      "skeletonId": -1,
+      "numBoneInfluencers": 4,
+      "applyFog": false,
+      "lodMeshIds": null,
+      "lodDistances": null,
+      "lodCoverages": null,
+      "rotation": null,
+      "scaling": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotationQuaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "actions": null,
+      "checkCollisions": false,
+      "pickable": true,
+      "showBoundingBox": false,
+      "showSubMeshesBoundingBox": false,
+      "alphaIndex": 0,
+      "physicsImpostor": 0,
+      "physicsMass": 0.0,
+      "physicsFriction": 0.0,
+      "physicsRestitution": 0.0,
+      "name": "Camera001.Target",
+      "id": "7a6d2ccd-8751-4519-beec-a95b0c38177c",
+      "parentId": null,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animations": [],
+      "autoAnimate": true,
+      "autoAnimateFrom": 0,
+      "autoAnimateTo": 100,
+      "autoAnimateLoop": true,
+      "metadata": null
+    },
+    {
+      "materialId": "169f7c62-dd59-41c8-ac31-d131b583e563",
+      "isEnabled": true,
+      "isVisible": true,
+      "positions": null,
+      "normals": null,
+      "tangents": null,
+      "uvs": null,
+      "uvs2": null,
+      "colors": null,
+      "hasVertexAlpha": false,
+      "matricesIndices": null,
+      "matricesWeights": null,
+      "matricesIndicesExtra": null,
+      "matricesWeightsExtra": null,
+      "indices": null,
+      "receiveShadows": true,
+      "infiniteDistance": false,
+      "billboardMode": 0,
+      "visibility": 1.0,
+      "subMeshes": null,
+      "instances": [
+        {
+          "rotation": null,
+          "scaling": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "rotationQuaternion": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "actions": null,
+          "checkCollisions": false,
+          "pickable": false,
+          "showBoundingBox": false,
+          "showSubMeshesBoundingBox": false,
+          "alphaIndex": 1000,
+          "physicsImpostor": 0,
+          "physicsMass": 0.0,
+          "physicsFriction": 0.0,
+          "physicsRestitution": 0.0,
+          "name": "InstanceMesh",
+          "id": "2c43f650-0e93-4dcb-bc64-43db21436905",
+          "parentId": null,
+          "position": [
+            1.5051,
+            -0.5,
+            0.0
+          ],
+          "animations": [],
+          "autoAnimate": true,
+          "autoAnimateFrom": 0,
+          "autoAnimateTo": 100,
+          "autoAnimateLoop": true,
+          "metadata": {
+            "myAngle": 3.1416,
+            "myArray": 3,
+            "myBoolean": true,
+            "myColor": [
+              0.0314,
+              1.0,
+              0.3059
+            ],
+            "myFloat": 20.0,
+            "myFRGBA": [
+              0.098,
+              0.0314,
+              1.0,
+              0.5
+            ],
+            "myInteger": 20,
+            "myPercent": 0.2,
+            "MyString": "Hi",
+            "myTextureMap": {
+              "name": "gradation_vertical.jpg",
+              "level": 1.0,
+              "hasAlpha": true,
+              "getAlphaFromRGB": false,
+              "coordinatesMode": 0,
+              "isCube": false,
+              "uOffset": 0.0,
+              "vOffset": 0.0,
+              "uScale": 1.0,
+              "vScale": -1.0,
+              "uRotationCenter": 0.0,
+              "vRotationCenter": 0.0,
+              "wRotationCenter": 0.5,
+              "invertY": false,
+              "uAng": 0.0,
+              "vAng": 0.0,
+              "wAng": 0.0,
+              "wrapU": 1,
+              "wrapV": 1,
+              "coordinatesIndex": 0,
+              "isRenderTarget": false,
+              "renderTargetSize": 0,
+              "mirrorPlane": null,
+              "renderList": null,
+              "animations": [],
+              "extensions": null,
+              "samplingMode": 3
+            },
+            "myWorldUnits": 20.0
+          }
+        }
+      ],
+      "skeletonId": -1,
+      "numBoneInfluencers": 4,
+      "applyFog": true,
+      "lodMeshIds": null,
+      "lodDistances": null,
+      "lodCoverages": null,
+      "rotation": null,
+      "scaling": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rotationQuaternion": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "actions": null,
+      "checkCollisions": false,
+      "pickable": false,
+      "showBoundingBox": false,
+      "showSubMeshesBoundingBox": false,
+      "alphaIndex": 1000,
+      "physicsImpostor": 0,
+      "physicsMass": 0.0,
+      "physicsFriction": 0.0,
+      "physicsRestitution": 0.0,
+      "name": "MasterMesh",
+      "id": "730e2753-eb4e-48a1-b445-9aed74763d95",
+      "parentId": null,
+      "position": [
+        0.0,
+        -0.5,
+        0.0
+      ],
+      "animations": [],
+      "autoAnimate": true,
+      "autoAnimateFrom": 0,
+      "autoAnimateTo": 100,
+      "autoAnimateLoop": true,
+      "metadata": {
+        "myAngle": 3.1416,
+        "myArray": 3,
+        "myBoolean": true,
+        "myColor": [
+          0.0314,
+          1.0,
+          0.3059
+        ],
+        "myFloat": 20.0,
+        "myFRGBA": [
+          0.098,
+          0.0314,
+          1.0,
+          0.5
+        ],
+        "myInteger": 20,
+        "myPercent": 0.2,
+        "MyString": "Hi",
+        "myTextureMap": {
+          "name": "gradation_vertical.jpg",
+          "level": 1.0,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0.0,
+          "vOffset": 0.0,
+          "uScale": 1.0,
+          "vScale": -1.0,
+          "uRotationCenter": 0.0,
+          "vRotationCenter": 0.0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0.0,
+          "vAng": 0.0,
+          "wAng": 0.0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 20.0
+      },
+      "boundingBoxMinimum": [
+        -0.5,
+        0.0,
+        -0.5
+      ],
+      "boundingBoxMaximum": [
+        0.5,
+        1.0,
+        0.5
+      ],
+      "delayLoadingFile": "CustomAttributes.MasterMesh.730e2753-eb4e-48a1-b445-9aed74763d95.babylonbinarymeshdata",
+      "hasUVs": true,
+      "_binaryInfo": {
+        "positionsAttrDesc": {
+          "count": 108,
+          "stride": 3,
+          "offset": 0,
+          "dataType": 1
+        },
+        "normalsAttrDesc": {
+          "count": 108,
+          "stride": 3,
+          "offset": 432,
+          "dataType": 1
+        },
+        "uvsAttrDesc": {
+          "count": 72,
+          "stride": 2,
+          "offset": 864,
+          "dataType": 1
+        },
+        "indicesAttrDesc": {
+          "count": 36,
+          "stride": 1,
+          "offset": 1152,
+          "dataType": 0
+        },
+        "subMeshesAttrDesc": {
+          "count": 1,
+          "stride": 5,
+          "offset": 1296,
+          "dataType": 0
+        }
+      }
+    }
+  ],
+  "sounds": [],
+  "materials": [
+    {
+      "customType": "BABYLON.StandardMaterial",
+      "ambient": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "diffuse": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "emissive": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "specularPower": 25.6,
+      "diffuseTexture": null,
+      "diffuseFresnelParameters": null,
+      "ambientTexture": null,
+      "opacityTexture": null,
+      "opacityFresnelParameters": null,
+      "reflectionTexture": null,
+      "reflectionFresnelParameters": null,
+      "emissiveTexture": null,
+      "lightmapTexture": null,
+      "useLightmapAsShadowmap": false,
+      "emissiveFresnelParameters": null,
+      "specularTexture": null,
+      "bumpTexture": null,
+      "useSpecularOverAlpha": true,
+      "disableLighting": false,
+      "useEmissiveAsIllumination": false,
+      "linkEmissiveWithDiffuse": true,
+      "twoSidedLighting": false,
+      "useGlossinessFromSpecularMapAlpha": false,
+      "name": "MyMaterial",
+      "id": "169f7c62-dd59-41c8-ac31-d131b583e563",
+      "backFaceCulling": true,
+      "wireframe": false,
+      "alpha": 1.0,
+      "alphaMode": 2,
+      "maxSimultaneousLights": 4,
+      "metadata": {
+        "myAngle": 6.2832,
+        "myArray": 1,
+        "myBoolean": true,
+        "myColor": [
+          0.9922,
+          0.8667,
+          0.0314
+        ],
+        "myFloat": 10.0,
+        "myFRGBA": [
+          0.9922,
+          0.8667,
+          0.0314,
+          0.502
+        ],
+        "myInteger": 10,
+        "myPercent": 0.1,
+        "MyString": "Hello",
+        "myTextureMap": {
+          "name": "gradation_horizontal.jpg",
+          "level": 1.0,
+          "hasAlpha": true,
+          "getAlphaFromRGB": false,
+          "coordinatesMode": 0,
+          "isCube": false,
+          "uOffset": 0.0,
+          "vOffset": 0.0,
+          "uScale": 1.0,
+          "vScale": -1.0,
+          "uRotationCenter": 0.0,
+          "vRotationCenter": 0.0,
+          "wRotationCenter": 0.5,
+          "invertY": false,
+          "uAng": 0.0,
+          "vAng": 0.0,
+          "wAng": 0.0,
+          "wrapU": 1,
+          "wrapV": 1,
+          "coordinatesIndex": 0,
+          "isRenderTarget": false,
+          "renderTargetSize": 0,
+          "mirrorPlane": null,
+          "renderList": null,
+          "animations": [],
+          "extensions": null,
+          "samplingMode": 3
+        },
+        "myWorldUnits": 10.0
+      }
+    }
+  ],
+  "multiMaterials": [],
+  "particleSystems": null,
+  "lensFlareSystems": null,
+  "shadowGenerators": [],
+  "skeletons": [],
+  "actions": null,
+  "metadata": null,
+  "workerCollisions": false,
+  "useDelayedTextureLoading": true
+}

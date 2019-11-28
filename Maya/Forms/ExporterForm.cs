@@ -27,6 +27,7 @@ namespace Maya2Babylon.Forms
         const string chkExportMorphTangentProperty = "babylonjs_exportMorphTangent";
         const string chkExportKHRTextureTransformProperty = "babylonjs_exportKHRTextureTransform";
         const string chkExportKHRLightsPunctualProperty = "babylonjs_exportKHRLightsPunctual";
+        const string chkExportKHRMaterialsUnlitProperty = "babylonjs_exportKHRMaterialsUnlit";
         const string chkBakeAnimationFramesProperty = "babylonjs_bakeAnimationFrames";
 
         const string PBRFullPropertyName = "babylonjs_pbr_full";
@@ -80,6 +81,7 @@ namespace Maya2Babylon.Forms
             chkExportMorphTangent.Checked = Loader.GetBoolProperty(chkExportMorphTangentProperty, false);
             chkExportKHRLightsPunctual.Checked = Loader.GetBoolProperty(chkExportKHRTextureTransformProperty, false);
             chkExportKHRTextureTransform.Checked = Loader.GetBoolProperty(chkExportKHRLightsPunctualProperty, false);
+            chkExportKHRMaterialsUnlit.Checked = Loader.GetBoolProperty(chkExportKHRMaterialsUnlitProperty, false);
             chkBakeAnimationFrames.Checked = Loader.GetBoolProperty(chkBakeAnimationFramesProperty, false);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
@@ -117,6 +119,7 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkExportMorphTangentProperty, chkExportMorphTangent.Checked);
             Loader.SetBoolProperty(chkExportKHRLightsPunctualProperty, chkExportKHRLightsPunctual.Checked);
             Loader.SetBoolProperty(chkExportKHRTextureTransformProperty, chkExportKHRTextureTransform.Checked);
+            Loader.SetBoolProperty(chkExportKHRMaterialsUnlitProperty, chkExportKHRMaterialsUnlit.Checked);
             Loader.SetBoolProperty(chkBakeAnimationFramesProperty, chkBakeAnimationFrames.Checked);
 
             Loader.SetBoolProperty(PBRFullPropertyName, chkFullPBR.Checked);
@@ -206,6 +209,23 @@ namespace Maya2Babylon.Forms
             {
                 var scaleFactorParsed = 1.0f;
                 var textureQualityParsed = 100L;
+                try
+                {
+                    scaleFactorParsed = float.Parse(txtScaleFactor.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Scale Factor value: {0}", txtScaleFactor.Text));
+                }
+                try
+                {
+                    textureQualityParsed = long.Parse(txtQuality.Text);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidDataException(String.Format("Invalid Texture Quality value: {0}", txtScaleFactor.Text));
+                }
+    
                 var exportParameters = new ExportParameters
                 {
                     outputPath = txtFilename.Text,
@@ -218,14 +238,15 @@ namespace Maya2Babylon.Forms
                     overwriteTextures = chkCopyTextures.Checked,
                     optimizeVertices = chkOptimizeVertices.Checked,
                     exportTangents = chkExportTangents.Checked,
-                    scaleFactor = float.TryParse(txtScaleFactor.Text, out scaleFactorParsed) ? scaleFactorParsed : 1.0f,
+                    scaleFactor = scaleFactorParsed,
                     exportSkins = chkExportSkin.Checked,
-                    txtQuality = long.TryParse(txtQuality.Text, out textureQualityParsed) ? textureQualityParsed : 100,
+                    txtQuality = textureQualityParsed,
                     dracoCompression = chkDracoCompression.Checked,
                     exportMorphNormals = chkExportMorphNormal.Checked,
                     exportMorphTangents = chkExportMorphTangent.Checked,
                     enableKHRLightsPunctual = chkExportKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkExportKHRTextureTransform.Checked,
+                    enableKHRMaterialsUnlit = chkExportKHRMaterialsUnlit.Checked,
                     bakeAnimationFrames = chkBakeAnimationFrames.Checked,
                     pbrFull = chkFullPBR.Checked,
                     pbrNoLight = chkNoAutoLight.Checked,
@@ -241,9 +262,10 @@ namespace Maya2Babylon.Forms
             }
             catch (Exception ex)
             {
-                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message + " " + ex.StackTrace, Color.Red);
-
+                currentNode = CreateTreeNode(0, "Export cancelled: " + ex.Message, Color.Red);
+                currentNode = CreateTreeNode(1, ex.ToString(), Color.Red);
                 currentNode.EnsureVisible();
+
                 progressBar.Value = 0;
                 success = false;
             }

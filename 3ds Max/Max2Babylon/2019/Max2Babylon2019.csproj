@@ -161,6 +161,9 @@
     <Compile Include="..\Exporter\BabylonExporter.Camera.cs">
       <Link>Exporter\BabylonExporter.Camera.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.CustomAttributes.cs">
+      <Link>Exporter\BabylonExporter.CustomAttributes.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.cs">
       <Link>Exporter\BabylonExporter.cs</Link>
     </Compile>
@@ -169,6 +172,9 @@
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Light.cs">
       <Link>Exporter\BabylonExporter.Light.cs</Link>
+    </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Logger.cs">
+      <Link>Exporter\BabylonExporter.Logger.cs</Link>
     </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Material.cs">
       <Link>Exporter\BabylonExporter.Material.cs</Link>

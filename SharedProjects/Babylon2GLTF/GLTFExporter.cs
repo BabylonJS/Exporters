@@ -497,7 +497,7 @@ namespace Babylon2GLTF
 
             foreach (GLTFImage gltfImage in gltf.ImagesList)
             {
-                var path = Path.Combine(gltf.OutputFolder, Uri.UnescapeDataString(gltfImage.uri));
+                var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
                 byte[] imageBytes = File.ReadAllBytes(path);
 
                 // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
@@ -566,6 +566,13 @@ namespace Babylon2GLTF
                 name = GetUniqueNodeName(babylonNode.name),
                 index = gltf.NodesList.Count
             };
+
+            // User Custom Attributes
+            if (babylonNode.metadata != null && babylonNode.metadata.Count != 0)
+            {
+                gltfNode.extras = babylonNode.metadata;
+            }
+
             gltf.NodesList.Add(gltfNode);   // add the node to the gltf list
             nodeToGltfNodeMap.Add(babylonNode, gltfNode);   // add the node to the global map
 
