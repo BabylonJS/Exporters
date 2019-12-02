@@ -89,6 +89,10 @@ namespace Max2Babylon
             exportParameters.exportMaterials = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_materials");
             exportParameters.exportAnimations = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_animations");
             exportParameters.exportAnimationsOnly = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_animations_only");
+            exportParameters.usePreExportProcess = Loader.Core.RootNode.GetBoolProperty("babylonjs_preproces");
+            exportParameters.flattenScene = Loader.Core.RootNode.GetBoolProperty("babylonjs_flattenScene");
+            exportParameters.mergeContainersAndXRef = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergecontainersandxref");
+            exportParameters.bakeAnimationType = (BakeAnimationType) Loader.Core.RootNode.GetFloatProperty("babylonjs_bakeAnimationsType", 0);
 
             exportParameters.pbrFull = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRFullPropertyName);
             exportParameters.pbrNoLight = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRNoLightPropertyName);

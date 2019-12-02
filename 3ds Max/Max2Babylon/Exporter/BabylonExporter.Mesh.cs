@@ -40,7 +40,7 @@ namespace Max2Babylon
 
         private BabylonNode ExportDummy(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
-            RaiseMessage("ExportDummy " + meshNode.Name, 1);
+            RaiseMessage(meshNode.Name, 1);
 
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
             babylonMesh.isDummy = true;

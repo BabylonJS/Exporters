@@ -51,7 +51,7 @@ namespace Babylon2GLTF
                     light.spot = new GLTFLight.Spot
                     {
                         //innerConeAngle = 0, Babylon doesn't support the innerConeAngle
-                        outerConeAngle = babylonLight.angle
+                        outerConeAngle = babylonLight.angle / 2 // divide by 2 as glTF measures light outer angle from the light's center, while Babylon's light angle measures the whole light's cone angle.
                     };
                     break;
                 default:

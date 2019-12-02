@@ -555,7 +555,7 @@ namespace Max2Babylon
 
             if (exportParameters.scaleFactor != 1.0f)
             {
-                RaiseMessage("A root node is added for scaling", 1);
+                RaiseMessage(String.Format("A root node is added to globally scale the scene by {0}", exportParameters.scaleFactor), 1);
 
                 // Create root node for scaling
                 BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
