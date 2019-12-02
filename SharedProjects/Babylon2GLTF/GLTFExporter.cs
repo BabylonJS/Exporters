@@ -576,37 +576,40 @@ namespace Babylon2GLTF
                 gltf.scenes[0].NodesList.Add(gltfNode.index);
             }
 
-            // Transform
-            // Position
-            gltfNode.translation = babylonNode.position;
+            // TRS
+            if (exportParameters.exportAnimationsOnly == false)
+            {
+                // Position
+                gltfNode.translation = babylonNode.position;
 
-            // Rotation
-            if (babylonNode.rotationQuaternion != null)
-            {
-                gltfNode.rotation = babylonNode.rotationQuaternion;
-            }
-            else
-            {
-                // Convert rotation vector to quaternion
-                BabylonVector3 rotationVector3 = new BabylonVector3
+                // Rotation
+                if (babylonNode.rotationQuaternion != null)
                 {
-                    X = babylonNode.rotation[0],
-                    Y = babylonNode.rotation[1],
-                    Z = babylonNode.rotation[2]
-                };
-                gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
+                    gltfNode.rotation = babylonNode.rotationQuaternion;
+                }
+                else
+                {
+                    // Convert rotation vector to quaternion
+                    BabylonVector3 rotationVector3 = new BabylonVector3
+                    {
+                        X = babylonNode.rotation[0],
+                        Y = babylonNode.rotation[1],
+                        Z = babylonNode.rotation[2]
+                    };
+                    gltfNode.rotation = rotationVector3.toQuaternion().ToArray();
                 }
 
-            // Scale
-            gltfNode.scale = babylonNode.scaling;
+                // Scale
+                gltfNode.scale = babylonNode.scaling;
 
-            // Switch coordinate system at object level
-            gltfNode.translation[2] *= -1;
-            gltfNode.translation[0] *= exportParameters.scaleFactor;
-            gltfNode.translation[1] *= exportParameters.scaleFactor;
-            gltfNode.translation[2] *= exportParameters.scaleFactor;
-            gltfNode.rotation[0] *= -1;
-            gltfNode.rotation[1] *= -1;
+                // Switch coordinate system at object level
+                gltfNode.translation[2] *= -1;
+                gltfNode.translation[0] *= exportParameters.scaleFactor;
+                gltfNode.translation[1] *= exportParameters.scaleFactor;
+                gltfNode.translation[2] *= exportParameters.scaleFactor;
+                gltfNode.rotation[0] *= -1;
+                gltfNode.rotation[1] *= -1;
+            }
 
             ExportGLTFExtension(babylonNode,ref gltfNode, gltf);
             

@@ -87,6 +87,8 @@ namespace Max2Babylon
             exportParameters.enableKHRTextureTransform = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrTextureTransform");
             exportParameters.enableKHRMaterialsUnlit = Loader.Core.RootNode.GetBoolProperty("babylonjs_khr_materials_unlit");
             exportParameters.exportMaterials = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_materials");
+            exportParameters.exportAnimations = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_animations");
+            exportParameters.exportAnimationsOnly = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_animations_only");
 
             exportParameters.pbrFull = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRFullPropertyName);
             exportParameters.pbrNoLight = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRNoLightPropertyName);

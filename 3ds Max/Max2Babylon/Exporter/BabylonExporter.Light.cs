@@ -27,7 +27,15 @@ namespace Max2Babylon
 
         private bool IsLightExportable(IIGameNode lightNode)
         {
-            return IsNodeExportable(lightNode);
+            if (!IsNodeExportable(lightNode))
+            {
+                return false;
+            }
+            if (exportParameters.exportAnimationsOnly && !isAnimated(lightNode))
+            {
+                return false;
+            }
+            return true;
         }
 
         private BabylonNode ExportLight(IIGameScene scene, IIGameNode lightNode, BabylonScene babylonScene)
@@ -209,77 +217,79 @@ namespace Max2Babylon
                 babylonLight.range = maxLight.GetAtten(0, 3, Tools.Forever);
             }
 
-
-            // Animations
-            var animations = new List<BabylonAnimation>();
-
-            if(createDummy)
+            if (exportParameters.exportAnimations)
             {
-                // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation except for the HemisphericLight.
-                if (babylonLight.type == 3)
+                // Animations
+                var animations = new List<BabylonAnimation>();
+
+                if(createDummy)
                 {
-                    BabylonVector3 direction = new BabylonVector3(0, 1, 0);
+                    // Position and rotation animations are stored by the parent (the dummy). The direction result from the parent rotation except for the HemisphericLight.
+                    if (babylonLight.type == 3)
+                    {
+                        BabylonVector3 direction = new BabylonVector3(0, 1, 0);
+                        ExportVector3Animation("direction", animations, key =>
+                        {
+                            var worldRotation = lightNode.GetWorldTM(key).Rotation;
+                            BabylonQuaternion quaternion = new BabylonQuaternion(worldRotation.X, worldRotation.Y, worldRotation.Z, worldRotation.W);
+
+                            return quaternion.Rotate(direction).ToArray();
+                        });
+                    }
+                }
+                else
+                {
+                    GeneratePositionAnimation(lightNode, animations);
+
                     ExportVector3Animation("direction", animations, key =>
                     {
-                        var worldRotation = lightNode.GetWorldTM(key).Rotation;
-                        BabylonQuaternion quaternion = new BabylonQuaternion(worldRotation.X, worldRotation.Y, worldRotation.Z, worldRotation.W);
+                        var localMatrixAnimDir = lightNode.GetLocalTM(key);
 
-                        return quaternion.Rotate(direction).ToArray();
+                        var positionLight = localMatrixAnimDir.Translation;
+                        var lightTarget = gameLight.LightTarget;
+                        if (lightTarget != null)
+                        {
+                            var targetWm = lightTarget.GetObjectTM(key);
+                            var targetPosition = targetWm.Translation;
+
+                            var direction = targetPosition.Subtract(positionLight).Normalize;
+                            return new[] { direction.X, direction.Y, direction.Z };
+                        }
+                        else
+                        {
+                            var vDir = Loader.Global.Point3.Create(0, -1, 0);
+                            vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
+
+                            // The HemisphericLight (type == 3) simulates the ambient environment light, so the passed direction is the light reflection direction, not the incoming direction.
+                            // So we need the opposite direction
+                            return babylonLight.type != 3 ? new[] { vDir.X, vDir.Y, vDir.Z } : new[] { -vDir.X, -vDir.Y, -vDir.Z };
+                        }
                     });
+
+                    // Animation temporary stored for gltf but not exported for babylon
+                    // TODO - Will cause an issue when externalizing the glTF export process
+                    var extraAnimations = new List<BabylonAnimation>();
+                    // Do not check if node rotation properties are animated
+                    GenerateRotationAnimation(lightNode, extraAnimations, true);
+                    babylonLight.extraAnimations = extraAnimations;
                 }
-            }
-            else
-            {
-                GeneratePositionAnimation(lightNode, animations);
 
-                ExportVector3Animation("direction", animations, key =>
+                ExportFloatAnimation("intensity", animations, key => new[] { maxLight.GetIntensity(key, Tools.Forever) });
+
+                ExportColor3Animation("diffuse", animations, key =>
                 {
-                    var localMatrixAnimDir = lightNode.GetLocalTM(key);
-
-                    var positionLight = localMatrixAnimDir.Translation;
-                    var lightTarget = gameLight.LightTarget;
-                    if (lightTarget != null)
-                    {
-                        var targetWm = lightTarget.GetObjectTM(key);
-                        var targetPosition = targetWm.Translation;
-
-                        var direction = targetPosition.Subtract(positionLight).Normalize;
-                        return new[] { direction.X, direction.Y, direction.Z };
-                    }
-                    else
-                    {
-                        var vDir = Loader.Global.Point3.Create(0, -1, 0);
-                        vDir = localMatrixAnimDir.ExtractMatrix3().VectorTransform(vDir).Normalize;
-
-                        // The HemisphericLight (type == 3) simulates the ambient environment light, so the passed direction is the light reflection direction, not the incoming direction.
-                        // So we need the opposite direction
-                        return babylonLight.type != 3 ? new[] { vDir.X, vDir.Y, vDir.Z } : new[] { -vDir.X, -vDir.Y, -vDir.Z };
-                    }
+                    return lightState.AffectDiffuse? maxLight.GetRGBColor(key, Tools.Forever).ToArray() : new float[] { 0, 0, 0 };
                 });
 
-                // Animation temporary stored for gltf but not exported for babylon
-                // TODO - Will cause an issue when externalizing the glTF export process
-                var extraAnimations = new List<BabylonAnimation>();
-                // Do not check if node rotation properties are animated
-                GenerateRotationAnimation(lightNode, extraAnimations, true);
-                babylonLight.extraAnimations = extraAnimations;
-            }
+                babylonLight.animations = animations.ToArray();
 
-            ExportFloatAnimation("intensity", animations, key => new[] { maxLight.GetIntensity(key, Tools.Forever) });
-
-            ExportColor3Animation("diffuse", animations, key =>
-            {
-                return lightState.AffectDiffuse? maxLight.GetRGBColor(key, Tools.Forever).ToArray() : new float[] { 0, 0, 0 };
-            });
-
-            babylonLight.animations = animations.ToArray();
-
-            if (lightNode.MaxNode.GetBoolProperty("babylonjs_autoanimate"))
-            {
-                babylonLight.autoAnimate = true;
-                babylonLight.autoAnimateFrom = (int)lightNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_from");
-                babylonLight.autoAnimateTo = (int)lightNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_to");
-                babylonLight.autoAnimateLoop = lightNode.MaxNode.GetBoolProperty("babylonjs_autoanimateloop");
+                if (lightNode.MaxNode.GetBoolProperty("babylonjs_autoanimate"))
+                {
+                    babylonLight.autoAnimate = true;
+                    babylonLight.autoAnimateFrom = (int)lightNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_from");
+                    babylonLight.autoAnimateTo = (int)lightNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_to");
+                    babylonLight.autoAnimateLoop = lightNode.MaxNode.GetBoolProperty("babylonjs_autoanimateloop");
+                }
             }
 
             babylonScene.LightsList.Add(babylonLight);
