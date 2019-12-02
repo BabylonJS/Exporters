@@ -599,6 +599,17 @@ namespace Max2Babylon
             int containerID = 1;
             container.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
 
+            //the first istance of the multiples containers, the one without _ID_*
+            //mContainer ->referenceBrotherContainer
+            //mContainer_ID_2
+            int idIndex = container.ContainerNode.Name.IndexOf("_ID_");
+            if(idIndex<0) return;
+            string refBrotherName = container.ContainerNode.Name.Substring(0,idIndex);
+            IINode refBrotherContainerObject = Loader.Core.GetINodeByName(refBrotherName);
+            //if there is no brother, there is nothing to resolve
+            if(refBrotherContainerObject==null) return;
+
+
             //manage multiple containers inherithed from the same source
             foreach (IINode n in containerHierarchy)
             {
@@ -615,7 +626,7 @@ namespace Max2Babylon
                 {
                     string originalName = n.Name;
                     n.Name = $"{n.Name}_ID_{containerID}";
-                    IINode source = Loader.Core.GetINodeByName(originalName);
+                    IINode source = refBrotherContainerObject.FindChildNode(originalName);
                     IMtl mat = source.Mtl;
                     if (mat != null)
                     {
