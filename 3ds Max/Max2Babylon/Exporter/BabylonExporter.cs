@@ -48,7 +48,7 @@ namespace Max2Babylon
             }
         }
 
-        private bool IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList,ref List<IINode> flattenableNodes)
+        private bool IsMeshFlattenable(IINode node, AnimationGroupList animationGroupList, ref List<IINode> flattenableNodes)
         {
             //a node can't be flatten if:
             //- is marked as not flattenable
@@ -65,7 +65,7 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
                 }
                 return false;
             }
@@ -81,7 +81,7 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
                 }
                 return false;
 
@@ -94,7 +94,7 @@ namespace Max2Babylon
                 for (int i = 0; i < node.NumChildren; i++)
                 {
                     IINode n = node.GetChildNode(i);
-                    return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
+                    return IsMeshFlattenable(n, animationGroupList, ref flattenableNodes);
                 }
                 return false;
             }
@@ -130,16 +130,16 @@ namespace Max2Babylon
                 string message = $"Flattening child nodes of {itemNode.Name}...";
                 RaiseMessage(message, 0);
                 List<IINode> flattenableNodes = new List<IINode>();
-                if(IsMeshFlattenable(itemNode, animationGroupList,ref flattenableNodes))
+                if (IsMeshFlattenable(itemNode, animationGroupList, ref flattenableNodes))
                 {
                     itemNode = itemNode.FlattenHierarchy();
                 }
 
-                
+
             }
         }
 
-        public void BakeAnimationsFrame(IINode node,BakeAnimationType bakeAnimationType)
+        public void BakeAnimationsFrame(IINode node, BakeAnimationType bakeAnimationType)
         {
             if (bakeAnimationType == BakeAnimationType.DoNotBakeAnimation) return;
 
@@ -152,11 +152,11 @@ namespace Max2Babylon
 #endif
             foreach (IINode iNode in hierachyRoot.NodeTree())
             {
-                tobake.AppendNode(iNode,false,Loader.Core.Time);
+                tobake.AppendNode(iNode, false, Loader.Core.Time);
             }
-            if (!hierachyRoot.IsRootNode) tobake.AppendNode(hierachyRoot,false,Loader.Core.Time);
+            if (!hierachyRoot.IsRootNode) tobake.AppendNode(hierachyRoot, false, Loader.Core.Time);
 
-            Loader.Core.SelectNodeTab(tobake,true,false);
+            Loader.Core.SelectNodeTab(tobake, true, false);
 
             if (bakeAnimationType == BakeAnimationType.BakeAllAnimations)
             {
@@ -200,7 +200,7 @@ namespace Max2Babylon
             List<IIContainerObject> sceneContainers = Tools.GetAllContainers();
             foreach (IIContainerObject containerObject in sceneContainers)
             {
-                if (!containerObject.IsInherited)continue;
+                if (!containerObject.IsInherited) continue;
                 ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).LoadContainer()");
                 ScriptsUtilities.ExecuteMaxScriptCommand($@"(getNodeByName(""{containerObject.ContainerNode.Name}"")).UpdateContainer()");
                 bool makeUnique = containerObject.MakeUnique;
@@ -212,7 +212,7 @@ namespace Max2Babylon
         public void MergeAllXrefRecords()
         {
             if (Loader.IIObjXRefManager.RecordCount <= 0) return;
-            while (Loader.IIObjXRefManager.RecordCount>0)
+            while (Loader.IIObjXRefManager.RecordCount > 0)
             {
                 var record = Loader.IIObjXRefManager.GetRecord(0);
                 RaiseMessage($"Merge XRef record {record.SrcFile.FileName}...");
@@ -249,7 +249,7 @@ namespace Max2Babylon
                         RaiseMessage(string.Format("Containers and Xref  merged in {0:0.00}s", containersXrefMergeTime ), Color.Blue);
 #endif
                     }
-                    BakeAnimationsFrame(exportNode,maxExporterParameters.bakeAnimationType);
+                    BakeAnimationsFrame(exportNode, maxExporterParameters.bakeAnimationType);
                 }
 
                 if (maxExporterParameters.flattenScene && maxExporterParameters.useMultiExporter)
@@ -264,7 +264,7 @@ namespace Max2Babylon
 
             Tools.InitializeGuidNodesMap();
 
-            string fileExportString = exportNode != null? $"{exportNode.NodeName} | {exportParameters.outputPath}": exportParameters.outputPath;
+            string fileExportString = exportNode != null ? $"{exportNode.NodeName} | {exportParameters.outputPath}" : exportParameters.outputPath;
             RaiseMessage($"Exportation started: {fileExportString}", Color.Blue);
 
 
@@ -297,14 +297,14 @@ namespace Max2Babylon
             {
                 gameScene.InitialiseIGame(exportNode, true);
             }
-            
+
             gameScene.SetStaticFrame(0);
 
             MaxSceneFileName = gameScene.SceneFileName;
 
             IsCancelled = false;
 
-            
+
             ReportProgressChanged(0);
 
             string tempOutputDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -320,7 +320,7 @@ namespace Max2Babylon
                 return;
             }
             Directory.CreateDirectory(tempOutputDirectory);
-            
+
             var outputBabylonDirectory = tempOutputDirectory;
 
             // Force output file extension to be babylon
@@ -330,7 +330,7 @@ namespace Max2Babylon
 
             var rawScene = Loader.Core.RootNode;
 
-           
+
 
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
@@ -404,7 +404,7 @@ namespace Max2Babylon
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
             {
-                if (type.IsAbstract || type.IsInterface )
+                if (type.IsAbstract || type.IsInterface)
                     continue;
 
                 if (typeof(IBabylonExtensionExporter).IsAssignableFrom(type))
@@ -415,7 +415,7 @@ namespace Max2Babylon
                         RaiseWarning("Creating exporter instance failed: " + type.Name, 1);
 
                     Type t = exporter.GetGLTFExtendedType();
-                    babylonScene.BabylonToGLTFExtensions.Add(exporter,t);
+                    babylonScene.BabylonToGLTFExtensions.Add(exporter, t);
                 }
 
                 if (typeof(IMaxMaterialExporter).IsAssignableFrom(type))
@@ -600,7 +600,7 @@ namespace Max2Babylon
             {
                 var atmospheric = Loader.Core.GetAtmospheric(index);
 
-                if (atmospheric!=null && atmospheric.Active(0) && atmospheric.ClassName == "Fog")
+                if (atmospheric != null && atmospheric.Active(0) && atmospheric.ClassName == "Fog")
                 {
                     var fog = atmospheric as IStdFog;
 
@@ -673,7 +673,8 @@ namespace Max2Babylon
 
                 // setup a default skybox for the scene for .Babylon export.
                 var sourcePath = exportParameters.pbrEnvironment;
-                if (!string.IsNullOrEmpty(sourcePath)) {
+                if (!string.IsNullOrEmpty(sourcePath))
+                {
                     var fileName = Path.GetFileName(sourcePath);
 
                     // Allow only dds file format
@@ -757,7 +758,7 @@ namespace Max2Babylon
             {
                 var tempBinaryOutputDirectory = Path.Combine(tempOutputDirectory, "Binary");
                 var binaryFilePaths = Directory.GetFiles(tempBinaryOutputDirectory);
-                foreach(var filePath in binaryFilePaths)
+                foreach (var filePath in binaryFilePaths)
                 {
                     if (filePath.EndsWith(".binary.babylon"))
                     {
@@ -800,11 +801,11 @@ namespace Max2Babylon
                         Loader.Global.BroadcastNotification(SystemNotificationCode.PostExport, maxNotification);
 
                         break;
-                    }   
+                    }
                 }
             }
             else
-            { 
+            {
                 foreach (var filePath in filePaths)
                 {
                     var file = Path.GetFileName(filePath);
@@ -913,7 +914,7 @@ namespace Max2Babylon
                 // Create a dummy (empty mesh)
                 babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
             };
-            
+
             if (babylonNode != null)
             {
                 string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
@@ -1056,7 +1057,7 @@ namespace Max2Babylon
             if (exportParameters is MaxExportParameters)
             {
                 MaxExportParameters maxExporterParameters = (exportParameters as MaxExportParameters);
-                if (maxExporterParameters.exportLayers!=null && maxExporterParameters.exportLayers.Count>0)
+                if (maxExporterParameters.exportLayers != null && maxExporterParameters.exportLayers.Count > 0)
                 {
                     if (!maxExporterParameters.exportLayers.HaveNode(gameNode.MaxNode))
                     {
@@ -1128,7 +1129,7 @@ namespace Max2Babylon
             IMatrix3 offsetTM = Tools.Identity;
             offsetTM.Scale(objOffsetScale, false);
             offsetTM.MultiplyBy(objOffsetRotMat);
-            offsetTM.Translate(objOffsetPos); 
+            offsetTM.Translate(objOffsetPos);
 
             return offsetTM;
         }
