@@ -9,15 +9,7 @@ namespace Max2Babylon
     {
         private bool IsCameraExportable(IIGameNode cameraNode)
         {
-            if (!IsNodeExportable(cameraNode))
-            {
-                return false;
-            }
-            if (exportParameters.exportAnimationsOnly && !isAnimated(cameraNode))
-            {
-                return false;
-            }
-            return true;
+            return IsNodeExportable(cameraNode);
         }
 
         private BabylonCamera ExportCamera(IIGameScene scene, IIGameNode cameraNode, BabylonScene babylonScene)

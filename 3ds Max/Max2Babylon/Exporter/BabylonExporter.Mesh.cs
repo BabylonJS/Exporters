@@ -30,7 +30,7 @@ namespace Max2Babylon
                     RaiseWarning($"Mesh {meshNode.Name} failed to initialize.", 2);
                 }
 
-                if (!isAnimated(meshNode))// && !gameMesh.IsObjectSkinned)
+                if (!isAnimated(meshNode))
                 {
                     return false;
                 }
@@ -141,11 +141,6 @@ namespace Max2Babylon
                 RaiseWarning($"Mesh {meshNode.Name} failed to initialize. Mesh is exported as dummy.", 2);
                 return ExportDummy(scene, meshNode, babylonScene);
             }
-
-            //if (exportParameters.exportAnimationsOnly)
-            //{
-            //    return ExportDummy(scene, meshNode, babylonScene);
-            //}
 
             var babylonMesh = new BabylonMesh { name = meshNode.Name, id = meshNode.MaxNode.GetGuid().ToString() };
 

@@ -925,7 +925,7 @@ namespace Max2Babylon
                 }
                 catch (Exception e)
                 {
-                    this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 2);
+                    this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 1);
                 }
 
                 CheckCancelled();
@@ -957,18 +957,19 @@ namespace Max2Babylon
             }
             else
             {
-                if (isNodeRelevantToExport(maxGameNode, false))
-                {
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-                }
-
                 CheckCancelled();
 
-                // Export its children
-                for (int i = 0; i < maxGameNode.ChildCount; i++)
+                if (isNodeRelevantToExport(maxGameNode))
                 {
-                    var descendant = maxGameNode.GetNodeChild(i);
-                    exportNodeRec(descendant, babylonScene, maxGameScene);
+                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+
+                    // Export its children
+                    for (int i = 0; i < maxGameNode.ChildCount; i++)
+                    {
+                        var descendant = maxGameNode.GetNodeChild(i);
+                        exportNodeRec(descendant, babylonScene, maxGameScene);
+                    }
+                    babylonScene.NodeMap[babylonNode.id] = babylonNode;
                 }
             }
 
@@ -978,7 +979,7 @@ namespace Max2Babylon
         /// <summary>
         /// Return true if node descendant hierarchy has any exportable Mesh, Camera or Light
         /// </summary>
-        private bool isNodeRelevantToExport(IIGameNode maxGameNode, bool isRecursive = true)
+        private bool isNodeRelevantToExport(IIGameNode maxGameNode)
         {
             bool isRelevantToExport;
             switch (maxGameNode.IGameObject.IGameType)
@@ -1004,20 +1005,17 @@ namespace Max2Babylon
             {
                 return true;
             }
-
-            if (isRecursive)
+            
+            // Descandant recursivity
+            List<IIGameNode> maxDescendants = getDescendants(maxGameNode);
+            int indexDescendant = 0;
+            while (indexDescendant < maxDescendants.Count) // while instead of for to stop as soon as a relevant node has been found
             {
-                // Descandant recursivity
-                List<IIGameNode> maxDescendants = getDescendants(maxGameNode);
-                int indexDescendant = 0;
-                while (indexDescendant < maxDescendants.Count) // while instead of for to stop as soon as a relevant node has been found
+                if (isNodeRelevantToExport(maxDescendants[indexDescendant]))
                 {
-                    if (isNodeRelevantToExport(maxDescendants[indexDescendant]))
-                    {
-                        return true;
-                    }
-                    indexDescendant++;
+                    return true;
                 }
+                indexDescendant++;
             }
 
             // No relevant node found in hierarchy
@@ -1131,6 +1129,11 @@ namespace Max2Babylon
             }
 
             if (!exportParameters.exportHiddenObjects && gameNode.MaxNode.IsHidden(NodeHideFlags.None, false))
+            {
+                return false;
+            }
+
+            if (exportParameters.exportAnimationsOnly && gameNode.IGameControl != null && !isAnimated(gameNode))
             {
                 return false;
             }

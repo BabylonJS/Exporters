@@ -27,15 +27,7 @@ namespace Max2Babylon
 
         private bool IsLightExportable(IIGameNode lightNode)
         {
-            if (!IsNodeExportable(lightNode))
-            {
-                return false;
-            }
-            if (exportParameters.exportAnimationsOnly && !isAnimated(lightNode))
-            {
-                return false;
-            }
-            return true;
+            return IsNodeExportable(lightNode);
         }
 
         private BabylonNode ExportLight(IIGameScene scene, IIGameNode lightNode, BabylonScene babylonScene)
