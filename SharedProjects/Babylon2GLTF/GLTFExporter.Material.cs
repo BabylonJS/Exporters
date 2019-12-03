@@ -4,6 +4,7 @@ using GLTFExport.Entities;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Collections.Generic;
 using Utilities;
 
 namespace Babylon2GLTF
@@ -133,12 +134,21 @@ namespace Babylon2GLTF
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
 
+                //Custom user properties
+                if (babylonStandardMaterial.metadata != null && babylonStandardMaterial.metadata.Count != 0)
+                {
+                    gltfMaterial.extras = babylonStandardMaterial.metadata;
+                }
+
                 // Alpha
                 string alphaMode;
                 float? alphaCutoff;
                 getAlphaMode(babylonStandardMaterial, out alphaMode, out alphaCutoff);
                 gltfMaterial.alphaMode = alphaMode;
-                gltfMaterial.alphaCutoff = alphaCutoff;
+                if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f) // do not export glTF default value
+                {
+                    gltfMaterial.alphaCutoff = alphaCutoff;
+                }
 
                 // DoubleSided
                 gltfMaterial.doubleSided = !babylonMaterial.backFaceCulling;
@@ -249,7 +259,16 @@ namespace Babylon2GLTF
                             Bitmap diffuseBitmap = null;
                             if (babylonStandardMaterial.diffuseTexture != null)
                             {
-                                diffuseBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath, logger);
+                                if (babylonStandardMaterial.diffuseTexture.bitmap != null)
+                                {
+                                    // Diffuse color map has been computed by the exporter
+                                    diffuseBitmap = babylonStandardMaterial.diffuseTexture.bitmap;
+                                }
+                                else
+                                {
+                                    // Diffuse color map is straight input
+                                    diffuseBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath, logger);
+                                }
                             }
 
                             // Specular
@@ -335,13 +354,15 @@ namespace Babylon2GLTF
                         //export textures
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
-                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap);
+                            string baseColorTextureName = name + "_baseColor" + ".png"; // TODO - unsafe name, may conflict with another texture name
+                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorTextureName);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {
-                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap);
+                            string metallicRoughnessTextureName = name + "_metallicRoughness" + ".jpg"; // TODO - unsafe name, may conflict with another texture name
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, metallicRoughnessTextureName);
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
                         }
 
@@ -440,12 +461,21 @@ namespace Babylon2GLTF
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
 
+                //Custom user properties
+                if (babylonMaterial.metadata != null && babylonMaterial.metadata.Count != 0)
+                {
+                    gltfMaterial.extras = babylonMaterial.metadata;
+                }
+
                 // Alpha
                 string alphaMode;
                 float? alphaCutoff;
                 getAlphaMode(babylonPBRMetallicRoughnessMaterial, out alphaMode, out alphaCutoff);
                 gltfMaterial.alphaMode = alphaMode;
-                gltfMaterial.alphaCutoff = alphaCutoff;
+                if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f) // do not export glTF default value
+                {
+                    gltfMaterial.alphaCutoff = alphaCutoff;
+                }
 
                 // DoubleSided
                 gltfMaterial.doubleSided = babylonPBRMetallicRoughnessMaterial.doubleSided;
@@ -570,8 +600,6 @@ namespace Babylon2GLTF
                     gltfMaterial.extensions["KHR_materials_unlit"] = new object();
                 }
             }
-
-            ExportGLTFExtension(babylonMaterial, ref gltfMaterial,gltf);
         }
 
         private void getAlphaMode(BabylonStandardMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
@@ -579,7 +607,7 @@ namespace Babylon2GLTF
             // TODO: maybe we want to be able to handle both BabylonStandardMaterial and BabylonPBRMetallicRoughnessMaterial via the relevant fields being dropped to BabylonMaterial?
             // Serialization is going to be tricky, as we dont want BabylonStandardMaterial.alphaMode and BabylonStandardMaterial.alphaCutoff to be serialized (till we support it officially in-engine)
             alphaMode = null;
-            alphaCutoff = null;
+            alphaCutoff = 0.5f;
             switch (babylonMaterial.transparencyMode)
             {
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE: // reuse the BabylonPBRMaterialMetallicRoughness enum.
@@ -605,7 +633,7 @@ namespace Babylon2GLTF
         private void getAlphaMode(BabylonPBRMetallicRoughnessMaterial babylonMaterial, out string alphaMode, out float? alphaCutoff)
         {
             alphaMode = null;
-            alphaCutoff = null;
+            alphaCutoff = 0.5f;
             switch (babylonMaterial.transparencyMode)
             {
                 case (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE:

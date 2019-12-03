@@ -85,6 +85,9 @@ namespace Maya2Babylon
             // Hierarchy
             ExportHierarchy(babylonCamera, mFnTransform);
 
+            // User custom attributes
+            babylonCamera.metadata = ExportCustomAttributeFromTransform(mFnTransform);
+
             // Position / rotation
             RaiseVerbose("BabylonExporter.Camera | ExportTransform", 2);
             float[] position = null;

@@ -42,7 +42,7 @@ namespace Max2Babylon
             }
         }
 
-        #region IIPropertyContainer
+        #region IIGameProperty
 
         public static string GetStringProperty(this IIGameProperty property)
         {
@@ -83,6 +83,48 @@ namespace Max2Babylon
             property.GetPropertyValue(value, 0);
             return value;
         }
+
+        #endregion
+
+        #region IIPropertyContainer
+
+        public static string GetStringProperty(this IIPropertyContainer propertyContainer, string propName, string defaultValue = null)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetStringProperty() : defaultValue;
+        }
+
+        public static int GetIntProperty(this IIPropertyContainer propertyContainer, string propName, int defaultValue = 0)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetIntValue() : defaultValue;
+        }
+
+        public static bool GetBoolProperty(this IIPropertyContainer propertyContainer, string propName, bool defaultValue = false)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetBoolValue() : defaultValue;
+        }
+
+        public static float GetFloatProperty(this IIPropertyContainer propertyContainer, string propName, float defaultValue = 0f)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetFloatValue() : defaultValue;
+        }
+
+        public static IPoint3 GetPoint3Property(this IIPropertyContainer propertyContainer, string propName, IPoint3 defaultValue = null)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetPoint3Property() : defaultValue;
+        }
+
+        public static IPoint4 GetPoint4Property(this IIPropertyContainer propertyContainer, string propName, IPoint4 defaultValue = null)
+        {
+            IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
+            return gameProperty != null ? gameProperty.GetPoint4Property() : defaultValue;
+        }
+
+        // ---
 
         public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
         {
@@ -400,6 +442,47 @@ namespace Max2Babylon
         public static IPoint3 ToPoint3(this Vector3 value)
         {
             return Loader.Global.Point3.Create(value.X, value.Y, value.Z);
+        }
+
+        public static IPoint2 Clone(this IPoint2 value)
+        {
+            return Loader.Global.Point2.Create(value.X, value.Y);
+        }
+
+        public static IPoint3 Clone(this IPoint3 value)
+        {
+            return Loader.Global.Point3.Create(value.X, value.Y, value.Z);
+        }
+
+        public static IPoint4 Clone(this IPoint4 value)
+        {
+            return Loader.Global.Point4.Create(value.X, value.Y, value.Z, value.W);
+        }
+
+        public static float[] Clone2(this float[] value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            return value.ToList().ToArray();
+        }
+
+        public static float[] MultiplyBy(this float[] array, float value)
+        {
+            if (array == null)
+            {
+                return null;
+            }
+            else
+            {
+                float[] result = new float[array.Length];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    result[i] = array[i] * value;
+                }
+                return result;
+            }
         }
 
         public static Vector3 ToVector3(this IPoint3 value)

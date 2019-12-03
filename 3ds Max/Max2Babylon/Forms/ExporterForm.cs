@@ -176,12 +176,12 @@ namespace Max2Babylon
                 {
                     string defaultTexturesDir = Path.GetDirectoryName(txtModelPath.Text);
                     txtTexturesPath.MaxPath(defaultTexturesDir);
-                }
+            }
 
                 if (!PathUtilities.IsBelowPath(txtTexturesPath.Text, txtModelPath.Text))
                 {
                     CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderers support this feature", 0);
-                }
+        }
             }
         }
 
@@ -370,7 +370,7 @@ namespace Max2Babylon
             if (clearLogs)
                 treeView.Nodes.Clear();
 
-            exporter.OnImportProgressChanged += progress =>
+            exporter.OnExportProgressChanged += progress =>
             {
                 progressBar.Value = progress;
                 Application.DoEvents();
@@ -381,6 +381,24 @@ namespace Max2Babylon
             exporter.OnError += (error, rank) => CreateErrorMessage(error, rank);
 
             exporter.OnMessage += (message, color, rank, emphasis) => CreateMessage(message, color, rank, emphasis);
+
+            exporter.OnVerbose += (message, color, rank, emphasis) =>
+            {
+                try
+                {
+                    currentNode = CreateTreeNode(rank, message, color);
+
+                    if (emphasis)
+                    {
+                        currentNode.EnsureVisible();
+                    }
+                }
+                catch
+                {
+                    //do nothing
+                }
+                Application.DoEvents();
+            };
 
             butExport.Enabled = false;
             butExportAndRun.Enabled = false;
@@ -396,7 +414,7 @@ namespace Max2Babylon
                 var scaleFactorParsed = 1.0f;
                 var textureQualityParsed = 100L;
                 try
-                {
+            {
                     scaleFactorParsed = float.Parse(txtScaleFactor.Text);
                 }
                 catch (Exception e)

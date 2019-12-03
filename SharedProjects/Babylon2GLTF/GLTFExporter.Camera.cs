@@ -1,5 +1,6 @@
 ﻿using BabylonExport.Entities;
 using GLTFExport.Entities;
+using System.Collections.Generic;
 
 namespace Babylon2GLTF
 {
@@ -32,6 +33,12 @@ namespace Babylon2GLTF
             gltf.CamerasList.Add(gltfCamera);
             gltfNode.camera = gltfCamera.index;
             gltfCamera.gltfNode = gltfNode;
+
+            // Custom user properties
+            if(babylonCamera.metadata != null && babylonCamera.metadata.Count != 0)
+            {
+                gltfCamera.extras = babylonCamera.metadata;
+            }
 
             // Camera type
             switch (babylonCamera.mode)
