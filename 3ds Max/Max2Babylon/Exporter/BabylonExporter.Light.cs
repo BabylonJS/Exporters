@@ -27,7 +27,25 @@ namespace Max2Babylon
 
         private bool IsLightExportable(IIGameNode lightNode)
         {
-            return IsNodeExportable(lightNode);
+            if (IsNodeExportable(lightNode) == false)
+            {
+                return false;
+            }
+
+            if (exportParameters.exportAnimationsOnly && lightNode.IGameControl != null && !isAnimated(lightNode))
+            {
+                var gameLight = lightNode.IGameObject.AsGameLight();
+                var initialized = gameLight.InitializeData;
+
+                if (gameLight.LightTarget != null)
+                {
+                    return IsNodeExportable(gameLight.LightTarget);
+                }
+
+                return false;
+            }
+
+            return true;
         }
 
         private BabylonNode ExportLight(IIGameScene scene, IIGameNode lightNode, BabylonScene babylonScene)

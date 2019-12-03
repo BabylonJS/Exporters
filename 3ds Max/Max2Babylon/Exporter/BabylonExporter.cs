@@ -511,6 +511,22 @@ namespace Max2Babylon
 
             }
 
+            // Convert fixed cameras and lights to dummies (meshes without geometry)
+            if (exportParameters.exportAnimationsOnly)
+            {
+                babylonScene.CamerasList.ForEach(camera =>
+                {
+                    ExportDummy(camera, babylonScene);
+                });
+                babylonScene.CamerasList.Clear();
+
+                babylonScene.LightsList.ForEach(light =>
+                {
+                    ExportDummy(light, babylonScene);
+                });
+                babylonScene.LightsList.Clear();
+            }
+
             // Main camera
             BabylonCamera babylonMainCamera = null;
             ICameraObject maxMainCameraObject = null;
@@ -898,79 +914,67 @@ namespace Max2Babylon
         {
             BabylonNode babylonNode = null;
 
-            if (exportParameters.exportAnimationsOnly == false)
+
+            try
             {
-                try
+                switch (maxGameNode.IGameObject.IGameType)
                 {
-                    switch (maxGameNode.IGameObject.IGameType)
-                    {
-                        case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
+                    case Autodesk.Max.IGameObject.ObjectTypes.Mesh:
+                        if (exportParameters.exportAnimationsOnly == false)
+                        {
                             babylonNode = ExportMesh(maxGameScene, maxGameNode, babylonScene);
-                            break;
-                        case Autodesk.Max.IGameObject.ObjectTypes.Camera:
-                            babylonNode = ExportCamera(maxGameScene, maxGameNode, babylonScene);
-                            break;
-                        case Autodesk.Max.IGameObject.ObjectTypes.Light:
-                            babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
-                            break;
-                        case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
-                            // Create a dummy (empty mesh) when type is unknown
-                            // An example of unknown type object is the target of target light or camera
+                        }
+                        else
+                        {
                             babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-                            break;
-                        default:
-                            // The type of node is not exportable (helper, spline, xref...)
-                            break;
-                    }
-                }
-                catch (Exception e)
-                {
-                    this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 1);
-                }
-
-                CheckCancelled();
-
-                // If node is not exported successfully but is significant
-                if (babylonNode == null &&
-                    isNodeRelevantToExport(maxGameNode))
-                {
-                    // Create a dummy (empty mesh)
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-                };
-
-                if (babylonNode != null)
-                {
-                    string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
-                    if (tag != "")
-                    {
-                        babylonNode.tags = tag;
-                    }
-
-                    // Export its children
-                    for (int i = 0; i < maxGameNode.ChildCount; i++)
-                    {
-                        var descendant = maxGameNode.GetNodeChild(i);
-                        exportNodeRec(descendant, babylonScene, maxGameScene);
-                    }
-                    babylonScene.NodeMap[babylonNode.id] = babylonNode;
+                        }
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Camera:
+                        babylonNode = ExportCamera(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Light:
+                        babylonNode = ExportLight(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    case Autodesk.Max.IGameObject.ObjectTypes.Unknown:
+                        // Create a dummy (empty mesh) when type is unknown
+                        // An example of unknown type object is the target of target light or camera
+                        babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+                        break;
+                    default:
+                        // The type of node is not exportable (helper, spline, xref...)
+                        break;
                 }
             }
-            else
+            catch (Exception e)
             {
-                CheckCancelled();
+                this.RaiseWarning(String.Format("Exception raised during export. Node will be exported as dummy node. \r\nMessage: \r\n{0} \r\n{1}", e.Message, e.InnerException), 1);
+            }
 
-                if (isNodeRelevantToExport(maxGameNode))
+            CheckCancelled();
+
+            // If node is not exported successfully but is significant
+            if (babylonNode == null &&
+                isNodeRelevantToExport(maxGameNode))
+            {
+                // Create a dummy (empty mesh)
+                babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+            };
+
+            if (babylonNode != null)
+            {
+                string tag = maxGameNode.MaxNode.GetStringProperty("babylonjs_tag", "");
+                if (tag != "")
                 {
-                    babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
-
-                    // Export its children
-                    for (int i = 0; i < maxGameNode.ChildCount; i++)
-                    {
-                        var descendant = maxGameNode.GetNodeChild(i);
-                        exportNodeRec(descendant, babylonScene, maxGameScene);
-                    }
-                    babylonScene.NodeMap[babylonNode.id] = babylonNode;
+                    babylonNode.tags = tag;
                 }
+
+                // Export its children
+                for (int i = 0; i < maxGameNode.ChildCount; i++)
+                {
+                    var descendant = maxGameNode.GetNodeChild(i);
+                    exportNodeRec(descendant, babylonScene, maxGameScene);
+                }
+                babylonScene.NodeMap[babylonNode.id] = babylonNode;
             }
 
             return babylonNode;
@@ -995,6 +999,10 @@ namespace Max2Babylon
                     break;
                 case Autodesk.Max.IGameObject.ObjectTypes.Helper:
                     isRelevantToExport = IsNodeExportable(maxGameNode);
+                    if (exportParameters.exportAnimationsOnly && maxGameNode.IGameControl != null && !isAnimated(maxGameNode))
+                    {
+                        isRelevantToExport = false;
+                    }
                     break;
                 default:
                     isRelevantToExport = false;
@@ -1133,11 +1141,6 @@ namespace Max2Babylon
                 return false;
             }
 
-            if (exportParameters.exportAnimationsOnly && gameNode.IGameControl != null && !isAnimated(gameNode))
-            {
-                return false;
-            }
-
             return true;
         }
 
@@ -1211,11 +1214,13 @@ namespace Max2Babylon
                 node.rotation = rotationQuaternion.toEulerAngles().ToArray();
             }
 
+            BabylonAnimation animationRotationQuaternion;
+
             // animation
             if (node.animations != null)
             {
                 List<BabylonAnimation> animations = new List<BabylonAnimation>(node.animations);
-                BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
                 if (animationRotationQuaternion != null)
                 {
                     foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
@@ -1223,19 +1228,17 @@ namespace Max2Babylon
                         key.values = FixCameraQuaternion(key.values, angle);
                     }
                 }
-                else   // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+            }
+            // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+            if (node.extraAnimations != null)
+            {
+                List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(node.extraAnimations);
+                animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                if (animationRotationQuaternion != null)
                 {
-                    if (node.extraAnimations != null)
+                    foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
                     {
-                        List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(node.extraAnimations);
-                        animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
-                        if (animationRotationQuaternion != null)
-                        {
-                            foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
-                            {
-                                key.values = FixCameraQuaternion(key.values, angle);
-                            }
-                        }
+                        key.values = FixCameraQuaternion(key.values, angle);
                     }
                 }
             }
@@ -1277,7 +1280,7 @@ namespace Max2Babylon
                     }
 
                     // Rotation
-                    BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                    animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
                     if (animationRotationQuaternion != null)
                     {
                         foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)

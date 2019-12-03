@@ -50,7 +50,32 @@ namespace Max2Babylon
 
             // Animations
             exportAnimation(babylonMesh, meshNode);
-            
+
+            babylonScene.MeshesList.Add(babylonMesh);
+
+            return babylonMesh;
+        }
+
+        private BabylonNode ExportDummy(BabylonNode babylonNode, BabylonScene babylonScene)
+        {
+            var babylonMesh = new BabylonMesh { name = babylonNode.name, id = babylonNode.id };
+            babylonMesh.isDummy = true;
+
+            // Position / rotation / scaling / hierarchy
+            babylonMesh.parentId = babylonNode.parentId;
+            babylonMesh.position = babylonNode.position;
+            babylonMesh.rotation = babylonNode.rotation;
+            babylonMesh.rotationQuaternion = babylonNode.rotationQuaternion;
+            babylonMesh.scaling = babylonNode.scaling;
+
+            // Animations
+            babylonMesh.animations = babylonNode.animations;
+            babylonMesh.extraAnimations = babylonNode.extraAnimations;
+            babylonMesh.autoAnimate = babylonNode.autoAnimate;
+            babylonMesh.autoAnimateFrom = babylonNode.autoAnimateFrom;
+            babylonMesh.autoAnimateTo = babylonNode.autoAnimateTo;
+            babylonMesh.autoAnimateLoop = babylonNode.autoAnimateLoop;
+
             babylonScene.MeshesList.Add(babylonMesh);
 
             return babylonMesh;

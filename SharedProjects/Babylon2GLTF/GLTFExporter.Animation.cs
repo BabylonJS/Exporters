@@ -34,6 +34,7 @@ namespace Babylon2GLTF
                     BabylonNode node = pair.Key;
                     GLTFNode gltfNode = pair.Value;
                     bool nodeHasAnimations = node.animations != null && node.animations.Length > 0 && node.animations[0] != null;
+                    bool nodeHasExtraAnimations = node.extraAnimations != null && node.extraAnimations.Count > 0 && node.extraAnimations[0] != null;
                     BabylonMesh meshNode = node as BabylonMesh;
                     BabylonMorphTargetManager morphTargetManager = null;
                     bool nodeHasAnimatedMorphTargets = false;
@@ -46,7 +47,7 @@ namespace Babylon2GLTF
                         }
                     }
 
-                    if (!nodeHasAnimations && !nodeHasAnimatedMorphTargets) continue;
+                    if (!nodeHasAnimations && !nodeHasExtraAnimations && !nodeHasAnimatedMorphTargets) continue;
                     if (nodeHasAnimations && node.animations[0].property == "_matrix")
                     {
                         ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, node, pair.Value);
@@ -100,9 +101,10 @@ namespace Babylon2GLTF
                             }
 
                             bool nodeHasAnimations = babylonNode.animations != null && babylonNode.animations.Length > 0 && babylonNode.animations[0] != null;
-                            if (!nodeHasAnimations) continue;
+                            bool nodeHasExtraAnimations = babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0 && babylonNode.extraAnimations[0] != null;
+                            if (!nodeHasAnimations && !nodeHasExtraAnimations) continue;
 
-                            if (babylonNode.animations[0].property == "_matrix") //TODO: Is this check accurate for deciphering between bones and nodes?
+                            if (nodeHasAnimations && babylonNode.animations[0].property == "_matrix") //TODO: Is this check accurate for deciphering between bones and nodes?
                             {
                                 ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode);
                             }

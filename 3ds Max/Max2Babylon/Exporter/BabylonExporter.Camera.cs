@@ -9,7 +9,25 @@ namespace Max2Babylon
     {
         private bool IsCameraExportable(IIGameNode cameraNode)
         {
-            return IsNodeExportable(cameraNode);
+            if (IsNodeExportable(cameraNode) == false)
+            {
+                return false;
+            }
+
+            if (exportParameters.exportAnimationsOnly && cameraNode.IGameControl != null && !isAnimated(cameraNode))
+            {
+                var gameCamera = cameraNode.IGameObject.AsGameCamera();
+                var initialized = gameCamera.InitializeData;
+
+                if (gameCamera.CameraTarget != null)
+                {
+                    return IsNodeExportable(gameCamera.CameraTarget);
+                }
+
+                return false;
+            }
+
+            return true;
         }
 
         private BabylonCamera ExportCamera(IIGameScene scene, IIGameNode cameraNode, BabylonScene babylonScene)
@@ -150,11 +168,13 @@ namespace Max2Babylon
                     camera.rotation = rotationQuaternion.toEulerAngles().ToArray();
                 }
 
+                BabylonAnimation animationRotationQuaternion;
+
                 // animation
                 if (camera.animations != null)
                 {
                     List<BabylonAnimation> animations = new List<BabylonAnimation>(camera.animations);
-                    BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                    animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
                     if (animationRotationQuaternion != null)
                     {
                         foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
@@ -162,19 +182,18 @@ namespace Max2Babylon
                             key.values = FixCameraQuaternion(key.values, angle);
                         }
                     }
-                    else   // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+                }
+
+                // if the camera has a lockedTargetId, it is the extraAnimations that stores the rotation animation
+                if (camera.extraAnimations != null)
+                {
+                    List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(camera.extraAnimations);
+                    animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                    if (animationRotationQuaternion != null)
                     {
-                        if (camera.extraAnimations != null)
+                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
                         {
-                            List<BabylonAnimation> extraAnimations = new List<BabylonAnimation>(camera.extraAnimations);
-                            animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
-                            if (animationRotationQuaternion != null)
-                            {
-                                foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
-                                {
-                                    key.values = FixCameraQuaternion(key.values, angle);
-                                }
-                            }
+                            key.values = FixCameraQuaternion(key.values, angle);
                         }
                     }
                 }
@@ -216,7 +235,7 @@ namespace Max2Babylon
                         }
 
                         // Rotation
-                        BabylonAnimation animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
+                        animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
                         if (animationRotationQuaternion != null)
                         {
                             foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
