@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -220,6 +221,43 @@ namespace BabylonJS_Installer
             var identity = WindowsIdentity.GetCurrent();
             var principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        public void checkNewInstallerVersion()
+        {
+            string url_versionFile = "https://raw.githubusercontent.com/BabylonJS/Exporters/master/BabylonJS_Installer/BabylonJS_Installer/BabylonJS_Installer.csproj";
+
+            string assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            System.Net.WebClient wc = new System.Net.WebClient();
+            string versionFile = wc.DownloadString(url_versionFile);
+            int avFrom = versionFile.IndexOf("<ApplicationVersion>") + "<ApplicationVersion>".Length;
+            int avTo = versionFile.LastIndexOf("</ApplicationVersion>");
+            String serverVersion = versionFile.Substring(avFrom, avTo - avFrom);
+
+            String[] currVersion = assemblyVersion.Split('.');
+            String[] servVersion = serverVersion.Split('.');
+
+            this.form.log("Current app version : " + currVersion[0] + '.' + currVersion[1] + '.' + currVersion[2]);
+            this.form.log("Server last version : " + servVersion[0] + '.' + servVersion[1] + '.' + servVersion[2]);
+            
+            bool isUpToDate = true;
+            if (int.Parse(servVersion[0]) > int.Parse(currVersion[0])) isUpToDate = false;
+            else if (int.Parse(servVersion[0]) == int.Parse(currVersion[0]))
+            {
+                if (int.Parse(servVersion[1]) > int.Parse(currVersion[1])) isUpToDate = false;
+                else if (int.Parse(servVersion[1]) == int.Parse(currVersion[1]))
+                {
+                    if (int.Parse(servVersion[2]) > int.Parse(currVersion[2])) isUpToDate = false;
+                }
+            }
+
+            if (isUpToDate) this.form.log("Application up to date !\n\n");
+            else
+            {
+                this.form.warn("A new version is available here : https://github.com/BabylonJS/Exporters/releases \n\n");
+                this.form.goTab("Logs");
+            }
         }
     }
 }

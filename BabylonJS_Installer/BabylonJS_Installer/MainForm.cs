@@ -79,6 +79,8 @@ namespace BabylonJS_Installer
             this.checker.form = this;
             this.checker.setLatestVersionDate();
 
+            this.checker.checkNewInstallerVersion();
+
             this.locations = new Dictionary<string, Dictionary<string, string>>();
             this.checkInstall("Max");
             this.checkInstall("Maya");
