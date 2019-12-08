@@ -95,6 +95,10 @@ namespace Babylon2GLTF
                 logger.ReportProgressChanged((int)progression);
                 logger.CheckCancelled();
             });
+#if DEBUG
+            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0;
+            logger.RaiseMessage(string.Format("GLTFNodes exported in {0:0.00}s", nodesExportTime), Color.Blue);
+#endif
 
 
             // Meshes
@@ -110,7 +114,7 @@ namespace Babylon2GLTF
                 logger.CheckCancelled();
             }
 #if DEBUG
-            var meshesExportTime = watch.ElapsedMilliseconds / 1000.0;
+            var meshesExportTime = watch.ElapsedMilliseconds / 1000.0 - nodesExportTime;
             logger.RaiseMessage(string.Format("GLTFMeshes exported in {0:0.00}s", meshesExportTime), Color.Blue);
 #endif
  
@@ -127,8 +131,8 @@ namespace Babylon2GLTF
                 logger.CheckCancelled();
             });
 #if DEBUG
-            var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 -meshesExportTime;
-            logger.RaiseMessage(string.Format("GLTFNodes exported in {0:0.00}s", nodesExportTime), Color.Blue);
+            var skinLightCameraExportTime = watch.ElapsedMilliseconds / 1000.0 -meshesExportTime;
+            logger.RaiseMessage(string.Format("GLTFSkin GLTFLights GLTFCameras exported in {0:0.00}s", skinLightCameraExportTime), Color.Blue);
 #endif
             // Materials
             progression = 70.0f;
