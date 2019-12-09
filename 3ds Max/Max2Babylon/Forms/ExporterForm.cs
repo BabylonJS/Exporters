@@ -31,7 +31,7 @@ namespace Max2Babylon
         private  bool filePostOpenCallback = false;
         private GlobalDelegates.Delegate5 m_FilePostOpenDelegate;
 
-        private void RegisterFilePreOpen()
+        private void RegisterFilePostOpen()
         {
             if (!filePostOpenCallback)
             {
@@ -55,7 +55,7 @@ namespace Max2Babylon
         public ExporterForm(BabylonExportActionItem babylonExportAction)
         {
             InitializeComponent();
-            RegisterFilePreOpen();
+            RegisterFilePostOpen();
 
 
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
