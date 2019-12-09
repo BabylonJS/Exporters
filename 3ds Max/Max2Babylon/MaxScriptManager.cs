@@ -12,19 +12,19 @@ namespace Max2Babylon
 {
     public class MaxScriptManager
     {
-        public static void Export()
+        public static void Export( bool logInListener)
         {
             string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
-            Export(InitParameters(userRelativePath));
+            Export(InitParameters(userRelativePath),logInListener);
         }
 
-        public static void Export(string outputPath)
+        public static void Export(string outputPath, bool logInListener)
         {
-            Export(InitParameters(outputPath));
+            Export(InitParameters(outputPath),logInListener);
         }
 
-        public static void Export(MaxExportParameters exportParameters)
+        public static void Export(MaxExportParameters exportParameters, bool logInListener )
         {
             if (Loader.Class_ID == null)
             {
@@ -40,23 +40,26 @@ namespace Max2Babylon
 
             BabylonExporter exporter = new BabylonExporter();
 
-            // Init log system
-            exporter.OnWarning += (warning, rank) =>
+            if (logInListener)
             {
-                Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(warning+"\n");
-            };
-            exporter.OnError += (error, rank) =>
-            {
-                Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(error + "\n");
-            };
-            exporter.OnMessage += (message, color, rank, emphasis) =>
-            {
-                Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
-            };
-            exporter.OnVerbose += (message, color, rank, emphasis) =>
-            {
-                Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
-            };
+                // Init log system
+                exporter.OnWarning += (warning, rank) =>
+                {
+                    Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(warning+"\n");
+                };
+                exporter.OnError += (error, rank) =>
+                {
+                    Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(error + "\n");
+                };
+                exporter.OnMessage += (message, color, rank, emphasis) =>
+                {
+                    Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
+                };
+                exporter.OnVerbose += (message, color, rank, emphasis) =>
+                {
+                    Autodesk.Max.GlobalInterface.Instance.TheListener.EditStream.Printf(message + "\n");
+                };
+            }
 
             // Start export
             exporter.Export(exportParameters);
