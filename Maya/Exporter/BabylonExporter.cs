@@ -31,7 +31,7 @@ namespace Maya2Babylon
         /// </summary>
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
-        public static string exporterVersion = "1.4.0";
+        public static string exporterVersion = "Custom.Build.Version";
 
         /// <summary>
         /// Export to file
