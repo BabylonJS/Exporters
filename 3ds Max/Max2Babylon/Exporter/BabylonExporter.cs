@@ -1,20 +1,16 @@
 ﻿using Autodesk.Max;
-using BabylonExport.Entities;
 using Babylon2GLTF;
+using BabylonExport.Entities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Autodesk.Max.Plugins;
-using GLTFExport.Entities;
-using Color = System.Drawing.Color;
 using Utilities;
+using Color = System.Drawing.Color;
 
 namespace Max2Babylon
 {
@@ -1013,7 +1009,7 @@ namespace Max2Babylon
             {
                 return true;
             }
-            
+
             // Descandant recursivity
             List<IIGameNode> maxDescendants = getDescendants(maxGameNode);
             int indexDescendant = 0;
