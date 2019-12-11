@@ -1710,17 +1710,20 @@ namespace Max2Babylon
 
         public static void MaxPath(this RichTextBox box, string path)
         {
-            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
-            box.ResetText();
-
-            box.Text = path;
-            box.ForeColor = Color.Black;
-
-            if (path.StartsWith(dirName))
+            if (!box.IsDisposed)
             {
-                box.SelectionStart = 0;
-                box.SelectionLength = dirName.Length;
-                box.SelectionColor = Color.Blue;
+                string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+                box.ResetText();
+
+                box.Text = path;
+                box.ForeColor = Color.Black;
+
+                if (path.StartsWith(dirName))
+                {
+                    box.SelectionStart = 0;
+                    box.SelectionLength = dirName.Length;
+                    box.SelectionColor = Color.Blue;
+                }
             }
         }
 
