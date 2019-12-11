@@ -719,7 +719,11 @@ namespace Max2Babylon
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
                 using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
+#if DEBUG
+                    jsonWriter.Formatting = Formatting.Indented;
+#else
                     jsonWriter.Formatting = Formatting.None;
+#endif
                     jsonSerializer.Serialize(jsonWriter, babylonScene);
                 }
                 File.WriteAllText(outputFile, sb.ToString());
