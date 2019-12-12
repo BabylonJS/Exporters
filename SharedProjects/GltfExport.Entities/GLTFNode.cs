@@ -22,13 +22,13 @@ namespace GLTFExport.Entities
         [DataMember(EmitDefaultValue = false)]
         public int? mesh { get; set; }
 
-        [DataMember(IsRequired = true)]
+        [DataMember(EmitDefaultValue = false)]
         public float[] translation { get; set; }
 
-        [DataMember(IsRequired = true)]
+        [DataMember(EmitDefaultValue = false)]
         public float[] rotation { get; set; }
 
-        [DataMember(IsRequired = true)]
+        [DataMember(EmitDefaultValue = false)]
         public float[] scale { get; set; }
 
         [DataMember(EmitDefaultValue = false)]

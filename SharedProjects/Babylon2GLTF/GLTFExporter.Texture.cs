@@ -193,8 +193,11 @@ namespace Babylon2GLTF
                     source = gltfImage.index
                 };
                 gltfTexture.index = gltf.TexturesList.Count;
-                gltf.TexturesList.Add(gltfTexture);
 
+                if (!CheckIfImageIsRegistered(name))
+                {
+                    gltf.TexturesList.Add(gltfTexture);
+                }
 
                 // --------------------------
                 // ------ TextureInfo -------

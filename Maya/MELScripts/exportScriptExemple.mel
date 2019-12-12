@@ -1,0 +1,94 @@
+string $parameters[] = `GenerateExportersParameter`;
+
+//DESTINATION PATH 
+$parameters[0] = "F:\\Developpement\\ExporterBJSExemple\\scriptExport\\export";
+
+//EXPORT FORMAT
+$parameters[1] = "babylon";
+
+//TEXTURES FOLDER
+$parameters[2] = "";
+
+//SCALE FACTOR
+$parameters[3] = "1";
+
+//WRITE TEXTURES
+$parameters[4] = "True";
+
+//OVERWRITE TEXTURES
+$parameters[5] = "True";
+
+//EXPORT HIDDEN OBJECTS
+$parameters[6] = "False";
+
+//EXPORT MATERIALS
+$parameters[7] = "True";
+
+//EXPORT ONLY SELECTED
+$parameters[8] = "False";
+
+//BAKE ANIMATION FRAMES
+$parameters[9] = "False";
+
+//OPTIMIZE ANIMATION
+$parameters[10] = "True";
+
+//OPTIMIZE VERTICES
+$parameters[11] = "True";
+
+//ANIMATION GROUP NON EXPORTED
+$parameters[12] = "False";
+
+//GENERATE MANIFEST
+$parameters[13] = "False";
+
+//AUTO SAVE SCENE FILE
+$parameters[14] = "False";
+
+//EXPORT TANGENTS
+$parameters[15] = "True";
+
+//EXPORT SKINS
+$parameters[16] = "True";
+
+//EXPORT MORPH TARGET
+$parameters[17] = "True";
+
+//EXPORT MORPH NORMALS
+$parameters[18] = "True";
+
+//TEXTURE QUALITY
+$parameters[19] = "100";
+
+//MERGE AO WITH MR
+$parameters[20] = "True";
+
+//DRACO COMPRESSION
+$parameters[21] = "False";
+
+//ENABLE KHR LIGHTS PUNCTUAL
+$parameters[22] = "False";
+
+//ENABLE KHR TEXTURE TRANSFORM
+$parameters[23] = "False";
+
+//ENABLE KHR MATERIALS UNLIT
+$parameters[24] = "False";
+
+//PBR FULL
+$parameters[25] = "False";
+
+//PBR NO LIGHT
+$parameters[26] = "False";
+
+//CREATE DEFAULT SKYBOX
+$parameters[27] = "False";
+
+//PBR ENVIRONMENT
+$parameters[28] = "";
+
+ScriptToBabylon -exportParameters $parameters;
+
+
+
+

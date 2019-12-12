@@ -13,7 +13,29 @@ namespace Max2Babylon
 
         private bool IsMeshExportable(IIGameNode meshNode)
         {
-            return IsNodeExportable(meshNode);
+            if (!IsNodeExportable(meshNode))
+            {
+                return false;
+            }
+            if (exportParameters.exportAnimationsOnly)
+            {
+                var gameMesh = meshNode.IGameObject.AsGameMesh();
+                try
+                {
+                    bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
+                                                                // translated into a property because it has no parameters
+                }
+                catch (Exception e)
+                {
+                    RaiseWarning($"Mesh {meshNode.Name} failed to initialize.", 2);
+                }
+
+                if (!isAnimated(meshNode))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private BabylonNode ExportDummy(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
@@ -34,7 +56,33 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
+        private BabylonNode ExportDummy(BabylonNode babylonNode, BabylonScene babylonScene)
+        {
+            var babylonMesh = new BabylonMesh { name = babylonNode.name, id = babylonNode.id };
+            babylonMesh.isDummy = true;
+
+            // Position / rotation / scaling / hierarchy
+            babylonMesh.parentId = babylonNode.parentId;
+            babylonMesh.position = babylonNode.position;
+            babylonMesh.rotation = babylonNode.rotation;
+            babylonMesh.rotationQuaternion = babylonNode.rotationQuaternion;
+            babylonMesh.scaling = babylonNode.scaling;
+
+            // Animations
+            babylonMesh.animations = babylonNode.animations;
+            babylonMesh.extraAnimations = babylonNode.extraAnimations;
+            babylonMesh.autoAnimate = babylonNode.autoAnimate;
+            babylonMesh.autoAnimateFrom = babylonNode.autoAnimateFrom;
+            babylonMesh.autoAnimateTo = babylonNode.autoAnimateTo;
+            babylonMesh.autoAnimateLoop = babylonNode.autoAnimateLoop;
+
+            babylonScene.MeshesList.Add(babylonMesh);
+
+            return babylonMesh;
+        }
+
         Dictionary<BabylonMesh, IIGameNode> masterMeshMap = new Dictionary<BabylonMesh, IIGameNode>();
+
         private BabylonNode ExportMesh(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
             if (IsMeshExportable(meshNode) == false)
@@ -51,7 +99,7 @@ namespace Max2Babylon
             var tabs = Loader.Global.NodeTab.Create();
 #endif
             Loader.Global.IInstanceMgr.InstanceMgr.GetInstances(meshNode.MaxNode, tabs);
-            BabylonMesh babylonMasterMesh = null;
+
             if (tabs.Count > 1)
             {
                 // For a mesh with instances, we distinguish between master and instance meshes:
@@ -998,23 +1046,26 @@ namespace Max2Babylon
 
         private void exportAnimation(BabylonNode babylonNode, IIGameNode maxGameNode)
         {
-            var animations = new List<BabylonAnimation>();
-
-            GenerateCoordinatesAnimations(maxGameNode, animations);
-
-            if (!ExportFloatController(maxGameNode.MaxNode.VisController, "visibility", animations))
+            if (exportParameters.exportAnimations)
             {
-                ExportFloatAnimation("visibility", animations, key => new[] { maxGameNode.MaxNode.GetVisibility(key, Tools.Forever) });
-            }
+                var animations = new List<BabylonAnimation>();
+                
+                GenerateCoordinatesAnimations(maxGameNode, animations);
+                
+                if (!ExportFloatController(maxGameNode.MaxNode.VisController, "visibility", animations))
+                {
+                    ExportFloatAnimation("visibility", animations, key => new[] { maxGameNode.MaxNode.GetVisibility(key, Tools.Forever) });
+                }
 
-            babylonNode.animations = animations.ToArray();
+                babylonNode.animations = animations.ToArray();
 
-            if (maxGameNode.MaxNode.GetBoolProperty("babylonjs_autoanimate", 1))
-            {
-                babylonNode.autoAnimate = true;
-                babylonNode.autoAnimateFrom = (int)maxGameNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_from");
-                babylonNode.autoAnimateTo = (int)maxGameNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_to", 100);
-                babylonNode.autoAnimateLoop = maxGameNode.MaxNode.GetBoolProperty("babylonjs_autoanimateloop", 1);
+                if (maxGameNode.MaxNode.GetBoolProperty("babylonjs_autoanimate", 1))
+                {
+                    babylonNode.autoAnimate = true;
+                    babylonNode.autoAnimateFrom = (int)maxGameNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_from");
+                    babylonNode.autoAnimateTo = (int)maxGameNode.MaxNode.GetFloatProperty("babylonjs_autoanimate_to", 100);
+                    babylonNode.autoAnimateLoop = maxGameNode.MaxNode.GetBoolProperty("babylonjs_autoanimateloop", 1);
+                }
             }
         }
 
