@@ -617,12 +617,38 @@ namespace Max2Babylon
             return false;
         }
 
-        public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
+        public bool isPositionAnimated(IIGameNode gameNode)
         {
-            if (gameNode.IGameControl.IsAnimated(IGameControlType.Pos) ||
+            return gameNode.IGameControl != null && (gameNode.IGameControl.IsAnimated(IGameControlType.Pos) ||
                 gameNode.IGameControl.IsAnimated(IGameControlType.PosX) ||
                 gameNode.IGameControl.IsAnimated(IGameControlType.PosY) ||
-                gameNode.IGameControl.IsAnimated(IGameControlType.PosZ))
+                gameNode.IGameControl.IsAnimated(IGameControlType.PosZ));
+        }
+
+        public bool isRotationAnimated(IIGameNode gameNode)
+        {
+            return gameNode.IGameControl != null && (gameNode.IGameControl.IsAnimated(IGameControlType.Rot) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
+                gameNode.IGameControl.IsAnimated(IGameControlType.EulerZ) ||
+                (gameNode.IGameObject.IGameType == Autodesk.Max.IGameObject.ObjectTypes.Light && gameNode.IGameObject.AsGameLight().LightTarget != null)); // Light with target are indirectly animated by their target
+        }
+
+        public bool isScaleAnimated(IIGameNode gameNode)
+        {
+            return gameNode.IGameControl != null && gameNode.IGameControl.IsAnimated(IGameControlType.Scale);
+        }
+
+        public bool isAnimated(IIGameNode gameNode)
+        {
+            return isPositionAnimated(gameNode) ||
+                isRotationAnimated(gameNode) ||
+                isScaleAnimated(gameNode);
+        }
+
+        public void GeneratePositionAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
+        {
+            if (isPositionAnimated(gameNode))
             {
                 ExportVector3Animation("position", animations, key =>
                 {
@@ -649,12 +675,7 @@ namespace Max2Babylon
 
         public void GenerateRotationAnimation(IIGameNode gameNode, List<BabylonAnimation> animations, bool force = false)
         {
-            if (gameNode.IGameControl.IsAnimated(IGameControlType.Rot) ||
-                gameNode.IGameControl.IsAnimated(IGameControlType.EulerX) ||
-                gameNode.IGameControl.IsAnimated(IGameControlType.EulerY) ||
-                gameNode.IGameControl.IsAnimated(IGameControlType.EulerZ) ||
-                (gameNode.IGameObject.IGameType == Autodesk.Max.IGameObject.ObjectTypes.Light && gameNode.IGameObject.AsGameLight().LightTarget != null) || // Light with target are indirectly animated by their target
-                force)
+            if (isRotationAnimated(gameNode) || force)
             {
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
@@ -685,7 +706,7 @@ namespace Max2Babylon
 
         public void GenerateScalingAnimation(IIGameNode gameNode, List<BabylonAnimation> animations)
         {
-            if (gameNode.IGameControl.IsAnimated(IGameControlType.Scale))
+            if (isScaleAnimated(gameNode))
             {
                 ExportVector3Animation("scaling", animations, key =>
                 {
