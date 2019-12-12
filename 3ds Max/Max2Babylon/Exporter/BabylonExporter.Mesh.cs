@@ -81,6 +81,8 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
+        Dictionary<BabylonMesh, IIGameNode> masterMeshMap = new Dictionary<BabylonMesh, IIGameNode>();
+
         private BabylonNode ExportMesh(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene)
         {
             if (IsMeshExportable(meshNode) == false)
@@ -97,6 +99,7 @@ namespace Max2Babylon
             var tabs = Loader.Global.NodeTab.Create();
 #endif
             Loader.Global.IInstanceMgr.InstanceMgr.GetInstances(meshNode.MaxNode, tabs);
+
             if (tabs.Count > 1)
             {
                 // For a mesh with instances, we distinguish between master and instance meshes:
@@ -104,52 +107,29 @@ namespace Max2Babylon
                 //      - an instance mesh only stores the info of the node (transform, hierarchy, animations)
 
                 // Check if this mesh has already been exported
-                List<BabylonMesh> babylonMasterMeshes = new List<BabylonMesh>();
-                var index = 0;
-                while (index < tabs.Count)
+                for (int index = 0; index < tabs.Count; index++)
                 {
 #if MAX2017 || MAX2018 || MAX2019 || MAX2020
                     var tab = tabs[index];
 #else
                     var tab = tabs[new IntPtr(index)];
 #endif
-
-                    babylonMasterMeshes.AddRange(babylonScene.MeshesList.FindAll(_babylonMesh => {
-                        // Same id
-                        return _babylonMesh.id == tab.GetGuid().ToString() &&
-                               // Mesh is not a dummy
-                               _babylonMesh.isDummy == false;
-                    }));
-
-                    index++;
-                }
-
-                if (babylonMasterMeshes.Count > 0)
-                {
-                    // Mesh already exported
-                    // Export this node as instance
-
-                    // Check if we need to export this instance as an instance mesh.
-                    // If there is already an exported mesh in the scene that shares this mesh's material, then export it as an instance.
-                    BabylonMesh babylonMasterMesh = null;
-                    foreach (var mesh in babylonMasterMeshes)
+                    var tabGuid = tab.GetGuid().ToString();
+                    foreach (var masterMeshPair in masterMeshMap)
                     {
-                        if (mesh.materialId == null
-                         || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(mesh.materialId)))
+                        // Check if we need to export this instance as an instance mesh.
+                        if (tabGuid == masterMeshPair.Key.id)
                         {
-                            babylonMasterMesh = mesh;
+                            // If there is already an exported mesh in the scene that shares this mesh's material, then export it as an instance.
+                            if (masterMeshPair.Key.materialId == null
+                            || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(masterMeshPair.Value.NodeMaterial.MaxMaterial.GetGuid().ToString())))
+                            {
+                                return ExportInstanceMesh(scene, meshNode, babylonScene, masterMeshPair.Key);
+                            }
                         }
                     }
-
-                    if (babylonMasterMesh != null)
-                    {
-                        return ExportInstanceMesh(scene, meshNode, babylonScene, babylonMasterMesh);
-                    }
-
-                    return ExportMasterMesh(scene, meshNode, babylonScene);
                 }
             }
-
             return ExportMasterMesh(scene, meshNode, babylonScene);
         }
 
@@ -563,7 +543,7 @@ namespace Max2Babylon
             exportAnimation(babylonMesh, meshNode);
 
             babylonScene.MeshesList.Add(babylonMesh);
-
+            masterMeshMap[babylonMesh] = meshNode;
             return babylonMesh;
         }
 

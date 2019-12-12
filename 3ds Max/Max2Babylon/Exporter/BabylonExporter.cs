@@ -29,7 +29,7 @@ namespace Max2Babylon
         private bool optimizeAnimations;
         private bool exportNonAnimated;
 
-        public static string exporterVersion = "1.5.0";
+        public static string exporterVersion = "Custom.Build.Version";
         public float scaleFactor = 1.0f;
 
         public const int MaxSceneTicksPerSecond = 4800; //https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/MAXScript-Help/files/GUID-141213A1-B5A8-457B-8838-E602022C8798-htm.html
@@ -761,7 +761,11 @@ namespace Max2Babylon
                 var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
                 using (var jsonWriter = new JsonTextWriterOptimized(sw))
                 {
+#if DEBUG
+                    jsonWriter.Formatting = Formatting.Indented;
+#else
                     jsonWriter.Formatting = Formatting.None;
+#endif
                     jsonSerializer.Serialize(jsonWriter, babylonScene);
                 }
                 File.WriteAllText(outputFile, sb.ToString());
