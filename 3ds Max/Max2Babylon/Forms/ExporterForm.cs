@@ -113,6 +113,8 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.PrepareCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.PrepareCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials", 1);
+            Tools.PrepareCheckBox(chkExportAnimations, Loader.Core.RootNode, "babylonjs_export_animations", 1);
+            Tools.PrepareCheckBox(chkExportAnimationsOnly, Loader.Core.RootNode, "babylonjs_export_animations_only");
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
             Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
@@ -318,6 +320,8 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkKHRLightsPunctual, Loader.Core.RootNode, "babylonjs_khrLightsPunctual");
             Tools.UpdateCheckBox(chkKHRMaterialsUnlit, Loader.Core.RootNode, "babylonjs_khr_materials_unlit");
             Tools.UpdateCheckBox(chkExportMaterials, Loader.Core.RootNode, "babylonjs_export_materials");
+            Tools.UpdateCheckBox(chkExportAnimations, Loader.Core.RootNode, "babylonjs_export_animations");
+            Tools.UpdateCheckBox(chkExportAnimationsOnly, Loader.Core.RootNode, "babylonjs_export_animations_only");
             Tools.UpdateCheckBox(chkAnimgroupExportNonAnimated, Loader.Core.RootNode, "babylonjs_animgroupexportnonanimated");
             Tools.UpdateCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.UpdateCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
@@ -453,6 +457,8 @@ namespace Max2Babylon
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
                     exportMaterials = chkExportMaterials.Checked,
+                    exportAnimations = chkExportAnimations.Checked,
+                    exportAnimationsOnly = chkExportAnimationsOnly.Checked,
                     optimizeAnimations = !chkDoNotOptimizeAnimations.Checked,
                     animgroupExportNonAnimated = chkAnimgroupExportNonAnimated.Checked,
                     exportNode = exportItem?.Node,

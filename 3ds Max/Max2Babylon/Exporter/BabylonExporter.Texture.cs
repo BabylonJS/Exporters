@@ -342,7 +342,7 @@ namespace Max2Babylon
             RaiseMessage("Export baseColor+Alpha texture", 2);
 
             var texture = baseColorTexture != null ? baseColorTexture : alphaTexture;
-            baseColorTextureMapExtension = baseColorTexture != null ? Path.GetExtension(baseColorTexture.Map.FullFilePath) : ".png"; // if we don't have a base color texture, export as png.
+            baseColorTextureMapExtension = ".png"; // since we are adding an alpha channel, export as png. This will convert any other input base texture format to PNG.
             var nameText = (baseColorTexture != null ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) : TextureUtilities.ColorToStringName(baseColor));
 
             var textureID = baseColorTexture != null ? texture.GetGuid().ToString() : string.Format("{0}_{1}", texture.GetGuid().ToString(), nameText);
@@ -373,17 +373,9 @@ namespace Max2Babylon
                 var hasAlpha = isTextureOk(alphaTexMap);
 
                 // Alpha
-
-                // If the texture file format does not traditionally support an alpha channel, export the base texture as opaque
-                if (baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp")
-                {
-                    babylonTexture.hasAlpha = false;
-                }
-                else
-                {
-                    babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE) || alpha < 1.0f;
-                }
+                babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE || baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB)) || alpha < 1.0f;
                 babylonTexture.getAlphaFromRGB = false;
+
                 if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE)) &&
                     (baseColorTextureMapExtension == ".tif" || baseColorTextureMapExtension == ".tiff"))
                 {
