@@ -626,6 +626,15 @@ namespace Max2Babylon
             exporter.IsCancelled = true;
         }
 
+        private void butCopyToClipboard_Click(object sender, EventArgs e)
+        {
+            var textString = treeView.ToPrettyString();
+            if (textString != string.Empty)
+            {
+                System.Windows.Forms.Clipboard.SetText(textString);
+            }
+        }
+
         private void ExporterForm_Activated(object sender, EventArgs e)
         {
             Loader.Global.DisableAccelerators();

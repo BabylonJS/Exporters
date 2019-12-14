@@ -17,5 +17,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)MathUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextureUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeViewExtension.cs" />
   </ItemGroup>
 </Project>
