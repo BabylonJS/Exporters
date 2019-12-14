@@ -51,9 +51,9 @@
             this.label8 = new System.Windows.Forms.Label();
             this.chkBakeAnimationFrames = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.chkExportKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.chkExportKHRTextureTransform = new System.Windows.Forms.CheckBox();
             this.chkExportKHRLightsPunctual = new System.Windows.Forms.CheckBox();
-            this.chkExportKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.chkExportMorphNormal = new System.Windows.Forms.CheckBox();
             this.chkExportMorphTangent = new System.Windows.Forms.CheckBox();
@@ -76,6 +76,7 @@
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.butCopyToClipboard = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -134,7 +135,7 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 735);
+            this.progressBar.Location = new System.Drawing.Point(12, 806);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(638, 23);
             this.progressBar.TabIndex = 103;
@@ -146,7 +147,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView.Location = new System.Drawing.Point(12, 444);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 237);
+            this.treeView.Size = new System.Drawing.Size(810, 279);
             this.treeView.TabIndex = 102;
             // 
             // butCancel
@@ -154,7 +155,7 @@
             this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCancel.Enabled = false;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(656, 735);
+            this.butCancel.Location = new System.Drawing.Point(656, 806);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(80, 23);
             this.butCancel.TabIndex = 104;
@@ -331,6 +332,17 @@
             this.label7.Size = new System.Drawing.Size(58, 13);
             this.label7.TabIndex = 26;
             this.label7.Text = "Animations";
+            // 
+            // chkExportKHRMaterialsUnlit
+            // 
+            this.chkExportKHRMaterialsUnlit.AutoSize = true;
+            this.chkExportKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(320, 256);
+            this.chkExportKHRMaterialsUnlit.Name = "chkExportKHRMaterialsUnlit";
+            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
+            this.chkExportKHRMaterialsUnlit.TabIndex = 25;
+            this.chkExportKHRMaterialsUnlit.Text = "KHR_materials_unlit";
+            this.chkExportKHRMaterialsUnlit.UseVisualStyleBackColor = true;
             // 
             // chkExportKHRTextureTransform
             // 
@@ -557,7 +569,7 @@
             // 
             this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butClose.Location = new System.Drawing.Point(742, 735);
+            this.butClose.Location = new System.Drawing.Point(742, 806);
             this.butClose.Name = "butClose";
             this.butClose.Size = new System.Drawing.Size(80, 23);
             this.butClose.TabIndex = 105;
@@ -585,22 +597,24 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
-            // chkExportKHRMaterialsUnlit
+            // butCopyToClipboard
             // 
-            this.chkExportKHRMaterialsUnlit.AutoSize = true;
-            this.chkExportKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(320, 256);
-            this.chkExportKHRMaterialsUnlit.Name = "chkExportKHRMaterialsUnlit";
-            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
-            this.chkExportKHRMaterialsUnlit.TabIndex = 25;
-            this.chkExportKHRMaterialsUnlit.Text = "KHR_materials_unlit";
-            this.chkExportKHRMaterialsUnlit.UseVisualStyleBackColor = true;
+            this.butCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.butCopyToClipboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.butCopyToClipboard.Location = new System.Drawing.Point(708, 729);
+            this.butCopyToClipboard.Name = "butCopyToClipboard";
+            this.butCopyToClipboard.Size = new System.Drawing.Size(114, 27);
+            this.butCopyToClipboard.TabIndex = 101;
+            this.butCopyToClipboard.Text = "Copy To Clipboard";
+            this.butCopyToClipboard.UseVisualStyleBackColor = true;
+            this.butCopyToClipboard.Click += new System.EventHandler(this.butCopyToClipboard_Click);
             // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(838, 690);
+            this.ClientSize = new System.Drawing.Size(838, 761);
+            this.Controls.Add(this.butCopyToClipboard);
             this.Controls.Add(this.butExportAndRun);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox2);
@@ -674,5 +688,6 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.OpenFileDialog envFileDialog;
         private System.Windows.Forms.CheckBox chkDefaultSkybox;
+        private System.Windows.Forms.Button butCopyToClipboard;
     }
 }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BabylonExport.Entities;
+using Utilities;
 
 namespace Maya2Babylon.Forms
 {
@@ -347,6 +348,15 @@ namespace Maya2Babylon.Forms
         private void butCancel_Click(object sender, EventArgs e)
         {
             exporter.IsCancelled = true;
+        }
+
+        private void butCopyToClipboard_Click(object sender, EventArgs e)
+        {
+            var textString = treeView.ToPrettyString();
+            if (textString != string.Empty)
+            {
+                System.Windows.Forms.Clipboard.SetText(textString);
+            }
         }
 
         private void ExporterForm_Activated(object sender, EventArgs e)
