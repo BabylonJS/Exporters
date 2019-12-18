@@ -323,23 +323,13 @@ namespace Max2Babylon
                     parentBoneIndex = parentIndex,
                     matrix = (parentIndex==-1)?node.GetWorldTM(0).ToArray():node.GetLocalTM(0).ToArray()
                 };
-
+                
                 if (exportParameters.exportAnimations)
                 {
                     // export its animation
                     var babylonAnimation = ExportMatrixAnimation("_matrix", key =>
                     {
-                        var objectTM = node.GetObjectTM(key);
-                        var parentNode = node.NodeParent;
-                        IGMatrix mat;
-                        if (parentNode == null || bone.parentBoneIndex == -1)
-                        {
-                            mat = objectTM;
-                        }
-                        else
-                        {
-                            mat = node.GetLocalTM(key);
-                        }
+                        IGMatrix mat = node.GetLocalTM(key);
                         return mat.ToArray();
                     },
                     false); // Do not remove linear animation keys for bones
