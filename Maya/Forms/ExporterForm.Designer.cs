@@ -51,9 +51,9 @@
             this.label8 = new System.Windows.Forms.Label();
             this.chkBakeAnimationFrames = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.chkExportKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.chkExportKHRTextureTransform = new System.Windows.Forms.CheckBox();
             this.chkExportKHRLightsPunctual = new System.Windows.Forms.CheckBox();
-            this.chkExportKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.chkExportMorphNormal = new System.Windows.Forms.CheckBox();
             this.chkExportMorphTangent = new System.Windows.Forms.CheckBox();
@@ -76,6 +76,8 @@
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.chkExportAnimations = new System.Windows.Forms.CheckBox();
+            this.chkExportAnimationsOnly = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -108,7 +110,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilename.Location = new System.Drawing.Point(18, 34);
             this.txtFilename.Name = "txtFilename";
-            this.txtFilename.Size = new System.Drawing.Size(377, 20);
+            this.txtFilename.Size = new System.Drawing.Size(379, 20);
             this.txtFilename.TabIndex = 2;
             this.txtFilename.TextChanged += new System.EventHandler(this.txtFilename_TextChanged);
             // 
@@ -116,7 +118,7 @@
             // 
             this.butBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.butBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butBrowse.Location = new System.Drawing.Point(401, 32);
+            this.butBrowse.Location = new System.Drawing.Point(403, 32);
             this.butBrowse.Name = "butBrowse";
             this.butBrowse.Size = new System.Drawing.Size(43, 23);
             this.butBrowse.TabIndex = 3;
@@ -206,6 +208,8 @@
             this.groupBox1.Controls.Add(this.chkFullPBR);
             this.groupBox1.Controls.Add(this.chkNoAutoLight);
             this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.chkExportAnimationsOnly);
+            this.groupBox1.Controls.Add(this.chkExportAnimations);
             this.groupBox1.Controls.Add(this.chkBakeAnimationFrames);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.chkExportKHRMaterialsUnlit);
@@ -236,7 +240,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(450, 382);
+            this.groupBox1.Size = new System.Drawing.Size(452, 382);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
@@ -266,14 +270,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEnvironmentName.Location = new System.Drawing.Point(86, 353);
             this.txtEnvironmentName.Name = "txtEnvironmentName";
-            this.txtEnvironmentName.Size = new System.Drawing.Size(309, 20);
+            this.txtEnvironmentName.Size = new System.Drawing.Size(311, 20);
             this.txtEnvironmentName.TabIndex = 31;
             // 
             // butEnvironmentPath
             // 
             this.butEnvironmentPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.butEnvironmentPath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butEnvironmentPath.Location = new System.Drawing.Point(401, 351);
+            this.butEnvironmentPath.Location = new System.Drawing.Point(403, 351);
             this.butEnvironmentPath.Name = "butEnvironmentPath";
             this.butEnvironmentPath.Size = new System.Drawing.Size(43, 23);
             this.butEnvironmentPath.TabIndex = 32;
@@ -331,6 +335,17 @@
             this.label7.Size = new System.Drawing.Size(58, 13);
             this.label7.TabIndex = 26;
             this.label7.Text = "Animations";
+            // 
+            // chkExportKHRMaterialsUnlit
+            // 
+            this.chkExportKHRMaterialsUnlit.AutoSize = true;
+            this.chkExportKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(320, 256);
+            this.chkExportKHRMaterialsUnlit.Name = "chkExportKHRMaterialsUnlit";
+            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
+            this.chkExportKHRMaterialsUnlit.TabIndex = 25;
+            this.chkExportKHRMaterialsUnlit.Text = "KHR_materials_unlit";
+            this.chkExportKHRMaterialsUnlit.UseVisualStyleBackColor = true;
             // 
             // chkExportKHRTextureTransform
             // 
@@ -585,16 +600,31 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
-            // chkExportKHRMaterialsUnlit
+            // chkExportAnimations
             // 
-            this.chkExportKHRMaterialsUnlit.AutoSize = true;
-            this.chkExportKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(320, 256);
-            this.chkExportKHRMaterialsUnlit.Name = "chkExportKHRMaterialsUnlit";
-            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
-            this.chkExportKHRMaterialsUnlit.TabIndex = 25;
-            this.chkExportKHRMaterialsUnlit.Text = "KHR_materials_unlit";
-            this.chkExportKHRMaterialsUnlit.UseVisualStyleBackColor = true;
+            this.chkExportAnimations.AutoSize = true;
+            this.chkExportAnimations.Checked = true;
+            this.chkExportAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportAnimations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportAnimations.Location = new System.Drawing.Point(166, 296);
+            this.chkExportAnimations.Name = "chkExportAnimations";
+            this.chkExportAnimations.Size = new System.Drawing.Size(107, 17);
+            this.chkExportAnimations.TabIndex = 27;
+            this.chkExportAnimations.Text = "Export Animations";
+            this.chkExportAnimations.UseVisualStyleBackColor = true;
+            this.chkExportAnimations.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // chkExportAnimationsOnly
+            // 
+            this.chkExportAnimationsOnly.AutoSize = true;
+            this.chkExportAnimationsOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportAnimationsOnly.Location = new System.Drawing.Point(320, 296);
+            this.chkExportAnimationsOnly.Name = "chkExportAnimationsOnly";
+            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(131, 17);
+            this.chkExportAnimationsOnly.TabIndex = 27;
+            this.chkExportAnimationsOnly.Text = "Export Animations Only";
+            this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
+            this.chkExportAnimationsOnly.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // ExporterForm
             // 
@@ -674,5 +704,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.OpenFileDialog envFileDialog;
         private System.Windows.Forms.CheckBox chkDefaultSkybox;
+        private System.Windows.Forms.CheckBox chkExportAnimations;
+        private System.Windows.Forms.CheckBox chkExportAnimationsOnly;
     }
 }

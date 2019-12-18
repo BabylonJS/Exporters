@@ -29,6 +29,8 @@ namespace Maya2Babylon.Forms
         const string chkExportKHRLightsPunctualProperty = "babylonjs_exportKHRLightsPunctual";
         const string chkExportKHRMaterialsUnlitProperty = "babylonjs_exportKHRMaterialsUnlit";
         const string chkBakeAnimationFramesProperty = "babylonjs_bakeAnimationFrames";
+        const string chkExportAnimationsProperty = "babylonjs_exportAnimations";
+        const string chkExportAnimationsOnlyProperty = "babylonjs_exportAnimationsOnly";
 
         const string PBRFullPropertyName = "babylonjs_pbr_full";
         const string PBRNoLightPropertyName = "babylonjs_pbr_nolight";
@@ -83,6 +85,8 @@ namespace Maya2Babylon.Forms
             chkExportKHRTextureTransform.Checked = Loader.GetBoolProperty(chkExportKHRLightsPunctualProperty, false);
             chkExportKHRMaterialsUnlit.Checked = Loader.GetBoolProperty(chkExportKHRMaterialsUnlitProperty, false);
             chkBakeAnimationFrames.Checked = Loader.GetBoolProperty(chkBakeAnimationFramesProperty, false);
+            chkExportAnimations.Checked = Loader.GetBoolProperty(chkExportAnimationsProperty, true);
+            chkExportAnimationsOnly.Checked = Loader.GetBoolProperty(chkExportAnimationsOnlyProperty, true);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
 
@@ -121,6 +125,8 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkExportKHRTextureTransformProperty, chkExportKHRTextureTransform.Checked);
             Loader.SetBoolProperty(chkExportKHRMaterialsUnlitProperty, chkExportKHRMaterialsUnlit.Checked);
             Loader.SetBoolProperty(chkBakeAnimationFramesProperty, chkBakeAnimationFrames.Checked);
+            Loader.SetBoolProperty(chkExportAnimationsProperty, chkExportAnimations.Checked);
+            Loader.SetBoolProperty(chkExportAnimationsOnlyProperty, chkExportAnimationsOnly.Checked);
 
             Loader.SetBoolProperty(PBRFullPropertyName, chkFullPBR.Checked);
             Loader.SetBoolProperty(PBRNoLightPropertyName, chkNoAutoLight.Checked);
@@ -248,6 +254,8 @@ namespace Maya2Babylon.Forms
                     enableKHRTextureTransform = chkExportKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkExportKHRMaterialsUnlit.Checked,
                     bakeAnimationFrames = chkBakeAnimationFrames.Checked,
+                    exportAnimations = chkExportAnimations.Checked,
+                    exportAnimationsOnly = chkExportAnimationsOnly.Checked,
                     pbrFull = chkFullPBR.Checked,
                     pbrNoLight = chkNoAutoLight.Checked,
                     createDefaultSkybox = chkDefaultSkybox.Checked,
