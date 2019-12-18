@@ -86,6 +86,9 @@
             this.saveOptionBtn = new System.Windows.Forms.Button();
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.chkExportAnimations = new System.Windows.Forms.CheckBox();
+            this.chkExportAnimationsOnly = new System.Windows.Forms.CheckBox();
+            this.butCopyToClipboard = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -156,7 +159,7 @@
             this.progressBar.Location = new System.Drawing.Point(12, 861);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1080, 23);
+            this.progressBar.Size = new System.Drawing.Size(959, 23);
             this.progressBar.TabIndex = 104;
             // 
             // treeView
@@ -228,6 +231,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkExportAnimationsOnly);
+            this.groupBox1.Controls.Add(this.chkExportAnimations);
             this.groupBox1.Controls.Add(this.lblBakeAnimation);
             this.groupBox1.Controls.Add(this.cmbBakeAnimationOptions);
             this.groupBox1.Controls.Add(this.chkApplyPreprocessToScene);
@@ -818,6 +823,44 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
+            // chkExportAnimations
+            // 
+            this.chkExportAnimations.AutoSize = true;
+            this.chkExportAnimations.Checked = true;
+            this.chkExportAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportAnimations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportAnimations.Location = new System.Drawing.Point(320, 195);
+            this.chkExportAnimations.Name = "chkExportAnimations";
+            this.chkExportAnimations.Size = new System.Drawing.Size(107, 17);
+            this.chkExportAnimations.TabIndex = 42;
+            this.chkExportAnimations.Text = "Export Animations";
+            this.chkExportAnimations.UseVisualStyleBackColor = true;
+            // 
+            // chkExportAnimationsOnly
+            // 
+            this.chkExportAnimationsOnly.AutoSize = true;
+            this.chkExportAnimationsOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportAnimationsOnly.Location = new System.Drawing.Point(320, 218);
+            this.chkExportAnimationsOnly.Name = "chkExportAnimationsOnly";
+            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(131, 17);
+            this.chkExportAnimationsOnly.TabIndex = 43;
+            this.chkExportAnimationsOnly.Text = "Export Animations Only";
+            this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
+            // 
+            // butCopyToClipboard
+            // 
+            this.butCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.butCopyToClipboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.butCopyToClipboard.Location = new System.Drawing.Point(979, 861);
+            this.butCopyToClipboard.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butCopyToClipboard.Name = "butCopyToClipboard";
+            this.butCopyToClipboard.Size = new System.Drawing.Size(111, 23);
+            this.butCopyToClipboard.TabIndex = 105;
+            this.butCopyToClipboard.Text = "Copy To Clipboard";
+            this.butCopyToClipboard.UseVisualStyleBackColor = true;
+            this.butCopyToClipboard.Click += new System.EventHandler(this.butCopyToClipboard_Click);
+            this.butCopyToClipboard.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
+            // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -829,6 +872,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.butClose);
+            this.Controls.Add(this.butCopyToClipboard);
             this.Controls.Add(this.butCancel);
             this.Controls.Add(this.treeView);
             this.Controls.Add(this.progressBar);
@@ -909,5 +953,8 @@
         private System.Windows.Forms.CheckBox chkApplyPreprocessToScene;
         private System.Windows.Forms.Label lblBakeAnimation;
         private System.Windows.Forms.ComboBox cmbBakeAnimationOptions;
+        private System.Windows.Forms.CheckBox chkExportAnimationsOnly;
+        private System.Windows.Forms.CheckBox chkExportAnimations;
+        private System.Windows.Forms.Button butCopyToClipboard;
     }
 }
