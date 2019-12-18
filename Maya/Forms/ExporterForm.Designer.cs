@@ -76,6 +76,7 @@
             this.toolTipDracoCompression = new System.Windows.Forms.ToolTip(this.components);
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.butCopyToClipboard = new System.Windows.Forms.Button();
             this.chkExportAnimations = new System.Windows.Forms.CheckBox();
             this.chkExportAnimationsOnly = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
@@ -136,7 +137,7 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 735);
+            this.progressBar.Location = new System.Drawing.Point(12, 806);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(638, 23);
             this.progressBar.TabIndex = 103;
@@ -148,7 +149,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView.Location = new System.Drawing.Point(12, 444);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 237);
+            this.treeView.Size = new System.Drawing.Size(810, 279);
             this.treeView.TabIndex = 102;
             // 
             // butCancel
@@ -156,7 +157,7 @@
             this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCancel.Enabled = false;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(656, 735);
+            this.butCancel.Location = new System.Drawing.Point(656, 806);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(80, 23);
             this.butCancel.TabIndex = 104;
@@ -572,7 +573,7 @@
             // 
             this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butClose.Location = new System.Drawing.Point(742, 735);
+            this.butClose.Location = new System.Drawing.Point(742, 806);
             this.butClose.Name = "butClose";
             this.butClose.Size = new System.Drawing.Size(80, 23);
             this.butClose.TabIndex = 105;
@@ -600,6 +601,18 @@
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
+            // butCopyToClipboard
+            // 
+            this.butCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.butCopyToClipboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.butCopyToClipboard.Location = new System.Drawing.Point(708, 729);
+            this.butCopyToClipboard.Name = "butCopyToClipboard";
+            this.butCopyToClipboard.Size = new System.Drawing.Size(114, 27);
+            this.butCopyToClipboard.TabIndex = 101;
+            this.butCopyToClipboard.Text = "Copy To Clipboard";
+            this.butCopyToClipboard.UseVisualStyleBackColor = true;
+            this.butCopyToClipboard.Click += new System.EventHandler(this.butCopyToClipboard_Click);
+            // 
             // chkExportAnimations
             // 
             this.chkExportAnimations.AutoSize = true;
@@ -612,7 +625,6 @@
             this.chkExportAnimations.TabIndex = 27;
             this.chkExportAnimations.Text = "Export Animations";
             this.chkExportAnimations.UseVisualStyleBackColor = true;
-            this.chkExportAnimations.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // chkExportAnimationsOnly
             // 
@@ -624,13 +636,13 @@
             this.chkExportAnimationsOnly.TabIndex = 27;
             this.chkExportAnimationsOnly.Text = "Export Animations Only";
             this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
-            this.chkExportAnimationsOnly.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // ExporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(838, 690);
+            this.ClientSize = new System.Drawing.Size(838, 761);
+            this.Controls.Add(this.butCopyToClipboard);
             this.Controls.Add(this.butExportAndRun);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox2);
@@ -704,6 +716,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.OpenFileDialog envFileDialog;
         private System.Windows.Forms.CheckBox chkDefaultSkybox;
+        private System.Windows.Forms.Button butCopyToClipboard;
         private System.Windows.Forms.CheckBox chkExportAnimations;
         private System.Windows.Forms.CheckBox chkExportAnimationsOnly;
     }
