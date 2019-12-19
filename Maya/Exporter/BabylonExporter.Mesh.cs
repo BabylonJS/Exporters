@@ -37,13 +37,16 @@ namespace Maya2Babylon
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
             // Animations
-            if (exportParameters.bakeAnimationFrames)
+            if (exportParameters.exportAnimations)
             {
-                ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
-            }
-            else
-            {
-                ExportNodeAnimation(babylonMesh, mFnTransform);
+                if (exportParameters.bakeAnimationFrames)
+                {
+                    ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
+                }
+                else
+                {
+                    ExportNodeAnimation(babylonMesh, mFnTransform);
+                }
             }
 
             babylonScene.MeshesList.Add(babylonMesh);
@@ -268,10 +271,15 @@ namespace Maya2Babylon
                 babylonInstanceMesh.metadata = ExportCustomAttributeFromTransform(mFnTransform);
 
                 // Animations
-                ExportNodeAnimation(babylonInstanceMesh, mFnTransform);
+                if (exportParameters.exportAnimations)
+                {
+                    ExportNodeAnimation(babylonInstanceMesh, mFnTransform);
+                }
 
                 return babylonInstanceMesh;
             }
+
+            babylonScene.MeshesList.Add(babylonMesh);
 
             // Position / rotation / scaling / hierarchy
             ExportNode(babylonMesh, mFnTransform, babylonScene);
@@ -294,14 +302,94 @@ namespace Maya2Babylon
                 RaiseWarning($"Mesh {babylonMesh.name} has more than 65536 vertices which means that it will require specific WebGL extension to be rendered. This may impact portability of your scene on low end devices.", 2);
             }
 
-            // Animations
-            if (exportParameters.bakeAnimationFrames)
+            // skin
+            if (exportParameters.exportSkins)
             {
-                ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
+                mFnSkinCluster = getMFnSkinCluster(mFnMesh);
             }
-            else
+            int maxNbBones = 0;
+            if (mFnSkinCluster != null)
             {
-                ExportNodeAnimation(babylonMesh, mFnTransform);
+                RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
+                Print(mFnSkinCluster, 3, $"Print {mFnSkinCluster.name}");
+
+                // Get the bones dictionary<name, index> => it represents all the bones in the skeleton
+                indexByNodeName = GetIndexByFullPathNameDictionary(mFnSkinCluster);
+
+                // Get the joint names that influence this mesh
+                allMayaInfluenceNames = GetBoneFullPathName(mFnSkinCluster, mFnTransform);
+
+                // Get the max number of joints acting on a vertex
+                int maxNumInfluences = GetMaxInfluence(mFnSkinCluster, mFnTransform, mFnMesh);
+
+                RaiseMessage($"Max influences : {maxNumInfluences}", 2);
+                if (maxNumInfluences > 8)
+                {
+                    RaiseWarning($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
+                    RaiseWarning("The result may not be as expected.", 2);
+                }
+                maxNbBones = Math.Min(maxNumInfluences, 8);
+
+                if (indexByNodeName != null && allMayaInfluenceNames != null)
+                {
+                    int skeletonId = babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
+
+                    // Bones with zero scale damage the mesh geometry export
+                    // So you need to fid a frame were those bones have a higher scale
+                    if (frameBySkeletonID.ContainsKey(skeletonId))
+                    {
+                        double frame = frameBySkeletonID[skeletonId];
+                        RaiseVerbose($"Export the mesh at the same frame as its skeleton {frame}");
+                    }
+                    else
+                    {
+                        List<MObject> bones = GetRevelantNodes(mFnSkinCluster);
+                        double currentFrame = Loader.GetCurrentTime();
+                        frameBySkeletonID[skeletonId] = currentFrame;
+
+                        if (HasNonZeroScale(bones, currentFrame))
+                        {
+                            RaiseVerbose($"Export the mesh at the current frame {currentFrame}", 2);
+                        }
+                        else
+                        {   // There is at least one bone in the skeleton that has a zero scale
+                            IList<double> validFrames = GetValidFrames(mFnSkinCluster);
+                            if (validFrames.Count > 0)
+                            {
+                                RaiseVerbose($"Export the mesh at the frame {validFrames[0]}", 2);
+                                Loader.SetCurrentTime(validFrames[0]);
+                                frameBySkeletonID[skeletonId] = validFrames[0];
+                            }
+                            else
+                            {
+                                RaiseError($"No valid frame found for the mesh export. The bone scales are too close to zero.", 2);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    mFnSkinCluster = null;
+                }
+            }
+
+            // Animations
+            if (exportParameters.exportAnimations)
+            {
+                if (exportParameters.bakeAnimationFrames)
+                {
+                    ExportNodeAnimationFrameByFrame(babylonMesh, mFnTransform);
+                }
+                else
+                {
+                    ExportNodeAnimation(babylonMesh, mFnTransform);
+                }
+            }
+            if (exportParameters.exportAnimationsOnly)
+            {
+                // Skip material and geometry export
+                RaiseMessage("BabylonExporter.Mesh | done", 2);
+                return babylonMesh;
             }
 
             // Material
@@ -414,76 +502,6 @@ namespace Maya2Babylon
                 isUVExportSuccess[indexUVSet] = true;
             }
 
-            // skin
-            if(exportParameters.exportSkins)
-            {
-                mFnSkinCluster = getMFnSkinCluster(mFnMesh);
-            }
-            int maxNbBones = 0;
-            if (mFnSkinCluster != null)
-            {
-                RaiseMessage($"mFnSkinCluster.name | {mFnSkinCluster.name}", 2);
-                Print(mFnSkinCluster, 3, $"Print {mFnSkinCluster.name}");
-
-                // Get the bones dictionary<name, index> => it represents all the bones in the skeleton
-                indexByNodeName = GetIndexByFullPathNameDictionary(mFnSkinCluster);
-
-                // Get the joint names that influence this mesh
-                allMayaInfluenceNames = GetBoneFullPathName(mFnSkinCluster, mFnTransform);
-
-                // Get the max number of joints acting on a vertex
-                int maxNumInfluences = GetMaxInfluence(mFnSkinCluster, mFnTransform, mFnMesh);
-
-                RaiseMessage($"Max influences : {maxNumInfluences}",2);
-                if (maxNumInfluences > 8)
-                {
-                    RaiseWarning($"Too many bones influences per vertex: {maxNumInfluences}. Babylon.js only support up to 8 bones influences per vertex.", 2);
-                    RaiseWarning("The result may not be as expected.",2);
-                }
-                maxNbBones = Math.Min(maxNumInfluences, 8);
-
-                if (indexByNodeName != null && allMayaInfluenceNames != null)
-                {
-                    int skeletonId = babylonMesh.skeletonId = GetSkeletonIndex(mFnSkinCluster);
-
-                    // Bones with zero scale damage the mesh geometry export
-                    // So you need to fid a frame were those bones have a higher scale
-                    if (frameBySkeletonID.ContainsKey(skeletonId))
-                    {
-                        double frame = frameBySkeletonID[skeletonId];
-                        RaiseVerbose($"Export the mesh at the same frame as its skeleton {frame}");
-                    }
-                    else
-                    {
-                        List<MObject> bones = GetRevelantNodes(mFnSkinCluster);
-                        double currentFrame = Loader.GetCurrentTime();
-                        frameBySkeletonID[skeletonId] = currentFrame;
-
-                        if (HasNonZeroScale(bones, currentFrame))
-                        {
-                            RaiseVerbose($"Export the mesh at the current frame {currentFrame}", 2);
-                        }
-                        else
-                        {   // There is at least one bone in the skeleton that has a zero scale
-                            IList<double> validFrames = GetValidFrames(mFnSkinCluster);
-                            if(validFrames.Count > 0)
-                            {
-                                RaiseVerbose($"Export the mesh at the frame {validFrames[0]}", 2);
-                                Loader.SetCurrentTime(validFrames[0]);
-                                frameBySkeletonID[skeletonId] = validFrames[0];
-                            }
-                            else
-                            {
-                                RaiseError($"No valid frame found for the mesh export. The bone scales are too close to zero.", 2);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    mFnSkinCluster = null;
-                }
-            }
             // Export tangents if option is checked and mesh have tangents
             bool isTangentExportSuccess = exportParameters.exportTangents;
 
@@ -619,7 +637,6 @@ namespace Maya2Babylon
 
 
 
-            babylonScene.MeshesList.Add(babylonMesh);
             RaiseMessage("BabylonExporter.Mesh | done", 2);
 
             return babylonMesh;

@@ -87,7 +87,7 @@ namespace Maya2Babylon.Forms
             chkExportKHRMaterialsUnlit.Checked = Loader.GetBoolProperty(chkExportKHRMaterialsUnlitProperty, false);
             chkBakeAnimationFrames.Checked = Loader.GetBoolProperty(chkBakeAnimationFramesProperty, false);
             chkExportAnimations.Checked = Loader.GetBoolProperty(chkExportAnimationsProperty, true);
-            chkExportAnimationsOnly.Checked = Loader.GetBoolProperty(chkExportAnimationsOnlyProperty, true);
+            chkExportAnimationsOnly.Checked = Loader.GetBoolProperty(chkExportAnimationsOnlyProperty, false);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
 

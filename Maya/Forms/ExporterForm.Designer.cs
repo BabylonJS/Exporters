@@ -49,6 +49,8 @@
             this.chkFullPBR = new System.Windows.Forms.CheckBox();
             this.chkNoAutoLight = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.chkExportAnimationsOnly = new System.Windows.Forms.CheckBox();
+            this.chkExportAnimations = new System.Windows.Forms.CheckBox();
             this.chkBakeAnimationFrames = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.chkExportKHRMaterialsUnlit = new System.Windows.Forms.CheckBox();
@@ -77,8 +79,6 @@
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.butCopyToClipboard = new System.Windows.Forms.Button();
-            this.chkExportAnimations = new System.Windows.Forms.CheckBox();
-            this.chkExportAnimationsOnly = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -316,6 +316,30 @@
             this.label8.Size = new System.Drawing.Size(109, 13);
             this.label8.TabIndex = 28;
             this.label8.Text = "Babylon PBR Options";
+            // 
+            // chkExportAnimationsOnly
+            // 
+            this.chkExportAnimationsOnly.AutoSize = true;
+            this.chkExportAnimationsOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportAnimationsOnly.Location = new System.Drawing.Point(320, 296);
+            this.chkExportAnimationsOnly.Name = "chkExportAnimationsOnly";
+            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(131, 17);
+            this.chkExportAnimationsOnly.TabIndex = 27;
+            this.chkExportAnimationsOnly.Text = "Export Animations Only";
+            this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
+            // 
+            // chkExportAnimations
+            // 
+            this.chkExportAnimations.AutoSize = true;
+            this.chkExportAnimations.Checked = true;
+            this.chkExportAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportAnimations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportAnimations.Location = new System.Drawing.Point(166, 296);
+            this.chkExportAnimations.Name = "chkExportAnimations";
+            this.chkExportAnimations.Size = new System.Drawing.Size(107, 17);
+            this.chkExportAnimations.TabIndex = 27;
+            this.chkExportAnimations.Text = "Export Animations";
+            this.chkExportAnimations.UseVisualStyleBackColor = true;
             // 
             // chkBakeAnimationFrames
             // 
@@ -612,30 +636,6 @@
             this.butCopyToClipboard.Text = "Copy To Clipboard";
             this.butCopyToClipboard.UseVisualStyleBackColor = true;
             this.butCopyToClipboard.Click += new System.EventHandler(this.butCopyToClipboard_Click);
-            // 
-            // chkExportAnimations
-            // 
-            this.chkExportAnimations.AutoSize = true;
-            this.chkExportAnimations.Checked = true;
-            this.chkExportAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExportAnimations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportAnimations.Location = new System.Drawing.Point(166, 296);
-            this.chkExportAnimations.Name = "chkExportAnimations";
-            this.chkExportAnimations.Size = new System.Drawing.Size(107, 17);
-            this.chkExportAnimations.TabIndex = 27;
-            this.chkExportAnimations.Text = "Export Animations";
-            this.chkExportAnimations.UseVisualStyleBackColor = true;
-            // 
-            // chkExportAnimationsOnly
-            // 
-            this.chkExportAnimationsOnly.AutoSize = true;
-            this.chkExportAnimationsOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportAnimationsOnly.Location = new System.Drawing.Point(320, 296);
-            this.chkExportAnimationsOnly.Name = "chkExportAnimationsOnly";
-            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(131, 17);
-            this.chkExportAnimationsOnly.TabIndex = 27;
-            this.chkExportAnimationsOnly.Text = "Export Animations Only";
-            this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
             // 
             // ExporterForm
             // 

@@ -213,27 +213,37 @@ namespace Maya2Babylon
 
                 try
                 {
-                    switch (getApiTypeOfDirectDescendants(mDagPath))
+                    if (exportParameters.exportAnimationsOnly == false)
                     {
-                        case MFn.Type.kMesh:
-                            if (exportParameters.exportAnimationsOnly == false)
-                            {
+                        switch (getApiTypeOfDirectDescendants(mDagPath))
+                        {
+                            case MFn.Type.kMesh:
                                 babylonNode = ExportMesh(mDagPath, babylonScene);
-                            }
-                            else
-                            {
+                                break;
+                            case MFn.Type.kCamera:
+                                babylonNode = ExportCamera(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                                babylonNode = ExportLight(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kLocator: // Camera target
                                 babylonNode = ExportDummy(mDagPath, babylonScene);
-                            }
-                            break;
-                        case MFn.Type.kCamera:
-                            babylonNode = ExportCamera(mDagPath, babylonScene);
-                            break;
-                        case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
-                            babylonNode = ExportLight(mDagPath, babylonScene);
-                            break;
-                        case MFn.Type.kLocator: // Camera target
-                            babylonNode = ExportDummy(mDagPath, babylonScene);
-                            break;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (getApiTypeOfDirectDescendants(mDagPath))
+                        {
+                            case MFn.Type.kMesh:
+                                babylonNode = ExportMesh(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kCamera:
+                            case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                            case MFn.Type.kLocator: // Camera target
+                                babylonNode = ExportDummy(mDagPath, babylonScene);
+                                break;
+                        }
                     }
                 }
                 catch (Exception e)
@@ -405,15 +415,18 @@ namespace Maya2Babylon
             // ----------------------------
             // ----- Animation groups -----
             // ----------------------------
-            RaiseMessage("Export animation groups");
-            // add animation groups to the scene
-            babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+            if (exportParameters.exportAnimations)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+            }
 
 
             if (isBabylonExported)
             {
-                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
-                if (babylonScene.animationGroups.Count > 0)
+                // if we are exporting to .Babylon then remove animations from nodes if there are animation groups.
+                if (babylonScene.animationGroups != null && babylonScene.animationGroups.Count > 0)
                 {
                     // add animations of each nodes in the animGroup
                     List<BabylonNode> babylonNodes = new List<BabylonNode>();
