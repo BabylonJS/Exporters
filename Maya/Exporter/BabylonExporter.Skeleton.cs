@@ -371,9 +371,12 @@ namespace Maya2Babylon
                     name = dagNode.name,
                     index = indexByFullPathName[currentFullPathName],
                     parentBoneIndex = parentIndex,
-                    matrix = GetBabylonMatrix(currentNodeTransform, frameBySkeletonID[skinIndex]).m,
-                    animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform)
+                    matrix = GetBabylonMatrix(currentNodeTransform, frameBySkeletonID[skinIndex]).m
                 };
+                if (exportParameters.exportAnimations)
+                {
+                    bone.animation = GetAnimationsFrameByFrameMatrix(currentNodeTransform);
+                }
 
                 bones.Add(bone);
                 RaiseVerbose($"Bone: name={bone.name}, index={bone.index}, parentBoneIndex={bone.parentBoneIndex}, matrix={string.Join(" ", bone.matrix)}", logRank + 1);

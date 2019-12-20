@@ -207,14 +207,22 @@ namespace Maya2Babylon
                     for (int index = 0; index < keysTime.Count; index++)
                     {
                         // Switch coordinate system at object level
-                        animCurvData.valuePerFrame.Add(keysTime[index], (float)keysValue[index] * -1.0f);
+                        int key = keysTime[index];
+                        if (animCurvData.valuePerFrame.ContainsKey(key) == false)
+                        {
+                            animCurvData.valuePerFrame.Add(key, (float)keysValue[index] * -1.0f);
+                        }
                     }
                 }
                 else
                 {
                     for (int index = 0; index < keysTime.Count; index++)
                     {
-                        animCurvData.valuePerFrame.Add(keysTime[index], (float)keysValue[index]);
+                        int key = keysTime[index];
+                        if (animCurvData.valuePerFrame.ContainsKey(key) == false)
+                        {
+                            animCurvData.valuePerFrame.Add(key, (float)keysValue[index]);
+                        }
                     }
                 }
             }
