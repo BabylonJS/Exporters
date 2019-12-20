@@ -213,20 +213,37 @@ namespace Maya2Babylon
 
                 try
                 {
-                    switch (getApiTypeOfDirectDescendants(mDagPath))
+                    if (exportParameters.exportAnimationsOnly == false)
                     {
-                        case MFn.Type.kMesh:
-                            babylonNode = ExportMesh(mDagPath, babylonScene);
-                            break;
-                        case MFn.Type.kCamera:
-                            babylonNode = ExportCamera(mDagPath, babylonScene);
-                            break;
-                        case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
-                            babylonNode = ExportLight(mDagPath, babylonScene);
-                            break;
-                        case MFn.Type.kLocator: // Camera target
-                            babylonNode = ExportDummy(mDagPath, babylonScene);
-                            break;
+                        switch (getApiTypeOfDirectDescendants(mDagPath))
+                        {
+                            case MFn.Type.kMesh:
+                                babylonNode = ExportMesh(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kCamera:
+                                babylonNode = ExportCamera(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                                babylonNode = ExportLight(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kLocator: // Camera target
+                                babylonNode = ExportDummy(mDagPath, babylonScene);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (getApiTypeOfDirectDescendants(mDagPath))
+                        {
+                            case MFn.Type.kMesh:
+                                babylonNode = ExportMesh(mDagPath, babylonScene);
+                                break;
+                            case MFn.Type.kCamera:
+                            case MFn.Type.kLight: // Lights api type are actually kPointLight, kSpotLight...
+                            case MFn.Type.kLocator: // Camera target
+                                babylonNode = ExportDummy(mDagPath, babylonScene);
+                                break;
+                        }
                     }
                 }
                 catch (Exception e)
@@ -306,16 +323,19 @@ namespace Maya2Babylon
                 RaiseMessage(string.Format("Total cameras: {0}", babylonScene.CamerasList.Count), Color.Gray, 1);
             }
 
-            // Default light
-            if (!exportParameters.pbrNoLight && babylonScene.LightsList.Count == 0)
+            if (exportParameters.exportAnimationsOnly == false)
             {
-                RaiseWarning("No light defined", 1);
-                RaiseWarning("A default ambient light was added for your convenience", 1);
-                ExportDefaultLight(babylonScene);
-            }
-            else
-            {
-                RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
+                // Default light
+                if (!exportParameters.pbrNoLight && babylonScene.LightsList.Count == 0)
+                {
+                    RaiseWarning("No light defined", 1);
+                    RaiseWarning("A default ambient light was added for your convenience", 1);
+                    ExportDefaultLight(babylonScene);
+                }
+                else
+                {
+                    RaiseMessage(string.Format("Total lights: {0}", babylonScene.LightsList.Count), Color.Gray, 1);
+                }
             }
 
             var sceneScaleFactor = exportParameters.scaleFactor;
@@ -358,21 +378,23 @@ namespace Maya2Babylon
             // --------------------
             // ----- Materials ----
             // --------------------
-            RaiseMessage("Exporting materials");
-            GenerateMaterialDuplicationDatas(babylonScene);
-            foreach (var mat in referencedMaterials)
+            if (exportParameters.exportAnimationsOnly == false)
             {
-                ExportMaterial(mat, babylonScene, exportParameters.pbrFull);
-                CheckCancelled();
+                RaiseMessage("Exporting materials");
+                GenerateMaterialDuplicationDatas(babylonScene);
+                foreach (var mat in referencedMaterials)
+                {
+                    ExportMaterial(mat, babylonScene, exportParameters.pbrFull);
+                    CheckCancelled();
+                }
+                foreach (var mat in multiMaterials)
+                {
+                    ExportMultiMaterial(mat.Key, mat.Value, babylonScene, exportParameters.pbrFull);
+                    CheckCancelled();
+                }
+                UpdateMeshesMaterialId(babylonScene);
+                RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
             }
-            foreach (var mat in multiMaterials)
-            {
-                ExportMultiMaterial(mat.Key, mat.Value, babylonScene, exportParameters.pbrFull);
-                CheckCancelled();
-            }
-            UpdateMeshesMaterialId(babylonScene);
-            RaiseMessage(string.Format("Total: {0}", babylonScene.MaterialsList.Count + babylonScene.MultiMaterialsList.Count), Color.Gray, 1);
-
 
             // Export skeletons
             if (exportParameters.exportSkins && skins.Count > 0)
@@ -393,15 +415,18 @@ namespace Maya2Babylon
             // ----------------------------
             // ----- Animation groups -----
             // ----------------------------
-            RaiseMessage("Export animation groups");
-            // add animation groups to the scene
-            babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+            if (exportParameters.exportAnimations)
+            {
+                RaiseMessage("Export animation groups");
+                // add animation groups to the scene
+                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
+            }
 
 
             if (isBabylonExported)
             {
-                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
-                if (babylonScene.animationGroups.Count > 0)
+                // if we are exporting to .Babylon then remove animations from nodes if there are animation groups.
+                if (babylonScene.animationGroups != null && babylonScene.animationGroups.Count > 0)
                 {
                     // add animations of each nodes in the animGroup
                     List<BabylonNode> babylonNodes = new List<BabylonNode>();
@@ -422,37 +447,40 @@ namespace Maya2Babylon
                     }
                 }
 
-                // setup a default skybox for the scene for .Babylon export.
-                var sourcePath = exportParameters.pbrEnvironment;
-                if (!string.IsNullOrEmpty(sourcePath))
+                if (exportParameters.exportAnimationsOnly == false)
                 {
-                    babylonScene.createDefaultSkybox = exportParameters.createDefaultSkybox;
-                    var fileName = Path.GetFileName(sourcePath);
-
-                    // Allow only dds file format
-                    if (!fileName.EndsWith(".dds"))
+                    // setup a default skybox for the scene for .Babylon export.
+                    var sourcePath = exportParameters.pbrEnvironment;
+                    if (!string.IsNullOrEmpty(sourcePath))
                     {
-                        RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
-                    }
-                    else
-                    {
-                        RaiseMessage($"texture id = Max_Babylon_Default_Environment");
-                        babylonScene.environmentTexture = fileName;
+                        babylonScene.createDefaultSkybox = exportParameters.createDefaultSkybox;
+                        var fileName = Path.GetFileName(sourcePath);
 
-                        if (exportParameters.writeTextures)
+                        // Allow only dds file format
+                        if (!fileName.EndsWith(".dds"))
                         {
-                            try
+                            RaiseWarning("Failed to export defauenvironment texture: only .dds format is supported.");
+                        }
+                        else
+                        {
+                            RaiseMessage($"texture id = Max_Babylon_Default_Environment");
+                            babylonScene.environmentTexture = fileName;
+
+                            if (exportParameters.writeTextures)
                             {
-                                var destPath = Path.Combine(babylonScene.OutputPath, fileName);
-                                if (File.Exists(sourcePath) && sourcePath != destPath)
+                                try
                                 {
-                                    File.Copy(sourcePath, destPath, true);
+                                    var destPath = Path.Combine(babylonScene.OutputPath, fileName);
+                                    if (File.Exists(sourcePath) && sourcePath != destPath)
+                                    {
+                                        File.Copy(sourcePath, destPath, true);
+                                    }
                                 }
-                            }
-                            catch
-                            {
-                                // silently fails
-                                RaiseMessage($"Fail to export the default env texture", 3);
+                                catch
+                                {
+                                    // silently fails
+                                    RaiseMessage($"Fail to export the default env texture", 3);
+                                }
                             }
                         }
                     }
