@@ -61,24 +61,9 @@ namespace Max2Babylon
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
-            
+
             // Check if the gltf-pipeline module is installed
-            try
-            {
-                Process gltfPipeline = new Process();
-                gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
-
-                // Hide the cmd window that show the gltf-pipeline result
-                gltfPipeline.StartInfo.UseShellExecute = false;
-                gltfPipeline.StartInfo.CreateNoWindow = true;
-
-                gltfPipeline.Start();
-                gltfPipeline.WaitForExit();
-            }
-            catch
-            {
-                gltfPipelineInstalled = false;
-            }
+            this.gltfPipelineInstalled = GLTFPipelineUtilities.IsGLTFPipelineInstalled();
 
             groupBox1.MouseMove += groupBox1_MouseMove;
         }
