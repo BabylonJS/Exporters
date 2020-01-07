@@ -272,38 +272,7 @@ namespace Babylon2GLTF
             if(exportParameters.dracoCompression)
             {
                 logger.RaiseMessage("GLTFExporter | Draco compression");
-
-                try
-                {
-                    Process gltfPipeline = new Process();
-
-                    // Hide the cmd window that show the gltf-pipeline result
-                    //gltfPipeline.StartInfo.UseShellExecute = false;
-                    //gltfPipeline.StartInfo.CreateNoWindow = true;
-                    gltfPipeline.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-                    string arg;
-                    if (generateBinary)
-                    {
-                        string outputGlbFile = Path.ChangeExtension(outputFile, "glb");
-                        arg = $" -i {outputGlbFile} -o {outputGlbFile} -d";
-                    }
-                    else
-                    {
-                        string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
-                        arg = $" -i {outputGltfFile} -o {outputGltfFile} -d -s";
-                    }
-                    gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
-                    gltfPipeline.StartInfo.Arguments = arg;
-
-                    gltfPipeline.Start();
-                    gltfPipeline.WaitForExit();
-                }
-                catch
-                {
-                    logger.RaiseError("gltf-pipeline module not found.", 1);
-                    logger.RaiseError("The exported file wasn't compressed.");
-                }
+                GLTFPipelineUtilities.DoDracoCompression(logger, generateBinary, outputFile);
             }
 
             logger.ReportProgressChanged(100);

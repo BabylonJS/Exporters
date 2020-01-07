@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ColorExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ArrayExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GLTFPipelineUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILoggingProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterBounded.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterOptimized.cs" />

@@ -47,22 +47,7 @@ namespace Maya2Babylon.Forms
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             // Check if the gltf-pipeline module is installed
-            try
-            {
-                Process gltfPipeline = new Process();
-                gltfPipeline.StartInfo.FileName = "gltf-pipeline.cmd";
-
-                // Hide the cmd window that show the gltf-pipeline result
-                gltfPipeline.StartInfo.UseShellExecute = false;
-                gltfPipeline.StartInfo.CreateNoWindow = true;
-
-                gltfPipeline.Start();
-                gltfPipeline.WaitForExit();
-            }
-            catch
-            {
-                gltfPipelineInstalled = false;
-            }
+            gltfPipelineInstalled = GLTFPipelineUtilities.IsGLTFPipelineInstalled();
 
             groupBox1.MouseMove += groupBox1_MouseMove;
         }
@@ -78,7 +63,7 @@ namespace Maya2Babylon.Forms
             chkAutoSave.Checked = Loader.GetBoolProperty(chkAutoSaveProperty, false);
             chkOptimizeVertices.Checked = Loader.GetBoolProperty(chkOptimizeVerticesProperty, true);
             chkExportTangents.Checked = Loader.GetBoolProperty(chkExportTangentsProperty, true);
-            //chkDracoCompression.Checked = Loader.GetBoolProperty(chkDracoCompressionProperty, false);
+            chkDracoCompression.Checked = Loader.GetBoolProperty(chkDracoCompressionProperty, false);
             chkExportSkin.Checked = Loader.GetBoolProperty(chkExportSkinProperty, true);
             chkExportMorphNormal.Checked = Loader.GetBoolProperty(chkExportMorphNormalProperty, true);
             chkExportMorphTangent.Checked = Loader.GetBoolProperty(chkExportMorphTangentProperty, false);
@@ -118,7 +103,7 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkAutoSaveProperty, chkAutoSave.Checked);
             Loader.SetBoolProperty(chkOptimizeVerticesProperty, chkOptimizeVertices.Checked);
             Loader.SetBoolProperty(chkExportTangentsProperty, chkExportTangents.Checked);
-            //Loader.SetBoolProperty(chkDracoCompressionProperty, chkDracoCompression.Checked);
+            Loader.SetBoolProperty(chkDracoCompressionProperty, chkDracoCompression.Checked);
             Loader.SetBoolProperty(chkExportSkinProperty, chkExportSkin.Checked);
             Loader.SetBoolProperty(chkExportMorphNormalProperty, chkExportMorphNormal.Checked);
             Loader.SetBoolProperty(chkExportMorphTangentProperty, chkExportMorphTangent.Checked);
