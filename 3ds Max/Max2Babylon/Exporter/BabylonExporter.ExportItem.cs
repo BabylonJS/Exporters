@@ -64,9 +64,14 @@ namespace Max2Babylon
             get { return exportPathAbsolute; }
         }
 
-        public string ExportTexturesesFolderPath
+        public string ExportTexturesesFolderRelative
         {
-            get { return exportTexturesFolderPath; }
+            get { return exportTexturesFolderRelative; }
+        }
+
+        public string ExportTexturesesFolderAbsolute
+        {
+            get { return exportTexturesFolderAbsolute; }
         }
 
         public string NodeName { get; private set; } = "<Invalid>";
@@ -111,7 +116,8 @@ namespace Max2Babylon
         private bool selected = true;
         private string exportPathRelative = "";
         private string exportPathAbsolute = "";
-        private string exportTexturesFolderPath = "";
+        private string exportTexturesFolderRelative = "";
+        private string exportTexturesFolderAbsolute = "";
 
         public ExportItem(string outputFileExt)
         {
@@ -148,7 +154,7 @@ namespace Max2Babylon
             LoadFromData(propertyName);
         }
 
-        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderPath, LayersToString(exportLayers)); }
+        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderRelative, LayersToString(exportLayers)); }
 
         public void SetExportLayers(List<IILayer> layers)
         {
@@ -161,13 +167,18 @@ namespace Max2Babylon
         {
             string dirName = Loader.Core.CurFilePath;
             if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
+            {
                 dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+            }
             else
             {
                 dirName = Path.GetDirectoryName(dirName);
             }
+
             if (dirName.Last() != Path.AltDirectorySeparatorChar || dirName.Last() != Path.DirectorySeparatorChar)
+            {
                 dirName += Path.DirectorySeparatorChar;
+            }
 
             string absolutePath;
             string relativePath;
@@ -203,34 +214,47 @@ namespace Max2Babylon
 
         public void SetExportTexturesFolderPath(string textureFolderPath)
         {
-            string dirName = textureFolderPath;
-
-            if (string.IsNullOrEmpty(dirName))
+            string dirName = Loader.Core.CurFilePath;
+            if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
             {
-                dirName = Loader.Core.CurFilePath;
-                if (string.IsNullOrEmpty(Loader.Core.CurFilePath))
-                    dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
-                else
-                {
-                    dirName = Path.GetDirectoryName(dirName);
-                }
-
-                if (dirName.Last() != Path.AltDirectorySeparatorChar || dirName.Last() != Path.DirectorySeparatorChar)
-                    dirName += Path.DirectorySeparatorChar;
+                dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+            }
+            else
+            {
+                dirName = Path.GetDirectoryName(dirName);
             }
 
-            if (string.IsNullOrWhiteSpace(dirName)) // empty path
+            if (dirName.Last() != Path.AltDirectorySeparatorChar || dirName.Last() != Path.DirectorySeparatorChar)
             {
-                textureFolderPath = string.Empty;
-            }
-            else if (Path.IsPathRooted(dirName)) // absolute path
-            {
-                textureFolderPath = Path.GetFullPath(dirName);
+                dirName += Path.DirectorySeparatorChar;
             }
 
-            if (textureFolderPath.Equals(exportTexturesFolderPath))
+            string absolutePath;
+            string relativePath;
+
+            if (string.IsNullOrWhiteSpace(textureFolderPath)) // empty path
+            {
+                absolutePath = string.Empty;
+                relativePath = string.Empty;
+            }
+            else if (Path.IsPathRooted(textureFolderPath)) // absolute path
+            {
+                absolutePath = Path.GetFullPath(textureFolderPath);
+                relativePath = PathUtilities.GetRelativePath(dirName, textureFolderPath);
+            }
+            else // relative path
+            {
+                absolutePath = Path.GetFullPath(Path.Combine(dirName, textureFolderPath));
+                relativePath = PathUtilities.GetRelativePath(dirName, absolutePath);
+
+                exportTexturesFolderRelative = relativePath;
+            }
+
+            // set absolute path (it may be different even if the relative path is equal, if the root dir changes for some reason)
+            exportTexturesFolderAbsolute = absolutePath;
+            if (exportTexturesFolderRelative.Equals(relativePath))
                 return;
-            exportTexturesFolderPath = textureFolderPath;
+            exportTexturesFolderRelative = relativePath;
 
             IsDirty = true;
         }
@@ -303,13 +327,13 @@ namespace Max2Babylon
             if (exportPathRelative.Contains(' ') || exportPathRelative.Contains('='))
                 throw new FormatException("Invalid character(s) in export path: " + exportPathRelative + ". Spaces and equal signs are not allowed.");
 
-            if (exportTexturesFolderPath.Contains(' ') || exportTexturesFolderPath.Contains('='))
-                throw new FormatException("Invalid character(s) in export path: " + exportTexturesFolderPath + ". Spaces and equal signs are not allowed.");
+            if (exportTexturesFolderRelative.Contains(' ') || exportTexturesFolderRelative.Contains('='))
+                throw new FormatException("Invalid character(s) in export path: " + exportTexturesFolderRelative + ". Spaces and equal signs are not allowed.");
 
             IINode node = Node;
             if (node == null) return false;
 
-            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderPath,LayersToString(exportLayers)));
+            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderRelative,LayersToString(exportLayers)));
 
             IsDirty = false;
             return true;
