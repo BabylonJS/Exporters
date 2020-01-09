@@ -52,7 +52,7 @@ namespace Max2Babylon
             row.Cells[1].Value = item.LayersToString(item.Layers);
             row.Cells[2].Value = item.NodeName;
             row.Cells[3].Value = item.ExportFilePathAbsolute;
-            row.Cells[4].Value = item.ExportTexturesesFolderPath;
+            row.Cells[4].Value = item.ExportTexturesesFolderAbsolute;
             Refresh();
         }
 
@@ -79,7 +79,7 @@ namespace Max2Babylon
         {
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension);
             item.SetExportFilePath(GetUniqueExportPath(exportPath));
-            item.SetExportTexturesFolderPath(item.ExportTexturesesFolderPath);
+            item.SetExportTexturesFolderPath(item.ExportTexturesesFolderAbsolute);
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
             exportItemList.Add(item);
             return item;
@@ -96,7 +96,7 @@ namespace Max2Babylon
 
             ExportItem item = new ExportItem(exportItemList.OutputFileExtension, nodeHandle);
             item.SetExportFilePath(GetUniqueExportPath(exportPath != null ? exportPath : item.ExportFilePathRelative));
-            item.SetExportTexturesFolderPath(item.ExportTexturesesFolderPath);
+            item.SetExportTexturesFolderPath(item.ExportTexturesesFolderAbsolute);
             item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
             exportItemList.Add(item);
             return item;

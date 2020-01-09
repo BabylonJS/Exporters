@@ -398,7 +398,7 @@ namespace Max2Babylon
             try
             {                
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : txtModelPath.Text;
-                string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderPath : txtTexturesPath.Text;
+                string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderAbsolute : txtTexturesPath.Text;
 
                 var scaleFactorParsed = 1.0f;
                 var textureQualityParsed = 100L;
