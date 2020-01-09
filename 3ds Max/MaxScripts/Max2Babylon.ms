@@ -9,7 +9,7 @@ maxScriptManager = dotNetObject "Max2Babylon.MaxScriptManager"
 -- UPDATE YOUR OUTPUT PATH
 -- Use \\ or / to separate folder.
 -- Use \\\ or // for network path. Ex: "\\\192.168.0.1\\my\\docs\\test.babylon"
-param = maxScriptManager.InitParameters "C:\\test.babylon"
+param = maxScriptManager.InitParameters "C:\\test.babylon" 
 
 -- Print all parameters
 print "Export parameters:"
@@ -18,7 +18,7 @@ showproperties param
 -- UPDATE PARAMETERS
 --param.exportOnlySelected = true
 
-maxScriptManager.Export param
+maxScriptManager.Export param --true -- <-- Uncomment to enable logging
 
 
 ----------- METHOD 2 : default parameters -----------
@@ -26,4 +26,4 @@ maxScriptManager.Export param
 -- UPDATE YOUR OUTPUT PATH
 -- Use \\ or / to separate folder.
 -- Use \\\ or // for network path. Ex: "\\\192.168.0.1\\my\\docs\\test.babylon"
--- maxScriptManager.Export "C:\\test.babylon"
+-- maxScriptManager.Export "C:\\test.babylon" --true -- <-- Uncomment to enable logging
