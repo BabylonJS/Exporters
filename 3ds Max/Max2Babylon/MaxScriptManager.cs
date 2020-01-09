@@ -12,16 +12,32 @@ namespace Max2Babylon
 {
     public class MaxScriptManager
     {
-        public static void Export( bool logInListener)
+        // Expose this entrypoint to MaxScript, as it does not seem to support C# optional parameters 
+        public static void Export()
+        {
+            Export(false);
+        }
+        public static void Export( bool logInListener )
         {
             string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
             string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
             Export(InitParameters(userRelativePath),logInListener);
         }
 
-        public static void Export(string outputPath, bool logInListener)
+        // Expose this entrypoint to MaxScript, as it does not seem to support C# optional parameters 
+        public static void Export(string outputPath)
+        {
+            Export(outputPath, false);
+        }
+        public static void Export(string outputPath, bool logInListener )
         {
             Export(InitParameters(outputPath),logInListener);
+        }
+
+        // Expose this entrypoint to MaxScript, as it does not seem to support C# optional parameters 
+        public static void Export(MaxExportParameters exportParameters)
+        {
+            Export(exportParameters, false); 
         }
 
         public static void Export(MaxExportParameters exportParameters, bool logInListener )
