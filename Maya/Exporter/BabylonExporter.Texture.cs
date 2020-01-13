@@ -722,7 +722,24 @@ namespace Maya2Babylon
 
             if (mPlug == null || mPlug.isNull || !mPlug.isConnected)
             {
-                return null;
+                // a compound plug connected to a non-compound plug may not be marked as connected, try to get a child plug:
+                if (mPlug.isCompound)
+                {
+                    // Retrieve the first non-empty plug and use the texture connected to it.
+                    for (uint i = 0; i < mPlug.numChildren; i++)
+                    {
+                        MPlug child = mPlug.child(i);
+                        if (child == null || child.isNull || !child.isConnected)
+                            continue;
+                        mPlug = child;
+                        break;
+                    }
+                }
+
+                if (mPlug == null || mPlug.isNull || !mPlug.isConnected)
+                {
+                    return null;
+                }
             }
 
             MObject sourceObject = mPlug.source.node;
