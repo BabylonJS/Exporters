@@ -30,7 +30,7 @@ namespace Max2Babylon
         public Dictionary<string, object> ExportExtraAttributes(IIGameNode gameNode, BabylonScene babylonScene, List<string> excludeAttributes = null)
         {
             // Retreive the max object
-            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = execute(\"$'" + gameNode.Name + "'\");");
+            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = execute(\"$'" + gameNode.MaxNode.Handle + "'\");");
 
             return _ExportExtraAttributes(gameNode.IGameObject.IPropertyContainer, babylonScene, excludeAttributes);
         }
