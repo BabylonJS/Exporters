@@ -3,6 +3,7 @@ using Max2Babylon;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
@@ -46,7 +47,7 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
             && materialExporter is IMaxGLTFMaterialExporter)
         {
             gltfMaterial = ((IMaxGLTFMaterialExporter)materialExporter).ExportGLTFMaterial(this.exportParameters, gltf, gameMtl,
-                (string sourcePath, string textureName) => { return gltfExporter.TryWriteImage(gltf, sourcePath, textureName); },
+                (string sourcePath, string textureName) => { return this.TryWriteImage(gltf, sourcePath, textureName, exportParameters, logger); },
                 (string message, Color color) => { logger.RaiseMessage(message, color, 2); },
                 (string message) => { logger.RaiseWarning(message, 2); },
                 (string message) => { logger.RaiseError(message, 2); });
@@ -61,5 +62,30 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
             return true;
         }
         return false;
+    }
+
+    public string TryWriteImage(GLTF gltf, string sourcePath, string textureName, ExportParameters exportParameters, ILoggingProvider logger)
+    {
+        if (sourcePath == null || sourcePath == "")
+        {
+            logger.RaiseWarning("Texture path is missing.", 3);
+            return null;
+        }
+
+        var validImageFormat = TextureUtilities.GetValidImageFormat(Path.GetExtension(sourcePath));
+
+        if (validImageFormat == null)
+        {
+            // Image format is not supported by the exporter
+            logger.RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
+            return null;
+        }
+
+        // Copy texture to output
+        var destPath = Path.Combine(gltf.OutputFolder, textureName);
+        destPath = Path.ChangeExtension(destPath, validImageFormat);
+        TextureUtilities.CopyTexture(sourcePath, destPath, exportParameters.txtQuality, logger);
+
+        return validImageFormat;
     }
 }

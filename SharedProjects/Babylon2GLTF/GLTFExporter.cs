@@ -219,11 +219,6 @@ namespace Babylon2GLTF
                     gltfBuffer.uri = null;
                 }
                 // Switch images to binary
-                var imageBufferViews = SwitchImagesFromUriToBinary(gltf);
-                imageBufferViews.ForEach(imageBufferView =>
-                {
-                    imageBufferView.Buffer.bytesList.AddRange(imageBufferView.bytesList);
-                });
                 gltf.Prepare();
                 // Serialize gltf data to JSON string then convert it to bytes
                 byte[] chunkDataJson = Encoding.ASCII.GetBytes(gltfToJson(gltf));
@@ -396,9 +391,6 @@ namespace Babylon2GLTF
             }
         }
 
-
-
-
         private List<BabylonNode> getDescendants(BabylonNode babylonNode)
         {
             return babylonNodes.FindAll(node => node.parentId == babylonNode.id);
@@ -453,42 +445,6 @@ namespace Babylon2GLTF
             return sb.ToString();
         }
 
-        private List<GLTFBufferView> SwitchImagesFromUriToBinary(GLTF gltf)
-        {
-            var imageBufferViews = new List<GLTFBufferView>();
-
-            foreach (GLTFImage gltfImage in gltf.ImagesList)
-            {
-                var path = Path.Combine(gltf.OutputFolder, gltfImage.uri);
-                byte[] imageBytes = File.ReadAllBytes(path);
-
-                // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
-                imageBytes = padChunk(imageBytes, 4, 0x00);
-
-                // BufferView - Image
-                var buffer = gltf.buffer;
-                var bufferViewImage = new GLTFBufferView
-                {
-                    name = "bufferViewImage",
-                    buffer = buffer.index,
-                    Buffer = buffer,
-                    byteOffset = buffer.byteLength
-                };
-                bufferViewImage.index = gltf.BufferViewsList.Count;
-                gltf.BufferViewsList.Add(bufferViewImage);
-                imageBufferViews.Add(bufferViewImage);
-
-
-                gltfImage.uri = null;
-                gltfImage.bufferView = bufferViewImage.index;
-                gltfImage.mimeType = "image/" + gltfImage.FileExtension;
-
-                bufferViewImage.bytesList.AddRange(imageBytes);
-                bufferViewImage.byteLength += imageBytes.Length;
-                bufferViewImage.Buffer.byteLength += imageBytes.Length;
-            }
-            return imageBufferViews;
-        }
         private byte[] padChunk(byte[] chunk, int padding, byte trailingChar)
         {
             var chunkModuloPadding = chunk.Length % padding;

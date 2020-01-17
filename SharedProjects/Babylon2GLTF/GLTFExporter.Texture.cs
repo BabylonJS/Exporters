@@ -39,55 +39,15 @@ namespace Babylon2GLTF
                 }
             }
 
-            return ExportTexture(babylonTexture, gltf, name, () =>
-            {
-                var extension = Path.GetExtension(name).ToLower();
-
-                // Write image to output
-                if (exportParameters.writeTextures)
-                {
-                    var absolutePath = Path.Combine(gltf.OutputFolder, name);
-                    var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                    logger.RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{absolutePath}'", 3);
-                    TextureUtilities.SaveBitmap(bitmap, absolutePath, imageFormat, exportParameters.txtQuality, logger);
-                }
-
-                return extension.Substring(1); // remove the dot
-            });
+            return ExportTexture(babylonTexture, gltf, name);
         }
 
         private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf)
         {
-            return ExportTexture(babylonTexture, gltf, null, 
-                () => { return TryWriteImage(gltf, babylonTexture.originalPath, babylonTexture.name); });
+            return ExportTexture(babylonTexture, gltf, null);
         }
 
-        public string TryWriteImage(GLTF gltf, string sourcePath, string textureName)
-            {
-                if (sourcePath == null || sourcePath == "")
-                {
-                    logger.RaiseWarning("Texture path is missing.", 3);
-                    return null;
-                }
-
-                var validImageFormat = GetGltfValidImageFormat(Path.GetExtension(sourcePath));
-
-                if (validImageFormat == null)
-                {
-                    // Image format is not supported by the exporter
-                    logger.RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
-                    return null;
-                }
-
-                // Copy texture to output
-                var destPath = Path.Combine(gltf.OutputFolder, textureName);
-                destPath = Path.ChangeExtension(destPath, validImageFormat);
-                CopyGltfTexture(sourcePath, destPath);
-
-                return validImageFormat;
-        }
-
-        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name, Func<string> writeImageFunc)
+        private GLTFTextureInfo ExportTexture(BabylonTexture babylonTexture, GLTF gltf, string name)
         {
             if (babylonTexture == null)
             {
@@ -99,7 +59,6 @@ namespace Babylon2GLTF
                 name = babylonTexture.name;
             }
 
-
             logger.RaiseMessage("GLTFExporter.Texture | Export texture named: " + name, 2);
 
             if (glTFTextureInfoMap.ContainsKey(babylonTexture.Id))
@@ -108,11 +67,29 @@ namespace Babylon2GLTF
             }
             else
             {
-                string validImageFormat = writeImageFunc.Invoke();
-                if (validImageFormat == null)
+                var sourcePath = babylonTexture.originalPath;
+                if (babylonTexture.bitmap != null)
                 {
+                    sourcePath = Path.Combine(gltf.OutputFolder, name);
+                }
+                
+                if (sourcePath == null || sourcePath == "")
+                {
+                    logger.RaiseWarning("Texture path is missing.", 3);
                     return null;
                 }
+
+                var validImageFormat = TextureUtilities.GetValidImageFormat(Path.GetExtension(sourcePath));
+
+                if (validImageFormat == null)
+                {
+                    // Image format is not supported by the exporter
+                    logger.RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), 3);
+                    return null;
+                }
+
+                var destPath = Path.Combine(gltf.OutputFolder, babylonTexture.name);
+                destPath = Path.ChangeExtension(destPath, validImageFormat);
 
                 name = Path.ChangeExtension(name, validImageFormat);
 
@@ -169,6 +146,32 @@ namespace Babylon2GLTF
                     };
                     gltfImage.index = gltf.ImagesList.Count;
                     gltf.ImagesList.Add(gltfImage);
+                    if (exportParameters.outputFormat == "glb")
+                    {
+                        var imageBufferView = WriteImageToGltfBuffer(gltf, gltfImage, sourcePath, babylonTexture.bitmap);
+                        gltfImage.uri = null;
+                        gltfImage.bufferView = imageBufferView.index;
+                        gltfImage.mimeType = "image/" + gltfImage.FileExtension;
+                    }
+                    else
+                    {
+                        if (exportParameters.writeTextures)
+                        {
+                            if (babylonTexture.bitmap != null)
+                            {
+                                // We may have modified this texture image, copy the buffer contents to disk
+                                var extension = Path.GetExtension(name).ToLower();
+                                var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
+                                logger.RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{destPath}'", 3);
+                                TextureUtilities.SaveBitmap(babylonTexture.bitmap, destPath, imageFormat, exportParameters.txtQuality, logger);
+                            }
+                            else
+                            {
+                                // Copy texture from source to output
+                                TextureUtilities.CopyTexture(sourcePath, destPath, exportParameters.txtQuality, logger);
+                            }
+                        }
+                    }
                     glTFImageMap.Add(name, gltfImage);
                     switch (validImageFormat)
                     {
@@ -412,16 +415,6 @@ namespace Babylon2GLTF
             }
         }
 
-        private string GetGltfValidImageFormat(string extension)
-        {
-            return TextureUtilities.GetValidImageFormat(extension);
-        }
-
-        private void CopyGltfTexture(string sourcePath, string destPath)
-        {
-            TextureUtilities.CopyTexture(sourcePath, destPath, exportParameters.txtQuality, logger);
-        }
-
         /// <summary>
         /// Add the KHR_texture_transform to the glTF file
         /// </summary>
@@ -455,6 +448,42 @@ namespace Babylon2GLTF
                 gltfTextureInfo.extensions = new GLTFExtensions();
             }
             gltfTextureInfo.extensions[KHR_texture_transform] = textureTransform;
+        }
+
+        private GLTFBufferView WriteImageToGltfBuffer(GLTF gltf, GLTFImage gltfImage, string imageSourcePath = null, Bitmap imageBitmap = null)
+        {
+            byte[] imageBytes = null;
+            if (imageBitmap != null)
+            {
+                ImageConverter converter = new ImageConverter();
+                imageBytes = (byte[])converter.ConvertTo(imageBitmap, typeof(byte[]));
+            }
+            else
+            {
+                imageBytes = File.ReadAllBytes(imageSourcePath);
+            }
+
+            // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
+            imageBytes = padChunk(imageBytes, 4, 0x00);
+
+            // BufferView - Image
+            var buffer = gltf.buffer;
+            var imageBufferView = new GLTFBufferView
+            {
+                name = "bufferViewImage",
+                buffer = buffer.index,
+                Buffer = buffer,
+                byteOffset = buffer.byteLength
+            };
+            imageBufferView.index = gltf.BufferViewsList.Count;
+            gltf.BufferViewsList.Add(imageBufferView);
+
+            imageBufferView.bytesList.AddRange(imageBytes);
+            imageBufferView.byteLength += imageBytes.Length;
+            imageBufferView.Buffer.byteLength += imageBytes.Length;
+            imageBufferView.Buffer.bytesList.AddRange(imageBufferView.bytesList);
+
+            return imageBufferView;
         }
     }
 }
