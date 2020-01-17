@@ -201,6 +201,10 @@ namespace Babylon2GLTF
                 {
                     gltf.TexturesList.Add(gltfTexture);
                 }
+                else
+                {
+                    gltfTexture = gltf.TexturesList[GetRegisteredTexture(gltfTexture.name).index];
+                }
 
                 // --------------------------
                 // ------ TextureInfo -------
