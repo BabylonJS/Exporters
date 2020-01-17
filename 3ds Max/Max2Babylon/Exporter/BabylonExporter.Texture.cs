@@ -304,10 +304,10 @@ namespace Max2Babylon
         private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName, bool isOpacity = false)
         {
             // --- Babylon texture ---
-
             var baseColorTexture = _getBitmapTex(baseColorTexMap);
             var alphaTexture = _getBitmapTex(alphaTexMap);
             string baseColorTextureMapExtension = null;
+
             // If we don't retrieve any textures from Max, return null.
             if (baseColorTexture == null && alphaTexture == null)
             {
@@ -327,12 +327,13 @@ namespace Max2Babylon
                         RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
                     }
 
-
                     if (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_NONE && // 'None (Opaque)'
                         baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp" || baseColorTextureMapExtension == ".png")
                     {
                         // Copy base color image
-                        return ExportTexture(baseColorTexture, babylonScene);
+                        var outTexture = ExportTexture(baseColorTexture, babylonScene);
+                        textureMap[outTexture.Id] = outTexture;
+                        return outTexture;
                     }
                 }
 
@@ -341,131 +342,131 @@ namespace Max2Babylon
             // Otherwise combine base color and alpha textures to a single output texture
             RaiseMessage("Export baseColor+Alpha texture", 2);
 
-            var texture = baseColorTexture != null ? baseColorTexture : alphaTexture;
-            baseColorTextureMapExtension = ".png"; // since we are adding an alpha channel, export as png. This will convert any other input base texture format to PNG.
-            var nameText = (baseColorTexture != null ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) : TextureUtilities.ColorToStringName(baseColor));
+            var hasBaseColor = baseColorTexture != null && isTextureOk(baseColorTexMap);
+            var hasAlpha = isTextureOk(alphaTexMap);
+            var texture = hasBaseColor ? baseColorTexture : alphaTexture;
 
-            var textureID = baseColorTexture != null ? texture.GetGuid().ToString() : string.Format("{0}_{1}", texture.GetGuid().ToString(), nameText);
+            baseColorTextureMapExtension = ".png"; // since we are adding an alpha channel, export as png. This will convert any other input base texture format to PNG.
+            ImageFormat imageFormat = ImageFormat.Png;
+
+            // since we are creating a new texture, give it a unique ID based on the base color and alpha maps.
+            var nameText = (hasBaseColor ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) + "_" + Path.GetFileNameWithoutExtension(alphaTexture.Map.FullFilePath) : TextureUtilities.ColorToStringName(baseColor));
+            var textureID = hasBaseColor ? texture.GetGuid().ToString() + "_" + alphaTexture.GetGuid().ToString() : string.Format("{0}_{1}", texture.GetGuid().ToString(), nameText);
+
             if (textureMap.ContainsKey(textureID))
             {
                 return textureMap[textureID];
             }
-            else
-            { 
-                var babylonTexture = new BabylonTexture(textureID)
-                {
-                    name = nameText // TODO - unsafe name, may conflict with another texture name
-                };
 
-                // Level
-                babylonTexture.level = 1.0f;
+            BabylonTexture babylonTexture = null;
+            babylonTexture = new BabylonTexture(textureID)
+            {
+                name = nameText
+            };
 
-                // UVs
-                var uvGen = _exportUV(texture.UVGen, babylonTexture);
+            // Alpha
+            babylonTexture.hasAlpha = hasAlpha || (hasBaseColor && (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE || baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB)) || alpha < 1.0f;
+            babylonTexture.getAlphaFromRGB = false;
 
-                // Is cube
-                _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
-
-
-                // --- Merge baseColor and alpha maps ---
-
-                var hasBaseColor = isTextureOk(baseColorTexMap);
-                var hasAlpha = isTextureOk(alphaTexMap);
-
-                // Alpha
-                babylonTexture.hasAlpha = isTextureOk(alphaTexMap) || (isTextureOk(baseColorTexMap) && (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE || baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB)) || alpha < 1.0f;
-                babylonTexture.getAlphaFromRGB = false;
-
-                if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE)) &&
-                    (baseColorTextureMapExtension == ".tif" || baseColorTextureMapExtension == ".tiff"))
-                {
-                    RaiseWarning($"Diffuse texture named {baseColorTexture.Map.FullFilePath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 3);
-                    RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
-                }
-
-                if (!hasBaseColor && !hasAlpha)
-                {
-                    return null;
-                }
-
-                // Set image format
-                ImageFormat imageFormat = babylonTexture.hasAlpha ? ImageFormat.Png : ImageFormat.Jpeg;
-                babylonTexture.name += imageFormat == ImageFormat.Png ? ".png" : ".jpg";
-
-                // --- Merge baseColor and alpha maps ---
-
-                if (exportParameters.writeTextures)
-                {
-                    // Load bitmaps
-                    var baseColorBitmap = _loadTexture(baseColorTexMap);
-                    var alphaBitmap = _loadTexture(alphaTexMap);
-
-                    // Retreive dimensions
-                    int width = 0;
-                    int height = 0;
-                    var haveSameDimensions = TextureUtilities.GetMinimalBitmapDimensions(out width, out height, baseColorBitmap, alphaBitmap);
-                    if (!haveSameDimensions)
-                    {
-                        RaiseError("Base color and transparency color maps should have same dimensions", 3);
-                    }
-
-                    var getAlphaFromRGB = alphaTexture != null && ((alphaTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB) || (alphaTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_NONE)); // 'RGB intensity' or 'None (Opaque)'
-
-                    // Create baseColor+alpha map
-                    var _baseColor = Color.FromArgb(
-                        (int)(baseColor[0] * 255),
-                        (int)(baseColor[1] * 255),
-                        (int)(baseColor[2] * 255));
-                    var _alpha = (int)(alpha * 255);
-                    Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
-                    for (int x = 0; x < width; x++)
-                    {
-                        for (int y = 0; y < height; y++)
-                        {
-                            var baseColorAtPixel = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : _baseColor;
-
-                            Color baseColorAlpha;
-                            if (alphaBitmap != null)
-                            {
-                                // Retreive alpha from alpha texture
-                                Color alphaColor = alphaBitmap.GetPixel(x, y);
-                                int alphaAtPixel = getAlphaFromRGB ? alphaColor.R : alphaColor.A;
-                                if (isOpacity == false)
-                                {
-                                    // Convert transparency to opacity
-                                    alphaAtPixel = 255 - alphaAtPixel;
-                                }
-                                baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
-                            }
-                            else if (baseColorTexture != null && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE) // Alpha source is 'Image Alpha'
-                            {
-                                // Use all channels from base color
-                                baseColorAlpha = baseColorAtPixel;
-                            }
-                            else
-                            {
-                                // Use RGB channels from base color and default alpha
-                                baseColorAlpha = Color.FromArgb(_alpha, baseColorAtPixel.R, baseColorAtPixel.G, baseColorAtPixel.B);
-                            }
-                            baseColorAlphaBitmap.SetPixel(x, y, baseColorAlpha);
-                        }
-                    }
-
-                    // Write bitmap
-                    if (isBabylonExported)
-                    {
-                        RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
-                        TextureUtilities.SaveBitmap(baseColorAlphaBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat, exportParameters.txtQuality, this);
-                    }
-                    else
-                    {
-                        // Store created bitmap for further use in gltf export
-                        babylonTexture.bitmap = baseColorAlphaBitmap;
-                    }
-                }
-
-                return babylonTexture;
+            if (!hasBaseColor && !hasAlpha)
+            {
+                return null;
             }
+
+            if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE)) &&
+                (baseColorTextureMapExtension == ".tif" || baseColorTextureMapExtension == ".tiff"))
+            {
+                RaiseWarning($"Diffuse texture named {baseColorTexture.Map.FullFilePath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 3);
+                RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
+            }
+
+            // Set image format
+            
+            babylonTexture.name += "_alpha_" + alphaTexture.Name;
+            babylonTexture.name += imageFormat == ImageFormat.Png ? ".png" : ".jpg";
+
+            // Level
+            babylonTexture.level = 1.0f;
+
+            // UVs
+            var uvGen = _exportUV(texture.UVGen, babylonTexture);
+
+            // Is cube
+            _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
+
+            // --- Merge baseColor and alpha maps ---
+
+            if (exportParameters.writeTextures && baseColorTexture != alphaTexture)
+            {
+                // Load bitmaps
+                var baseColorBitmap = _loadTexture(baseColorTexMap);
+                var alphaBitmap = _loadTexture(alphaTexMap);
+
+                // Retreive dimensions
+                int width = 0;
+                int height = 0;
+                var haveSameDimensions = TextureUtilities.GetMinimalBitmapDimensions(out width, out height, baseColorBitmap, alphaBitmap);
+                if (!haveSameDimensions)
+                {
+                    RaiseError("Base color and transparency color maps should have same dimensions", 3);
+                }
+
+                var getAlphaFromRGB = alphaTexture != null && ((alphaTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB) || (alphaTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_NONE)); // 'RGB intensity' or 'None (Opaque)'
+
+                // Create baseColor+alpha map
+                var _baseColor = Color.FromArgb(
+                    (int)(baseColor[0] * 255),
+                    (int)(baseColor[1] * 255),
+                    (int)(baseColor[2] * 255));
+                var _alpha = (int)(alpha * 255);
+                Bitmap baseColorAlphaBitmap = new Bitmap(width, height);
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        var baseColorAtPixel = baseColorBitmap != null ? baseColorBitmap.GetPixel(x, y) : _baseColor;
+
+                        Color baseColorAlpha;
+                        if (alphaBitmap != null)
+                        {
+                            // Retreive alpha from alpha texture
+                            Color alphaColor = alphaBitmap.GetPixel(x, y);
+                            int alphaAtPixel = getAlphaFromRGB ? alphaColor.R : alphaColor.A;
+                            if (isOpacity == false)
+                            {
+                                // Convert transparency to opacity
+                                alphaAtPixel = 255 - alphaAtPixel;
+                            }
+                            baseColorAlpha = Color.FromArgb(alphaAtPixel, baseColorAtPixel);
+                        }
+                        else if (baseColorTexture != null && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE) // Alpha source is 'Image Alpha'
+                        {
+                            // Use all channels from base color
+                            baseColorAlpha = baseColorAtPixel;
+                        }
+                        else
+                        {
+                            // Use RGB channels from base color and default alpha
+                            baseColorAlpha = Color.FromArgb(_alpha, baseColorAtPixel.R, baseColorAtPixel.G, baseColorAtPixel.B);
+                        }
+                        baseColorAlphaBitmap.SetPixel(x, y, baseColorAlpha);
+                    }
+                }
+
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
+                    TextureUtilities.SaveBitmap(baseColorAlphaBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat, exportParameters.txtQuality, this);
+                }
+                else
+                {
+                    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = baseColorAlphaBitmap;
+                }
+            }
+
+            return babylonTexture;
         }
 
         private BabylonTexture ExportORMTexture(ITexmap ambientOcclusionTexMap, ITexmap roughnessTexMap, ITexmap metallicTexMap, float metallic, float roughness, BabylonScene babylonScene, bool invertRoughness)
