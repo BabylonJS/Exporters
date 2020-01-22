@@ -88,7 +88,7 @@ namespace Babylon2GLTF
                     return null;
                 }
 
-                var destPath = Path.Combine(gltf.OutputFolder, babylonTexture.name);
+                var destPath = Path.Combine(gltf.OutputFolder, name);
                 destPath = Path.ChangeExtension(destPath, validImageFormat);
 
                 name = Path.ChangeExtension(name, validImageFormat);
