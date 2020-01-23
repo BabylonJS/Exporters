@@ -196,13 +196,9 @@ namespace Babylon2GLTF
 
                 // --- Global ---
 
-                // Eye Ball correction to limit overall brightness from std to PBR.
-                // This only impacts the factors.
-                var correctedDiffuse = new BabylonColor3(babylonStandardMaterial.diffuse).scale(0.5f);
-
                 SpecularGlossiness _specularGlossiness = new SpecularGlossiness
                 {
-                    diffuse = correctedDiffuse,
+                    diffuse = new BabylonColor3(babylonStandardMaterial.diffuse),
                     opacity = babylonMaterial.alpha,
                     specular = new BabylonColor3(babylonStandardMaterial.specular),
                     glossiness = babylonStandardMaterial.specularPower / 256
