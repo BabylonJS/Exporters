@@ -327,14 +327,10 @@ namespace Max2Babylon
                         RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
                     }
 
-                    if (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_NONE && // 'None (Opaque)'
-                        baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp" || baseColorTextureMapExtension == ".png")
-                    {
-                        // Copy base color image
-                        var outTexture = ExportTexture(baseColorTexture, babylonScene);
-                        textureMap[outTexture.Id] = outTexture;
-                        return outTexture;
-                    }
+                    // Copy base color image
+                    var outTexture = ExportTexture(baseColorTexture, babylonScene);
+                    textureMap[outTexture.Id] = outTexture;
+                    return outTexture;
                 }
 
             }
