@@ -440,9 +440,9 @@ namespace Babylon2GLTF
 
             KHR_texture_transform textureTransform = new KHR_texture_transform
             {
-                offset = new float[] { babylonTexture.uOffset, -babylonTexture.vOffset },
+                offset = new float[] { babylonTexture.uOffset, babylonTexture.vOffset },
                 rotation = angle,
-                scale = new float[] { babylonTexture.uScale, -babylonTexture.vScale },
+                scale = new float[] { babylonTexture.uScale, babylonTexture.vScale },
                 texCoord = babylonTexture.coordinatesIndex
             };
 

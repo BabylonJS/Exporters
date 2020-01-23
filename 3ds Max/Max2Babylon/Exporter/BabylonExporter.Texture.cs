@@ -327,14 +327,10 @@ namespace Max2Babylon
                         RaiseWarning($"If you don't want material to be in BLEND mode, set diffuse texture Alpha Source to 'None (Opaque)'", 3);
                     }
 
-                    if (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_NONE && // 'None (Opaque)'
-                        baseColorTextureMapExtension == ".jpg" || baseColorTextureMapExtension == ".jpeg" || baseColorTextureMapExtension == ".bmp" || baseColorTextureMapExtension == ".png")
-                    {
-                        // Copy base color image
-                        var outTexture = ExportTexture(baseColorTexture, babylonScene);
-                        textureMap[outTexture.Id] = outTexture;
-                        return outTexture;
-                    }
+                    // Copy base color image
+                    var outTexture = ExportTexture(baseColorTexture, babylonScene);
+                    textureMap[outTexture.Id] = outTexture;
+                    return outTexture;
                 }
 
             }
@@ -346,12 +342,21 @@ namespace Max2Babylon
             var hasAlpha = isTextureOk(alphaTexMap);
             var texture = hasBaseColor ? baseColorTexture : alphaTexture;
 
-            baseColorTextureMapExtension = ".png"; // since we are adding an alpha channel, export as png. This will convert any other input base texture format to PNG.
-            ImageFormat imageFormat = ImageFormat.Png;
+            ImageFormat imageFormat = null;
+            if (hasBaseColor)
+            {
+                imageFormat = TextureUtilities.GetImageFormat(Path.GetExtension(baseColorTexture.Map.FullFilePath));
+            }
+
+            if (hasAlpha || imageFormat == null)
+            {
+                baseColorTextureMapExtension = ".png"; // since we are adding an alpha channel, export as png. This will convert any other input base texture format to PNG.
+                imageFormat = ImageFormat.Png;
+            }
 
             // since we are creating a new texture, give it a unique ID based on the base color and alpha maps.
-            var nameText = (hasBaseColor ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) + "_" + Path.GetFileNameWithoutExtension(alphaTexture.Map.FullFilePath) : TextureUtilities.ColorToStringName(baseColor));
-            var textureID = hasBaseColor ? texture.GetGuid().ToString() + "_" + alphaTexture.GetGuid().ToString() : string.Format("{0}_{1}", texture.GetGuid().ToString(), nameText);
+            var nameText = (hasBaseColor ? Path.GetFileNameWithoutExtension(baseColorTexture.Map.FullFilePath) + (hasAlpha ?  "_" + Path.GetFileNameWithoutExtension(alphaTexture.Map.FullFilePath) : "") : TextureUtilities.ColorToStringName(baseColor));
+            var textureID = hasBaseColor ? texture.GetGuid().ToString() + (hasAlpha ? "_" + alphaTexture.GetGuid().ToString() : "") : string.Format("{0}_{1}", texture.GetGuid().ToString(), nameText);
 
             if (textureMap.ContainsKey(textureID))
             {
@@ -382,8 +387,19 @@ namespace Max2Babylon
 
             // Set image format
             
-            babylonTexture.name += "_alpha_" + alphaTexture.Name;
-            babylonTexture.name += imageFormat == ImageFormat.Png ? ".png" : ".jpg";
+            if (hasAlpha)
+            {
+                babylonTexture.name += "_alpha_" + alphaTexture.Name;
+            }
+
+            if (imageFormat == ImageFormat.Jpeg)
+            {
+                babylonTexture.name += ".jpg";
+            }
+            else
+            {
+                babylonTexture.name += "." + imageFormat.ToString();
+            }
 
             // Level
             babylonTexture.level = 1.0f;
@@ -396,7 +412,7 @@ namespace Max2Babylon
 
             // --- Merge baseColor and alpha maps ---
 
-            if (exportParameters.writeTextures && baseColorTexture != alphaTexture)
+            if (exportParameters.writeTextures && baseColorTexture != alphaTexture && alphaTexture != null)
             {
                 // Load bitmaps
                 var baseColorBitmap = _loadTexture(baseColorTexMap);

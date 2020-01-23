@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.IO;
+using System.Reflection;
 using BabylonExport.Entities;
 using GLTFExport.Entities;
 
@@ -83,6 +85,34 @@ namespace Utilities
                 logger.RaiseError(string.Format("Texture {0} not found.", absolutePath), 3);
                 return null;
             }
+        }
+
+        // https://dejanstojanovic.net/aspnet/2014/june/getting-systemdrawingimagingimageformat-from-a-string/
+        public static ImageFormat GetImageFormat(string extension)
+        {
+            ImageFormat result = null;
+            if (extension == null || extension == "")
+            {
+                return result;
+            }
+
+            if (extension[0] == '.' || extension[0] == ',')
+            {
+                extension = extension.Substring(1);
+            }
+
+            if (extension == "jpg")
+            {
+                extension = "jpeg";
+            }
+
+            PropertyInfo prop = typeof(ImageFormat).GetProperties().Where(p => p.Name.Equals(extension, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            if (prop != null)
+            {
+                result = prop.GetValue(prop) as ImageFormat;
+            }
+
+            return result;
         }
 
         public static void CopyTexture(string sourcePath, string destPath, long imageQuality, ILoggingProvider logger)
