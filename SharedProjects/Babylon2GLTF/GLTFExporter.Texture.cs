@@ -215,7 +215,7 @@ namespace Babylon2GLTF
                     texCoord = babylonTexture.coordinatesIndex
                 };
 
-                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == -1) || !(babylonTexture.wAng == 0))
+                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == 1) || !(babylonTexture.wAng == 0))
                 {
                     // Add texture extension if enabled in the export settings
                     if (exportParameters.enableKHRTextureTransform)
