@@ -196,13 +196,9 @@ namespace Babylon2GLTF
 
                 // --- Global ---
 
-                // Eye Ball correction to limit overall brightness from std to PBR.
-                // This only impacts the factors.
-                var correctedDiffuse = new BabylonColor3(babylonStandardMaterial.diffuse).scale(0.5f);
-
                 SpecularGlossiness _specularGlossiness = new SpecularGlossiness
                 {
-                    diffuse = correctedDiffuse,
+                    diffuse = new BabylonColor3(babylonStandardMaterial.diffuse),
                     opacity = babylonMaterial.alpha,
                     specular = new BabylonColor3(babylonStandardMaterial.specular),
                     glossiness = babylonStandardMaterial.specularPower / 256
@@ -354,15 +350,13 @@ namespace Babylon2GLTF
                         //export textures
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
-                            string baseColorTextureName = name + "_baseColor" + ".png"; // TODO - unsafe name, may conflict with another texture name
-                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorTextureName);
+                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, null);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {
-                            string metallicRoughnessTextureName = name + "_metallicRoughness" + ".jpg"; // TODO - unsafe name, may conflict with another texture name
-                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, metallicRoughnessTextureName);
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, null);
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
                         }
 
