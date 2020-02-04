@@ -1,9 +1,9 @@
 ﻿using Autodesk.Maya.OpenMaya;
+using BabylonExport.Entities;
+using Maya2Babylon.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using BabylonExport.Entities;
 
 namespace Maya2Babylon
 {
@@ -191,6 +191,54 @@ namespace Maya2Babylon
             MUuid mUuid = new MUuid();
             mUuid.generate();
             return mUuid.asString();
+        }
+
+
+        // -------------------------
+        // ------ UNIT SYSTEM ------
+        // -------------------------
+
+        public static float GetScaleFactorToMeters()
+        {
+            float scaleFactorFloat = 1;
+            
+            string unitType = MGlobal.executeCommandStringResult("currentUnit -query -linear;"); // Result is a shortname. Ex: "ft" for foot
+            // Convert unit type shortname to enum value
+            ScaleUnitType scaleUnitType = EnumExtension.GetValueFromDescription<ScaleUnitType>(unitType);
+
+            switch (scaleUnitType)
+            {
+                case ScaleUnitType.Inch:
+                    scaleFactorFloat = 0.0254f;
+                    break;
+                case ScaleUnitType.Foot:
+                    scaleFactorFloat = 0.3048f;
+                    break;
+                case ScaleUnitType.Yard:
+                    scaleFactorFloat = 0.9144f;
+                    break;
+                case ScaleUnitType.Mile:
+                    scaleFactorFloat = 1609.34f;
+                    break;
+                case ScaleUnitType.Millimeter:
+                    scaleFactorFloat = 0.001f;
+                    break;
+                case ScaleUnitType.Centimeter:
+                    scaleFactorFloat = 0.01f;
+                    break;
+                case ScaleUnitType.Meter:
+                    scaleFactorFloat = 1;
+                    break;
+                case ScaleUnitType.Kilometer:
+                    scaleFactorFloat = 1000;
+                    break;
+                default:
+                    scaleFactorFloat = 1;
+                    break;
+            }
+
+            return scaleFactorFloat;
+
         }
     }
 }

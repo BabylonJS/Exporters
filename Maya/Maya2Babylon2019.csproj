@@ -86,6 +86,7 @@
     <Compile Include="Exporter\PluginNodes\babylonStandardMaterialNode.cs" />
     <Compile Include="Exporter\PluginNodes\babylonStingrayPBSMaterialNode.cs" />
     <Compile Include="Extensions\ColorExtension.cs" />
+    <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Extensions\MColorExtension.cs" />
     <Compile Include="Extensions\MFloatVectorExtension.cs" />
     <Compile Include="Extensions\MFloatPointExtension.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Extensions\MPointExtension.cs" />
     <Compile Include="Extensions\MVectorExtension.cs" />
     <Compile Include="Extensions\MTransformationMatrixExtension.cs" />
+    <Compile Include="Extensions\ScaleSystem.cs" />
     <Compile Include="Forms\ExporterForm.cs">
       <SubType>Form</SubType>
     </Compile>
