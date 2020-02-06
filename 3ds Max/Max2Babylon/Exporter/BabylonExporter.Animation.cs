@@ -668,6 +668,9 @@ namespace Max2Babylon
 
                     tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
 
+                    // Apply unit conversion factor to meter
+                    t_babylon *= scaleFactorToMeters;
+
                     return new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
                 });
             }
