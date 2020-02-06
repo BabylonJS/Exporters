@@ -323,14 +323,29 @@ namespace Max2Babylon
                     parentBoneIndex = parentIndex,
                     matrix = (parentIndex==-1)?node.GetWorldTM(0).ToArray():node.GetLocalTM(0).ToArray()
                 };
-                
+
+                // Apply unit conversion factor to meter
+                // Affect translation only
+                bone.matrix[12] *= scaleFactorToMeters;
+                bone.matrix[13] *= scaleFactorToMeters;
+                bone.matrix[14] *= scaleFactorToMeters;
+
                 if (exportParameters.exportAnimations)
                 {
                     // export its animation
                     var babylonAnimation = ExportMatrixAnimation("_matrix", key =>
                     {
                         IGMatrix mat = node.GetLocalTM(key);
-                        return mat.ToArray();
+
+                        float[] matrix = mat.ToArray();
+
+                        // Apply unit conversion factor to meter
+                        // Affect translation only
+                        matrix[12] *= scaleFactorToMeters;
+                        matrix[13] *= scaleFactorToMeters;
+                        matrix[14] *= scaleFactorToMeters;
+
+                        return matrix;
                     },
                     false); // Do not remove linear animation keys for bones
 
