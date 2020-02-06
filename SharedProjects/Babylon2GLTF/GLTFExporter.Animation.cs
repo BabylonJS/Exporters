@@ -213,9 +213,6 @@ namespace Babylon2GLTF
                         if (babylonAnimation.property == "position")
                         {
                             outputValues[2] *= -1;
-                            outputValues[0] *= exportParameters.scaleFactor;
-                            outputValues[1] *= exportParameters.scaleFactor;
-                            outputValues[2] *= exportParameters.scaleFactor;
                         }
                         else if (babylonAnimation.property == "rotationQuaternion")
                         {
@@ -300,7 +297,6 @@ namespace Babylon2GLTF
                     
                     // Switch coordinate system at object level
                     translationBabylon.Z *= -1;
-                    translationBabylon *= exportParameters.scaleFactor;
                     rotationQuatBabylon.X *= -1;
                     rotationQuatBabylon.Y *= -1;
 
