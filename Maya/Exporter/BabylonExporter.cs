@@ -32,6 +32,7 @@ namespace Maya2Babylon
         private static List<string> defaultCameraNames = new List<string>(new string[] { "persp", "top", "front", "side" });
 
         public static string exporterVersion = "Custom.Build.Version";
+        public float scaleFactorToMeters = 1.0f;
 
         /// <summary>
         /// Export to file
@@ -70,6 +71,11 @@ namespace Maya2Babylon
             RaiseMessage("Export started", Color.Blue);
             var progression = 0.0f;
             ReportProgressChanged(progression);
+
+            // In Maya, system unit does not influence model size
+            // Ex: 1 meter is converted to 100 cm: the scene is not shrinked
+            // All values are retreived from API as centimeters regardless of current unit
+            scaleFactorToMeters = 0.01f;
 
             // Store export options
             this.isBabylonExported = exportParameters.outputFormat == "babylon" || exportParameters.outputFormat == "binary babylon";
@@ -339,7 +345,7 @@ namespace Maya2Babylon
             }
 
             var sceneScaleFactor = exportParameters.scaleFactor;
-            if (exportParameters.scaleFactor != 1.0f)
+            if (sceneScaleFactor != 1.0f)
             {
                 RaiseMessage(String.Format("A root node is added to globally scale the scene by {0}", sceneScaleFactor), 1);
 

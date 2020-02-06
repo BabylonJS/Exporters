@@ -79,6 +79,11 @@ namespace Maya2Babylon
             rotation[0] *= -1;
             rotation[1] *= -1;
             rotationOrder = Tools.InvertRotationOrder(rotationOrder);
+
+            // Apply unit conversion factor to meter
+            position[0] *= scaleFactorToMeters;
+            position[1] *= scaleFactorToMeters;
+            position[2] *= scaleFactorToMeters;
         }
 
         private void GetTransform(MFnTransform mFnTransform, ref float[] position)
@@ -89,6 +94,11 @@ namespace Maya2Babylon
 
             // Switch coordinate system at object level
             position[2] *= -1;
+
+            // Apply unit conversion factor to meter
+            position[0] *= scaleFactorToMeters;
+            position[1] *= scaleFactorToMeters;
+            position[2] *= scaleFactorToMeters;
         }
     }
 }

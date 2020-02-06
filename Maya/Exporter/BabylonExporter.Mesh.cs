@@ -849,6 +849,11 @@ namespace Maya2Babylon
             point.z *= -1;
             normal.z *= -1;
 
+            // Apply unit conversion factor to meter
+            point.x *= scaleFactorToMeters;
+            point.y *= scaleFactorToMeters;
+            point.z *= scaleFactorToMeters;
+
             var vertex = new GlobalVertex
             {
                 BaseIndex = vertexIndexGlobal,
@@ -1310,6 +1315,11 @@ namespace Maya2Babylon
                             // Switch coordinate system at object level
                             position.z *= -1;
                             normal.z *= -1;
+
+                            // Apply unit conversion factor to meter
+                            position.x *= scaleFactorToMeters;
+                            position.y *= scaleFactorToMeters;
+                            position.z *= scaleFactorToMeters;
 
                             GlobalVertex vertex = new GlobalVertex
                             {
