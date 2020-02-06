@@ -71,8 +71,6 @@ namespace Babylon2GLTF
                 globalVertex.Position.Z *= -1;
                 globalVertex.Normal.Z *= -1;
 
-                globalVertex.Position *= exportParameters.scaleFactor;
-
                 if (hasUV)
                 {
                     globalVertex.UV = BabylonVector2.FromArray(babylonMesh.uvs, indexVertex);

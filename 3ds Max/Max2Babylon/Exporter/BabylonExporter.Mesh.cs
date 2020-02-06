@@ -837,6 +837,17 @@ namespace Max2Babylon
             // convert from object to local/node space
             vertex.Position = offsetTM.PointTransform(vertex.Position);
 
+            // Apply unit conversion factor to meter
+            // <!>
+            // For some reason the following code is not working (resulting in ugly rigged mesh)
+            // vertex.Position = (vertex.Position.Clone()).MultiplyBy(scaleFactor); // cloning or not give same results
+            // Instead, create Point3 from scratch
+            // </!>
+            vertex.Position = Loader.Global.Point3.Create(
+                vertex.Position[0] * scaleFactorToMeters,
+                vertex.Position[1] * scaleFactorToMeters,
+                vertex.Position[2] * scaleFactorToMeters);
+
             // normal (from object to local/node space)
             vertex.Normal = offsetTM.VectorTransform(vertex.Normal).Normalize;
 
@@ -1042,6 +1053,11 @@ namespace Max2Babylon
             }
             babylonAbstractMesh.scaling = new[] { s_babylon.X, s_babylon.Y, s_babylon.Z };
             babylonAbstractMesh.position = new[] { t_babylon.X, t_babylon.Y, t_babylon.Z };
+
+            // Apply unit conversion factor to meter
+            babylonAbstractMesh.position[0] *= scaleFactorToMeters;
+            babylonAbstractMesh.position[1] *= scaleFactorToMeters;
+            babylonAbstractMesh.position[2] *= scaleFactorToMeters;
         }
 
         private void exportAnimation(BabylonNode babylonNode, IIGameNode maxGameNode)

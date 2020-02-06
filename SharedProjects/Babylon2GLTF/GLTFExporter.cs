@@ -537,9 +537,6 @@ namespace Babylon2GLTF
 
                 // Switch coordinate system at object level
                 gltfNode.translation[2] *= -1;
-                gltfNode.translation[0] *= exportParameters.scaleFactor;
-                gltfNode.translation[1] *= exportParameters.scaleFactor;
-                gltfNode.translation[2] *= exportParameters.scaleFactor;
                 gltfNode.rotation[0] *= -1;
                 gltfNode.rotation[1] *= -1;
             }
