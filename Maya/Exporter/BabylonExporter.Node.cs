@@ -60,6 +60,29 @@ namespace Maya2Babylon
             }
         }
 
+        private void ExportTransform(BabylonNode babylonNode, MFnTransform mFnTransform)
+        {
+            // Position / rotation / scaling
+            RaiseVerbose("BabylonExporter.Node | ExportTransform", 2);
+            float[] position = null;
+            float[] rotationQuaternion = null;
+            float[] rotation = null;
+            float[] scaling = null;
+            BabylonVector3.EulerRotationOrder rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
+            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling);
+
+            babylonNode.position = position;
+            if (_exportQuaternionsInsteadOfEulers)
+            {
+                babylonNode.rotationQuaternion = rotationQuaternion;
+            }
+            else
+            {
+                babylonNode.rotation = rotation;
+            }
+            babylonNode.scaling = scaling;
+        }
+
         private void GetTransform(MFnTransform mFnTransform, ref float[] position, ref float[] rotationQuaternion, ref float[] rotation, ref BabylonVector3.EulerRotationOrder rotationOrder, ref float[] scaling)
         {
             var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
@@ -79,21 +102,6 @@ namespace Maya2Babylon
             rotation[0] *= -1;
             rotation[1] *= -1;
             rotationOrder = Tools.InvertRotationOrder(rotationOrder);
-
-            // Apply unit conversion factor to meter
-            position[0] *= scaleFactorToMeters;
-            position[1] *= scaleFactorToMeters;
-            position[2] *= scaleFactorToMeters;
-        }
-
-        private void GetTransform(MFnTransform mFnTransform, ref float[] position)
-        {
-            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
-
-            position = transformationMatrix.getTranslation();
-
-            // Switch coordinate system at object level
-            position[2] *= -1;
 
             // Apply unit conversion factor to meter
             position[0] *= scaleFactorToMeters;

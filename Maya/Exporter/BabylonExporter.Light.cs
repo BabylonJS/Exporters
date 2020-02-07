@@ -128,11 +128,8 @@ namespace Maya2Babylon
             // User custom attributes
             babylonLight.metadata = ExportCustomAttributeFromTransform(mFnTransform);
 
-            // Position
-            //RaiseVerbose("BabylonExporter.Light | ExportTransform", 2);
-            float[] position = null;
-            GetTransform(mFnTransform, ref position);
-            babylonLight.position = position;
+            // Position / rotation / scaling
+            ExportTransform(babylonLight, mFnTransform);
 
             // Direction
             var vDir = new MVector(0, 0, -1);
