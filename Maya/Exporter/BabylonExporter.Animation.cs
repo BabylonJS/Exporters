@@ -90,6 +90,11 @@ namespace Maya2Babylon
                 rotationQuaternion[0] *= -1;
                 rotationQuaternion[1] *= -1;
 
+                // Apply unit conversion factor to meter
+                position[0] *= scaleFactorToMeters;
+                position[1] *= scaleFactorToMeters;
+                position[2] *= scaleFactorToMeters;
+
                 // create animation key for each property
                 for (int indexAnimation = 0; indexAnimation < babylonAnimationProperties.Length; indexAnimation++)
                 {
@@ -202,27 +207,31 @@ namespace Maya2Babylon
                 //Get the value for each curves
                 MGlobal.executeCommand("keyframe - q -vc -absolute " + animCurv + ";", keysValue);
 
+                // Switch coordinate system at object level
                 if (animCurv.EndsWith("translateZ") || animCurv.EndsWith("rotateX") || animCurv.EndsWith("rotateY"))
                 {
-                    for (int index = 0; index < keysTime.Count; index++)
+                    for (int index = 0; index < keysValue.Count; index++)
                     {
-                        // Switch coordinate system at object level
-                        int key = keysTime[index];
-                        if (animCurvData.valuePerFrame.ContainsKey(key) == false)
-                        {
-                            animCurvData.valuePerFrame.Add(key, (float)keysValue[index] * -1.0f);
-                        }
+                        keysValue[index] *= -1.0f;
                     }
                 }
-                else
+
+                // Apply unit conversion factor to meter
+                if (animCurv.Contains("translate"))
                 {
-                    for (int index = 0; index < keysTime.Count; index++)
+                    for (int index = 0; index < keysValue.Count; index++)
                     {
-                        int key = keysTime[index];
-                        if (animCurvData.valuePerFrame.ContainsKey(key) == false)
-                        {
-                            animCurvData.valuePerFrame.Add(key, (float)keysValue[index]);
-                        }
+                        keysValue[index] *= scaleFactorToMeters;
+                    }
+                }
+
+                // Store data
+                for (int index = 0; index < keysTime.Count; index++)
+                {
+                    int key = keysTime[index];
+                    if (animCurvData.valuePerFrame.ContainsKey(key) == false)
+                    {
+                        animCurvData.valuePerFrame.Add(key, (float)keysValue[index]);
                     }
                 }
             }
@@ -415,6 +424,11 @@ namespace Maya2Babylon
             position[2] *= -1;
             rotationQuaternion[0] *= -1;
             rotationQuaternion[1] *= -1;
+
+            // Apply unit conversion factor to meter
+            position[0] *= scaleFactorToMeters;
+            position[1] *= scaleFactorToMeters;
+            position[2] *= scaleFactorToMeters;
 
             // The composed matrix
             return BabylonMatrix.Compose(new BabylonVector3(scaling[0], scaling[1], scaling[2]),   // scaling
