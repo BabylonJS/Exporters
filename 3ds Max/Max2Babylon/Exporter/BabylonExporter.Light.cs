@@ -116,7 +116,7 @@ namespace Max2Babylon
             {
                 if (lightState.Type == LightType.DirectLgt || lightState.Type == LightType.SpotLgt || lightState.Type == LightType.OmniLgt)
                 {
-                    ExportShadowGenerator(lightNode.MaxNode, babylonScene);
+                    ExportShadowGenerator(lightNode.MaxNode, babylonScene, babylonLight);
                 }
                 else
                 {
