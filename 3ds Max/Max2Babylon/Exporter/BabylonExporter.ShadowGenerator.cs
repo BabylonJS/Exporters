@@ -6,14 +6,14 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
-        private BabylonShadowGenerator ExportShadowGenerator(IINode lightNode, BabylonScene babylonScene)
+        private BabylonShadowGenerator ExportShadowGenerator(IINode lightNode, BabylonScene babylonScene, BabylonLight babylonLight)
         {
             var maxLight = (lightNode.ObjectRef as ILightObject);
             var babylonShadowGenerator = new BabylonShadowGenerator();
 
             RaiseMessage("Exporting shadow map", 2);
 
-            babylonShadowGenerator.lightId = lightNode.GetGuid().ToString();
+            babylonShadowGenerator.lightId = babylonLight.id;
 
             babylonShadowGenerator.mapSize = maxLight.GetMapSize(0, Tools.Forever);
 
