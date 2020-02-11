@@ -1070,29 +1070,6 @@ namespace Maya2Babylon
             ExportHierarchy(babylonAbstractMesh, mFnTransform);
         }
 
-        private void ExportTransform(BabylonAbstractMesh babylonAbstractMesh, MFnTransform mFnTransform)
-        {
-            // Position / rotation / scaling
-            RaiseVerbose("BabylonExporter.Mesh | ExportTransform", 2);
-            float[] position = null;
-            float[] rotationQuaternion = null;
-            float[] rotation = null;
-            float[] scaling = null;
-            BabylonVector3.EulerRotationOrder rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
-            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling);
-
-            babylonAbstractMesh.position = position;
-            if (_exportQuaternionsInsteadOfEulers)
-            {
-                babylonAbstractMesh.rotationQuaternion = rotationQuaternion;
-            }
-            else
-            {
-                babylonAbstractMesh.rotation = rotation;
-            }
-            babylonAbstractMesh.scaling = scaling;
-        }
-
         /// <summary>
         /// 
         /// </summary>
