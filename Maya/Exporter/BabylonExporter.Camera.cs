@@ -88,25 +88,8 @@ namespace Maya2Babylon
             // User custom attributes
             babylonCamera.metadata = ExportCustomAttributeFromTransform(mFnTransform);
 
-            // Position / rotation
-            RaiseVerbose("BabylonExporter.Camera | ExportTransform", 2);
-            float[] position = null;
-            float[] rotationQuaternion = null;
-            float[] rotation = null;
-            float[] scaling = null;
-            var rotationOrder = BabylonVector3.EulerRotationOrder.XYZ;
-            GetTransform(mFnTransform, ref position, ref rotationQuaternion, ref rotation, ref rotationOrder, ref scaling);
-            babylonCamera.position = position;
-            babylonCamera.scaling = scaling;
-            if (_exportQuaternionsInsteadOfEulers)
-            {
-                babylonCamera.rotationQuaternion = rotationQuaternion;
-            }
-            else
-            {
-                babylonCamera.rotation = rotation;
-            }
-            
+            // Position / rotation / scaling
+            ExportTransform(babylonCamera, mFnTransform);
 
             // Field of view of babylon is the vertical one
             babylonCamera.fov = (float)mFnCamera.verticalFieldOfView;
