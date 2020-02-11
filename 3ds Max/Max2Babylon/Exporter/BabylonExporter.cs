@@ -502,7 +502,7 @@ namespace Max2Babylon
                 for (int index = 0; index < babylonScene.LightsList.Count; index++)
                 {
                     BabylonNode light = babylonScene.LightsList[index];
-                    FixNodeRotation(ref light, ref babylonScene, -Math.PI / 2);
+                    FixNodeRotation(ref light, ref babylonScene, Math.PI / 2);
                 }
 
             }
