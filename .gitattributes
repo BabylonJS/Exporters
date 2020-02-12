@@ -2,7 +2,7 @@
 * text=auto
  
 # Explicitly declare text files we want to always be normalized and converted to native line endings on checkout.
-*.txt text
+*.cs text
  
 # Declare files that will always have LF line endings on checkout.
-*.sln text eol=clrf
+*.sln text eol=lf
