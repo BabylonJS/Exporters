@@ -148,12 +148,12 @@ namespace Max2Babylon
 #endif
             if (bakeAnimationType == BakeAnimationType.BakeSelective)
             {
-            foreach (IINode iNode in hierachyRoot.NodeTree())
-            {
+                foreach (IINode iNode in hierachyRoot.NodeTree())
+                {
                     if (iNode.IsMarkedAsObjectToBakeAnimation())
                     {
-                tobake.AppendNode(iNode,false,Loader.Core.Time);
-            }
+                        tobake.AppendNode(iNode,false,Loader.Core.Time);
+                    }
                 }
             }
 
@@ -411,7 +411,7 @@ namespace Max2Babylon
                 babylonScene.skyboxBlurLevel = rawScene.GetFloatProperty("babylonjs_skyboxBlurLevel");
             }
             }
-
+            
             // Instantiate custom material exporters
             materialExporters = new Dictionary<ClassIDWrapper, IMaxMaterialExporter>();
             foreach (Type type in Tools.GetAllLoadableTypes())
