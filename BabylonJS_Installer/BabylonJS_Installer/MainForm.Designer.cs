@@ -1,4 +1,4 @@
-﻿namespace BabylonJS_Installer
+namespace BabylonJS_Installer
 {
     partial class MainForm
     {

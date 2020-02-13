@@ -1,4 +1,4 @@
-﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMaya;
 using Babylon2GLTF;
 using BabylonExport.Entities;
 using System;

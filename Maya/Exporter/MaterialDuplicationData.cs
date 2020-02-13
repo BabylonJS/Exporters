@@ -1,4 +1,4 @@
-﻿using BabylonExport.Entities;
+using BabylonExport.Entities;
 using System.Collections.Generic;
 
 public class MaterialDuplicationData

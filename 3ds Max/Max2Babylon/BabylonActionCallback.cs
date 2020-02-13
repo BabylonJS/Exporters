@@ -1,4 +1,4 @@
-﻿using Autodesk.Max.Plugins;
+using Autodesk.Max.Plugins;
 
 namespace Max2Babylon
 {

@@ -1,4 +1,4 @@
-﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMaya;
 using Maya2Babylon.Forms;
 using System;
 using System.Collections.Generic;

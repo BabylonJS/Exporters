@@ -1,4 +1,4 @@
-﻿namespace BabylonExport.Entities
+namespace BabylonExport.Entities
 {
     public interface BabylonIAnimatable
     {

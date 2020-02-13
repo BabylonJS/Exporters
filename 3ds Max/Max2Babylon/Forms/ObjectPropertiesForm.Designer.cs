@@ -1,4 +1,4 @@
-﻿namespace Max2Babylon
+namespace Max2Babylon
 {
     partial class ObjectPropertiesForm
     {

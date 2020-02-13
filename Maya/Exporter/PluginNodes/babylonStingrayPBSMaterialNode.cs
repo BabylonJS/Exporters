@@ -1,4 +1,4 @@
-﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
 
 [assembly: MPxNodeClass(typeof(Maya2Babylon.babylonStingrayPBSMaterialNode), "babylonStingrayPBSMaterialNode", 0x0008106c, //528492 in decimal // TODO - Ask Autodesk for a unique ID

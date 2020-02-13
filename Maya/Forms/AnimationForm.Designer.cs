@@ -1,4 +1,4 @@
-﻿namespace Maya2Babylon.Forms
+namespace Maya2Babylon.Forms
 {
     partial class AnimationForm
     {

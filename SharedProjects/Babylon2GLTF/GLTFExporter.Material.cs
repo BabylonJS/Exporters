@@ -1,4 +1,4 @@
-﻿using BabylonExport.Entities;
+using BabylonExport.Entities;
 using Utilities;
 using GLTFExport.Entities;
 using System;

@@ -1,4 +1,4 @@
-﻿using GLTFExport.Entities;
+using GLTFExport.Entities;
 
 namespace GLTFExport.Tools
 {

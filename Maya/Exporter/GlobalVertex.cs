@@ -1,4 +1,4 @@
-﻿using Maya2Babylon;
+using Maya2Babylon;
 
 namespace MayaBabylon
 {

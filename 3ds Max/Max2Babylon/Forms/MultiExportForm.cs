@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using BabylonExport.Entities;
 using System;
 using System.Diagnostics;

@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using System.Windows.Forms;
 using ActionItem = Autodesk.Max.Plugins.ActionItem;
 

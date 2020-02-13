@@ -1,4 +1,4 @@
-﻿using Utilities;
+using Utilities;
 using GLTFExport.Entities;
 
 namespace BabylonExport.Entities

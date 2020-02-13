@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BabylonExport.Entities;
 using UnityEngine;
 

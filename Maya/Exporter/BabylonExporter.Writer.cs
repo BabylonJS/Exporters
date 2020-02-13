@@ -1,4 +1,4 @@
-﻿using BabylonExport.Entities;
+using BabylonExport.Entities;
 using BabylonFileConverter;
 using Newtonsoft.Json;
 using System.Globalization;
