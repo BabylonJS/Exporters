@@ -1,4 +1,4 @@
-﻿using Autodesk.Maya.OpenMaya;
+using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
 
 [assembly: MPxNodeClass(typeof(Maya2Babylon.babylonStandardMaterialNode), "babylonStandardMaterialNode", 0x0008106b, //528491 in decimal // TODO - Ask Autodesk for a unique ID
