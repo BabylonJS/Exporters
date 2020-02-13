@@ -509,6 +509,12 @@ namespace Max2Babylon
                     babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
                 }
 
+                // Constraints
+                if (babylonMaterial.baseTexture != null)
+                {
+                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                }
+
                 if (isTransparencyModeFromBabylonAttributes == false && (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha)))
                 {
                     babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
