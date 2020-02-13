@@ -19,7 +19,7 @@ namespace Max2Babylon
         }
         public static void Export( bool logInListener )
         {
-            string storedModelPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.ModelFilePathProperty, string.Empty);
+            string storedModelPath = Loader.Core.RootNode.GetStringProperty(MaxExportParameters.ModelFilePathProperty, string.Empty);
             string userRelativePath = Tools.ResolveRelativePath(storedModelPath);
             Export(InitParameters(userRelativePath),logInListener);
         }
@@ -105,9 +105,14 @@ namespace Max2Babylon
             exportParameters.enableKHRLightsPunctual = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrLightsPunctual");
             exportParameters.enableKHRTextureTransform = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrTextureTransform");
             exportParameters.enableKHRMaterialsUnlit = Loader.Core.RootNode.GetBoolProperty("babylonjs_khr_materials_unlit");
+            exportParameters.animgroupExportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroupexportnonanimated");
+            exportParameters.optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
             exportParameters.exportMaterials = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_materials");
             exportParameters.exportAnimations = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_animations");
             exportParameters.exportAnimationsOnly = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_animations_only");
+
+            exportParameters.exportMorphTangents = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_Morph_Tangents");
+            exportParameters.exportMorphNormals = Loader.Core.RootNode.GetBoolProperty("babylonjs_export_Morph_Normals");
             exportParameters.usePreExportProcess = Loader.Core.RootNode.GetBoolProperty("babylonjs_preproces");
             exportParameters.flattenScene = Loader.Core.RootNode.GetBoolProperty("babylonjs_flattenScene");
             exportParameters.mergeContainersAndXRef = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergecontainersandxref");
@@ -116,7 +121,13 @@ namespace Max2Babylon
             exportParameters.pbrFull = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRFullPropertyName);
             exportParameters.pbrNoLight = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRNoLightPropertyName);
             exportParameters.pbrEnvironment = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
+            exportParameters.exportNode = null;
             return exportParameters;
+        }
+
+        public static void DisableBabylonAutoSave()
+        {
+            Loader.Core.RootNode.SetUserPropBool("babylonjs_autosave",false);
         }
 
         public static void ImportAnimationGroups(string jsonPath)
@@ -260,6 +271,11 @@ namespace Max2Babylon
             newGuids.Add(node.GetGuid());
             info.NodeGuids = newGuids;
             info.SaveToData();
+        }
+
+        public int GeTimeRange(AnimationGroup info)
+        {
+            return Tools.CalculateEndFrameFromAnimationGroupNodes(info);
         }
 
         public void SetAnimationGroupTimeRange(AnimationGroup info, int start,int end)
