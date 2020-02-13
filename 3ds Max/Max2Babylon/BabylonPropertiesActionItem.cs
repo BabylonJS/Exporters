@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using ActionItem = Autodesk.Max.Plugins.ActionItem;
 
 namespace Max2Babylon

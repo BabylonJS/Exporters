@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using Utilities;
 
 namespace Max2Babylon
