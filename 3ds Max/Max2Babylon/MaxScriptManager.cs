@@ -273,7 +273,7 @@ namespace Max2Babylon
             info.SaveToData();
         }
 
-        public int GeTimeRange(AnimationGroup info)
+        public int GetTimeRange(AnimationGroup info)
         {
             return Tools.CalculateEndFrameFromAnimationGroupNodes(info);
         }
