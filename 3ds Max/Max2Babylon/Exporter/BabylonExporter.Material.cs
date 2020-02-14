@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using Autodesk.Max;
@@ -196,10 +196,15 @@ namespace Max2Babylon
                 // Textures
 
                 BabylonFresnelParameters fresnelParameters;
-                babylonMaterial.diffuseTexture = ExportTexture(stdMat, STANDARD_MATERIAL_TEXTURE_ID_DIFFUSE, out fresnelParameters, babylonScene);                // Diffuse
+                float[] multiplyColor;
+                babylonMaterial.diffuseTexture = ExportDiffuseTexture(stdMat, STANDARD_MATERIAL_TEXTURE_ID_DIFFUSE, out fresnelParameters, babylonScene, out multiplyColor);                // Diffuse
                 if (fresnelParameters != null)
                 {
                     babylonMaterial.diffuseFresnelParameters = fresnelParameters;
+                }
+                if (multiplyColor != null)
+                {
+                    babylonMaterial.diffuse = multiplyColor;
                 }
                 if ((babylonMaterial.alpha == 1.0f && babylonMaterial.opacityTexture == null) &&
                     babylonMaterial.diffuseTexture != null &&
@@ -266,7 +271,7 @@ namespace Max2Babylon
                 }
 
                 // Constraints
-                if (babylonMaterial.diffuseTexture != null)
+                if (babylonMaterial.diffuseTexture != null && multiplyColor == null)
                 {
                     babylonMaterial.diffuse = new[] { 1.0f, 1.0f, 1.0f };
                 }
@@ -329,7 +334,12 @@ namespace Max2Babylon
                         Color defaultColor = Color.FromArgb((int)(babylonMaterial.diffuse[0] * 255), (int)(babylonMaterial.diffuse[1] * 255), (int)(babylonMaterial.diffuse[2] * 255));
                         ITexmap baseColorTextureMap = GetSubTexmap(stdMat, STANDARD_MATERIAL_TEXTURE_ID_DIFFUSE);
                         ITexmap opacityTextureMap = GetSubTexmap(stdMat, STANDARD_MATERIAL_TEXTURE_ID_OPACITY);
-                        babylonMaterial.diffuseTexture = ExportBaseColorAlphaTexture(baseColorTextureMap, opacityTextureMap, babylonMaterial.diffuse, babylonMaterial.alpha, babylonScene, name, true);
+                        multiplyColor = null;
+                        babylonMaterial.diffuseTexture = ExportBaseColorAlphaTexture(baseColorTextureMap, opacityTextureMap, babylonMaterial.diffuse, babylonMaterial.alpha, babylonScene, out multiplyColor, true);
+                        if (multiplyColor != null)
+                        {
+                            babylonMaterial.diffuse = multiplyColor;
+                        }
                         babylonMaterial.opacityTexture = null;
                         babylonMaterial.alpha = 1.0f;
                     }
@@ -413,7 +423,12 @@ namespace Max2Babylon
                 {
                     alphaTexmap = _getTexMap(materialNode, 9);
                 }
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name);
+                float[] multiplyColor = null;
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor);
+                if (multiplyColor != null)
+                {
+                    babylonMaterial.baseColor = multiplyColor;
+                }
 
                 if (isUnlit == false)
                 {
@@ -507,6 +522,12 @@ namespace Max2Babylon
                     babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
 
                     babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
+                }
+
+                // Constraints
+                if (babylonMaterial.baseTexture != null && multiplyColor == null)
+                {
+                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
                 }
 
                 if (isTransparencyModeFromBabylonAttributes == false && (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha)))
@@ -661,7 +682,12 @@ namespace Max2Babylon
                 {
                     alphaTexmap = _getTexMap(materialNode, "opacity");
                 }
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, name, true);
+                float[] multiplyColor = null;
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor, true);
+                if (multiplyColor != null)
+                {
+                    babylonMaterial.baseColor = multiplyColor;
+                }
 
                 if (isUnlit == false)
                 {
@@ -742,7 +768,10 @@ namespace Max2Babylon
                 // Constraints
                 if (babylonMaterial.baseTexture != null)
                 {
-                    babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    if (multiplyColor == null)
+                    {
+                        babylonMaterial.baseColor = new[] { 1.0f, 1.0f, 1.0f };
+                    }
                     babylonMaterial.alpha = 1.0f;
                 }
 
