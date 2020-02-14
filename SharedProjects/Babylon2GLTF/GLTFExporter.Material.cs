@@ -1,4 +1,4 @@
-using BabylonExport.Entities;
+﻿using BabylonExport.Entities;
 using Utilities;
 using GLTFExport.Entities;
 using System;
@@ -367,7 +367,7 @@ namespace Babylon2GLTF
                     // Constraints
                     if (gltfPbrMetallicRoughness.baseColorTexture != null)
                     {
-                        gltfPbrMetallicRoughness.baseColorFactor = new[] { 1.0f, 1.0f, 1.0f, 1.0f };
+                        gltfPbrMetallicRoughness.baseColorFactor[3] = 1.0f;
                     }
 
                     if (gltfPbrMetallicRoughness.metallicRoughnessTexture != null)

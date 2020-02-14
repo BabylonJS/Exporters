@@ -100,6 +100,12 @@ namespace Max2Babylon
                         case ParamType2.Float:
                             RaiseVerbose("paramBlock.GetProperty(" + i + ")=" + paramBlock.GetFloat(i, 0, 0), logRank + 2);
                             break;
+                        case ParamType2.Bool2:
+                            RaiseVerbose("paramBlock.GetProperty(" + i + ")=" + paramBlock.GetInt(i, 0, 0), logRank + 2);
+                            break;
+                        case ParamType2.Rgba:
+                            RaiseVerbose("paramBlock.GetProperty(" + i + ")=" + paramBlock.GetColor(i, 0, 0), logRank + 2);
+                            break;
                         default:
                             RaiseVerbose("Unknown property type", logRank + 2);
                             break;
