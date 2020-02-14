@@ -11,5 +11,17 @@ namespace GLTFExport.Entities
 
         [DataMember(EmitDefaultValue = false)]
         public Dictionary<string, object> extras { get; set; }
+
+        public bool ShouldSerializeextensions()
+        {
+            return (this.extensions != null);
+
+        }
+
+        public bool ShouldSerializeextras()
+        {
+            return (this.extras != null);
+
+        }
     }
 }

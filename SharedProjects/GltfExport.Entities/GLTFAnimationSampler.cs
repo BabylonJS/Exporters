@@ -21,7 +21,7 @@ namespace GLTFExport.Entities
         public int input { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public string interpolation { get; private set; }
+        public Interpolation interpolation { get; private set; }
 
         /// <summary>
         /// The index of an accessor containing keyframe output values.
@@ -36,7 +36,12 @@ namespace GLTFExport.Entities
 
         public void SetInterpolation(Interpolation interpolation)
         {
-            this.interpolation = interpolation.ToString();
+            this.interpolation = interpolation;
+        }
+
+        public bool ShouldSerializeinterpolation()
+        {
+            return (this.interpolation == Interpolation.LINEAR);
         }
 
         public GLTFAnimationSampler()

@@ -10,55 +10,55 @@ namespace GLTFExport.Entities
         [DataMember(IsRequired = true)]
         public GLTFAsset asset { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public List<string> extensionsUsed { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public List<string> extensionsRequired { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? scene { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFScene[] scenes { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFNode[] nodes { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFCamera[] cameras { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFMesh[] meshes { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFAccessor[] accessors { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFBufferView[] bufferViews { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFBuffer[] buffers { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFMaterial[] materials { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFTexture[] textures { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFImage[] images { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFSampler[] samplers { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFAnimation[] animations { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFSkin[] skins { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFExtensions extensions { get; set; }
 
         public string OutputFolder { get; private set; }
@@ -217,6 +217,114 @@ namespace GLTFExport.Entities
             gltfTexture.source = image?.index;
             TexturesList.Add(gltfTexture);
             return gltfTexture;
+        }
+
+        public bool ShouldSerializeextensionsUsed()
+        {
+            return (this.extensionsUsed != null);
+
+        }
+
+        public bool ShouldSerializeextensionsRequired()
+        {
+            return (this.extensionsRequired != null);
+
+        }
+
+        public bool ShouldSerializeaccessors()
+        {
+            return (this.accessors != null);
+
+        }
+
+        public bool ShouldSerializeanimations()
+        {
+            return (this.animations != null);
+
+        }
+
+        public bool ShouldSerializeasset()
+        {
+            return (this.asset != null);
+
+        }
+
+        public bool ShouldSerializebuffers()
+        {
+            return (this.buffers != null);
+
+        }
+
+        public bool ShouldSerializebufferViews()
+        {
+            return (this.bufferViews != null);
+
+        }
+
+        public bool ShouldSerializecameras()
+        {
+            return (this.cameras != null);
+
+        }
+
+        public bool ShouldSerializeimages()
+        {
+            return (this.images != null);
+
+        }
+
+        public bool ShouldSerializematerials()
+        {
+            return (this.materials != null);
+
+        }
+
+        public bool ShouldSerializemeshes()
+        {
+            return (this.meshes != null);
+
+        }
+
+        public bool ShouldSerializenodes()
+        {
+            return (this.nodes != null);
+
+        }
+
+        public bool ShouldSerializesamplers()
+        {
+            return (this.samplers != null);
+
+        }
+
+        public bool ShouldSerializescene()
+        {
+            return (this.scene != null);
+
+        }
+
+        public bool ShouldSerializescenes()
+        {
+            return (this.scenes != null);
+
+        }
+
+        public bool ShouldSerializeskins()
+        {
+            return (this.skins != null);
+
+        }
+
+        public bool ShouldSerializetextures()
+        {
+            return (this.textures != null);
+
+        }
+
+        public bool ShouldSerializeextensions()
+        {
+            return (this.extensions != null);
+
         }
     }
 }
