@@ -593,7 +593,7 @@ namespace Max2Babylon
         private static void ResolveMultipleInheritedContainer(IIContainerObject container)
         {
             int b = 0;
-            if (container.ContainerNode.GetUserPropBool("flightsim_resolved", ref b))
+            if (container.ContainerNode.GetUserPropBool("BabylonJS_container_resolved", ref b))
             {
                 return;
             }
@@ -663,7 +663,7 @@ namespace Max2Babylon
                     }
                 }
             }
-            container.ContainerNode.SetUserPropBool("flightsim_resolved", true);
+            container.ContainerNode.SetUserPropBool("BabylonJS_container_resolved", true);
         }
 
 

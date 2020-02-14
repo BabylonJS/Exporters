@@ -148,15 +148,14 @@ namespace Babylon2GLTF
             var materialsExportTime = watch.ElapsedMilliseconds / 1000.0 -nodesExportTime;
             logger.RaiseMessage(string.Format("GLTFMaterials exported in {0:0.00}s", materialsExportTime), Color.Blue);
 #endif
-                // Animations
-                progression = 90.0f;
-                logger.ReportProgressChanged((int) progression);
-                logger.RaiseMessage("GLTFExporter | Exporting Animations");
-                ExportAnimationGroups(gltf, babylonScene);
+            // Animations
+            progression = 90.0f;
+            logger.ReportProgressChanged((int)progression);
+            logger.RaiseMessage("GLTFExporter | Exporting Animations");
+            ExportAnimationGroups(gltf, babylonScene);
 #if DEBUG
-                var animationGroupsExportTime = watch.ElapsedMilliseconds / 1000.0 - materialsExportTime;
-                logger.RaiseMessage(string.Format("GLTFAnimations exported in {0:0.00}s", animationGroupsExportTime),
-                    Color.Blue);
+            var animationGroupsExportTime = watch.ElapsedMilliseconds / 1000.0 -materialsExportTime;
+            logger.RaiseMessage(string.Format("GLTFAnimations exported in {0:0.00}s", animationGroupsExportTime), Color.Blue);
 #endif
             // Prepare buffers
             gltf.BuffersList.ForEach(buffer =>
