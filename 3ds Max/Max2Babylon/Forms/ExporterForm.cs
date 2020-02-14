@@ -58,7 +58,7 @@ namespace Max2Babylon
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
-            
+
             // Check if the gltf-pipeline module is installed
             this.gltfPipelineInstalled = GLTFPipelineUtilities.IsGLTFPipelineInstalled();
 
