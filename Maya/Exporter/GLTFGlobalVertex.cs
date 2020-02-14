@@ -1,4 +1,4 @@
-﻿using BabylonExport.Entities;
+using BabylonExport.Entities;
 
 namespace Maya2Babylon
 {

@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using Autodesk.Max.IQuadMenuContext;
 using Autodesk.Max.Plugins;
 using System;
