@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using Babylon2GLTF;
 using BabylonExport.Entities;
 using Newtonsoft.Json;

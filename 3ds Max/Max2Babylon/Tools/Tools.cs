@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using Max2Babylon.Extensions;
 using SharpDX;
 using System;

@@ -1,4 +1,4 @@
-﻿namespace Max2Babylon.Forms
+namespace Max2Babylon.Forms
 {
     partial class LayerSelector
     {
