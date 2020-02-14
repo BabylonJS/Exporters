@@ -8,13 +8,37 @@ namespace GLTFExport.Entities
         [DataMember(IsRequired = true)]
         public string version { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public string generator { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public string copyright { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public string minVersion { get; set; }
+
+        public bool ShouldSerializecopyright()
+        {
+            return (this.copyright != null);
+
+        }
+
+        public bool ShouldSerializegenerator()
+        {
+            return (this.generator != null);
+
+        }
+
+        public bool ShouldSerializeversion()
+        {
+            return (this.version != null);
+
+        }
+
+        public bool ShouldSerializeminVersion()
+        {
+            return (this.minVersion != null);
+
+        }
     }
 }

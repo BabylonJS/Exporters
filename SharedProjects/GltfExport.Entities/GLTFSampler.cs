@@ -28,16 +28,40 @@ namespace GLTFExport.Entities
             REPEAT = 10497
         }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public TextureMagFilter? magFilter { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public TextureMinFilter? minFilter { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public TextureWrapMode? wrapS { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public TextureWrapMode? wrapT { get; set; }
+
+        public bool ShouldSerializemagFilter()
+        {
+            return (this.magFilter != null);
+   
+        }
+
+        public bool ShouldSerializeminFilter()
+        {
+            return (this.minFilter != null);
+
+        }
+
+        public bool ShouldSerializewrapS()
+        {
+            return (this.wrapS != TextureWrapMode.REPEAT);
+
+        }
+
+        public bool ShouldSerializewrapT()
+        {
+            return (this.wrapT != TextureWrapMode.REPEAT);
+ 
+        }
     }
 }

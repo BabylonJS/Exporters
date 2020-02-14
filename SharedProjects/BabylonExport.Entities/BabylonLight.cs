@@ -67,6 +67,7 @@ namespace BabylonExport.Entities
             rotation = new float[] { 0, 0, 0 };
             rotationQuaternion = new float[] { 0, 0, 0, 1 };
             scaling = new float[] { 1, 1, 1 };
+            name = "";
         }
     }
 }

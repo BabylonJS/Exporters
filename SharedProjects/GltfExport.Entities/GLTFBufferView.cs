@@ -9,17 +9,27 @@ namespace GLTFExport.Entities
         [DataMember(IsRequired = true)]
         public int buffer { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int byteOffset { get; set; }
 
         [DataMember(IsRequired = true)]
         public int byteLength { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? byteStride { get; set; } // Field only defined for buffer views that contain vertex attributes.
 
         public GLTFBuffer Buffer;
         public List<GLTFAccessor> Accessors = new List<GLTFAccessor>();
         public List<byte> bytesList = new List<byte>();
+
+        public bool ShouldSerializebyteOffset()
+        {
+            return (this.byteOffset != 0);
+        }
+
+        public bool ShouldSerializebyteStride()
+        {
+            return (this.byteStride != null);
+        }
     }
 }
