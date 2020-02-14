@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Autodesk.Max;
@@ -38,9 +38,10 @@ namespace Max2Babylon
         // --- "public" export methods ---
         // -------------------------------
 
-        private BabylonTexture ExportTexture(IStdMat2 stdMat, int index, out BabylonFresnelParameters fresnelParameters, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false)
+        private ITexmap GetTexmap(IStdMat2 stdMat, int index, out BabylonFresnelParameters fresnelParameters, out float amount)
         {
             fresnelParameters = null;
+            amount = 0;
 
             if (!stdMat.MapEnabled(index))
             {
@@ -57,9 +58,37 @@ namespace Max2Babylon
 
             texMap = _exportFresnelParameters(texMap, out fresnelParameters);
 
-            var amount = stdMat.GetTexmapAmt(index, 0);
+            amount = stdMat.GetTexmapAmt(index, 0);
+
+            return texMap;
+        }
+
+        private BabylonTexture ExportTexture(IStdMat2 stdMat, int index, out BabylonFresnelParameters fresnelParameters, BabylonScene babylonScene, bool allowCube = false, bool forceAlpha = false)
+        {
+            float amount = 1.0f;
+            ITexmap texMap = GetTexmap(stdMat, index, out fresnelParameters, out amount);
+
+            if (texMap == null)
+            {
+                return null;
+            }
 
             return ExportTexture(texMap, babylonScene, amount, allowCube, forceAlpha);
+        }
+
+        private BabylonTexture ExportDiffuseTexture(IStdMat2 stdMat, int index, out BabylonFresnelParameters fresnelParameters, BabylonScene babylonScene, out float[] multiplyColor, bool allowCube = false, bool forceAlpha = false)
+        {
+            multiplyColor = null;
+
+            float amount = 1.0f;
+            ITexmap texMap = GetTexmap(stdMat, index, out fresnelParameters, out amount);
+
+            if (texMap == null)
+            {
+                return null;
+            }
+
+            return ExportDiffuseTexture(texMap, babylonScene, out multiplyColor, amount, allowCube, forceAlpha);
         }
 
         private BabylonTexture ExportSpecularTexture(IIGameMaterial materialNode, float[] specularColor, BabylonScene babylonScene)
@@ -301,10 +330,10 @@ namespace Max2Babylon
         }
 
         /// <returns></returns>
-        private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, string materialName, bool isOpacity = false)
+        private BabylonTexture ExportBaseColorAlphaTexture(ITexmap baseColorTexMap, ITexmap alphaTexMap, float[] baseColor, float alpha, BabylonScene babylonScene, out float[] multiplyColor, bool isOpacity = false)
         {
             // --- Babylon texture ---
-            var baseColorTexture = _getBitmapTex(baseColorTexMap);
+            var baseColorTexture = _getBitmapTex(baseColorTexMap, out multiplyColor);
             var alphaTexture = _getBitmapTex(alphaTexMap);
             string baseColorTextureMapExtension = null;
 
@@ -338,7 +367,7 @@ namespace Max2Babylon
             // Otherwise combine base color and alpha textures to a single output texture
             RaiseMessage("Export baseColor+Alpha texture", 2);
 
-            var hasBaseColor = baseColorTexture != null && isTextureOk(baseColorTexMap);
+            var hasBaseColor = baseColorTexture != null && File.Exists(baseColorTexture.Map.FullFilePath);
             var hasAlpha = isTextureOk(alphaTexMap);
             var texture = hasBaseColor ? baseColorTexture : alphaTexture;
 
@@ -378,7 +407,7 @@ namespace Max2Babylon
                 return null;
             }
 
-            if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (isTextureOk(baseColorTexMap) && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE)) &&
+            if ((!isTextureOk(alphaTexMap) && alpha == 1.0f && (hasBaseColor && baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE)) &&
                 (baseColorTextureMapExtension == ".tif" || baseColorTextureMapExtension == ".tiff"))
             {
                 RaiseWarning($"Diffuse texture named {baseColorTexture.Map.FullFilePath} is a .tif file and its Alpha Source is 'Image Alpha' by default.", 3);
@@ -415,7 +444,7 @@ namespace Max2Babylon
             if (exportParameters.writeTextures && baseColorTexture != alphaTexture && alphaTexture != null)
             {
                 // Load bitmaps
-                var baseColorBitmap = _loadTexture(baseColorTexMap);
+                var baseColorBitmap = baseColorTexture != null ? TextureUtilities.LoadTexture(baseColorTexture.Map.FullFilePath, this) : null;
                 var alphaBitmap = _loadTexture(alphaTexMap);
 
                 // Retreive dimensions
@@ -723,6 +752,17 @@ namespace Max2Babylon
                 amount *= specialAmount;
             }
 
+            return ExportBitmapTexture(texture, babylonScene, amount, allowCube, forceAlpha);
+        }
+
+        private BabylonTexture ExportDiffuseTexture(ITexmap texMap, BabylonScene babylonScene, out float[] multiplyColor, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
+        {
+            IBitmapTex texture = _getBitmapTex(texMap, out multiplyColor);
+            return ExportBitmapTexture(texture, babylonScene, amount, allowCube, forceAlpha);
+        }
+
+        private BabylonTexture ExportBitmapTexture(IBitmapTex texture, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
+        {
             if (texture == null)
             {
                 return null;
@@ -1036,6 +1076,93 @@ namespace Max2Babylon
             }
 
             return texture;
+        }
+
+        private IBitmapTex _getBitmapTex(ITexmap texMap, out float[] multiplyColor, bool raiseError = true)
+        {
+            multiplyColor = null;
+
+            var texture = _getBitmapTex(texMap, false);
+
+            if (texture == null)
+            {
+                texture = _getMultiplyTexmap(texMap, out multiplyColor);
+
+                if (texture == null && raiseError)
+                {
+                    RaiseError($"Texture type is not supported. Use a Bitmap or a RGB Multiply instead.", 2);
+                }
+            }
+
+            return texture;
+        }
+
+        private IBitmapTex _getMultiplyTexmap(ITexmap texMap, out float[] multiplyColor)
+        {
+            multiplyColor = null;
+
+            if (texMap == null)
+            {
+                return null;
+            }
+
+            if (texMap.ClassName == "RGB Multiply")
+            {
+                RaiseVerbose($"RGB Multiply found", 2);
+
+                var block = texMap.GetParamBlockByID(0);
+                if (block != null)
+                {
+                    Print(block, 2);
+
+                    // Color #1
+                    IBitmapTex bitmap1 = null;
+                    bool map1Enable = block.GetInt(4, 0, 0) == 1;
+                    if (map1Enable)
+                    {
+                        ITexmap map1 = block.GetTexmap(2, 0, 0);
+                        bitmap1 = _getBitmapTex(map1, false);
+                    }
+
+                    // Color #2
+                    IBitmapTex bitmap2 = null;
+                    bool map2Enable = block.GetInt(5, 0, 0) == 1;
+                    if (map2Enable)
+                    {
+                        ITexmap map2 = block.GetTexmap(3, 0, 0);
+                        bitmap2 = _getBitmapTex(map2, false);
+                    }
+
+                    // Constraints
+                    if (bitmap1 == null && bitmap2 == null)
+                    {
+                        RaiseError($"Specify one texture in the RGB Multiply map.", 2);
+                        return null;
+                    }
+                    if (bitmap1 != null && bitmap2 != null)
+                    {
+                        RaiseError($"Specify only one texture in the RGB Multiply map.", 2);
+                        return null;
+                    }
+
+                    // Return bitmap texture and multiplicative color
+                    if (bitmap1 != null)
+                    {
+                        multiplyColor = block.GetColor(1, 0, 0).ToArray(); // Color #2
+                        return bitmap1;
+                    }
+                    else
+                    {
+                        multiplyColor = block.GetColor(0, 0, 0).ToArray(); // Color #1
+                        return bitmap2;
+                    }
+                }
+
+                return null;
+            }
+
+            RaiseError($"Texture type is not supported. Use a Bitmap or RGB Multiply map instead.", 2);
+            return null;
         }
 
         private string getSourcePath(ITexmap texMap)
