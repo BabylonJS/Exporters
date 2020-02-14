@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace GLTFExport.Entities
 {
     [DataContract]
     public class GLTFScene : GLTFChildRootProperty
     {
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int[] nodes { get; set; }
 
         public List<int> NodesList { get; private set; }
@@ -24,6 +25,12 @@ namespace GLTFExport.Entities
             {
                 nodes = NodesList.ToArray();
             }
+        }
+
+        public bool ShouldSerializenodes()
+        {
+            return (this.nodes != null);
+
         }
     }
 }

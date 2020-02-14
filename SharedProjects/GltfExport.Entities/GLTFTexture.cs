@@ -5,10 +5,22 @@ namespace GLTFExport.Entities
     [DataContract]
     public class GLTFTexture : GLTFIndexedChildRootProperty
     {
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? sampler { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? source { get; set; }
+
+        public bool ShouldSerializesampler()
+        {
+            return (this.sampler != null);
+
+        }
+
+        public bool ShouldSerializesource()
+        {
+            return (this.source != null);
+
+        }
     }
 }

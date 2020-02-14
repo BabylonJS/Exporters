@@ -7,7 +7,7 @@ namespace GLTFExport.Entities
     [DataContract]
     public class GLTFImage : GLTFIndexedChildRootProperty
     {
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public string uri
         {
             get { return _uri; }
@@ -17,13 +17,31 @@ namespace GLTFExport.Entities
             }
         }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public string mimeType { get; set; } // "image/jpeg" or "image/png"
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? bufferView { get; set; }
 
         public string FileExtension;
         private string _uri;
+
+        public bool ShouldSerializeuri()
+        {
+            return (this.uri != null);
+
+        }
+
+        public bool ShouldSerializemimeType()
+        {
+            return (this.mimeType != null);
+
+        }
+
+        public bool ShouldSerializebufferView()
+        {
+            return (this.bufferView != null);
+
+        }
     }
 }
