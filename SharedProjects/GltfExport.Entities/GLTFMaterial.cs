@@ -1,4 +1,5 @@
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Linq;
 
 namespace GLTFExport.Entities
 {
@@ -12,31 +13,81 @@ namespace GLTFExport.Entities
             BLEND
         }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFPBRMetallicRoughness pbrMetallicRoughness { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFTextureInfo normalTexture { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFTextureInfo occlusionTexture { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFTextureInfo emissiveTexture { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public float[] emissiveFactor { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
-        public string alphaMode { get; set; }
+        [DataMember]
+        public AlphaMode alphaMode { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public float? alphaCutoff { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public bool doubleSided { get; set; }
 
         public string id;
+
+        public bool ShouldSerializepbrMetallicRoughness()
+        {
+            return (this.pbrMetallicRoughness != null);
+
+        }
+
+        public bool ShouldSerializenormalTexture()
+        {
+            return (this.normalTexture != null);
+
+        }
+
+        public bool ShouldSerializeocclusionTexture()
+        {
+            return (this.occlusionTexture != null);
+
+        }
+
+        public bool ShouldSerializeemissiveTexture()
+        {
+            return (this.emissiveTexture != null);
+
+        }
+
+        public bool ShouldSerializeemissiveFactor()
+        {
+            return (!this.emissiveFactor.SequenceEqual(new float[] {
+                        0F,
+                        0F,
+                        0F}));
+        }
+
+        public bool ShouldSerializealphaMode()
+        {
+            return (this.alphaMode != AlphaMode.OPAQUE);
+
+        }
+
+        public bool ShouldSerializealphaCutoff()
+        {
+            return (this.alphaCutoff != 0.5F);
+
+        }
+
+        public bool ShouldSerializedoubleSided()
+        {
+            return (!this.doubleSided );
+
+        }
     }
 
 
@@ -44,16 +95,41 @@ namespace GLTFExport.Entities
     [DataContract]
     public class KHR_texture_transform
     {
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public float[] offset { get; set; }     // array[2], default value [0,0]
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public float rotation { get; set; }     // in radian, default value 0
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public float[] scale { get; set; }      // array[2], default value [1,1]
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? texCoord { get; set; }       // min value 0, default null
+
+
+        public bool ShouldSerializeoffset()
+        {
+            return (this.offset != null && this.offset != new float[] {0f, 0f});
+
+        }
+        public bool ShouldSerializerotation()
+        {
+            return (this.rotation != 0f);
+
+        }
+
+        public bool ShouldSerializescale()
+        {
+            return (this.scale != null && this.scale != new float[] { 0f, 0f });
+
+        }
+
+        public bool ShouldSerializetextCoord()
+        {
+            return (this.texCoord != null);
+
+        }
+
     }
 }

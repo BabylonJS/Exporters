@@ -11,15 +11,30 @@ namespace GLTFExport.Entities
             orthographic
         }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFCameraOrthographic orthographic { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFCameraPerspective perspective { get; set; }
 
         [DataMember(IsRequired = true)]
         public string type { get; set; }
 
         public GLTFNode gltfNode;
+
+        public bool ShouldSerializeorthographic()
+        {
+            return (this.orthographic != null);
+        }
+
+        public bool ShouldSerializeperspective()
+        {
+            return (this.perspective != null);
+        }
+
+        public bool ShouldSerializegltfNode()
+        {
+            return (this.gltfNode != null);
+        }
     }
 }

@@ -9,13 +9,13 @@ namespace GLTFExport.Entities
         /// The index of the accessor containing the floating-point 4x4 inverse-bind matrices.
         /// The default is that each matrix is a 4x4 identity matrix, which implies that inverse-bind matrices were pre-applied.
         /// </summary>
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? inverseBindMatrices { get; set; }
 
         /// <summary>
         /// The index of the node used as a skeleton root. When undefined, joints transforms resolve to scene root.
         /// </summary>
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? skeleton { get; set; }
 
         /// <summary>
@@ -23,5 +23,24 @@ namespace GLTFExport.Entities
         /// </summary>
         [DataMember(IsRequired = true)]
         public int[] joints { get; set; }
+
+        public bool ShouldSerializeinverseBindMatrices()
+        {
+            return (this.inverseBindMatrices != null);
+      
+        }
+
+        public bool ShouldSerializeskeleton()
+        {
+            return (this.skeleton != null);
+      
+        }
+
+        public bool ShouldSerializejoints()
+        {
+            return (this.joints != null);
+      
+        }
     }
+    
 }

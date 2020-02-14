@@ -32,16 +32,46 @@ namespace GLTFExport.Entities
         [DataMember(IsRequired = true)]
         public Dictionary<string, int> attributes { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? indices { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public FillMode? mode { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public int? material { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public GLTFMorphTarget[] targets { get; set; }
+
+        public bool ShouldSerializeattributes()
+        {
+            return (this.attributes != null);
+      
+        }
+
+        public bool ShouldSerializeindices()
+        {
+            return (this.indices != null);
+      
+        }
+
+        public bool ShouldSerializematerial()
+        {
+            return (this.material != null);
+      
+        }
+
+        public bool ShouldSerializemode()
+        {
+            return (this.mode == FillMode.TRIANGLES);
+      
+        }
+
+        public bool ShouldSerializetargets()
+        {
+            return (this.targets != null);
+      
+        }
     }
 }
