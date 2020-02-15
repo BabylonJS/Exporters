@@ -1,7 +1,5 @@
-using System.Runtime.Serialization;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace GLTFExport.Entities
 {
@@ -31,18 +29,20 @@ namespace GLTFExport.Entities
         public string type { get; set; }         // ambient, directional, point or spot
 
         [DataMember]
-        public float range { get; set; }            // point or spot
+        public float? range { get; set; }            // point or spot
 
         [DataMember]
         public Spot spot { get; set; }              // spot
 
 
+        public bool ShouldSerializelight()
+        {
+            return (this.light != null);
+        }
+
         public bool ShouldSerializecolor()
         {
-            return (this.color != null && !this.color.SequenceEqual(new float[] {
-                        1F,
-                        1F,
-                        1F}));
+            return (this.color != null && !this.color.SequenceEqual(new float[] { 1f, 1f, 1f}));
         }
 
         public bool ShouldSerializeintensity()
@@ -57,14 +57,8 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializerange()
         {
-            return (this.range != float.MaxValue);
+            return (this.range != null);
         }
-
-        public bool ShouldSerializename()
-        {
-            return (this.name != "");
-        }
-
 
         [DataContract]
         public class Spot
@@ -78,12 +72,12 @@ namespace GLTFExport.Entities
 
             public bool ShouldSerializeinnerConeAngle()
             {
-                return (this.innerConeAngle != 0f);
+                return (this.innerConeAngle != null);
             }
 
             public bool ShouldSerializeouterConeAngle()
             {
-                return (this.outerConeAngle != 0.7853981633974483);
+                return (this.outerConeAngle != null);
             }
         }
     }

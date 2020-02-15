@@ -31,10 +31,5 @@ namespace GLTFExport.Entities
         {
             return (this.perspective != null);
         }
-
-        public bool ShouldSerializegltfNode()
-        {
-            return (this.gltfNode != null);
-        }
     }
 }
