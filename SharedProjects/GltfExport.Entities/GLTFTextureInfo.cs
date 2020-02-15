@@ -14,8 +14,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializetexCoord()
         {
-            return (this.texCoord != null) && (this.texCoord != 0);
-
+            return (this.texCoord != null && this.texCoord != 0);
         }
     }
 }

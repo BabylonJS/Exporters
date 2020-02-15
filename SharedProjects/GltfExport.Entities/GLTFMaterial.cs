@@ -1,5 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace GLTFExport.Entities
 {
@@ -28,7 +30,7 @@ namespace GLTFExport.Entities
         [DataMember]
         public float[] emissiveFactor { get; set; }
 
-        [DataMember]
+        [DataMember, JsonConverter(typeof(StringEnumConverter))]
         public AlphaMode alphaMode { get; set; }
 
         [DataMember]
@@ -42,51 +44,41 @@ namespace GLTFExport.Entities
         public bool ShouldSerializepbrMetallicRoughness()
         {
             return (this.pbrMetallicRoughness != null);
-
         }
 
         public bool ShouldSerializenormalTexture()
         {
             return (this.normalTexture != null);
-
         }
 
         public bool ShouldSerializeocclusionTexture()
         {
             return (this.occlusionTexture != null);
-
         }
 
         public bool ShouldSerializeemissiveTexture()
         {
             return (this.emissiveTexture != null);
-
         }
 
         public bool ShouldSerializeemissiveFactor()
         {
-            return (!this.emissiveFactor.SequenceEqual(new float[] {
-                        0F,
-                        0F,
-                        0F}));
+            return (this.emissiveFactor != null && !this.emissiveFactor.SequenceEqual(new float[] { 0f, 0f, 0f }));
         }
 
         public bool ShouldSerializealphaMode()
         {
             return (this.alphaMode != AlphaMode.OPAQUE);
-
         }
 
         public bool ShouldSerializealphaCutoff()
         {
-            return (this.alphaCutoff != 0.5F);
-
+            return (this.alphaCutoff != null && this.alphaCutoff != 0.5f);
         }
 
         public bool ShouldSerializedoubleSided()
         {
-            return (!this.doubleSided );
-
+            return this.doubleSided;
         }
     }
 
@@ -110,26 +102,22 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializeoffset()
         {
-            return (this.offset != null && this.offset != new float[] {0f, 0f});
+            return (this.offset != null && this.offset != new float[] { 0f, 0f });
 
         }
         public bool ShouldSerializerotation()
         {
             return (this.rotation != 0f);
-
         }
 
         public bool ShouldSerializescale()
         {
             return (this.scale != null && this.scale != new float[] { 0f, 0f });
-
         }
 
-        public bool ShouldSerializetextCoord()
+        public bool ShouldSerializetexCoord()
         {
             return (this.texCoord != null);
-
         }
-
     }
 }

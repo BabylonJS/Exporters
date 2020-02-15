@@ -17,28 +17,24 @@ namespace GLTFExport.Entities
         [DataMember]
         public string minVersion { get; set; }
 
-        public bool ShouldSerializecopyright()
+        public bool ShouldSerializeversion()
         {
-            return (this.copyright != null);
-
+            return (this.version != null);
         }
 
         public bool ShouldSerializegenerator()
         {
             return (this.generator != null);
-
         }
 
-        public bool ShouldSerializeversion()
+        public bool ShouldSerializecopyright()
         {
-            return (this.version != null);
-
+            return (this.copyright != null);
         }
 
         public bool ShouldSerializeminVersion()
         {
             return (this.minVersion != null);
-
         }
     }
 }
