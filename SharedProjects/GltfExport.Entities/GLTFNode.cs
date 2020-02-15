@@ -54,12 +54,6 @@ namespace GLTFExport.Entities
             }
         }
 
-        public bool ShouldSerializemesh()
-        {
-            return (mesh != null);
-
-        }
-
         public bool ShouldSerializecamera() { 
             return (this.camera != null);
         }
@@ -74,33 +68,28 @@ namespace GLTFExport.Entities
             return (this.skin != null);
         }
 
-        public bool ShouldSerializematrix() {
+        public bool ShouldSerializemesh()
+        {
             return (this.mesh != null);
         }
 
+        //public bool ShouldSerializematrix() {
+        //    return (this.matrix != null);
+        //}
+
         public bool ShouldSerializetranslation()
         {
-            return (this.translation != null) && !this.translation.SequenceEqual(new float[] {
-                        0F,
-                        0F,
-                        0F});
+            return (this.translation != null) && !this.translation.SequenceEqual(new float[] { 0f, 0f, 0f});
         }
 
         public bool ShouldSerializerotation()
         {
-            return (this.rotation != null) && !this.rotation.SequenceEqual(new float[] {
-                        0F,
-                        0F,
-                        0F,
-                        1F});
+            return (this.rotation != null) && !this.rotation.SequenceEqual(new float[] { 0f, 0f, 0f, 1f});
         }
 
         public bool ShouldSerializescale()
         {
-            return (this.scale != null) && !this.scale.SequenceEqual(new float[] {
-                        1F,
-                        1F,
-                        1F});
+            return (this.scale != null) && !this.scale.SequenceEqual(new float[] { 1f, 1f, 1f});
         }
 
         public bool ShouldSerializeweights()

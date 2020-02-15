@@ -30,7 +30,6 @@ namespace GLTFExport.Entities
         public bool ShouldSerializenodes()
         {
             return (this.nodes != null);
-
         }
     }
 }

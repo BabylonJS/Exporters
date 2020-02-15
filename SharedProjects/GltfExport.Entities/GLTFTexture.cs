@@ -14,13 +14,11 @@ namespace GLTFExport.Entities
         public bool ShouldSerializesampler()
         {
             return (this.sampler != null);
-
         }
 
         public bool ShouldSerializesource()
         {
             return (this.source != null);
-
         }
     }
 }

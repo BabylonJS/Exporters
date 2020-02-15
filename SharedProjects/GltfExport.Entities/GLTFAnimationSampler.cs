@@ -20,7 +20,7 @@ namespace GLTFExport.Entities
         [DataMember(IsRequired = true)]
         public int input { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
+        [DataMember]
         public Interpolation interpolation { get; private set; }
 
         /// <summary>
@@ -39,16 +39,16 @@ namespace GLTFExport.Entities
             this.interpolation = interpolation;
         }
 
-        public bool ShouldSerializeinterpolation()
-        {
-            return (this.interpolation == Interpolation.LINEAR);
-        }
-
         public GLTFAnimationSampler()
         {
             // For GLTF, default value is LINEAR
             // but gltf loader of BABYLON doesn't handle missing interpolation value
             SetInterpolation(Interpolation.LINEAR);
+        }
+
+        public bool ShouldSerializeinterpolation()
+        {
+            return (this.interpolation == Interpolation.LINEAR);
         }
     }
 }

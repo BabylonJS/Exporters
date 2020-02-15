@@ -44,13 +44,11 @@ namespace GLTFExport.Entities
         public bool ShouldSerializechannels()
         {
             return (this.channels != null);
-
         }
 
         public bool ShouldSerializesamplers()
         {
             return (this.samplers != null);
-
         }
     }
 }

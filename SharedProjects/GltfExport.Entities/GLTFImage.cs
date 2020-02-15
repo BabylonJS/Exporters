@@ -29,19 +29,16 @@ namespace GLTFExport.Entities
         public bool ShouldSerializeuri()
         {
             return (this.uri != null);
-
         }
 
         public bool ShouldSerializemimeType()
         {
             return (this.mimeType != null);
-
         }
 
         public bool ShouldSerializebufferView()
         {
             return (this.bufferView != null);
-
         }
     }
 }

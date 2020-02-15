@@ -43,25 +43,21 @@ namespace GLTFExport.Entities
         public bool ShouldSerializemagFilter()
         {
             return (this.magFilter != null);
-   
         }
 
         public bool ShouldSerializeminFilter()
         {
             return (this.minFilter != null);
-
         }
 
         public bool ShouldSerializewrapS()
         {
-            return (this.wrapS != TextureWrapMode.REPEAT);
-
+            return (this.wrapS != null && this.wrapS != TextureWrapMode.REPEAT);
         }
 
         public bool ShouldSerializewrapT()
         {
-            return (this.wrapT != TextureWrapMode.REPEAT);
- 
+            return (this.wrapT != null && this.wrapT != TextureWrapMode.REPEAT);
         }
     }
 }

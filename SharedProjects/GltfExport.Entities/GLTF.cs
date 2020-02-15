@@ -222,109 +222,91 @@ namespace GLTFExport.Entities
         public bool ShouldSerializeextensionsUsed()
         {
             return (this.extensionsUsed != null);
-
         }
 
         public bool ShouldSerializeextensionsRequired()
         {
             return (this.extensionsRequired != null);
-
         }
 
         public bool ShouldSerializeaccessors()
         {
             return (this.accessors != null);
-
         }
 
         public bool ShouldSerializeanimations()
         {
             return (this.animations != null);
-
         }
 
         public bool ShouldSerializeasset()
         {
             return (this.asset != null);
-
         }
 
         public bool ShouldSerializebuffers()
         {
             return (this.buffers != null);
-
         }
 
         public bool ShouldSerializebufferViews()
         {
             return (this.bufferViews != null);
-
         }
 
         public bool ShouldSerializecameras()
         {
             return (this.cameras != null);
-
         }
 
         public bool ShouldSerializeimages()
         {
             return (this.images != null);
-
         }
 
         public bool ShouldSerializematerials()
         {
             return (this.materials != null);
-
         }
 
         public bool ShouldSerializemeshes()
         {
             return (this.meshes != null);
-
         }
 
         public bool ShouldSerializenodes()
         {
             return (this.nodes != null);
-
         }
 
         public bool ShouldSerializesamplers()
         {
             return (this.samplers != null);
-
         }
 
         public bool ShouldSerializescene()
         {
             return (this.scene != null);
-
         }
 
         public bool ShouldSerializescenes()
         {
             return (this.scenes != null);
-
         }
 
         public bool ShouldSerializeskins()
         {
             return (this.skins != null);
-
         }
 
         public bool ShouldSerializetextures()
         {
             return (this.textures != null);
-
         }
 
         public bool ShouldSerializeextensions()
         {
             return (this.extensions != null);
-
         }
     }
 }
