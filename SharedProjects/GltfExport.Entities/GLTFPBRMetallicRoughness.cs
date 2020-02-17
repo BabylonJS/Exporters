@@ -23,11 +23,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializebaseColorFactor()
         {
-            return (this.baseColorFactor != null)  && !this.baseColorFactor.SequenceEqual(new float[] {
-                        1F,
-                        1F,
-                        1F,
-                        1F});
+            return (this.baseColorFactor != null)  && !this.baseColorFactor.SequenceEqual(new float[] { 1f, 1f, 1f, 1f});
         }
 
         public bool ShouldSerializebaseColorTexture()
@@ -37,20 +33,17 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializemetallicFactor()
         {
-            return (this.metallicFactor != 1F);
-     
+            return (this.metallicFactor != 1f);
         }
 
         public bool ShouldSerializeroughnessFactor()
         {
             return (this.roughnessFactor != 1F);
-
         }
 
         public bool ShouldSerializemetallicRoughnessTexture()
         {
             return (this.metallicRoughnessTexture != null);
-
         }
     }
 }

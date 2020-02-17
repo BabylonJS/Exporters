@@ -47,31 +47,26 @@ namespace GLTFExport.Entities
         public bool ShouldSerializeattributes()
         {
             return (this.attributes != null);
-      
         }
 
         public bool ShouldSerializeindices()
         {
             return (this.indices != null);
-      
         }
 
         public bool ShouldSerializematerial()
         {
             return (this.material != null);
-      
         }
 
         public bool ShouldSerializemode()
         {
-            return (this.mode == FillMode.TRIANGLES);
-      
+            return (this.mode != null && this.mode != FillMode.TRIANGLES);
         }
 
         public bool ShouldSerializetargets()
         {
             return (this.targets != null);
-      
         }
     }
 }

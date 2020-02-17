@@ -27,19 +27,16 @@ namespace GLTFExport.Entities
         public bool ShouldSerializeinverseBindMatrices()
         {
             return (this.inverseBindMatrices != null);
-      
         }
 
         public bool ShouldSerializeskeleton()
         {
             return (this.skeleton != null);
-      
         }
 
         public bool ShouldSerializejoints()
         {
             return (this.joints != null);
-      
         }
     }
     
