@@ -173,7 +173,6 @@ namespace Max2Babylon
             ScriptsUtilities.ExecuteMaxScriptCommand(@"
                 for obj in selection do 
                 (
-                    --if obj.isAnimated == false then continue
                     tag = getUserProp obj ""babylonjs_BakeAnimation""
                     if tag!=true then continue
 
