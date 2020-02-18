@@ -22,6 +22,7 @@ namespace Max2Babylon
         {
             InitializeComponent();
             ExportItemGridView_Populate(exportItemList);
+            TopMost = true;
         }
 
         private void ExportItemGridView_Populate(ExportItemList exportItemList)

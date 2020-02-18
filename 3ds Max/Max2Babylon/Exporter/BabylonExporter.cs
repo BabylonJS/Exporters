@@ -146,10 +146,18 @@ namespace Max2Babylon
 #else
             var tobake = Loader.Global.NodeTab.Create();
 #endif
-            foreach (IINode iNode in hierachyRoot.NodeTree())
+            if (bakeAnimationType == BakeAnimationType.BakeSelective)
             {
-                tobake.AppendNode(iNode,false,Loader.Core.Time);
+                foreach (IINode iNode in hierachyRoot.NodeTree())
+                {
+                    if (iNode.IsMarkedAsObjectToBakeAnimation())
+                    {
+                        tobake.AppendNode(iNode,false,Loader.Core.Time);
+                    }
+                }
             }
+
+            
             if (!hierachyRoot.IsRootNode) tobake.AppendNode(hierachyRoot,false,Loader.Core.Time);
 
             Loader.Core.SelectNodeTab(tobake,true,false);
@@ -165,7 +173,6 @@ namespace Max2Babylon
             ScriptsUtilities.ExecuteMaxScriptCommand(@"
                 for obj in selection do 
                 (
-                    if obj.isAnimated == false then continue
                     tag = getUserProp obj ""babylonjs_BakeAnimation""
                     if tag!=true then continue
 
@@ -221,6 +228,7 @@ namespace Max2Babylon
 
         public void Export(ExportParameters exportParameters)
         {
+            ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Unavailable""");
             var watch = new Stopwatch();
             watch.Start();
 
@@ -279,6 +287,7 @@ namespace Max2Babylon
             {
                 RaiseError("Quality is not a valid number. It should be an integer between 0 and 100.");
                 RaiseError("This parameter sets the quality of jpg compression.");
+                ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Available""");
                 return;
             }
 
@@ -314,6 +323,7 @@ namespace Max2Babylon
             {
                 RaiseError("Exportation stopped: Output folder does not exist");
                 ReportProgressChanged(100);
+                ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Available""");
                 return;
             }
             Directory.CreateDirectory(tempOutputDirectory);
@@ -686,8 +696,8 @@ namespace Max2Babylon
 
             if (isBabylonExported)
             {
-                // if we are exporting to .Babylon then remove animations from nodes if there are animation groups.
-                if (babylonScene.animationGroups != null && babylonScene.animationGroups.Count > 0)
+                // if we are exporting to .Babylon then remove then remove animations from nodes if there are animation groups.
+                if (babylonScene.animationGroups?.Count > 0)
                 {
                     foreach (BabylonNode node in babylonScene.MeshesList)
                     {
@@ -884,6 +894,7 @@ namespace Max2Babylon
                     Tools.RemoveFlattenModification();
                 }
             }
+            ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Available""");
         }
 
         private void moveFileToOutputDirectory(string sourceFilePath, string targetFilePath, ExportParameters exportParameters)
