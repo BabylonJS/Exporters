@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace BabylonExport.Entities
 {
     [DataContract]
-    public class BabylonNode : BabylonIAnimatable
+    public partial class BabylonNode : BabylonIAnimatable
     {
         [DataMember]
         public string name { get; set; }

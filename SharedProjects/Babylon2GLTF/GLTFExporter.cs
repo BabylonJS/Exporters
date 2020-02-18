@@ -557,7 +557,7 @@ namespace Babylon2GLTF
                 {
                     string extensionName = extensionExporter.Key.GetGLTFExtensionName();
                     object extensionObject = extensionExporter.Key.ExportBabylonExtension(babylonObject);
-                    if (extensionObject != null && !string.IsNullOrEmpty(extensionName))
+                    if (extensionObject != null && !string.IsNullOrEmpty(extensionName) && !nodeExtensions.ContainsKey(extensionName))
                     {
                         nodeExtensions.Add(extensionName,extensionObject);
                     }

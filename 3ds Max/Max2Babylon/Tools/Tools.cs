@@ -1024,44 +1024,35 @@ namespace Max2Babylon
             return containersChildren;
         }
 
-        private static IIContainerObject GetConflictingContainer(this IIContainerObject container)
+        private static int GetNextAvailableContainerID(this IIContainerObject container)
         {
+            int id = 1;
             string guidStr = container.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
             List<IIContainerObject> containers = GetAllContainers();
             foreach (IIContainerObject iContainerObject in containers)
             {
                 if (container.ContainerNode.Handle == iContainerObject.ContainerNode.Handle) continue;
-                string compareGuid = iContainerObject.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
-                if (compareGuid == guidStr && iContainerObject.ContainerNode.Name == container.ContainerNode.Name)
+                //string compareGuid = iContainerObject.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
+                string defaultName = Regex.Replace(iContainerObject.ContainerNode.Name, @"_\d+","");
+                if (defaultName == container.ContainerNode.Name)
                 {
-                    return iContainerObject;
+                    int containerID = 1;
+                    iContainerObject.ContainerNode.GetUserPropInt("babylonjs_ContainerID",ref containerID);
+                    id = Math.Max(id, containerID+1);
                 }
             }
-            return null;
+            return id;
         }   
 
 
         public static void ResolveContainer(this IIContainerObject container)
         {
             guids = new Dictionary<Guid, IAnimatable>();
-            int id = 2;
-            while (container.GetConflictingContainer()!=null) //container with same guid  && same name exist)
-            {
-                bool hasID = Regex.IsMatch(container.ContainerNode.Name, @"_ID_\d+");
-                if (hasID)
-                {
-                    int index = container.ContainerNode.Name.LastIndexOf("_");
-                    string containerName = container.ContainerNode.Name.Remove(index + 1);
-                    containerName = containerName + id;
-                    container.ContainerNode.Name = containerName;
-                }
-                else
-                {
-                    container.ContainerNode.Name = container.ContainerNode.Name + "_ID_" + id;
-                }
+            int id = container.GetNextAvailableContainerID();
+            string defaultName = Regex.Replace(container.ContainerNode.Name, @"_\d+","");
+            container.ContainerNode.Name = defaultName + "_" + id;
                 container.ContainerNode.SetUserPropInt("babylonjs_ContainerID",id);
-                id++;
-            }
+           
         }
 
         public static IINode BabylonAnimationHelper()
@@ -1712,19 +1703,46 @@ namespace Max2Babylon
         {
             if (!box.IsDisposed)
             {
-                string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
-                box.ResetText();
+            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+            box.ResetText();
 
-                box.Text = path;
-                box.ForeColor = Color.Black;
+            box.Text = path;
+            box.ForeColor = Color.Black;
 
-                if (path.StartsWith(dirName))
+            if (path.StartsWith(dirName))
+            {
+                box.SelectionStart = 0;
+                box.SelectionLength = dirName.Length;
+                box.SelectionColor = Color.Blue;
+            }
+        }
+        }
+
+        public static int GetMaterialProperty(IMtl mat, string propName)
+        {
+            for (int j = 0; j < mat.NumParamBlocks; j++)
+            {
+                IIParamBlock2 pBlock = mat.GetParamBlock(j);
+
+                for (short k = 0; k < pBlock.NumParams; k++)
                 {
-                    box.SelectionStart = 0;
-                    box.SelectionLength = dirName.Length;
-                    box.SelectionColor = Color.Blue;
+#if MAX2015
+
+                    IParamDef p = pBlock.GetParamDef(k);
+#else
+                    
+                    IParamDef p =  pBlock.GetParamDefByIndex(Convert.ToUInt16(k));
+#endif
+                    if (p.IntName == propName)
+                    {
+                        int v = 0;
+                        pBlock.GetValue(k, Loader.Core.Time, ref v, Tools.Forever, 0);
+                        return v;
+                    }
                 }
             }
+
+            return 0;
         }
 
 
