@@ -102,5 +102,17 @@ namespace Max2Babylon
                     yield return y;
             }
         }
+
+        public static IEnumerable<IINode> LayerNodes(this IILayer layer)
+        {
+            IILayerProperties layerProp = Loader.IIFPLayerManager.GetLayer(layer.Name);
+#if MAX2020
+            ITab<IINode> nodes = Loader.Global.INodeTab.Create();
+#else
+            ITab<IINode> nodes = Loader.Global.INodeTabNS.Create();
+#endif
+            layerProp.Nodes(nodes);
+            return Tools.ITabToIEnumerable(nodes);
+        }
     }
 }
