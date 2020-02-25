@@ -14,7 +14,7 @@ namespace Maya2Babylon
         private class BaseObject
         {
             public MFnTransform mFnTransform;
-            public BabylonStandardMaterial babylonMaterial;
+            public BabylonMaterial babylonMaterial;
         }
 
         public Dictionary<string, object> ExportCustomAttributeFromTransform(MFnTransform mfnTransform) {
@@ -24,7 +24,7 @@ namespace Maya2Babylon
             return _ExportCustomUserAttributes(baseObject);
         }
 
-        public Dictionary<string, object> ExportCustomAttributeFromMaterial(BabylonStandardMaterial babylonMaterial)
+        public Dictionary<string, object> ExportCustomAttributeFromMaterial(BabylonMaterial babylonMaterial)
         {
             var baseObject = new BaseObject();
             baseObject.mFnTransform = null;
@@ -32,7 +32,7 @@ namespace Maya2Babylon
             return _ExportCustomUserAttributes(baseObject);
         }
 
-        private Dictionary<string,object> _ExportCustomUserAttributes(BaseObject baseObject)
+        private Dictionary<string, object> _ExportCustomUserAttributes(BaseObject baseObject)
         {
             var objectName = "";
 
@@ -40,15 +40,17 @@ namespace Maya2Babylon
             {
                 objectName = baseObject.mFnTransform.name;
             }
-            else if(baseObject.babylonMaterial != null)
+            else if (baseObject.babylonMaterial != null)
             {
                 objectName = baseObject.babylonMaterial.name;
             }
 
-            MStringArray customAttributeNames = new MStringArray();
+            MStringArray customAttributeNamesMStringArray = new MStringArray();
             Dictionary<string, object> customsAttributes = new Dictionary<string, object>();
 
-            MGlobal.executeCommand($"listAttr -ud {objectName}", customAttributeNames);
+            MGlobal.executeCommand($"listAttr -ud {objectName}", customAttributeNamesMStringArray);
+
+            var customAttributeNames = customAttributeNamesMStringArray.Where((attributeName) => { return !_DisallowedCustomAttributeNames.Contains(attributeName); });
 
             foreach (string name in customAttributeNames)
             {
@@ -108,5 +110,72 @@ namespace Maya2Babylon
 
             return customsAttributes;
         }
+
+        /**
+         *  This is a list of attributes that will not be exported as custom attributes, as the StingrayPBS material uses custom attributes to implement their node based shader.
+         *  Any custom attribute that uses these default names will not be included in export.
+         */
+        public List<string> _DisallowedCustomAttributeNames = new List<string>()
+        {
+            "TEX_global_diffuse_cube",  
+            "TEX_global_diffuse_cubeX", 
+            "TEX_global_diffuse_cubeY", 
+            "TEX_global_diffuse_cubeZ", 
+            "TEX_global_specular_cube", 
+            "TEX_global_specular_cubeX",
+            "TEX_global_specular_cubeY",
+            "TEX_global_specular_cubeZ",
+            "TEX_brdf_lut",
+            "TEX_brdf_lutX",
+            "TEX_brdf_lutY",
+            "TEX_brdf_lutZ",
+            "use_normal_map",
+            "uv_offset",
+            "uv_offsetX",
+            "uv_offsetY",
+            "uv_scale",
+            "uv_scaleX",
+            "uv_scaleY",
+            "TEX_normal_map",
+            "TEX_normal_mapX",
+            "TEX_normal_mapY",
+            "TEX_normal_mapZ",
+            "use_color_map",
+            "TEX_color_map",
+            "TEX_color_mapX",
+            "TEX_color_mapY",
+            "TEX_color_mapZ",
+            "base_color",
+            "base_colorR",
+            "base_colorG",
+            "base_colorB",
+            "use_metallic_map",
+            "TEX_metallic_map",
+            "TEX_metallic_mapX",
+            "TEX_metallic_mapY",
+            "TEX_metallic_mapZ",
+            "metallic",
+            "use_roughness_map",
+            "TEX_roughness_map",
+            "TEX_roughness_mapX",
+            "TEX_roughness_mapY",
+            "TEX_roughness_mapZ",
+            "roughness",
+            "use_emissive_map",
+            "TEX_emissive_map",
+            "TEX_emissive_mapX",
+            "TEX_emissive_mapY",
+            "TEX_emissive_mapZ",
+            "emissive",
+            "emissiveR",
+            "emissiveG",
+            "emissiveB",
+            "emissive_intensity",
+            "use_ao_map",
+            "TEX_ao_map",
+            "TEX_ao_mapX",
+            "TEX_ao_mapY",
+            "TEX_ao_mapZ"
+        };
     }
 }
