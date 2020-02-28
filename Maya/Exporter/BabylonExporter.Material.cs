@@ -487,6 +487,9 @@ namespace Maya2Babylon
                     babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
                 }
 
+                // User custom attributes
+                babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);
+
                 if (babylonAttributesDependencyNode == null)
                 {
                     // Create Babylon Material dependency node
@@ -534,6 +537,9 @@ namespace Maya2Babylon
                 {
                     name = name
                 };
+
+                // User custom attributes
+                babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);
 
                 // --- Global ---
 

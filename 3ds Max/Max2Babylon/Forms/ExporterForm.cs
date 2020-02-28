@@ -15,9 +15,6 @@ namespace Max2Babylon
 {
     public partial class ExporterForm : Form
     {
-        private const string ModelFilePathProperty = "modelFilePathProperty";
-        private const string TextureFolderPathProperty = "textureFolderPathProperty";
-
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
@@ -241,7 +238,7 @@ namespace Max2Babylon
             }
         }
 
-        private async void butExport_Click(object sender, EventArgs e)
+        public async void butExport_Click(object sender, EventArgs e)
         {
             try
             {
@@ -425,8 +422,8 @@ namespace Max2Babylon
                     textureFolder = textureExportPath,
                     outputFormat = comboOutputFormat.SelectedItem.ToString(),
                     scaleFactor = scaleFactorParsed,
-                    writeTextures = chkWriteTextures.Checked,
-                    overwriteTextures = chkOverwriteTextures.Checked,
+                    writeTextures = chkWriteTextures.Enabled && chkWriteTextures.Checked,
+                    overwriteTextures = chkOverwriteTextures.Enabled && chkOverwriteTextures.Checked,
                     exportHiddenObjects = chkHidden.Checked,
                     exportOnlySelected = chkOnlySelected.Checked,
                     generateManifest = chkManifest.Checked,
@@ -435,13 +432,13 @@ namespace Max2Babylon
                     exportMorphTangents = chkExportMorphTangents.Checked,
                     exportMorphNormals = chkExportMorphNormals.Checked,
                     txtQuality = textureQualityParsed,
-                    mergeAOwithMR = chkMergeAOwithMR.Checked,
+                    mergeAOwithMR = chkMergeAOwithMR.Enabled && chkMergeAOwithMR.Checked,
                     bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
-                    dracoCompression = chkDracoCompression.Checked,
+                    dracoCompression = chkDracoCompression.Enabled && chkDracoCompression.Checked,
                     enableKHRLightsPunctual = chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
-                    exportMaterials = chkExportMaterials.Checked,
+                    exportMaterials = chkExportMaterials.Enabled && chkExportMaterials.Checked,
                     exportAnimations = chkExportAnimations.Checked,
                     exportAnimationsOnly = chkExportAnimationsOnly.Checked,
                     optimizeAnimations = !chkDoNotOptimizeAnimations.Checked,
@@ -452,7 +449,7 @@ namespace Max2Babylon
                     pbrFull = chkFullPBR.Checked,
                     pbrEnvironment = txtEnvironmentName.Text,
                     usePreExportProcess = chkUsePreExportProces.Checked,
-                    flattenScene = chkFlatten.Checked,
+                    flattenScene = chkFlatten.Enabled && chkFlatten.Checked,
                     mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
                     useMultiExporter = multiExport
                 };
@@ -465,6 +462,7 @@ namespace Max2Babylon
             {
                 progressBar.Value = 0;
                 success = false;
+                ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Available""");
             }
             catch (Exception ex)
             {
@@ -477,6 +475,7 @@ namespace Max2Babylon
 
                 progressBar.Value = 0;
                 success = false;
+                ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = Available");
             }
 
             butCancel.Enabled = false;
