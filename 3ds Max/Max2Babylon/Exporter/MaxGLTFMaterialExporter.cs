@@ -40,6 +40,11 @@ internal class MaxGLTFMaterialExporter : IGLTFMaterialExporter
     {
         gltfMaterial = null;
         IIGameMaterial gameMtl = babylonMaterial.maxGameMaterial;
+        if (gameMtl == null || gameMtl.MaxMaterial == null)
+        {
+            return false;
+        }
+
         IMtl maxMtl = gameMtl.MaxMaterial;
 
         IMaxMaterialExporter materialExporter;
