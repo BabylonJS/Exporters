@@ -565,6 +565,25 @@ namespace Babylon2GLTF
                     }
                 }
             }
+            else if (babylonMaterial.GetType() == typeof(BabylonFurMaterial))
+            {
+                // TODO - Implement proper handling of BabylonFurMaterial once gLTF spec has support
+                var babylonPBRFurMaterial = babylonMaterial as BabylonFurMaterial;
+
+                gltfMaterial = new GLTFMaterial
+                {
+                    name = name
+                };
+                gltfMaterial.id = babylonMaterial.id;
+                gltfMaterial.index = gltf.MaterialsList.Count;
+                gltf.MaterialsList.Add(gltfMaterial);
+
+                //Custom user properties
+                if (babylonPBRFurMaterial.metadata != null && babylonPBRFurMaterial.metadata.Count != 0)
+                {
+                    gltfMaterial.extras = babylonPBRFurMaterial.metadata;
+                }
+            }
             else
             {
                 logger.RaiseWarning("GLTFExporter.Material | Unsupported material type: " + babylonMaterial.GetType(), 2);
