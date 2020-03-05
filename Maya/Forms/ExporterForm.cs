@@ -402,7 +402,7 @@ namespace Maya2Babylon.Forms
                     this.saveFileDialog.Filter = "glTF files|*.gltf";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkNoAutoLight.Enabled = false;
-                    chkNoAutoLight.Checked = false;
+                    chkNoAutoLight.Checked = true;
                     chkFullPBR.Enabled = false;
                     chkFullPBR.Checked = false;
                     chkDefaultSkybox.Enabled = false;
@@ -416,7 +416,7 @@ namespace Maya2Babylon.Forms
                     this.saveFileDialog.Filter = "glb files|*.glb";
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkNoAutoLight.Enabled = false;
-                    chkNoAutoLight.Checked = false;
+                    chkNoAutoLight.Checked = true;
                     chkFullPBR.Enabled = false;
                     chkFullPBR.Checked = false;
                     chkDefaultSkybox.Enabled = false;
