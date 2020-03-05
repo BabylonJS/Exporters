@@ -1331,6 +1331,15 @@ namespace Max2Babylon
             return animationListString.Split(itemSeparator);
         }
 
+        public static Dictionary<string, string> UserPropToDictionary(this IINode node)
+        {
+            string[] propArray = new string[] { };
+            string userProp = string.Empty;
+            node.GetUserPropBuffer(ref userProp);
+            string[] userProperties = userProp.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            return userProperties.Select(item => item.Replace(" = ","=").Split('=')).ToDictionary(s => s[0], s => s[1]);
+        }
+
         public static void SetStringArrayProperty(this IINode node, string propertyName, IEnumerable<string> stringEnumerable, char itemSeparator = ';')
         {
             if (itemSeparator == ' ' || itemSeparator == '=')
