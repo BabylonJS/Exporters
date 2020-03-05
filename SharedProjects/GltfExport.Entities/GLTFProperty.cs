@@ -14,12 +14,12 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializeextensions()
         {
-            return (this.extensions != null);
+            return this.extensions != null && this.extensions.Count > 0;
         }
 
         public bool ShouldSerializeextras()
         {
-            return (this.extras != null);
+            return (this.extras != null && this.extras.Count > 0);
         }
     }
 }
