@@ -179,14 +179,9 @@ namespace Max2Babylon
 
         public string GetPropertyName() { return serializedId.ToString(); }
 
-        public void LoadFromData(string propertyName,IINode dataNode)
+        public void LoadFromData(string propertiesString,IINode dataNode)
         {
-            if (!Guid.TryParse(propertyName, out serializedId))
-                throw new Exception("Invalid ID, can't deserialize.");
-
-            string propertiesString = string.Empty;
-            if (!dataNode.GetUserPropString(propertyName, ref propertiesString))
-                return;
+            if (string.IsNullOrWhiteSpace(propertiesString)) return;
 
             string[] properties = propertiesString.Split(s_PropertySeparator);
 
@@ -291,16 +286,25 @@ namespace Max2Babylon
         {
             dataNode = dataNode ?? Loader.Core.RootNode;
 
-            string[] animationPropertyNames = dataNode.GetStringArrayProperty(s_AnimationListPropertyName);
-
-            if (Capacity < animationPropertyNames.Length)
-                Capacity = animationPropertyNames.Length;
-
-            foreach (string propertyNameStr in animationPropertyNames)
+            Dictionary<string, string> nodePropDictionary = dataNode.UserPropToDictionary();
+            string animProp = string.Empty;
+            nodePropDictionary.TryGetValue(s_AnimationListPropertyName,out animProp);
+            if (!string.IsNullOrWhiteSpace(animProp))
             {
-                AnimationGroup info = new AnimationGroup();
-                info.LoadFromData(propertyNameStr,dataNode);
-                Add(info);
+                string[] animationPropertyNames = animProp.Split(';') ;
+
+                if (Capacity < animationPropertyNames.Length)
+                    Capacity = animationPropertyNames.Length;
+
+                foreach (string propertyNameStr in animationPropertyNames)
+                {
+                    AnimationGroup info = new AnimationGroup();
+                    if(!nodePropDictionary.ContainsKey(propertyNameStr))
+                        throw new Exception("Invalid ID, can't deserialize.");
+                        
+                    info.LoadFromData(nodePropDictionary[propertyNameStr],dataNode);
+                    Add(info);
+                }
             }
         }
 
@@ -314,10 +318,11 @@ namespace Max2Babylon
                 int timelineStart = Loader.Core.AnimRange.Start / Loader.Global.TicksPerFrame;
                 int timelineEnd = Loader.Core.AnimRange.End / Loader.Global.TicksPerFrame;
 
+                List<string> warnings = new List<string>();
                 foreach (AnimationGroup animGroup in animationList)
                 {
                     // ensure min <= start <= end <= max
-                    List<string> warnings = new List<string>();
+                    warnings.Clear();
                     if (animGroup.FrameStart < timelineStart || animGroup.FrameStart > timelineEnd)
                     {
                         warnings.Add("Start frame '" + animGroup.FrameStart + "' outside of timeline range [" + timelineStart + ", " + timelineEnd + "]. Set to timeline start time '" + timelineStart + "'");
