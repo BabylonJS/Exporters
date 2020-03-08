@@ -1,0 +1,9 @@
+STRINGTABLE BJS_Expose_Variable
+{
+    BJS_Expose_Variable "BJS_Expose_Variable";
+    
+    BJS_EXPOSE_VARIABLE_TRUE        "isExposed";
+    BJS_EXPOSE_GLOBAL               "isGlobal";
+    BJS_VARIABLE_NAME               "Variable Name";
+
+}
