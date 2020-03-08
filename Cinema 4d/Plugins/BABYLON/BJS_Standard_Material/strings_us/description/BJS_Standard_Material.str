@@ -1,0 +1,13 @@
+STRINGTABLE BJS_Standard_Material
+{
+    BJS_Standard_Material           "BABYLON Standard Material Tag";
+    
+    BJS_MATERIAL_NAME               "Material Name";    
+    BJS_MATERIAL_COLOR_SECTION      "Color Settings:";
+    
+    BJS_MATERIAL_COLOR_AMBIENT          "Ambient";
+    BJS_MATERIAL_COLOR_DIFFUSE          "Diffuse";
+    BJS_MATERIAL_COLOR_EMISSIVE         "Emissive";
+    BJS_MATERIAL_COLOR_SPECULAR         "Specular";
+   
+}

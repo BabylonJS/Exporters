@@ -1,0 +1,17 @@
+STRINGTABLE BJS_Light_Tag
+{
+    BJS_Light_Tag "BABYLON JS Light Tag";
+    
+    BJS_LIGHT_SPECULAR              "Specular Color";
+    BJS_LIGHT_EXPONENT              "Exponent (Spot Light)";
+    
+    BJS_LIGHT_MAKE_HEMISPHERIC      "Make Hemispheric (Directional Light)";
+    BJS_LIGHT_GROUND_COLOR          "Ground Color";
+
+    BJS_LIGHT_ANIMAION_SETTINGS        "Animation Settings";
+    BJS_LIGHT_AUTO_ANIMATE             "Auto Animate";
+    BJS_LIGHT_AUTO_ANIMATE_FROM        "Animate From";
+    BJS_LIGHT_AUTO_ANIMATE_TO          "Animate To";
+    BJS_LIGHT_AUTO_ANIMATE_LOOP        "Animate Loop";
+    BJS_LIGHT_AUTO_ANIMATE_SPEED       "Animate Speed";    
+}
