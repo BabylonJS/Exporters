@@ -1,0 +1,42 @@
+STRINGTABLE BJS_Camera_Tag
+{
+    BJS_Camera_Tag                      "BABYLON JS Camera Tag";
+    
+    BJS_CAMERA_TYPE                     "Type";
+    BJS_CAMERA_TYPE_COMBO               "Type";
+    BJS_CAMERA_TYPE_FREE                "Free";
+    BJS_CAMERA_TYPE_ARC                 "Arc";
+    BJS_CAMERA_TYPE_FOLLOW              "Follow";
+    
+    BJS_CAMERA_FOV                      "fov";
+    BJS_CAMERA_MINZ                     "minZ";
+    BJS_CAMERA_MAXZ                     "maxZ";
+    BJS_CAMERA_SPEED                    "Speed";
+    BJS_CAMERA_INERTIA                  "Inertia";
+    
+    BJS_ARC_CAMERA_SETTINGS             "Arc Camera Settings";
+    BJS_CAMERA_ALPHA                    "Alpha";
+    BJS_CAMERA_BETA                     "Beta";
+    BJS_CAMERA_RADIUS                   "Radius";
+    BJS_CAMERA_EYE_SPACE                "Eye Space";
+    
+    BJS_FOLLOW_CAMERA_SETTINGS          "Follow Camera Settings";
+    BJS_FOLLOW_CAMERA_HEIGHT_OFFSET     "Height Offset";
+    BJS_FOLLOW_CAMERA_ROTATION_OFFSET   "Rotation Offset";
+
+    BJS_CAMERA_MISC_SETTINGS            "Misc Settings";
+    BJS_CAMERA_ATTACH_CONTROLS          "Attach Controls";
+    BJS_CAMERA_RIG_MODE                 "Rig Mode";
+    BJS_CAMERA_CHECK_COLLISIONS         "Check Collisions";
+    BJS_CAMERA_APPLY_GRAVITY            "Apply Gravity";
+    BJS_CAMERA_ELLIPSOID                "Ellipsoid";
+    BJS_CAMERA_MAKE_ACTIVE              "Make Active Camera";
+
+    BJS_CAMERA_ANIMAION_SETTINGS        "Animation Settings";
+    BJS_CAMERA_AUTO_ANIMATE             "Auto Animate";
+    BJS_CAMERA_AUTO_ANIMATE_FROM        "Animate From";
+    BJS_CAMERA_AUTO_ANIMATE_TO          "Animate To";
+    BJS_CAMERA_AUTO_ANIMATE_LOOP        "Animate Loop";
+    BJS_CAMERA_AUTO_ANIMATE_SPEED       "Animate Speed";
+    
+}
