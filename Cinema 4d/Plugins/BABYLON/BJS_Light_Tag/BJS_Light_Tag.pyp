@@ -70,7 +70,9 @@ class BJS_Light_Tag(plugins.TagData):
                 groundLight.Remove()        
 
         
-    def Execute(self, node, doc, op, bt, priority, flags):        
+    def Execute(self, node, doc, op, bt, priority, flags):
+
+    
         return c4d.EXECUTIONRESULT_OK
         
     def Message(self, node, type, data):       
