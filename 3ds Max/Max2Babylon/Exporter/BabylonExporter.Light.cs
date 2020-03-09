@@ -65,10 +65,9 @@ namespace Max2Babylon
             // Export the custom attributes of this light
             babylonLight.metadata = ExportExtraAttributes(lightNode, babylonScene);
 
-            // If the light has a children and the export is to babylon, add a dummy
             // To preserve the position/rotation and the hierarchy, we create a dummy that will contains as direct children the light and the light children
             // The light will have no children. The dummy will contains the position and rotation animations.
-            bool createDummy = isBabylonExported && (lightNode.ChildCount > 0);
+            bool createDummy = lightNode.ChildCount > 0;
             BabylonNode dummy = null;
             if (createDummy)
             {
@@ -76,6 +75,7 @@ namespace Max2Babylon
                 dummy.name = "_" + dummy.name + "_";
                 babylonLight.id = Guid.NewGuid().ToString();
                 babylonLight.parentId = dummy.id;
+                babylonLight.hasDummy = true;
             }
             else
             {
