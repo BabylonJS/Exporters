@@ -179,9 +179,23 @@ namespace Max2Babylon
 
         public string GetPropertyName() { return serializedId.ToString(); }
 
-        public void LoadFromData(string propertiesString,IINode dataNode)
+        public void LoadFromData(string propertyName,IINode dataNode,Dictionary<string, string> rootNodePropDictionary = null)
         {
-            if (string.IsNullOrWhiteSpace(propertiesString)) return;
+
+            string propertiesString = string.Empty;
+
+            if (rootNodePropDictionary == null)
+            {
+                if (!dataNode.GetUserPropString(propertyName, ref propertiesString))
+                    return;
+            }
+            else
+            {
+                if (!rootNodePropDictionary.TryGetValue(propertyName, out propertiesString))
+                    return;
+            }
+
+            
 
             string[] properties = propertiesString.Split(s_PropertySeparator);
 
@@ -293,19 +307,20 @@ namespace Max2Babylon
             {
                 string[] animationPropertyNames = animProp.Split(';') ;
 
-                if (Capacity < animationPropertyNames.Length)
-                    Capacity = animationPropertyNames.Length;
+            if (Capacity < animationPropertyNames.Length)
+                Capacity = animationPropertyNames.Length;
 
-                foreach (string propertyNameStr in animationPropertyNames)
-                {
-                    AnimationGroup info = new AnimationGroup();
+            foreach (string propertyNameStr in animationPropertyNames)
+            {
+                AnimationGroup info = new AnimationGroup();
                     if(!nodePropDictionary.ContainsKey(propertyNameStr))
                         throw new Exception("Invalid ID, can't deserialize.");
                         
+                    info.LoadFromData(propertyNameStr,dataNode,nodePropDictionary);
                     info.LoadFromData(nodePropDictionary[propertyNameStr],dataNode);
-                    Add(info);
-                }
+                Add(info);
             }
+        }
         }
 
         public static AnimationGroupList InitAnimationGroups(ILoggingProvider logger)
