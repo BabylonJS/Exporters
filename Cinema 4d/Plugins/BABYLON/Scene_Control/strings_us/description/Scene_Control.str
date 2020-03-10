@@ -18,5 +18,6 @@ STRINGTABLE Scene_Control
     BJS_SCENE_AUTO_ANIMATE_LOOP     "Animate Loop";
     BJS_SCENE_AUTO_ANIMATE_SPEED    "Animate Speed";
     
-    BJS_EXPORT_SCENE_TEMPLATE "Export Scene Template";
+    BJS_EXPORT_SCENE_TEMPLATE "Export .babylon";
+    BJS_EXPORT_SCENE_WEBSITE "Export As Website";
 }
