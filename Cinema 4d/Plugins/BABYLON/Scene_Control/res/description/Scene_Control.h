@@ -1,0 +1,26 @@
+#ifndef _Scene_Control_H_
+#define _Scene_Control_H_
+
+enum
+{   
+    BJS_SCENE_AUTO_CLEAR             = 10000,
+    BJS_SCENE_CLEAR_COLOR            = 10001,
+    BJS_SCENE_CLEAR_ALPHA            = 100010,
+    BJS_SCENE_AMBIENT_COLOR          = 10002,
+    BJS_SCENE_GRAVITY                = 10003,
+    BJS_SCENE_ACTIVE_CAMERA          = 10004,
+    BJS_SCENE_COLLISIONS_ENABLED     = 10005,
+    BJS_SCENE_PHYSICS_ENABLED        = 10006,
+    BJS_SCENE_PHYSICS_GRAVITY        = 10007,
+    BJS_SCENE_PHYSICS_ENGINE         = 10008,
+    BJS_SCENE_AUTO_ANIMATE           = 10009,
+    BJS_SCENE_AUTO_ANIMATE_FROM      = 10010,
+    BJS_SCENE_AUTO_ANIMATE_TO        = 10011,
+    BJS_SCENE_AUTO_ANIMATE_LOOP      = 10012,
+    BJS_SCENE_AUTO_ANIMATE_SPEED     = 10013,
+    BJS_SCENE_GLOBAL_SCALE           = 10014,
+    BJS_EXPORT_SCENE_TEMPLATE        = 2000,
+    BJS_EXPORT_SCENE_WEBSITE         = 2001
+};
+
+#endif

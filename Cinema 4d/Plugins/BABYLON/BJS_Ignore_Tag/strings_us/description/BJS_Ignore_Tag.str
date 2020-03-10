@@ -1,0 +1,7 @@
+STRINGTABLE BJS_Ignore_Tag
+{
+    BJS_Ignore_Tag "BJS_Ignore_Tag";
+    
+    BJS_IGNORE_BOOL        "Ignore?";
+
+}

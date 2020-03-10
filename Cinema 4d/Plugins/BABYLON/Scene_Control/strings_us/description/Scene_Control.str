@@ -1,0 +1,23 @@
+STRINGTABLE Scene_Control
+{
+    Scene_Control       "BABYLON JS Scene Controller";    
+    
+    BJS_SCENE_AUTO_CLEAR            "Auto Clear";    
+    BJS_SCENE_CLEAR_COLOR           "Clear Color";
+    BJS_SCENE_CLEAR_ALPHA           "Clear Alpha";
+    BJS_SCENE_AMBIENT_COLOR         "Ambient Color";
+    BJS_SCENE_GRAVITY               "Gravity";
+    BJS_SCENE_ACTIVE_CAMERA         "Active Camera";
+    BJS_SCENE_COLLISIONS_ENABLED    "Enabled Collisions";
+    BJS_SCENE_PHYSICS_ENABLED       "Physics Enabled";
+    BJS_SCENE_PHYSICS_GRAVITY       "Physics Gravity";
+    BJS_SCENE_PHYSICS_ENGINE        "Physics Engine";
+    BJS_SCENE_AUTO_ANIMATE          "Auto Animate";
+    BJS_SCENE_AUTO_ANIMATE_FROM     "Animate From";
+    BJS_SCENE_AUTO_ANIMATE_TO       "Animate To";
+    BJS_SCENE_AUTO_ANIMATE_LOOP     "Animate Loop";
+    BJS_SCENE_AUTO_ANIMATE_SPEED    "Animate Speed";
+    
+    BJS_EXPORT_SCENE_TEMPLATE "Export .babylon";
+    BJS_EXPORT_SCENE_WEBSITE "Export As Website";
+}

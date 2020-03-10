@@ -181,8 +181,6 @@ namespace Max2Babylon
 
         public void LoadFromData(string propertyName,IINode dataNode,Dictionary<string, string> rootNodePropDictionary = null)
         {
-            if (!Guid.TryParse(propertyName, out serializedId))
-                throw new Exception("Invalid ID, can't deserialize.");
 
             string propertiesString = string.Empty;
 
@@ -309,17 +307,20 @@ namespace Max2Babylon
             {
                 string[] animationPropertyNames = animProp.Split(';') ;
 
-                if (Capacity < animationPropertyNames.Length)
-                    Capacity = animationPropertyNames.Length;
+            if (Capacity < animationPropertyNames.Length)
+                Capacity = animationPropertyNames.Length;
 
-                foreach (string propertyNameStr in animationPropertyNames)
-                {
-                    AnimationGroup info = new AnimationGroup();
+            foreach (string propertyNameStr in animationPropertyNames)
+            {
+                AnimationGroup info = new AnimationGroup();
+                    if(!nodePropDictionary.ContainsKey(propertyNameStr))
+                        throw new Exception("Invalid ID, can't deserialize.");
                         
                     info.LoadFromData(propertyNameStr,dataNode,nodePropDictionary);
-                    Add(info);
-                }
+                    info.LoadFromData(nodePropDictionary[propertyNameStr],dataNode);
+                Add(info);
             }
+        }
         }
 
         public static AnimationGroupList InitAnimationGroups(ILoggingProvider logger)
