@@ -46,6 +46,7 @@ CONTAINER Scene_Control
         GROUP
         {
             BUTTON BJS_EXPORT_SCENE_TEMPLATE { }
+            BUTTON BJS_EXPORT_SCENE_WEBSITE { }
         }       
 	}
 }

@@ -20,7 +20,7 @@ BJS_LIGHT_EXPONENT_SIMULATE_PREVIEW     = 10003
 BJS_LIGHT_MAKE_HEMISPHERIC              = 10004
 BJS_LIGHT_GROUND_COLOR                  = 10005
 
-#BJS_LIGHT_ANIMAION_SETTINGS            = 2000
+BJS_LIGHT_ANIMAION_SETTINGS             = 2000
 BJS_LIGHT_AUTO_ANIMATE                  = 20000
 BJS_LIGHT_AUTO_ANIMATE_FROM             = 20001
 BJS_LIGHT_AUTO_ANIMATE_TO               = 20002
@@ -71,7 +71,12 @@ class BJS_Light_Tag(plugins.TagData):
 
         
     def Execute(self, node, doc, op, bt, priority, flags):
-
+        data = node.GetDataInstance()  
+        data.SetBool( BJS_LIGHT_AUTO_ANIMATE, False)
+        data.SetLong( BJS_LIGHT_AUTO_ANIMATE_FROM, 0)
+        data.SetLong( BJS_LIGHT_AUTO_ANIMATE_TO, 0)
+        data.SetBool( BJS_LIGHT_AUTO_ANIMATE_LOOP, False)
+        data.SetFloat( BJS_LIGHT_AUTO_ANIMATE_SPEED, 1)
     
         return c4d.EXECUTIONRESULT_OK
         

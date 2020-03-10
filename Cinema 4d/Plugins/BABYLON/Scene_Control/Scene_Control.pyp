@@ -35,6 +35,7 @@ BJS_SCENE_AUTO_ANIMATE_SPEED     = 10013
 BJS_SCENE_GLOBAL_SCALE           = 10014
 
 BJS_EXPORT_SCENE_TEMPLATE = 2000
+BJS_EXPORT_SCENE_WEBSITE = 2001
 #---------------------------------
 
 #=================================
@@ -309,23 +310,15 @@ class Light:
             normal = gPos - node.GetAbsPos()
             self.direction  = Vec3Array(normal.GetNormalized())
             
-            print "LIGHT ANGLE"
             print deg2Rad( node[c4d.LIGHT_DETAILS_OUTERANGLE] )
             self.angle = node[c4d.LIGHT_DETAILS_OUTERANGLE]
             
         elif self.type == 3:
-            if lightTag:                
-                if lData[ c4d.BJS_LIGHT_MAKE_HEMISPHERIC ] == False:
-                    self.type == 1
-                    tempTarget = c4d.BaseObject(c4d.Ocube)          
-                    tempTarget.InsertUnder( node )
-                    tempTarget.SetRelPos(c4d.Vector(0, 0, 1))
-                    gPos = tempTarget.GetRelPos() * tempTarget.GetMg()            
-                    tempTarget.Remove()
-                    normal = gPos - node.GetAbsPos()
-                    self.direction  = Vec3Array(normal.GetNormalized())
-                else:
-                    self.type == 3
+            if lightTag:
+                print "Make HEMI?" 
+                print lData[ c4d.BJS_LIGHT_MAKE_HEMISPHERIC ]  
+                if lData[ c4d.BJS_LIGHT_MAKE_HEMISPHERIC ] is True:
+                    self.type = 3
                     self.groundColor = Vec3Array(lData[c4d.BJS_LIGHT_GROUND_COLOR])                    
                     tempTarget = c4d.BaseObject(c4d.Ocube)          
                     tempTarget.InsertUnder( node )
@@ -334,6 +327,15 @@ class Light:
                     tempTarget.Remove()
                     normal = gPos - node.GetAbsPos()
                     self.direction  = Vec3Array(normal.GetNormalized())
+                else:
+                    self.type = 1
+                    tempTarget = c4d.BaseObject(c4d.Ocube)          
+                    tempTarget.InsertUnder( node )
+                    tempTarget.SetRelPos(c4d.Vector(0, 0, 1))
+                    gPos = tempTarget.GetRelPos() * tempTarget.GetMg()            
+                    tempTarget.Remove()
+                    normal = gPos - node.GetAbsPos()
+                    self.direction  = Vec3Array(normal.GetNormalized())                    
             else:
                 self.type = 1
                 tempTarget = c4d.BaseObject(c4d.Ocube)          
@@ -346,8 +348,7 @@ class Light:
         else:
             self.type = 0
             #Area light not supported.
-        
-        print self.type
+
         self.diffuse = Vec3Array(node[c4d.LIGHT_COLOR])
         self.intensity = node[c4d.LIGHT_BRIGHTNESS]
            
@@ -381,18 +382,24 @@ class Light:
                 self.excludedMeshesIds = inExStringList
         
         self.animations = []
-        #if lightTag:
+        if lightTag:
+            #Need to fix this...
+            self.autoAnimate = False
+            self.autoAnimateFrom = 0
+            self.autoAnimateTo = 0
+            self.autoAnimateLoop = False
+            self.autoAnimateSpeed = 1  
             #self.autoAnimate = lData[ c4d.BJS_LIGHT_AUTO_ANIMATE ]
             #self.autoAnimateFrom = lData[  c4d.BJS_LIGHT_AUTO_ANIMATE_FROM ]
             #self.autoAnimateTo = lData[  c4d.BJS_LIGHT_AUTO_ANIMATE_TO ]
             #self.autoAnimateLoop = lData[  c4d.BJS_LIGHT_AUTO_ANIMATE_LOOP ]
             #self.autoAnimateSpeed = lData[  c4d.BJS_LIGHT_AUTO_ANIMATE_SPEED ]
-        #else:
-        self.autoAnimate = False
-        self.autoAnimateFrom = 0
-        self.autoAnimateTo = 0
-        self.autoAnimateLoop = False
-        self.autoAnimateSpeed = 1            
+        else:
+            self.autoAnimate = False
+            self.autoAnimateFrom = 0
+            self.autoAnimateTo = 0
+            self.autoAnimateLoop = False
+            self.autoAnimateSpeed = 1            
         
         scene.lights.append( self )
             
@@ -631,18 +638,20 @@ class Scene_Control(plugins.ObjectData):
             
         if type ==  c4d.MSG_DESCRIPTION_COMMAND:
             if data['id'][0].id == BJS_EXPORT_SCENE_TEMPLATE:
-                self.Export(node)        
+                self.ExportTemplate(node)
+            elif data['id'][0].id == BJS_EXPORT_SCENE_WEBSITE:
+                self.ExportWebsite(node)
         
         
         return True        
 
-
-    def Export(self, node):        
+    def GetSceneJSON(self, node):
         data = json.dumps((startParse(node)).reprJSON(), sort_keys=True, indent=4, separators=(',', ': '), cls=ComplexEncoder)
-        data = cleanArrays(data)          
-        
+        return cleanArrays(data)  
+
+    def ExportTemplate(self, node):        
+        data = self.GetSceneJSON(node)
         #print data
-        
         filePath = storage.LoadDialog(title="Save as Babylon File", flags=c4d.FILESELECT_SAVE, force_suffix="babylon")
         if filePath is None:
             return
@@ -652,6 +661,68 @@ class Scene_Control(plugins.ObjectData):
         f.close()        
         c4d.CopyStringToClipboard("KEEEYAH!")
         gui.MessageDialog(".babylon file exported")
+        
+        return
+        
+    def ExportWebsite(self, node): 
+        data = self.GetSceneJSON(node)
+        filePath = storage.LoadDialog(title="Save as Website", flags=c4d.FILESELECT_DIRECTORY)
+        
+        assetPath = os.path.join(filePath, "Assets") 
+        if os.path.exists(assetPath) == False:
+            os.mkdir(assetPath)
+        
+        babylonFile = open(assetPath+"/scene.babylon","w")
+        babylonFile.write(data)
+        babylonFile.close()
+
+        html =  """<meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+            <title>Babylon - Getting Started</title>
+            <!--- Link to the last version of BabylonJS --->
+            <script src="https://cdn.babylonjs.com/babylon.js"></script>
+            <style>
+                html, body {
+                    overflow: hidden;
+                    width   : 100%;
+                    height  : 100%;
+                    margin  : 0;
+                    padding : 0;
+                }
+
+                #renderCanvas {
+                    width   : 100%;
+                    height  : 100%;
+                    touch-action: none;
+                }
+            </style>
+        </head>
+        <body>
+            <canvas id="renderCanvas"></canvas>
+            <script>
+                window.addEventListener('DOMContentLoaded', ()=>{
+                    var canvas = document.getElementById('renderCanvas')
+                    var engine = new BABYLON.Engine(canvas, true)
+                    BABYLON.SceneLoader.Load('./Assets/', "scene.babylon", engine, (scene)=>{    
+                        
+                        scene.debugLayer.show(true)
+                        
+                        engine.runRenderLoop(()=>{
+                            scene.render();
+                        })
+                        window.addEventListener('resize', ()=>{
+                            engine.resize()
+                        })                        
+                    })
+                })
+            </script>
+        </body>
+        </html>"""
+
+        siteFile = open(filePath+"/index.html", "w")
+        siteFile.write(html)
+        siteFile.close()
+        gui.MessageDialog("Files exported!")
+     
 #---------------------------------
 
 
