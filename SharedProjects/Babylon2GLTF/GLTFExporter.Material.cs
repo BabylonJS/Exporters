@@ -266,6 +266,7 @@ namespace Babylon2GLTF
                                 {
                                     // Diffuse color map is straight input
                                     diffuseBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath, logger);
+                                    babylonStandardMaterial.diffuseTexture.bitmap = diffuseBitmap;
                                 }
                             }
 
