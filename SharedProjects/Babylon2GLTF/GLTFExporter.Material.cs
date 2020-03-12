@@ -245,6 +245,8 @@ namespace Babylon2GLTF
 
                         Bitmap baseColorBitmap = null;
                         Bitmap metallicRoughnessBitmap = null;
+                        string baseColorBitmapName = null;
+                        string metallicRoughnessBitmapName = null;
 
                         GLTFTextureInfo textureInfoBC = new GLTFTextureInfo();
                         GLTFTextureInfo textureInfoMR = new GLTFTextureInfo();
@@ -264,6 +266,7 @@ namespace Babylon2GLTF
                                 {
                                     // Diffuse color map is straight input
                                     diffuseBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.diffuseTexture.originalPath, logger);
+                                    babylonStandardMaterial.diffuseTexture.bitmap = diffuseBitmap;
                                 }
                             }
 
@@ -290,7 +293,7 @@ namespace Babylon2GLTF
                                 opacityBitmap = TextureUtilities.LoadTexture(babylonStandardMaterial.opacityTexture.originalPath, logger);
                             }
 
-                            if (diffuseBitmap != null || specularBitmap != null || opacityBitmap != null)
+                            if ((diffuseBitmap != null && (specularBitmap != null || opacityBitmap != null)) || specularBitmap != null || opacityBitmap != null)
                             {
                                 // Retreive dimensions
                                 int width = 0;
@@ -300,7 +303,14 @@ namespace Babylon2GLTF
                                 {
                                     logger.RaiseError("Diffuse, specular and opacity maps should have same dimensions", 2);
                                 }
+                                baseColorBitmapName = (babylonStandardMaterial.diffuseTexture != null ? Path.GetFileNameWithoutExtension(babylonStandardMaterial.diffuseTexture.name) : TextureUtilities.ColorToStringName(Color.FromArgb(255, (int)(babylonStandardMaterial.diffuse[0]), (int)(babylonStandardMaterial.diffuse[1]), (int)(babylonStandardMaterial.diffuse[2]))))
+                                                    + (babylonStandardMaterial.opacityTexture != null ? "_alpha_" + Path.GetFileNameWithoutExtension(babylonStandardMaterial.opacityTexture.name) : "")
+                                                    + ".png";
 
+                                metallicRoughnessBitmapName = "MR_" + baseColorBitmapName
+                                                            + "_spec_" + (babylonStandardMaterial.specularTexture != null ? Path.GetFileNameWithoutExtension(babylonStandardMaterial.specularTexture.name) : TextureUtilities.ColorToStringName(Color.FromArgb(255, (int)(babylonStandardMaterial.specular[0]), (int)(babylonStandardMaterial.specular[1]), (int)(babylonStandardMaterial.specular[2]))))
+                                                            + "_gloss_" + babylonStandardMaterial.specularPower
+                                                            +".png";
                                 // Create baseColor+alpha and metallic+roughness maps
                                 baseColorBitmap = new Bitmap(width, height);
                                 metallicRoughnessBitmap = new Bitmap(width, height);
@@ -350,13 +360,13 @@ namespace Babylon2GLTF
                         //export textures
                         if (baseColorBitmap != null || babylonTexture.bitmap != null)
                         {
-                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, null);
+                            textureInfoBC = ExportBitmapTexture(gltf, babylonTexture, baseColorBitmap, baseColorBitmapName);
                             gltfPbrMetallicRoughness.baseColorTexture = textureInfoBC;
                         }
 
                         if (isTextureOk(babylonStandardMaterial.specularTexture))
                         {
-                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, null);
+                            textureInfoMR = ExportBitmapTexture(gltf, babylonTexture, metallicRoughnessBitmap, metallicRoughnessBitmapName);
                             gltfPbrMetallicRoughness.metallicRoughnessTexture = textureInfoMR;
                         }
 
