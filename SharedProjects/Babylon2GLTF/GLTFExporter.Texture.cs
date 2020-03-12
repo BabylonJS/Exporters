@@ -33,6 +33,14 @@ namespace Babylon2GLTF
                 {
                     bitmap = babylonTexture.bitmap;
                 }
+                else
+                {
+                    if(bitmap != babylonTexture.bitmap)
+                    {
+                        babylonTexture = new BabylonTexture(babylonTexture);
+                        babylonTexture.bitmap = bitmap;
+                    }
+                }
                 if (name == null)
                 {
                     name = babylonTexture.name;

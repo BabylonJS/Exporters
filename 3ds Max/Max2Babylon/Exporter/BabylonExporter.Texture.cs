@@ -358,7 +358,10 @@ namespace Max2Babylon
 
                     // Copy base color image
                     var outTexture = ExportTexture(baseColorTexture, babylonScene);
-                    textureMap[outTexture.Id] = outTexture;
+                    if (outTexture != null)
+                    {
+                        textureMap[outTexture.Id] = outTexture;
+                    }
                     return outTexture;
                 }
 
@@ -1081,6 +1084,11 @@ namespace Max2Babylon
         private IBitmapTex _getBitmapTex(ITexmap texMap, out float[] multiplyColor, bool raiseError = true)
         {
             multiplyColor = null;
+
+            if (texMap == null)
+            {
+                return null;
+            }
 
             var texture = _getBitmapTex(texMap, false);
 
