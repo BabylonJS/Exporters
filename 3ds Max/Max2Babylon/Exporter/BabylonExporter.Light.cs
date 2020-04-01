@@ -147,7 +147,7 @@ namespace Max2Babylon
                     var targetPosition = targetWm.Translation;
 
                     var direction = targetPosition.Subtract(position).Normalize;
-                    babylonLight.direction = new[] { direction.X, direction.Y, direction.Z };
+                    babylonLight.direction = new[]   { direction.X, direction.Y, direction.Z };
                 }
                 else
                 {

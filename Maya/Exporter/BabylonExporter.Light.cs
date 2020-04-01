@@ -37,19 +37,27 @@ namespace Maya2Babylon
             RaiseMessage(mDagPath.partialPathName, 1);
 
             // Transform above light
-            MFnTransform mFnTransform = new MFnTransform(mDagPath);
+            MFnTransform mFnLightTransform = new MFnTransform(mDagPath);
 
             // Light direct child of the transform
             MFnLight mFnLight = null;
-            for (uint i = 0; i < mFnTransform.childCount; i++)
+            bool createDummy = false;
+            for (uint i = 0; i < mFnLightTransform.childCount; i++)
             {
-                MObject childObject = mFnTransform.child(i);
+                MObject childObject = mFnLightTransform.child(i);
                 if (childObject.hasFn(MFn.Type.kLight))
                 {
                     var _mFnLight = new MFnLight(childObject);
                     if (!_mFnLight.isIntermediateObject)
                     {
                         mFnLight = _mFnLight;
+                    }
+                }
+                else
+                {
+                    if (childObject.hasFn(MFn.Type.kTransform))
+                    {
+                        createDummy = true;
                     }
                 }
             }
@@ -60,7 +68,7 @@ namespace Maya2Babylon
             }
 
             RaiseMessage("mFnLight.fullPathName=" + mFnLight.fullPathName, 2);
-
+            
             // --- prints ---
             #region prints
 
@@ -109,7 +117,7 @@ namespace Maya2Babylon
                     break;
             }
 
-            Print(mFnTransform, 2, "Print ExportLight mFnTransform");
+            Print(mFnLightTransform, 2, "Print ExportLight mFnTransform");
 
             Print(mFnLight, 2, "Print ExportLight mFnLight");
 
@@ -120,24 +128,41 @@ namespace Maya2Babylon
                 return null;
             }
 
-            var babylonLight = new BabylonLight { name = mFnTransform.name, id = mFnTransform.uuid().asString() };
+            var babylonLight = new BabylonLight { name = mFnLightTransform.name, id = mFnLightTransform.uuid().asString() };
+            // User custom attributes
+            babylonLight.metadata = ExportCustomAttributeFromTransform(mFnLightTransform);
+
+            MVector vDir = new MVector(0, 0, -1);
+            MTransformationMatrix transformationMatrix;
 
             // Hierarchy
-            ExportHierarchy(babylonLight, mFnTransform);
+            BabylonNode dummy = null;
+            if (createDummy)
+            {
+                dummy = ExportDummy(mDagPath, babylonScene);
+                dummy.name = "_" + dummy.name + "_";
+                babylonLight.id = Guid.NewGuid().ToString();
+                babylonLight.parentId = dummy.id;
+                babylonLight.hasDummy = true;
 
-            // User custom attributes
-            babylonLight.metadata = ExportCustomAttributeFromTransform(mFnTransform);
+                // The position is stored by the dummy parent and the default direction is downward and it is updated by the rotation of the parent dummy
+                babylonLight.position = new[] { 0f, 0f, 0f };
+                babylonLight.direction = new[] { 0f, -1f, 0f };
+            }
+            else
+            {
+                ExportHierarchy(babylonLight, mFnLightTransform);
+                // Position / rotation / scaling
+                ExportTransform(babylonLight, mFnLightTransform);
 
-            // Position / rotation / scaling
-            ExportTransform(babylonLight, mFnTransform);
+                // Direction
+                vDir = new MVector(0, 0, -1);
+                transformationMatrix = new MTransformationMatrix(mFnLightTransform.transformationMatrix);
+                vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
+                vDir.normalize();
+                babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
+            }
 
-            // Direction
-            var vDir = new MVector(0, 0, -1);
-            var transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
-            vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
-            vDir.normalize();
-            babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
-            
             // Common fields 
             babylonLight.intensity = mFnLight.intensity;
             babylonLight.diffuse = mFnLight.lightDiffuse ? mFnLight.color.toArrayRGB() : new float[] { 0, 0, 0 };
@@ -172,11 +197,14 @@ namespace Maya2Babylon
                     babylonLight.specular = babylonLight.diffuse;
 
                     // Direction
-                    vDir = new MVector(0, 1, 0);
-                    transformationMatrix = new MTransformationMatrix(mFnTransform.transformationMatrix);
-                    vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
-                    vDir.normalize();
-                    babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
+                    if (!createDummy)
+                    {
+                        vDir = new MVector(0, 1, 0);
+                        transformationMatrix = new MTransformationMatrix(mFnLightTransform.transformationMatrix);
+                        vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
+                        vDir.normalize();
+                        babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
+                    }
                     break;
                 case MFn.Type.kAreaLight:
                 case MFn.Type.kVolumeLight:
@@ -197,7 +225,7 @@ namespace Maya2Babylon
             MStringArray UUIDMesh = new MStringArray();
 
             //MEL Command that get the enlighted mesh for a given light
-            MGlobal.executeCommand($@"lightlink -query -light {mFnTransform.fullPathName};", enlightedMeshesFullPathNames);
+            MGlobal.executeCommand($@"lightlink -query -light {mFnLightTransform.fullPathName};", enlightedMeshesFullPathNames);
 
             //For each enlighted mesh
             foreach (String Mesh in enlightedMeshesFullPathNames)
@@ -221,11 +249,11 @@ namespace Maya2Babylon
             // Animations
             if (exportParameters.bakeAnimationFrames)
             {
-                ExportNodeAnimationFrameByFrame(babylonLight, mFnTransform);
+                ExportNodeAnimationFrameByFrame(babylonLight, mFnLightTransform);
             }
             else
             {
-                ExportNodeAnimation(babylonLight, mFnTransform);
+                ExportNodeAnimation(babylonLight, mFnLightTransform);
             }
 
             babylonScene.LightsList.Add(babylonLight);
