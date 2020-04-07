@@ -150,8 +150,7 @@ namespace Babylon2GLTF
                     }
                     gltfImage = new GLTFImage
                     {
-                        uri = textureUri,
-                        FileExtension = Path.GetExtension(textureUri).Substring(1)
+                        uri = textureUri
                     };
                     gltfImage.index = gltf.ImagesList.Count;
                     gltf.ImagesList.Add(gltfImage);
