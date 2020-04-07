@@ -349,7 +349,7 @@ namespace Maya2Babylon
 
                             // if any of our rotation axes have a keyframe diff large enough to lose information when converted to quaternion, break it down into a number of sub keyframes.
                             var largestRotationalComponentDiff = Math.Max(Math.Max(Math.Abs(rotationDiff.X), Math.Abs(rotationDiff.Y)), Math.Abs(rotationDiff.Z));
-                            if (largestRotationalComponentDiff > _MaxRotationalKeyframeDifferenceDegrees && !(subdivisions > 0))
+                            if (largestRotationalComponentDiff > _MaxRotationalKeyframeDifferenceDegrees && largestRotationalComponentDiff != 360.0f && !(subdivisions > 0))
                             {
                                 subdivisions = Convert.ToInt32(Math.Ceiling(largestRotationalComponentDiff / _MaxRotationalKeyframeDifferenceDegrees));
                                 this.RaiseWarning($"Animation Track \"{mayaAnimationProperty}\": Frames {babylonAnimationKey.frame} and {nextBabylonAnimationKey.frame} have a rotation difference of {largestRotationalComponentDiff} that is larger than {_MaxRotationalKeyframeDifferenceDegrees} degrees. Interpolating with {subdivisions} additional keyframes.", 2);
