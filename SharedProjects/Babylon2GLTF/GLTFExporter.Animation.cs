@@ -459,7 +459,7 @@ namespace Babylon2GLTF
             }
 
             var influencesPerFrame = _getTargetManagerAnimationsData(babylonMorphTargetManager);
-            var frames = new List<int>(influencesPerFrame.Keys);
+            var frames = new List<float>(influencesPerFrame.Keys);
 
             var framesInRange = frames.Where(frame => frame >= startFrame && frame <= endFrame).ToList();
             framesInRange.Sort(); // Mandatory to sort otherwise gltf loader of babylon doesn't understand
@@ -611,10 +611,10 @@ namespace Babylon2GLTF
         /// for animation2, the value associated to key=0 is equal to the one at key=50 since 0 is out of range [50, 100] (same for key=25)</example>
         /// <param name="babylonMorphTargetManager"></param>
         /// <returns>A map which for each frame, gives the influence value of all targets</returns>
-        private Dictionary<int, List<float>> _getTargetManagerAnimationsData(BabylonMorphTargetManager babylonMorphTargetManager)
+        private Dictionary<float, List<float>> _getTargetManagerAnimationsData(BabylonMorphTargetManager babylonMorphTargetManager)
         {
             // Merge all keys into a single set (no duplicated frame)
-            var mergedFrames = new HashSet<int>();
+            var mergedFrames = new HashSet<float>();
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
             {
                 if (babylonMorphTarget.animations != null)
@@ -628,7 +628,7 @@ namespace Babylon2GLTF
             }
 
             // For each frame, gives the influence value of all targets (gltf structure)
-            var influencesPerFrame = new Dictionary<int, List<float>>();
+            var influencesPerFrame = new Dictionary<float, List<float>>();
             foreach (var frame in mergedFrames)
             {
                 influencesPerFrame.Add(frame, new List<float>());
@@ -636,7 +636,7 @@ namespace Babylon2GLTF
             foreach (var babylonMorphTarget in babylonMorphTargetManager.targets)
             {
                 // For a given target, for each frame, gives the influence value of the target (babylon structure)
-                var influencePerFrameForTarget = new Dictionary<int, float>();
+                var influencePerFrameForTarget = new Dictionary<float, float>();
 
                 if (babylonMorphTarget.animations != null && babylonMorphTarget.animations.Length > 0)
                 {

@@ -3,6 +3,7 @@ using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utilities;
 
 namespace Maya2Babylon
 {
@@ -12,8 +13,12 @@ namespace Maya2Babylon
         public Dictionary<int, float> valuePerFrame = new Dictionary<int, float>();
     }
 
+    enum AnimationInterpolationMode { Linear };
+
     internal partial class BabylonExporter
     {
+        private float _MaxRotationalKeyframeDifferenceDegrees = 179f;
+
         /// <summary>
         /// Export TRS animations of the transform
         /// </summary>
@@ -322,15 +327,51 @@ namespace Maya2Babylon
                 // Convert euler to quaternion angles
                 if (indexAnimationProperty == 1) // Rotation
                 {
-                    foreach (var babylonAnimationKey in babylonAnimationKeys)
+                    BabylonAnimationKey nextBabylonAnimationKey = null;
+                    BabylonVector3 nextBabylonAnimationEulerAngles = null;
+                    int subdivisions = 0;
+
+                    for (int keyframeIndex = 0; keyframeIndex < babylonAnimationKeys.Count; ++keyframeIndex)
                     {
-                        BabylonVector3 eulerAngles = BabylonVector3.FromArray(babylonAnimationKey.values);
-                        BabylonVector3 eulerAnglesRadians = eulerAngles * (float)(Math.PI / 180);
+                        nextBabylonAnimationEulerAngles = null;
+                        var babylonAnimationKey = babylonAnimationKeys[keyframeIndex];
+                        BabylonVector3 babylonAnimationEulerAngles = BabylonVector3.FromArray(babylonAnimationKey.values);
+                        if (keyframeIndex < babylonAnimationKeys.Count - 1)
+                        {
+                            nextBabylonAnimationKey = babylonAnimationKeys[keyframeIndex + 1];
+                            nextBabylonAnimationEulerAngles = BabylonVector3.FromArray(nextBabylonAnimationKey.values);
+                        }
+
+                        if (nextBabylonAnimationEulerAngles != null)
+                        {
+                            var rotationDiff = nextBabylonAnimationEulerAngles - babylonAnimationEulerAngles;
+                            var frameDiff = (float)(nextBabylonAnimationKey.frame - babylonAnimationKey.frame);
+
+                            // if any of our rotation axes have a keyframe diff large enough to lose information when converted to quaternion, break it down into a number of sub keyframes.
+                            var largestRotationalComponentDiff = Math.Max(Math.Max(Math.Abs(rotationDiff.X), Math.Abs(rotationDiff.Y)), Math.Abs(rotationDiff.Z));
+                            if (largestRotationalComponentDiff > _MaxRotationalKeyframeDifferenceDegrees && !(subdivisions > 0))
+                            {
+                                subdivisions = Convert.ToInt32(Math.Ceiling(largestRotationalComponentDiff / _MaxRotationalKeyframeDifferenceDegrees));
+                                this.RaiseWarning($"Animation Track \"{mayaAnimationProperty}\": Frames {babylonAnimationKey.frame} and {nextBabylonAnimationKey.frame} have a rotation difference of {largestRotationalComponentDiff} that is larger than {_MaxRotationalKeyframeDifferenceDegrees} degrees. Interpolating with {subdivisions} additional keyframes.", 2);
+                                for (int subdivision = 1; subdivision <= subdivisions; ++subdivision)
+                                {
+                                    var newKeyframe = babylonAnimationKey.frame + (frameDiff * ((float)subdivision / (float)(subdivisions + 1)));
+                                    var newKeyframeValues = InterpolateBetweenRotationalKeyframes(babylonAnimationKey, nextBabylonAnimationKey, newKeyframe, AnimationInterpolationMode.Linear);
+                                    var subdividedAnimationKey = new BabylonAnimationKey() { frame = newKeyframe, values = newKeyframeValues };
+                                    babylonAnimationKeys.Insert(keyframeIndex + subdivision, subdividedAnimationKey);
+                                    this.RaiseWarning($"Frame inserted at {newKeyframe}", 3);
+                                }
+                                subdivisions += 1;
+                            }
+                            if (subdivisions > 0) subdivisions -= 1;
+                        }
+
+                        BabylonVector3 eulerAnglesRadians = babylonAnimationEulerAngles * (float)(Math.PI / 180);
                         BabylonQuaternion quaternionAngles = eulerAnglesRadians.toQuaternion(rotationOrder);
                         babylonAnimationKey.values = quaternionAngles.ToArray();
                     }
                 }
-                
+
                 var keysFull = new List<BabylonAnimationKey>(babylonAnimationKeys);
 
                 // Optimization
@@ -357,6 +398,20 @@ namespace Maya2Babylon
             return animationsObject;
         }
 
+        static float[] InterpolateBetweenRotationalKeyframes(BabylonAnimationKey from, BabylonAnimationKey to, float frame, AnimationInterpolationMode interpolationMode)
+        {
+            float frameDiffNormalized = (frame - from.frame)/(to.frame - from.frame);
+            frameDiffNormalized = Math.Min(frameDiffNormalized, 1.0f);
+            frameDiffNormalized = Math.Max(frameDiffNormalized, 0.0f);
+
+            switch (interpolationMode)
+            {
+                case AnimationInterpolationMode.Linear:
+                default:
+                    return MathUtilities.LerpEulerAngle(from.values, to.values, frameDiffNormalized);
+            }
+        }
+
         static void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
             for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
@@ -373,6 +428,11 @@ namespace Maya2Babylon
         }
 
         static float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
+        {
+            return weightedLerp(frame0, frame1, frame2, value0, value2);
+        }
+
+        static float[] weightedLerp(float frame0, float frame1, float frame2, float[] value0, float[] value2)
         {
             double weight2 = (frame1 - frame0) / (double)(frame2 - frame0);
             double weight0 = 1 - weight2;

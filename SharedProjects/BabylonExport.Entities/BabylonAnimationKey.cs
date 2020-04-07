@@ -7,7 +7,7 @@ namespace BabylonExport.Entities
     public class BabylonAnimationKey : IComparable<BabylonAnimationKey>, ICloneable
     {
         [DataMember]
-        public int frame { get; set; }
+        public float frame { get; set; }
 
         [DataMember]
         public float[] values { get; set; }
