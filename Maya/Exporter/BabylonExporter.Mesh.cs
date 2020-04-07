@@ -512,6 +512,11 @@ namespace Maya2Babylon
             // TODO - Add custom properties
             //var optimizeVertices = false; // meshNode.MaxNode.GetBoolProperty("babylonjsexportParameters.optimizeVertices");
             var optimizeVertices = exportParameters.optimizeVertices; // global option
+            if (optimizeVertices && hasMorphTarget)
+            {
+                optimizeVertices = false;
+                RaiseWarning("Unable to optimize a mesh with morph targets. Disabling optimization for this mesh.");
+            }
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
