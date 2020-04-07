@@ -154,6 +154,15 @@ namespace Babylon2GLTF
                     };
                     gltfImage.index = gltf.ImagesList.Count;
                     gltf.ImagesList.Add(gltfImage);
+                    switch (validImageFormat)
+                    {
+                        case "jpg":
+                            gltfImage.FileExtension = "jpeg";
+                            break;
+                        case "png":
+                            gltfImage.FileExtension = "png";
+                            break;
+                    }
                     if (exportParameters.outputFormat == "glb")
                     {
                         var imageBufferView = WriteImageToGltfBuffer(gltf, gltfImage, sourcePath, babylonTexture.bitmap);
@@ -181,15 +190,6 @@ namespace Babylon2GLTF
                         }
                     }
                     glTFImageMap.Add(name, gltfImage);
-                    switch (validImageFormat)
-                    {
-                        case "jpg":
-                            gltfImage.FileExtension = "jpeg";
-                            break;
-                        case "png":
-                            gltfImage.FileExtension = "png";
-                            break;
-                    }
                 }
 
                 // --------------------------
