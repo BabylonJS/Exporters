@@ -496,7 +496,7 @@ namespace Max2Babylon
             }
         }
 
-        private float[] weightedLerp(int frame0, int frame1, int frame2, float[] value0, float[] value2)
+        private float[] weightedLerp(float frame0, float frame1, float frame2, float[] value0, float[] value2)
         {
             double weight2 = (frame1 - frame0) / (double)(frame2 - frame0);
             double weight0 = 1 - weight2;

@@ -12,6 +12,37 @@ namespace Utilities
             return min + (max - min) * t;
         }
 
+        public static float LerpEulerAngle(float min, float max, float t)
+        {
+            while(min < 0 || max < 0)
+            {
+                min += 360.0f;
+                max += 360.0f;
+            }
+
+            return min + (max - min) * t;
+        }
+
+        public static float[] Lerp(float[] minArray, float[] maxArray, float t)
+        {
+            float[] res = new float[minArray.Length];
+            for (int index = 0; index < minArray.Length; index++)
+            {
+                res[index] = MathUtilities.Lerp(minArray[index], maxArray[index], t);
+            }
+            return res;
+        }
+
+        public static float[] LerpEulerAngle(float[] minArray, float[] maxArray, float t)
+        {
+            float[] res = new float[minArray.Length];
+            for (int index = 0; index < minArray.Length; index++)
+            {
+                res[index] = MathUtilities.LerpEulerAngle(minArray[index], maxArray[index], t);
+            }
+            return res;
+        }
+
         public static int RoundToInt(float f)
         {
             return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
