@@ -520,12 +520,15 @@ namespace Max2Babylon
                                 }
 
                                 // Animations
-                                var animations = new List<BabylonAnimation>();
-                                var morphWeight = morpher.GetMorphWeight(i);
-                                ExportFloatGameController(morphWeight, "influence", animations);
-                                if (animations.Count > 0)
+                                if (exportParameters.exportAnimations)
                                 {
-                                    babylonMorphTarget.animations = animations.ToArray();
+                                    var animations = new List<BabylonAnimation>();
+                                    var morphWeight = morpher.GetMorphWeight(i);
+                                    ExportFloatGameController(morphWeight, "influence", animations);
+                                    if (animations.Count > 0)
+                                    {
+                                        babylonMorphTarget.animations = animations.ToArray();
+                                    }
                                 }
                             }
                         }

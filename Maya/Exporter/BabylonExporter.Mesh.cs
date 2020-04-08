@@ -515,7 +515,7 @@ namespace Maya2Babylon
             if (optimizeVertices && hasMorphTarget)
             {
                 optimizeVertices = false;
-                RaiseWarning("Unable to optimize a mesh with morph targets. Disabling optimization for this mesh.");
+                RaiseWarning("Unable to optimize a mesh with morph targets. Disabling optimization for this mesh.", 2);
             }
 
             // Compute normals
@@ -1350,7 +1350,10 @@ namespace Maya2Babylon
                         }
 
                         // Animation
-                        babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                        if (exportParameters.exportAnimations)
+                        {
+                            babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                        }
                     }
 
                 }
