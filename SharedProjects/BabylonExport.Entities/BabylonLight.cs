@@ -53,6 +53,8 @@ namespace BabylonExport.Entities
         [DataMember]
         public int? falloffType { get; set; }
 
+        public bool? hasDummy { get; set; }
+
         public BabylonLight()
         {
             diffuse = new[] {1.0f, 1.0f, 1.0f};
