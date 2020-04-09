@@ -48,7 +48,14 @@ namespace Maya2Babylon
             MStringArray customAttributeNamesMStringArray = new MStringArray();
             Dictionary<string, object> customsAttributes = new Dictionary<string, object>();
 
-            MGlobal.executeCommand($"listAttr -ud {objectName}", customAttributeNamesMStringArray);
+            try
+            {
+                MGlobal.executeCommand($"listAttr -ud {objectName}", customAttributeNamesMStringArray);
+            }
+            catch (Exception e)
+            {
+                //do nothing...
+            }
 
             var customAttributeNames = customAttributeNamesMStringArray.Where((attributeName) => { return !_DisallowedCustomAttributeNames.Contains(attributeName); });
 
