@@ -68,6 +68,10 @@ namespace Maya2Babylon
             }
 
             RaiseMessage("mFnLight.fullPathName=" + mFnLight.fullPathName, 2);
+            if (createDummy)
+            {
+                RaiseWarning("Adding a dummy node to this light so that the children have proper NodeTransform hierarchy.", 2);
+            }
             
             // --- prints ---
             #region prints
@@ -135,19 +139,47 @@ namespace Maya2Babylon
             MVector vDir = new MVector(0, 0, -1);
             MTransformationMatrix transformationMatrix;
 
+            // Animations
+            if (exportParameters.exportAnimations)
+            {
+                if (exportParameters.bakeAnimationFrames)
+                {
+                    ExportNodeAnimationFrameByFrame(babylonLight, mFnLightTransform);
+                }
+                else
+                {
+                    ExportNodeAnimation(babylonLight, mFnLightTransform);
+                }
+            }
+
+            if (babylonLight.animations != null && !createDummy)
+            {
+                RaiseWarning("Adding a dummy node to the light so that it can be animated properly.", 2);
+                createDummy = true;
+            }
+
             // Hierarchy
             BabylonNode dummy = null;
             if (createDummy)
             {
                 dummy = ExportDummy(mDagPath, babylonScene);
                 dummy.name = "_" + dummy.name + "_";
+                dummy.animations = babylonLight.animations;
+                dummy.extraAnimations = babylonLight.extraAnimations;
+                dummy.autoAnimate = babylonLight.autoAnimate;
+                dummy.autoAnimateFrom = babylonLight.autoAnimateFrom;
+                dummy.autoAnimateTo = babylonLight.autoAnimateTo;
+
+                babylonLight.animations = null;
+                babylonLight.extraAnimations = null;
+
                 babylonLight.id = Guid.NewGuid().ToString();
                 babylonLight.parentId = dummy.id;
                 babylonLight.hasDummy = true;
 
                 // The position is stored by the dummy parent and the default direction is downward and it is updated by the rotation of the parent dummy
                 babylonLight.position = new[] { 0f, 0f, 0f };
-                babylonLight.direction = new[] { 0f, -1f, 0f };
+                babylonLight.direction = new[] { 0f, 0f, 1f };
             }
             else
             {
@@ -245,16 +277,6 @@ namespace Maya2Babylon
             }
 
             babylonLight.includedOnlyMeshesIds = includeMeshesIds.ToArray();
-
-            // Animations
-            if (exportParameters.bakeAnimationFrames)
-            {
-                ExportNodeAnimationFrameByFrame(babylonLight, mFnLightTransform);
-            }
-            else
-            {
-                ExportNodeAnimation(babylonLight, mFnLightTransform);
-            }
 
             babylonScene.LightsList.Add(babylonLight);
 
