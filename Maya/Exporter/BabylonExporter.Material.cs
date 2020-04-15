@@ -259,7 +259,9 @@ namespace Maya2Babylon
                         babylonMaterial.linkEmissiveWithDiffuse = false;
                     }
                     // Special treatment for "Alpha test" transparency mode
-                    if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                    if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST 
+                        && ((babylonMaterial.diffuseTexture != null && babylonMaterial.opacityTexture != null && babylonMaterial.diffuseTexture.originalPath != babylonMaterial.opacityTexture.originalPath)
+                            || (babylonMaterial.diffuseTexture == null && babylonMaterial.opacityTexture != null)))
                     {
                         // Base color and alpha files need to be merged into a single file
                         Color defaultColor = Color.FromArgb((int)(babylonMaterial.diffuse[0] * 255), (int)(babylonMaterial.diffuse[1] * 255), (int)(babylonMaterial.diffuse[2] * 255));
