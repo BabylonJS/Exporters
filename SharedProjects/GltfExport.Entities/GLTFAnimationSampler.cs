@@ -1,4 +1,6 @@
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace GLTFExport.Entities
 {
@@ -7,9 +9,11 @@ namespace GLTFExport.Entities
     {
         public enum Interpolation
         {
+            [EnumMember(Value = "LINEAR")]
             LINEAR,
+            [EnumMember(Value = "STEP")]
             STEP,
-            CATMULLROMSPLINE,
+            [EnumMember(Value = "CUBICSPLINE")]
             CUBICSPLINE
         }
 
@@ -21,6 +25,7 @@ namespace GLTFExport.Entities
         public int input { get; set; }
 
         [DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public Interpolation interpolation { get; private set; }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializeinterpolation()
         {
-            return (this.interpolation == Interpolation.LINEAR);
+            return (this.interpolation != Interpolation.LINEAR);
         }
     }
 }
