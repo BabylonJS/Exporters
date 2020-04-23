@@ -522,7 +522,7 @@ namespace Maya2Babylon
             OptimizeAnimations(keys, false); // Do not remove linear animation keys for bones
 
             // Ensure animation has at least 2 frames
-            if (IsAnimationKeysRelevant(keys, "_matrix"))
+            if (IsAnimationKeysRelevant(keys, "_matrix", GetBabylonMatrix(mFnTransform, start).m.ToArray()))
             {
                 // Animations
                 animation = new BabylonAnimation()
@@ -560,7 +560,7 @@ namespace Maya2Babylon
         /// <param name="keys">Animation key frames</param>
         /// <param name="property">The target property of the animation</param>
         /// <returns></returns>
-        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys, string property)
+        private bool IsAnimationKeysRelevant(List<BabylonAnimationKey> keys, string property, float[] expectedValues = null)
         {
             if (keys.Count > 1)
             {
@@ -571,19 +571,64 @@ namespace Maya2Babylon
                         switch(property)
                         {
                             case "scaling":
-                                if (keys[0].values.IsEqualTo( new BabylonVector3(1,1,1).ToArray()))
+                                expectedValues = expectedValues == null ? new BabylonVector3(1, 1, 1).ToArray() : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
                                 {
                                     return false;
                                 }
                                 break;
                             case "rotationQuaternion":
-                                if (keys[0].values.IsEqualTo(new BabylonQuaternion(0,0,0,1).ToArray()))
+                                expectedValues = expectedValues == null ? new BabylonQuaternion(0, 0, 0, 1).ToArray() : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
                                 {
                                     return false;
                                 }
                                 break;
                             case "position":
-                                if (keys[0].values.IsEqualTo(new BabylonVector3(0,0,0).ToArray()))
+                                expectedValues = expectedValues == null ? new BabylonVector3(0, 0, 0).ToArray() : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "_matrix":
+                                expectedValues = expectedValues == null ? BabylonMatrix.Identity().m : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "uOffset":
+                                expectedValues = expectedValues == null ? new float[1] { 0 } : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "vOffset":
+                                expectedValues = expectedValues == null ? new float[1] { 0 } : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "uScale":
+                                expectedValues = expectedValues == null ? new float[1] { 1 } : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "vScale":
+                                expectedValues = expectedValues == null ? new float[1] { 1 } : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
+                                {
+                                    return false;
+                                }
+                                break;
+                            case "wAng":
+                                expectedValues = expectedValues == null ? new float[1] { 0 } : expectedValues;
+                                if (keys[0].values.IsEqualTo(expectedValues))
                                 {
                                     return false;
                                 }
