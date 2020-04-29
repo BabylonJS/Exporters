@@ -93,14 +93,11 @@ namespace Babylon2GLTF
                 {
                     // In babylon, the 4 bones indices are stored in a single int
                     // Each bone index is 8-bit offset from the next
-                    int bonesIndicesMerged = babylonMesh.matricesIndices[indexVertex];
-                    int bone3 = bonesIndicesMerged >> 24;
-                    bonesIndicesMerged -= bone3 << 24;
-                    int bone2 = bonesIndicesMerged >> 16;
-                    bonesIndicesMerged -= bone2 << 16;
-                    int bone1 = bonesIndicesMerged >> 8;
-                    bonesIndicesMerged -= bone1 << 8;
-                    int bone0 = bonesIndicesMerged >> 0;
+                    uint bonesIndicesMerged = (uint)babylonMesh.matricesIndices[indexVertex];
+                    uint bone3 =  bonesIndicesMerged        >> 24;
+                    uint bone2 = (bonesIndicesMerged << 8 ) >> 24;
+                    uint bone1 = (bonesIndicesMerged << 16) >> 24;
+                    uint bone0 = (bonesIndicesMerged << 24) >> 24;
                     bonesIndicesMerged -= bone0 << 0;
                     var bonesIndicesArray = new ushort[] { (ushort)bone0, (ushort)bone1, (ushort)bone2, (ushort)bone3 };
                     globalVertex.BonesIndices = bonesIndicesArray;
