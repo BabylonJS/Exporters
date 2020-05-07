@@ -24,6 +24,7 @@ namespace Maya2Babylon.Forms
         const string chkExportTangentsProperty = "babylonjs_exportTangents";
         const string chkDracoCompressionProperty = "babylonjs_dracoCompression";
         const string chkExportSkinProperty = "babylonjs_exportSkin";
+        const string chkExportMaterialsProperty = "babylonjs_exportMaterials";
         const string chkExportMorphNormalProperty = "babylonjs_exportMorphNormal";
         const string chkExportMorphTangentProperty = "babylonjs_exportMorphTangent";
         const string chkExportKHRTextureTransformProperty = "babylonjs_exportKHRTextureTransform";
@@ -73,6 +74,7 @@ namespace Maya2Babylon.Forms
             chkBakeAnimationFrames.Checked = Loader.GetBoolProperty(chkBakeAnimationFramesProperty, false);
             chkExportAnimations.Checked = Loader.GetBoolProperty(chkExportAnimationsProperty, true);
             chkExportAnimationsOnly.Checked = Loader.GetBoolProperty(chkExportAnimationsOnlyProperty, false);
+            chkExportMaterials.Checked = Loader.GetBoolProperty(chkExportMaterialsProperty, true);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
 
@@ -113,6 +115,7 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkBakeAnimationFramesProperty, chkBakeAnimationFrames.Checked);
             Loader.SetBoolProperty(chkExportAnimationsProperty, chkExportAnimations.Checked);
             Loader.SetBoolProperty(chkExportAnimationsOnlyProperty, chkExportAnimationsOnly.Checked);
+            Loader.SetBoolProperty(chkExportMaterialsProperty, chkExportMaterials.Checked);
 
             Loader.SetBoolProperty(PBRFullPropertyName, chkFullPBR.Checked);
             Loader.SetBoolProperty(PBRNoLightPropertyName, chkNoAutoLight.Checked);
@@ -217,7 +220,7 @@ namespace Maya2Babylon.Forms
                 {
                     throw new InvalidDataException(String.Format("Invalid Texture Quality value: {0}", txtScaleFactor.Text));
                 }
-    
+
                 var exportParameters = new ExportParameters
                 {
                     outputPath = txtFilename.Text,
@@ -234,6 +237,7 @@ namespace Maya2Babylon.Forms
                     exportSkins = chkExportSkin.Checked,
                     txtQuality = textureQualityParsed,
                     dracoCompression = chkDracoCompression.Checked,
+                    exportMaterials = chkExportMaterials.Checked,
                     exportMorphNormals = chkExportMorphNormal.Checked,
                     exportMorphTangents = chkExportMorphTangent.Checked,
                     enableKHRLightsPunctual = chkExportKHRLightsPunctual.Checked,
