@@ -384,7 +384,7 @@ namespace Maya2Babylon
             // --------------------
             // ----- Materials ----
             // --------------------
-            if (exportParameters.exportAnimationsOnly == false)
+            if (exportParameters.exportAnimationsOnly == false && exportParameters.exportMaterials == true)
             {
                 RaiseMessage("Exporting materials");
                 GenerateMaterialDuplicationDatas(babylonScene);
