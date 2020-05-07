@@ -64,6 +64,7 @@ namespace Maya2Babylon.Forms
             this.txtQuality = new System.Windows.Forms.TextBox();
             this.labelQuality = new System.Windows.Forms.Label();
             this.chkExportSkin = new System.Windows.Forms.CheckBox();
+            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
             this.chkExportTangents = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtScaleFactor = new System.Windows.Forms.TextBox();
@@ -79,7 +80,6 @@ namespace Maya2Babylon.Forms
             this.envFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.butCopyToClipboard = new System.Windows.Forms.Button();
-            this.chkExportMaterials = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -515,6 +515,20 @@ namespace Maya2Babylon.Forms
             this.chkExportSkin.Text = "Export skins";
             this.chkExportSkin.UseVisualStyleBackColor = true;
             // 
+            // chkExportMaterials
+            // 
+            this.chkExportMaterials.AutoSize = true;
+            this.chkExportMaterials.Checked = true;
+            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMaterials.Location = new System.Drawing.Point(26, 285);
+            this.chkExportMaterials.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportMaterials.Name = "chkExportMaterials";
+            this.chkExportMaterials.Size = new System.Drawing.Size(144, 24);
+            this.chkExportMaterials.TabIndex = 17;
+            this.chkExportMaterials.Text = "Export materials";
+            this.chkExportMaterials.UseVisualStyleBackColor = true;
+            // 
             // chkExportTangents
             // 
             this.chkExportTangents.AutoSize = true;
@@ -685,21 +699,6 @@ namespace Maya2Babylon.Forms
             this.butCopyToClipboard.Text = "Copy To Clipboard";
             this.butCopyToClipboard.UseVisualStyleBackColor = true;
             this.butCopyToClipboard.Click += new System.EventHandler(this.butCopyToClipboard_Click);
-            // 
-            // chkExportMaterials
-            // 
-            this.chkExportMaterials.AutoSize = true;
-            this.chkExportMaterials.Checked = true;
-            this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMaterials.Location = new System.Drawing.Point(26, 285);
-            this.chkExportMaterials.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkExportMaterials.Name = "chkExportMaterials";
-            this.chkExportMaterials.Size = new System.Drawing.Size(144, 24);
-            this.chkExportMaterials.TabIndex = 17;
-            this.chkExportMaterials.Text = "Export materials";
-            this.chkExportMaterials.UseVisualStyleBackColor = true;
-            this.chkExportMaterials.CheckedChanged += new System.EventHandler(this.chkExportTangents_CheckedChanged);
             // 
             // ExporterForm
             // 
