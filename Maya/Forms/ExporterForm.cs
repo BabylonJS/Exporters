@@ -33,6 +33,7 @@ namespace Maya2Babylon.Forms
         const string chkBakeAnimationFramesProperty = "babylonjs_bakeAnimationFrames";
         const string chkExportAnimationsProperty = "babylonjs_exportAnimations";
         const string chkExportAnimationsOnlyProperty = "babylonjs_exportAnimationsOnly";
+        const string chkExportTexturesProperty = "babylonjs_exportTextures";
 
         const string PBRFullPropertyName = "babylonjs_pbr_full";
         const string PBRNoLightPropertyName = "babylonjs_pbr_nolight";
@@ -75,6 +76,7 @@ namespace Maya2Babylon.Forms
             chkExportAnimations.Checked = Loader.GetBoolProperty(chkExportAnimationsProperty, true);
             chkExportAnimationsOnly.Checked = Loader.GetBoolProperty(chkExportAnimationsOnlyProperty, false);
             chkExportMaterials.Checked = Loader.GetBoolProperty(chkExportMaterialsProperty, true);
+            chkExportTextures.Checked = Loader.GetBoolProperty(chkExportTexturesProperty, true);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
 
@@ -116,6 +118,7 @@ namespace Maya2Babylon.Forms
             Loader.SetBoolProperty(chkExportAnimationsProperty, chkExportAnimations.Checked);
             Loader.SetBoolProperty(chkExportAnimationsOnlyProperty, chkExportAnimationsOnly.Checked);
             Loader.SetBoolProperty(chkExportMaterialsProperty, chkExportMaterials.Checked);
+            Loader.SetBoolProperty(chkExportTexturesProperty, chkExportTextures.Checked);
 
             Loader.SetBoolProperty(PBRFullPropertyName, chkFullPBR.Checked);
             Loader.SetBoolProperty(PBRNoLightPropertyName, chkNoAutoLight.Checked);
@@ -240,6 +243,7 @@ namespace Maya2Babylon.Forms
                     exportMaterials = chkExportMaterials.Checked,
                     exportMorphNormals = chkExportMorphNormal.Checked,
                     exportMorphTangents = chkExportMorphTangent.Checked,
+                    exportTextures = chkExportTextures.Checked,
                     enableKHRLightsPunctual = chkExportKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkExportKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkExportKHRMaterialsUnlit.Checked,
