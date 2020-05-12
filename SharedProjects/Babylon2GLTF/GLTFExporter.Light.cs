@@ -47,7 +47,10 @@ namespace Babylon2GLTF
                     break;
                 case (2): // spot
                     light.type = GLTFLight.LightType.spot.ToString();
-                    light.range = babylonLight.range;
+                    if (babylonLight.range != float.MaxValue)
+                    {
+                        light.range = babylonLight.range;
+                    }
                     light.spot = new GLTFLight.Spot
                     {
                         //innerConeAngle = 0, Babylon doesn't support the innerConeAngle

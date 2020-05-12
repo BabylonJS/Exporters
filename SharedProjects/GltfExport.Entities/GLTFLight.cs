@@ -1,5 +1,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
+using Utilities;
+using System;
 
 namespace GLTFExport.Entities
 {
@@ -20,16 +22,16 @@ namespace GLTFExport.Entities
 
         // Properties used by GLTFextension
         [DataMember]
-        public float[] color { get; set; }
+        public float[] color { get; set; } = new float[3] { 1.0f, 1.0f, 1.0f };
 
         [DataMember]
-        public float intensity { get; set; }
+        public float intensity { get; set; } = 1.0f;
 
         [DataMember]
-        public string type { get; set; }         // ambient, directional, point or spot
+        public string type { get; set; }            // ambient, directional, point or spot
 
         [DataMember]
-        public float? range { get; set; }            // point or spot
+        public float? range { get; set; } = 0.0f;   // point or spot
 
         [DataMember]
         public Spot spot { get; set; }              // spot
@@ -38,6 +40,11 @@ namespace GLTFExport.Entities
         public bool ShouldSerializelight()
         {
             return (this.light != null);
+        }
+
+        public bool ShouldSerializespot()
+        {
+            return (this.spot != null && (this.spot.ShouldSerializeouterConeAngle() || this.spot.ShouldSerializeinnerConeAngle()));
         }
 
         public bool ShouldSerializecolor()
@@ -57,7 +64,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializerange()
         {
-            return (this.range != null);
+            return (this.range != null && this.range != 0.0f);
         }
 
         [DataContract]
@@ -72,12 +79,12 @@ namespace GLTFExport.Entities
 
             public bool ShouldSerializeinnerConeAngle()
             {
-                return (this.innerConeAngle != null);
+                return (this.innerConeAngle != null && this.innerConeAngle != 0.0f);
             }
 
             public bool ShouldSerializeouterConeAngle()
             {
-                return (this.outerConeAngle != null);
+                return (this.outerConeAngle != null && !MathUtilities.IsAlmostEqualTo((float)this.outerConeAngle, (float)Math.PI/4.0f, float.Epsilon));
             }
         }
     }
