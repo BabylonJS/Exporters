@@ -31,7 +31,7 @@ namespace GLTFExport.Entities
         public string type { get; set; }            // ambient, directional, point or spot
 
         [DataMember]
-        public float? range { get; set; } = 0.0f;   // point or spot
+        public float? range { get; set; }           // point or spot, undefined = infinite
 
         [DataMember]
         public Spot spot { get; set; }              // spot
@@ -64,7 +64,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializerange()
         {
-            return (this.range != null && this.range != 0.0f);
+            return (this.range != null);
         }
 
         [DataContract]

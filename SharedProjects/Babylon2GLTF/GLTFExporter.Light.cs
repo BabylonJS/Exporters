@@ -40,7 +40,10 @@ namespace Babylon2GLTF
             {
                 case (0): // point
                     light.type = GLTFLight.LightType.point.ToString();
-                    light.range = babylonLight.range;
+                    if (babylonLight.range != float.MaxValue)
+                    {
+                        light.range = babylonLight.range;
+                    }
                     break;
                 case (1): // directional
                     light.type = GLTFLight.LightType.directional.ToString();
