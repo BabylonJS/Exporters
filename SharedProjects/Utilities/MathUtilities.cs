@@ -48,6 +48,11 @@ namespace Utilities
             return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
         }
 
+        public static bool IsAlmostEqualTo(float first, float second, float epsilon)
+        {
+            return Math.Abs(first - second) < epsilon;
+        }
+
         /**
          * Computes a texture transform matrix with a pre-transformation
          */
