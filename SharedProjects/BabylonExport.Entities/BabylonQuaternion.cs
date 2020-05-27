@@ -25,7 +25,7 @@ namespace BabylonExport.Entities
 
         public float[] ToArray()
         {
-            return new [] {X, Y, Z, W};
+            return new[] { X, Y, Z, W };
         }
 
         /**
@@ -48,18 +48,23 @@ namespace BabylonExport.Entities
             var zAxisY = qy * qz - qx * qw;
             var limit = .4999999;
 
-            if (zAxisY< -limit) {
-                result.Y = (float) (2 * Math.Atan2(qy, qw));
-                result.X = (float) Math.PI / 2;
+            if (zAxisY < -limit)
+            {
+                result.Y = (float)(2 * Math.Atan2(qy, qw));
+                result.X = (float)Math.PI / 2;
                 result.Z = 0;
-            } else if (zAxisY > limit) {
-                result.Y = (float) (2 * Math.Atan2(qy, qw));
-                result.X = (float) -Math.PI / 2;
+            }
+            else if (zAxisY > limit)
+            {
+                result.Y = (float)(2 * Math.Atan2(qy, qw));
+                result.X = (float)-Math.PI / 2;
                 result.Z = 0;
-            } else {
-                result.Z = (float)Math.Atan2(2.0 * (qx* qy + qz* qw), (-sqz - sqx + sqy + sqw));
-                result.X = (float)Math.Asin(-2.0 * (qz* qy - qx* qw));
-                result.Y = (float)Math.Atan2(2.0 * (qz* qx + qy* qw), (sqz - sqx - sqy + sqw));
+            }
+            else
+            {
+                result.Z = (float)Math.Atan2(2.0 * (qx * qy + qz * qw), (-sqz - sqx + sqy + sqw));
+                result.X = (float)Math.Asin(-2.0 * (qz * qy - qx * qw));
+                result.Y = (float)Math.Atan2(2.0 * (qz * qx + qy * qw), (sqz - sqx - sqy + sqw));
             }
 
             return result;
@@ -93,13 +98,13 @@ namespace BabylonExport.Entities
             var sinYaw = Math.Sin(halfYaw);
             var cosYaw = Math.Cos(halfYaw);
 
-            result.X = (float)((cosYaw* sinPitch * cosRoll) + (sinYaw* cosPitch * sinRoll));
-            result.Y = (float)((sinYaw* cosPitch * cosRoll) - (cosYaw* sinPitch * sinRoll));
-            result.Z = (float)((cosYaw* cosPitch * sinRoll) - (sinYaw* sinPitch * cosRoll));
-            result.W = (float)((cosYaw* cosPitch * cosRoll) + (sinYaw* sinPitch * sinRoll));
+            result.X = (float)((cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll));
+            result.Y = (float)((sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll));
+            result.Z = (float)((cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll));
+            result.W = (float)((cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll));
         }
 
-    public override string ToString()
+        public override string ToString()
         {
             return "{ X=" + X + ", Y=" + Y + ", Z=" + Z + ", W=" + W + " }";
         }
@@ -107,7 +112,8 @@ namespace BabylonExport.Entities
         /**
          * Updates the passed quaternion "result" with the passed rotation matrix values.  
          */
-        public static void FromRotationMatrixToRef(BabylonMatrix matrix, BabylonQuaternion result) {
+        public static void FromRotationMatrixToRef(BabylonMatrix matrix, BabylonQuaternion result)
+        {
             var data = matrix.m;
             float m11 = data[0], m12 = data[4], m13 = data[8];
             float m21 = data[1], m22 = data[5], m23 = data[9];
@@ -115,15 +121,18 @@ namespace BabylonExport.Entities
             var trace = m11 + m22 + m33;
             float s;
 
-            if (trace > 0) {
+            if (trace > 0)
+            {
 
-                s = (float) (0.5 / Math.Sqrt(trace + 1.0));
+                s = (float)(0.5 / Math.Sqrt(trace + 1.0));
 
                 result.W = 0.25f / s;
                 result.X = (m32 - m23) * s;
                 result.Y = (m13 - m31) * s;
                 result.Z = (m21 - m12) * s;
-            } else if (m11 > m22 && m11 > m33) {
+            }
+            else if (m11 > m22 && m11 > m33)
+            {
 
                 s = (float)(2.0 * Math.Sqrt(1.0 + m11 - m22 - m33));
 
@@ -131,7 +140,9 @@ namespace BabylonExport.Entities
                 result.X = 0.25f * s;
                 result.Y = (m12 + m21) / s;
                 result.Z = (m13 + m31) / s;
-            } else if (m22 > m33) {
+            }
+            else if (m22 > m33)
+            {
 
                 s = (float)(2.0 * Math.Sqrt(1.0 + m22 - m11 - m33));
 
@@ -139,7 +150,9 @@ namespace BabylonExport.Entities
                 result.X = (m12 + m21) / s;
                 result.Y = 0.25f * s;
                 result.Z = (m23 + m32) / s;
-            } else {
+            }
+            else
+            {
 
                 s = (float)(2.0 * Math.Sqrt(1.0 + m33 - m11 - m22));
 
@@ -154,7 +167,8 @@ namespace BabylonExport.Entities
          * Updates the passed rotation matrix with the current Quaternion values.  
          * Returns the current Quaternion.  
          */
-        public BabylonQuaternion toRotationMatrix(BabylonMatrix result) {
+        public BabylonQuaternion toRotationMatrix(BabylonMatrix result)
+        {
             var xx = this.X * this.X;
             var yy = this.Y * this.Y;
             var zz = this.Z * this.Z;
@@ -181,7 +195,7 @@ namespace BabylonExport.Entities
             result.m[13] = 0;
             result.m[14] = 0;
             result.m[15] = 1.0f;
-            
+
             return this;
         }
 
@@ -190,8 +204,8 @@ namespace BabylonExport.Entities
          */
         public static BabylonQuaternion FromArray(float[] array, int countOffset = 0)
         {
-                var offset = countOffset * 4;
-                return new BabylonQuaternion(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
+            var offset = countOffset * 4;
+            return new BabylonQuaternion(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
         }
 
 
@@ -224,5 +238,40 @@ namespace BabylonExport.Entities
             return result;
         }
 
+        public static BabylonQuaternion Slerp(BabylonQuaternion left, BabylonQuaternion right, float amount)
+        {
+            float num2;
+            float num3;
+            float num4 = (((left.X * right.X) + (left.Y * right.Y)) + (left.Z * right.Z)) + (left.W * right.W);
+            bool flag = false;
+
+            if (num4 < 0)
+            {
+                flag = true;
+                num4 = -num4;
+            }
+
+            if (num4 > 0.999999)
+            {
+                num3 = 1 - amount;
+                num2 = flag ? -amount : amount;
+            }
+            else
+            {
+                var num5 = Math.Acos((double)num4);
+                var num6 = (1.0 / Math.Sin((double)num5));
+                num3 = (float)((Math.Sin((1.0 - (double)amount) * (double)num5)) * (double)num6);
+                num2 = (float)(flag ? ((-Math.Sin((double)amount * num5)) * num6) : ((Math.Sin((double)amount * num5)) * num6));
+            }
+            BabylonQuaternion result = new BabylonQuaternion()
+            {
+                X = (num3 * left.X) + (num2 * right.X),
+                Y = (num3 * left.Y) + (num2 * right.Y),
+                Z = (num3 * left.Z) + (num2 * right.Z),
+                W = (num3 * left.W) + (num2 * right.W)
+            };
+
+            return result;
+        }
     }
 }
