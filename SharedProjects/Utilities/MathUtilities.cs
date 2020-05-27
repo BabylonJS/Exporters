@@ -7,6 +7,11 @@ namespace Utilities
 {
     static class MathUtilities
     {
+        public static float GetLerpFactor(float from, float to, float value)
+        {
+            return (value - from) / (to - from);
+        }
+
         public static float Lerp(float min, float max, float t)
         {
             return min + (max - min) * t;

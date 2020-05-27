@@ -1012,6 +1012,8 @@ namespace Maya2Babylon
 
                 // Select usefull keys
                 var keys = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
+                AddBoundaryKeyframes(animation, keys, from, to);
+
                 bool keysInRangeAreRelevant = true;
 
                 // Optimize these keys
@@ -1020,8 +1022,8 @@ namespace Maya2Babylon
                     OptimizeAnimations(keys, true);
                     keysInRangeAreRelevant = IsAnimationKeysRelevant(keys, animation.property);
 
-                    // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel if the first check fails.
-                    if (!keysInRangeAreRelevant && exportParameters.bakeAnimationFrames)
+                    // Do a less efficient check against all frames in the scene for this animation channel if the first check fails, to make sure we aren't overoptimizing
+                    if (!keysInRangeAreRelevant)
                     {
                         List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(nodeAnimation.keysFull);
                         OptimizeAnimations(optimizedKeysFull, true);
@@ -1052,6 +1054,8 @@ namespace Maya2Babylon
                 // Select usefull keys
                 var keys = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
+                AddBoundaryKeyframes(animation, keys, from, to);
+
                 bool keysInRangeAreRelevant = true;
 
                 // Optimize these keys
@@ -1061,8 +1065,8 @@ namespace Maya2Babylon
                     OptimizeAnimations(keys, true);
                     keysInRangeAreRelevant = IsAnimationKeysRelevant(keys, animation.property);
 
-                    // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel if the first check fails.
-                    if (!keysInRangeAreRelevant && exportParameters.bakeAnimationFrames)
+                    // Do a less efficient check against all frames in the scene for this animation channel if the first check fails, to make sure we aren't overoptimizing
+                    if (!keysInRangeAreRelevant)
                     {
                         List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(animation.keysFull);
                         OptimizeAnimations(optimizedKeysFull, true);
@@ -1091,6 +1095,8 @@ namespace Maya2Babylon
             // Select usefull keys
             var keys = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
+            AddBoundaryKeyframes(animation, keys, from, to);
+
             bool keysInRangeAreRelevant = true;
 
             // Optimize these keys
@@ -1101,8 +1107,8 @@ namespace Maya2Babylon
                 OptimizeAnimations(keys, false);
                 keysInRangeAreRelevant = IsAnimationKeysRelevant(keys, animation.property);
 
-                // if we are baking the animation frames, then do a less efficient check against all frames in the scene for this animation channel if the first check fails.
-                if (!keysInRangeAreRelevant && exportParameters.bakeAnimationFrames)
+                // Do a less efficient check against all frames in the scene for this animation channel if the first check fails, to make sure we aren't overoptimizing
+                if (!keysInRangeAreRelevant)
                 {
                     List<BabylonAnimationKey> optimizedKeysFull = new List<BabylonAnimationKey>(animation.keysFull);
                     OptimizeAnimations(optimizedKeysFull, true);
@@ -1118,6 +1124,50 @@ namespace Maya2Babylon
             }
 
             return subAnimations;
+        }
+
+        private void AddBoundaryKeyframes(BabylonAnimation animation, List<BabylonAnimationKey> keysInRange, float from, float to)
+        {
+            // Add extra boundary keyframes to start and end of segment if appropriate
+            // add a first frame key if we need to:
+            if (!keysInRange.Any(key => key.frame == from))
+            {
+                var lastKeyBeforeFrom = animation.keysFull.LastOrDefault(key => key.frame < from);
+                if (lastKeyBeforeFrom != null)
+                {
+                    var firstKeyAfterFrom = animation.keysFull.FirstOrDefault(key => key.frame > from);
+                    var interpolatedKey = new BabylonAnimationKey() { frame = from };
+                    if (firstKeyAfterFrom != null)
+                    {
+                        interpolatedKey.values = BabylonAnimationKey.Interpolate(animation, lastKeyBeforeFrom, firstKeyAfterFrom, from);
+                    }
+                    else
+                    {
+                        interpolatedKey.values = new List<float>(firstKeyAfterFrom.values).ToArray();
+                    }
+                    keysInRange.Insert(0, interpolatedKey);
+                }
+            }
+
+            // add a last frame key if we need to:
+            if (!keysInRange.Any(key => key.frame == to))
+            {
+                var lastKeyBeforeTo = animation.keysFull.LastOrDefault(key => key.frame < to);
+                if (lastKeyBeforeTo != null)
+                {
+                    var firstKeyAfterTo = animation.keysFull.FirstOrDefault(key => key.frame > to);
+                    var interpolatedKey = new BabylonAnimationKey() { frame = to };
+                    if (firstKeyAfterTo != null)
+                    {
+                        interpolatedKey.values = BabylonAnimationKey.Interpolate(animation, lastKeyBeforeTo, firstKeyAfterTo, to);
+                    }
+                    else
+                    {
+                        interpolatedKey.values = new List<float>(lastKeyBeforeTo.values).ToArray();
+                    }
+                    keysInRange.Add(interpolatedKey);
+                }
+            }
         }
 
         private BabylonAnimation CreatePositionAnimation(float from, float to, float[] position)

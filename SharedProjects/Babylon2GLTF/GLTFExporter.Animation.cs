@@ -106,11 +106,11 @@ namespace Babylon2GLTF
 
                             if (nodeHasAnimations && babylonNode.animations[0].property == "_matrix") //TODO: Is this check accurate for deciphering between bones and nodes?
                             {
-                                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode);
+                                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, animGroup);
                             }
                             else
                             {
-                                ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene);
+                                ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene, animGroup);
                             }
                         }
                         else
@@ -142,7 +142,7 @@ namespace Babylon2GLTF
             }
         }
 
-        private void ExportNodeAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonNode babylonNode, GLTFNode gltfNode, BabylonScene babylonScene)
+        private void ExportNodeAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonNode babylonNode, GLTFNode gltfNode, BabylonScene babylonScene, BabylonAnimationGroup animationGroup = null)
         {
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
@@ -151,7 +151,17 @@ namespace Babylon2GLTF
             
             // Combine babylon animations from .babylon file and cached ones
             var babylonAnimations = new List<BabylonAnimation>();
-            if (babylonNode.animations != null)
+            if (animationGroup != null)
+            {
+                var targetedAnimation = animationGroup.targetedAnimations.FirstOrDefault(animation => animation.targetId == babylonNode.id);
+                if (targetedAnimation != null)
+                {
+                    babylonAnimations.Add(targetedAnimation.animation);
+                }
+            }
+
+            // Do not include the node animations if a provided animation group already includes them.
+            if (babylonNode.animations != null && babylonAnimations.Count <= 0)
             {
                 babylonAnimations.AddRange(babylonNode.animations);
             }
@@ -254,7 +264,7 @@ namespace Babylon2GLTF
             ExportGLTFExtension(babylonNode, ref gltfAnimation,gltf);
         }
 
-        private void ExportBoneAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonNode babylonNode, GLTFNode gltfNode)
+        private void ExportBoneAnimation(GLTFAnimation gltfAnimation, int startFrame, int endFrame, GLTF gltf, BabylonNode babylonNode, GLTFNode gltfNode, BabylonAnimationGroup animationGroup = null)
         {
             var channelList = gltfAnimation.ChannelList;
             var samplerList = gltfAnimation.SamplerList;
@@ -263,7 +273,21 @@ namespace Babylon2GLTF
             {
                 logger.RaiseMessage("GLTFExporter.Animation | Export animation of bone named: " + babylonNode.name, 2);
 
-                var babylonAnimation = babylonNode.animations[0];
+                BabylonAnimation babylonAnimation = null;
+                if (animationGroup != null)
+                {
+                    var targetedAnimation = animationGroup.targetedAnimations.FirstOrDefault(animation => animation.targetId == babylonNode.id);
+                    if (targetedAnimation != null)
+                    {
+                        babylonAnimation = targetedAnimation.animation;
+                    }
+                }
+
+                // otherwise fall back to the full animation track on the node.
+                if (babylonAnimation == null)
+                {
+                    babylonAnimation = babylonNode.animations[0];
+                }
 
                 var babylonAnimationKeysInRange = babylonAnimation.keys.Where(key => key.frame >= startFrame && key.frame <= endFrame);
                 if (babylonAnimationKeysInRange.Count() <= 0)
