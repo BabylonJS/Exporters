@@ -39,7 +39,7 @@ namespace Max2Babylon
 
         public static bool HasNode(this IILayer layer,IINode node,bool checkInChild = true)
         {
-#if MAX2020
+#if MAX2020 || MAX2021
             ITab<IINode> nodes = Loader.Global.INodeTab.Create();
 #else
             ITab<IINode> nodes = Loader.Global.INodeTabNS.Create();
@@ -106,7 +106,7 @@ namespace Max2Babylon
         public static IEnumerable<IINode> LayerNodes(this IILayer layer)
         {
             IILayerProperties layerProp = Loader.IIFPLayerManager.GetLayer(layer.Name);
-#if MAX2020
+#if MAX2020 || MAX2021
             ITab<IINode> nodes = Loader.Global.INodeTab.Create();
 #else
             ITab<IINode> nodes = Loader.Global.INodeTabNS.Create();
