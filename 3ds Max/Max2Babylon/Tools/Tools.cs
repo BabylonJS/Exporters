@@ -815,7 +815,7 @@ namespace Max2Babylon
             IPolyObject polyObject = result.GetPolyObjectFromNode();
             IEPoly nodeEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
 
-#if MAX2020
+#if MAX2020 || MAX2021
             IINodeTab toflatten = Loader.Global.INodeTab.Create();
             IINodeTab resultTarget = Loader.Global.INodeTab.Create();
 #else
@@ -887,7 +887,7 @@ namespace Max2Babylon
 
         public static bool IsNodeSelected(this IINode node)
         {
-#if MAX2020
+#if MAX2020 || MAX2021
             IINodeTab selection = Loader.Global.INodeTab.Create();
 #else
             IINodeTab selection = Loader.Global.INodeTabNS.Create();
@@ -937,7 +937,7 @@ namespace Max2Babylon
 
         public static List<IIContainerObject> GetContainerInSelection()
         {
-#if MAX2020
+#if MAX2020 || MAX2021
             IINodeTab selection = Loader.Global.INodeTab.Create();
 #else
             IINodeTab selection = Loader.Global.INodeTabNS.Create();
