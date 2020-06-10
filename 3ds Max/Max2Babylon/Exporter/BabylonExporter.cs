@@ -141,7 +141,7 @@ namespace Max2Babylon
 
             IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
 
-#if MAX2020
+#if MAX2020 || MAX2021
             var tobake = Loader.Global.INodeTab.Create();
 #else
             var tobake = Loader.Global.NodeTab.Create();
@@ -360,7 +360,9 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2020
+#if MAX2021
+                version = "2021",
+#elif MAX2020
                 version = "2020",
 #elif MAX2019
                 version = "2019",
@@ -369,7 +371,7 @@ namespace Max2Babylon
 #elif MAX2017
                 version = "2017",
 #else
-               version = Loader.Core.ProductVersion.ToString(),
+                version = Loader.Core.ProductVersion.ToString(),
 #endif
                 exporter_version = exporterVersion,
                 file = outputFileName
@@ -1104,7 +1106,7 @@ namespace Max2Babylon
                 List<T> list = new List<T>();
                 for (int i = 0; i < tab.Count; i++)
                 {
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021
                     var item = tab[i];
 #else
                     var item = tab[new IntPtr(i)];
