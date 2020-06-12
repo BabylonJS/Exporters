@@ -564,8 +564,7 @@ namespace Max2Babylon
             // Default light
             if (exportParameters.exportAnimationsOnly == false)
             {
-                bool addDefaultLight = rawScene.GetBoolProperty("babylonjs_addDefaultLight", 1);
-                if (!exportParameters.pbrNoLight && addDefaultLight && babylonScene.LightsList.Count == 0)
+                if (!exportParameters.pbrNoLight && babylonScene.LightsList.Count == 0)
                 {
                     RaiseWarning("No light defined", 1);
                     RaiseWarning("A default hemispheric light was added for your convenience", 1);
