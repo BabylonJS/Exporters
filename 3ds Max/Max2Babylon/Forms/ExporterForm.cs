@@ -62,7 +62,7 @@ namespace Max2Babylon
             // Check if the gltf-pipeline module is installed
             this.gltfPipelineInstalled = GLTFPipelineUtilities.IsGLTFPipelineInstalled();
 
-            groupBox1.MouseMove += groupBox1_MouseMove;
+            exportOptionsScrollPanel.MouseMove += exportOptionsScrollPanel_MouseMove;
         }
 
         private void LoadOptions()
@@ -264,7 +264,7 @@ namespace Max2Babylon
 
         private async Task<bool> DoExport(ExportItemList exportItemList)
         {
-            treeView.Nodes.Clear();
+            logTreeView.Nodes.Clear();
 
             bool allSucceeded = true;
             foreach (ExportItem item in exportItemList)
@@ -356,7 +356,7 @@ namespace Max2Babylon
             exporter = new BabylonExporter();
 
             if (clearLogs)
-                treeView.Nodes.Clear();
+                logTreeView.Nodes.Clear();
 
             exporter.OnExportProgressChanged += progress =>
             {
@@ -566,11 +566,11 @@ namespace Max2Babylon
                 if (rank < 0 || rank > currentRank + 1)
                 {
                     rank = 0;
-                    treeView.Nodes.Add(new TreeNode("Invalid rank passed to CreateTreeNode (through RaiseMessage, RaiseWarning or RaiseError)!") { ForeColor = Color.DarkOrange });
+                    logTreeView.Nodes.Add(new TreeNode("Invalid rank passed to CreateTreeNode (through RaiseMessage, RaiseWarning or RaiseError)!") { ForeColor = Color.DarkOrange });
                 }
                 if (rank == 0)
                 {
-                    treeView.Nodes.Add(newNode);
+                    logTreeView.Nodes.Add(newNode);
                 }
                 else if (rank == currentRank + 1)
                 {
@@ -615,7 +615,7 @@ namespace Max2Babylon
 
         private void butCopyToClipboard_Click(object sender, EventArgs e)
         {
-            var textString = treeView.ToPrettyString();
+            var textString = logTreeView.ToPrettyString();
             if (textString != string.Empty)
             {
                 System.Windows.Forms.Clipboard.SetText(textString);
@@ -685,7 +685,6 @@ namespace Max2Babylon
                     txtTexturesPath.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
-                    chkNoAutoLight.Enabled = true;
                     chkFullPBR.Enabled = true;
                     btnEnvBrowse.Enabled = true;
                     txtEnvironmentName.Enabled = true;
@@ -702,8 +701,6 @@ namespace Max2Babylon
                     txtTexturesPath.Enabled = true;
                     textureLabel.Enabled = true;
                     btnTxtBrowse.Enabled = true;
-                    chkNoAutoLight.Enabled = false;
-                    chkNoAutoLight.Checked = false;
                     chkFullPBR.Enabled = false;
                     chkFullPBR.Checked = false;
                     btnEnvBrowse.Enabled = false;
@@ -725,8 +722,6 @@ namespace Max2Babylon
                     txtTexturesPath.Enabled = false;
                     textureLabel.Enabled = false;
                     btnTxtBrowse.Enabled = false;
-                    chkNoAutoLight.Enabled = false;
-                    chkNoAutoLight.Checked = false;
                     chkFullPBR.Enabled = false;
                     chkFullPBR.Checked = false;
                     btnEnvBrowse.Enabled = false;
@@ -748,9 +743,9 @@ namespace Max2Babylon
         /// <param name="sender"></param>
         /// <param name="e"></param>
         bool IsShown = false;
-        private void groupBox1_MouseMove(object sender, MouseEventArgs e)
+        private void exportOptionsScrollPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            Control ctrl = groupBox1.GetChildAtPoint(e.Location);
+            Control ctrl = exportOptionsScrollPanel.GetChildAtPoint(e.Location);
 
             if (ctrl != null)
             {
