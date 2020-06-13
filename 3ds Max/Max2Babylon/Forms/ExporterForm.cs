@@ -388,10 +388,14 @@ namespace Max2Babylon
                 Application.DoEvents();
             };
 
+            // disable UI controls during export.
             butExport.Enabled = false;
             butExportAndRun.Enabled = false;
             butMultiExport.Enabled = false;
             butCancel.Enabled = true;
+
+            // switch to the log tab.
+            exporterTabControl.SelectTab(1);
 
             bool success = true;
             try
