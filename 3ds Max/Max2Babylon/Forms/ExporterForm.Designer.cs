@@ -348,7 +348,7 @@ namespace Max2Babylon
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(17, 406);
+            this.label5.Location = new System.Drawing.Point(17, 401);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(66, 13);
@@ -358,7 +358,7 @@ namespace Max2Babylon
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(2, 326);
+            this.label8.Location = new System.Drawing.Point(2, 321);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(113, 13);
             this.label8.TabIndex = 33;
@@ -367,7 +367,7 @@ namespace Max2Babylon
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 369);
+            this.label7.Location = new System.Drawing.Point(7, 364);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(112, 13);
@@ -378,7 +378,7 @@ namespace Max2Babylon
             // 
             this.txtEnvironmentName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEnvironmentName.Location = new System.Drawing.Point(87, 404);
+            this.txtEnvironmentName.Location = new System.Drawing.Point(87, 399);
             this.txtEnvironmentName.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtEnvironmentName.Multiline = false;
             this.txtEnvironmentName.Name = "txtEnvironmentName";
@@ -389,7 +389,7 @@ namespace Max2Babylon
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 424);
+            this.label6.Location = new System.Drawing.Point(7, 419);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(76, 13);
@@ -400,7 +400,7 @@ namespace Max2Babylon
             // 
             this.chkFullPBR.AutoSize = true;
             this.chkFullPBR.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkFullPBR.Location = new System.Drawing.Point(14, 387);
+            this.chkFullPBR.Location = new System.Drawing.Point(14, 382);
             this.chkFullPBR.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkFullPBR.Name = "chkFullPBR";
             this.chkFullPBR.Size = new System.Drawing.Size(86, 17);
@@ -412,7 +412,7 @@ namespace Max2Babylon
             // 
             this.btnEnvBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEnvBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEnvBrowse.Location = new System.Drawing.Point(723, 402);
+            this.btnEnvBrowse.Location = new System.Drawing.Point(723, 397);
             this.btnEnvBrowse.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnEnvBrowse.Name = "btnEnvBrowse";
             this.btnEnvBrowse.Size = new System.Drawing.Size(28, 23);
@@ -486,7 +486,7 @@ namespace Max2Babylon
             // 
             this.chkKHRMaterialsUnlit.AutoSize = true;
             this.chkKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(319, 441);
+            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(319, 436);
             this.chkKHRMaterialsUnlit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkKHRMaterialsUnlit.Name = "chkKHRMaterialsUnlit";
             this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
@@ -498,7 +498,7 @@ namespace Max2Babylon
             // 
             this.chkKHRTextureTransform.AutoSize = true;
             this.chkKHRTextureTransform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRTextureTransform.Location = new System.Drawing.Point(168, 441);
+            this.chkKHRTextureTransform.Location = new System.Drawing.Point(168, 436);
             this.chkKHRTextureTransform.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkKHRTextureTransform.Name = "chkKHRTextureTransform";
             this.chkKHRTextureTransform.Size = new System.Drawing.Size(133, 17);
@@ -510,7 +510,7 @@ namespace Max2Babylon
             // 
             this.chkKHRLightsPunctual.AutoSize = true;
             this.chkKHRLightsPunctual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRLightsPunctual.Location = new System.Drawing.Point(20, 441);
+            this.chkKHRLightsPunctual.Location = new System.Drawing.Point(20, 436);
             this.chkKHRLightsPunctual.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkKHRLightsPunctual.Name = "chkKHRLightsPunctual";
             this.chkKHRLightsPunctual.Size = new System.Drawing.Size(123, 17);
@@ -611,7 +611,7 @@ namespace Max2Babylon
             this.chkExportMorphNormals.Checked = true;
             this.chkExportMorphNormals.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportMorphNormals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphNormals.Location = new System.Drawing.Point(162, 342);
+            this.chkExportMorphNormals.Location = new System.Drawing.Point(162, 337);
             this.chkExportMorphNormals.Name = "chkExportMorphNormals";
             this.chkExportMorphNormals.Size = new System.Drawing.Size(124, 17);
             this.chkExportMorphNormals.TabIndex = 16;
@@ -623,7 +623,7 @@ namespace Max2Babylon
             // 
             this.chkExportMorphTangents.AutoSize = true;
             this.chkExportMorphTangents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphTangents.Location = new System.Drawing.Point(14, 342);
+            this.chkExportMorphTangents.Location = new System.Drawing.Point(14, 337);
             this.chkExportMorphTangents.Name = "chkExportMorphTangents";
             this.chkExportMorphTangents.Size = new System.Drawing.Size(129, 17);
             this.chkExportMorphTangents.TabIndex = 16;
