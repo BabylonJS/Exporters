@@ -713,9 +713,9 @@ namespace Max2Babylon
             this.chkAutoSave.Location = new System.Drawing.Point(14, 157);
             this.chkAutoSave.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkAutoSave.Name = "chkAutoSave";
-            this.chkAutoSave.Size = new System.Drawing.Size(130, 17);
+            this.chkAutoSave.Size = new System.Drawing.Size(107, 17);
             this.chkAutoSave.TabIndex = 15;
-            this.chkAutoSave.Text = "Auto save 3ds Max file";
+            this.chkAutoSave.Text = "Save 3ds Max file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
             this.chkAutoSave.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
