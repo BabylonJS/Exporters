@@ -26,8 +26,6 @@ namespace Max2Babylon
         public bool ExportQuaternionsInsteadOfEulers { get; set; }
 
         private bool isBabylonExported, isGltfExported;
-        private bool optimizeAnimations;
-        private bool exportNonAnimated;
 
         public static string exporterVersion = "Custom.Build.Version";
         public float scaleFactorToMeters = 1.0f;
@@ -342,10 +340,6 @@ namespace Max2Babylon
             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
-
-            // Get scene parameters
-            optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations");
-            exportNonAnimated = Loader.Core.RootNode.GetBoolProperty("babylonjs_animgroup_exportnonanimated");
 
             // Save scene
             if (exportParameters.autoSaveSceneFile)
