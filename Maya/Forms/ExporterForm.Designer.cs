@@ -90,10 +90,9 @@ namespace Maya2Babylon.Forms
             this.butExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExport.Enabled = false;
             this.butExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExport.Location = new System.Drawing.Point(319, 693);
-            this.butExport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butExport.Location = new System.Drawing.Point(213, 450);
             this.butExport.Name = "butExport";
-            this.butExport.Size = new System.Drawing.Size(296, 42);
+            this.butExport.Size = new System.Drawing.Size(197, 27);
             this.butExport.TabIndex = 100;
             this.butExport.Text = "Export";
             this.butExport.UseVisualStyleBackColor = true;
@@ -102,10 +101,9 @@ namespace Maya2Babylon.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 26);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(6, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 20);
+            this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "File name:";
             // 
@@ -113,10 +111,9 @@ namespace Maya2Babylon.Forms
             // 
             this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilename.Location = new System.Drawing.Point(27, 52);
-            this.txtFilename.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtFilename.Location = new System.Drawing.Point(18, 34);
             this.txtFilename.Name = "txtFilename";
-            this.txtFilename.Size = new System.Drawing.Size(566, 26);
+            this.txtFilename.Size = new System.Drawing.Size(379, 20);
             this.txtFilename.TabIndex = 2;
             this.txtFilename.TextChanged += new System.EventHandler(this.txtFilename_TextChanged);
             // 
@@ -124,10 +121,9 @@ namespace Maya2Babylon.Forms
             // 
             this.butBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.butBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butBrowse.Location = new System.Drawing.Point(604, 49);
-            this.butBrowse.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butBrowse.Location = new System.Drawing.Point(403, 32);
             this.butBrowse.Name = "butBrowse";
-            this.butBrowse.Size = new System.Drawing.Size(64, 35);
+            this.butBrowse.Size = new System.Drawing.Size(43, 23);
             this.butBrowse.TabIndex = 3;
             this.butBrowse.Text = "...";
             this.butBrowse.UseVisualStyleBackColor = true;
@@ -143,10 +139,9 @@ namespace Maya2Babylon.Forms
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(18, 1205);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.progressBar.Location = new System.Drawing.Point(12, 655);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(957, 35);
+            this.progressBar.Size = new System.Drawing.Size(638, 23);
             this.progressBar.TabIndex = 103;
             // 
             // treeView
@@ -154,10 +149,9 @@ namespace Maya2Babylon.Forms
             this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.Location = new System.Drawing.Point(18, 745);
-            this.treeView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.treeView.Location = new System.Drawing.Point(12, 484);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(1213, 330);
+            this.treeView.Size = new System.Drawing.Size(810, 165);
             this.treeView.TabIndex = 102;
             // 
             // butCancel
@@ -165,10 +159,9 @@ namespace Maya2Babylon.Forms
             this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCancel.Enabled = false;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(984, 1205);
-            this.butCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butCancel.Location = new System.Drawing.Point(656, 655);
             this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(120, 35);
+            this.butCancel.Size = new System.Drawing.Size(80, 23);
             this.butCancel.TabIndex = 104;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
@@ -178,10 +171,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkManifest.AutoSize = true;
             this.chkManifest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkManifest.Location = new System.Drawing.Point(27, 215);
-            this.chkManifest.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkManifest.Location = new System.Drawing.Point(18, 140);
             this.chkManifest.Name = "chkManifest";
-            this.chkManifest.Size = new System.Drawing.Size(167, 24);
+            this.chkManifest.Size = new System.Drawing.Size(112, 17);
             this.chkManifest.TabIndex = 14;
             this.chkManifest.Text = "Generate .manifest";
             this.chkManifest.UseVisualStyleBackColor = true;
@@ -189,10 +181,9 @@ namespace Maya2Babylon.Forms
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 151);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(6, 98);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 20);
+            this.label2.Size = new System.Drawing.Size(46, 13);
             this.label2.TabIndex = 10;
             this.label2.Text = "Options:";
             // 
@@ -202,10 +193,9 @@ namespace Maya2Babylon.Forms
             this.chkCopyTextures.Checked = true;
             this.chkCopyTextures.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkCopyTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkCopyTextures.Location = new System.Drawing.Point(249, 285);
-            this.chkCopyTextures.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkCopyTextures.Location = new System.Drawing.Point(166, 185);
             this.chkCopyTextures.Name = "chkCopyTextures";
-            this.chkCopyTextures.Size = new System.Drawing.Size(195, 24);
+            this.chkCopyTextures.Size = new System.Drawing.Size(132, 17);
             this.chkCopyTextures.TabIndex = 11;
             this.chkCopyTextures.Text = "Copy textures to output";
             this.chkCopyTextures.UseVisualStyleBackColor = true;
@@ -253,11 +243,9 @@ namespace Maya2Babylon.Forms
             this.groupBox1.Controls.Add(this.chkManifest);
             this.groupBox1.Controls.Add(this.butBrowse);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(18, 9);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox1.Size = new System.Drawing.Size(678, 674);
+            this.groupBox1.Size = new System.Drawing.Size(452, 438);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
@@ -265,10 +253,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkDefaultSkybox.AutoSize = true;
             this.chkDefaultSkybox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkDefaultSkybox.Location = new System.Drawing.Point(481, 526);
-            this.chkDefaultSkybox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkDefaultSkybox.Location = new System.Drawing.Point(321, 342);
             this.chkDefaultSkybox.Name = "chkDefaultSkybox";
-            this.chkDefaultSkybox.Size = new System.Drawing.Size(170, 24);
+            this.chkDefaultSkybox.Size = new System.Drawing.Size(117, 17);
             this.chkDefaultSkybox.TabIndex = 34;
             this.chkDefaultSkybox.Text = "Add Default Skybox";
             this.chkDefaultSkybox.UseVisualStyleBackColor = true;
@@ -277,10 +264,9 @@ namespace Maya2Babylon.Forms
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(26, 615);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Location = new System.Drawing.Point(17, 400);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(98, 20);
+            this.label9.Size = new System.Drawing.Size(66, 13);
             this.label9.TabIndex = 33;
             this.label9.Text = "Environment";
             // 
@@ -288,20 +274,18 @@ namespace Maya2Babylon.Forms
             // 
             this.txtEnvironmentName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEnvironmentName.Location = new System.Drawing.Point(133, 610);
-            this.txtEnvironmentName.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtEnvironmentName.Location = new System.Drawing.Point(89, 396);
             this.txtEnvironmentName.Name = "txtEnvironmentName";
-            this.txtEnvironmentName.Size = new System.Drawing.Size(464, 26);
+            this.txtEnvironmentName.Size = new System.Drawing.Size(311, 20);
             this.txtEnvironmentName.TabIndex = 31;
             // 
             // butEnvironmentPath
             // 
             this.butEnvironmentPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butEnvironmentPath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butEnvironmentPath.Location = new System.Drawing.Point(608, 607);
-            this.butEnvironmentPath.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butEnvironmentPath.Location = new System.Drawing.Point(405, 395);
             this.butEnvironmentPath.Name = "butEnvironmentPath";
-            this.butEnvironmentPath.Size = new System.Drawing.Size(64, 35);
+            this.butEnvironmentPath.Size = new System.Drawing.Size(43, 23);
             this.butEnvironmentPath.TabIndex = 32;
             this.butEnvironmentPath.Text = "...";
             this.butEnvironmentPath.UseVisualStyleBackColor = true;
@@ -311,10 +295,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkFullPBR.AutoSize = true;
             this.chkFullPBR.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkFullPBR.Location = new System.Drawing.Point(250, 526);
-            this.chkFullPBR.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkFullPBR.Location = new System.Drawing.Point(167, 342);
             this.chkFullPBR.Name = "chkFullPBR";
-            this.chkFullPBR.Size = new System.Drawing.Size(125, 24);
+            this.chkFullPBR.Size = new System.Drawing.Size(86, 17);
             this.chkFullPBR.TabIndex = 30;
             this.chkFullPBR.Text = "Use Full PBR";
             this.chkFullPBR.UseVisualStyleBackColor = true;
@@ -323,10 +306,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkNoAutoLight.AutoSize = true;
             this.chkNoAutoLight.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkNoAutoLight.Location = new System.Drawing.Point(28, 526);
-            this.chkNoAutoLight.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkNoAutoLight.Location = new System.Drawing.Point(19, 342);
             this.chkNoAutoLight.Name = "chkNoAutoLight";
-            this.chkNoAutoLight.Size = new System.Drawing.Size(165, 24);
+            this.chkNoAutoLight.Size = new System.Drawing.Size(113, 17);
             this.chkNoAutoLight.TabIndex = 29;
             this.chkNoAutoLight.Text = "No Automatic Light";
             this.chkNoAutoLight.UseVisualStyleBackColor = true;
@@ -334,10 +316,9 @@ namespace Maya2Babylon.Forms
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 502);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Location = new System.Drawing.Point(6, 326);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(162, 20);
+            this.label8.Size = new System.Drawing.Size(109, 13);
             this.label8.TabIndex = 28;
             this.label8.Text = "Babylon PBR Options";
             // 
@@ -345,10 +326,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkExportAnimationsOnly.AutoSize = true;
             this.chkExportAnimationsOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportAnimationsOnly.Location = new System.Drawing.Point(481, 472);
-            this.chkExportAnimationsOnly.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportAnimationsOnly.Location = new System.Drawing.Point(321, 307);
             this.chkExportAnimationsOnly.Name = "chkExportAnimationsOnly";
-            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(194, 24);
+            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(131, 17);
             this.chkExportAnimationsOnly.TabIndex = 27;
             this.chkExportAnimationsOnly.Text = "Export Animations Only";
             this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
@@ -359,10 +339,9 @@ namespace Maya2Babylon.Forms
             this.chkExportAnimations.Checked = true;
             this.chkExportAnimations.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportAnimations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportAnimations.Location = new System.Drawing.Point(250, 472);
-            this.chkExportAnimations.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportAnimations.Location = new System.Drawing.Point(167, 307);
             this.chkExportAnimations.Name = "chkExportAnimations";
-            this.chkExportAnimations.Size = new System.Drawing.Size(159, 24);
+            this.chkExportAnimations.Size = new System.Drawing.Size(107, 17);
             this.chkExportAnimations.TabIndex = 27;
             this.chkExportAnimations.Text = "Export Animations";
             this.chkExportAnimations.UseVisualStyleBackColor = true;
@@ -371,10 +350,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkBakeAnimationFrames.AutoSize = true;
             this.chkBakeAnimationFrames.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkBakeAnimationFrames.Location = new System.Drawing.Point(28, 472);
-            this.chkBakeAnimationFrames.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkBakeAnimationFrames.Location = new System.Drawing.Point(19, 307);
             this.chkBakeAnimationFrames.Name = "chkBakeAnimationFrames";
-            this.chkBakeAnimationFrames.Size = new System.Drawing.Size(200, 24);
+            this.chkBakeAnimationFrames.Size = new System.Drawing.Size(134, 17);
             this.chkBakeAnimationFrames.TabIndex = 27;
             this.chkBakeAnimationFrames.Text = "Bake Animation Frames";
             this.chkBakeAnimationFrames.UseVisualStyleBackColor = true;
@@ -382,10 +360,9 @@ namespace Maya2Babylon.Forms
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 446);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(6, 290);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(88, 20);
+            this.label7.Size = new System.Drawing.Size(58, 13);
             this.label7.TabIndex = 26;
             this.label7.Text = "Animations";
             // 
@@ -393,10 +370,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkExportKHRMaterialsUnlit.AutoSize = true;
             this.chkExportKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(481, 411);
-            this.chkExportKHRMaterialsUnlit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportKHRMaterialsUnlit.Location = new System.Drawing.Point(321, 267);
             this.chkExportKHRMaterialsUnlit.Name = "chkExportKHRMaterialsUnlit";
-            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(175, 24);
+            this.chkExportKHRMaterialsUnlit.Size = new System.Drawing.Size(118, 17);
             this.chkExportKHRMaterialsUnlit.TabIndex = 25;
             this.chkExportKHRMaterialsUnlit.Text = "KHR_materials_unlit";
             this.chkExportKHRMaterialsUnlit.UseVisualStyleBackColor = true;
@@ -405,10 +381,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkExportKHRTextureTransform.AutoSize = true;
             this.chkExportKHRTextureTransform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportKHRTextureTransform.Location = new System.Drawing.Point(250, 411);
-            this.chkExportKHRTextureTransform.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportKHRTextureTransform.Location = new System.Drawing.Point(167, 267);
             this.chkExportKHRTextureTransform.Name = "chkExportKHRTextureTransform";
-            this.chkExportKHRTextureTransform.Size = new System.Drawing.Size(199, 24);
+            this.chkExportKHRTextureTransform.Size = new System.Drawing.Size(133, 17);
             this.chkExportKHRTextureTransform.TabIndex = 25;
             this.chkExportKHRTextureTransform.Text = "KHR_texture_transform";
             this.chkExportKHRTextureTransform.UseVisualStyleBackColor = true;
@@ -417,10 +392,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkExportKHRLightsPunctual.AutoSize = true;
             this.chkExportKHRLightsPunctual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportKHRLightsPunctual.Location = new System.Drawing.Point(28, 411);
-            this.chkExportKHRLightsPunctual.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportKHRLightsPunctual.Location = new System.Drawing.Point(19, 267);
             this.chkExportKHRLightsPunctual.Name = "chkExportKHRLightsPunctual";
-            this.chkExportKHRLightsPunctual.Size = new System.Drawing.Size(180, 24);
+            this.chkExportKHRLightsPunctual.Size = new System.Drawing.Size(123, 17);
             this.chkExportKHRLightsPunctual.TabIndex = 24;
             this.chkExportKHRLightsPunctual.Text = "KHR_lights_punctual";
             this.chkExportKHRLightsPunctual.UseVisualStyleBackColor = true;
@@ -428,10 +402,9 @@ namespace Maya2Babylon.Forms
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 379);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(6, 246);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(122, 20);
+            this.label6.Size = new System.Drawing.Size(82, 13);
             this.label6.TabIndex = 23;
             this.label6.Text = "glTF Extensions";
             this.label6.Click += new System.EventHandler(this.label6_Click);
@@ -442,10 +415,9 @@ namespace Maya2Babylon.Forms
             this.chkExportMorphNormal.Checked = true;
             this.chkExportMorphNormal.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportMorphNormal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphNormal.Location = new System.Drawing.Point(28, 339);
-            this.chkExportMorphNormal.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportMorphNormal.Location = new System.Drawing.Point(19, 220);
             this.chkExportMorphNormal.Name = "chkExportMorphNormal";
-            this.chkExportMorphNormal.Size = new System.Drawing.Size(128, 24);
+            this.chkExportMorphNormal.Size = new System.Drawing.Size(87, 17);
             this.chkExportMorphNormal.TabIndex = 21;
             this.chkExportMorphNormal.Text = "Export normal";
             this.chkExportMorphNormal.UseVisualStyleBackColor = true;
@@ -454,10 +426,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkExportMorphTangent.AutoSize = true;
             this.chkExportMorphTangent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphTangent.Location = new System.Drawing.Point(250, 339);
-            this.chkExportMorphTangent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportMorphTangent.Location = new System.Drawing.Point(167, 220);
             this.chkExportMorphTangent.Name = "chkExportMorphTangent";
-            this.chkExportMorphTangent.Size = new System.Drawing.Size(135, 24);
+            this.chkExportMorphTangent.Size = new System.Drawing.Size(92, 17);
             this.chkExportMorphTangent.TabIndex = 22;
             this.chkExportMorphTangent.Text = "Export tangent";
             this.chkExportMorphTangent.UseVisualStyleBackColor = true;
@@ -465,10 +436,9 @@ namespace Maya2Babylon.Forms
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 314);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(7, 204);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(160, 20);
+            this.label5.Size = new System.Drawing.Size(108, 13);
             this.label5.TabIndex = 20;
             this.label5.Text = "MorphTarget options:";
             // 
@@ -476,20 +446,18 @@ namespace Maya2Babylon.Forms
             // 
             this.chkDracoCompression.AutoSize = true;
             this.chkDracoCompression.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkDracoCompression.Location = new System.Drawing.Point(249, 251);
-            this.chkDracoCompression.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkDracoCompression.Location = new System.Drawing.Point(166, 163);
             this.chkDracoCompression.Name = "chkDracoCompression";
-            this.chkDracoCompression.Size = new System.Drawing.Size(200, 24);
+            this.chkDracoCompression.Size = new System.Drawing.Size(136, 17);
             this.chkDracoCompression.TabIndex = 18;
             this.chkDracoCompression.Text = "Use Draco compression";
             this.chkDracoCompression.UseVisualStyleBackColor = true;
             // 
             // txtQuality
             // 
-            this.txtQuality.Location = new System.Drawing.Point(603, 143);
-            this.txtQuality.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtQuality.Location = new System.Drawing.Point(402, 93);
             this.txtQuality.Name = "txtQuality";
-            this.txtQuality.Size = new System.Drawing.Size(61, 26);
+            this.txtQuality.Size = new System.Drawing.Size(42, 20);
             this.txtQuality.TabIndex = 9;
             this.txtQuality.Text = "100";
             this.txtQuality.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -497,10 +465,9 @@ namespace Maya2Babylon.Forms
             // labelQuality
             // 
             this.labelQuality.AutoSize = true;
-            this.labelQuality.Location = new System.Drawing.Point(476, 151);
-            this.labelQuality.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelQuality.Location = new System.Drawing.Point(317, 98);
             this.labelQuality.Name = "labelQuality";
-            this.labelQuality.Size = new System.Drawing.Size(115, 20);
+            this.labelQuality.Size = new System.Drawing.Size(79, 13);
             this.labelQuality.TabIndex = 8;
             this.labelQuality.Text = "Texture quality:";
             // 
@@ -510,10 +477,9 @@ namespace Maya2Babylon.Forms
             this.chkExportSkin.Checked = true;
             this.chkExportSkin.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportSkin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportSkin.Location = new System.Drawing.Point(480, 251);
-            this.chkExportSkin.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportSkin.Location = new System.Drawing.Point(320, 163);
             this.chkExportSkin.Name = "chkExportSkin";
-            this.chkExportSkin.Size = new System.Drawing.Size(116, 24);
+            this.chkExportSkin.Size = new System.Drawing.Size(80, 17);
             this.chkExportSkin.TabIndex = 19;
             this.chkExportSkin.Text = "Export skins";
             this.chkExportSkin.UseVisualStyleBackColor = true;
@@ -524,10 +490,9 @@ namespace Maya2Babylon.Forms
             this.chkExportMaterials.Checked = true;
             this.chkExportMaterials.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportMaterials.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMaterials.Location = new System.Drawing.Point(26, 285);
-            this.chkExportMaterials.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportMaterials.Location = new System.Drawing.Point(17, 185);
             this.chkExportMaterials.Name = "chkExportMaterials";
-            this.chkExportMaterials.Size = new System.Drawing.Size(144, 24);
+            this.chkExportMaterials.Size = new System.Drawing.Size(97, 17);
             this.chkExportMaterials.TabIndex = 17;
             this.chkExportMaterials.Text = "Export materials";
             this.chkExportMaterials.UseVisualStyleBackColor = true;
@@ -538,10 +503,9 @@ namespace Maya2Babylon.Forms
             this.chkExportTangents.Checked = true;
             this.chkExportTangents.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportTangents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportTangents.Location = new System.Drawing.Point(27, 251);
-            this.chkExportTangents.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportTangents.Location = new System.Drawing.Point(18, 163);
             this.chkExportTangents.Name = "chkExportTangents";
-            this.chkExportTangents.Size = new System.Drawing.Size(143, 24);
+            this.chkExportTangents.Size = new System.Drawing.Size(97, 17);
             this.chkExportTangents.TabIndex = 17;
             this.chkExportTangents.Text = "Export tangents";
             this.chkExportTangents.UseVisualStyleBackColor = true;
@@ -550,19 +514,17 @@ namespace Maya2Babylon.Forms
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(494, 106);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(329, 69);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 20);
+            this.label4.Size = new System.Drawing.Size(67, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "Scale factor:";
             // 
             // txtScaleFactor
             // 
-            this.txtScaleFactor.Location = new System.Drawing.Point(603, 102);
-            this.txtScaleFactor.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtScaleFactor.Location = new System.Drawing.Point(402, 66);
             this.txtScaleFactor.Name = "txtScaleFactor";
-            this.txtScaleFactor.Size = new System.Drawing.Size(61, 26);
+            this.txtScaleFactor.Size = new System.Drawing.Size(42, 20);
             this.txtScaleFactor.TabIndex = 7;
             this.txtScaleFactor.Text = "1";
             this.txtScaleFactor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -573,10 +535,9 @@ namespace Maya2Babylon.Forms
             this.chkOptimizeVertices.Checked = true;
             this.chkOptimizeVertices.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOptimizeVertices.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkOptimizeVertices.Location = new System.Drawing.Point(480, 215);
-            this.chkOptimizeVertices.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkOptimizeVertices.Location = new System.Drawing.Point(320, 140);
             this.chkOptimizeVertices.Name = "chkOptimizeVertices";
-            this.chkOptimizeVertices.Size = new System.Drawing.Size(150, 24);
+            this.chkOptimizeVertices.Size = new System.Drawing.Size(103, 17);
             this.chkOptimizeVertices.TabIndex = 16;
             this.chkOptimizeVertices.Text = "Optimize vertices";
             this.chkOptimizeVertices.UseVisualStyleBackColor = true;
@@ -584,10 +545,9 @@ namespace Maya2Babylon.Forms
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 106);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(6, 69);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(112, 20);
+            this.label3.Size = new System.Drawing.Size(74, 13);
             this.label3.TabIndex = 4;
             this.label3.Text = "Output format:";
             // 
@@ -599,10 +559,9 @@ namespace Maya2Babylon.Forms
             "binary babylon",
             "gltf",
             "glb"});
-            this.comboOutputFormat.Location = new System.Drawing.Point(129, 102);
-            this.comboOutputFormat.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.comboOutputFormat.Location = new System.Drawing.Point(86, 66);
             this.comboOutputFormat.Name = "comboOutputFormat";
-            this.comboOutputFormat.Size = new System.Drawing.Size(180, 28);
+            this.comboOutputFormat.Size = new System.Drawing.Size(121, 21);
             this.comboOutputFormat.TabIndex = 5;
             this.comboOutputFormat.SelectedIndexChanged += new System.EventHandler(this.comboOutputFormat_SelectedIndexChanged);
             // 
@@ -610,10 +569,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkOnlySelected.AutoSize = true;
             this.chkOnlySelected.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkOnlySelected.Location = new System.Drawing.Point(480, 180);
-            this.chkOnlySelected.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkOnlySelected.Location = new System.Drawing.Point(320, 117);
             this.chkOnlySelected.Name = "chkOnlySelected";
-            this.chkOnlySelected.Size = new System.Drawing.Size(172, 24);
+            this.chkOnlySelected.Size = new System.Drawing.Size(118, 17);
             this.chkOnlySelected.TabIndex = 13;
             this.chkOnlySelected.Text = "Export only selected";
             this.chkOnlySelected.UseVisualStyleBackColor = true;
@@ -622,10 +580,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkAutoSave.AutoSize = true;
             this.chkAutoSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkAutoSave.Location = new System.Drawing.Point(249, 215);
-            this.chkAutoSave.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkAutoSave.Location = new System.Drawing.Point(166, 140);
             this.chkAutoSave.Name = "chkAutoSave";
-            this.chkAutoSave.Size = new System.Drawing.Size(167, 24);
+            this.chkAutoSave.Size = new System.Drawing.Size(116, 17);
             this.chkAutoSave.TabIndex = 15;
             this.chkAutoSave.Text = "Auto save Maya file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
@@ -634,10 +591,9 @@ namespace Maya2Babylon.Forms
             // 
             this.chkHidden.AutoSize = true;
             this.chkHidden.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkHidden.Location = new System.Drawing.Point(249, 180);
-            this.chkHidden.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkHidden.Location = new System.Drawing.Point(166, 117);
             this.chkHidden.Name = "chkHidden";
-            this.chkHidden.Size = new System.Drawing.Size(183, 24);
+            this.chkHidden.Size = new System.Drawing.Size(125, 17);
             this.chkHidden.TabIndex = 12;
             this.chkHidden.Text = "Export hidden objects";
             this.chkHidden.UseVisualStyleBackColor = true;
@@ -648,10 +604,9 @@ namespace Maya2Babylon.Forms
             this.chkExportTextures.Checked = true;
             this.chkExportTextures.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExportTextures.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportTextures.Location = new System.Drawing.Point(26, 181);
-            this.chkExportTextures.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkExportTextures.Location = new System.Drawing.Point(17, 118);
             this.chkExportTextures.Name = "chkExportTextures";
-            this.chkExportTextures.Size = new System.Drawing.Size(137, 24);
+            this.chkExportTextures.Size = new System.Drawing.Size(93, 17);
             this.chkExportTextures.TabIndex = 11;
             this.chkExportTextures.Text = "Export textures";
             this.chkExportTextures.UseVisualStyleBackColor = true;
@@ -661,10 +616,9 @@ namespace Maya2Babylon.Forms
             this.butExportAndRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.butExportAndRun.Enabled = false;
             this.butExportAndRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butExportAndRun.Location = new System.Drawing.Point(621, 693);
-            this.butExportAndRun.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butExportAndRun.Location = new System.Drawing.Point(414, 450);
             this.butExportAndRun.Name = "butExportAndRun";
-            this.butExportAndRun.Size = new System.Drawing.Size(296, 42);
+            this.butExportAndRun.Size = new System.Drawing.Size(197, 27);
             this.butExportAndRun.TabIndex = 101;
             this.butExportAndRun.Text = "Export && Run";
             this.butExportAndRun.UseVisualStyleBackColor = true;
@@ -674,10 +628,9 @@ namespace Maya2Babylon.Forms
             // 
             this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butClose.Location = new System.Drawing.Point(1113, 1205);
-            this.butClose.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butClose.Location = new System.Drawing.Point(742, 655);
             this.butClose.Name = "butClose";
-            this.butClose.Size = new System.Drawing.Size(120, 35);
+            this.butClose.Size = new System.Drawing.Size(80, 23);
             this.butClose.TabIndex = 105;
             this.butClose.Text = "Close";
             this.butClose.UseVisualStyleBackColor = true;
@@ -696,10 +649,9 @@ namespace Maya2Babylon.Forms
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.Image = global::Maya2Babylon.Properties.Resources.MayaExporter;
-            this.pictureBox2.Location = new System.Drawing.Point(702, 18);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pictureBox2.Location = new System.Drawing.Point(468, 12);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(531, 258);
+            this.pictureBox2.Size = new System.Drawing.Size(354, 168);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
@@ -708,10 +660,9 @@ namespace Maya2Babylon.Forms
             // 
             this.butCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCopyToClipboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCopyToClipboard.Location = new System.Drawing.Point(1062, 1087);
-            this.butCopyToClipboard.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.butCopyToClipboard.Location = new System.Drawing.Point(708, 707);
             this.butCopyToClipboard.Name = "butCopyToClipboard";
-            this.butCopyToClipboard.Size = new System.Drawing.Size(171, 42);
+            this.butCopyToClipboard.Size = new System.Drawing.Size(114, 27);
             this.butCopyToClipboard.TabIndex = 101;
             this.butCopyToClipboard.Text = "Copy To Clipboard";
             this.butCopyToClipboard.UseVisualStyleBackColor = true;
@@ -719,10 +670,10 @@ namespace Maya2Babylon.Forms
             // 
             // ExporterForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1257, 1136);
+            this.ClientSize = new System.Drawing.Size(842, 690);
             this.Controls.Add(this.butCopyToClipboard);
             this.Controls.Add(this.butExportAndRun);
             this.Controls.Add(this.groupBox1);
@@ -734,8 +685,7 @@ namespace Maya2Babylon.Forms
             this.Controls.Add(this.butExport);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MinimumSize = new System.Drawing.Size(1279, 1146);
+            this.MinimumSize = new System.Drawing.Size(858, 688);
             this.Name = "ExporterForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Babylon.js - Export scene to babylon or glTF format";
