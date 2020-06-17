@@ -17,6 +17,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "..\SharedProje
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Babylon2GLTF", "..\SharedProjects\Babylon2GLTF\Babylon2GLTF.shproj", "{CC8BFA12-AFF1-4F9F-9EE4-C4A3A5D86237}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2020", "Maya2Babylon2020.csproj", "{9383CDB8-3A6B-4897-BA46-12241E6BB42D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{00356433-4277-48bb-ac33-92d3c47fe28b}*SharedItemsImports = 13
@@ -31,6 +33,11 @@ Global
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
 		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
 		..\SharedProjects\Utilities\Extensions.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
 		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{cc8bfa12-aff1-4f9f-9ee4-c4a3a5d86237}*SharedItemsImports = 13
 		..\SharedProjects\Utilities\Extensions.projitems*{daed1281-4757-4a4e-b252-b879b43193a3}*SharedItemsImports = 13
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
@@ -48,6 +55,10 @@ Global
 		{0AC46A8E-8C0D-4EBE-B64A-4CC274E0FF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AC46A8E-8C0D-4EBE-B64A-4CC274E0FF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AC46A8E-8C0D-4EBE-B64A-4CC274E0FF38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
