@@ -61,7 +61,7 @@ namespace Max2Babylon
                                 animationGroup.targetedAnimations.Add(targetedAnimation);
                             }
                         }
-                        else if (exportNonAnimated)
+                        else if (exportParameters.animgroupExportNonAnimated)
                         {
                             BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
                             {
@@ -99,7 +99,7 @@ namespace Max2Babylon
                                 animationGroup.targetedAnimations.Add(targetedAnimation);
                             }
                         }
-                        else if (exportNonAnimated)
+                        else if (exportParameters.animgroupExportNonAnimated)
                         {
                             BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
                             {
@@ -134,7 +134,7 @@ namespace Max2Babylon
                 var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
                 // Optimize these keys
-                if (optimizeAnimations)
+                if (exportParameters.optimizeAnimations)
                 {
                     OptimizeAnimations(keys, true);
                 }
@@ -158,7 +158,7 @@ namespace Max2Babylon
             var keys = animation.keysFull = animation.keysFull.FindAll(k => from <= k.frame && k.frame <= to);
 
             // Optimize these keys
-            if (optimizeAnimations)
+            if (exportParameters.optimizeAnimations)
             {
                 OptimizeAnimations(keys, true);
             }
@@ -546,8 +546,6 @@ namespace Max2Babylon
 
         private BabylonAnimation ExportAnimation(string property, Func<int, float[]> extractValueFunc, BabylonAnimation.DataType dataType, bool removeLinearAnimationKeys = true)
         {
-            var optimizeAnimations = !Loader.Core.RootNode.GetBoolProperty("babylonjs_donotoptimizeanimations"); // reverse negation for clarity
-
             var start = Loader.Core.AnimRange.Start;
             var end = Loader.Core.AnimRange.End;
 
@@ -568,7 +566,7 @@ namespace Max2Babylon
             var keysFull = new List<BabylonAnimationKey>(keys);
 
             // Optimization process always keeps first and last frames
-            if (optimizeAnimations)
+            if (exportParameters.optimizeAnimations)
             {
                 OptimizeAnimations(keys, removeLinearAnimationKeys);
             }
