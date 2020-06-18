@@ -139,9 +139,9 @@ namespace Maya2Babylon.Forms
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 655);
+            this.progressBar.Location = new System.Drawing.Point(12, 659);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(638, 23);
+            this.progressBar.Size = new System.Drawing.Size(518, 23);
             this.progressBar.TabIndex = 103;
             // 
             // treeView
@@ -151,7 +151,7 @@ namespace Maya2Babylon.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView.Location = new System.Drawing.Point(12, 484);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(810, 165);
+            this.treeView.Size = new System.Drawing.Size(810, 168);
             this.treeView.TabIndex = 102;
             // 
             // butCancel
@@ -159,7 +159,7 @@ namespace Maya2Babylon.Forms
             this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCancel.Enabled = false;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(656, 655);
+            this.butCancel.Location = new System.Drawing.Point(656, 659);
             this.butCancel.Name = "butCancel";
             this.butCancel.Size = new System.Drawing.Size(80, 23);
             this.butCancel.TabIndex = 104;
@@ -628,7 +628,7 @@ namespace Maya2Babylon.Forms
             // 
             this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butClose.Location = new System.Drawing.Point(742, 655);
+            this.butClose.Location = new System.Drawing.Point(742, 659);
             this.butClose.Name = "butClose";
             this.butClose.Size = new System.Drawing.Size(80, 23);
             this.butClose.TabIndex = 105;
@@ -660,9 +660,9 @@ namespace Maya2Babylon.Forms
             // 
             this.butCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.butCopyToClipboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCopyToClipboard.Location = new System.Drawing.Point(708, 707);
+            this.butCopyToClipboard.Location = new System.Drawing.Point(536, 659);
             this.butCopyToClipboard.Name = "butCopyToClipboard";
-            this.butCopyToClipboard.Size = new System.Drawing.Size(114, 27);
+            this.butCopyToClipboard.Size = new System.Drawing.Size(114, 23);
             this.butCopyToClipboard.TabIndex = 101;
             this.butCopyToClipboard.Text = "Copy To Clipboard";
             this.butCopyToClipboard.UseVisualStyleBackColor = true;
