@@ -36,6 +36,10 @@ namespace BabylonJS_Installer
                 {
                     this.form.warn("\nWARNING: Max2Babylon 2020 only supports 3dsMax 2020.2 or later. Earlier versions of 3dsMax WILL crash!");
                 }
+                if (software == "Maya" && version == "2020")
+                {
+                    this.form.warn("\nWARNING: Maya2Babylon 2020 only supports Maya 2020.1 or later. Earlier versions of Maya will NOT load!");
+                }
             };
 
             if (this.pingSite(this.url_github))
