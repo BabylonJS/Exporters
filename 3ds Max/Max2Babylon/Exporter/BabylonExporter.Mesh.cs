@@ -436,8 +436,26 @@ namespace Max2Babylon
 
                 if (hasColor)
                 {
-                    babylonMesh.colors = vertices.SelectMany(v => v.Color.ToArray()).ToArray();
-                    babylonMesh.hasVertexAlpha = hasAlpha;
+                    var colors = vertices.SelectMany(v => v.Color.ToArray()).ToArray();
+
+                    // There is an issue in 3dsMax where certain CSG operations assign a vertex color to the generated geometry.
+                    // this workaround allows us to void our vertex colors if they have all been found to be [0,0,0,0]
+                    bool useVertexColors = false;
+                    for (int i = 0; i < colors.Length; ++i)
+                    {
+                        if (colors[i] != 0.0f)
+                        {
+                            useVertexColors = true;
+                            break;
+                        }
+                    }
+
+                    if (useVertexColors)
+                    {
+                        babylonMesh.colors = colors;
+                        babylonMesh.hasVertexAlpha = hasAlpha;
+                    }
+                    
                 }
 
                 babylonMesh.subMeshes = subMeshes.ToArray();
