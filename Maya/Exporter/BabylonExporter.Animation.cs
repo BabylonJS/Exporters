@@ -1143,7 +1143,7 @@ namespace Maya2Babylon
                     }
                     else
                     {
-                        interpolatedKey.values = new List<float>(firstKeyAfterFrom.values).ToArray();
+                        interpolatedKey.values = new List<float>(lastKeyBeforeFrom.values).ToArray();
                     }
                     keysInRange.Insert(0, interpolatedKey);
                 }
