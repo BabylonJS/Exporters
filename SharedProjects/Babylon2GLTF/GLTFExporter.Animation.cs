@@ -153,21 +153,25 @@ namespace Babylon2GLTF
             var babylonAnimations = new List<BabylonAnimation>();
             if (animationGroup != null)
             {
-                var targetedAnimation = animationGroup.targetedAnimations.FirstOrDefault(animation => animation.targetId == babylonNode.id);
-                if (targetedAnimation != null)
+                var targetedAnimations = animationGroup.targetedAnimations.Where(animation => animation.targetId == babylonNode.id);
+                foreach (var targetedAnimation in targetedAnimations)
                 {
                     babylonAnimations.Add(targetedAnimation.animation);
                 }
             }
 
             // Do not include the node animations if a provided animation group already includes them.
-            if (babylonNode.animations != null && babylonAnimations.Count <= 0)
+            if (babylonAnimations.Count <= 0)
             {
-                babylonAnimations.AddRange(babylonNode.animations);
-            }
-            if (babylonNode.extraAnimations != null)
-            {
-                babylonAnimations.AddRange(babylonNode.extraAnimations);
+                if (babylonNode.animations != null)
+                {
+                    babylonAnimations.AddRange(babylonNode.animations);
+                }
+
+                if (babylonNode.extraAnimations != null)
+                {
+                    babylonAnimations.AddRange(babylonNode.extraAnimations);
+                }
             }
 
             // Filter animations to only keep TRS ones
