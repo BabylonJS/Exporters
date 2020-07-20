@@ -231,6 +231,16 @@ namespace Maya2Babylon
                     case 28:
                         ScriptExportParameters.pbrEnvironment = argExportParameters[i];
                         break;
+                    case 29:
+                        ScriptExportParameters.exportAnimations = bool.Parse(argExportParameters[i]);
+                        break;
+                    case 30:
+                        ScriptExportParameters.exportAnimationsOnly = bool.Parse(argExportParameters[i]);
+                        break;
+                    case 31:
+                        ScriptExportParameters.exportTextures = bool.Parse(argExportParameters[i]);
+                        break;
+
                 }
             }
 

@@ -16,10 +16,7 @@ namespace BabylonExport.Entities
         public bool overwriteTextures = true;
         public bool exportHiddenObjects = false;
         public bool exportMaterials = true;
-        public bool exportAnimations = true;
-        public bool exportAnimationsOnly = false;
         public bool exportOnlySelected = false;
-        public bool exportTextures = true;
         public bool bakeAnimationFrames = false;
         public bool optimizeAnimations = true;
         public bool optimizeVertices = true;
@@ -40,7 +37,12 @@ namespace BabylonExport.Entities
         public bool pbrNoLight = false;
         public bool createDefaultSkybox = false;
         public string pbrEnvironment;
-        
+        public bool exportAnimations = true;
+        public bool exportAnimationsOnly = false;
+        public bool exportTextures = true;
+
+
+
 
         public IGLTFMaterialExporter customGLTFMaterialExporter;
         public bool useMultiExporter = false;
