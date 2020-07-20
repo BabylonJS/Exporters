@@ -87,6 +87,15 @@ $parameters[27] = "False";
 //PBR ENVIRONMENT
 $parameters[28] = "";
 
+//EXPORT ANIMATIONS
+$parameters[29] = "True";
+
+//EXPORT ANIMATIONS ONLY
+$parameters[30] = "False";
+
+//EXPORT TEXTURES
+$parameters[31] = "True";
+
 ScriptToBabylon -exportParameters $parameters;
 
 
