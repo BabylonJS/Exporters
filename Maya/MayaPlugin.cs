@@ -259,7 +259,6 @@ namespace Maya2Babylon
                         catch
                         {
                         }
-                        Application.DoEvents();
                     };
 
                     exporterInstance.OnWarning += (error, rank) =>
@@ -271,7 +270,6 @@ namespace Maya2Babylon
                         catch
                         {
                         }
-                        Application.DoEvents();
                     };
 
                     exporterInstance.OnMessage += (message, color, rank, emphasis) =>
@@ -283,7 +281,6 @@ namespace Maya2Babylon
                         catch
                         {
                         }
-                        Application.DoEvents();
                     };
 
                     exporterInstance.Export(ScriptExportParameters);
