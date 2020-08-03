@@ -518,7 +518,6 @@ namespace Maya2Babylon
 
         public void CheckCancelled()
         {
-            Application.DoEvents();
             if (IsCancelled)
             {
                 throw new OperationCanceledException();
