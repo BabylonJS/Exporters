@@ -49,6 +49,8 @@ namespace Babylon2GLTF
                 string nameSuffix = " (" + NbNodesByName[name] + ")";
                 NbNodesByName[name]++;
                 name += nameSuffix;
+
+                logger.RaiseWarning("GLTFExporter | Name collision, renaming to : '" + name + "'", 2);
             }
             else
             {
