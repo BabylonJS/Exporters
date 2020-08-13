@@ -52,37 +52,37 @@ namespace MayaBabylon
                 return false;
             }
 
-            if (!other.Position.IsAlmostEqualTo(Position, Tools.Epsilon))
+            if ((Position != null || other.Position != null) && !other.Position.IsAlmostEqualTo(Position, Tools.Epsilon))
             {
                 return false;
             }
 
-            if (!other.Normal.IsAlmostEqualTo(Normal, Tools.Epsilon))
+            if ((Normal != null || other.Normal != null) && !other.Normal.IsAlmostEqualTo(Normal, Tools.Epsilon))
             {
                 return false;
             }
 
-            if (UV != null && !other.UV.IsAlmostEqualTo(UV, Tools.Epsilon))
+            if ((UV != null || other.UV != null) && !other.UV.IsAlmostEqualTo(UV, Tools.Epsilon))
             {
                 return false;
             }
 
-            if (UV2 != null && !other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon))
+            if ((UV2 != null || other.UV2 != null) && !other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon))
             {
                 return false;
             }
 
-            if (Weights != null && !other.Weights.IsAlmostEqualTo(Weights, Tools.Epsilon))
+            if ((Weights != null || other.Weights != null) && !other.Weights.IsAlmostEqualTo(Weights, Tools.Epsilon))
             {
                 return false;
             }
 
-            if (WeightsExtra != null && !other.WeightsExtra.IsAlmostEqualTo(WeightsExtra, Tools.Epsilon))
+            if ((WeightsExtra != null || other.WeightsExtra != null) && !other.WeightsExtra.IsAlmostEqualTo(WeightsExtra, Tools.Epsilon))
             {
                 return false;
             }
 
-            if (Color != null && !other.Color.IsAlmostEqualTo(Color, Tools.Epsilon))
+            if ((Color != null || other.Color != null) && !other.Color.IsAlmostEqualTo(Color, Tools.Epsilon))
             {
                 return false;
             }
