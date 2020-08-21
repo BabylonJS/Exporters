@@ -62,12 +62,12 @@ namespace MayaBabylon
                 return false;
             }
 
-            if ((UV == null && other.UV != null) || (UV != null && other.UV == null) || UV != null && !other.UV.IsAlmostEqualTo(UV, Tools.Epsilon))
+            if ((UV == null && other.UV != null) || (UV != null && other.UV == null) || !other.UV.IsAlmostEqualTo(UV, Tools.Epsilon))
             {
                 return false;
             }
 
-            if ((UV2 == null && other.UV2 != null) || (UV2 != null && other.UV2 == null) && !other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon))
+            if ((UV2 == null && other.UV2 != null) || (UV2 != null && other.UV2 == null) || !other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon))
             {
                 return false;
             }
