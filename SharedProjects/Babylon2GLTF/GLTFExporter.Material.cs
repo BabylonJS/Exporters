@@ -4,8 +4,6 @@ using GLTFExport.Entities;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Collections.Generic;
-using Utilities;
 
 namespace Babylon2GLTF
 {
@@ -18,19 +16,15 @@ namespace Babylon2GLTF
             logger.RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
             GLTFMaterial gltfMaterial = null;
-            string message = null;
             IGLTFMaterialExporter customMaterialExporter = exportParameters.customGLTFMaterialExporter;
             if (customMaterialExporter != null && customMaterialExporter.GetGltfMaterial(babylonMaterial, gltf, logger, out gltfMaterial))
             {
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
             }
-            else if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
+            else if (babylonMaterial is BabylonStandardMaterial babylonStandardMaterial)
             {
-                var babylonStandardMaterial = babylonMaterial as BabylonStandardMaterial;
-
-
-                // --- prints ---
+                 // --- prints ---
                 #region prints
 
                 logger.RaiseVerbose("GLTFExporter.Material | babylonMaterial data", 2);
@@ -387,9 +381,8 @@ namespace Babylon2GLTF
                     }
                 }
             }
-            else if (babylonMaterial.GetType() == typeof(BabylonPBRMetallicRoughnessMaterial))
+            else if (babylonMaterial is BabylonPBRMetallicRoughnessMaterial babylonPBRMetallicRoughnessMaterial)
             {
-                var babylonPBRMetallicRoughnessMaterial = babylonMaterial as BabylonPBRMetallicRoughnessMaterial;
                 // --- prints ---
                 #region prints
 
@@ -575,11 +568,9 @@ namespace Babylon2GLTF
                     }
                 }
             }
-            else if (babylonMaterial.GetType() == typeof(BabylonFurMaterial))
+            else if (babylonMaterial is BabylonFurMaterial babylonPBRFurMaterial)
             {
                 // TODO - Implement proper handling of BabylonFurMaterial once gLTF spec has support
-                var babylonPBRFurMaterial = babylonMaterial as BabylonFurMaterial;
-
                 gltfMaterial = new GLTFMaterial
                 {
                     name = name

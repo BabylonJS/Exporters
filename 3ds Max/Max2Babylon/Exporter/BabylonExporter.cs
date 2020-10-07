@@ -30,7 +30,7 @@ namespace Max2Babylon
         public static string exporterVersion = "Custom.Build.Version";
         public float scaleFactorToMeters = 1.0f;
 
-        public const int MaxSceneTicksPerSecond = 4800; //https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/MAXScript-Help/files/GUID-141213A1-B5A8-457B-8838-E602022C8798-htm.html
+        public const int MaxSceneTicksPerSecond = 4800; 
 
 
         public void CheckCancelled()

@@ -220,8 +220,13 @@ namespace Babylon2GLTF
                 var gltfTextureInfo = new GLTFTextureInfo
                 {
                     index = gltfTexture.index,
-                    texCoord = babylonTexture.coordinatesIndex
+                    texCoord = babylonTexture.coordinatesIndex,
                 };
+                
+                if ( babylonTexture.level != 1.0)
+                {
+                    gltfTextureInfo.scale = babylonTexture.level;
+                }
 
                 if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == 1) || !(babylonTexture.wAng == 0))
                 {
