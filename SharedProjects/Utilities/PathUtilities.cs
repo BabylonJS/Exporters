@@ -57,5 +57,16 @@ namespace Utilities
 
             return path;
         }
+
+        public static string VerifyLegalFileName(string fileName)
+        {
+            // Checks a filename for illegal characters, spaces, and # signs and replaces with an underscore ("_")
+            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars()) + " #";
+            Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+            return r.Replace(fileName, "_");
+            //source: https://stackoverflow.com/a/146162/301388
+        }
     }
+
+
 }
