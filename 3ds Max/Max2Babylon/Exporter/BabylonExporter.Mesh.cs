@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Max2Babylon
 {
@@ -154,6 +155,9 @@ namespace Max2Babylon
 
             // Export the custom attributes of this mesh
             babylonMesh.metadata = ExportExtraAttributes(meshNode, babylonScene);
+
+            // append userData to extras
+            ExportUserData(meshNode, babylonMesh);
 
             // Sounds
             var soundName = meshNode.MaxNode.GetStringProperty("babylonjs_sound_filename", "");
@@ -568,6 +572,37 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
+        private void ExportUserData(IIGameNode meshNode, BabylonAbstractMesh babylonMesh)
+        {
+            string userProp = "";
+            // read "extras = ..." in user user defined object properties as a string
+            meshNode.MaxNode.GetUserPropString("extras", ref userProp);
+
+            if (userProp != "")
+            {
+                // setup metadata if needed
+                if (babylonMesh.metadata == null)
+                    babylonMesh.metadata = new Dictionary<string, object>();
+                try
+                {
+                    // JSON parse the string value
+                    var o = JObject.Parse(userProp);
+                    // convert Newtonsoft JSON to dictionary
+                    Dictionary<string, object> d = o.ToObject<Dictionary<string, object>>();
+                    // insert root elements to metadata
+                    foreach (var e in d)
+                    {
+                        babylonMesh.metadata[e.Key] = e.Value;
+                    }
+                    RaiseMessage(d.Count + " User defined properties", 2);
+                }
+                catch (Exception e)
+                {
+                    RaiseWarning("Failed to parse user defined properties: " + userProp, 2);
+                }
+            }
+        }
+
         private BabylonNode ExportInstanceMesh(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene, BabylonMesh babylonMasterMesh)
         {
             meshNode.MaxNode.MarkAsInstance();
@@ -585,6 +620,9 @@ namespace Max2Babylon
 
             // Export the custom attributes of this mesh
             babylonInstanceMesh.metadata = ExportExtraAttributes(meshNode, babylonScene);
+
+            // Append userData to extras
+            ExportUserData(meshNode, babylonInstanceMesh);
 
             // Physics
             var impostorText = meshNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");
