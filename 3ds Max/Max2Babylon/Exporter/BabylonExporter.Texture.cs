@@ -501,6 +501,10 @@ namespace Max2Babylon
                     }
                 }
 
+                // If there is a "#" in the generated texture filename it causes problems with Exporter webserver
+                // when viewing the final exported project. This converts any troublesome characters to underscores
+                babylonTexture.name = PathUtilities.VerifyLegalFileName(babylonTexture.name);
+
                 // Write bitmap
                 if (isBabylonExported)
                 {
