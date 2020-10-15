@@ -223,6 +223,11 @@ namespace Babylon2GLTF
                     texCoord = babylonTexture.coordinatesIndex
                 };
 
+                if (babylonTexture.level != 1.0)
+                {
+                    gltfTextureInfo.scale = babylonTexture.level;
+                }
+
                 if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == 1) || !(babylonTexture.wAng == 0))
                 {
                     // Add texture extension if enabled in the export settings
