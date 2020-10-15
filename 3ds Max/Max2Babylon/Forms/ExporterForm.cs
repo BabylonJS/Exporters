@@ -409,7 +409,7 @@ namespace Max2Babylon
             {
                     scaleFactorParsed = float.Parse(txtScaleFactor.Text);
                 }
-                catch
+                catch (Exception e)
                 {
                     throw new InvalidDataException(String.Format("Invalid Scale Factor value: {0}", txtScaleFactor.Text));
                 }
@@ -417,7 +417,7 @@ namespace Max2Babylon
                 {
                     textureQualityParsed = long.Parse(txtQuality.Text);
                 }
-                catch
+                catch (Exception e)
                 {
                     throw new InvalidDataException(String.Format("Invalid Texture Quality value: {0}", txtScaleFactor.Text));
                 }
@@ -511,7 +511,7 @@ namespace Max2Babylon
                 }
             }
 
-            return await Task.FromResult(success);
+            return success;
         }
 
         void CreateWarningMessage(string warning, int rank)

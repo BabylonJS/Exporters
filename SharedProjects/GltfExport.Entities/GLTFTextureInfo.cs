@@ -12,9 +12,6 @@ namespace GLTFExport.Entities
         [DataMember]
         public int? texCoord { get; set; }
 
-        [DataMember]
-        public float? scale { get; set; }
-
         public bool ShouldSerializetexCoord()
         {
             return (this.texCoord != null && this.texCoord != 0);
