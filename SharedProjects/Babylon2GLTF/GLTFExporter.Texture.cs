@@ -16,6 +16,12 @@ namespace Babylon2GLTF
         private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
         private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
         public string relativeTextureFolder = "";
+
+        private GLTFTextureInfo ExportBaseColorTexture(GLTF gltf, BabylonTexture babylonTexture)
+        {
+            return babylonTexture == null ? null : babylonTexture.bitmap != null ? ExportBitmapTexture(gltf, babylonTexture) : ExportTexture(babylonTexture, gltf);
+        }
+
         /// <summary>
         /// Export the texture using the parameters of babylonTexture except its name.
         /// Write the bitmap file
@@ -136,17 +142,37 @@ namespace Babylon2GLTF
 
                 logger.RaiseMessage("GLTFExporter.Texture | create image", 3);
                 GLTFImage gltfImage = null;
-                if (glTFImageMap.ContainsKey(name))
+
+                string ImageName = name;
+
+                if (exportParameters.tryToReuseOpaqueAndBlendTexture)
                 {
-                    gltfImage = glTFImageMap[name];
+                    if (!string.IsNullOrEmpty(babylonTexture.baseColorPath))
+                    {
+                        if (string.IsNullOrEmpty(babylonTexture.alphaPath))
+                        {
+                            // lets search previous similar image
+                            ImageName = BaseColorAlphaImageNameLookup(babylonTexture, ImageName);
+                        }
+                        else
+                        {
+                            // register Pair with ImageName
+                            RegisterBaseColorAlphaImageName(babylonTexture, ImageName);
+                        }
+                    }
+                }
+
+                if (glTFImageMap.ContainsKey(ImageName))
+                {
+                    gltfImage = glTFImageMap[ImageName];
                 }
                 else
                 {
-                    string textureUri = name;
+                    string textureUri = ImageName;
                     if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder))
                     {
                         textureUri = PathUtilities.GetRelativePath( exportParameters.outputPath,exportParameters.textureFolder);
-                        textureUri = Path.Combine(textureUri, name);
+                        textureUri = Path.Combine(textureUri, ImageName);
                     }
                     gltfImage = new GLTFImage
                     {
@@ -177,9 +203,9 @@ namespace Babylon2GLTF
                             if (babylonTexture.bitmap != null)
                             {
                                 // We may have modified this texture image, copy the buffer contents to disk
-                                var extension = Path.GetExtension(name).ToLower();
+                                var extension = Path.GetExtension(ImageName).ToLower();
                                 var imageFormat = extension == ".jpg" ? System.Drawing.Imaging.ImageFormat.Jpeg : System.Drawing.Imaging.ImageFormat.Png;
-                                logger.RaiseMessage($"GLTFExporter.Texture | write image '{name}' to '{destPath}'", 3);
+                                logger.RaiseMessage($"GLTFExporter.Texture | write image '{ImageName}' to '{destPath}'", 3);
                                 TextureUtilities.SaveBitmap(babylonTexture.bitmap, destPath, imageFormat, exportParameters.txtQuality, logger);
                             }
                             else
@@ -189,7 +215,7 @@ namespace Babylon2GLTF
                             }
                         }
                     }
-                    glTFImageMap.Add(name, gltfImage);
+                    glTFImageMap.Add(ImageName, gltfImage);
                 }
 
                 // --------------------------

@@ -100,7 +100,6 @@ namespace Babylon2GLTF
             logger.RaiseMessage(string.Format("GLTFNodes exported in {0:0.00}s", nodesExportTime), Color.Blue);
 #endif
 
-
             // Meshes
             logger.RaiseMessage("GLTFExporter | Exporting meshes");
             progression = 10.0f;
@@ -138,8 +137,45 @@ namespace Babylon2GLTF
             progression = 70.0f;
             logger.ReportProgressChanged((int)progression);
             logger.RaiseMessage("GLTFExporter | Exporting materials");
-            foreach (var babylonMaterial in babylonMaterialsToExport)
+
+            if (exportParameters.tryToReuseOpaqueAndBlendTexture)
             {
+                // we MUST sort the material in order to let BabylonPBRMetallicRoughnessMaterial with Alpha first.
+                // the reason is the sequential write pattern 
+                List<BabylonMaterial> newOrder = SortMaterialPriorToOptimizeTextureUsage(babylonMaterialsToExport).ToList();
+                
+                // however, we MUST re-assign material indexes for mesh primitives.
+                List<(int, GLTFMeshPrimitive)> links = new List<(int, GLTFMeshPrimitive)>(newOrder.Count);
+                for (int i = 0; i != babylonMaterialsToExport.Count; i++)
+                {
+                    BabylonMaterial material = babylonMaterialsToExport[i];
+                    int k;
+                    for (k = 0; k != newOrder.Count; k++)
+                    {
+                        if (newOrder[k].id == material.id)
+                        {
+                            break;
+                        }
+                    }
+
+                    // research meshPrimitives to update the indexes.
+                    foreach(var m in gltf.MeshesList.SelectMany(m => m.primitives).Where(p => p.material == i))
+                    {
+                        links.Add((k, m));
+                    }
+                }
+                    
+                // finally update the indexes
+                foreach(var l in links)
+                {
+                    l.Item2.material = l.Item1;
+                }
+
+                babylonMaterialsToExport = newOrder;
+            }
+
+            foreach (var babylonMaterial in babylonMaterialsToExport)
+            { 
                 ExportMaterial(babylonMaterial, gltf);
                 logger.CheckCancelled();
             };

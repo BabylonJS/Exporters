@@ -19,5 +19,9 @@ namespace GLTFExport.Entities
         {
             return (this.texCoord != null && this.texCoord != 0);
         }
+        public bool ShouldSerializescale()
+        {
+            return (this.scale != null && this.scale != 1.0);
+        }
     }
 }
