@@ -188,7 +188,7 @@ namespace Babylon2GLTF
                 return imageName;
             }
             key = _DicoPairBaseColorAlphaImageName.Keys.Where(k => k.baseColorPath.Equals(key.baseColorPath)).FirstOrDefault();
-            return key!= default ? _DicoPairBaseColorAlphaImageName[key] : defaultName ;
+            return key!= null ? _DicoPairBaseColorAlphaImageName[key] : defaultName ;
         }
 
         internal IEnumerable<BabylonMaterial> SortMaterialPriorToOptimizeTextureUsage(IEnumerable<BabylonMaterial> materials)
