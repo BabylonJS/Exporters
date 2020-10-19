@@ -145,7 +145,8 @@ namespace Babylon2GLTF
                 List<BabylonMaterial> newOrder = SortMaterialPriorToOptimizeTextureUsage(babylonMaterialsToExport).ToList();
                 
                 // however, we MUST re-assign material indexes for mesh primitives.
-                List<(int, GLTFMeshPrimitive)> links = new List<(int, GLTFMeshPrimitive)>(newOrder.Count);
+                
+                List<Tuple<int, GLTFMeshPrimitive>> links = new List<Tuple<int, GLTFMeshPrimitive>>(newOrder.Count);
                 for (int i = 0; i != babylonMaterialsToExport.Count; i++)
                 {
                     BabylonMaterial material = babylonMaterialsToExport[i];
@@ -161,7 +162,7 @@ namespace Babylon2GLTF
                     // research meshPrimitives to update the indexes.
                     foreach(var m in gltf.MeshesList.SelectMany(m => m.primitives).Where(p => p.material == i))
                     {
-                        links.Add((k, m));
+                        links.Add(new Tuple<int, GLTFMeshPrimitive>(k, m));
                     }
                 }
                     

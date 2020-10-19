@@ -274,7 +274,7 @@ namespace Babylon2GLTF
             }
             public override int GetHashCode()
             {
-                return (baseColorPath, alphaPath).GetHashCode();
+                return new Tuple<string, string>(baseColorPath, alphaPath).GetHashCode();
             }
             public override bool Equals(object obj)
             {
