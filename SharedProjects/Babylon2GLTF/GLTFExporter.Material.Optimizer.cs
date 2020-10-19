@@ -210,29 +210,6 @@ namespace Babylon2GLTF
             return sorted;
         }
 
-        // TODO : move this logic later on process when generate TextureInfo.
-        internal IEnumerable<BabylonMaterial> OptimizeBaseColorTextureForBRMetallicRoughnessMaterial( IEnumerable<BabylonMaterial> materials )
-        {
-            // build list of material with corresponding base color alpha pair
-            IEnumerable<(PairBaseColorAlpha, BabylonPBRMetallicRoughnessMaterial)> materialsToOptimize = materials.Where(m => m is BabylonPBRMetallicRoughnessMaterial).Cast<BabylonPBRMetallicRoughnessMaterial>().Select(m=> (new PairBaseColorAlpha(m.baseTexture), m));
-
-            // peek the first alpha material
-            IEnumerable<(PairBaseColorAlpha, BabylonPBRMetallicRoughnessMaterial)> blended = materialsToOptimize.Where(a => a.Item1.HasAlpha);
-            if(blended.Any()) 
-            {
-               foreach ( var p in  materialsToOptimize.Where(a => !a.Item1.HasAlpha))
-               {
-                    var replacement = blended.First();
-                    if (replacement != default)
-                    {
-                        p.Item2.baseTexture = replacement.Item2.baseTexture;
-                    }
-               }
-            }
-            // return original list.
-            return materials;
-        }
-
         public class TexturesPaths
         {
             public string diffusePath;
