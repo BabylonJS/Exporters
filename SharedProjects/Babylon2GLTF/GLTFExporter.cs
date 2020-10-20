@@ -142,37 +142,7 @@ namespace Babylon2GLTF
             {
                 // we MUST sort the material in order to let BabylonPBRMetallicRoughnessMaterial with Alpha first.
                 // the reason is the sequential write pattern 
-                List<BabylonMaterial> newOrder = SortMaterialPriorToOptimizeTextureUsage(babylonMaterialsToExport).ToList();
-                
-                // however, we MUST re-assign material indexes for mesh primitives.
-                
-                List<Tuple<int, GLTFMeshPrimitive>> links = new List<Tuple<int, GLTFMeshPrimitive>>(newOrder.Count);
-                for (int i = 0; i != babylonMaterialsToExport.Count; i++)
-                {
-                    BabylonMaterial material = babylonMaterialsToExport[i];
-                    int k;
-                    for (k = 0; k != newOrder.Count; k++)
-                    {
-                        if (newOrder[k].id == material.id)
-                        {
-                            break;
-                        }
-                    }
-
-                    // research meshPrimitives to update the indexes.
-                    foreach(var m in gltf.MeshesList.SelectMany(m => m.primitives).Where(p => p.material == i))
-                    {
-                        links.Add(new Tuple<int, GLTFMeshPrimitive>(k, m));
-                    }
-                }
-                    
-                // finally update the indexes
-                foreach(var l in links)
-                {
-                    l.Item2.material = l.Item1;
-                }
-
-                babylonMaterialsToExport = newOrder;
+                babylonMaterialsToExport = SortMaterialPriorToOptimizeTextureUsage(gltf, babylonMaterialsToExport).ToList();
             }
 
             foreach (var babylonMaterial in babylonMaterialsToExport)

@@ -173,7 +173,9 @@ namespace Babylon2GLTF
         internal void RegisterBaseColorAlphaImageName(BabylonTexture texture, string imageName)
         {
             var key = new PairBaseColorAlpha(texture);
-            if (!_DicoPairBaseColorAlphaImageName.ContainsKey(key)) 
+
+            if (!_DicoPairBaseColorAlphaImageName.ContainsKey(key))
+
             {
                 _DicoPairBaseColorAlphaImageName.Add(key, imageName);
             }
@@ -188,18 +190,21 @@ namespace Babylon2GLTF
                 return imageName;
             }
             key = _DicoPairBaseColorAlphaImageName.Keys.Where(k => k.baseColorPath.Equals(key.baseColorPath)).FirstOrDefault();
-            return key!= null ? _DicoPairBaseColorAlphaImageName[key] : defaultName ;
+
+            return key != null ? _DicoPairBaseColorAlphaImageName[key] : defaultName;
         }
 
-        internal IEnumerable<BabylonMaterial> SortMaterialPriorToOptimizeTextureUsage(IEnumerable<BabylonMaterial> materials)
+        internal IEnumerable<BabylonMaterial> SortMaterialPriorToOptimizeTextureUsage(GLTF gltf, IEnumerable<BabylonMaterial> materials)
         {
-            List<BabylonMaterial> sorted = new List<BabylonMaterial>(materials.Count());
-            // replace ALL BabylonPBRMetallicRoughnessMaterial with Alpha first
-            foreach (var m in materials)
+            List<BabylonMaterial> original = materials.ToList();
+            List<BabylonMaterial> sorted = new List<BabylonMaterial>(original.Count());
+            
+            // reorder ALL BabylonPBRMetallicRoughnessMaterial with Alpha at first place
+            foreach (var m in original)
             {
-                if(m is BabylonPBRMetallicRoughnessMaterial a)
+                if (m is BabylonPBRMetallicRoughnessMaterial a)
                 {
-                    if(a.baseTexture.hasAlpha)
+                    if (a.baseTexture.hasAlpha)
                     {
                         sorted.Insert(0, m);
                         continue;
@@ -207,6 +212,25 @@ namespace Babylon2GLTF
                     sorted.Add(m);
                 }
             }
+ 
+            // however because we changed the order , we MUST re-assign material indexes for mesh primitives.
+            List<Tuple<int, GLTFMeshPrimitive>> links = new List<Tuple<int, GLTFMeshPrimitive>>(sorted.Count);
+            for (int i = 0; i != original.Count; i++)
+            {
+                // get new index
+                int k = -1;
+                while (++k < sorted.Count && sorted[k].id != original[i].id) ;
+
+                // research meshPrimitives to update the indexes and put the result ito temporary buffer
+                links.AddRange(gltf.MeshesList.SelectMany(m => m.primitives).Where(p => p.material == i).Select(m=>new Tuple<int, GLTFMeshPrimitive>(k, m)));
+            }
+
+            // finally update the indexes from temporary buffer
+            foreach (var l in links)
+            {
+                l.Item2.material = l.Item1;
+            }
+
             return sorted;
         }
 
@@ -289,5 +313,4 @@ namespace Babylon2GLTF
             public bool HasAlpha => !String.IsNullOrEmpty(alphaPath);
         }
     }
-
 }
