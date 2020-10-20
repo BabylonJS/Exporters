@@ -100,7 +100,6 @@ namespace Babylon2GLTF
             logger.RaiseMessage(string.Format("GLTFNodes exported in {0:0.00}s", nodesExportTime), Color.Blue);
 #endif
 
-
             // Meshes
             logger.RaiseMessage("GLTFExporter | Exporting meshes");
             progression = 10.0f;
@@ -138,8 +137,16 @@ namespace Babylon2GLTF
             progression = 70.0f;
             logger.ReportProgressChanged((int)progression);
             logger.RaiseMessage("GLTFExporter | Exporting materials");
-            foreach (var babylonMaterial in babylonMaterialsToExport)
+
+            if (exportParameters.tryToReuseOpaqueAndBlendTexture)
             {
+                // we MUST sort the material in order to let BabylonPBRMetallicRoughnessMaterial with Alpha first.
+                // the reason is the sequential write pattern 
+                babylonMaterialsToExport = SortMaterialPriorToOptimizeTextureUsage(gltf, babylonMaterialsToExport).ToList();
+            }
+
+            foreach (var babylonMaterial in babylonMaterialsToExport)
+            { 
                 ExportMaterial(babylonMaterial, gltf);
                 logger.CheckCancelled();
             };
