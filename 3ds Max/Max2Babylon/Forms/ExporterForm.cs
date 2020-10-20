@@ -25,7 +25,7 @@ namespace Max2Babylon
         private ExportItem singleExportItem;
 
 
-        private  bool filePostOpenCallback = false;
+        private bool filePostOpenCallback = false;
         private GlobalDelegates.Delegate5 m_FilePostOpenDelegate;
 
         private void RegisterFilePostOpen()
@@ -33,7 +33,7 @@ namespace Max2Babylon
             if (!filePostOpenCallback)
             {
                 m_FilePostOpenDelegate = new GlobalDelegates.Delegate5(OnFilePostOpen);
-                GlobalInterface.Instance.RegisterNotification(this.m_FilePostOpenDelegate, null, SystemNotificationCode.FilePostOpen );
+                GlobalInterface.Instance.RegisterNotification(this.m_FilePostOpenDelegate, null, SystemNotificationCode.FilePostOpen);
 
                 filePostOpenCallback = true;
             }
@@ -118,6 +118,8 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces", 0);
             Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
             Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
+            Tools.PrepareCheckBox(chkTryReuseTexture, Loader.Core.RootNode, "babylonjs_tryReuseTexture", 0);
+            
         }
 
         private void ExporterForm_Load(object sender, EventArgs e)
@@ -161,12 +163,12 @@ namespace Max2Babylon
                 {
                     string defaultTexturesDir = Path.GetDirectoryName(txtModelPath.Text);
                     txtTexturesPath.MaxPath(defaultTexturesDir);
-            }
+                }
 
                 if (!PathUtilities.IsBelowPath(txtTexturesPath.Text, txtModelPath.Text))
                 {
                     CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderers support this feature", 0);
-        }
+                }
             }
         }
 
@@ -191,7 +193,7 @@ namespace Max2Babylon
             {
                 intialDirectory = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
             }
-            
+
             if (!Directory.Exists(intialDirectory))
             {
                 intialDirectory = null;
@@ -207,7 +209,7 @@ namespace Max2Babylon
 
                 if (!PathUtilities.IsBelowPath(selectedFolderPath, absoluteModelPath))
                 {
-                    CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderers support this feature",0);
+                    CreateWarningMessage("WARNING: textures path should be below model file path, not all client renderers support this feature", 0);
                 }
 
                 txtTexturesPath.MaxPath(selectedFolderPath);
@@ -250,7 +252,7 @@ namespace Max2Babylon
 
                 await DoExport(singleExportItem);
             }
-            catch{}
+            catch { }
             finally
             {
                 if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
@@ -311,7 +313,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals");
             Tools.UpdateCheckBox(chkExportTextures, Loader.Core.RootNode, "babylonjs_export_Textures");
             Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
-            Tools.UpdateCheckBox(chkApplyPreprocessToScene,Loader.Core.RootNode, "babylonjs_applyPreprocess");
+            Tools.UpdateCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess");
 
             Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelPath.Text));
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(txtTexturesPath.Text));
@@ -323,16 +325,17 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkUsePreExportProces, Loader.Core.RootNode, "babylonjs_preproces");
             Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene");
             Tools.UpdateCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref");
+            Tools.UpdateCheckBox(chkTryReuseTexture, Loader.Core.RootNode, "babylonjs_tryReuseTexture");
         }
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
         {
-            new BabylonAnimationActionItem().Close(); 
+            new BabylonAnimationActionItem().Close();
             SaveOptions();
 
             //store layer visibility status and force visibility on
-            
-            Dictionary<IILayer, bool> layerState =  new Dictionary<IILayer, bool>();
+
+            Dictionary<IILayer, bool> layerState = new Dictionary<IILayer, bool>();
             if (exportItem.Layers != null)
             {
                 foreach (IILayer layer in exportItem.Layers)
@@ -345,9 +348,9 @@ namespace Max2Babylon
 #if MAX2015
                         layerState.Add( l,  l.IsHidden);
 #else
-                        layerState.Add( l,  l.IsHidden(false));
+                        layerState.Add(l, l.IsHidden(false));
 #endif
-                        l.Hide(false,false);
+                        l.Hide(false, false);
                     }
 
                 }
@@ -399,14 +402,14 @@ namespace Max2Babylon
 
             bool success = true;
             try
-            {                
+            {
                 string modelAbsolutePath = multiExport ? exportItem.ExportFilePathAbsolute : txtModelPath.Text;
                 string textureExportPath = multiExport ? exportItem.ExportTexturesesFolderAbsolute : txtTexturesPath.Text;
 
                 var scaleFactorParsed = 1.0f;
                 var textureQualityParsed = 100L;
                 try
-            {
+                {
                     scaleFactorParsed = float.Parse(txtScaleFactor.Text);
                 }
                 catch (Exception e)
@@ -458,7 +461,8 @@ namespace Max2Babylon
                     usePreExportProcess = chkUsePreExportProces.Checked,
                     flattenScene = chkFlatten.Checked,
                     mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
-                    useMultiExporter = multiExport
+                    useMultiExporter = multiExport,
+                    tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked
                 };
 
                 exporter.callerForm = this;
@@ -601,7 +605,7 @@ namespace Max2Babylon
         {
             if (exporter != null)
             {
-                exporter.IsCancelled = true;                
+                exporter.IsCancelled = true;
             }
             babylonExportAction.Close();
         }
@@ -645,17 +649,17 @@ namespace Max2Babylon
                     Loader.Core.FileHold();
                 }
 
-            if (await DoExport(singleExportItem))
-            {
-                WebServer.SceneFilename = Path.GetFileName(txtModelPath.Text);
-                WebServer.SceneFolder = Path.GetDirectoryName(txtModelPath.Text);
+                if (await DoExport(singleExportItem))
+                {
+                    WebServer.SceneFilename = Path.GetFileName(txtModelPath.Text);
+                    WebServer.SceneFolder = Path.GetDirectoryName(txtModelPath.Text);
 
-                Process.Start(WebServer.url + WebServer.SceneFilename);
+                    Process.Start(WebServer.url + WebServer.SceneFilename);
 
-                WindowState = FormWindowState.Minimized;
+                    WindowState = FormWindowState.Minimized;
+                }
             }
-        }
-            catch{}
+            catch { }
             finally
             {
                 if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)
@@ -811,7 +815,7 @@ namespace Max2Babylon
                     }
                     await DoExport(exportItemList);
                 }
-                catch{}
+                catch { }
                 finally
                 {
                     if (chkUsePreExportProces.Checked && !chkApplyPreprocessToScene.Checked)

@@ -530,14 +530,7 @@ namespace Babylon2GLTF
                 };
                 if (babylonPBRMetallicRoughnessMaterial.baseTexture != null)
                 {
-                    if (babylonPBRMetallicRoughnessMaterial.baseTexture.bitmap != null)
-                    {
-                        gltfPbrMetallicRoughness.baseColorTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.baseTexture);
-                    }
-                    else
-                    {
-                        gltfPbrMetallicRoughness.baseColorTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.baseTexture, gltf);
-                    }
+                    gltfPbrMetallicRoughness.baseColorTexture = ExportBaseColorTexture(gltf, babylonPBRMetallicRoughnessMaterial.baseTexture);
                 }
 
                 // Metallic roughness

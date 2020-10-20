@@ -714,6 +714,7 @@ namespace Max2Babylon
                 }
 
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor, true);
+                
                 if (multiplyColor != null)
                 {
                     babylonMaterial.baseColor = multiplyColor;
