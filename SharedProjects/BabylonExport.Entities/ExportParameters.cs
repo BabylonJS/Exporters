@@ -41,7 +41,7 @@ namespace BabylonExport.Entities
         public bool exportAnimationsOnly = false;
         public bool exportTextures = true;
         // try to optimize the output reu-sing opaque and blend texture.
-        public bool tryToReuseOpaqueAndBlendTexture = true;
+        public bool tryToReuseOpaqueAndBlendTexture = false;
 
 
 
