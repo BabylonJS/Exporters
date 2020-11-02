@@ -123,6 +123,10 @@ namespace BabylonExport.Entities
         // Used for gltf export
         public string originalPath;
         // Used for gltf export
+        public string baseColorPath;
+        // Used for gltf export
+        public string alphaPath;
+        // Used for gltf export
         public Bitmap bitmap;
 
         public string Id { get; }
@@ -181,6 +185,8 @@ namespace BabylonExport.Entities
             samplingMode = original.samplingMode;
             originalPath = original.originalPath;
             bitmap = original.bitmap;
+            baseColorPath = original.baseColorPath;
+            alphaPath = original.alphaPath;
         }
     }
 }
