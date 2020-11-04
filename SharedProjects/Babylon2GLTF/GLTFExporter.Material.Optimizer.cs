@@ -15,6 +15,8 @@ namespace Babylon2GLTF
         private Dictionary<TexturesPaths, PairBaseColorMetallicRoughness> _DicoMatTextureGLTF = new Dictionary<TexturesPaths, PairBaseColorMetallicRoughness>();
         private Dictionary<string, GLTFTextureInfo> _DicoTextNameTextureComponent = new Dictionary<string, GLTFTextureInfo>();
         private Dictionary<PairEmissiveDiffuse, GLTFTextureInfo> _DicoEmissiveTextureComponent = new Dictionary<PairEmissiveDiffuse, GLTFTextureInfo>();
+        private Dictionary<PairBaseColorAlpha, string> _DicoPairBaseColorAlphaImageName = new Dictionary<PairBaseColorAlpha, string>();
+
 
         public TexturesPaths SetStandText(BabylonStandardMaterial babylonStandardMaterial)
         {
@@ -73,7 +75,6 @@ namespace Babylon2GLTF
             return null;
         }
 
-
         public bool CheckIfImageIsRegistered(string name)
         {
             foreach (string registeredName in _DicoTextNameTextureComponent.Keys)
@@ -95,7 +96,6 @@ namespace Babylon2GLTF
         {
             return _DicoTextNameTextureComponent[name];
         }
-
 
         public PairEmissiveDiffuse CreatePair(string diffusePath, string emissivePath, float[] diffuse, float[] emissive)
         {
@@ -170,6 +170,69 @@ namespace Babylon2GLTF
             return null;
         }
 
+        internal void RegisterBaseColorAlphaImageName(BabylonTexture texture, string imageName)
+        {
+            var key = new PairBaseColorAlpha(texture);
+
+            if (!_DicoPairBaseColorAlphaImageName.ContainsKey(key))
+
+            {
+                _DicoPairBaseColorAlphaImageName.Add(key, imageName);
+            }
+        }
+
+        internal string BaseColorAlphaImageNameLookup(BabylonTexture texture, string defaultName = null)
+        {
+            var key = new PairBaseColorAlpha(texture);
+            string imageName = null;
+            if (_DicoPairBaseColorAlphaImageName.TryGetValue(key, out imageName))
+            {
+                return imageName;
+            }
+            key = _DicoPairBaseColorAlphaImageName.Keys.Where(k => k.baseColorPath.Equals(key.baseColorPath)).FirstOrDefault();
+
+            return key != null ? _DicoPairBaseColorAlphaImageName[key] : defaultName;
+        }
+
+        internal IEnumerable<BabylonMaterial> SortMaterialPriorToOptimizeTextureUsage(GLTF gltf, IEnumerable<BabylonMaterial> materials)
+        {
+            List<BabylonMaterial> original = materials.ToList();
+            List<BabylonMaterial> sorted = new List<BabylonMaterial>(original.Count());
+            
+            // reorder ALL BabylonPBRMetallicRoughnessMaterial with Alpha at first place
+            foreach (var m in original)
+            {
+                if (m is BabylonPBRMetallicRoughnessMaterial a)
+                {
+                    if (a.baseTexture.hasAlpha)
+                    {
+                        sorted.Insert(0, m);
+                        continue;
+                    }
+                    sorted.Add(m);
+                }
+            }
+ 
+            // however because we changed the order , we MUST re-assign material indexes for mesh primitives.
+            List<Tuple<int, GLTFMeshPrimitive>> links = new List<Tuple<int, GLTFMeshPrimitive>>(sorted.Count);
+            for (int i = 0; i != original.Count; i++)
+            {
+                // get new index
+                int k = -1;
+                while (++k < sorted.Count && sorted[k].id != original[i].id) ;
+
+                // research meshPrimitives to update the indexes and put the result ito temporary buffer
+                links.AddRange(gltf.MeshesList.SelectMany(m => m.primitives).Where(p => p.material == i).Select(m=>new Tuple<int, GLTFMeshPrimitive>(k, m)));
+            }
+
+            // finally update the indexes from temporary buffer
+            foreach (var l in links)
+            {
+                l.Item2.material = l.Item1;
+            }
+
+            return sorted;
+        }
 
         public class TexturesPaths
         {
@@ -219,6 +282,35 @@ namespace Babylon2GLTF
                 }
             }
         }
+
+        /// <summary>
+        ///  To optimze the usage of texture when Base Color only and Base Color + Alpha exist at the same time. 
+        /// </summary>
+        public class PairBaseColorAlpha
+        {
+            public string baseColorPath = null;
+            public string alphaPath = null;
+
+            public PairBaseColorAlpha(BabylonTexture texture)
+            {
+                baseColorPath = texture.baseColorPath;
+                alphaPath = texture.alphaPath;
+            }
+            public override int GetHashCode()
+            {
+                return new Tuple<string, string>(baseColorPath, alphaPath).GetHashCode();
+            }
+            public override bool Equals(object obj)
+            {
+                return (obj != null && obj is PairBaseColorAlpha pca) ? this.Equals(pca) : false;
+            }
+
+            public bool Equals(PairBaseColorAlpha other)
+            {
+                return baseColorPath == other.baseColorPath && alphaPath == other.alphaPath;
+            }
+
+            public bool HasAlpha => !String.IsNullOrEmpty(alphaPath);
+        }
     }
 }
-
