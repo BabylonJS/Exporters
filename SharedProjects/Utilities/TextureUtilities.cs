@@ -55,12 +55,18 @@ namespace Utilities
                 {
                     switch (Path.GetExtension(absolutePath).ToLower())
                     {
+#if USE_GDIMAGE_LIBRARY
+
                         case ".dds":
-                            // External library GDImageLibrary.dll + TQ.Texture.dll
-                            return GDImageLibrary._DDS.LoadImage(absolutePath);
+                                  // External library GDImageLibrary.dll + TQ.Texture.dll
+                                  return GDImageLibrary._DDS.LoadImage(absolutePath);
+#endif
+#if USE_PALOMA_TARGAIMAGE
+
                         case ".tga":
                             // External library TargaImage.dll
                             return Paloma.TargaImage.LoadTargaImage(absolutePath);
+#endif
                         case ".bmp":
                         case ".gif":
                         case ".jpg":
@@ -231,7 +237,8 @@ namespace Utilities
             Bitmap bitmap;
             switch (imageFormat)
             {
-                case "dds":
+#if !DONT_USE_GDIMAGE_LIBRARY
+            case "dds":
                     // External libraries GDImageLibrary.dll + TQ.Texture.dll
                     try
                     {
@@ -243,7 +250,9 @@ namespace Utilities
                         logger.RaiseError(string.Format("Failed to convert texture {0} to png: {1}", Path.GetFileName(sourcePath), e.Message), 3);
                     }
                     break;
-                case "tga":
+#endif
+#if !DONT_USE_PALOMA_TARGAIMAGE
+            case "tga":
                     // External library TargaImage.dll
                     try
                     {
@@ -255,6 +264,7 @@ namespace Utilities
                         logger.RaiseError(string.Format("Failed to convert texture {0} to png: {1}", Path.GetFileName(sourcePath), e.Message), 3);
                     }
                     break;
+#endif
                 case "bmp":
                     bitmap = new Bitmap(sourcePath);
                     SaveBitmap(bitmap, destPath, ImageFormat.Jpeg, imageQuality, logger); // no alpha
