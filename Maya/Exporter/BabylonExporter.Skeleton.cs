@@ -113,7 +113,8 @@ namespace Maya2Babylon
             for(int index = 0; index < mayaInfluenceNames.Count; index++)
             {
                 string name = mayaInfluenceNames[index];
-                int indexFullPathName = boneFullPathNames.FindIndex(fullPathName => fullPathName.EndsWith(name));
+                string name_substring = "|" + name;
+                int indexFullPathName = boneFullPathNames.FindIndex(fullPathName => fullPathName.EndsWith(name_substring));
                 mayaInfluenceNames[index] = boneFullPathNames[indexFullPathName];
 
                 if (index == 0) {
