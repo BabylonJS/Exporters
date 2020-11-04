@@ -204,7 +204,7 @@ namespace Babylon2GLTF
             {
                 if (m is BabylonPBRMetallicRoughnessMaterial a)
                 {
-                    if (a.baseTexture.hasAlpha)
+                    if (a.baseTexture != null && a.baseTexture.hasAlpha)
                     {
                         sorted.Insert(0, m);
                         continue;
