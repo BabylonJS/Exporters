@@ -248,8 +248,8 @@ namespace Babylon2GLTF
                         string baseColorBitmapName = null;
                         string metallicRoughnessBitmapName = null;
 
-                        GLTFTextureInfo textureInfoBC = new GLTFTextureInfo();
-                        GLTFTextureInfo textureInfoMR = new GLTFTextureInfo();
+                        GLTFTextureInfo textureInfoBC = null;
+                        GLTFTextureInfo textureInfoMR = null;
 
                         if (exportParameters.writeTextures)
                         {
