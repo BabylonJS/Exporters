@@ -55,14 +55,12 @@ namespace Utilities
                 {
                     switch (Path.GetExtension(absolutePath).ToLower())
                     {
-#if USE_GDIMAGE_LIBRARY
-
+#if !DONT_USE_GDIMAGE_LIBRARY
                         case ".dds":
                                   // External library GDImageLibrary.dll + TQ.Texture.dll
                                   return GDImageLibrary._DDS.LoadImage(absolutePath);
 #endif
-#if USE_PALOMA_TARGAIMAGE
-
+#if !DONT_USE_PALOMA_TARGAIMAGE
                         case ".tga":
                             // External library TargaImage.dll
                             return Paloma.TargaImage.LoadTargaImage(absolutePath);
