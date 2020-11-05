@@ -92,10 +92,9 @@ namespace Babylon2GLTF
                         // search the babylon scene id map for the babylon node that matches this id
                         if (babylonNode != null)
                         {
-                            BabylonMorphTargetManager morphTargetManager = null;
 
                             // search our babylon->gltf node mapping to see if this node is included in the exported gltf scene
-                            if(!nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
+                            if (!nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
                             {
                                 continue;
                             }

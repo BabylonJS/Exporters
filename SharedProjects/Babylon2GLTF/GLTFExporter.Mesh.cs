@@ -39,6 +39,7 @@ namespace Babylon2GLTF
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
             bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
             bool hasMetadata = babylonMesh.metadata != null && babylonMesh.metadata.Count > 0;
+            bool hasNormals = babylonMesh.normals != null && babylonMesh.normals.Length > 0;
 
             logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
@@ -47,6 +48,7 @@ namespace Babylon2GLTF
             logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasMetadata=" + hasMetadata, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasNormals=" + hasNormals, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -54,7 +56,16 @@ namespace Babylon2GLTF
             {
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
-                globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                // Switch coordinate system at object level
+                globalVertex.Position.Z *= -1;
+                globalVertex.Position *= exportParameters.scaleFactor;
+
+                if (hasNormals)
+                {
+                    globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+                    globalVertex.Normal.Z *= -1;
+                }
 
                 if (hasTangents)
                 {
@@ -66,10 +77,6 @@ namespace Babylon2GLTF
                     // Invert W to switch to right handed system
                     globalVertex.Tangent.W *= -1;
                 }
-
-                // Switch coordinate system at object level
-                globalVertex.Position.Z *= -1;
-                globalVertex.Normal.Z *= -1;
 
                 if (hasUV)
                 {
@@ -202,7 +209,10 @@ namespace Babylon2GLTF
                     }
 
                     // TODO - Add and retreive info from babylon material
-                    meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
+                    if (babylonMaterial.wireframe)                       
+                        meshPrimitive.mode = GLTFMeshPrimitive.FillMode.LINE_STRIP;
+                    else
+                        meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
                 }
 
                 // --------------------------
@@ -283,19 +293,22 @@ namespace Babylon2GLTF
                 }
 
                 // --- Normals ---
-                var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
-                    gltf,
-                    GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
-                    "accessorNormals",
-                    GLTFAccessor.ComponentType.FLOAT,
-                    GLTFAccessor.TypeEnum.VEC3
-                );
-                meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.NORMAL.ToString(), accessorNormals.index);
+                if (hasNormals)
+                {
+                    var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
+                      gltf,
+                      GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
+                      "accessorNormals",
+                      GLTFAccessor.ComponentType.FLOAT,
+                      GLTFAccessor.TypeEnum.VEC3
+                    );
+                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.NORMAL.ToString(), accessorNormals.index);
 
-                // Populate accessor
-                List<float> normals = globalVerticesSubMesh.SelectMany(v => v.Normal.ToArray()).ToList();
-                normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
-                accessorNormals.count = globalVerticesSubMesh.Count;
+                    // Populate accessor
+                    List<float> normals = globalVerticesSubMesh.SelectMany(v => v.Normal.ToArray()).ToList();
+                    normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
+                    accessorNormals.count = globalVerticesSubMesh.Count;
+                }
 
                 // --- Colors ---
                 if (hasColor)
