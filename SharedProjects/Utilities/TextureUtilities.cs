@@ -173,6 +173,59 @@ namespace Utilities
             }
         }
 
+
+        public static string GetPreferredFormat(string path, bool hasAlpha, TextureFormatExportPolicy policy = TextureFormatExportPolicy.CONSERVATIV)
+        {
+            if (hasAlpha) return "png";
+
+            switch (policy)
+            {
+                case TextureFormatExportPolicy.CONSERVATIV:
+                    {
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            return GetValidImageFormat(path);
+                        }
+                        return "png";
+                    }
+                case TextureFormatExportPolicy.SIZE:
+                    {
+                        return "jpg";
+                    }
+                case TextureFormatExportPolicy.QUALITY:
+                default:
+                    {
+                        return "png";
+                    }
+            }
+        }
+        public static string GetPreferredFormat(IEnumerable<string> paths, bool hasAlpha, TextureFormatExportPolicy policy = TextureFormatExportPolicy.QUALITY)
+        {
+            if (hasAlpha) return "png";
+
+            switch (policy)
+            {
+                case TextureFormatExportPolicy.CONSERVATIV:
+                    {
+                        if (paths != null)
+                        {
+                            var exts = paths.Where(p => !string.IsNullOrEmpty(p)).Select(p => Path.GetExtension(p)).Select(e=> GetValidImageFormat(e));
+                            return exts.Any(e => e.Equals("jpg")) ? "jpg" : "png";
+                        }
+                        return "png";
+                    }
+                case TextureFormatExportPolicy.SIZE:
+                    {
+                        return "jpg";
+                    }
+                case TextureFormatExportPolicy.QUALITY:
+                default:
+                    {
+                        return "png";
+                    }
+            }
+        }
+
         /// <summary>
         /// Copy image from source to dest.
         /// The copy process may include a conversion to another image format:

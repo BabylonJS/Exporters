@@ -3,6 +3,11 @@ using GLTFExport.Entities;
 
 namespace BabylonExport.Entities
 {
+    public enum TextureFormatExportPolicy
+    {
+        QUALITY, CONSERVATIV, SIZE
+    }
+
     public class ExportParameters
     {
         public string softwarePackageName;
@@ -42,7 +47,7 @@ namespace BabylonExport.Entities
         public bool exportTextures = true;
         // try to optimize the output reu-sing opaque and blend texture.
         public bool tryToReuseOpaqueAndBlendTexture = false;
-
+        public TextureFormatExportPolicy textureFormatExportPolicy = TextureFormatExportPolicy.CONSERVATIV;
 
 
         public IGLTFMaterialExporter customGLTFMaterialExporter;
