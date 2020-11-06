@@ -351,23 +351,30 @@ namespace Utilities
             string path = Path.Combine(directoryName, fileName);
             using (FileStream fs = File.Open(path, FileMode.Create))
             {
-                ImageCodecInfo encoder = GetEncoder(imageFormat);
 
-                if (encoder != null)
-                {
-                    // Create an Encoder object based on the GUID for the Quality parameter category
-                    EncoderParameters encoderParameters = new EncoderParameters(1);
-                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, imageQuality);
-                    encoderParameters.Param[0] = encoderQualityParameter;
-
-                    bitmap.Save(fs, encoder, encoderParameters);
-                }
-                else
-                {
-                    bitmap.Save(fs, imageFormat);
-                }
+                SaveBitmap(fs, bitmap, imageFormat, imageQuality);
             }
         }
+        
+        public static void SaveBitmap(Stream output, Bitmap bitmap, ImageFormat imageFormat, long imageQuality)
+        {
+            ImageCodecInfo encoder = GetEncoder(imageFormat);
+
+            if (encoder != null)
+            {
+                // Create an Encoder object based on the GUID for the Quality parameter category
+                EncoderParameters encoderParameters = new EncoderParameters(1);
+                EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, imageQuality);
+                encoderParameters.Param[0] = encoderQualityParameter;
+
+                bitmap.Save(output, encoder, encoderParameters);
+            }
+            else
+            {
+                bitmap.Save(output, imageFormat);
+            }
+        }
+
 
         private static List<char> GetInvalidChars(string s, char[] invalidChars)
         {
