@@ -3,9 +3,12 @@ using GLTFExport.Entities;
 
 namespace BabylonExport.Entities
 {
+    // Define the policy use to assign format to aggregated texture such ORM
     public enum TextureFormatExportPolicy
     {
-        QUALITY, CONSERVATIV, SIZE
+        QUALITY, // we want the best quality
+        CONSERVATIV, // we try to keep the source format if possible
+        SIZE // we try to minimize the size of texture as much as possibe.
     }
 
     public class ExportParameters

@@ -499,8 +499,6 @@ namespace Babylon2GLTF
             byte[] imageBytes = null;
             if (imageBitmap != null)
             {
-                //ImageConverter converter = new ImageConverter();
-                //imageBytes = (byte[])converter.ConvertTo(imageBitmap, typeof(byte[]));
                 // try our best to get extension - default will be png which is the looseless format.
                 var extension = gltfImage.FileExtension ?? (gltfImage.uri != null ? Path.GetExtension(gltfImage.uri) : null);
                 var outputFormat = extension != null ? TextureUtilities.GetImageFormat(gltfImage.FileExtension) : ImageFormat.Png;
