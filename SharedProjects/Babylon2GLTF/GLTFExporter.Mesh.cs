@@ -421,15 +421,22 @@ namespace Babylon2GLTF
             }
             gltfMesh.primitives = meshPrimitives.ToArray();
 
-            // Morph targets weights
+            // Morph targets weights and names
             if (babylonMorphTargetManager != null)
             {
                 var weights = new List<float>();
+                var targetNames = new List<String>();
                 foreach (BabylonMorphTarget babylonMorphTarget in babylonMorphTargetManager.targets)
                 {
                     weights.Add(babylonMorphTarget.influence);
+                    targetNames.Add(babylonMorphTarget.name);
                 }
                 gltfMesh.weights = weights.ToArray();
+
+                if (gltfMesh.extras == null) {
+                    gltfMesh.extras = new Dictionary<string, object>();
+                }
+                gltfMesh.extras["targetNames"] = targetNames.ToArray();
             }
 
             if (hasBones)
