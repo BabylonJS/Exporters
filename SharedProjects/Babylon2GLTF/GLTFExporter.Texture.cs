@@ -13,6 +13,10 @@ namespace Babylon2GLTF
     partial class GLTFExporter
     {
         public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
+        public const string KHR_materials_clearcoat = "KHR_materials_clearcoat";  // Name of the extension
+        public const string KHR_materials_sheen = "KHR_materials_sheen";  // Name of the extension
+        public const string KHR_materials_transmission = "KHR_materials_transmission";  // Name of the extension
+       
         private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
         private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
         public string relativeTextureFolder = "";
