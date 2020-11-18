@@ -4,12 +4,44 @@ using GLTFExport.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Utilities;
 
 namespace Babylon2GLTF
 {
     partial class GLTFExporter
     {
+        private void ExportAnimatedNode(GLTF gltf, BabylonNode node, GLTFNode gltfNode, GLTFAnimation gltfAnimation, int startFrame, int endFrame, BabylonAnimationGroup animGroup = null)
+        {
+            bool nodeHasAnimations = node.animations != null && node.animations.Length > 0 && node.animations[0] != null;
+            bool nodeHasExtraAnimations = node.extraAnimations != null && node.extraAnimations.Count > 0 && node.extraAnimations[0] != null;
+            BabylonMesh meshNode = node as BabylonMesh;
+            BabylonMorphTargetManager morphTargetManager = null;
+            bool nodeHasAnimatedMorphTargets = false;
+            if (meshNode != null && meshNode.morphTargetManagerId != null)
+            {
+                morphTargetManager = GetBabylonMorphTargetManager(babylonScene, meshNode);
+                if (morphTargetManager != null)
+                {
+                    nodeHasAnimatedMorphTargets = morphTargetManager.targets.Any(target => target.animations != null && target.animations.Length > 0 && target.animations[0] != null);
+                }
+            }
+
+            if (!nodeHasAnimations && !nodeHasExtraAnimations && !nodeHasAnimatedMorphTargets) return;
+            if (nodeHasAnimations && node.animations[0].property == "_matrix")
+            {
+                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, node, gltfNode, animGroup);
+            }
+            else
+            {
+                ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, node, gltfNode, babylonScene, animGroup);
+            }
+
+            if (nodeHasAnimatedMorphTargets)
+            {
+                ExportMorphTargetWeightAnimation(morphTargetManager, gltf, gltfNode, gltfAnimation.ChannelList, gltfAnimation.SamplerList, startFrame, endFrame, babylonScene);
+            }
+        }
 
         private void ExportAnimationGroups(GLTF gltf, BabylonScene babylonScene)
         {
@@ -33,34 +65,8 @@ namespace Babylon2GLTF
                 {
                     BabylonNode node = pair.Key;
                     GLTFNode gltfNode = pair.Value;
-                    bool nodeHasAnimations = node.animations != null && node.animations.Length > 0 && node.animations[0] != null;
-                    bool nodeHasExtraAnimations = node.extraAnimations != null && node.extraAnimations.Count > 0 && node.extraAnimations[0] != null;
-                    BabylonMesh meshNode = node as BabylonMesh;
-                    BabylonMorphTargetManager morphTargetManager = null;
-                    bool nodeHasAnimatedMorphTargets = false;
-                    if (meshNode != null && meshNode.morphTargetManagerId != null)
-                    {
-                        morphTargetManager = GetBabylonMorphTargetManager(babylonScene, meshNode);
-                        if (morphTargetManager != null)
-                        {
-                            nodeHasAnimatedMorphTargets = morphTargetManager.targets.Any(target => target.animations != null && target.animations.Length > 0 && target.animations[0] != null);
-                        }
-                    }
 
-                    if (!nodeHasAnimations && !nodeHasExtraAnimations && !nodeHasAnimatedMorphTargets) continue;
-                    if (nodeHasAnimations && node.animations[0].property == "_matrix")
-                    {
-                        ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, node, pair.Value);
-                    }
-                    else
-                    {
-                        ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, node, gltfNode, babylonScene);
-                    }
-
-                    if (nodeHasAnimatedMorphTargets)
-                    {
-                        ExportMorphTargetWeightAnimation(morphTargetManager, gltf, gltfNode, gltfAnimation.ChannelList, gltfAnimation.SamplerList, startFrame, endFrame, babylonScene);
-                    }
+                    ExportAnimatedNode(gltf, node, gltfNode, gltfAnimation, startFrame, endFrame);
                 }
 
                 if (gltfAnimation.ChannelList.Count > 0)
@@ -92,26 +98,13 @@ namespace Babylon2GLTF
                         // search the babylon scene id map for the babylon node that matches this id
                         if (babylonNode != null)
                         {
-                            BabylonMorphTargetManager morphTargetManager = null;
-
                             // search our babylon->gltf node mapping to see if this node is included in the exported gltf scene
-                            if(!nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
+                            if (!nodeToGltfNodeMap.TryGetValue(babylonNode, out gltfNode))
                             {
                                 continue;
                             }
 
-                            bool nodeHasAnimations = babylonNode.animations != null && babylonNode.animations.Length > 0 && babylonNode.animations[0] != null;
-                            bool nodeHasExtraAnimations = babylonNode.extraAnimations != null && babylonNode.extraAnimations.Count > 0 && babylonNode.extraAnimations[0] != null;
-                            if (!nodeHasAnimations && !nodeHasExtraAnimations) continue;
-
-                            if (nodeHasAnimations && babylonNode.animations[0].property == "_matrix") //TODO: Is this check accurate for deciphering between bones and nodes?
-                            {
-                                ExportBoneAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, animGroup);
-                            }
-                            else
-                            {
-                                ExportNodeAnimation(gltfAnimation, startFrame, endFrame, gltf, babylonNode, gltfNode, babylonScene, animGroup);
-                            }
+                            ExportAnimatedNode(gltf, babylonNode, gltfNode, gltfAnimation, startFrame, endFrame, animGroup);
                         }
                         else
                         {

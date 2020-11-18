@@ -343,6 +343,9 @@ namespace Max2Babylon
                 return null;
             }
 
+            var baseColorSourcePath = baseColorTexture.Map.FullFilePath;
+            var alphaSourcePath = alphaTexture?.Map.FullFilePath;
+
             // If we only have a base color texture, and we are using an opaque texture, export the base color image only.
             if (baseColorTexture != null && alphaTexture == null)
             {
@@ -360,6 +363,10 @@ namespace Max2Babylon
                     var outTexture = ExportTexture(baseColorTexture, babylonScene);
                     if (outTexture != null)
                     {
+                        // used to keep trace of the base + apha merge sources
+                        outTexture.baseColorPath = baseColorSourcePath;
+                        outTexture.alphaPath = null;
+
                         textureMap[outTexture.Id] = outTexture;
                     }
                     return outTexture;
@@ -398,7 +405,10 @@ namespace Max2Babylon
             BabylonTexture babylonTexture = null;
             babylonTexture = new BabylonTexture(textureID)
             {
-                name = nameText
+                name = nameText,
+                // used to keep trace of the base + apha merge sources
+                baseColorPath = baseColorSourcePath,
+                alphaPath = alphaSourcePath
             };
 
             // Alpha
@@ -500,6 +510,10 @@ namespace Max2Babylon
                         baseColorAlphaBitmap.SetPixel(x, y, baseColorAlpha);
                     }
                 }
+
+                // If there is a "#" in the generated texture filename it causes problems with Exporter webserver
+                // when viewing the final exported project. This converts any troublesome characters to underscores
+                babylonTexture.name = PathUtilities.VerifyLegalFileName(babylonTexture.name);
 
                 // Write bitmap
                 if (isBabylonExported)

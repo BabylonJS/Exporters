@@ -90,7 +90,7 @@ namespace Max2Babylon
                 babylonScene.MultiMaterialsList.Add(babylonMultimaterial);
                 return;
             }
-            
+
             // Retreive Babylon Attributes container
             IIPropertyContainer babylonAttributesContainer = materialNode.IPropertyContainer;
 
@@ -103,7 +103,7 @@ namespace Max2Babylon
             // check custom exporters first, to allow custom exporters of supported material classes
             IMaxMaterialExporter materialExporter;
             materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out materialExporter);
-            
+
             IStdMat2 stdMat = null;
             if (materialNode.MaxMaterial != null && materialNode.MaxMaterial.NumParamBlocks > 0)
             {
@@ -334,7 +334,10 @@ namespace Max2Babylon
             }
 
             // Add babylon attributes
-            AddStandardBabylonAttributes(materialNode.MaterialName, babylonMaterial);
+            if (babylonAttributesContainer == null)
+            {
+                AddStandardBabylonAttributes(materialNode.MaterialName, babylonMaterial);
+            }
 
             if (babylonAttributesContainer != null)
             {
@@ -585,7 +588,10 @@ namespace Max2Babylon
             }
 
             // Add babylon attributes
-            AddPhysicalBabylonAttributes(materialNode.MaterialName, babylonMaterial);
+            if (babylonAttributesContainer == null)
+            {
+                AddPhysicalBabylonAttributes(materialNode.MaterialName, babylonMaterial);
+            }
 
             if (babylonAttributesContainer != null)
             {
@@ -714,6 +720,7 @@ namespace Max2Babylon
                 }
 
                 babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(colorTexmap, alphaTexmap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor, true);
+
                 if (multiplyColor != null)
                 {
                     babylonMaterial.baseColor = multiplyColor;
@@ -825,7 +832,10 @@ namespace Max2Babylon
             }
 
             // Add babylon attributes
-            AddAiStandardSurfaceBabylonAttributes(materialNode.MaterialName, babylonMaterial);
+            if (babylonAttributesContainer == null)
+            {
+                AddAiStandardSurfaceBabylonAttributes(materialNode.MaterialName, babylonMaterial);
+            }
 
             if (babylonAttributesContainer != null)
             {
@@ -1072,7 +1082,7 @@ namespace Max2Babylon
                         + "\r\n" + "("
                         + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\""
                         //+ "\r\n" + "checkbox babylonBackfaceCulling_ui \"Backface Culling\""
-                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[1,100,4]"
+                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[0,100,4]"
                         + "\r\n" + "dropdownlist babylonTransparencyMode_dd \"Transparency Mode\" items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1)"
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
@@ -1108,7 +1118,7 @@ namespace Max2Babylon
                         + "\r\n" + "("
                         + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\""
                         + "\r\n" + "checkbox babylonBackfaceCulling_ui \"Backface Culling\""
-                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[1,100,4]"
+                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[0,100,4]"
                         + "\r\n" + "dropdownlist babylonTransparencyMode_dd \"Transparency Mode\" items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1)"
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
@@ -1144,7 +1154,7 @@ namespace Max2Babylon
                         + "\r\n" + "("
                         + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\""
                         + "\r\n" + "checkbox babylonBackfaceCulling_ui \"Backface Culling\""
-                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[1,100,4]"
+                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[0,100,4]"
                         + "\r\n" + "dropdownlist babylonTransparencyMode_dd \"Opacity Mode\" items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1)"
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
@@ -1161,6 +1171,7 @@ namespace Max2Babylon
         private void ExportCommonBabylonAttributes(IIPropertyContainer babylonAttributesContainer, BabylonMaterial babylonMaterial)
         {
             int maxSimultaneousLights = babylonAttributesContainer.GetIntProperty("babylonMaxSimultaneousLights", 4);
+            maxSimultaneousLights = Math.Min(100,Math.Max(maxSimultaneousLights,1));// force to be [1,100], because of 3DSMax Slider issue.
             RaiseVerbose("maxSimultaneousLights=" + maxSimultaneousLights, 3);
             babylonMaterial.maxSimultaneousLights = maxSimultaneousLights;
 
