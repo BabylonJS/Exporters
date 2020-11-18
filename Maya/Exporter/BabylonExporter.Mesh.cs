@@ -1255,11 +1255,15 @@ namespace Maya2Babylon
                 MIntArray weightIndexList = new MIntArray();    // list of weight. For each weight, there are multiple targets
                 blendShapeDeformer.weightIndexList(weightIndexList);
 
+                MPlug plugWeight = blendShapeDeformer.findPlug("weight");
 
                 for (int i = 0; i < weightIndexList.Count; i++)
                 {
                     int weightIndex = weightIndexList[i];
                     float weight = blendShapeDeformer.weight((uint)weightIndex);
+
+                    MPlug plugCurrentWeight = plugWeight.elementByLogicalIndex((uint)weightIndex);
+                    string currentWeightName = blendShapeDeformer.plugsAlias(plugCurrentWeight);
 
                     MObjectArray targets = new MObjectArray();  // the targets for the given weight
                     blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
@@ -1271,7 +1275,7 @@ namespace Maya2Babylon
 
                         BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
                         {
-                            name = $"{blendShapeDeformer.name}_{targetMesh.name}",
+                            name = $"{blendShapeDeformer.name}.{currentWeightName}",
                             influence = envelope * weight,
                             id = Guid.NewGuid().ToString()
                         };
