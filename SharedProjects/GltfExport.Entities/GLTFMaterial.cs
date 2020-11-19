@@ -2,16 +2,13 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Utilities;
 
 namespace GLTFExport.Entities
 {
     [DataContract]
     public class GLTFMaterial : GLTFIndexedChildRootProperty
     {
-        internal static float[] one2 = { 1.0f, 1.0f };
-        internal static float[] zeros2 = { 0.0f, 0.0f };
-        internal static float[] zeros3 = { 0.0f, 0.0f, 0.0f };
-
         public enum AlphaMode
         {
             OPAQUE,
@@ -67,7 +64,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializeemissiveFactor()
         {
-            return (this.emissiveFactor != null && !this.emissiveFactor.SequenceEqual(zeros3));
+            return (this.emissiveFactor != null && !this.emissiveFactor.IsAlmostEqualTo(0,float.Epsilon));
         }
 
         public bool ShouldSerializealphaMode()
@@ -77,7 +74,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializealphaCutoff()
         {
-            return (this.alphaCutoff != null && this.alphaCutoff != 0.5f);
+            return (this.alphaCutoff != null && !MathUtilities.IsAlmostEqualTo(this.alphaCutoff.Value, 0.5f, float.Epsilon));
         }
 
         public bool ShouldSerializedoubleSided()
@@ -106,17 +103,16 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializeoffset()
         {
-            return (this.offset != null && !this.offset.SequenceEqual(GLTFMaterial.zeros2));
-
+            return (this.offset != null && !this.offset.IsAlmostEqualTo(0, float.Epsilon));
         }
         public bool ShouldSerializerotation()
         {
-            return (this.rotation != 0f);
+            return !MathUtilities.IsAlmostEqualTo(this.rotation,0f,float.Epsilon);
         }
 
         public bool ShouldSerializescale()
         {
-            return (this.scale != null && !this.scale.SequenceEqual(GLTFMaterial.one2));
+            return this.scale != null && !this.scale.IsAlmostEqualTo(1,float.Epsilon);
         }
 
         public bool ShouldSerializetexCoord()
@@ -151,7 +147,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializeclearcoatFactor()
         {
-            return (this.clearcoatFactor != null && this.clearcoatFactor.Value != 0);
+            return this.clearcoatFactor != null && !MathUtilities.IsAlmostEqualTo(this.clearcoatFactor.Value, 0f, float.Epsilon);
         }
         public bool ShouldSerializeclearcoatTexture()
         {
@@ -159,7 +155,7 @@ namespace GLTFExport.Entities
         }
         public bool ShouldSerializeclearcoatRoughnessFactor()
         {
-            return (this.clearcoatRoughnessFactor != null && this.clearcoatRoughnessFactor.Value != 0);
+            return this.clearcoatRoughnessFactor != null && !MathUtilities.IsAlmostEqualTo(this.clearcoatRoughnessFactor.Value, 0f, float.Epsilon);
         }
         public bool ShouldSerializeclearcoatRoughnessTexture()
         {
@@ -193,7 +189,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializesheenColorFactor()
         {
-            return (this.sheenColorFactor != null && !this.sheenColorFactor.SequenceEqual(GLTFMaterial.zeros3));
+            return (this.sheenColorFactor != null && !this.sheenColorFactor.IsAlmostEqualTo(0,float.Epsilon));
         }
 
         public bool ShouldSerializesheenColorTexture()
@@ -203,7 +199,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializesheenRoughnessFactor()
         {
-            return (this.sheenRoughnessFactor != null && this.sheenRoughnessFactor.Value != 0);
+            return this.sheenRoughnessFactor != null && !MathUtilities.IsAlmostEqualTo(this.sheenRoughnessFactor.Value, 0f, float.Epsilon);
         }
 
         public bool ShouldSerializesheenRoughnessTexture()
@@ -227,7 +223,7 @@ namespace GLTFExport.Entities
 
         public bool ShouldSerializetransmissionFactor()
         {
-            return (this.transmissionFactor != null && this.transmissionFactor.Value != 0);
+            return this.transmissionFactor != null && !MathUtilities.IsAlmostEqualTo(this.transmissionFactor.Value, 0f, float.Epsilon);
         }
 
         public bool ShouldSerializetransmissionTexture()
