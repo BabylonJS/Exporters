@@ -85,8 +85,25 @@ namespace Maya2Babylon
             return SubArray(array, startEntityIndex * count, count);
         }
 
+        /// <summary>
+        /// Check for almost equality of two float[] arrays. Note this function return true if the both array are NULL.
+        /// </summary>
+        /// <param name="current"> the first array</param>
+        /// <param name="other">the second array</param>
+        /// <param name="epsilon">threshold</param>
+        /// <returns>true if ALL the difference betwen indice related items into arrays are smaller than epsilon OR if both array are NULL.
+        /// false otherwise</returns>
         public static bool IsAlmostEqualTo(this float[] current, float[] other, float epsilon)
         {
+            if (current == null)
+            {
+                return other == null;
+            }
+            if (other == null)
+            {
+                return false;
+            }
+
             if (current.Length != other.Length)
             {
                 return false;
