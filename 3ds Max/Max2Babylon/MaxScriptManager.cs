@@ -83,13 +83,15 @@ namespace Max2Babylon
 
 
         //leave the possibility to do get the outputh path from the babylon exporter with all the settings as presaved
-        public static MaxExportParameters InitParameters(string outputPath)
+        public static MaxExportParameters InitParameters(string outputPath = null)
         {
             long txtQuality = 100;
             float scaleFactor = 1f;
             MaxExportParameters exportParameters = new MaxExportParameters();
+            var ext = Path.GetExtension(outputPath);
+
             exportParameters.outputPath = outputPath;
-            exportParameters.outputFormat = Path.GetExtension(outputPath)?.Substring(1);
+            exportParameters.outputFormat = string.IsNullOrEmpty(ext)? null : ext.Substring(1);
             exportParameters.textureFolder = Loader.Core.RootNode.GetStringProperty("textureFolderPathProperty", string.Empty);
             exportParameters.generateManifest = Loader.Core.RootNode.GetBoolProperty("babylonjs_generatemanifest");
             exportParameters.writeTextures = Loader.Core.RootNode.GetBoolProperty("babylonjs_writetextures");
