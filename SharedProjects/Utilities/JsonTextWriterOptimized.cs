@@ -6,13 +6,19 @@ namespace Utilities
 {
     class JsonTextWriterOptimized : JsonTextWriter
     {
-        public JsonTextWriterOptimized(TextWriter textWriter)
+        internal const int DefaultNumberOfDigit = 8;
+
+        int _d;
+
+        public JsonTextWriterOptimized(TextWriter textWriter, int numberOfDigit = DefaultNumberOfDigit)
             : base(textWriter)
         {
+            _d = numberOfDigit;
         }
+
         public override void WriteValue(float value)
         {
-            value = (float)Math.Round(value, 4);
+            value = (float)Math.Round(value, _d);
             base.WriteValue(value);
         }
     }

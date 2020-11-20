@@ -1,9 +1,12 @@
 using BabylonExport.Entities;
 using BabylonFileConverter;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Utilities;
 
 namespace Maya2Babylon
 {
@@ -21,7 +24,11 @@ namespace Maya2Babylon
                 
             using (var jsonWriter = new JsonTextWriterOptimized(sw))
             {
+#if DEBUG
+                jsonWriter.Formatting = Formatting.Indented;
+#else
                 jsonWriter.Formatting = Formatting.None;
+#endif
                 jsonSerializer.Serialize(jsonWriter, babylonScene);
             }
             File.WriteAllText(outputFile, sb.ToString());
