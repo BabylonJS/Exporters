@@ -49,6 +49,11 @@ namespace Maya2Babylon
                 if (babylonMaterial != null)
                     MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
             }
+            else {
+                // Init alpha mode value based on material opacity
+                if (babylonMaterial != null)
+                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
+            }
             if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling") == false)
             {
                 MGlobal.executeCommand($"addAttr -ln \"babylonBackfaceCulling\" -nn \"Backface Culling\" - at bool {babylonAttributesDependencyNode.name};");
