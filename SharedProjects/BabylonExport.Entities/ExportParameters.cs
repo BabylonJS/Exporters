@@ -3,6 +3,14 @@ using GLTFExport.Entities;
 
 namespace BabylonExport.Entities
 {
+    // Define the policy use to assign format to aggregated texture such ORM
+    public enum TextureFormatExportPolicy
+    {
+        QUALITY, // we want the best quality
+        CONSERVATIV, // we try to keep the source format if possible
+        SIZE // we try to minimize the size of texture as much as possibe.
+    }
+
     public class ExportParameters
     {
         public string softwarePackageName;
@@ -42,7 +50,7 @@ namespace BabylonExport.Entities
         public bool exportTextures = true;
         // try to optimize the output reu-sing opaque and blend texture.
         public bool tryToReuseOpaqueAndBlendTexture = false;
-
+        public TextureFormatExportPolicy textureFormatExportPolicy = TextureFormatExportPolicy.CONSERVATIV;
 
 
         public IGLTFMaterialExporter customGLTFMaterialExporter;
