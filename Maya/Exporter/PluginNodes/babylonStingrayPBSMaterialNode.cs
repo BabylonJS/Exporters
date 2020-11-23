@@ -48,10 +48,6 @@ namespace Maya2Babylon
             if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode") == false)
             {
                 MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Transparency Mode\" - at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
-
-                // Init alpha mode value based on material opacity
-                if (babylonMaterial != null)
-                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
             }
             if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling") == false)
             {
@@ -65,6 +61,12 @@ namespace Maya2Babylon
             if (babylonAttributesDependencyNode.hasAttribute("babylonMaxSimultaneousLights") == false)
             {
                 MGlobal.executeCommand($"addAttr -ln \"babylonMaxSimultaneousLights\" -nn \"Max Simultaneous Lights\" - at long  -min 1 -dv 4 {babylonAttributesDependencyNode.name};");
+            }
+
+            // Initialise attributes according babylon material
+            if (babylonMaterial != null) {
+                // Init alpha mode value based on material opacity
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
             }
         }
 
