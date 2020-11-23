@@ -194,6 +194,8 @@ namespace Babylon2GLTF
                     var babylonMaterials = new List<BabylonMaterial>(babylonScene.materials);
                     babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
 
+                    meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
+
                     // If babylon material was exported successfully
                     if (babylonMaterial != null)
                     {
@@ -206,13 +208,13 @@ namespace Babylon2GLTF
                             babylonMaterialsToExport.Add(babylonMaterial);
                         }
                         meshPrimitive.material = indexMaterial;
-                    }
 
-                    // TODO - Add and retreive info from babylon material
-                    if (babylonMaterial.wireframe)                       
-                        meshPrimitive.mode = GLTFMeshPrimitive.FillMode.LINE_STRIP;
-                    else
-                        meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
+                        // TODO - Add and retreive info from babylon material
+                        if (babylonMaterial.wireframe)
+                        {
+                            meshPrimitive.mode = GLTFMeshPrimitive.FillMode.LINE_STRIP;
+                        }
+                    }
                 }
 
                 // --------------------------
@@ -421,15 +423,22 @@ namespace Babylon2GLTF
             }
             gltfMesh.primitives = meshPrimitives.ToArray();
 
-            // Morph targets weights
+            // Morph targets weights and names
             if (babylonMorphTargetManager != null)
             {
                 var weights = new List<float>();
+                var targetNames = new List<String>();
                 foreach (BabylonMorphTarget babylonMorphTarget in babylonMorphTargetManager.targets)
                 {
                     weights.Add(babylonMorphTarget.influence);
+                    targetNames.Add(babylonMorphTarget.name);
                 }
                 gltfMesh.weights = weights.ToArray();
+
+                if (gltfMesh.extras == null) {
+                    gltfMesh.extras = new Dictionary<string, object>();
+                }
+                gltfMesh.extras["targetNames"] = targetNames.ToArray();
             }
 
             if (hasBones)

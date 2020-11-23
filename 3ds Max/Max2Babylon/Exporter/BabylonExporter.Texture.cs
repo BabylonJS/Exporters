@@ -7,6 +7,7 @@ using Utilities;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Max2Babylon
 {
@@ -539,6 +540,11 @@ namespace Max2Babylon
             var roughnessTexture = _getBitmapTex(roughnessTexMap);
             var ambientOcclusionTexture = _getBitmapTex(ambientOcclusionTexMap);
 
+            // we are trying to get the best output format, function of source and policy.
+            var paths = new IBitmapTex[] { metallicTexture, roughnessTexture, ambientOcclusionTexture }.Where(t => t != null).Select(t => t.Map.FileName);
+            var policy = exportParameters.textureFormatExportPolicy;
+            var preferredExtension = TextureUtilities.GetPreferredFormat(paths, false, policy);
+
             // Use metallic or roughness texture as a reference for UVs parameters
             var texture = metallicTexture != null ? metallicTexture : roughnessTexture;
             if (texture == null)
@@ -553,12 +559,12 @@ namespace Max2Babylon
             {
                 return textureMap[textureID];
             }
-            else { 
+            else {
                 var babylonTexture = new BabylonTexture(textureID)
                 {
                     name = (ambientOcclusionTexMap != null ? Path.GetFileNameWithoutExtension(ambientOcclusionTexture.Map.FileName) : "") +
                            (roughnessTexMap != null ? Path.GetFileNameWithoutExtension(roughnessTexture.Map.FileName) : ("" + (int)(roughness * 255))) +
-                           (metallicTexMap != null ? Path.GetFileNameWithoutExtension(metallicTexture.Map.FileName) : ("" + (int)(metallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                           (metallicTexMap != null ? Path.GetFileNameWithoutExtension(metallicTexture.Map.FileName) : ("" + (int)(metallic * 255))) + "." + preferredExtension // TODO - unsafe name, may conflict with another texture name
                 };
 
                 // UVs
@@ -566,7 +572,6 @@ namespace Max2Babylon
 
                 // Is cube
                 _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
-
 
                 // --- Merge metallic and roughness maps ---
 
@@ -613,7 +618,8 @@ namespace Max2Babylon
                     if (isBabylonExported)
                     {
                         RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
-                        TextureUtilities.SaveBitmap(ormBitmap, babylonScene.OutputPath, babylonTexture.name, ImageFormat.Jpeg, exportParameters.txtQuality, this);
+                        var imageFormat = TextureUtilities.GetImageFormat(Path.GetExtension(babylonTexture.name));
+                        TextureUtilities.SaveBitmap(ormBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat, exportParameters.txtQuality, this);
                     }
                     else
                     {
