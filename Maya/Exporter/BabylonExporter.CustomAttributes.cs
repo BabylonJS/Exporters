@@ -55,6 +55,7 @@ namespace Maya2Babylon
             catch (Exception e)
             {
                 //do nothing...
+                this.RaiseWarning($"Exception raised during export. listAttr {objectName} failed because of {e.Message}, {e.InnerException}");
             }
 
             var customAttributeNames = customAttributeNamesMStringArray.Where((attributeName) => { return !_DisallowedCustomAttributeNames.Contains(attributeName); });
@@ -63,45 +64,53 @@ namespace Maya2Babylon
             {
                 MStringArray type = new MStringArray();
 
-                MGlobal.executeCommand($"getAttr -type {objectName}.{name}", type);
-
-                switch (type[0])
+                try
                 {
-                    case "double":
-                        double floatValue = 0;
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", out floatValue);
-                        customsAttributes.Add(name, floatValue);
-                        break;
-                    case "bool":
-                        int boolBinValue = 0;
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", out boolBinValue);
-                        customsAttributes.Add(name, boolBinValue);
-                        break;
-                    case "long":
-                        int intValue = 0;
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", out intValue);
-                        customsAttributes.Add(name, intValue);
-                        break;
-                    case "string":
-                        string stringValue = "";
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", out stringValue);
-                        customsAttributes.Add(name, stringValue);
-                        break;
-                    case "enum":
-                        int enumValue = 0;
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", out enumValue);
-                        customsAttributes.Add(name, enumValue);
-                        break;
-                    case "double3":
-                        MDoubleArray vectorValue = new MDoubleArray();
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", vectorValue);
-                        customsAttributes.Add(name, vectorValue);
-                        break;
-                    default:
-                        MCommandResult attrValue = new MCommandResult();
-                        MGlobal.executeCommand($"getAttr {objectName}.{name}", attrValue);
-                        customsAttributes.Add(name, attrValue);
-                        break;
+                    MGlobal.executeCommand($"getAttr -type {objectName}.{name}", type);
+
+                    switch (type[0])
+                    {
+                        case "double":
+                            double floatValue = 0;
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", out floatValue);
+                            customsAttributes.Add(name, floatValue);
+                            break;
+                        case "bool":
+                            int boolBinValue = 0;
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", out boolBinValue);
+                            customsAttributes.Add(name, boolBinValue);
+                            break;
+                        case "long":
+                            int intValue = 0;
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", out intValue);
+                            customsAttributes.Add(name, intValue);
+                            break;
+                        case "string":
+                            string stringValue = "";
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", out stringValue);
+                            customsAttributes.Add(name, stringValue);
+                            break;
+                        case "enum":
+                            int enumValue = 0;
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", out enumValue);
+                            customsAttributes.Add(name, enumValue);
+                            break;
+                        case "double3":
+                            MDoubleArray vectorValue = new MDoubleArray();
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", vectorValue);
+                            customsAttributes.Add(name, vectorValue);
+                            break;
+                        default:
+                            MCommandResult attrValue = new MCommandResult();
+                            MGlobal.executeCommand($"getAttr {objectName}.{name}", attrValue);
+                            customsAttributes.Add(name, attrValue);
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //do nothing...
+                    this.RaiseWarning($"Exception raised during export. getAttr {objectName}.{name} failed because of {e.Message}, {e.InnerException}");
                 }
             }
 
