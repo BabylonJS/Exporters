@@ -1,5 +1,6 @@
 using Autodesk.Maya.OpenMaya;
 using BabylonExport.Entities;
+using System;
 
 [assembly: MPxNodeClass(typeof(Maya2Babylon.babylonStingrayPBSMaterialNode), "babylonStingrayPBSMaterialNode", 0x0008106c, //528492 in decimal // TODO - Ask Autodesk for a unique ID
     NodeType = MPxNode.NodeType.kHardwareShader, Classification = "shader/surface/utility")]
@@ -47,20 +48,19 @@ namespace Maya2Babylon
         {
             if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode") == false)
             {
-                MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Transparency Mode\" - at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
+                MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Transparency Mode\" -at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
             }
             if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling") == false)
             {
-                MGlobal.executeCommand($"addAttr -ln \"babylonBackfaceCulling\" -nn \"Backface Culling\" - at bool {babylonAttributesDependencyNode.name};");
-                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonBackfaceCulling\" 1;");
+                MGlobal.executeCommand($"addAttr -ln \"babylonBackfaceCulling\" -nn \"Backface Culling\" -at bool {babylonAttributesDependencyNode.name};");
             }
             if (babylonAttributesDependencyNode.hasAttribute("babylonUnlit") == false)
             {
-                MGlobal.executeCommand($"addAttr -ln \"babylonUnlit\" -nn \"Unlit\" - at bool {babylonAttributesDependencyNode.name};");
+                MGlobal.executeCommand($"addAttr -ln \"babylonUnlit\" -nn \"Unlit\" -at bool {babylonAttributesDependencyNode.name};");
             }
             if (babylonAttributesDependencyNode.hasAttribute("babylonMaxSimultaneousLights") == false)
             {
-                MGlobal.executeCommand($"addAttr -ln \"babylonMaxSimultaneousLights\" -nn \"Max Simultaneous Lights\" - at long  -min 1 -dv 4 {babylonAttributesDependencyNode.name};");
+                MGlobal.executeCommand($"addAttr -ln \"babylonMaxSimultaneousLights\" -nn \"Max Simultaneous Lights\" -at long  -min 1 -dv 4 {babylonAttributesDependencyNode.name};");
             }
 
             // Initialise attributes according to babylon material
@@ -68,9 +68,9 @@ namespace Maya2Babylon
                 // Init alpha mode value based on material opacity
                 MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
 
-                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonBackfaceCulling\" {babylonMaterial.backFaceCulling};");
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonBackfaceCulling\" {Convert.ToInt32(babylonMaterial.backFaceCulling)};");
 
-                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonUnlit\" {babylonMaterial.isUnlit};");
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonUnlit\" {Convert.ToInt32(babylonMaterial.isUnlit)};");
 
                 MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonMaxSimultaneousLights\" {babylonMaterial.maxSimultaneousLights};");
             }
