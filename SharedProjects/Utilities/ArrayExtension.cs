@@ -29,6 +29,17 @@ namespace Utilities
             }
             return true;
         }
+        public static bool IsAlmostEqualTo(this float[] current, float value, float epsilon)
+        {
+            for (var i = 0; i < current.Length; ++i)
+            {
+                if (!MathUtilities.IsAlmostEqualTo(current[i], value, epsilon))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         public static T[] SubArray<T>(T[] array, int startIndex, int count)
         {
