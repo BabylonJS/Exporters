@@ -63,10 +63,16 @@ namespace Maya2Babylon
                 MGlobal.executeCommand($"addAttr -ln \"babylonMaxSimultaneousLights\" -nn \"Max Simultaneous Lights\" - at long  -min 1 -dv 4 {babylonAttributesDependencyNode.name};");
             }
 
-            // Initialise attributes according babylon material
+            // Initialise attributes according to babylon material
             if (babylonMaterial != null) {
                 // Init alpha mode value based on material opacity
                 MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonMaterial.transparencyMode};");
+
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonBackfaceCulling\" {babylonMaterial.backFaceCulling};");
+
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonUnlit\" {babylonMaterial.isUnlit};");
+
+                MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonMaxSimultaneousLights\" {babylonMaterial.maxSimultaneousLights};");
             }
         }
 
