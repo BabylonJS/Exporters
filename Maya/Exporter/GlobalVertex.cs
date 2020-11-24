@@ -40,54 +40,21 @@ namespace MayaBabylon
 
         public override bool Equals(object obj)
         {
-            if (!(obj is GlobalVertex))
+            if (obj != null && obj is GlobalVertex other)
             {
-                return false;
+                // Note the logic located into the Tools.IsAlmostEqualTo Extension which is also check for null parameters.
+                return 
+                    other.BaseIndex == BaseIndex &&
+                    other.Position.IsAlmostEqualTo(Position, Tools.Epsilon) &&
+                    other.Normal.IsAlmostEqualTo(Normal, Tools.Epsilon) &
+                    other.UV.IsAlmostEqualTo(UV, Tools.Epsilon) &&
+                    other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon) &&
+                    other.Weights.IsAlmostEqualTo(Weights, Tools.Epsilon) &&
+                    other.WeightsExtra.IsAlmostEqualTo(WeightsExtra, Tools.Epsilon) &&
+                    other.Color.IsAlmostEqualTo(Color, Tools.Epsilon) && 
+                    other.BonesIndices == BonesIndices;
             }
-
-            var other = (GlobalVertex)obj;
-
-            if (other.BaseIndex != BaseIndex)
-            {
-                return false;
-            }
-
-            if ((Position == null && other.Position != null) || (Position!= null && other.Position == null) || !other.Position.IsAlmostEqualTo(Position, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            if ((Normal == null && other.Normal != null) || (Normal != null && other.Normal == null) || !other.Normal.IsAlmostEqualTo(Normal, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            if ((UV == null && other.UV != null) || (UV != null && other.UV == null) || !other.UV.IsAlmostEqualTo(UV, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            if ((UV2 == null && other.UV2 != null) || (UV2 != null && other.UV2 == null) || !other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            if ((Weights == null && other.Weights != null) || (Weights != null && other.Weights == null) || !other.Weights.IsAlmostEqualTo(Weights, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            if ((WeightsExtra == null && other.WeightsExtra != null) || (WeightsExtra != null && other.WeightsExtra == null) || !other.WeightsExtra.IsAlmostEqualTo(WeightsExtra, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            if ((Color == null && other.Color != null) || (Color != null && other.Color == null) || !other.Color.IsAlmostEqualTo(Color, Tools.Epsilon))
-            {
-                return false;
-            }
-
-            return other.BonesIndices == BonesIndices;
+            return false;
         }
     }
 }
