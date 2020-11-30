@@ -536,7 +536,7 @@ namespace Maya2Babylon
                     {
                         babylonTransparencyMode = 2;
                     }
-                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonTransparencyMode};");
+                    babylonStingrayPBSMaterialNode.setAttributeValue(babylonAttributesDependencyNode.name + ".babylonTransparencyMode", babylonTransparencyMode);
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
