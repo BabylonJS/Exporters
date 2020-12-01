@@ -55,12 +55,16 @@ namespace Utilities
                 {
                     switch (Path.GetExtension(absolutePath).ToLower())
                     {
+#if !DONT_USE_GDIMAGE_LIBRARY
                         case ".dds":
-                            // External library GDImageLibrary.dll + TQ.Texture.dll
-                            return GDImageLibrary._DDS.LoadImage(absolutePath);
+                                  // External library GDImageLibrary.dll + TQ.Texture.dll
+                                  return GDImageLibrary._DDS.LoadImage(absolutePath);
+#endif
+#if !DONT_USE_PALOMA_TARGAIMAGE
                         case ".tga":
                             // External library TargaImage.dll
                             return Paloma.TargaImage.LoadTargaImage(absolutePath);
+#endif
                         case ".bmp":
                         case ".gif":
                         case ".jpg":
@@ -173,6 +177,59 @@ namespace Utilities
             }
         }
 
+
+        public static string GetPreferredFormat(string path, bool hasAlpha, TextureFormatExportPolicy policy = TextureFormatExportPolicy.CONSERVATIV)
+        {
+            if (hasAlpha) return "png";
+
+            switch (policy)
+            {
+                case TextureFormatExportPolicy.CONSERVATIV:
+                    {
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            return GetValidImageFormat(path);
+                        }
+                        return "png";
+                    }
+                case TextureFormatExportPolicy.SIZE:
+                    {
+                        return "jpg";
+                    }
+                case TextureFormatExportPolicy.QUALITY:
+                default:
+                    {
+                        return "png";
+                    }
+            }
+        }
+        public static string GetPreferredFormat(IEnumerable<string> paths, bool hasAlpha, TextureFormatExportPolicy policy = TextureFormatExportPolicy.QUALITY)
+        {
+            if (hasAlpha) return "png";
+
+            switch (policy)
+            {
+                case TextureFormatExportPolicy.CONSERVATIV:
+                    {
+                        if (paths != null)
+                        {
+                            var exts = paths.Where(p => !string.IsNullOrEmpty(p)).Select(p => Path.GetExtension(p)).Select(e=> GetValidImageFormat(e));
+                            return exts.Any(e => e.Equals("jpg")) ? "jpg" : "png";
+                        }
+                        return "png";
+                    }
+                case TextureFormatExportPolicy.SIZE:
+                    {
+                        return "jpg";
+                    }
+                case TextureFormatExportPolicy.QUALITY:
+                default:
+                    {
+                        return "png";
+                    }
+            }
+        }
+
         /// <summary>
         /// Copy image from source to dest.
         /// The copy process may include a conversion to another image format:
@@ -231,7 +288,8 @@ namespace Utilities
             Bitmap bitmap;
             switch (imageFormat)
             {
-                case "dds":
+#if !DONT_USE_GDIMAGE_LIBRARY
+            case "dds":
                     // External libraries GDImageLibrary.dll + TQ.Texture.dll
                     try
                     {
@@ -243,7 +301,9 @@ namespace Utilities
                         logger.RaiseError(string.Format("Failed to convert texture {0} to png: {1}", Path.GetFileName(sourcePath), e.Message), 3);
                     }
                     break;
-                case "tga":
+#endif
+#if !DONT_USE_PALOMA_TARGAIMAGE
+            case "tga":
                     // External library TargaImage.dll
                     try
                     {
@@ -255,6 +315,7 @@ namespace Utilities
                         logger.RaiseError(string.Format("Failed to convert texture {0} to png: {1}", Path.GetFileName(sourcePath), e.Message), 3);
                     }
                     break;
+#endif
                 case "bmp":
                     bitmap = new Bitmap(sourcePath);
                     SaveBitmap(bitmap, destPath, ImageFormat.Jpeg, imageQuality, logger); // no alpha
@@ -298,23 +359,30 @@ namespace Utilities
             string path = Path.Combine(directoryName, fileName);
             using (FileStream fs = File.Open(path, FileMode.Create))
             {
-                ImageCodecInfo encoder = GetEncoder(imageFormat);
 
-                if (encoder != null)
-                {
-                    // Create an Encoder object based on the GUID for the Quality parameter category
-                    EncoderParameters encoderParameters = new EncoderParameters(1);
-                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, imageQuality);
-                    encoderParameters.Param[0] = encoderQualityParameter;
-
-                    bitmap.Save(fs, encoder, encoderParameters);
-                }
-                else
-                {
-                    bitmap.Save(fs, imageFormat);
-                }
+                SaveBitmap(fs, bitmap, imageFormat, imageQuality);
             }
         }
+        
+        public static void SaveBitmap(Stream output, Bitmap bitmap, ImageFormat imageFormat, long imageQuality)
+        {
+            ImageCodecInfo encoder = GetEncoder(imageFormat);
+
+            if (encoder != null)
+            {
+                // Create an Encoder object based on the GUID for the Quality parameter category
+                EncoderParameters encoderParameters = new EncoderParameters(1);
+                EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, imageQuality);
+                encoderParameters.Param[0] = encoderQualityParameter;
+
+                bitmap.Save(output, encoder, encoderParameters);
+            }
+            else
+            {
+                bitmap.Save(output, imageFormat);
+            }
+        }
+
 
         private static List<char> GetInvalidChars(string s, char[] invalidChars)
         {

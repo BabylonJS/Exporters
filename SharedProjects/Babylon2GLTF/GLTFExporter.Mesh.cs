@@ -39,6 +39,7 @@ namespace Babylon2GLTF
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
             bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
             bool hasMetadata = babylonMesh.metadata != null && babylonMesh.metadata.Count > 0;
+            bool hasNormals = babylonMesh.normals != null && babylonMesh.normals.Length > 0;
 
             logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
@@ -47,6 +48,7 @@ namespace Babylon2GLTF
             logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasMetadata=" + hasMetadata, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasNormals=" + hasNormals, 3);
 
             // Retreive vertices data from babylon mesh
             List<GLTFGlobalVertex> globalVertices = new List<GLTFGlobalVertex>();
@@ -54,7 +56,16 @@ namespace Babylon2GLTF
             {
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
                 globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
-                globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+
+                // Switch coordinate system at object level
+                globalVertex.Position.Z *= -1;
+                globalVertex.Position *= exportParameters.scaleFactor;
+
+                if (hasNormals)
+                {
+                    globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+                    globalVertex.Normal.Z *= -1;
+                }
 
                 if (hasTangents)
                 {
@@ -66,10 +77,6 @@ namespace Babylon2GLTF
                     // Invert W to switch to right handed system
                     globalVertex.Tangent.W *= -1;
                 }
-
-                // Switch coordinate system at object level
-                globalVertex.Position.Z *= -1;
-                globalVertex.Normal.Z *= -1;
 
                 if (hasUV)
                 {
@@ -187,6 +194,8 @@ namespace Babylon2GLTF
                     var babylonMaterials = new List<BabylonMaterial>(babylonScene.materials);
                     babylonMaterial = babylonMaterials.Find(_babylonMaterial => _babylonMaterial.id == babylonMaterialId);
 
+                    meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
+
                     // If babylon material was exported successfully
                     if (babylonMaterial != null)
                     {
@@ -199,10 +208,13 @@ namespace Babylon2GLTF
                             babylonMaterialsToExport.Add(babylonMaterial);
                         }
                         meshPrimitive.material = indexMaterial;
-                    }
 
-                    // TODO - Add and retreive info from babylon material
-                    meshPrimitive.mode = GLTFMeshPrimitive.FillMode.TRIANGLES;
+                        // TODO - Add and retreive info from babylon material
+                        if (babylonMaterial.wireframe)
+                        {
+                            meshPrimitive.mode = GLTFMeshPrimitive.FillMode.LINE_STRIP;
+                        }
+                    }
                 }
 
                 // --------------------------
@@ -283,19 +295,22 @@ namespace Babylon2GLTF
                 }
 
                 // --- Normals ---
-                var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
-                    gltf,
-                    GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
-                    "accessorNormals",
-                    GLTFAccessor.ComponentType.FLOAT,
-                    GLTFAccessor.TypeEnum.VEC3
-                );
-                meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.NORMAL.ToString(), accessorNormals.index);
+                if (hasNormals)
+                {
+                    var accessorNormals = GLTFBufferService.Instance.CreateAccessor(
+                      gltf,
+                      GLTFBufferService.Instance.GetBufferViewFloatVec3(gltf, buffer),
+                      "accessorNormals",
+                      GLTFAccessor.ComponentType.FLOAT,
+                      GLTFAccessor.TypeEnum.VEC3
+                    );
+                    meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.NORMAL.ToString(), accessorNormals.index);
 
-                // Populate accessor
-                List<float> normals = globalVerticesSubMesh.SelectMany(v => v.Normal.ToArray()).ToList();
-                normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
-                accessorNormals.count = globalVerticesSubMesh.Count;
+                    // Populate accessor
+                    List<float> normals = globalVerticesSubMesh.SelectMany(v => v.Normal.ToArray()).ToList();
+                    normals.ForEach(n => accessorNormals.bytesList.AddRange(BitConverter.GetBytes(n)));
+                    accessorNormals.count = globalVerticesSubMesh.Count;
+                }
 
                 // --- Colors ---
                 if (hasColor)
@@ -408,15 +423,22 @@ namespace Babylon2GLTF
             }
             gltfMesh.primitives = meshPrimitives.ToArray();
 
-            // Morph targets weights
+            // Morph targets weights and names
             if (babylonMorphTargetManager != null)
             {
                 var weights = new List<float>();
+                var targetNames = new List<String>();
                 foreach (BabylonMorphTarget babylonMorphTarget in babylonMorphTargetManager.targets)
                 {
                     weights.Add(babylonMorphTarget.influence);
+                    targetNames.Add(babylonMorphTarget.name);
                 }
                 gltfMesh.weights = weights.ToArray();
+
+                if (gltfMesh.extras == null) {
+                    gltfMesh.extras = new Dictionary<string, object>();
+                }
+                gltfMesh.extras["targetNames"] = targetNames.ToArray();
             }
 
             if (hasBones)

@@ -7,12 +7,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Drawing.Imaging;
 
 namespace Babylon2GLTF
 {
     partial class GLTFExporter
     {
         public const string KHR_texture_transform = "KHR_texture_transform";  // Name of the extension
+        public const string KHR_materials_clearcoat = "KHR_materials_clearcoat";  // Name of the extension
+        public const string KHR_materials_sheen = "KHR_materials_sheen";  // Name of the extension
+        public const string KHR_materials_transmission = "KHR_materials_transmission";  // Name of the extension
+       
         private Dictionary<string, GLTFTextureInfo> glTFTextureInfoMap = new Dictionary<string, GLTFTextureInfo>();
         private Dictionary<string, GLTFImage> glTFImageMap = new Dictionary<string, GLTFImage>();
         public string relativeTextureFolder = "";
@@ -191,7 +196,7 @@ namespace Babylon2GLTF
                     }
                     if (exportParameters.outputFormat == "glb")
                     {
-                        var imageBufferView = WriteImageToGltfBuffer(gltf, gltfImage, sourcePath, babylonTexture.bitmap);
+                        var imageBufferView = WriteImageToGltfBuffer(gltf, gltfImage, sourcePath, babylonTexture.bitmap, exportParameters.txtQuality);
                         gltfImage.uri = null;
                         gltfImage.bufferView = imageBufferView.index;
                         gltfImage.mimeType = "image/" + gltfImage.FileExtension;
@@ -493,13 +498,21 @@ namespace Babylon2GLTF
             gltfTextureInfo.extensions[KHR_texture_transform] = textureTransform;
         }
 
-        private GLTFBufferView WriteImageToGltfBuffer(GLTF gltf, GLTFImage gltfImage, string imageSourcePath = null, Bitmap imageBitmap = null)
+        private GLTFBufferView WriteImageToGltfBuffer(GLTF gltf, GLTFImage gltfImage, string imageSourcePath = null, Bitmap imageBitmap = null, long textureQuality = 100)
         {
             byte[] imageBytes = null;
             if (imageBitmap != null)
             {
-                ImageConverter converter = new ImageConverter();
-                imageBytes = (byte[])converter.ConvertTo(imageBitmap, typeof(byte[]));
+                // try our best to get extension - default will be png which is the looseless format.
+                var extension = gltfImage.FileExtension ?? (gltfImage.uri != null ? Path.GetExtension(gltfImage.uri) : null);
+                var outputFormat = extension != null ? TextureUtilities.GetImageFormat(gltfImage.FileExtension) : ImageFormat.Png;
+
+                using (MemoryStream m = new MemoryStream())
+                {
+                    // this use the SAME method for GLTF
+                    TextureUtilities.SaveBitmap(m, imageBitmap, outputFormat, textureQuality);
+                    imageBytes = m.ToArray();
+                }
             }
             else
             {
