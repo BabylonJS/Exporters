@@ -640,8 +640,6 @@ namespace Maya2Babylon
                 }
             }
 
-
-
             RaiseMessage("BabylonExporter.Mesh | done", 2);
 
             return babylonMesh;
@@ -1232,8 +1230,6 @@ namespace Maya2Babylon
             return blendShapeDeformers;
         }
 
-
-
         /// <summary>
         /// Convert a Maya blendShape influencing a Maya object into a BabylonMorphTarget list
         /// </summary>
@@ -1266,7 +1262,14 @@ namespace Maya2Babylon
                     string currentWeightName = blendShapeDeformer.plugsAlias(plugCurrentWeight);
 
                     MObjectArray targets = new MObjectArray();  // the targets for the given weight
-                    blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
+                    try
+                    {
+                        blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
+                    } 
+                    catch(Exception e)
+                    {
+                        // its common for target to be deleted, then it not available anymore. This is a known issue of Maya.
+                    }
 
                     for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
                     {
