@@ -914,21 +914,25 @@ namespace Maya2Babylon
                 foreach(BabylonMorphTargetManager morphTargetManager in babylonScene.MorphTargetManagersList)
                 {
                     var morphTargets = morphTargetManager.targets;
-                    
-                    foreach (BabylonMorphTarget morphTarget in morphTargets)
+                    if (morphTargets != null)
                     {
-                        var animations = GetSubAnimations(morphTarget, animationGroup.from, animationGroup.to);
-                        foreach (BabylonAnimation animation in animations)
+                        foreach (BabylonMorphTarget morphTarget in morphTargets)
                         {
-                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            var animations = GetSubAnimations(morphTarget, animationGroup.from, animationGroup.to);
+                            foreach (BabylonAnimation animation in animations)
                             {
-                                animation = animation,
-                                targetId = morphTarget.id
-                            };
-                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = morphTarget.id
+                                };
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
                         }
-
-
+                    }
+                    else
+                    {
+                        this.RaiseWarning("Empty BabylonMorphTargetManager found");
                     }
                 }
 
@@ -937,15 +941,18 @@ namespace Maya2Babylon
                     if (node.animations != null && node.animations.Length != 0)
                     {
                         IList<BabylonAnimation> animations = GetSubAnimations(node, animationGroup.from, animationGroup.to);
-                        foreach (BabylonAnimation animation in animations)
+                        if (animations != null)
                         {
-                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                            foreach (BabylonAnimation animation in animations)
                             {
-                                animation = animation,
-                                targetId = node.id
-                            };
+                                BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                {
+                                    animation = animation,
+                                    targetId = node.id
+                                };
 
-                            animationGroup.targetedAnimations.Add(targetedAnimation);
+                                animationGroup.targetedAnimations.Add(targetedAnimation);
+                            }
                         }
                     }
                     else if (exportNonAnimated)
@@ -960,39 +967,45 @@ namespace Maya2Babylon
                     }
                 }
 
-
                 foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
                 {
-                    foreach (BabylonBone bone in skel.bones)
+                    if (skel.bones != null)
                     {
-                        if (bone.animation != null)
+                        foreach (BabylonBone bone in skel.bones)
                         {
-                            IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
-                            foreach (BabylonAnimation animation in animations)
+                            if (bone.animation != null)
+                            {
+                                IList<BabylonAnimation> animations = GetSubAnimations(bone, animationGroup.from, animationGroup.to);
+                                foreach (BabylonAnimation animation in animations)
+                                {
+                                    BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
+                                    {
+                                        animation = animation,
+                                        targetId = bone.id
+                                    };
+
+                                    animationGroup.targetedAnimations.Add(targetedAnimation);
+                                }
+                            }
+                            else if (exportNonAnimated)
                             {
                                 BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
                                 {
-                                    animation = animation,
+                                    animation = CreateMatrixAnimation(animationGroup.from, animationGroup.to, bone.matrix),
                                     targetId = bone.id
                                 };
 
                                 animationGroup.targetedAnimations.Add(targetedAnimation);
                             }
                         }
-                        else if (exportNonAnimated)
-                        {
-                            BabylonTargetedAnimation targetedAnimation = new BabylonTargetedAnimation
-                            {
-                                animation = CreateMatrixAnimation(animationGroup.from, animationGroup.to, bone.matrix),
-                                targetId = bone.id
-                            };
-
-                            animationGroup.targetedAnimations.Add(targetedAnimation);
-                        }
+                    }
+                    else
+                    {
+                        this.RaiseWarning($"Empty Skeleton found {skel.name??string.Empty}");
                     }
                 }
 
-                if(animationGroup.targetedAnimations.Count > 0)
+                if (animationGroup.targetedAnimations.Count > 0)
                 {
                     animationGroups.Add(animationGroup);
                 }
