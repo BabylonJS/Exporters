@@ -228,7 +228,7 @@ namespace Babylon2GLTF
                 // Switch images to binary
                 gltf.Prepare();
                 // Serialize gltf data to JSON string then convert it to bytes
-                byte[] chunkDataJson = Encoding.ASCII.GetBytes(gltfToJson(gltf));
+                byte[] chunkDataJson = Encoding.UTF8.GetBytes(gltfToJson(gltf));
                 // JSON chunk must be padded with trailing Space chars (0x20) to satisfy alignment requirements 
                 chunkDataJson = padChunk(chunkDataJson, 4, 0x20);
                 UInt32 chunkLengthJson = (UInt32)chunkDataJson.Length;
