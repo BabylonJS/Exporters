@@ -527,7 +527,6 @@ namespace Maya2Babylon
                     babylonMaterial._unlit = babylonMaterial.isUnlit;
 
                     // Update displayed Transparency mode value based on StingrayPBS preset material
-                    MGlobal.executeCommand($"setAttr - l false {{ \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" }}"); // Unlock attribute
                     int babylonTransparencyMode = 0;
                     if (materialDependencyNode.hasAttribute("mask_threshold"))
                     {
@@ -537,8 +536,7 @@ namespace Maya2Babylon
                     {
                         babylonTransparencyMode = 2;
                     }
-                    MGlobal.executeCommand($"setAttr \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" {babylonTransparencyMode};");
-                    MGlobal.executeCommand($"setAttr - l true {{ \"{babylonAttributesDependencyNode.name}.babylonTransparencyMode\" }}"); // Lock it afterwards
+                    babylonStingrayPBSMaterialNode.setAttributeValue(babylonAttributesDependencyNode.name + ".babylonTransparencyMode", babylonTransparencyMode);
                 }
 
                 babylonScene.MaterialsList.Add(babylonMaterial);
