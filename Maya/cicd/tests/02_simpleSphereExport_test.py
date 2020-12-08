@@ -53,11 +53,7 @@ class Test(unittest.TestCase):
             "False",            # export animation only
             "False"             # export textures
         ]
-        #------------------------------------------------------------------------------------------
-        # this fails on the command line every time, but succeeds in editor
-        # the dotnet command can be accessed via `GenerateExportersParameter` as in test 01
-        #------------------------------------------------------------------------------------------
-        # lme.evalMelString("ScriptToBabylon -exportParameters %s;" % lme.convertStringsToMelArray(exportParams))
+        lme.evalMelString("ScriptToBabylon -exportParameters %s;" % lme.convertStringsToMelArray(exportParams))
 
 if __name__ == "__main__":
     unittest.main()

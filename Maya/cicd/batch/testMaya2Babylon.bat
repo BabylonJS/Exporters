@@ -23,8 +23,8 @@ call %~dp0..\venv\Scripts\activate.bat
 "%mayapy%" -m pip install -r "%~dp0..\python\.requirements" --quiet
 "%mayapy%" -m pip install "%~dp0..\python\libMayaExtended" --quiet
 
-"%mayapy%" -m pytest -W ignore::DeprecationWarning "%~dp0..\tests"
-@REM for %%f in ("%~dp0..\tests\*_test.py") do "%mayapy%" -m unittest %%f
+@REM "%mayapy%" -m pytest -W ignore::DeprecationWarning "%~dp0..\tests"
+for %%f in ("%~dp0..\tests\*_test.py") do "%mayapy%" -m unittest %%f
 call %~dp0..\venv\Scripts\deactivate.bat
 
 echo tests completed
