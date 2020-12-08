@@ -88,9 +88,17 @@ namespace Maya2Babylon
             // Check directory exists
             if (!Directory.Exists(outputBabylonDirectory))
             {
-                RaiseError("Export stopped: Output folder does not exist");
-                ReportProgressChanged(100);
-                return;
+                RaiseMessage("Output folder does not exist and will be created");
+                try
+                {
+                    Directory.CreateDirectory(outputBabylonDirectory);
+                }
+                catch
+                {
+                    RaiseError("Export stopped: Failed to create missing output directory.");
+                    ReportProgressChanged(100);
+                    return;
+                }
             }
 
             var watch = new Stopwatch();

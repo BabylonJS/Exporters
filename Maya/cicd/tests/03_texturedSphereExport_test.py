@@ -11,23 +11,27 @@ except:
 import libMayaExtended as lme
 
 class Test(unittest.TestCase):
-    def test_simpleSphereExport(self):
+    def test_texturedSphereExport(self):
         lme.loadPlugin("mtoa")
         lme.loadPlugin("Maya2Babylon.nll.dll")
 
         sphere = lme.sphere("Sphere")
         shader = lme.createAssignShader(sphere, "aiStandardSurface", "Sphere_PBR")
         
+        texturePath = "%s\\resources\\uv_layout.png" % pathlib.Path(__file__).parent.absolute()
+        texture = lme.createTextureFile("file", texturePath, "Sphere_Albedo")
+        lme.connect("%s.outColor" % texture, "%s.baseColor" % shader)
+
         lme.select(sphere)
 
-        exportPath = "%s\\temp\\02_SphereSimple" % pathlib.Path(__file__).parent.absolute()
+        exportPath = "%s\\temp\\03_SphereTextured" % pathlib.Path(__file__).parent.absolute()
         exportParams = [
             exportPath,         # export path
             "gltf",             # export format
             "",                 # textures path
             "1",                # scale factor
-            "False",            # write textures
-            "False",            # overwrite textures
+            "True",             # write textures
+            "True",             # overwrite textures
             "False",            # export hidden objects
             "True",             # export materials
             "True",             # export selected
@@ -45,7 +49,7 @@ class Test(unittest.TestCase):
             "False",            # create MRAO (RGB) maps
             "False",            # draco compression
             "False",            # enable KHR_LIGHTS_PUNCTUAL
-            "False",            # enable KHR_TEXTURE_TRANSFORM
+            "True",             # enable KHR_TEXTURE_TRANSFORM
             "False",            # enable KHR_MATERIALS_UNLIT
             "False",            # PBR full
             "False",            # PBR no lights
@@ -53,7 +57,7 @@ class Test(unittest.TestCase):
             "",                 # environment path
             "False",            # export animation
             "False",            # export animation only
-            "False"             # export textures
+            "True"              # export textures
         ]
         lme.evalMelString("ScriptToBabylon -exportParameters %s;" % lme.convertStringsToMelArray(exportParams))
 
