@@ -555,7 +555,18 @@ namespace Max2Babylon
                     babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
 
                     babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
+
+                    if (babylonMaterial.metallicRoughnessTexture != null)
+                    {
+                        // Change the factor to zero if combining partial channel to avoid issue (in case of image compression).
+                        // ie - if no metallic map, then b MUSt be fully black. However channel of jpeg MAY not beeing fully black 
+                        // cause of the compression algorithm. Keeping MetallicFactor to 1 will make visible artifact onto texture. So set to Zero instead.
+                        babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null ? 1.0f : 0.0f;
+                        babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null ? 1.0f : 0.0f;
+                    }
+
                 }
+
             }
 
             // Constraints
@@ -574,11 +585,6 @@ namespace Max2Babylon
                 babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
             }
 
-            if (babylonMaterial.metallicRoughnessTexture != null)
-            {
-                babylonMaterial.metallic = 1.0f;
-                babylonMaterial.roughness = 1.0f;
-            }
 
             if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
             {
@@ -800,6 +806,15 @@ namespace Max2Babylon
                             babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, i, babylonScene);
                         }
                     }
+
+                    if (babylonMaterial.metallicRoughnessTexture != null)
+                    {
+                        // Change the factor to zero if combining partial channel to avoid issue (in case of image compression).
+                        // ie - if no metallic map, then b MUSt be fully black. However channel of jpeg MAY not beeing fully black 
+                        // cause of the compression algorithm. Keeping MetallicFactor to 1 will make visible artifact onto texture. So set to Zero instead.
+                        babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null ? 1.0f : 0.0f;
+                        babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null ? 1.0f : 0.0f;
+                    }
                 }
             }
 
@@ -818,11 +833,6 @@ namespace Max2Babylon
                 babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
             }
 
-            if (babylonMaterial.metallicRoughnessTexture != null)
-            {
-                babylonMaterial.metallic = 1.0f;
-                babylonMaterial.roughness = 1.0f;
-            }
 
             if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
             {
