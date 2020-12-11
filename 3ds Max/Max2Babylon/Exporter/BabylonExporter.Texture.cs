@@ -715,7 +715,7 @@ namespace Max2Babylon
                     amount = block.GetFloat(0, 0, 0);           // Normal texture Mult Spin
                     var map = block.GetTexmap(2, 0, 0);         // Normal texture
                     var mapEnabled = block.GetInt(4, 0, 0);     // Normal texture Enable
-                    if (mapEnabled == 0)
+                    if (map == null || mapEnabled == 0)
                     {
                         RaiseError($"Only Normal Bump Texture with Normal enabled are supported.", 2);
                         return null;
@@ -746,10 +746,10 @@ namespace Max2Babylon
                         return null;
                     }
 
-                    // var bumpAmount = block.GetFloat(1, 0, 0);   // Bump texture Mult Spin
-                    // var bumpMap = block.GetMap(3, 0, 0);        // Bump texture
+                    var bumpAmount = block.GetFloat(1, 0, 0);   // Bump texture Mult Spin
+                    var bumpMap = block.GetTexmap(3, 0, 0);     // Bump texture
                     var bumpMapEnable = block.GetInt(5, 0, 0);  // Bump texture Enable
-                    if (bumpMapEnable == 1)
+                    if (bumpMap != null && bumpMapEnable == 1)
                     {
                         RaiseError($"Only Normal Bump Texture without Bump are supported.", 2);
                         return null;
