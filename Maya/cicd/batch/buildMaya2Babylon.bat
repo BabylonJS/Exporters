@@ -7,7 +7,9 @@ rem  where:  install dll and nll assemblies to 2021 plug-ins directory:
 rem          located at: C:\Program Files\Autodesk\Maya(Version)\bin\plug-ins
 rem
 
-set mayaversion=2021
+if "%1" == "" goto nomayaver
+
+set mayaversion=%1
 set mayalocation=%ProgramFiles%\Autodesk\Maya%mayaversion%
 
 set solutionfile=%~dp0..\..\Maya2Babylon.sln
@@ -36,6 +38,10 @@ set releaseassembly=%assemblydir%\Maya2Babylon.nll.dll
 copy /y "%releaseassembly%" "%installdir%\Maya2Babylon.nll.dll"
 
 echo build suceeded
+goto end
+
+:nomayaver
+echo no maya version specified: re-run command with 2019|2020|2021 as argument
 goto end
 
 :nosolution

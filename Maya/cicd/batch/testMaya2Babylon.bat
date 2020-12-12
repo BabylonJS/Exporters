@@ -7,7 +7,9 @@ rem  where:  run all python code in test directory:
 rem          located at: .\Tests\*.py
 rem
 
-set mayaversion=2021
+if "%1" == "" goto nomayaver
+
+set mayaversion=%1
 set mayalocation=%ProgramFiles%\Autodesk\Maya%mayaversion%
 
 set mayapy=%mayalocation%\bin\mayapy.exe
@@ -23,17 +25,23 @@ call %~dp0..\venv\Scripts\activate.bat
 "%mayapy%" -m pip install -r "%~dp0..\python\.requirements" --quiet
 "%mayapy%" -m pip install "%~dp0..\python\libMayaExtended" --quiet
 
-"%mayapy%" -m pytest -W ignore::DeprecationWarning "%~dp0..\tests"
+"%mayapy%" -m pytest -s -W ignore::DeprecationWarning "%~dp0..\tests"
 call %~dp0..\venv\Scripts\deactivate.bat
 
 echo tests completed
 goto end
 
-:novenv
-echo no virtualenv created or found for python execution
+:nomayaver
+echo no maya version specified: re-run command with 2019|2020|2021 as argument
+goto end
 
 :nomayapy
 echo no mayapy executable found at location [%mayapy%]
+goto end
+
+:novenv
+echo no virtualenv created or found for python execution
+goto end
 
 :end
 echo exiting bat file
