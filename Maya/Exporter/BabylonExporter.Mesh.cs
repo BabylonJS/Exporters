@@ -630,7 +630,7 @@ namespace Maya2Babylon
                 babylonScene.MorphTargetManagersList.Add(babylonMorphTargetManager);
                 babylonMesh.morphTargetManagerId = babylonMorphTargetManager.id;
 
-                IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(babylonMesh, mFnMesh.objectProperty);
+                IList<BabylonMorphTarget> babylonMorphTargets = GetMorphTargets(babylonMesh, mFnMesh);
                 babylonMorphTargetManager.targets = babylonMorphTargets.ToArray();
 
                 if (babylonMorphTargets.Count > 5)
@@ -830,17 +830,17 @@ namespace Maya2Babylon
 
         }
 
-            /// <summary>
-            /// Extract geometry (position, normal, UVs...) for a specific vertex
-            /// </summary>
-            /// <param name="mFnMesh"></param>
-            /// <param name="polygonId">The polygon (face) to examine</param>
-            /// <param name="vertexIndexGlobal">The object-relative (mesh-relative/global) vertex index</param>
-            /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
-            /// <param name="uvSetNames"></param>
-            /// <param name="isUVExportSuccess"></param>
-            /// <returns></returns>
-            private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess)
+        /// <summary>
+        /// Extract geometry (position, normal, UVs...) for a specific vertex
+        /// </summary>
+        /// <param name="mFnMesh"></param>
+        /// <param name="polygonId">The polygon (face) to examine</param>
+        /// <param name="vertexIndexGlobal">The object-relative (mesh-relative/global) vertex index</param>
+        /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
+        /// <param name="uvSetNames"></param>
+        /// <param name="isUVExportSuccess"></param>
+        /// <returns></returns>
+        private GlobalVertex ExtractVertex(MFnMesh mFnMesh, int polygonId, int vertexIndexGlobal, int vertexIndexLocal, MStringArray uvSetNames, ref bool[] isUVExportSuccess, ref bool isTangentExportSuccess)
         {
             MPoint point = new MPoint();
             mFnMesh.getPoint(vertexIndexGlobal, point);
@@ -1129,7 +1129,6 @@ namespace Maya2Babylon
             return mFnSkinCluster;
         }
 
-
         /// <summary>
         /// Instances manager
         /// </summary>
@@ -1153,7 +1152,6 @@ namespace Maya2Babylon
             return babylonMasterMesh;
         }
 
-
         /// <summary>
         /// Check if a Maya object is link to a blend shape by counting its connections to it. 
         /// </summary>
@@ -1167,7 +1165,6 @@ namespace Maya2Babylon
             IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mObject);
             return blendShapeDeformers.Count > 0;
         }
-
 
         /// <summary>
         /// Search the blend shapes through the connections of the Maya object
@@ -1200,7 +1197,6 @@ namespace Maya2Babylon
             blendShapeByMObject[mObject] = uniqBlendShapeDeformers;
             return uniqBlendShapeDeformers;
         }
-
 
         private IList<MFnBlendShapeDeformer> GetBlendShapeSub(MObject mObject)
         {
@@ -1236,10 +1232,10 @@ namespace Maya2Babylon
         /// <param name="baseObject">The Maya object influenced by the blendShapes</param>
         /// <param name="blendShapeDeformers">List of Maya blendShape. Use GetBlendShape function to get the right one.</param>
         /// <returns>BabylonMorphTarget list</returns>
-        private IList<BabylonMorphTarget> GetMorphTargets(BabylonMesh babylonMesh, MObject baseObject)
+        private IList<BabylonMorphTarget> GetMorphTargets(BabylonMesh babylonMesh, MFnMesh mesh)
         {
             // Morph Targets
-            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(baseObject);
+            IList<MFnBlendShapeDeformer> blendShapeDeformers = GetBlendShape(mesh.objectProperty);
             IList <BabylonMorphTarget> babylonMorphTargets = new List<BabylonMorphTarget>();
 
             for (int index = 0; index < blendShapeDeformers.Count; index++)
@@ -1264,112 +1260,225 @@ namespace Maya2Babylon
                     MObjectArray targets = new MObjectArray();  // the targets for the given weight
                     try
                     {
-                        blendShapeDeformer.getTargets(baseObject, weightIndex, targets);
-                    } 
-                    catch(Exception e)
-                    {
-                        // its common for target to be deleted, then it not available anymore. This is a known issue of Maya.
-                    }
-
-                    for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
-                    {
-                        MObject target = targets[targetIndex];
-                        MFnMesh targetMesh = new MFnMesh(target);
-
-                        BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
+                        blendShapeDeformer.getTargets(mesh.objectProperty, weightIndex, targets);
+                        // reach here it's mean the target are still present into the scene. However, it's common that
+                        // the target has been removed and the deformation baked into the deformer.
+                        // If so, the get target throw an exception OR return no results and we need to address the case differently.
+                        for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
                         {
-                            name = $"{blendShapeDeformer.name}.{currentWeightName}",
-                            influence = envelope * weight,
-                            id = Guid.NewGuid().ToString()
-                        };
-                        babylonMorphTargets.Add(babylonMorphTarget);
+                            MObject target = targets[targetIndex];
+                            MFnMesh targetMesh = new MFnMesh(target);
 
-                        // Target geometry
-                        var targetVertices = new List<GlobalVertex>();
-                        var uvSetNames = new MStringArray();
-                        bool[] isUVExportSuccess = { false, false };
-                        bool isTangentExportSuccess = exportParameters.exportTangents;
-                        bool optimizeVertices = exportParameters.optimizeVertices;
-
-                        List<VertexData> vertexDatas = babylonMesh.VertexDatas;
-                        for(int vertexIndex = 0; vertexIndex < vertexDatas.Count; vertexIndex++)
-                        {
-                            VertexData vertexData = vertexDatas[vertexIndex];
-
-                            MPoint position = new MPoint();
-                            targetMesh.getPoint(vertexData.vertexIndexGlobal, position);
-                            MVector normal = new MVector();
-                            targetMesh.getFaceVertexNormal(vertexData.polygonId, vertexData.vertexIndexGlobal, normal);
-
-                            // Switch coordinate system at object level
-                            position.z *= -1;
-                            normal.z *= -1;
-
-                            // Apply unit conversion factor to meter
-                            position.x *= scaleFactorToMeters;
-                            position.y *= scaleFactorToMeters;
-                            position.z *= scaleFactorToMeters;
-
-                            GlobalVertex vertex = new GlobalVertex
+                            BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
                             {
-                                BaseIndex = vertexData.vertexIndexGlobal,
-                                Position = position.toArray(),
-                                Normal = normal.toArray()
+                                name = $"{blendShapeDeformer.name}.{currentWeightName}",
+                                influence = envelope * weight,
+                                id = Guid.NewGuid().ToString()
                             };
+                            babylonMorphTargets.Add(babylonMorphTarget);
 
-                            if (isTangentExportSuccess)
+                            // Target geometry
+                            var targetVertices = new List<GlobalVertex>();
+                            var uvSetNames = new MStringArray();
+                            bool[] isUVExportSuccess = { false, false };
+                            bool isTangentExportSuccess = exportParameters.exportTangents;
+                            bool optimizeVertices = exportParameters.optimizeVertices;
+
+                            List<VertexData> vertexDatas = babylonMesh.VertexDatas;
+                            for (int vertexIndex = 0; vertexIndex < vertexDatas.Count; vertexIndex++)
                             {
-                                try
+                                VertexData vertexData = vertexDatas[vertexIndex];
+
+                                MPoint position = new MPoint();
+                                targetMesh.getPoint(vertexData.vertexIndexGlobal, position);
+                                MVector normal = new MVector();
+                                targetMesh.getFaceVertexNormal(vertexData.polygonId, vertexData.vertexIndexGlobal, normal);
+
+                                // Switch coordinate system at object level
+                                position.z *= -1;
+                                normal.z *= -1;
+
+                                // Apply unit conversion factor to meter
+                                position.x *= scaleFactorToMeters;
+                                position.y *= scaleFactorToMeters;
+                                position.z *= scaleFactorToMeters;
+
+                                GlobalVertex vertex = new GlobalVertex
                                 {
-                                    MVector tangent = new MVector();
-                                    targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
+                                    BaseIndex = vertexData.vertexIndexGlobal,
+                                    Position = position.toArray(),
+                                    Normal = normal.toArray()
+                                };
 
-                                    // Switch coordinate system at object level
-                                    tangent.z *= -1;
-
-                                    int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
-                                    bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
-
-                                    // Invert W to switch to left handed system
-                                    vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
-                                }
-                                catch
+                                if (isTangentExportSuccess)
                                 {
-                                    // Exception raised when mesh don't have tangents
-                                    isTangentExportSuccess = false;
+                                    try
+                                    {
+                                        MVector tangent = new MVector();
+                                        targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
+
+                                        // Switch coordinate system at object level
+                                        tangent.z *= -1;
+
+                                        int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
+                                        bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
+
+                                        // Invert W to switch to left handed system
+                                        vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                    }
+                                    catch
+                                    {
+                                        // Exception raised when mesh don't have tangents
+                                        isTangentExportSuccess = false;
+                                    }
                                 }
+
+                                targetVertices.Add(vertex);
                             }
 
-                            targetVertices.Add(vertex);
-                        }
+                            babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
 
-                        babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
+                            if (exportParameters.exportMorphNormals)
+                            {
+                                babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
+                            }
 
-                        if (exportParameters.exportMorphNormals)
-                        {
-                            babylonMorphTarget.normals = targetVertices.SelectMany(v => v.Normal).ToArray();
-                        }
+                            // Tangent
+                            if (isTangentExportSuccess && exportParameters.exportMorphTangents)
+                            {
+                                babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
+                            }
 
-                        // Tangent
-                        if (isTangentExportSuccess && exportParameters.exportMorphTangents)
-                        {
-                            babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
-                        }
-
-                        // Animation
-                        if (exportParameters.exportAnimations)
-                        {
-                            babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                            // Animation
+                            if (exportParameters.exportAnimations)
+                            {
+                                babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                            }
                         }
                     }
+                    catch
+                    {
+                        // see comment above.
+                    }
+                    if (targets.Count == 0)
+                    {
+                        // its common for target to be deleted, then beeing not available anymore. (This is a known problem of all Maya exporter, and seems no-ones find a solution so-far)
+                        // Maya is then store the baked "deltas" into plug. We going to retreive these deltas and associated index to build our GlobalVertices list.
 
+                        // 1 - Return the "inputTargetItem" array indices for the specified target. The "inputTargetItem" array indices correspond to the weight where the targets take affect according to the formula: index = wt * 1000 + 5000. 
+                        // For example, if you have only a single target, and no in-betweens, the index will typically be 6000 since the default weight for the initial target is 1.0.
+                        MIntArray targetItemIndices = new MIntArray();
+                        blendShapeDeformer.targetItemIndexList((uint)weightIndex, mesh.objectProperty, targetItemIndices);
+
+                        foreach (int k in targetItemIndices)
+                        {
+                            BabylonMorphTarget babylonMorphTarget = new BabylonMorphTarget
+                            {
+                                name = $"{blendShapeDeformer.name}.{currentWeightName}",
+                                influence = envelope * weight,
+                                id = Guid.NewGuid().ToString()
+                            };
+                            babylonMorphTargets.Add(babylonMorphTarget);
+
+                            // 2 - The inputPointsTarget holds all the deltas as four component double list [X,Y,Z,W]
+                            MDoubleArray deltas = new MDoubleArray();
+                            MGlobal.executeCommand($"getAttr {blendShapeDeformer.name}.inputTarget[0].inputTargetGroup[{weightIndex}].inputTargetItem[{k}].inputPointsTarget;", deltas);
+
+                            // 3 - the inputComponentsTarget holds the vertex indices that get each delta
+                            // list is string formatted as "vtx[6873:6875]"
+                            // this is not an obvious format -> TODO - search for an alternative to access theses values
+                            MStringArray indiceStrList = new MStringArray();
+                            MGlobal.executeCommand($"getAttr {blendShapeDeformer.name}.inputTarget[0].inputTargetGroup[{weightIndex}].inputTargetItem[{k}].inputComponentsTarget;", indiceStrList);
+                            uint[] originalVertexIndices = indiceStrList.SelectMany(str => ParseStrIndice(str)).ToArray();
+
+                            // 4 - within the indices, access the original vertices position and add delta to it.
+                            var targetVertices = new List<GlobalVertex>();
+                            List<VertexData> vertexDatas = babylonMesh.VertexDatas;
+                            for (int vertexIndex = 0; vertexIndex < vertexDatas.Count; vertexIndex++)
+                            {
+                                VertexData vertexData = vertexDatas[vertexIndex];
+                                // retreive the original position
+                                MPoint position = new MPoint();
+                                mesh.getPoint(vertexData.vertexIndexGlobal, position);
+                                MVector normal = new MVector();
+                                mesh.getFaceVertexNormal(vertexData.polygonId, vertexData.vertexIndexGlobal, normal);
+
+                                // Switch coordinate system at object level
+                                position.z *= -1;
+                                normal.z *= -1;
+
+                                // Apply unit conversion factor to meter
+                                position.x *= scaleFactorToMeters;
+                                position.y *= scaleFactorToMeters;
+                                position.z *= scaleFactorToMeters;
+
+                                GlobalVertex vertex = new GlobalVertex
+                                {
+                                    BaseIndex = vertexData.vertexIndexGlobal,
+                                    Position = position.toArray()
+                                };
+
+                                for (int j = 0; j != originalVertexIndices.Length; j++)
+                                {
+                                    int localIndex = (int)originalVertexIndices[j];
+
+                                    if (localIndex == vertexData.vertexIndexGlobal)
+                                    {
+                                        // we find a vertice to apply delta
+                                        // remember that morph formula is : final mesh = original mesh + sum((morph targets - original mesh) * morph targets influences)
+                                        int il = j * 4;
+                                        vertex.Position[0] += (float)(deltas[il] * scaleFactorToMeters);
+                                        vertex.Position[1] += (float)(deltas[il + 1] * scaleFactorToMeters);
+                                        vertex.Position[2] += (float)(deltas[il + 2] * -scaleFactorToMeters);
+                                        break;
+                                    }
+
+                                    if (localIndex > vertexData.vertexIndexGlobal)
+                                    {
+                                        // optimize because originalVertexIndices is sort ascending
+                                        break;
+                                    }
+                                }
+                                targetVertices.Add(vertex);
+                            }
+                            babylonMorphTarget.positions = targetVertices.SelectMany(v => v.Position).ToArray();
+
+                            // Animation
+                            if (exportParameters.exportAnimations)
+                            {
+                                babylonMorphTarget.animations = GetAnimationsInfluence(blendShapeDeformer.name, weightIndex).ToArray();
+                            }
+                        }
+                    }
                 }
             }
 
             return babylonMorphTargets;
         }
 
-
+        /// <summary>
+        /// utility for GetMorphTargets
+        /// </summary>
+        /// <param name="str">the index to be parsed in the form of vtx[6873:6875] or vtx[6873]</param>
+        /// <returns>All the corresponding indices</returns>
+        private IEnumerable<uint> ParseStrIndice(string str)
+        {
+            str = str.Substring(4, str.Length - 5);
+            uint [] indices = str.Split(':').Select(s=>uint.Parse(s)).ToArray();
+            uint a = indices[0];
+            if (indices.Length == 1)
+            {
+                yield return a;
+            } 
+            else
+            {
+                uint b = indices[1];
+                for (uint i = a; i <= b; i++)
+                {
+                    yield return i;
+                }
+            }
+         }
 
         /// <summary>
         /// Set the blend shape envelope to 0.
