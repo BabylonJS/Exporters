@@ -22,8 +22,10 @@ namespace Babylon2GLTF
             // --------------------------
             // --- Mesh from babylon ----
             // --------------------------
+            // get direct access to mesh data or use geometryId to do so
+            IBabylonMeshData meshData = babylonMesh.geometryId == null ? babylonMesh : (IBabylonMeshData)babylonScene.geometries.Get(babylonMesh.geometryId)?? babylonMesh;
 
-            if (babylonMesh.positions == null || babylonMesh.positions.Length == 0)
+            if (meshData.positions == null || meshData.positions.Length == 0)
             {
                 logger.RaiseMessage("GLTFExporter.Mesh | Mesh is a dummy", 2);
                 return null;
@@ -31,15 +33,16 @@ namespace Babylon2GLTF
 
             logger.RaiseMessage("GLTFExporter.Mesh | Mesh from babylon", 2);
             // Retreive general data from babylon mesh
-            int nbVertices = babylonMesh.positions.Length / 3;
-            bool hasUV = babylonMesh.uvs != null && babylonMesh.uvs.Length > 0;
-            bool hasUV2 = babylonMesh.uvs2 != null && babylonMesh.uvs2.Length > 0;
-            bool hasColor = babylonMesh.colors != null && babylonMesh.colors.Length > 0;
-            bool hasBones = babylonMesh.matricesIndices != null && babylonMesh.matricesIndices.Length > 0;
+            int nbVertices = meshData.positions.Length / 3;
+            bool hasUV = meshData.uvs != null && meshData.uvs.Length > 0;
+            bool hasUV2 = meshData.uvs2 != null && meshData.uvs2.Length > 0;
+            bool hasColor = meshData.colors != null && meshData.colors.Length > 0;
+            bool hasBones = meshData.matricesIndices != null && meshData.matricesIndices.Length > 0;
+            bool hasTangents = meshData.tangents != null && meshData.tangents.Length > 0;
+            bool hasNormals = meshData.normals != null && meshData.normals.Length > 0;
+
             bool hasBonesExtra = babylonMesh.matricesIndicesExtra != null && babylonMesh.matricesIndicesExtra.Length > 0;
-            bool hasTangents = babylonMesh.tangents != null && babylonMesh.tangents.Length > 0;
             bool hasMetadata = babylonMesh.metadata != null && babylonMesh.metadata.Count > 0;
-            bool hasNormals = babylonMesh.normals != null && babylonMesh.normals.Length > 0;
 
             logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
@@ -55,7 +58,7 @@ namespace Babylon2GLTF
             for (int indexVertex = 0; indexVertex < nbVertices; indexVertex++)
             {
                 GLTFGlobalVertex globalVertex = new GLTFGlobalVertex();
-                globalVertex.Position = BabylonVector3.FromArray(babylonMesh.positions, indexVertex);
+                globalVertex.Position = BabylonVector3.FromArray(meshData.positions, indexVertex);
 
                 // Switch coordinate system at object level
                 globalVertex.Position.Z *= -1;
@@ -63,13 +66,13 @@ namespace Babylon2GLTF
 
                 if (hasNormals)
                 {
-                    globalVertex.Normal = BabylonVector3.FromArray(babylonMesh.normals, indexVertex);
+                    globalVertex.Normal = BabylonVector3.FromArray(meshData.normals, indexVertex);
                     globalVertex.Normal.Z *= -1;
                 }
 
                 if (hasTangents)
                 {
-                    globalVertex.Tangent = BabylonQuaternion.FromArray(babylonMesh.tangents, indexVertex);
+                    globalVertex.Tangent = BabylonQuaternion.FromArray(meshData.tangents, indexVertex);
 
                     // Switch coordinate system at object level
                     globalVertex.Tangent.Z *= -1;
@@ -80,27 +83,27 @@ namespace Babylon2GLTF
 
                 if (hasUV)
                 {
-                    globalVertex.UV = BabylonVector2.FromArray(babylonMesh.uvs, indexVertex);
+                    globalVertex.UV = BabylonVector2.FromArray(meshData.uvs, indexVertex);
                     // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
                     // While for Babylon, it corresponds to the lower left corner of a texture image
                     globalVertex.UV.Y = 1 - globalVertex.UV.Y;
                 }
                 if (hasUV2)
                 {
-                    globalVertex.UV2 = BabylonVector2.FromArray(babylonMesh.uvs2, indexVertex);
+                    globalVertex.UV2 = BabylonVector2.FromArray(meshData.uvs2, indexVertex);
                     // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
                     // While for Babylon, it corresponds to the lower left corner of a texture image
                     globalVertex.UV2.Y = 1 - globalVertex.UV2.Y;
                 }
                 if (hasColor)
                 {
-                    globalVertex.Color = ArrayExtension.SubArrayFromEntity(babylonMesh.colors, indexVertex, 4);
+                    globalVertex.Color = ArrayExtension.SubArrayFromEntity(meshData.colors, indexVertex, 4);
                 }
                 if (hasBones)
                 {
                     // In babylon, the 4 bones indices are stored in a single int
                     // Each bone index is 8-bit offset from the next
-                    uint bonesIndicesMerged = (uint)babylonMesh.matricesIndices[indexVertex];
+                    uint bonesIndicesMerged = (uint)meshData.matricesIndices[indexVertex];
                     uint bone3 =  bonesIndicesMerged        >> 24;
                     uint bone2 = (bonesIndicesMerged << 8 ) >> 24;
                     uint bone1 = (bonesIndicesMerged << 16) >> 24;
@@ -108,7 +111,7 @@ namespace Babylon2GLTF
                     bonesIndicesMerged -= bone0 << 0;
                     var bonesIndicesArray = new ushort[] { (ushort)bone0, (ushort)bone1, (ushort)bone2, (ushort)bone3 };
                     globalVertex.BonesIndices = bonesIndicesArray;
-                    globalVertex.BonesWeights = ArrayExtension.SubArrayFromEntity(babylonMesh.matricesWeights, indexVertex, 4);
+                    globalVertex.BonesWeights = ArrayExtension.SubArrayFromEntity(meshData.matricesWeights, indexVertex, 4);
                 }
 
                 globalVertices.Add(globalVertex);
@@ -117,7 +120,7 @@ namespace Babylon2GLTF
             var babylonMorphTargetManager = GetBabylonMorphTargetManager(babylonScene, babylonMesh);
 
             // Retreive indices from babylon mesh
-            List<int> babylonIndices = babylonMesh.indices.ToList();
+            List<int> babylonIndices = meshData.indices.ToList();
 
             // --------------------------
             // ------- Init glTF --------
