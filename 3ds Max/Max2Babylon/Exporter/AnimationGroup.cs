@@ -142,13 +142,19 @@ namespace Max2Babylon
         public const char s_PropertySeparator = ';';
         public const string s_PropertyFormat = "{0};{1};{2};{3}";
 
-        private Guid serializedId = Guid.NewGuid();
+        private Guid serializedId;
         private string name = "Animation";
+
         // use current timeline frame range by default
 
         private List<Guid> nodeGuids = new List<Guid>();
 
-        public AnimationGroup() { }
+        public AnimationGroup() : this(Guid.NewGuid()) { }
+
+        public AnimationGroup(Guid guid) {
+            serializedId = guid;
+        }
+
         public AnimationGroup(AnimationGroup other)
         {
             DeepCopyFrom(other);
@@ -296,7 +302,7 @@ namespace Max2Babylon
             return this.First(animationGroup => animationGroup.Name == name);
         }
 
-        public void LoadFromData(IINode dataNode = null)
+        public void LoadFromData(ILoggingProvider logger=null, IINode dataNode = null)
         {
             dataNode = dataNode ?? Loader.Core.RootNode;
 
@@ -307,26 +313,30 @@ namespace Max2Babylon
             {
                 string[] animationPropertyNames = animProp.Split(';') ;
 
-            if (Capacity < animationPropertyNames.Length)
-                Capacity = animationPropertyNames.Length;
+                if (Capacity < animationPropertyNames.Length)
+                    Capacity = animationPropertyNames.Length;
 
-            foreach (string propertyNameStr in animationPropertyNames)
-            {
-                AnimationGroup info = new AnimationGroup();
-                    if(!nodePropDictionary.ContainsKey(propertyNameStr))
-                        throw new Exception("Invalid ID, can't deserialize.");
-                        
+                foreach (string propertyNameStr in animationPropertyNames)
+                {
+                    if (!nodePropDictionary.ContainsKey(propertyNameStr))
+                    {
+                        logger?.RaiseWarning($"Invalid ID {propertyNameStr}, can't deserialize.");
+                        // give a chance to other group! 
+                        continue;
+                    }
+
+                    AnimationGroup info = new AnimationGroup(new Guid(propertyNameStr));
                     info.LoadFromData(propertyNameStr,dataNode,nodePropDictionary);
                     info.LoadFromData(nodePropDictionary[propertyNameStr],dataNode);
-                Add(info);
+                    Add(info);
+                }
             }
-        }
         }
 
         public static AnimationGroupList InitAnimationGroups(ILoggingProvider logger)
         {
             AnimationGroupList animationList = new AnimationGroupList();
-            animationList.LoadFromData(Loader.Core.RootNode);
+            animationList.LoadFromData(logger, Loader.Core.RootNode);
 
             if (animationList.Count > 0)
             {
@@ -486,14 +496,14 @@ namespace Max2Babylon
 
             Loader.Core.RootNode.SetStringArrayProperty(s_AnimationListPropertyName, animationPropertyNameList);
 
-            LoadFromData(Loader.Core.RootNode);
+            LoadFromData(null,Loader.Core.RootNode);
             
         }
 
         public static void SaveDataToAnimationHelper()
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData(Loader.Core.RootNode);
+            animationGroupList.LoadFromData(null,Loader.Core.RootNode);
 
             List<string> animationPropertyNameList = new List<string>();
             var helper = Tools.BabylonAnimationHelper();
@@ -519,7 +529,7 @@ namespace Max2Babylon
             }
 
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData(Loader.Core.RootNode);
+            animationGroupList.LoadFromData(null,Loader.Core.RootNode);
 
             RemoveDataOnContainer(iContainerObject); //cleanup for a new serialization
             List<string> animationPropertyNameList = new List<string>();
@@ -550,7 +560,7 @@ namespace Max2Babylon
                 if (node.IsBabylonAnimationHelper())
                 {
                     AnimationGroupList helperAnimationGroupList = new AnimationGroupList();
-                    helperAnimationGroupList.LoadFromData(node);
+                    helperAnimationGroupList.LoadFromData(null,node);
 
                     //merge
                     foreach (AnimationGroup animationGroup in helperAnimationGroupList)
