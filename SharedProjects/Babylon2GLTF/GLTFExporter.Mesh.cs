@@ -154,18 +154,19 @@ namespace Babylon2GLTF
                         indices = p.indices,
                         attributes = p.attributes
                     };
+
+                    // Material
                     if (babylonMesh.materialId != null)
                     {
                         logger.RaiseMessage("GLTFExporter.Mesh | Material", 3);
+                        // according we have a clone, then submeshes are of the same count and order.
                         SetBabylonMaterial(babylonMesh, babylonMesh.subMeshes[i], meshPrimitive);
                     }
                     return meshPrimitive;
-                }
-                ));
+                }));
             }
             else
             {
-
                 foreach (BabylonSubMesh babylonSubMesh in babylonMesh.subMeshes)
                 {
                     // --------------------------
@@ -178,7 +179,7 @@ namespace Babylon2GLTF
                     // In gltf, indices of each mesh primitive are 0-based (ie: min value is 0)
                     // Thus, the gltf indices list is a concatenation of sub lists all 0-based
                     // Example for 2 triangles, each being a submesh:
-                    //      babylonIndices = {0,1,2, 3,4,5} gives as result gltfIndicies = {0,1,2, 0,1,2}
+                    // babylonIndices = {0,1,2, 3,4,5} gives as result gltfIndicies = {0,1,2, 0,1,2}
                     var minIndiceValue = gltfIndices.Min(); // Should be equal to babylonSubMesh.indexStart
                     if (minIndiceValue != 0)
                     {
@@ -191,7 +192,6 @@ namespace Babylon2GLTF
                     // --------------------------
                     // ----- Mesh primitive -----
                     // --------------------------
-
                     // MeshPrimitive
                     var meshPrimitive = new GLTFMeshPrimitive
                     {
