@@ -112,7 +112,7 @@ namespace Max2Babylon
         public void FlattenItem(ref IINode itemNode)
         {
             AnimationGroupList animationGroupList = new AnimationGroupList();
-            animationGroupList.LoadFromData(Loader.Core.RootNode);
+            animationGroupList.LoadFromData(this,Loader.Core.RootNode);
 
             if (itemNode == null)
             {
