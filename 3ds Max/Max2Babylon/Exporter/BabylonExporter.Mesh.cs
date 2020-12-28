@@ -611,17 +611,17 @@ namespace Max2Babylon
         {
             // idea here is to create a mesh with a geometryId similar to the babylonMasterMesh
             // for the purpose we wrote a specific extension
-            var m = babylonMasterMesh.Clone(babylonScene);
-            if (m != null)
+            var babylonMesh = babylonMasterMesh.Clone(babylonScene);
+            if (babylonMesh != null)
             {
-                m.id = maxNode.MaxNode.GetGuid().ToString();
-                m.name = maxNode.Name;
-                m.pickable = maxNode.MaxNode.GetBoolProperty("babylonjs_checkpickable");
-                m.checkCollisions = maxNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions");
-                m.showBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox");
-                m.showSubMeshesBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox");
-                m.alphaIndex = (int)maxNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000);
-                m.visibility = maxNode.MaxNode.GetVisibility(0, Tools.Forever);
+                babylonMesh.id = maxNode.MaxNode.GetGuid().ToString();
+                babylonMesh.name = maxNode.Name;
+                babylonMesh.pickable = maxNode.MaxNode.GetBoolProperty("babylonjs_checkpickable");
+                babylonMesh.checkCollisions = maxNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions");
+                babylonMesh.showBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox");
+                babylonMesh.showSubMeshesBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox");
+                babylonMesh.alphaIndex = (int)maxNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000);
+                babylonMesh.visibility = maxNode.MaxNode.GetVisibility(0, Tools.Forever);
 
                 // Material
                 var mtl = maxNode.NodeMaterial;
@@ -649,7 +649,7 @@ namespace Max2Babylon
                     IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
                     if (unsupportedMaterial == null)
                     {
-                        m.materialId = mtl.MaxMaterial.GetGuid().ToString();
+                        babylonMesh.materialId = mtl.MaxMaterial.GetGuid().ToString();
 
                         if (!referencedMaterials.Contains(mtl))
                         {
@@ -679,24 +679,27 @@ namespace Max2Babylon
                 {
                     // ensure to clean the material because Clone() did not define any behavior about
                     // cloning the material id.
-                    m.materialId = null;
+                    babylonMesh.materialId = null;
                 }
 
                 // Export the custom attributes of this mesh
-                m.metadata = ExportExtraAttributes(maxNode, babylonScene);
+                babylonMesh.metadata = ExportExtraAttributes(maxNode, babylonScene);
 
                 // Append userData to extras
-                ExportUserData(maxNode, m);
+                ExportUserData(maxNode, babylonMesh);
 
                 // Export transform / hierarchy / animations
-                exportNode(m, maxNode, maxScene, babylonScene);
+                exportNode(babylonMesh, maxNode, maxScene, babylonScene);
 
                 // Animations
-                exportAnimation(m, maxNode);
+                exportAnimation(babylonMesh, maxNode);
 
-                babylonScene.MeshesList.Add(m);
+                // in order to keep the optimisation, a clone could be considered as Master
+                masterMeshMap[babylonMesh] = maxNode;
+
+                babylonScene.MeshesList.Add(babylonMesh);
             }
-            return m;
+            return babylonMesh;
         }
 
         private BabylonNode ExportInstanceMesh(IIGameScene maxScene, IIGameNode maxNode, BabylonScene babylonScene, BabylonMesh babylonMasterMesh, IIGameNode maxMasterNode)
