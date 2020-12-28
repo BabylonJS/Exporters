@@ -119,7 +119,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
             Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
             Tools.PrepareCheckBox(chkTryReuseTexture, Loader.Core.RootNode, "babylonjs_tryReuseTexture", 0);
-            
+            Tools.PrepareCheckBox(chkUseClone, Loader.Core.RootNode, "babylonjs_useClone", 0);
         }
 
         private void ExporterForm_Load(object sender, EventArgs e)
@@ -462,7 +462,8 @@ namespace Max2Babylon
                     flattenScene = chkFlatten.Checked,
                     mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
                     useMultiExporter = multiExport,
-                    tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked
+                    tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked,
+                    useClone = chkUseClone.Checked
                 };
 
                 exporter.callerForm = this;

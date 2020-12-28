@@ -122,11 +122,11 @@ namespace Max2Babylon
                         if (tabGuid == masterMeshPair.Key.id)
                         {
                             bool isShareMat = masterMeshPair.Key.materialId == null || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(masterMeshPair.Value.NodeMaterial.MaxMaterial.GetGuid().ToString()));
+
+                            BabylonNode n = isShareMat?
+                                ExportInstanceMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) :
+                                exportParameters.useClone ? ExportCloneMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) : null;
                             
-                            BabylonNode n = isShareMat ?   
-                                ExportInstanceMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) : 
-                                ExportCloneMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value);
- 
                             if( n != null)
                             {
                                 return n;

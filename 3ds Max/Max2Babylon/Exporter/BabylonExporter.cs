@@ -18,7 +18,7 @@ namespace Max2Babylon
     {
         public Form callerForm;
 
-        public ExportParameters exportParameters;
+        public MaxExportParameters exportParameters;
         public bool IsCancelled { get; set; }
 
         public string MaxSceneFileName { get; set; }
@@ -220,7 +220,7 @@ namespace Max2Babylon
             AnimationGroupList.LoadDataFromAnimationHelpers();
         }
 
-        public void Export(ExportParameters exportParameters)
+        public void Export(MaxExportParameters exportParameters)
         {
             ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Unavailable""");
             var watch = new Stopwatch();

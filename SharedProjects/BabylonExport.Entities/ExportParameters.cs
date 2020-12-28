@@ -52,7 +52,6 @@ namespace BabylonExport.Entities
         public bool tryToReuseOpaqueAndBlendTexture = false;
         public TextureFormatExportPolicy textureFormatExportPolicy = TextureFormatExportPolicy.CONSERVATIV;
 
-
         public IGLTFMaterialExporter customGLTFMaterialExporter;
         public bool useMultiExporter = false;
 
