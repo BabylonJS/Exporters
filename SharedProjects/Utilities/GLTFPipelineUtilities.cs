@@ -1,3 +1,4 @@
+using BabylonExport.Entities;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -26,13 +27,13 @@ namespace Utilities
             }
         }
 
-        public static void DoDracoCompression(ILoggingProvider logger, bool generateBinary, string outputFile)
+        public static void DoDracoCompression(ILoggingProvider logger, bool generateBinary, string outputFile, DracoParameters args = null)
         {
             Action onError = delegate
-                {
-                    logger.RaiseError("gltf-pipeline module not found.", 1);
-                    logger.RaiseError("The exported file wasn't compressed.");
-                };
+            {
+                logger.RaiseError("gltf-pipeline module not found.", 1);
+                logger.RaiseError("The exported file wasn't compressed.");
+            };
             try
             {
                 Process gltfPipeline = new Process();
@@ -53,8 +54,9 @@ namespace Utilities
                     string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
                     arg = $"/C gltf-pipeline -i {outputGltfFile} -o {outputGltfFile} -d -s";
                 }
+
                 gltfPipeline.StartInfo.FileName = "cmd.exe";
-                gltfPipeline.StartInfo.Arguments = arg;
+                gltfPipeline.StartInfo.Arguments = args != null ? $"{arg} {args.toCLIArgs()}" : arg;
 
                 gltfPipeline.Start();
                 gltfPipeline.WaitForExit();

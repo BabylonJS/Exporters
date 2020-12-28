@@ -10,6 +10,38 @@ namespace BabylonExport.Entities
         CONSERVATIV, // we try to keep the source format if possible
         SIZE // we try to minimize the size of texture as much as possibe.
     }
+    public class DracoParameters
+    {
+        public const string dracoPrefix = "draco.";
+        public static readonly string compressionLevel_param_name = $"{dracoPrefix}compressionLevel";
+        public static readonly string quantizePositionBits_param_name = $"{dracoPrefix}quantizePositionBits";
+        public static readonly string quantizeNormalBits_param_name = $"{dracoPrefix}quantizeNormalBits";
+        public static readonly string quantizeTexcoordBits_param_name = $"{dracoPrefix}quantizeTexcoordBits";
+        public static readonly string quantizeColorBits_param_name = $"{dracoPrefix}quantizeColorBits";
+        public static readonly string quantizeGenericBits_param_name = $"{dracoPrefix}quantizeGenericBits";
+        public static readonly string unifiedQuantization_param_name = $"{dracoPrefix}unifiedQuantization";
+
+        public const int compressionLevel_default = 7;
+        public const int quantizePositionBits_default = 14;
+        public const int quantizeNormalBits_default = 10;
+        public const int quantizeTexcoordBits_default = 12;
+        public const int quantizeColorBits_default = 8;
+        public const int quantizeGenericBits_default = 12;
+        public const bool unifiedQuantization_default = false;
+
+        public int compressionLevel = compressionLevel_default;
+        public int quantizePositionBits = quantizePositionBits_default;
+        public int quantizeNormalBits = quantizeNormalBits_default;
+        public int quantizeTexcoordBits = quantizeTexcoordBits_default;
+        public int quantizeColorBits = quantizeColorBits_default;
+        public int quantizeGenericBits = quantizeGenericBits_default;
+        public bool unifiedQuantization = unifiedQuantization_default;
+
+        public string toCLIArgs()
+        {
+            return $"--{compressionLevel_param_name} {compressionLevel} --{quantizePositionBits_param_name} {quantizePositionBits}  --{quantizeNormalBits_param_name} {quantizeNormalBits} --{quantizeTexcoordBits_param_name} {quantizeTexcoordBits} --{quantizeColorBits_param_name} {quantizeColorBits} --{quantizeGenericBits_param_name} {quantizeGenericBits} --{unifiedQuantization_param_name} {unifiedQuantization}";
+        }
+    }
 
     public class ExportParameters
     {
@@ -37,7 +69,6 @@ namespace BabylonExport.Entities
         public bool exportMorphNormals = true;
         public long txtQuality = 100;
         public bool mergeAOwithMR = true;
-        public bool dracoCompression = false;
         public bool enableKHRLightsPunctual = false;
         public bool enableKHRTextureTransform = false;
         public bool enableKHRMaterialsUnlit = false;
@@ -62,5 +93,10 @@ namespace BabylonExport.Entities
         public const string PBRFullPropertyName = "babylonjs_pbr_full";
         public const string PBRNoLightPropertyName = "babylonjs_pbr_nolight";
         public const string PBREnvironmentPathPropertyName = "babylonjs_pbr_environmentPathProperty";
+
+        #region DRACO
+        public bool dracoCompression = false;
+        DracoParameters dracoParams = new DracoParameters();
+        #endregion
     }
 }
