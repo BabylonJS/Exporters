@@ -37,19 +37,19 @@ namespace BabylonExport.Entities
 
         public static IBabylonMeshData ClearLocalGeometry(this IBabylonMeshData data)
         {
-            data.positions = default;
-            data.normals = default;
-            data.tangents = default;
-            data.uvs = default;
-            data.uvs2 = default;
-            data.uvs3 = default;
-            data.uvs4 = default;
-            data.uvs5 = default;
-            data.uvs6 = default;
-            data.colors = default;
-            data.matricesIndices = default;
-            data.matricesWeights = default;
-            data.indices = default;
+            data.positions = null;
+            data.normals = null;
+            data.tangents = null;
+            data.uvs = null;
+            data.uvs2 = null;
+            data.uvs3 = null;
+            data.uvs4 = null;
+            data.uvs5 = null;
+            data.uvs6 = null;
+            data.colors = null;
+            data.matricesIndices = null;
+            data.matricesWeights = null;
+            data.indices = null;
             return data;
         }
 
