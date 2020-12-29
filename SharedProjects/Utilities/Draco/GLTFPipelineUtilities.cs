@@ -58,6 +58,8 @@ namespace Utilities
                 gltfPipeline.StartInfo.FileName = "cmd.exe";
                 gltfPipeline.StartInfo.Arguments = args != null ? $"{arg} {args.toCLIArgs()}" : arg;
 
+                logger.RaiseMessage($"Draco compression CLI -> {gltfPipeline.StartInfo.Arguments}", 1);
+
                 gltfPipeline.Start();
                 gltfPipeline.WaitForExit();
 

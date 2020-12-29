@@ -429,7 +429,7 @@ namespace Max2Babylon
             butCancel.Enabled = true;
 
             // switch to the log tab.
-            exporterTabControl.SelectTab(1);
+            exporterTabControl.SelectTab(logTabPage.Name);
 
             bool success = true;
             try
