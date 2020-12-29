@@ -194,7 +194,6 @@ namespace Utilities
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.QPositionLabel.AutoSize = true;
-            this.QPositionLabel.BackColor = System.Drawing.SystemColors.Control;
             this.QPositionLabel.Location = new System.Drawing.Point(2, 0);
             this.QPositionLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.QPositionLabel.Name = "QPositionLabel";
@@ -437,29 +436,29 @@ namespace Utilities
         }
 
         #endregion
+        public System.Windows.Forms.NumericUpDown CompressionLevelNumericUpDown;
+        public System.Windows.Forms.TrackBar QPositionTrackBar;
+        public System.Windows.Forms.TrackBar QNormalTrackBar;
+        public System.Windows.Forms.TrackBar QTexcoordTrackBar;
+        public System.Windows.Forms.TrackBar QColorTrackBar;
+        public System.Windows.Forms.TrackBar QGenericTrackBar;
+        public System.Windows.Forms.CheckBox UnifiedCheckBox;
 
         private System.Windows.Forms.Label CompressionLevelLabel;
-        private System.Windows.Forms.NumericUpDown CompressionLevelNumericUpDown;
         private System.Windows.Forms.GroupBox QuantizationGroup;
         private System.Windows.Forms.TableLayoutPanel QTableLayoutPanel;
         private System.Windows.Forms.Label QPositionValueLabel;
         private System.Windows.Forms.Label QPositionLabel;
-        private System.Windows.Forms.TrackBar QPositionTrackBar;
         private System.Windows.Forms.Label QNormalValueLabel;
         private System.Windows.Forms.Label QNormalLabel;
-        private System.Windows.Forms.TrackBar QNormalTrackBar;
         private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
         private System.Windows.Forms.TableLayoutPanel HeaderTableLayoutPanel;
         private System.Windows.Forms.Label QTexcoordLabel;
         private System.Windows.Forms.Label QTexcoordValueLabel;
-        private System.Windows.Forms.TrackBar QGenericTrackBar;
-        private System.Windows.Forms.TrackBar QColorTrackBar;
-        private System.Windows.Forms.TrackBar QTexcoordTrackBar;
         private System.Windows.Forms.Label QColorLabel;
         private System.Windows.Forms.Label QColorValueLabel;
         private System.Windows.Forms.Label QGenericLabel;
         private System.Windows.Forms.Label QGenericValueLabel;
-        private System.Windows.Forms.CheckBox UnifiedCheckBox;
         private System.Windows.Forms.Button ResetButton;
     }
 }

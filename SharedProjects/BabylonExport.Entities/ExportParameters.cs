@@ -96,7 +96,7 @@ namespace BabylonExport.Entities
 
         #region DRACO
         public bool dracoCompression = false;
-        public DracoParameters dracoParams = new DracoParameters();
+        public DracoParameters dracoParams = null;
         #endregion
     }
 }

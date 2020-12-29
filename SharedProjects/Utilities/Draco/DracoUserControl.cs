@@ -18,6 +18,15 @@ namespace Utilities
             InitializeValues();
         }
 
+        public void UpdateValueLabels()
+        {
+            this.QPositionValueLabel.Text = this.QPositionTrackBar.Value.ToString();
+            this.QNormalValueLabel.Text = this.QNormalTrackBar.Value.ToString();
+            this.QTexcoordValueLabel.Text = this.QTexcoordTrackBar.Value.ToString();
+            this.QColorValueLabel.Text = this.QColorTrackBar.Value.ToString();
+            this.QGenericValueLabel.Text = this.QGenericTrackBar.Value.ToString();
+        }
+
         private void QPositionTrackBar_Scroll(object sender, EventArgs e)
         {
             this.QPositionValueLabel.Text = this.QPositionTrackBar.Value.ToString();
@@ -53,11 +62,7 @@ namespace Utilities
             this.QGenericTrackBar.Value = quantizeGenericBits_default;
             this.UnifiedCheckBox.Checked = unifiedQuantization_default;
 
-            this.QPositionValueLabel.Text = this.QPositionTrackBar.Value.ToString();
-            this.QNormalValueLabel.Text = this.QNormalTrackBar.Value.ToString();
-            this.QTexcoordValueLabel.Text = this.QTexcoordTrackBar.Value.ToString();
-            this.QColorValueLabel.Text = this.QColorTrackBar.Value.ToString();
-            this.QGenericValueLabel.Text = this.QGenericTrackBar.Value.ToString();
+            UpdateValueLabels();
         }
     }
 }
