@@ -36,7 +36,7 @@ namespace Utilities
             this.QNormalValueLabel = new System.Windows.Forms.Label();
             this.QNormalLabel = new System.Windows.Forms.Label();
             this.QPositionValueLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.QPositionLabel = new System.Windows.Forms.Label();
             this.QPositionTrackBar = new System.Windows.Forms.TrackBar();
             this.QNormalTrackBar = new System.Windows.Forms.TrackBar();
             this.QTexcoordLabel = new System.Windows.Forms.Label();
@@ -123,7 +123,7 @@ namespace Utilities
             this.QTableLayoutPanel.Controls.Add(this.QNormalValueLabel, 2, 1);
             this.QTableLayoutPanel.Controls.Add(this.QNormalLabel, 0, 1);
             this.QTableLayoutPanel.Controls.Add(this.QPositionValueLabel, 2, 0);
-            this.QTableLayoutPanel.Controls.Add(this.label1, 0, 0);
+            this.QTableLayoutPanel.Controls.Add(this.QPositionLabel, 0, 0);
             this.QTableLayoutPanel.Controls.Add(this.QPositionTrackBar, 1, 0);
             this.QTableLayoutPanel.Controls.Add(this.QNormalTrackBar, 1, 1);
             this.QTableLayoutPanel.Controls.Add(this.QTexcoordLabel, 0, 2);
@@ -190,17 +190,17 @@ namespace Utilities
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.QPositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(2, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 40);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Position";
+            this.QPositionLabel.AutoSize = true;
+            this.QPositionLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.QPositionLabel.Location = new System.Drawing.Point(2, 0);
+            this.QPositionLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.QPositionLabel.Name = "QPositionLabel";
+            this.QPositionLabel.Size = new System.Drawing.Size(68, 40);
+            this.QPositionLabel.TabIndex = 2;
+            this.QPositionLabel.Text = "Position";
             // 
             // QPositionTrackBar
             // 
@@ -443,7 +443,7 @@ namespace Utilities
         private System.Windows.Forms.GroupBox QuantizationGroup;
         private System.Windows.Forms.TableLayoutPanel QTableLayoutPanel;
         private System.Windows.Forms.Label QPositionValueLabel;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label QPositionLabel;
         private System.Windows.Forms.TrackBar QPositionTrackBar;
         private System.Windows.Forms.Label QNormalValueLabel;
         private System.Windows.Forms.Label QNormalLabel;

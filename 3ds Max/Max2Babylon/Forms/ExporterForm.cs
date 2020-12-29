@@ -109,6 +109,8 @@ namespace Max2Babylon
                 chkDracoCompression.Enabled = false;
             }
 
+            dracoGroupBox.Enabled = chkDracoCompression.Enabled && chkDracoCompression.Checked;
+
             Tools.PrepareCheckBox(chkFullPBR, Loader.Core.RootNode, ExportParameters.PBRFullPropertyName);
             Tools.PrepareCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
             string storedEnvironmentPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
@@ -741,6 +743,8 @@ namespace Max2Babylon
                     break;
             }
 
+            dracoGroupBox.Enabled = chkDracoCompression.Enabled && chkDracoCompression.Checked;
+
             string newModelPath = Path.ChangeExtension(txtModelPath.Text, this.saveFileDialog.DefaultExt);
             this.txtModelPath.MaxPath(newModelPath);
         }
@@ -844,6 +848,11 @@ namespace Max2Babylon
                 lblBakeAnimation.Enabled = true;
                 chkApplyPreprocessToScene.Enabled = true;
             }
+        }
+
+        private void chkDracoCompression_CheckedChanged(object sender, EventArgs e)
+        {
+            dracoGroupBox.Enabled = chkDracoCompression.Checked;
         }
     }
 }
