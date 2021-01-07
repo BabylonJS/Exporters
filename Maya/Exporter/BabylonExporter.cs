@@ -60,13 +60,17 @@ namespace Maya2Babylon
         {
             this.exportParameters = exportParameters;
 
+            //---------------------------------------------------------------------
+            // RD Removed: 07/12/2020: 
+            // The following causes erorrs when trying using mayapy.exe
+            //---------------------------------------------------------------------
             // Check if the animation is running
-            MGlobal.executeCommand("play -q - state", out int isPlayed);
-            if(isPlayed == 1)
-            {
-                RaiseError("Stop the animation before exporting.");
-                return;
-            }
+            // MGlobal.executeCommand("play -q - state", out int isPlayed);
+            // if(isPlayed == 1)
+            // {
+            //     RaiseError("Stop the animation before exporting.");
+            //     return;
+            // }
 
             RaiseMessage("Export started", Color.Blue);
             var progression = 0.0f;
@@ -84,15 +88,22 @@ namespace Maya2Babylon
             // Check directory exists
             if (!Directory.Exists(outputBabylonDirectory))
             {
-                RaiseError("Export stopped: Output folder does not exist");
-                ReportProgressChanged(100);
-                return;
+                RaiseMessage("Output folder does not exist and will be created");
+                try
+                {
+                    Directory.CreateDirectory(outputBabylonDirectory);
+                }
+                catch
+                {
+                    RaiseError("Export stopped: Failed to create missing output directory.");
+                    ReportProgressChanged(100);
+                    return;
+                }
             }
 
             var watch = new Stopwatch();
             watch.Start();
 
-            
             var babylonScene = new BabylonScene(outputBabylonDirectory);
 
             // Save scene
@@ -124,6 +135,7 @@ namespace Maya2Babylon
             MGlobal.getActiveSelectionList(selectedNodes);
             selectedNodeFullPaths = new List<string>();
             MItSelectionList mItSelectionList = new MItSelectionList(selectedNodes);
+
             while (!mItSelectionList.isDone)
             {
                 MDagPath mDagPath = new MDagPath();
@@ -139,6 +151,7 @@ namespace Maya2Babylon
 
                 mItSelectionList.next();
             }
+
             if (selectedNodeFullPaths.Count > 0)
             {
                 RaiseMessage("Selected nodes full path");
