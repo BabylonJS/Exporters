@@ -128,6 +128,16 @@ namespace Maya2Babylon
 
                         isTransparencyModeFromBabylonMaterialNode = true;
                     }
+                    // Backface Culling
+                    if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling"))
+                    {
+                        babylonMaterial.backFaceCulling = babylonAttributesDependencyNode.findPlug("babylonBackfaceCulling").asBool();
+                    }
+                    // unlit
+                    if (babylonAttributesDependencyNode.hasAttribute("babylonUnlit"))
+                    {
+                        babylonMaterial.isUnlit = babylonAttributesDependencyNode.findPlug("babylonUnlit").asBool();
+                    }
                 }
 
                 // Maya ambient <=> babylon emissive
