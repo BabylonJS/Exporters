@@ -21,6 +21,8 @@ namespace BabylonExport.Entities
         public static readonly string quantizeGenericBits_param_name = $"{dracoPrefix}quantizeGenericBits";
         public static readonly string unifiedQuantization_param_name = $"{dracoPrefix}unifiedQuantization";
 
+        
+        // default values are defined from https://github.com/CesiumGS/gltf-pipeline
         public const int compressionLevel_default = 7;
         public const int quantizePositionBits_default = 14;
         public const int quantizeNormalBits_default = 10;

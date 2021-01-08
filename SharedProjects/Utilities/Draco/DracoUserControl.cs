@@ -5,6 +5,8 @@ namespace Utilities
 {
     public partial class DracoUserControl : UserControl
     {
+        // default values are defined from https://github.com/CesiumGS/gltf-pipeline
+
         public const int quantizePositionBits_default = 14;
         public const int quantizeNormalBits_default = 10;
         public const int quantizeTexcoordBits_default = 12;
