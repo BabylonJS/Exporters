@@ -1301,6 +1301,12 @@ namespace Max2Babylon
             node.GetUserPropFloat(propertyName, ref state);
             return state;
         }
+        public static int GetIntProperty(this IINode node, string propertyName, int defaultState = 0)
+        {
+            int state = defaultState;
+            node.GetUserPropInt(propertyName, ref state);
+            return state;
+        }
 
         public static float[] GetVector3Property(this IINode node, string propertyName)
         {
@@ -1591,9 +1597,22 @@ namespace Max2Babylon
             }
         }
 
+        public static void PrepareTrackBar(TrackBar tb, IINode node, string propertyName, int defaultState = 0)
+        {
+            tb.Value = node.GetIntProperty(propertyName, defaultState);
+        }
+        public static void UpdateTrackBar(TrackBar tb, IINode node, string propertyName)
+        {
+            node.SetUserPropInt(propertyName, tb.Value);
+        }
         public static void PrepareNumericUpDown(NumericUpDown nup, List<IINode> nodes, string propertyName, float defaultState = 0)
         {
             nup.Value = (decimal)nodes[0].GetFloatProperty(propertyName, defaultState);
+        }
+
+        public static void PrepareNumericUpDown(NumericUpDown nup, IINode node, string propertyName, float defaultState)
+        {
+            nup.Value = (decimal)node.GetFloatProperty(propertyName, defaultState);
         }
 
         public static void UpdateNumericUpDown(NumericUpDown nup, List<IINode> nodes, string propertyName)
@@ -1602,6 +1621,10 @@ namespace Max2Babylon
             {
                 node.SetUserPropFloat(propertyName, (float)nup.Value);
             }
+        }
+        public static void UpdateNumericUpDown(NumericUpDown nup, IINode node, string propertyName)
+        {
+           node.SetUserPropFloat(propertyName, (float)nup.Value);
         }
 
         public static void PrepareVector3Control(Vector3Control vector3Control, IINode node, string propertyName, float defaultX = 0, float defaultY = 0, float defaultZ = 0)
