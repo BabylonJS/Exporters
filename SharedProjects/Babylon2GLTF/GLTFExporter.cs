@@ -274,7 +274,7 @@ namespace Babylon2GLTF
             if(exportParameters.dracoCompression)
             {
                 logger.RaiseMessage("GLTFExporter | Draco compression");
-                GLTFPipelineUtilities.DoDracoCompression(logger, generateBinary, outputFile);
+                GLTFPipelineUtilities.DoDracoCompression(logger, generateBinary, outputFile, exportParameters.dracoParams);
             }
 
             logger.ReportProgressChanged(100);

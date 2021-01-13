@@ -94,11 +94,16 @@ namespace Max2Babylon
             this.chkTryReuseTexture = new System.Windows.Forms.CheckBox();
             this.logTabPage = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.advancedTabPage = new System.Windows.Forms.TabPage();
+            this.dracoGroupBox = new System.Windows.Forms.GroupBox();
+            this.dracoUserControl = new Utilities.DracoUserControl();
             this.exporterTabControl.SuspendLayout();
             this.exportOptionsTabPage.SuspendLayout();
             this.exportOptionsScrollPanel.SuspendLayout();
             this.logTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.advancedTabPage.SuspendLayout();
+            this.dracoGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // butExport
@@ -204,7 +209,7 @@ namespace Max2Babylon
             this.chkManifest.Location = new System.Drawing.Point(474, 242);
             this.chkManifest.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkManifest.Name = "chkManifest";
-            this.chkManifest.Size = new System.Drawing.Size(167, 24);
+            this.chkManifest.Size = new System.Drawing.Size(162, 24);
             this.chkManifest.TabIndex = 14;
             this.chkManifest.Text = "Generate .manifest";
             this.chkManifest.UseVisualStyleBackColor = true;
@@ -229,7 +234,7 @@ namespace Max2Babylon
             this.chkWriteTextures.Location = new System.Drawing.Point(21, 277);
             this.chkWriteTextures.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkWriteTextures.Name = "chkWriteTextures";
-            this.chkWriteTextures.Size = new System.Drawing.Size(132, 24);
+            this.chkWriteTextures.Size = new System.Drawing.Size(127, 24);
             this.chkWriteTextures.TabIndex = 11;
             this.chkWriteTextures.Text = "Write Textures";
             this.chkWriteTextures.UseVisualStyleBackColor = true;
@@ -242,7 +247,7 @@ namespace Max2Babylon
             this.chkExportAnimationsOnly.Location = new System.Drawing.Point(474, 314);
             this.chkExportAnimationsOnly.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkExportAnimationsOnly.Name = "chkExportAnimationsOnly";
-            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(194, 24);
+            this.chkExportAnimationsOnly.Size = new System.Drawing.Size(189, 24);
             this.chkExportAnimationsOnly.TabIndex = 43;
             this.chkExportAnimationsOnly.Text = "Export Animations Only";
             this.chkExportAnimationsOnly.UseVisualStyleBackColor = true;
@@ -256,7 +261,7 @@ namespace Max2Babylon
             this.chkExportTextures.Location = new System.Drawing.Point(243, 174);
             this.chkExportTextures.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkExportTextures.Name = "chkExportTextures";
-            this.chkExportTextures.Size = new System.Drawing.Size(141, 24);
+            this.chkExportTextures.Size = new System.Drawing.Size(136, 24);
             this.chkExportTextures.TabIndex = 42;
             this.chkExportTextures.Text = "Export Textures";
             this.chkExportTextures.UseVisualStyleBackColor = true;
@@ -270,7 +275,7 @@ namespace Max2Babylon
             this.chkExportAnimations.Location = new System.Drawing.Point(474, 174);
             this.chkExportAnimations.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkExportAnimations.Name = "chkExportAnimations";
-            this.chkExportAnimations.Size = new System.Drawing.Size(159, 24);
+            this.chkExportAnimations.Size = new System.Drawing.Size(154, 24);
             this.chkExportAnimations.TabIndex = 42;
             this.chkExportAnimations.Text = "Export Animations";
             this.chkExportAnimations.UseVisualStyleBackColor = true;
@@ -308,7 +313,7 @@ namespace Max2Babylon
             this.chkApplyPreprocessToScene.Location = new System.Drawing.Point(21, 443);
             this.chkApplyPreprocessToScene.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkApplyPreprocessToScene.Name = "chkApplyPreprocessToScene";
-            this.chkApplyPreprocessToScene.Size = new System.Drawing.Size(225, 24);
+            this.chkApplyPreprocessToScene.Size = new System.Drawing.Size(220, 24);
             this.chkApplyPreprocessToScene.TabIndex = 39;
             this.chkApplyPreprocessToScene.Text = "Apply Preprocess To Scene";
             this.chkApplyPreprocessToScene.UseVisualStyleBackColor = true;
@@ -321,7 +326,7 @@ namespace Max2Babylon
             this.chkMrgContainersAndXref.Location = new System.Drawing.Point(21, 412);
             this.chkMrgContainersAndXref.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkMrgContainersAndXref.Name = "chkMrgContainersAndXref";
-            this.chkMrgContainersAndXref.Size = new System.Drawing.Size(230, 24);
+            this.chkMrgContainersAndXref.Size = new System.Drawing.Size(225, 24);
             this.chkMrgContainersAndXref.TabIndex = 37;
             this.chkMrgContainersAndXref.Text = "Merge Containers And XRef";
             this.chkMrgContainersAndXref.UseVisualStyleBackColor = true;
@@ -332,7 +337,7 @@ namespace Max2Babylon
             this.chkUsePreExportProces.Location = new System.Drawing.Point(8, 386);
             this.chkUsePreExportProces.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkUsePreExportProces.Name = "chkUsePreExportProces";
-            this.chkUsePreExportProces.Size = new System.Drawing.Size(203, 24);
+            this.chkUsePreExportProces.Size = new System.Drawing.Size(196, 24);
             this.chkUsePreExportProces.TabIndex = 36;
             this.chkUsePreExportProces.Text = "Use PreExport Process:";
             this.chkUsePreExportProces.UseVisualStyleBackColor = true;
@@ -345,7 +350,7 @@ namespace Max2Babylon
             this.chkFlatten.Location = new System.Drawing.Point(21, 348);
             this.chkFlatten.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkFlatten.Name = "chkFlatten";
-            this.chkFlatten.Size = new System.Drawing.Size(164, 24);
+            this.chkFlatten.Size = new System.Drawing.Size(159, 24);
             this.chkFlatten.TabIndex = 35;
             this.chkFlatten.Text = "Flatten Hierarchies";
             this.chkFlatten.UseVisualStyleBackColor = true;
@@ -409,7 +414,7 @@ namespace Max2Babylon
             this.chkFullPBR.Location = new System.Drawing.Point(21, 588);
             this.chkFullPBR.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkFullPBR.Name = "chkFullPBR";
-            this.chkFullPBR.Size = new System.Drawing.Size(125, 24);
+            this.chkFullPBR.Size = new System.Drawing.Size(120, 24);
             this.chkFullPBR.TabIndex = 28;
             this.chkFullPBR.Text = "Use Full PBR";
             this.chkFullPBR.UseVisualStyleBackColor = true;
@@ -434,7 +439,7 @@ namespace Max2Babylon
             this.chkNoAutoLight.Location = new System.Drawing.Point(686, 177);
             this.chkNoAutoLight.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkNoAutoLight.Name = "chkNoAutoLight";
-            this.chkNoAutoLight.Size = new System.Drawing.Size(165, 24);
+            this.chkNoAutoLight.Size = new System.Drawing.Size(160, 24);
             this.chkNoAutoLight.TabIndex = 27;
             this.chkNoAutoLight.Text = "No Automatic Light";
             this.chkNoAutoLight.UseVisualStyleBackColor = true;
@@ -483,7 +488,7 @@ namespace Max2Babylon
             this.chkExportMaterials.Location = new System.Drawing.Point(21, 174);
             this.chkExportMaterials.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkExportMaterials.Name = "chkExportMaterials";
-            this.chkExportMaterials.Size = new System.Drawing.Size(144, 24);
+            this.chkExportMaterials.Size = new System.Drawing.Size(139, 24);
             this.chkExportMaterials.TabIndex = 23;
             this.chkExportMaterials.Text = "Export Materials";
             this.chkExportMaterials.UseVisualStyleBackColor = true;
@@ -495,7 +500,7 @@ namespace Max2Babylon
             this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(478, 671);
             this.chkKHRMaterialsUnlit.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkKHRMaterialsUnlit.Name = "chkKHRMaterialsUnlit";
-            this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(175, 24);
+            this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(170, 24);
             this.chkKHRMaterialsUnlit.TabIndex = 22;
             this.chkKHRMaterialsUnlit.Text = "KHR_materials_unlit";
             this.chkKHRMaterialsUnlit.UseVisualStyleBackColor = true;
@@ -507,7 +512,7 @@ namespace Max2Babylon
             this.chkKHRTextureTransform.Location = new System.Drawing.Point(252, 671);
             this.chkKHRTextureTransform.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkKHRTextureTransform.Name = "chkKHRTextureTransform";
-            this.chkKHRTextureTransform.Size = new System.Drawing.Size(199, 24);
+            this.chkKHRTextureTransform.Size = new System.Drawing.Size(194, 24);
             this.chkKHRTextureTransform.TabIndex = 21;
             this.chkKHRTextureTransform.Text = "KHR_texture_transform";
             this.chkKHRTextureTransform.UseVisualStyleBackColor = true;
@@ -519,7 +524,7 @@ namespace Max2Babylon
             this.chkKHRLightsPunctual.Location = new System.Drawing.Point(30, 671);
             this.chkKHRLightsPunctual.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkKHRLightsPunctual.Name = "chkKHRLightsPunctual";
-            this.chkKHRLightsPunctual.Size = new System.Drawing.Size(180, 24);
+            this.chkKHRLightsPunctual.Size = new System.Drawing.Size(175, 24);
             this.chkKHRLightsPunctual.TabIndex = 20;
             this.chkKHRLightsPunctual.Text = "KHR_lights_punctual";
             this.chkKHRLightsPunctual.UseVisualStyleBackColor = true;
@@ -533,7 +538,7 @@ namespace Max2Babylon
             this.chkOverwriteTextures.Location = new System.Drawing.Point(243, 277);
             this.chkOverwriteTextures.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkOverwriteTextures.Name = "chkOverwriteTextures";
-            this.chkOverwriteTextures.Size = new System.Drawing.Size(161, 24);
+            this.chkOverwriteTextures.Size = new System.Drawing.Size(156, 24);
             this.chkOverwriteTextures.TabIndex = 19;
             this.chkOverwriteTextures.Text = "Overwrite Textures";
             this.chkOverwriteTextures.UseVisualStyleBackColor = true;
@@ -545,7 +550,7 @@ namespace Max2Babylon
             this.chkDoNotOptimizeAnimations.Location = new System.Drawing.Point(243, 348);
             this.chkDoNotOptimizeAnimations.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkDoNotOptimizeAnimations.Name = "chkDoNotOptimizeAnimations";
-            this.chkDoNotOptimizeAnimations.Size = new System.Drawing.Size(229, 24);
+            this.chkDoNotOptimizeAnimations.Size = new System.Drawing.Size(224, 24);
             this.chkDoNotOptimizeAnimations.TabIndex = 18;
             this.chkDoNotOptimizeAnimations.Text = "Do Not Optimize Animations";
             this.chkDoNotOptimizeAnimations.UseVisualStyleBackColor = true;
@@ -558,7 +563,7 @@ namespace Max2Babylon
             this.chkAnimgroupExportNonAnimated.Location = new System.Drawing.Point(21, 314);
             this.chkAnimgroupExportNonAnimated.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkAnimgroupExportNonAnimated.Name = "chkAnimgroupExportNonAnimated";
-            this.chkAnimgroupExportNonAnimated.Size = new System.Drawing.Size(374, 24);
+            this.chkAnimgroupExportNonAnimated.Size = new System.Drawing.Size(369, 24);
             this.chkAnimgroupExportNonAnimated.TabIndex = 18;
             this.chkAnimgroupExportNonAnimated.Text = "(Animation Group) Export Non-Animated Objects";
             this.chkAnimgroupExportNonAnimated.UseVisualStyleBackColor = true;
@@ -571,10 +576,11 @@ namespace Max2Babylon
             this.chkDracoCompression.Location = new System.Drawing.Point(243, 242);
             this.chkDracoCompression.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkDracoCompression.Name = "chkDracoCompression";
-            this.chkDracoCompression.Size = new System.Drawing.Size(200, 24);
+            this.chkDracoCompression.Size = new System.Drawing.Size(195, 24);
             this.chkDracoCompression.TabIndex = 18;
             this.chkDracoCompression.Text = "Use Draco compression";
             this.chkDracoCompression.UseVisualStyleBackColor = true;
+            this.chkDracoCompression.CheckedChanged += new System.EventHandler(this.chkDracoCompression_CheckedChanged);
             this.chkDracoCompression.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkMergeAOwithMR
@@ -586,7 +592,7 @@ namespace Max2Babylon
             this.chkMergeAOwithMR.Location = new System.Drawing.Point(474, 277);
             this.chkMergeAOwithMR.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkMergeAOwithMR.Name = "chkMergeAOwithMR";
-            this.chkMergeAOwithMR.Size = new System.Drawing.Size(137, 24);
+            this.chkMergeAOwithMR.Size = new System.Drawing.Size(132, 24);
             this.chkMergeAOwithMR.TabIndex = 17;
             this.chkMergeAOwithMR.Text = "Merge AO map";
             this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
@@ -622,7 +628,7 @@ namespace Max2Babylon
             this.chkExportMorphNormals.Location = new System.Drawing.Point(243, 518);
             this.chkExportMorphNormals.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkExportMorphNormals.Name = "chkExportMorphNormals";
-            this.chkExportMorphNormals.Size = new System.Drawing.Size(185, 24);
+            this.chkExportMorphNormals.Size = new System.Drawing.Size(180, 24);
             this.chkExportMorphNormals.TabIndex = 16;
             this.chkExportMorphNormals.Text = "Export morph normals";
             this.chkExportMorphNormals.UseVisualStyleBackColor = true;
@@ -635,7 +641,7 @@ namespace Max2Babylon
             this.chkExportMorphTangents.Location = new System.Drawing.Point(21, 518);
             this.chkExportMorphTangents.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkExportMorphTangents.Name = "chkExportMorphTangents";
-            this.chkExportMorphTangents.Size = new System.Drawing.Size(192, 24);
+            this.chkExportMorphTangents.Size = new System.Drawing.Size(187, 24);
             this.chkExportMorphTangents.TabIndex = 16;
             this.chkExportMorphTangents.Text = "Export morph tangents";
             this.chkExportMorphTangents.UseVisualStyleBackColor = true;
@@ -650,7 +656,7 @@ namespace Max2Babylon
             this.chkExportTangents.Location = new System.Drawing.Point(474, 206);
             this.chkExportTangents.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkExportTangents.Name = "chkExportTangents";
-            this.chkExportTangents.Size = new System.Drawing.Size(143, 24);
+            this.chkExportTangents.Size = new System.Drawing.Size(138, 24);
             this.chkExportTangents.TabIndex = 16;
             this.chkExportTangents.Text = "Export tangents";
             this.chkExportTangents.UseVisualStyleBackColor = true;
@@ -710,7 +716,7 @@ namespace Max2Babylon
             this.chkOnlySelected.Location = new System.Drawing.Point(243, 206);
             this.chkOnlySelected.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkOnlySelected.Name = "chkOnlySelected";
-            this.chkOnlySelected.Size = new System.Drawing.Size(172, 24);
+            this.chkOnlySelected.Size = new System.Drawing.Size(167, 24);
             this.chkOnlySelected.TabIndex = 13;
             this.chkOnlySelected.Text = "Export only selected";
             this.chkOnlySelected.UseVisualStyleBackColor = true;
@@ -723,7 +729,7 @@ namespace Max2Babylon
             this.chkAutoSave.Location = new System.Drawing.Point(21, 242);
             this.chkAutoSave.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkAutoSave.Name = "chkAutoSave";
-            this.chkAutoSave.Size = new System.Drawing.Size(153, 24);
+            this.chkAutoSave.Size = new System.Drawing.Size(148, 24);
             this.chkAutoSave.TabIndex = 15;
             this.chkAutoSave.Text = "Save 3ds Max file";
             this.chkAutoSave.UseVisualStyleBackColor = true;
@@ -736,7 +742,7 @@ namespace Max2Babylon
             this.chkHidden.Location = new System.Drawing.Point(21, 206);
             this.chkHidden.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkHidden.Name = "chkHidden";
-            this.chkHidden.Size = new System.Drawing.Size(183, 24);
+            this.chkHidden.Size = new System.Drawing.Size(178, 24);
             this.chkHidden.TabIndex = 12;
             this.chkHidden.Text = "Export hidden objects";
             this.chkHidden.UseVisualStyleBackColor = true;
@@ -827,6 +833,7 @@ namespace Max2Babylon
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.exporterTabControl.Controls.Add(this.exportOptionsTabPage);
+            this.exporterTabControl.Controls.Add(this.advancedTabPage);
             this.exporterTabControl.Controls.Add(this.logTabPage);
             this.exporterTabControl.Location = new System.Drawing.Point(3, 137);
             this.exporterTabControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -905,14 +912,14 @@ namespace Max2Babylon
             this.exportOptionsScrollPanel.Size = new System.Drawing.Size(1366, 702);
             this.exportOptionsScrollPanel.TabIndex = 44;
             // 
-            // tryReuseTextureCheckBox
+            // chkTryReuseTexture
             // 
             this.chkTryReuseTexture.AutoSize = true;
             this.chkTryReuseTexture.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkTryReuseTexture.Location = new System.Drawing.Point(686, 206);
             this.chkTryReuseTexture.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
-            this.chkTryReuseTexture.Name = "tryReuseTextureCheckBox";
-            this.chkTryReuseTexture.Size = new System.Drawing.Size(148, 24);
+            this.chkTryReuseTexture.Name = "chkTryReuseTexture";
+            this.chkTryReuseTexture.Size = new System.Drawing.Size(143, 24);
             this.chkTryReuseTexture.TabIndex = 44;
             this.chkTryReuseTexture.Text = "Try reuse texture";
             this.chkTryReuseTexture.UseVisualStyleBackColor = true;
@@ -939,6 +946,35 @@ namespace Max2Babylon
             this.pictureBox1.Size = new System.Drawing.Size(770, 123);
             this.pictureBox1.TabIndex = 113;
             this.pictureBox1.TabStop = false;
+            // 
+            // advancedTabPage
+            // 
+            this.advancedTabPage.Controls.Add(this.dracoGroupBox);
+            this.advancedTabPage.Location = new System.Drawing.Point(4, 29);
+            this.advancedTabPage.Name = "advancedTabPage";
+            this.advancedTabPage.Size = new System.Drawing.Size(1380, 713);
+            this.advancedTabPage.TabIndex = 2;
+            this.advancedTabPage.Text = "Advanced";
+            this.advancedTabPage.UseVisualStyleBackColor = true;
+            // 
+            // dracoGroupBox
+            // 
+            this.dracoGroupBox.Controls.Add(this.dracoUserControl);
+            this.dracoGroupBox.Location = new System.Drawing.Point(15, 15);
+            this.dracoGroupBox.Name = "dracoGroupBox";
+            this.dracoGroupBox.Size = new System.Drawing.Size(563, 563);
+            this.dracoGroupBox.TabIndex = 0;
+            this.dracoGroupBox.TabStop = false;
+            this.dracoGroupBox.Text = "Draco settings";
+            // 
+            // dracoUserControl
+            // 
+            this.dracoUserControl.AutoSize = true;
+            this.dracoUserControl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.dracoUserControl.Location = new System.Drawing.Point(6, 25);
+            this.dracoUserControl.Name = "dracoUserControl";
+            this.dracoUserControl.Size = new System.Drawing.Size(559, 544);
+            this.dracoUserControl.TabIndex = 0;
             // 
             // ExporterForm
             // 
@@ -970,6 +1006,9 @@ namespace Max2Babylon
             this.exportOptionsScrollPanel.PerformLayout();
             this.logTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.advancedTabPage.ResumeLayout(false);
+            this.dracoGroupBox.ResumeLayout(false);
+            this.dracoGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1041,5 +1080,8 @@ namespace Max2Babylon
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel exportOptionsScrollPanel;
         private System.Windows.Forms.CheckBox chkTryReuseTexture;
+        private System.Windows.Forms.TabPage advancedTabPage;
+        private System.Windows.Forms.GroupBox dracoGroupBox;
+        private Utilities.DracoUserControl dracoUserControl;
     }
 }

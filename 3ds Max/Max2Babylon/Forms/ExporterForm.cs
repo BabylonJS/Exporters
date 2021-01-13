@@ -109,6 +109,7 @@ namespace Max2Babylon
                 chkDracoCompression.Enabled = false;
             }
 
+
             Tools.PrepareCheckBox(chkFullPBR, Loader.Core.RootNode, ExportParameters.PBRFullPropertyName);
             Tools.PrepareCheckBox(chkNoAutoLight, Loader.Core.RootNode, ExportParameters.PBRNoLightPropertyName);
             string storedEnvironmentPath = Loader.Core.RootNode.GetStringProperty(ExportParameters.PBREnvironmentPathPropertyName, string.Empty);
@@ -119,7 +120,23 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene", 0);
             Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
             Tools.PrepareCheckBox(chkTryReuseTexture, Loader.Core.RootNode, "babylonjs_tryReuseTexture", 0);
-            
+
+            #region prepare draco            
+            LoadDracoOptions();
+            dracoUserControl.UpdateValueLabels(); // force value label to be updated
+            dracoGroupBox.Enabled = chkDracoCompression.Enabled && chkDracoCompression.Checked;
+            #endregion
+        }
+
+        private void LoadDracoOptions()
+        {
+            Tools.PrepareNumericUpDown(dracoUserControl.CompressionLevelNumericUpDown, Loader.Core.RootNode, $"babylonjs_{DracoParameters.compressionLevel_param_name}", DracoParameters.compressionLevel_default);
+            Tools.PrepareTrackBar(dracoUserControl.QPositionTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizePositionBits_param_name}", DracoParameters.quantizePositionBits_default);
+            Tools.PrepareTrackBar(dracoUserControl.QNormalTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeNormalBits_param_name}", DracoParameters.quantizeNormalBits_default);
+            Tools.PrepareTrackBar(dracoUserControl.QTexcoordTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeTexcoordBits_param_name}", DracoParameters.quantizeTexcoordBits_default);
+            Tools.PrepareTrackBar(dracoUserControl.QColorTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeColorBits_param_name}", DracoParameters.quantizeColorBits_default);
+            Tools.PrepareTrackBar(dracoUserControl.QGenericTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeGenericBits_param_name}", DracoParameters.quantizeGenericBits_default);
+            Tools.PrepareCheckBox(dracoUserControl.UnifiedCheckBox, Loader.Core.RootNode, $"babylonjs_{DracoParameters.unifiedQuantization_param_name}", DracoParameters.unifiedQuantization_default?1:0);
         }
 
         private void ExporterForm_Load(object sender, EventArgs e)
@@ -326,7 +343,21 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkFlatten, Loader.Core.RootNode, "babylonjs_flattenScene");
             Tools.UpdateCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref");
             Tools.UpdateCheckBox(chkTryReuseTexture, Loader.Core.RootNode, "babylonjs_tryReuseTexture");
+
+            SaveDracoOptions();
         }
+
+        private void SaveDracoOptions()
+        {
+            Tools.UpdateNumericUpDown(dracoUserControl.CompressionLevelNumericUpDown, Loader.Core.RootNode, $"babylonjs_{DracoParameters.compressionLevel_param_name}");
+            Tools.UpdateTrackBar(dracoUserControl.QPositionTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizePositionBits_param_name}");
+            Tools.UpdateTrackBar(dracoUserControl.QNormalTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeNormalBits_param_name}");
+            Tools.UpdateTrackBar(dracoUserControl.QTexcoordTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeTexcoordBits_param_name}");
+            Tools.UpdateTrackBar(dracoUserControl.QColorTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeColorBits_param_name}");
+            Tools.UpdateTrackBar(dracoUserControl.QGenericTrackBar, Loader.Core.RootNode, $"babylonjs_{DracoParameters.quantizeGenericBits_param_name}");
+            Tools.UpdateCheckBox(dracoUserControl.UnifiedCheckBox, Loader.Core.RootNode, $"babylonjs_{DracoParameters.unifiedQuantization_param_name}");
+        }
+
 
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
         {
@@ -398,7 +429,7 @@ namespace Max2Babylon
             butCancel.Enabled = true;
 
             // switch to the log tab.
-            exporterTabControl.SelectTab(1);
+            exporterTabControl.SelectTab(logTabPage.Name);
 
             bool success = true;
             try
@@ -444,7 +475,7 @@ namespace Max2Babylon
                     txtQuality = textureQualityParsed,
                     mergeAOwithMR = chkMergeAOwithMR.Checked,
                     bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
-                    dracoCompression = chkDracoCompression.Checked,
+                    dracoCompression = chkDracoCompression.Enabled && chkDracoCompression.Checked,
                     enableKHRLightsPunctual = chkKHRLightsPunctual.Checked,
                     enableKHRTextureTransform = chkKHRTextureTransform.Checked,
                     enableKHRMaterialsUnlit = chkKHRMaterialsUnlit.Checked,
@@ -462,8 +493,22 @@ namespace Max2Babylon
                     flattenScene = chkFlatten.Checked,
                     mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
                     useMultiExporter = multiExport,
-                    tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked
+                    tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked,
                 };
+
+                if (exportParameters.dracoCompression)
+                {
+                    exportParameters.dracoParams = new DracoParameters()
+                    {
+                        compressionLevel = (int)dracoUserControl.CompressionLevelNumericUpDown.Value,
+                        quantizePositionBits = dracoUserControl.QPositionTrackBar.Value,
+                        quantizeNormalBits = dracoUserControl.QNormalTrackBar.Value,
+                        quantizeTexcoordBits = dracoUserControl.QTexcoordTrackBar.Value,
+                        quantizeColorBits = dracoUserControl.QColorTrackBar.Value,
+                        quantizeGenericBits = dracoUserControl.QGenericTrackBar.Value,
+                        unifiedQuantization = dracoUserControl.UnifiedCheckBox.Checked
+                    }; 
+                }
 
                 exporter.callerForm = this;
 
@@ -741,6 +786,8 @@ namespace Max2Babylon
                     break;
             }
 
+            dracoGroupBox.Enabled = chkDracoCompression.Enabled && chkDracoCompression.Checked;
+
             string newModelPath = Path.ChangeExtension(txtModelPath.Text, this.saveFileDialog.DefaultExt);
             this.txtModelPath.MaxPath(newModelPath);
         }
@@ -844,6 +891,11 @@ namespace Max2Babylon
                 lblBakeAnimation.Enabled = true;
                 chkApplyPreprocessToScene.Enabled = true;
             }
+        }
+
+        private void chkDracoCompression_CheckedChanged(object sender, EventArgs e)
+        {
+            dracoGroupBox.Enabled = chkDracoCompression.Checked;
         }
     }
 }
