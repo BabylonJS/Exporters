@@ -19,6 +19,9 @@ namespace Max2Babylon
 {
     partial class BabylonExporter
     {
+        // use as scale for GetSelfIllumColor to convert [0,PI] to [O,1]
+        private const float selfIllumScale = (float)(1.0 / Math.PI);
+
         readonly List<IIGameMaterial> referencedMaterials = new List<IIGameMaterial>();
         Dictionary<ClassIDWrapper, IMaxMaterialExporter> materialExporters;
 
@@ -208,7 +211,7 @@ namespace Max2Babylon
                 babylonMaterial.specularPower = materialNode.MaxMaterial.GetShininess(0, false) * 256;
                 babylonMaterial.emissive =
                     isSelfIllumColor
-                        ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
+                        ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).Scale(selfIllumScale).ToArray()
                         : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false)); // compute the pre-multiplied emissive color
 
                 // If Self-Illumination color checkbox is checked
@@ -433,9 +436,10 @@ namespace Max2Babylon
                     babylonMaterial.roughness = 1 - babylonMaterial.roughness;
                 }
 
+ 
                 // Self illumination is computed from emission color, luminance, temperature and weight
                 babylonMaterial.emissive = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
-                                                ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).ToArray()
+                                                ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).Scale(selfIllumScale).ToArray()
                                                 : materialNode.MaxMaterial.GetDiffuse(0, false).Scale(materialNode.MaxMaterial.GetSelfIllum(0, false));
             }
             else

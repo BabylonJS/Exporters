@@ -562,7 +562,7 @@ namespace Maya2Babylon
             // For more information about UV
             // see http://help.autodesk.com/view/MAYAUL/2018/ENU/?guid=GUID-94070C7E-C550-42FD-AFC9-FBE82B173B1D
             babylonTexture.uOffset = textureDependencyNode.findPlug("offsetU").asFloat();
-                ;
+
             babylonTexture.vOffset = textureDependencyNode.findPlug("offsetV").asFloat();
             
             babylonTexture.uScale = textureDependencyNode.findPlug("repeatU").asFloat();
@@ -699,20 +699,21 @@ namespace Maya2Babylon
         private string getSourcePathFromFileTexture(MFnDependencyNode textureDependencyNode)
         {
             MObject sourceObject = textureDependencyNode.objectProperty;
-
             // Retreive texture file path
-            if (!sourceObject.hasFn(MFn.Type.kFileTexture))
+            if (textureDependencyNode.typeId.id != 0x52544654 && // MayaFile
+                textureDependencyNode.typeId.id != 0x115d17) // aiImage
             {
-                RaiseError("Only file texture is supported.", logRankTexture + 1);
+                RaiseError("Only file or aiImage texture are supported.", logRankTexture + 1);
                 return null;
             }
-            MPlug fileTextureNamePlug = textureDependencyNode.findPlug("fileTextureName");
+            string fileTexturePath = textureDependencyNode.typeId.id == 0x115d17 ? "filename" : "fileTextureName";
+            MPlug fileTextureNamePlug = textureDependencyNode.findPlug(fileTexturePath);
             if (fileTextureNamePlug == null || fileTextureNamePlug.isNull)
             {
                 RaiseError("Texture path is missing.", logRankTexture + 1);
                 return null;
             }
-            string sourcePath = fileTextureNamePlug.asString();
+            string sourcePath = fileTextureNamePlug.asStringProperty;
             return sourcePath;
         }
 

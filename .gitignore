@@ -175,5 +175,9 @@ obj
 *.swatches
 assemblies
 /Maya/Assemblies/*.dll
+/Maya/cicd/tests/temp
+/Maya/cicd/venv/
+__pycache__
+.pytest_cache
 
 BabylonJS_Installer/Dist/*
