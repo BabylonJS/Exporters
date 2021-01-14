@@ -11,7 +11,11 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ColorExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ArrayExtension.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GLTFPipelineUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draco\DracoUserControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draco\DracoUserControl.Designer.cs">
+      <DependentUpon>DracoUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Draco\GLTFPipelineUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILoggingProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterBounded.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterOptimized.cs" />
@@ -19,5 +23,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)PathUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextureUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeViewExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Draco\DracoUserControl.resx">
+      <DependentUpon>DracoUserControl.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

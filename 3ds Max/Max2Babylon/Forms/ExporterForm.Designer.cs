@@ -94,12 +94,20 @@ namespace Max2Babylon
             this.chkTryReuseTexture = new System.Windows.Forms.CheckBox();
             this.logTabPage = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+
             this.chkUseClone = new System.Windows.Forms.CheckBox();
+
+            this.advancedTabPage = new System.Windows.Forms.TabPage();
+            this.dracoGroupBox = new System.Windows.Forms.GroupBox();
+            this.dracoUserControl = new Utilities.DracoUserControl();
+
             this.exporterTabControl.SuspendLayout();
             this.exportOptionsTabPage.SuspendLayout();
             this.exportOptionsScrollPanel.SuspendLayout();
             this.logTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.advancedTabPage.SuspendLayout();
+            this.dracoGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // butExport
@@ -334,7 +342,9 @@ namespace Max2Babylon
             this.chkUsePreExportProces.Location = new System.Drawing.Point(21, 384);
             this.chkUsePreExportProces.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkUsePreExportProces.Name = "chkUsePreExportProces";
-            this.chkUsePreExportProces.Size = new System.Drawing.Size(193, 24);
+
+            this.chkUsePreExportProces.Size = new System.Drawing.Size(196, 24);
+
             this.chkUsePreExportProces.TabIndex = 36;
             this.chkUsePreExportProces.Text = "Use PreExport Process:";
             this.chkUsePreExportProces.UseVisualStyleBackColor = true;
@@ -577,6 +587,7 @@ namespace Max2Babylon
             this.chkDracoCompression.TabIndex = 18;
             this.chkDracoCompression.Text = "Use Draco compression";
             this.chkDracoCompression.UseVisualStyleBackColor = true;
+            this.chkDracoCompression.CheckedChanged += new System.EventHandler(this.chkDracoCompression_CheckedChanged);
             this.chkDracoCompression.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // chkMergeAOwithMR
@@ -829,6 +840,7 @@ namespace Max2Babylon
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.exporterTabControl.Controls.Add(this.exportOptionsTabPage);
+            this.exporterTabControl.Controls.Add(this.advancedTabPage);
             this.exporterTabControl.Controls.Add(this.logTabPage);
             this.exporterTabControl.Location = new System.Drawing.Point(3, 137);
             this.exporterTabControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -943,6 +955,7 @@ namespace Max2Babylon
             this.pictureBox1.TabIndex = 113;
             this.pictureBox1.TabStop = false;
             // 
+
             // chkUseClone
             // 
             this.chkUseClone.AutoSize = true;
@@ -954,6 +967,38 @@ namespace Max2Babylon
             this.chkUseClone.TabIndex = 45;
             this.chkUseClone.Text = "Use clone (experimental)";
             this.chkUseClone.UseVisualStyleBackColor = true;
+
+            // advancedTabPage
+            // 
+            this.advancedTabPage.Controls.Add(this.dracoGroupBox);
+            this.advancedTabPage.Location = new System.Drawing.Point(4, 29);
+            this.advancedTabPage.Name = "advancedTabPage";
+            this.advancedTabPage.Size = new System.Drawing.Size(1380, 713);
+            this.advancedTabPage.TabIndex = 2;
+            this.advancedTabPage.Text = "Advanced";
+            this.advancedTabPage.UseVisualStyleBackColor = true;
+            
+            // 
+            // dracoGroupBox
+            // 
+            this.dracoGroupBox.Controls.Add(this.dracoUserControl);
+            this.dracoGroupBox.Location = new System.Drawing.Point(15, 15);
+            this.dracoGroupBox.Name = "dracoGroupBox";
+            this.dracoGroupBox.Size = new System.Drawing.Size(563, 563);
+            this.dracoGroupBox.TabIndex = 0;
+            this.dracoGroupBox.TabStop = false;
+            this.dracoGroupBox.Text = "Draco settings";
+            
+            // 
+            // dracoUserControl
+            // 
+            this.dracoUserControl.AutoSize = true;
+            this.dracoUserControl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.dracoUserControl.Location = new System.Drawing.Point(6, 25);
+            this.dracoUserControl.Name = "dracoUserControl";
+            this.dracoUserControl.Size = new System.Drawing.Size(559, 544);
+            this.dracoUserControl.TabIndex = 0;
+
             // 
             // ExporterForm
             // 
@@ -985,6 +1030,9 @@ namespace Max2Babylon
             this.exportOptionsScrollPanel.PerformLayout();
             this.logTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.advancedTabPage.ResumeLayout(false);
+            this.dracoGroupBox.ResumeLayout(false);
+            this.dracoGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1056,6 +1104,11 @@ namespace Max2Babylon
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel exportOptionsScrollPanel;
         private System.Windows.Forms.CheckBox chkTryReuseTexture;
+
         private System.Windows.Forms.CheckBox chkUseClone;
+
+        private System.Windows.Forms.TabPage advancedTabPage;
+        private System.Windows.Forms.GroupBox dracoGroupBox;
+        private Utilities.DracoUserControl dracoUserControl;
     }
 }
