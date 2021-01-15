@@ -68,6 +68,9 @@ namespace BabylonExport.Entities
         public BabylonLight[] lights { get; set; }
 
         [DataMember]
+        public BabylonGeometries geometries { get; set; }
+
+        [DataMember]
         public BabylonMesh[] meshes { get; set; }
 
         [DataMember]

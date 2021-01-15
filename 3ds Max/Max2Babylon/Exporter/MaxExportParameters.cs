@@ -20,6 +20,7 @@ namespace Max2Babylon
         public bool mergeContainersAndXRef = false;
         public bool flattenScene = false;
         public BakeAnimationType bakeAnimationType = BakeAnimationType.DoNotBakeAnimation;
-
+        // export as clone when node's material are not identical
+        public bool useClone = false;
     }
 }

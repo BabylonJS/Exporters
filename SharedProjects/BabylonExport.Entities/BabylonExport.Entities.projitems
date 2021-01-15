@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonDirectionalLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonFresnelParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonFurMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonGeometries.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonHDRCubeTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonIAnimatable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonLensFlare.cs" />
@@ -28,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMatrix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\BabylonMeshExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTargetManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMultiMaterial.cs" />
@@ -49,6 +51,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonUniversalCamera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVector2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVector3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonVertexData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExportParameters.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Extensions\" />
   </ItemGroup>
 </Project>
