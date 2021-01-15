@@ -94,9 +94,13 @@ namespace Max2Babylon
             this.chkTryReuseTexture = new System.Windows.Forms.CheckBox();
             this.logTabPage = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+
+            this.chkUseClone = new System.Windows.Forms.CheckBox();
+
             this.advancedTabPage = new System.Windows.Forms.TabPage();
             this.dracoGroupBox = new System.Windows.Forms.GroupBox();
             this.dracoUserControl = new Utilities.DracoUserControl();
+
             this.exporterTabControl.SuspendLayout();
             this.exportOptionsTabPage.SuspendLayout();
             this.exportOptionsScrollPanel.SuspendLayout();
@@ -149,7 +153,7 @@ namespace Max2Babylon
             // 
             this.butModelBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.butModelBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butModelBrowse.Location = new System.Drawing.Point(1046, 49);
+            this.butModelBrowse.Location = new System.Drawing.Point(1049, 49);
             this.butModelBrowse.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.butModelBrowse.Name = "butModelBrowse";
             this.butModelBrowse.Size = new System.Drawing.Size(42, 35);
@@ -284,7 +288,7 @@ namespace Max2Babylon
             // 
             this.lblBakeAnimation.AutoSize = true;
             this.lblBakeAnimation.Enabled = false;
-            this.lblBakeAnimation.Location = new System.Drawing.Point(286, 385);
+            this.lblBakeAnimation.Location = new System.Drawing.Point(239, 385);
             this.lblBakeAnimation.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblBakeAnimation.Name = "lblBakeAnimation";
             this.lblBakeAnimation.Size = new System.Drawing.Size(187, 20);
@@ -299,7 +303,7 @@ namespace Max2Babylon
             "Do not bake animations",
             "Bake all animations",
             "Selective bake"});
-            this.cmbBakeAnimationOptions.Location = new System.Drawing.Point(488, 382);
+            this.cmbBakeAnimationOptions.Location = new System.Drawing.Point(438, 382);
             this.cmbBakeAnimationOptions.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.cmbBakeAnimationOptions.Name = "cmbBakeAnimationOptions";
             this.cmbBakeAnimationOptions.Size = new System.Drawing.Size(265, 28);
@@ -323,7 +327,7 @@ namespace Max2Babylon
             this.chkMrgContainersAndXref.AutoSize = true;
             this.chkMrgContainersAndXref.Enabled = false;
             this.chkMrgContainersAndXref.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkMrgContainersAndXref.Location = new System.Drawing.Point(21, 412);
+            this.chkMrgContainersAndXref.Location = new System.Drawing.Point(21, 413);
             this.chkMrgContainersAndXref.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkMrgContainersAndXref.Name = "chkMrgContainersAndXref";
             this.chkMrgContainersAndXref.Size = new System.Drawing.Size(225, 24);
@@ -334,10 +338,13 @@ namespace Max2Babylon
             // chkUsePreExportProces
             // 
             this.chkUsePreExportProces.AutoSize = true;
-            this.chkUsePreExportProces.Location = new System.Drawing.Point(8, 386);
-            this.chkUsePreExportProces.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkUsePreExportProces.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkUsePreExportProces.Location = new System.Drawing.Point(21, 384);
+            this.chkUsePreExportProces.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkUsePreExportProces.Name = "chkUsePreExportProces";
+
             this.chkUsePreExportProces.Size = new System.Drawing.Size(196, 24);
+
             this.chkUsePreExportProces.TabIndex = 36;
             this.chkUsePreExportProces.Text = "Use PreExport Process:";
             this.chkUsePreExportProces.UseVisualStyleBackColor = true;
@@ -393,7 +400,7 @@ namespace Max2Babylon
             this.txtEnvironmentName.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.txtEnvironmentName.Multiline = false;
             this.txtEnvironmentName.Name = "txtEnvironmentName";
-            this.txtEnvironmentName.Size = new System.Drawing.Size(930, 29);
+            this.txtEnvironmentName.Size = new System.Drawing.Size(907, 29);
             this.txtEnvironmentName.TabIndex = 30;
             this.txtEnvironmentName.Text = "";
             // 
@@ -423,7 +430,7 @@ namespace Max2Babylon
             // 
             this.btnEnvBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEnvBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEnvBrowse.Location = new System.Drawing.Point(1072, 611);
+            this.btnEnvBrowse.Location = new System.Drawing.Point(1049, 610);
             this.btnEnvBrowse.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.btnEnvBrowse.Name = "btnEnvBrowse";
             this.btnEnvBrowse.Size = new System.Drawing.Size(42, 35);
@@ -436,7 +443,7 @@ namespace Max2Babylon
             // 
             this.chkNoAutoLight.AutoSize = true;
             this.chkNoAutoLight.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkNoAutoLight.Location = new System.Drawing.Point(686, 177);
+            this.chkNoAutoLight.Location = new System.Drawing.Point(686, 173);
             this.chkNoAutoLight.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkNoAutoLight.Name = "chkNoAutoLight";
             this.chkNoAutoLight.Size = new System.Drawing.Size(160, 24);
@@ -497,7 +504,7 @@ namespace Max2Babylon
             // 
             this.chkKHRMaterialsUnlit.AutoSize = true;
             this.chkKHRMaterialsUnlit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(478, 671);
+            this.chkKHRMaterialsUnlit.Location = new System.Drawing.Point(474, 671);
             this.chkKHRMaterialsUnlit.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkKHRMaterialsUnlit.Name = "chkKHRMaterialsUnlit";
             this.chkKHRMaterialsUnlit.Size = new System.Drawing.Size(170, 24);
@@ -509,7 +516,7 @@ namespace Max2Babylon
             // 
             this.chkKHRTextureTransform.AutoSize = true;
             this.chkKHRTextureTransform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRTextureTransform.Location = new System.Drawing.Point(252, 671);
+            this.chkKHRTextureTransform.Location = new System.Drawing.Point(243, 671);
             this.chkKHRTextureTransform.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkKHRTextureTransform.Name = "chkKHRTextureTransform";
             this.chkKHRTextureTransform.Size = new System.Drawing.Size(194, 24);
@@ -521,7 +528,7 @@ namespace Max2Babylon
             // 
             this.chkKHRLightsPunctual.AutoSize = true;
             this.chkKHRLightsPunctual.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkKHRLightsPunctual.Location = new System.Drawing.Point(30, 671);
+            this.chkKHRLightsPunctual.Location = new System.Drawing.Point(21, 671);
             this.chkKHRLightsPunctual.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.chkKHRLightsPunctual.Name = "chkKHRLightsPunctual";
             this.chkKHRLightsPunctual.Size = new System.Drawing.Size(175, 24);
@@ -600,7 +607,7 @@ namespace Max2Babylon
             // 
             // txtQuality
             // 
-            this.txtQuality.Location = new System.Drawing.Point(1174, 212);
+            this.txtQuality.Location = new System.Drawing.Point(1029, 208);
             this.txtQuality.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.txtQuality.Name = "txtQuality";
             this.txtQuality.Size = new System.Drawing.Size(62, 26);
@@ -612,7 +619,7 @@ namespace Max2Babylon
             // labelQuality
             // 
             this.labelQuality.AutoSize = true;
-            this.labelQuality.Location = new System.Drawing.Point(1047, 214);
+            this.labelQuality.Location = new System.Drawing.Point(902, 210);
             this.labelQuality.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.labelQuality.Name = "labelQuality";
             this.labelQuality.Size = new System.Drawing.Size(115, 20);
@@ -665,7 +672,7 @@ namespace Max2Babylon
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1065, 177);
+            this.label4.Location = new System.Drawing.Point(920, 173);
             this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(98, 20);
@@ -674,7 +681,7 @@ namespace Max2Babylon
             // 
             // txtScaleFactor
             // 
-            this.txtScaleFactor.Location = new System.Drawing.Point(1174, 175);
+            this.txtScaleFactor.Location = new System.Drawing.Point(1029, 171);
             this.txtScaleFactor.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.txtScaleFactor.Name = "txtScaleFactor";
             this.txtScaleFactor.Size = new System.Drawing.Size(61, 26);
@@ -857,6 +864,7 @@ namespace Max2Babylon
             // exportOptionsScrollPanel
             // 
             this.exportOptionsScrollPanel.AutoScroll = true;
+            this.exportOptionsScrollPanel.Controls.Add(this.chkUseClone);
             this.exportOptionsScrollPanel.Controls.Add(this.chkTryReuseTexture);
             this.exportOptionsScrollPanel.Controls.Add(this.chkExportAnimationsOnly);
             this.exportOptionsScrollPanel.Controls.Add(this.chkExportTextures);
@@ -947,6 +955,19 @@ namespace Max2Babylon
             this.pictureBox1.TabIndex = 113;
             this.pictureBox1.TabStop = false;
             // 
+
+            // chkUseClone
+            // 
+            this.chkUseClone.AutoSize = true;
+            this.chkUseClone.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkUseClone.Location = new System.Drawing.Point(686, 242);
+            this.chkUseClone.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.chkUseClone.Name = "chkUseClone";
+            this.chkUseClone.Size = new System.Drawing.Size(200, 24);
+            this.chkUseClone.TabIndex = 45;
+            this.chkUseClone.Text = "Use clone (experimental)";
+            this.chkUseClone.UseVisualStyleBackColor = true;
+
             // advancedTabPage
             // 
             this.advancedTabPage.Controls.Add(this.dracoGroupBox);
@@ -956,6 +977,7 @@ namespace Max2Babylon
             this.advancedTabPage.TabIndex = 2;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
+            
             // 
             // dracoGroupBox
             // 
@@ -966,6 +988,7 @@ namespace Max2Babylon
             this.dracoGroupBox.TabIndex = 0;
             this.dracoGroupBox.TabStop = false;
             this.dracoGroupBox.Text = "Draco settings";
+            
             // 
             // dracoUserControl
             // 
@@ -975,6 +998,7 @@ namespace Max2Babylon
             this.dracoUserControl.Name = "dracoUserControl";
             this.dracoUserControl.Size = new System.Drawing.Size(559, 544);
             this.dracoUserControl.TabIndex = 0;
+
             // 
             // ExporterForm
             // 
@@ -1080,6 +1104,9 @@ namespace Max2Babylon
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel exportOptionsScrollPanel;
         private System.Windows.Forms.CheckBox chkTryReuseTexture;
+
+        private System.Windows.Forms.CheckBox chkUseClone;
+
         private System.Windows.Forms.TabPage advancedTabPage;
         private System.Windows.Forms.GroupBox dracoGroupBox;
         private Utilities.DracoUserControl dracoUserControl;
