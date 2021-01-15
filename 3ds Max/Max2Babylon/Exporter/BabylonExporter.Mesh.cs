@@ -121,11 +121,15 @@ namespace Max2Babylon
                         // Check if we need to export this instance as an instance mesh.
                         if (tabGuid == masterMeshPair.Key.id)
                         {
-                            // If there is already an exported mesh in the scene that shares this mesh's material, then export it as an instance.
-                            if (masterMeshPair.Key.materialId == null
-                            || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(masterMeshPair.Value.NodeMaterial.MaxMaterial.GetGuid().ToString())))
+                            bool isShareMat = masterMeshPair.Key.materialId == null || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(masterMeshPair.Value.NodeMaterial.MaxMaterial.GetGuid().ToString()));
+
+                            BabylonNode n = isShareMat?
+                                ExportInstanceMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) :
+                                exportParameters.useClone ? ExportCloneMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) : null;
+                            
+                            if( n != null)
                             {
-                                return ExportInstanceMesh(scene, meshNode, babylonScene, masterMeshPair.Key);
+                                return n;
                             }
                         }
                     }
@@ -603,29 +607,124 @@ namespace Max2Babylon
             }
         }
 
-        private BabylonNode ExportInstanceMesh(IIGameScene scene, IIGameNode meshNode, BabylonScene babylonScene, BabylonMesh babylonMasterMesh)
+        private BabylonNode ExportCloneMesh(IIGameScene maxScene, IIGameNode maxNode, BabylonScene babylonScene, BabylonMesh babylonMasterMesh, IIGameNode maxMasterNode)
         {
-            meshNode.MaxNode.MarkAsInstance();
+            // idea here is to create a mesh with a geometryId similar to the babylonMasterMesh
+            // for the purpose we wrote a specific extension
+            var babylonMesh = babylonMasterMesh.Clone(babylonScene);
+            if (babylonMesh != null)
+            {
+                babylonMesh.id = maxNode.MaxNode.GetGuid().ToString();
+                babylonMesh.name = maxNode.Name;
+                babylonMesh.pickable = maxNode.MaxNode.GetBoolProperty("babylonjs_checkpickable");
+                babylonMesh.checkCollisions = maxNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions");
+                babylonMesh.showBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox");
+                babylonMesh.showSubMeshesBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox");
+                babylonMesh.alphaIndex = (int)maxNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000);
+                babylonMesh.visibility = maxNode.MaxNode.GetVisibility(0, Tools.Forever);
+
+                // Material
+                var mtl = maxNode.NodeMaterial;
+                var multiMatsCount = 1;
+
+                // The DirectXShader material is a passthrough to its render material.
+                // The shell material is a passthrough to its baked material.
+                while (mtl != null && (isShellMaterial(mtl) || isDirectXShaderMaterial(mtl)))
+                {
+                    if (isShellMaterial(mtl))
+                    {
+                        // Retrieve the baked material from the shell material.
+                        mtl = GetBakedMaterialFromShellMaterial(mtl);
+                    }
+                    else // isDirectXShaderMaterial(mtl)
+                    {
+                        // Retrieve the render material from the directX shader
+                        mtl = GetRenderMaterialFromDirectXShader(mtl);
+                    }
+                }
+
+                isMaterialDoubleSided = false;
+                if (mtl != null)
+                {
+                    IIGameMaterial unsupportedMaterial = isMaterialSupported(mtl);
+                    if (unsupportedMaterial == null)
+                    {
+                        babylonMesh.materialId = mtl.MaxMaterial.GetGuid().ToString();
+
+                        if (!referencedMaterials.Contains(mtl))
+                        {
+                            referencedMaterials.Add(mtl);
+                        }
+
+                        multiMatsCount = Math.Max(mtl.SubMaterialCount, 1);
+
+                        if (isDoubleSidedMaterial(mtl))
+                        {
+                            isMaterialDoubleSided = true;
+                        }
+                    }
+                    else
+                    {
+                        if (mtl.SubMaterialCount == 0 || mtl == unsupportedMaterial)
+                        {
+                            RaiseWarning("Unsupported material type '" + unsupportedMaterial.MaterialClass + "'. Material is ignored.", 2);
+                        }
+                        else
+                        {
+                            RaiseWarning("Unsupported sub-material type '" + unsupportedMaterial.MaterialClass + "'. Material is ignored.", 2);
+                        }
+                    }
+                }
+                else
+                {
+                    // ensure to clean the material because Clone() did not define any behavior about
+                    // cloning the material id.
+                    babylonMesh.materialId = null;
+                }
+
+                // Export the custom attributes of this mesh
+                babylonMesh.metadata = ExportExtraAttributes(maxNode, babylonScene);
+
+                // Append userData to extras
+                ExportUserData(maxNode, babylonMesh);
+
+                // Export transform / hierarchy / animations
+                exportNode(babylonMesh, maxNode, maxScene, babylonScene);
+
+                // Animations
+                exportAnimation(babylonMesh, maxNode);
+
+                // in order to keep the optimisation, a clone could be considered as Master
+                masterMeshMap[babylonMesh] = maxNode;
+
+                babylonScene.MeshesList.Add(babylonMesh);
+            }
+            return babylonMesh;
+        }
+
+        private BabylonNode ExportInstanceMesh(IIGameScene maxScene, IIGameNode maxNode, BabylonScene babylonScene, BabylonMesh babylonMasterMesh, IIGameNode maxMasterNode)
+        {
+            maxNode.MaxNode.MarkAsInstance();
 
             var babylonInstanceMesh = new BabylonAbstractMesh
             {
-                id = meshNode.MaxNode.GetGuid().ToString(),
-                name = meshNode.Name,
-                pickable = meshNode.MaxNode.GetBoolProperty("babylonjs_checkpickable"),
-                checkCollisions = meshNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions"),
-                showBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox"),
-                showSubMeshesBoundingBox = meshNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox"),
-                alphaIndex = (int)meshNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000)
+                id = maxNode.MaxNode.GetGuid().ToString(),
+                name = maxNode.Name,
+                pickable = maxNode.MaxNode.GetBoolProperty("babylonjs_checkpickable"),
+                checkCollisions = maxNode.MaxNode.GetBoolProperty("babylonjs_checkcollisions"),
+                showBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showboundingbox"),
+                showSubMeshesBoundingBox = maxNode.MaxNode.GetBoolProperty("babylonjs_showsubmeshesboundingbox"),
+                alphaIndex = (int)maxNode.MaxNode.GetFloatProperty("babylonjs_alphaindex", 1000)
             };
 
             // Export the custom attributes of this mesh
-            babylonInstanceMesh.metadata = ExportExtraAttributes(meshNode, babylonScene);
+            babylonInstanceMesh.metadata = ExportExtraAttributes(maxNode, babylonScene);
 
             // Append userData to extras
-            ExportUserData(meshNode, babylonInstanceMesh);
+            ExportUserData(maxNode, babylonInstanceMesh);
 
             // Physics
-            var impostorText = meshNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");
+            var impostorText = maxNode.MaxNode.GetStringProperty("babylonjs_impostor", "None");
 
             if (impostorText != "None")
             {
@@ -645,9 +744,9 @@ namespace Max2Babylon
                         break;
                 }
 
-                babylonInstanceMesh.physicsMass = meshNode.MaxNode.GetFloatProperty("babylonjs_mass");
-                babylonInstanceMesh.physicsFriction = meshNode.MaxNode.GetFloatProperty("babylonjs_friction", 0.2f);
-                babylonInstanceMesh.physicsRestitution = meshNode.MaxNode.GetFloatProperty("babylonjs_restitution", 0.2f);
+                babylonInstanceMesh.physicsMass = maxNode.MaxNode.GetFloatProperty("babylonjs_mass");
+                babylonInstanceMesh.physicsFriction = maxNode.MaxNode.GetFloatProperty("babylonjs_friction", 0.2f);
+                babylonInstanceMesh.physicsRestitution = maxNode.MaxNode.GetFloatProperty("babylonjs_restitution", 0.2f);
             }
 
 
@@ -657,10 +756,10 @@ namespace Max2Babylon
             babylonMasterMesh.instances = list.ToArray();
 
             // Export transform / hierarchy / animations
-            exportNode(babylonInstanceMesh, meshNode, scene, babylonScene);
+            exportNode(babylonInstanceMesh, maxNode, maxScene, babylonScene);
 
             // Animations
-            exportAnimation(babylonInstanceMesh, meshNode);
+            exportAnimation(babylonInstanceMesh, maxNode);
 
             return babylonInstanceMesh;
         }
@@ -876,7 +975,6 @@ namespace Max2Babylon
             indexCount += 3;
             CheckCancelled();
         }
-
 
         int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {

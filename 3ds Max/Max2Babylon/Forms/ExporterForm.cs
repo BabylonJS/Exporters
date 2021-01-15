@@ -121,6 +121,9 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkMrgContainersAndXref, Loader.Core.RootNode, "babylonjs_mergecontainersandxref", 0);
             Tools.PrepareCheckBox(chkTryReuseTexture, Loader.Core.RootNode, "babylonjs_tryReuseTexture", 0);
 
+            Tools.PrepareCheckBox(chkUseClone, Loader.Core.RootNode, "babylonjs_useClone", 0);
+
+
             #region prepare draco            
             LoadDracoOptions();
             dracoUserControl.UpdateValueLabels(); // force value label to be updated
@@ -494,6 +497,7 @@ namespace Max2Babylon
                     mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
                     useMultiExporter = multiExport,
                     tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked,
+                    useClone = chkUseClone.Checked
                 };
 
                 if (exportParameters.dracoCompression)

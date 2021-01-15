@@ -18,7 +18,7 @@ namespace Max2Babylon
     {
         public Form callerForm;
 
-        public ExportParameters exportParameters;
+        public MaxExportParameters exportParameters;
         public bool IsCancelled { get; set; }
 
         public string MaxSceneFileName { get; set; }
@@ -78,7 +78,6 @@ namespace Max2Babylon
                     return IsMeshFlattenable(n,animationGroupList,ref flattenableNodes);
                 }
                 return false;
-
             }
 
             if (node.IsNodeTreeAnimated())
@@ -128,8 +127,6 @@ namespace Max2Babylon
                 {
                     itemNode = itemNode.FlattenHierarchy();
                 }
-
-                
             }
         }
 
@@ -193,7 +190,6 @@ namespace Max2Babylon
                     delete tmp
                 )
              ");
-
         }
 
         public void ExportClosedContainers()
@@ -224,7 +220,7 @@ namespace Max2Babylon
             AnimationGroupList.LoadDataFromAnimationHelpers();
         }
 
-        public void Export(ExportParameters exportParameters)
+        public void Export(MaxExportParameters exportParameters)
         {
             ScriptsUtilities.ExecuteMaxScriptCommand(@"global BabylonExporterStatus = ""Unavailable""");
             var watch = new Stopwatch();
@@ -335,9 +331,7 @@ namespace Max2Babylon
 
             var rawScene = Loader.Core.RootNode;
 
-           
-
-            string outputFormat = exportParameters.outputFormat;
+             string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
 
@@ -490,7 +484,6 @@ namespace Max2Babylon
             };
             RaiseMessage(string.Format("Total meshes: {0}", babylonScene.MeshesList.Count), Color.Gray, 1);
 
-
             // In 3DS Max the default camera look down (in the -z direction for the 3DS Max reference (+y for babylon))
             // In Babylon the default camera look to the horizon (in the +z direction for the babylon reference)
             // In glTF the default camera look to the horizon (in the +Z direction for glTF reference)
@@ -510,7 +503,6 @@ namespace Max2Babylon
                     BabylonNode light = babylonScene.LightsList[index];
                     FixNodeRotation(ref light, ref babylonScene, Math.PI / 2);
                 }
-
             }
 
             // Convert fixed cameras and lights to dummies (meshes without geometry)
@@ -605,12 +597,10 @@ namespace Max2Babylon
                 // Store root node
                 babylonScene.MeshesList.Add(rootNode);
             }
-
 #if DEBUG
             var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 - flattenTime;
             RaiseMessage($"Nodes exported in {nodesExportTime:0.00}s", Color.Blue);
 #endif
-
             // Materials
             if (exportParameters.exportMaterials && exportParameters.exportAnimationsOnly == false)
             {
@@ -631,7 +621,6 @@ namespace Max2Babylon
             var materialsExportTime = watch.ElapsedMilliseconds / 1000.0 - nodesExportTime;
             RaiseMessage($"Materials exported in {materialsExportTime:0.00}s", Color.Blue);
 #endif
-
             // Fog
             if (exportParameters.exportAnimationsOnly == false)
             {
@@ -668,13 +657,10 @@ namespace Max2Babylon
                     ExportSkin(skin, babylonScene);
                 }
             }
-
 #if DEBUG
             var skeletonsExportTime = watch.ElapsedMilliseconds / 1000.0 - materialsExportTime;
             RaiseMessage($"Skeletons exported in {skeletonsExportTime:0.00}s", Color.Blue);
 #endif
-
-
             // ----------------------------
             // ----- Animation groups -----
             // ----------------------------

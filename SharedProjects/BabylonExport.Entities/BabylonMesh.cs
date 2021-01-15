@@ -5,12 +5,31 @@ using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
-    
+    public interface IBabylonMeshData
+    {
+        float[] positions { get; set; }
+        float[] normals { get; set; }
+        float[] tangents { get; set; }
+        float[] uvs { get; set; }
+        float[] uvs2 { get; set; }
+        float[] uvs3 { get; set; }
+        float[] uvs4 { get; set; }
+        float[] uvs5 { get; set; }
+        float[] uvs6 { get; set; }
+        float[] colors { get; set; }
+        int[] matricesIndices { get; set; }
+        float[] matricesWeights { get; set; }
+        int[] indices { get; set; }
+    }
+
     [DataContract]
-    public class BabylonMesh : BabylonAbstractMesh
+    public class BabylonMesh : BabylonAbstractMesh, IBabylonMeshData
     {
         [DataMember]
         public string materialId { get; set; }
+        
+        [DataMember]
+        public string geometryId { get; set; }
 
         [DataMember]
         public bool isEnabled { get; set; }
@@ -35,6 +54,18 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public float[] uvs2 { get; set; }
+
+        [DataMember]
+        public float[] uvs3 { get; set; }
+
+        [DataMember]
+        public float[] uvs4 { get; set; }
+
+        [DataMember]
+        public float[] uvs5 { get; set; }
+
+        [DataMember]
+        public float[] uvs6 { get; set; }
 
         [DataMember]
         public float[] colors { get; set; }
