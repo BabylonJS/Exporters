@@ -120,24 +120,10 @@ namespace Maya2Babylon
                 bool isTransparencyModeFromBabylonMaterialNode = false;
                 if (babylonAttributesDependencyNode != null)
                 {
-                    // Transparency mode
-                    if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode"))
-                    {
-                        int transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
-                        babylonMaterial.transparencyMode = transparencyMode;
+                    // Common attributes
+                    ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
 
-                        isTransparencyModeFromBabylonMaterialNode = true;
-                    }
-                    // Backface Culling
-                    if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling"))
-                    {
-                        babylonMaterial.backFaceCulling = babylonAttributesDependencyNode.findPlug("babylonBackfaceCulling").asBool();
-                    }
-                    // unlit
-                    if (babylonAttributesDependencyNode.hasAttribute("babylonUnlit"))
-                    {
-                        babylonMaterial.isUnlit = babylonAttributesDependencyNode.findPlug("babylonUnlit").asBool();
-                    }
+                    isTransparencyModeFromBabylonMaterialNode = babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode");
                 }
 
                 // Maya ambient <=> babylon emissive
@@ -298,6 +284,12 @@ namespace Maya2Babylon
                 {
                     name = name
                 };
+
+                if (babylonAttributesDependencyNode != null)
+                {
+                    // Common attributes
+                    ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
+                }
 
                 // --- Global ---
 
@@ -536,7 +528,7 @@ namespace Maya2Babylon
                     babylonMaterial.doubleSided = !babylonMaterial.backFaceCulling;
                     babylonMaterial._unlit = babylonMaterial.isUnlit;
 
-                    // Update displayed Transparency mode value based on StingrayPBS preset material
+                     // Update displayed Transparency mode value based on StingrayPBS preset material
                     int babylonTransparencyMode = 0;
                     if (materialDependencyNode.hasAttribute("mask_threshold"))
                     {
@@ -565,16 +557,13 @@ namespace Maya2Babylon
                 babylonMaterial.metadata = ExportCustomAttributeFromMaterial(babylonMaterial);
 
                 // --- Global ---
-
                 bool isTransparencyModeFromBabylonMaterialNode = false;
                 if (babylonAttributesDependencyNode != null)
                 {
-                    // Transparency mode
-                    if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode"))
-                    {
-                        babylonMaterial.transparencyMode = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
-                        isTransparencyModeFromBabylonMaterialNode = true;
-                    }
+                    // Common attributes
+                    ExportCommonBabylonAttributes(babylonAttributesDependencyNode, babylonMaterial);
+
+                    isTransparencyModeFromBabylonMaterialNode = babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode");
                 }
 
                 // Color3
@@ -603,7 +592,6 @@ namespace Maya2Babylon
                 // Emissive
                 float emissionWeight = materialDependencyNode.findPlug("emission").asFloat();
                 babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray().Multiply(emissionWeight);
-
 
                 var list = new List<string>();
 
@@ -798,19 +786,54 @@ namespace Maya2Babylon
             }
         }
 
-        private void ExportCommonBabylonAttributes(MFnDependencyNode babylonAttributesDependencyNode, BabylonMaterial babylonMaterial)
+        private void ExportCommonBabylonAttributes0(MFnDependencyNode babylonAttributesDependencyNode, BabylonMaterial babylonMaterial)
         {
-            bool backfaceCulling = babylonAttributesDependencyNode.findPlug("babylonBackfaceCulling").asBool();
-            RaiseVerbose("backfaceCulling=" + backfaceCulling, 3);
-            babylonMaterial.backFaceCulling = backfaceCulling;
+            // Backface Culling
+            if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling"))
+            {
+                bool v = babylonAttributesDependencyNode.findPlug("babylonBackfaceCulling").asBool();
+                RaiseVerbose($"backfaceCulling={v}", 3);
+                babylonMaterial.backFaceCulling = v;
+            }
+            // unlit
+            if (babylonAttributesDependencyNode.hasAttribute("babylonUnlit"))
+            {
+                bool v = babylonAttributesDependencyNode.findPlug("babylonUnlit").asBool();
+                RaiseVerbose($"isUnlit={v}", 3);
+                babylonMaterial.isUnlit = v;
+            }
+            // max light
+            if (babylonAttributesDependencyNode.hasAttribute("babylonMaxSimultaneousLights"))
+            {
+                int v = babylonAttributesDependencyNode.findPlug("babylonMaxSimultaneousLights").asInt();
+                RaiseVerbose($"maxSimultaneousLights={v}", 3);
+                babylonMaterial.maxSimultaneousLights = v;
+            }
+        }
 
-            int maxSimultaneousLights = babylonAttributesDependencyNode.findPlug("babylonMaxSimultaneousLights").asInt();
-            RaiseVerbose("maxSimultaneousLights=" + maxSimultaneousLights, 3);
-            babylonMaterial.maxSimultaneousLights = maxSimultaneousLights;
+        private void ExportCommonBabylonAttributes(MFnDependencyNode babylonAttributesDependencyNode, BabylonStandardMaterial babylonMaterial)
+        {
+            ExportCommonBabylonAttributes0(babylonAttributesDependencyNode, babylonMaterial);
+            
+            if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode"))
+            {
+                int v = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
+                RaiseVerbose($"babylonTransparencyMode={v}", 3);
+                babylonMaterial.transparencyMode = v;
+            }
+        }
 
-            bool unlit = babylonAttributesDependencyNode.findPlug("babylonUnlit").asBool();
-            RaiseVerbose("unlit=" + unlit, 3);
-            babylonMaterial.isUnlit = unlit;
+        private void ExportCommonBabylonAttributes(MFnDependencyNode babylonAttributesDependencyNode, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
+        {
+
+            ExportCommonBabylonAttributes0(babylonAttributesDependencyNode, babylonMaterial);
+
+            if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode"))
+            {
+                int v = babylonAttributesDependencyNode.findPlug("babylonTransparencyMode").asInt();
+                RaiseVerbose($"babylonTransparencyMode={v}", 3);
+                babylonMaterial.transparencyMode = v;
+            }
         }
 
         private bool isStingrayPBSMaterial(MFnDependencyNode materialDependencyNode)
