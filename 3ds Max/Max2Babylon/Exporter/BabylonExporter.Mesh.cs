@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace Max2Babylon
 {
@@ -511,19 +512,23 @@ namespace Max2Babylon
                     var babylonMorphTargets = new List<BabylonMorphTarget>();
                     // All morphers are considered identical
                     // Their targets are concatenated
+                    int m = 0;
                     morphers.ForEach(morpher =>
                     {
+                        m++;
                         for (int i = 0; i < morpher.NumberOfMorphTargets; i++)
                         {
                             // Morph target
                             var maxMorphTarget = morpher.GetMorphTarget(i);
+ 
+                            // Target geometry
+                            var targetVertices = ExtractTargetVertices(babylonMesh, vertices, offsetTM, i, maxMorphTarget, optimizeVertices, faceIndexes);
 
-                            // Ensure target still exists (green color legend)
-                            if (maxMorphTarget != null)
+                            if (targetVertices != null && targetVertices.Any())
                             {
                                 var babylonMorphTarget = new BabylonMorphTarget
                                 {
-                                    name = maxMorphTarget.Name
+                                    name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})" 
                                 };
                                 babylonMorphTargets.Add(babylonMorphTarget);
 
@@ -531,7 +536,6 @@ namespace Max2Babylon
                                 babylonMorphTarget.influence = 0f;
 
                                 // Target geometry
-                                var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
 
                                 if (exportParameters.exportMorphNormals)
@@ -574,6 +578,60 @@ namespace Max2Babylon
             babylonScene.MeshesList.Add(babylonMesh);
             masterMeshMap[babylonMesh] = meshNode;
             return babylonMesh;
+        }
+
+        private IEnumerable<GlobalVertex> ExtractTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+        {
+            if (maxMorphTarget != null)
+            {
+                foreach(var v in ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes))
+                {
+                    yield return v;
+                }
+                yield break;
+            }
+            // rebuild Morph Target
+            var points = ExtractTargetPoints(babylonAbstractMesh, morphIndex, offsetTM).ToList();
+            for (int i = 0; i != vertices.Count; i++)
+            {
+                int bi = vertices[i].BaseIndex;
+                yield return new GlobalVertex()
+                {
+                    BaseIndex = bi,
+                    Position = points[bi]
+                };
+            }
+        }
+
+        private IEnumerable<IPoint3> ExtractTargetPoints(BabylonAbstractMesh babylonAbstractMesh, int morphIndex, IMatrix3 offsetTM)
+        {
+            // this is the place where we reconstruct the vertices. 
+            // the needed function is not available on the .net SDK, then we have to use Max Script.
+            // TODO : use direct instance instead of manipulate string
+            // var res = Loader.Global.ExecuteScript(Loader.Global.StringStream.Create($"for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)"), false);
+            var script = $"with printAllElements on (for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)) as string";
+            var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script);
+            if (!String.IsNullOrEmpty(str))
+            {
+                // we obtain a list of Point3 as string in a format of #([5.69523,-58.2409,65.1479],...)
+                int i = str.IndexOf('[');
+                if (i != -1)
+                {
+                    do
+                    {
+                        int j = str.IndexOf(']', i++);
+                        var p3Str = str.Substring(i, j - i);
+                        var xyz = p3Str.Split(',').Select(s => float.Parse(s, CultureInfo.InvariantCulture)).ToArray();
+                        var p = Loader.Global.Point3.Create(xyz[0], xyz[1], xyz[2]);
+                        p = offsetTM.PointTransform(p);
+                        // we have to reverse y and z
+                        p = Loader.Global.Point3.Create(p[0] * scaleFactorToMeters, p[2] * scaleFactorToMeters, p[1] * scaleFactorToMeters);
+                        yield return p;
+                        i = str.IndexOf('[', j);
+                    } while (i != -1);
+                }
+            }
+            yield break;
         }
 
         private void ExportUserData(IIGameNode meshNode, BabylonAbstractMesh babylonMesh)
