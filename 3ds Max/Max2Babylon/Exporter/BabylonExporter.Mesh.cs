@@ -808,12 +808,15 @@ namespace Max2Babylon
             int indexInFaceIndexesArray = 0;
             for (int i = 0; i < multiMatsCount; ++i)
             {
-                int materialId = i;
                 var indexCount = 0;
                 var minVertexIndex = int.MaxValue;
                 var maxVertexIndex = int.MinValue;
+                // Material Id is 0 if normal material, and GetMaterialID if multi-material
+                // default is [1,n] increment by 1 but user can decide to change the id (still an int) and set for example [4,3,9,1]
+                // note that GetMaterialID return the user id minus 1
+                int materialId = multiMatsCount == 1? i : meshNode.NodeMaterial.GetMaterialID(i);
                 var subMesh = new BabylonSubMesh { indexStart = indexStart, materialIndex = i };
-
+ 
                 if (multiMatsCount == 1)
                 {
                     for (int j = 0; j < unskinnedMesh.NumberOfFaces; ++j)
@@ -898,10 +901,9 @@ namespace Max2Babylon
                         }
                     }
                 }
-
+ 
                 if (indexCount != 0)
                 {
-
                     subMesh.indexCount = indexCount;
                     subMesh.verticesStart = minVertexIndex;
                     subMesh.verticesCount = maxVertexIndex - minVertexIndex + 1;
