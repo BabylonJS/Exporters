@@ -528,7 +528,7 @@ namespace Maya2Babylon
                     babylonMaterial.doubleSided = !babylonMaterial.backFaceCulling;
                     babylonMaterial._unlit = babylonMaterial.isUnlit;
 
-                     // Update displayed Transparency mode value based on StingrayPBS preset material
+                    // Update displayed Transparency mode value based on StingrayPBS preset material
                     int babylonTransparencyMode = 0;
                     if (materialDependencyNode.hasAttribute("mask_threshold"))
                     {
