@@ -816,7 +816,6 @@ namespace Max2Babylon
                 // note that GetMaterialID return the user id minus 1
                 int materialId = multiMatsCount == 1? i : meshNode.NodeMaterial.GetMaterialID(i);
                 var subMesh = new BabylonSubMesh { indexStart = indexStart, materialIndex = i };
- 
                 if (multiMatsCount == 1)
                 {
                     for (int j = 0; j < unskinnedMesh.NumberOfFaces; ++j)
