@@ -566,7 +566,7 @@ namespace Max2Babylon
                                     if (mustRebuildMorphTarget)
                                     {
                                         // we do not recontruct the tangents
-                                        RaiseWarning("we do not have morph tangents when morph target has been rebuilded.", 4);
+                                        RaiseWarning("Rebuilt morph targets will not have tangent information.", 4);
                                         babylonMorphTarget.tangents = null;
                                     }
                                     else
