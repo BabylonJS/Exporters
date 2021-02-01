@@ -637,7 +637,6 @@ namespace Max2Babylon
             // this is the place where we reconstruct the vertices. 
             // the needed function is not available on the .net SDK, then we have to use Max Script.
             // TODO : use direct instance instead of manipulate string
-            // var res = Loader.Global.ExecuteScript(Loader.Global.StringStream.Create($"for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)"), false);
             var script = $"with printAllElements on (for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)) as string";
             var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script);
             if (!String.IsNullOrEmpty(str))
