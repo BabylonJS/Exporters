@@ -524,7 +524,7 @@ namespace Max2Babylon
                             if (mustRebuildMorphTarget)
                             {
                                 string actionStr = exportParameters.rebuildMorphTarget ? $" trying to rebuild {i}." : string.Empty;
-                                RaiseWarning($"Morph target [{i}] is not available anymore - ie beeing deleted under max and only baked into the scene.{actionStr}",3);
+                                RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}",3);
                             }
 
                             // Target geometry - this is where we rebuild the target if necessary
