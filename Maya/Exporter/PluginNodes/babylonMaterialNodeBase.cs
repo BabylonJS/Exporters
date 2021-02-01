@@ -14,6 +14,7 @@ namespace Maya2Babylon {
         }
 
         protected static void Init(MFnDependencyNode babylonAttributesDependencyNode, BabylonMaterial babylonMaterial = null) {
+            
             // Ensure all attributes are setup            
             if (babylonAttributesDependencyNode.hasAttribute("babylonBackfaceCulling") == false) {
                 MGlobal.executeCommand($"addAttr -ln \"babylonBackfaceCulling\" -nn \"Backface Culling\" -at bool {babylonAttributesDependencyNode.name};");
