@@ -21,6 +21,7 @@ namespace Maya2Babylon
         public static void Init(MFnDependencyNode babylonAttributesDependencyNode, BabylonStandardMaterial babylonMaterial = null)
         {
             babylonMaterialNodeBase.Init(babylonAttributesDependencyNode, babylonMaterial);
+            
             if (babylonAttributesDependencyNode.hasAttribute("babylonTransparencyMode") == false) {
                 MGlobal.executeCommand($"addAttr -ln \"babylonTransparencyMode\" -nn \"Transparency Mode\" -at \"enum\" -en \"Opaque:Cutoff:Blend:\" {babylonAttributesDependencyNode.name};");
             }
