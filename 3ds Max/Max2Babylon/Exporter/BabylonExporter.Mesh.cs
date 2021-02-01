@@ -901,7 +901,6 @@ namespace Max2Babylon
                         }
                     }
                 }
- 
                 if (indexCount != 0)
                 {
                     subMesh.indexCount = indexCount;
