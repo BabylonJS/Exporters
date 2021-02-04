@@ -67,8 +67,6 @@ namespace BabylonExport.Entities
         public bool autoSaveSceneFile = false;
         public bool exportTangents = true;
         public bool exportSkins = true;
-        public bool exportMorphTangents = true;
-        public bool exportMorphNormals = true;
         public long txtQuality = 100;
         public bool mergeAOwithMR = true;
         public bool enableKHRLightsPunctual = false;
@@ -98,6 +96,12 @@ namespace BabylonExport.Entities
         #region DRACO
         public bool dracoCompression = false;
         public DracoParameters dracoParams = null;
+        #endregion
+
+        #region Morph
+        public bool rebuildMorphTarget = true;
+        public bool exportMorphTangents = true;
+        public bool exportMorphNormals = true;
         #endregion
     }
 }

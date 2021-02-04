@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace Max2Babylon
 {
@@ -511,38 +512,67 @@ namespace Max2Babylon
                     var babylonMorphTargets = new List<BabylonMorphTarget>();
                     // All morphers are considered identical
                     // Their targets are concatenated
+                    int m = 0;
                     morphers.ForEach(morpher =>
                     {
+                        m++;
                         for (int i = 0; i < morpher.NumberOfMorphTargets; i++)
                         {
                             // Morph target
                             var maxMorphTarget = morpher.GetMorphTarget(i);
+                            bool mustRebuildMorphTarget = maxMorphTarget == null;
+                            if (mustRebuildMorphTarget)
+                            {
+                                string actionStr = exportParameters.rebuildMorphTarget ? $" trying to rebuild {i}." : string.Empty;
+                                RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}",3);
+                            }
 
-                            // Ensure target still exists (green color legend)
-                            if (maxMorphTarget != null)
+                            // Target geometry - this is where we rebuild the target if necessary
+                            var targetVertices = ExtractMorphTargetVertices(babylonMesh, vertices, offsetTM, i, maxMorphTarget, optimizeVertices, faceIndexes);
+
+                            if (targetVertices != null && targetVertices.Any())
                             {
                                 var babylonMorphTarget = new BabylonMorphTarget
                                 {
-                                    name = maxMorphTarget.Name
+                                    // the name is reconstructed if we have to rebuild the target
+                                    name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})" 
                                 };
                                 babylonMorphTargets.Add(babylonMorphTarget);
+                                RaiseMessage($"Morph target {babylonMorphTarget.name} added.",3);
 
                                 // TODO - Influence
-                                babylonMorphTarget.influence = 0f;
+                                babylonMorphTarget.influence = 0f; 
 
                                 // Target geometry
-                                var targetVertices = ExtractVertices(babylonMesh, maxMorphTarget, optimizeVertices, faceIndexes);
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
 
                                 if (exportParameters.exportMorphNormals)
                                 {
-                                    babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
+                                    if (mustRebuildMorphTarget)
+                                    {
+                                        // we do not recontruct the normals
+                                        RaiseWarning("we do not have morph normals when morph target has been rebuilded.",4);
+                                        babylonMorphTarget.normals = null;
+                                    }
+                                    else
+                                    {
+                                        babylonMorphTarget.normals = targetVertices.SelectMany(v => new[] { v.Normal.X, v.Normal.Y, v.Normal.Z }).ToArray();
+                                    }
                                 }
 
                                 // Tangent
                                 if (exportParameters.exportTangents && exportParameters.exportMorphTangents)
                                 {
-                                    babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
+                                    if (mustRebuildMorphTarget)
+                                    {
+                                        // we do not recontruct the tangents
+                                        RaiseWarning("Rebuilt morph targets will not have tangent information.", 4);
+                                        babylonMorphTarget.tangents = null;
+                                    }
+                                    else
+                                    {
+                                        babylonMorphTarget.tangents = targetVertices.SelectMany(v => v.Tangent).ToArray();
+                                    }
                                 }
 
                                 // Animations
@@ -574,6 +604,62 @@ namespace Max2Babylon
             babylonScene.MeshesList.Add(babylonMesh);
             masterMeshMap[babylonMesh] = meshNode;
             return babylonMesh;
+        }
+
+        private IEnumerable<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+        {
+            if (maxMorphTarget != null)
+            {
+                foreach(var v in ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes))
+                {
+                    yield return v;
+                }
+                yield break;
+            }
+            // rebuild Morph Target
+            if (exportParameters.rebuildMorphTarget)
+            {
+                var points = ExtractMorphTargetPoints(babylonAbstractMesh, morphIndex, offsetTM).ToList();
+                for (int i = 0; i != vertices.Count; i++)
+                {
+                    int bi = vertices[i].BaseIndex;
+                    yield return new GlobalVertex()
+                    {
+                        BaseIndex = bi,
+                        Position = points[bi]
+                    };
+                }
+            }
+        }
+
+        private IEnumerable<IPoint3> ExtractMorphTargetPoints(BabylonAbstractMesh babylonAbstractMesh, int morphIndex, IMatrix3 offsetTM)
+        {
+            // this is the place where we reconstruct the vertices. 
+            // the needed function is not available on the .net SDK, then we have to use Max Script.
+            // TODO : use direct instance instead of manipulate string
+            var script = $"with printAllElements on (for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)) as string";
+            var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script);
+            if (!String.IsNullOrEmpty(str))
+            {
+                // we obtain a list of Point3 as string in a format of #([5.69523,-58.2409,65.1479],...)
+                int i = str.IndexOf('[');
+                if (i != -1)
+                {
+                    do
+                    {
+                        int j = str.IndexOf(']', i++);
+                        var p3Str = str.Substring(i, j - i);
+                        var xyz = p3Str.Split(',').Select(s => float.Parse(s, CultureInfo.InvariantCulture)).ToArray();
+                        var p = Loader.Global.Point3.Create(xyz[0], xyz[1], xyz[2]);
+                        p = offsetTM.PointTransform(p);
+                        // we have to reverse y and z
+                        p = Loader.Global.Point3.Create(p[0] * scaleFactorToMeters, p[2] * scaleFactorToMeters, p[1] * scaleFactorToMeters);
+                        yield return p;
+                        i = str.IndexOf('[', j);
+                    } while (i != -1);
+                }
+            }
+            yield break;
         }
 
         private void ExportUserData(IIGameNode meshNode, BabylonAbstractMesh babylonMesh)
@@ -808,12 +894,14 @@ namespace Max2Babylon
             int indexInFaceIndexesArray = 0;
             for (int i = 0; i < multiMatsCount; ++i)
             {
-                int materialId = i;
                 var indexCount = 0;
                 var minVertexIndex = int.MaxValue;
                 var maxVertexIndex = int.MinValue;
+                // Material Id is 0 if normal material, and GetMaterialID if multi-material
+                // default is [1,n] increment by 1 but user can decide to change the id (still an int) and set for example [4,3,9,1]
+                // note that GetMaterialID return the user id minus 1
+                int materialId = multiMatsCount == 1? i : meshNode.NodeMaterial.GetMaterialID(i);
                 var subMesh = new BabylonSubMesh { indexStart = indexStart, materialIndex = i };
-
                 if (multiMatsCount == 1)
                 {
                     for (int j = 0; j < unskinnedMesh.NumberOfFaces; ++j)
@@ -898,10 +986,8 @@ namespace Max2Babylon
                         }
                     }
                 }
-
                 if (indexCount != 0)
                 {
-
                     subMesh.indexCount = indexCount;
                     subMesh.verticesStart = minVertexIndex;
                     subMesh.verticesCount = maxVertexIndex - minVertexIndex + 1;
