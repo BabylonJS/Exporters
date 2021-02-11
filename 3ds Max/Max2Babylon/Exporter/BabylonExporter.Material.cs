@@ -1148,15 +1148,27 @@ namespace Max2Babylon
                         + "\r\n" + " "
                         + "\r\n" + "rollout params \"Babylon Attributes\""
                         + "\r\n" + "("
-                        + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\""
+                        + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\" across:3"
                         + "\r\n" + "checkbox babylonBackfaceCulling_ui \"Backface Culling\""
-                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights \" Align: #Left type: #integer Range:[0,100,4]"
                         + "\r\n" + "checkbox babylonUseFactors_ui \"Use Scalar Factors\""
-                        + "\r\n" + "spinner babylonDirectIntensity_ui \"Full PBR Direct Intensity \" Align: #Left type: #float Range:[0.0,1.0,1.0]"
-                        + "\r\n" + "spinner babylonEmissiveIntensity_ui \"Full PBR Emissive Intensity \" Align: #Left type: #float Range:[0.0,1.0,1.0]"
-                        + "\r\n" + "spinner babylonEnvironmentIntensity_ui \"Full PBR Environment Intensity \" Align: #Left type: #float Range:[0.0,1.0,1.0]"
-                        + "\r\n" + "spinner babylonSpecularIntensity_ui \"Full PBR Specular Intensity \" Align: #Left type: #float Range:[0.0,1.0,1.0]"
-                        + "\r\n" + "dropdownlist babylonTransparencyMode_dd \"Transparency Mode \" items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1)"
+
+                        + "\r\n" + "label babylonMaxSimultaneousLights_label \"Max Simultaneous Lights\" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui Align: #Right type: #integer Range:[0,100,4]"
+
+                        + "\r\n" + "label babylonDirectIntensity_label \"Full PBR Direct Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonDirectIntensity_ui  Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonEmissiveIntensity_label \"Full PBR Emissive Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonEmissiveIntensity_ui Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonEnvironmentIntensity_label \"Full PBR Environment Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonEnvironmentIntensity_ui Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonSpecularIntensity_label \"Full PBR Specular Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonSpecularIntensity_ui Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonTransparencyMode_label \"Transparency Mode \" Align: #Left across:2"
+                        + "\r\n" + "dropdownlist babylonTransparencyMode_dd  items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1) Align: #Right"
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
                         + "\r\n" + ");";
