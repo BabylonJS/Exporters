@@ -403,13 +403,19 @@ namespace Max2Babylon
             var propertyContainer = materialNode.IPropertyContainer;
 
             bool isTransparencyModeFromBabylonAttributes = false;
+            bool usePbrFactor = false; // this force the exporter to set the metallic or roughness even if the map are set
             if (babylonAttributesContainer != null)
             {
-                IIGameProperty babylonTransparencyModeGameProperty = babylonAttributesContainer.QueryProperty("babylonTransparencyMode");
-                if (babylonTransparencyModeGameProperty != null)
+                IIGameProperty gameProperty = babylonAttributesContainer.QueryProperty("babylonTransparencyMode");
+                if (gameProperty != null)
                 {
-                    babylonMaterial.transparencyMode = babylonTransparencyModeGameProperty.GetIntValue();
+                    babylonMaterial.transparencyMode = gameProperty.GetIntValue();
                     isTransparencyModeFromBabylonAttributes = true;
+                }
+                gameProperty = babylonAttributesContainer.QueryProperty("babylonUseFactors");
+                if (gameProperty != null)
+                {
+                    usePbrFactor = gameProperty.GetBoolValue();
                 }
             }
 
@@ -560,7 +566,7 @@ namespace Max2Babylon
 
                     babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
 
-                    if (babylonMaterial.metallicRoughnessTexture != null)
+                    if (babylonMaterial.metallicRoughnessTexture != null && !usePbrFactor)
                     {
                         // Change the factor to zero if combining partial channel to avoid issue (in case of image compression).
                         // ie - if no metallic map, then b MUSt be fully black. However channel of jpeg MAY not beeing fully black 
@@ -568,9 +574,7 @@ namespace Max2Babylon
                         babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null ? 1.0f : 0.0f;
                         babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null ? 1.0f : 0.0f;
                     }
-
                 }
-
             }
 
             // Constraints
@@ -874,14 +878,25 @@ namespace Max2Babylon
             excludeAttributes.Add("babylonBackfaceCulling");
             excludeAttributes.Add("babylonMaxSimultaneousLights");
             excludeAttributes.Add("babylonTransparencyMode");
+            excludeAttributes.Add("babylonUseFactors");
+            excludeAttributes.Add("babylonDirectIntensity");
+            excludeAttributes.Add("babylonEmissiveIntensity");
+            excludeAttributes.Add("babylonEnvironmentIntensity");
+            excludeAttributes.Add("babylonSpecularIntensity");
 
             // Export the custom attributes of this material
             babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
 
             if (exportParameters.pbrFull)
             {
-                var fullPBR = new BabylonPBRMaterial(babylonMaterial);
-                fullPBR.maxGameMaterial = babylonMaterial.maxGameMaterial;
+                var fullPBR = new BabylonPBRMaterial(babylonMaterial)
+                {
+                    directIntensity = babylonAttributesContainer?.GetIntProperty("babylonDirectIntensity") ?? 1.0f,
+                    emissiveIntensity = babylonAttributesContainer?.GetIntProperty("babylonEmissiveIntensity") ?? 1.0f,
+                    environmentIntensity = babylonAttributesContainer?.GetIntProperty("babylonEnvironmentIntensity") ?? 1.0f,
+                    specularIntensity = babylonAttributesContainer?.GetIntProperty("babylonSpecularIntensity") ?? 1.0f,
+                    maxGameMaterial = babylonMaterial.maxGameMaterial
+                };
                 babylonScene.MaterialsList.Add(fullPBR);
             }
             else
@@ -1087,7 +1102,6 @@ namespace Max2Babylon
                         + "\r\n" + "parameters main rollout:params"
                         + "\r\n" + "("
                         + "\r\n" + "babylonUnlit type:#boolean ui:babylonUnlit_ui"
-                        //+ "\r\n" + "babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:true"
                         + "\r\n" + "babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4"
                         + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonTransparencyMode
                         + "\r\n" + ")"
@@ -1095,7 +1109,6 @@ namespace Max2Babylon
                         + "\r\n" + "rollout params \"Babylon Attributes\""
                         + "\r\n" + "("
                         + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\""
-                        //+ "\r\n" + "checkbox babylonBackfaceCulling_ui \"Backface Culling\""
                         + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[0,100,4]"
                         + "\r\n" + "dropdownlist babylonTransparencyMode_dd \"Transparency Mode\" items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1)"
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
@@ -1125,15 +1138,37 @@ namespace Max2Babylon
                         + "\r\n" + "babylonUnlit type:#boolean ui:babylonUnlit_ui"
                         + "\r\n" + "babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:true"
                         + "\r\n" + "babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4"
+                        + "\r\n" + "babylonUseFactors type:#boolean ui:babylonUseFactors_ui default:false"
+                        + "\r\n" + "babylonDirectIntensity type:#float ui:babylonDirectIntensity_ui default:1.0"
+                        + "\r\n" + "babylonEmissiveIntensity type:#float ui:babylonEmissiveIntensity_ui default:1.0"
+                        + "\r\n" + "babylonEnvironmentIntensity type:#float ui:babylonEnvironmentIntensity_ui default:1.0"
+                        + "\r\n" + "babylonSpecularIntensity type:#float ui:babylonSpecularIntensity_ui default:1.0"
                         + "\r\n" + "babylonTransparencyMode type:#integer default:" + babylonTransparencyMode
                         + "\r\n" + ")"
                         + "\r\n" + " "
                         + "\r\n" + "rollout params \"Babylon Attributes\""
                         + "\r\n" + "("
-                        + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\""
+                        + "\r\n" + "checkbox babylonUnlit_ui \"Unlit\" across:3"
                         + "\r\n" + "checkbox babylonBackfaceCulling_ui \"Backface Culling\""
-                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui \"Max Simultaneous Lights\" Align: #Left type: #integer Range:[0,100,4]"
-                        + "\r\n" + "dropdownlist babylonTransparencyMode_dd \"Transparency Mode\" items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1)"
+                        + "\r\n" + "checkbox babylonUseFactors_ui \"Use Scalar Factors\""
+
+                        + "\r\n" + "label babylonMaxSimultaneousLights_label \"Max Simultaneous Lights\" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonMaxSimultaneousLights_ui Align: #Right type: #integer Range:[0,100,4]"
+
+                        + "\r\n" + "label babylonDirectIntensity_label \"Full PBR Direct Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonDirectIntensity_ui  Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonEmissiveIntensity_label \"Full PBR Emissive Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonEmissiveIntensity_ui Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonEnvironmentIntensity_label \"Full PBR Environment Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonEnvironmentIntensity_ui Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonSpecularIntensity_label \"Full PBR Specular Intensity \" Align: #Left across:2"
+                        + "\r\n" + "spinner babylonSpecularIntensity_ui Align: #Right type: #float Range:[0.0,1.0,1.0]"
+
+                        + "\r\n" + "label babylonTransparencyMode_label \"Transparency Mode \" Align: #Left across:2"
+                        + "\r\n" + "dropdownlist babylonTransparencyMode_dd  items:# (\"Opaque\",\"Cutoff\",\"Blend\") selection:(babylonTransparencyMode+1) Align: #Right"
                         + "\r\n" + "on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1"
                         + "\r\n" + ")"
                         + "\r\n" + ");";
