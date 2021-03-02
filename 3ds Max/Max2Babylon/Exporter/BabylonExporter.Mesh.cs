@@ -1097,12 +1097,16 @@ namespace Max2Babylon
             // tangent
             if (exportParameters.exportTangents)
             {
-                int indexTangentBinormal = mesh.GetFaceVertexTangentBinormal(face.MeshFaceIndex, facePart, 1);
-                IPoint3 normal = vertex.Normal.Normalize;
-                IPoint3 tangent = mesh.GetTangent(indexTangentBinormal, 1).Normalize;
-                IPoint3 bitangent = mesh.GetBinormal(indexTangentBinormal, 1).Normalize;
-                int w = GetW(normal, tangent, bitangent);
-                vertex.Tangent = new float[] { tangent.X, tangent.Y, tangent.Z, w };
+                int mapChannel = 1; // Texture Coordinates
+                if (mesh.GetNumberOfTangents(mapChannel) != 0)
+                {
+                    int indexTangentBinormal = mesh.GetFaceVertexTangentBinormal(face.MeshFaceIndex, facePart, mapChannel);
+                    IPoint3 normal = vertex.Normal.Normalize;
+                    IPoint3 tangent = mesh.GetTangent(indexTangentBinormal, mapChannel).Normalize;
+                    IPoint3 bitangent = mesh.GetBinormal(indexTangentBinormal, mapChannel).Normalize;
+                    float w = GetW(normal, tangent, bitangent);
+                    vertex.Tangent = new float[] { tangent.X, tangent.Y, tangent.Z, -1 };
+                }
             }
 
             if (hasUV)
@@ -1342,27 +1346,41 @@ namespace Max2Babylon
         /// <param name="tangent"></param>
         /// <param name="bitangent"></param>
         /// <returns>
-        /// -1 when the normal is not flipped
-        /// 1 when the normal is flipped
+        /// 1 when the bitangent is nearly 0,0,0 or is not flipped
+        /// -1 when the bitangent is flipped (oposite direction of the cross product of normal ^ tangent)
         /// </returns>
-        private int GetW(IPoint3 normal, IPoint3 tangent, IPoint3 bitangent)
+        private float GetW(IPoint3 normal, IPoint3 tangent, IPoint3 bitangent)
         {
-            //Cross product bitangent = w * normal ^ tangent
-            float x = normal.Y * tangent.Z - normal.Z * tangent.Y;
-            float y = normal.Z * tangent.X - normal.X * tangent.Z;
-            float z = normal.X * tangent.Y - normal.Y * tangent.X;
+            float btx = Math.Abs(bitangent.X) <= Tools.Epsilon ? 0 : bitangent.X;
+            float bty = Math.Abs(bitangent.Y) <= Tools.Epsilon ? 0 : bitangent.Y;
+            float btz = Math.Abs(bitangent.Z) <= Tools.Epsilon ? 0 : bitangent.Z;
 
-            int w = Math.Sign(bitangent.X * x);
-            if (w == 0)
+            if( btx == 0 && bty == 0 && btz == 0)
             {
-                w = Math.Sign(bitangent.Y * y);
-            }
-            if (w == 0)
-            {
-                w = Math.Sign(bitangent.Z * z);
+                return 1;
             }
 
-            return w;
+            float nx = Math.Abs(normal.X) <= Tools.Epsilon ? 0 : normal.X;
+            float ny = Math.Abs(normal.Y) <= Tools.Epsilon ? 0 : normal.Y;
+            float nz = Math.Abs(normal.Z) <= Tools.Epsilon ? 0 : normal.Z;
+           
+            float tx = Math.Abs(tangent.X) <= Tools.Epsilon ? 0 : tangent.X;
+            float ty = Math.Abs(tangent.Y) <= Tools.Epsilon ? 0 : tangent.Y;
+            float tz = Math.Abs(tangent.Z) <= Tools.Epsilon ? 0 : tangent.Z;
+
+            // Cross product bitangent = w * normal ^ tangent
+
+            // theorical bittangent
+            float x = ny * tz - nz * ty;
+            float y = nz * tx - nx * tz;
+            float z = nx * ty - ny * tx;
+ 
+            // Speaking in broadest terms, if the dot product of two non-zero vectors is positive, 
+            // then the two vectors point in the same general direction, meaning less than 90 degrees. 
+            // If the dot product is negative, then the two vectors point in opposite directions, 
+            // or above 90 and less than or equal to 180 degrees.
+            var dot = btx * x + bty * y + btz * z;
+            return dot < 0 ? -1 : 1;
         }
 
     }
