@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using BabylonExport.Entities;
 
 namespace Utilities
 {
     static class MathUtilities
     {
+        public const float Epsilon = 1E-7f;
         public static float GetLerpFactor(float from, float to, float value)
         {
             return (value - from) / (to - from);
@@ -53,10 +52,34 @@ namespace Utilities
             return Convert.ToInt32(Math.Round(f, MidpointRounding.AwayFromZero));
         }
 
-        public static bool IsAlmostEqualTo(float first, float second, float epsilon)
+        public static bool IsAlmostEqualTo(float first, float second, float epsilon = Epsilon)
         {
-            return Math.Abs(first - second) < epsilon;
+            return Math.Abs(first - second) <= epsilon;
         }
+
+        /// <summary>
+        /// This is used to round floating 
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="epsilon"></param>
+        /// <returns></returns>
+        public static float RoundToIfAlmostEqualTo(float a, float b, float epsilon)
+        {
+            return Math.Abs(a - b) <= epsilon ? b : a ;
+        }
+
+        public static float DotProduct(float x1, float y1, float z1, float x2, float y2, float z2)
+        {
+            return x1 * x2 + y1 * y2 + z1 * z2;
+        }
+        public static void CrossProduct(float x1, float y1, float z1, float x2, float y2, float z2, out float x3, out float y3, out float z3)
+        {
+            x3 = y1 * z2 - z1 * y2;
+            y3 = z1 * x2 - x1 * z2;
+            z3 = x1 * y2 - y1 * x2;
+        }
+
 
         /**
          * Computes a texture transform matrix with a pre-transformation

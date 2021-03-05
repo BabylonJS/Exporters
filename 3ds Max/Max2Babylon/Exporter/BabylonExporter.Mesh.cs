@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using Utilities;
 
 namespace Max2Babylon
 {
@@ -1105,7 +1106,7 @@ namespace Max2Babylon
                     IPoint3 tangent = mesh.GetTangent(indexTangentBinormal, mapChannel).Normalize;
                     IPoint3 bitangent = mesh.GetBinormal(indexTangentBinormal, mapChannel).Normalize;
                     float w = GetW(normal, tangent, bitangent);
-                    vertex.Tangent = new float[] { tangent.X, tangent.Y, tangent.Z, -1 };
+                    vertex.Tangent = new float[] { tangent.X, tangent.Y, tangent.Z, w };
                 }
             }
 
@@ -1340,7 +1341,7 @@ namespace Max2Babylon
         }
 
         /// <summary>
-        /// get the w of the tangent
+        /// get the w of the UV tangent
         /// </summary>
         /// <param name="normal"></param>
         /// <param name="tangent"></param>
@@ -1351,35 +1352,33 @@ namespace Max2Babylon
         /// </returns>
         private float GetW(IPoint3 normal, IPoint3 tangent, IPoint3 bitangent)
         {
-            float btx = Math.Abs(bitangent.X) <= Tools.Epsilon ? 0 : bitangent.X;
-            float bty = Math.Abs(bitangent.Y) <= Tools.Epsilon ? 0 : bitangent.Y;
-            float btz = Math.Abs(bitangent.Z) <= Tools.Epsilon ? 0 : bitangent.Z;
+            float btx = MathUtilities.RoundToIfAlmostEqualTo(bitangent.X, 0, Tools.Epsilon);
+            float bty = MathUtilities.RoundToIfAlmostEqualTo(bitangent.Y, 0, Tools.Epsilon);
+            float btz = MathUtilities.RoundToIfAlmostEqualTo(bitangent.Z, 0, Tools.Epsilon);
 
             if( btx == 0 && bty == 0 && btz == 0)
             {
                 return 1;
             }
+ 
+            float nx = MathUtilities.RoundToIfAlmostEqualTo(normal.X, 0, Tools.Epsilon);
+            float ny = MathUtilities.RoundToIfAlmostEqualTo(normal.Y, 0, Tools.Epsilon);
+            float nz = MathUtilities.RoundToIfAlmostEqualTo(normal.Z, 0, Tools.Epsilon);
 
-            float nx = Math.Abs(normal.X) <= Tools.Epsilon ? 0 : normal.X;
-            float ny = Math.Abs(normal.Y) <= Tools.Epsilon ? 0 : normal.Y;
-            float nz = Math.Abs(normal.Z) <= Tools.Epsilon ? 0 : normal.Z;
-           
-            float tx = Math.Abs(tangent.X) <= Tools.Epsilon ? 0 : tangent.X;
-            float ty = Math.Abs(tangent.Y) <= Tools.Epsilon ? 0 : tangent.Y;
-            float tz = Math.Abs(tangent.Z) <= Tools.Epsilon ? 0 : tangent.Z;
+            float tx = MathUtilities.RoundToIfAlmostEqualTo(tangent.X, 0, Tools.Epsilon);
+            float ty = MathUtilities.RoundToIfAlmostEqualTo(tangent.Y, 0, Tools.Epsilon);
+            float tz = MathUtilities.RoundToIfAlmostEqualTo(tangent.Z, 0, Tools.Epsilon);
 
             // Cross product bitangent = w * normal ^ tangent
 
             // theorical bittangent
-            float x = ny * tz - nz * ty;
-            float y = nz * tx - nx * tz;
-            float z = nx * ty - ny * tx;
+            MathUtilities.CrossProduct(nx, ny, nz, tx, ty, tz, out float x, out float y, out float z);
  
             // Speaking in broadest terms, if the dot product of two non-zero vectors is positive, 
             // then the two vectors point in the same general direction, meaning less than 90 degrees. 
             // If the dot product is negative, then the two vectors point in opposite directions, 
             // or above 90 and less than or equal to 180 degrees.
-            var dot = btx * x + bty * y + btz * z;
+            var dot = MathUtilities.DotProduct(btx, bty,btz, x,y,z);
             return dot < 0 ? -1 : 1;
         }
 
