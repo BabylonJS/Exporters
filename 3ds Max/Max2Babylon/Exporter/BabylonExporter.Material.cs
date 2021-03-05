@@ -150,7 +150,7 @@ namespace Max2Babylon
                 };
                 ExportStandardMaterial(materialNode, babylonAttributesContainer, stdMat, babylonScene, babylonMaterial);
             }
-            else if (isPhysicalMaterial(materialNode))
+            else if (isPhysicalMaterial(materialNode) || isPBRMaterial(materialNode))
             {
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
                 {
@@ -910,6 +910,10 @@ namespace Max2Babylon
         {
             return ClassIDWrapper.Physical_Material.Equals(materialNode.MaxMaterial.ClassID);
         }
+        public bool isPBRMaterial(IIGameMaterial materialNode)
+        {
+            return ClassIDWrapper.PBR_Metal_Rough_Material.Equals(materialNode.MaxMaterial.ClassID);
+        }
 
         public bool isDoubleSidedMaterial(IIGameMaterial materialNode)
         {
@@ -999,7 +1003,7 @@ namespace Max2Babylon
                 }
 
                 // Physical material
-                if (isPhysicalMaterial(materialNode))
+                if (isPhysicalMaterial(materialNode) || isPBRMaterial(materialNode))
                 {
                     return null;
                 }
