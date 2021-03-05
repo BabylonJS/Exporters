@@ -64,7 +64,7 @@ namespace Utilities
         /// <param name="b"></param>
         /// <param name="epsilon"></param>
         /// <returns></returns>
-        public static float RoundToIfAlmostEqualTo(float a, float b, float epsilon)
+        public static float RoundToIfAlmostEqualTo(float a, float b, float epsilon = Epsilon)
         {
             return Math.Abs(a - b) <= epsilon ? b : a ;
         }
