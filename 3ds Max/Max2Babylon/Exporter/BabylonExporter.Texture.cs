@@ -344,7 +344,7 @@ namespace Max2Babylon
                 return null;
             }
 
-            var baseColorSourcePath = baseColorTexture.Map.FullFilePath;
+            var baseColorSourcePath = baseColorTexture?.Map.FullFilePath;
             var alphaSourcePath = alphaTexture?.Map.FullFilePath;
 
             // If we only have a base color texture, and we are using an opaque texture, export the base color image only.
