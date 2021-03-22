@@ -81,7 +81,8 @@ namespace Max2Babylon
         public static readonly ClassIDWrapper Two_Sided_Material = new ClassIDWrapper(0x7e73161f, 0x7ffd6281);
 
         public static readonly ClassIDWrapper Physical_Material = new ClassIDWrapper(0x3d6b1cec, 0xdeadc001);
-        public static readonly ClassIDWrapper PBR_Metal_Rough_Material = new ClassIDWrapper(0xd00f1e00, 0xbe77e500);
+        public static readonly ClassIDWrapper PBR_MetalRough_Material = new ClassIDWrapper(0xd00f1e00, 0xbe77e500);
+        public static readonly ClassIDWrapper PBR_SpecGloss_Material = new ClassIDWrapper(0xd00f1e00, 0x01dbad33);
 
         public static readonly ClassIDWrapper Editable_Poly = new ClassIDWrapper(469250957, 422535320);
         public static readonly ClassIDWrapper Sphere = new ClassIDWrapper(17,0);

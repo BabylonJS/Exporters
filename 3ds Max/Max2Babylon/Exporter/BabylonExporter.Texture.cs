@@ -336,7 +336,6 @@ namespace Max2Babylon
             // --- Babylon texture ---
             var baseColorTexture = _getBitmapTex(baseColorTexMap, out multiplyColor);
             var alphaTexture = _getBitmapTex(alphaTexMap);
-            string baseColorTextureMapExtension = null;
 
             // If we don't retrieve any textures from Max, return null.
             if (baseColorTexture == null && alphaTexture == null)
@@ -344,6 +343,7 @@ namespace Max2Babylon
                 return null;
             }
 
+            string baseColorTextureMapExtension = null;
             var baseColorSourcePath = baseColorTexture?.Map.FullFilePath;
             var alphaSourcePath = alphaTexture?.Map.FullFilePath;
 

@@ -360,7 +360,12 @@ namespace Max2Babylon
             cmd += "\r\n" + BabylonExporter.GetStandardBabylonAttributesDataCA();
             cmd += "\r\n" + "custAttributes.add maxMaterial babylonAttributesDataCA;";
             cmd += "\r\n" + ")";
-            cmd += "\r\n" + "else if classof maxMaterial == PhysicalMaterial then";
+            cmd += "\r\n" + "else if classof maxMaterial == PhysicalMaterial then ";
+            cmd += "\r\n" + "(";
+            cmd += "\r\n" + BabylonExporter.GetPhysicalBabylonAttributesDataCA();
+            cmd += "\r\n" + "custAttributes.add maxMaterial babylonAttributesDataCA;";
+            cmd += "\r\n" + ")";
+            cmd += "\r\n" + "else if classof maxMaterial == PBRMetalRough OR classof maxMaterial == PBRSpecGloss then";
             cmd += "\r\n" + "(";
             cmd += "\r\n" + BabylonExporter.GetPhysicalBabylonAttributesDataCA();
             cmd += "\r\n" + "custAttributes.add maxMaterial babylonAttributesDataCA;";
