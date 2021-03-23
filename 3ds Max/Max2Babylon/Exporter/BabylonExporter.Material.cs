@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using Autodesk.Max;
 using Utilities;
 using BabylonExport.Entities;
-using Max2Babylon.Extensions;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Text;
 
 namespace BabylonExport.Entities
 {
@@ -97,10 +93,10 @@ namespace Max2Babylon
                 return;
             }
 
-            // Retreive Babylon Attributes container
-            IIPropertyContainer babylonAttributesContainer = materialNode.IPropertyContainer;
+            // Retreive Attributes container
+            IIPropertyContainer attributesContainer = materialNode.IPropertyContainer;
 
-            bool isUnlit = babylonAttributesContainer?.GetBoolProperty("babylonUnlit", false)??false;
+            bool isUnlit = attributesContainer?.GetBoolProperty("babylonUnlit", false)??false;
 
             // check custom exporters first, to allow custom exporters of supported material classes
             materialExporters.TryGetValue(new ClassIDWrapper(materialNode.MaxMaterial.ClassID), out IMaxMaterialExporter materialExporter);
@@ -147,7 +143,7 @@ namespace Max2Babylon
                     isUnlit = isUnlit,
                     diffuse = materialNode.MaxMaterial.GetDiffuse(0, false).ToArray()
                 };
-                ExportStandardMaterial(materialNode, babylonAttributesContainer, stdMat, babylonScene, babylonMaterial);
+                ExportStandardMaterial(materialNode, attributesContainer, stdMat, babylonScene, babylonMaterial);
             }
             else if (isPhysicalMaterial(materialNode))
             {
@@ -157,7 +153,7 @@ namespace Max2Babylon
                     name = name,
                     isUnlit = isUnlit
                 };
-                ExportPhysicalMaterial(materialNode, babylonAttributesContainer, stdMat, babylonScene, babylonMaterial);
+                ExportPhysicalMaterial(materialNode, attributesContainer, stdMat, babylonScene, babylonMaterial);
             }
             else if (isArnoldMaterial(materialNode))
             {
@@ -167,7 +163,7 @@ namespace Max2Babylon
                     name = name,
                     isUnlit = isUnlit
                 };
-                ExportArnoldMaterial(materialNode, babylonAttributesContainer, stdMat, babylonScene, babylonMaterial);
+                ExportArnoldMaterial(materialNode, attributesContainer, stdMat, babylonScene, babylonMaterial);
             }
             else
             {
@@ -176,12 +172,12 @@ namespace Max2Babylon
             }
         }
 
-        private void ExportStandardMaterial(IIGameMaterial materialNode, IIPropertyContainer babylonAttributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonStandardMaterial babylonMaterial)
+        private void ExportStandardMaterial(IIGameMaterial materialNode, IIPropertyContainer attributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonStandardMaterial babylonMaterial)
         {
             bool isTransparencyModeFromBabylonAttributes = false;
-            if (babylonAttributesContainer != null)
+            if (attributesContainer != null)
             {
-                IIGameProperty babylonTransparencyModeGameProperty = babylonAttributesContainer.QueryProperty("babylonTransparencyMode");
+                IIGameProperty babylonTransparencyModeGameProperty = attributesContainer.QueryProperty("babylonTransparencyMode");
                 if (babylonTransparencyModeGameProperty != null)
                 {
                     babylonMaterial.transparencyMode = babylonTransparencyModeGameProperty.GetIntValue();
@@ -336,17 +332,17 @@ namespace Max2Babylon
             }
 
             // Add babylon attributes
-            if (babylonAttributesContainer == null)
+            if (attributesContainer == null)
             {
                 AddStandardBabylonAttributes(materialNode.MaterialName, babylonMaterial);
             }
 
-            if (babylonAttributesContainer != null)
+            if (attributesContainer != null)
             {
                 RaiseVerbose("Babylon Attributes of " + materialNode.MaterialName, 2);
 
                 // Common attributes
-                ExportCommonBabylonAttributes(babylonAttributesContainer, babylonMaterial);
+                ExportCommonBabylonAttributes(attributesContainer, babylonMaterial);
 
                 // Special treatment for Unlit
                 if (babylonMaterial.isUnlit)
@@ -397,21 +393,21 @@ namespace Max2Babylon
             babylonScene.MaterialsList.Add(babylonMaterial);
         }
 
-        private void ExportPhysicalMaterial(IIGameMaterial materialNode, IIPropertyContainer babylonAttributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
+        private void ExportPhysicalMaterial(IIGameMaterial materialNode, IIPropertyContainer attributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
             var propertyContainer = materialNode.IPropertyContainer;
 
             bool isTransparencyModeFromBabylonAttributes = false;
             bool usePbrFactor = false; // this force the exporter to set the metallic or roughness even if the map are set
-            if (babylonAttributesContainer != null)
+            if (attributesContainer != null)
             {
-                IIGameProperty gameProperty = babylonAttributesContainer.QueryProperty("babylonTransparencyMode");
+                IIGameProperty gameProperty = attributesContainer.QueryProperty("babylonTransparencyMode");
                 if (gameProperty != null)
                 {
                     babylonMaterial.transparencyMode = gameProperty.GetIntValue();
                     isTransparencyModeFromBabylonAttributes = true;
                 }
-                gameProperty = babylonAttributesContainer.QueryProperty("babylonUseFactors");
+                gameProperty = attributesContainer.QueryProperty("babylonUseFactors");
                 if (gameProperty != null)
                 {
                     usePbrFactor = gameProperty.GetBoolValue();
@@ -455,7 +451,6 @@ namespace Max2Babylon
             }
 
             // --- Textures ---
-
             float[] multiplyColor = null;
             if (exportParameters.exportTextures)
             {
@@ -601,21 +596,21 @@ namespace Max2Babylon
             }
 
             // Add babylon attributes
-            if (babylonAttributesContainer == null)
+            if (attributesContainer == null)
             {
                 AddPhysicalBabylonAttributes(materialNode.MaterialName, babylonMaterial);
             }
 
-            if (babylonAttributesContainer != null)
+            if (attributesContainer != null)
             {
                 RaiseVerbose("Babylon Attributes of " + materialNode.MaterialName, 2);
 
                 // Common attributes
-                ExportCommonBabylonAttributes(babylonAttributesContainer, babylonMaterial);
+                ExportCommonBabylonAttributes(attributesContainer, babylonMaterial);
                 babylonMaterial._unlit = babylonMaterial.isUnlit;
 
                 // Backface culling
-                bool backFaceCulling = babylonAttributesContainer.GetBoolProperty("babylonBackfaceCulling");
+                bool backFaceCulling = attributesContainer.GetBoolProperty("babylonBackfaceCulling");
                 RaiseVerbose("backFaceCulling=" + backFaceCulling, 3);
                 babylonMaterial.backFaceCulling = backFaceCulling;
                 babylonMaterial.doubleSided = !backFaceCulling;
@@ -636,14 +631,14 @@ namespace Max2Babylon
             babylonScene.MaterialsList.Add(babylonMaterial);
         }
 
-        private void ExportArnoldMaterial(IIGameMaterial materialNode, IIPropertyContainer babylonAttributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
+        private void ExportArnoldMaterial(IIGameMaterial materialNode, IIPropertyContainer attributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
             var propertyContainer = materialNode.IPropertyContainer;
 
             bool isTransparencyModeFromBabylonAttributes = false;
-            if (babylonAttributesContainer != null)
+            if (attributesContainer != null)
             {
-                IIGameProperty babylonTransparencyModeGameProperty = babylonAttributesContainer.QueryProperty("babylonTransparencyMode");
+                IIGameProperty babylonTransparencyModeGameProperty = attributesContainer.QueryProperty("babylonTransparencyMode");
                 if (babylonTransparencyModeGameProperty != null)
                 {
                     babylonMaterial.transparencyMode = babylonTransparencyModeGameProperty.GetIntValue();
@@ -849,21 +844,21 @@ namespace Max2Babylon
             }
 
             // Add babylon attributes
-            if (babylonAttributesContainer == null)
+            if (attributesContainer == null)
             {
                 AddAiStandardSurfaceBabylonAttributes(materialNode.MaterialName, babylonMaterial);
             }
 
-            if (babylonAttributesContainer != null)
+            if (attributesContainer != null)
             {
                 RaiseVerbose("Babylon Attributes of " + materialNode.MaterialName, 2);
 
                 // Common attributes
-                ExportCommonBabylonAttributes(babylonAttributesContainer, babylonMaterial);
+                ExportCommonBabylonAttributes(attributesContainer, babylonMaterial);
                 babylonMaterial._unlit = babylonMaterial.isUnlit;
 
                 // Backface culling
-                bool backFaceCulling = babylonAttributesContainer.GetBoolProperty("babylonBackfaceCulling");
+                bool backFaceCulling = attributesContainer.GetBoolProperty("babylonBackfaceCulling");
                 RaiseVerbose("backFaceCulling=" + backFaceCulling, 3);
                 babylonMaterial.backFaceCulling = backFaceCulling;
                 babylonMaterial.doubleSided = !backFaceCulling;
@@ -890,10 +885,10 @@ namespace Max2Babylon
             {
                 var fullPBR = new BabylonPBRMaterial(babylonMaterial)
                 {
-                    directIntensity = babylonAttributesContainer?.GetIntProperty("babylonDirectIntensity") ?? 1.0f,
-                    emissiveIntensity = babylonAttributesContainer?.GetIntProperty("babylonEmissiveIntensity") ?? 1.0f,
-                    environmentIntensity = babylonAttributesContainer?.GetIntProperty("babylonEnvironmentIntensity") ?? 1.0f,
-                    specularIntensity = babylonAttributesContainer?.GetIntProperty("babylonSpecularIntensity") ?? 1.0f,
+                    directIntensity = attributesContainer?.GetIntProperty("babylonDirectIntensity") ?? 1.0f,
+                    emissiveIntensity = attributesContainer?.GetIntProperty("babylonEmissiveIntensity") ?? 1.0f,
+                    environmentIntensity = attributesContainer?.GetIntProperty("babylonEnvironmentIntensity") ?? 1.0f,
+                    specularIntensity = attributesContainer?.GetIntProperty("babylonSpecularIntensity") ?? 1.0f,
                     maxGameMaterial = babylonMaterial.maxGameMaterial
                 };
                 babylonScene.MaterialsList.Add(fullPBR);
@@ -1114,11 +1109,11 @@ namespace Max2Babylon
         {
             int maxSimultaneousLights = babylonAttributesContainer.GetIntProperty("babylonMaxSimultaneousLights", 4);
             maxSimultaneousLights = Math.Min(100,Math.Max(maxSimultaneousLights,1));// force to be [1,100], because of 3DSMax Slider issue.
-            RaiseVerbose("maxSimultaneousLights=" + maxSimultaneousLights, 3);
+            RaiseVerbose($"maxSimultaneousLights={maxSimultaneousLights}", 3);
             babylonMaterial.maxSimultaneousLights = maxSimultaneousLights;
 
             bool unlit = babylonAttributesContainer.GetBoolProperty("babylonUnlit");
-            RaiseVerbose("unlit=" + unlit, 3);
+            RaiseVerbose($"unlit={unlit}", 3);
             babylonMaterial.isUnlit = unlit;
         }
     }
