@@ -630,6 +630,11 @@ namespace Max2Babylon
             excludeAttributes.Add("babylonBackfaceCulling");
             excludeAttributes.Add("babylonMaxSimultaneousLights");
             excludeAttributes.Add("babylonTransparencyMode");
+            excludeAttributes.Add("babylonUseFactors");
+            excludeAttributes.Add("babylonDirectIntensity");
+            excludeAttributes.Add("babylonEmissiveIntensity");
+            excludeAttributes.Add("babylonEnvironmentIntensity");
+            excludeAttributes.Add("babylonSpecularIntensity");
 
             // Export the custom attributes of this material
             babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
@@ -878,11 +883,6 @@ namespace Max2Babylon
             excludeAttributes.Add("babylonBackfaceCulling");
             excludeAttributes.Add("babylonMaxSimultaneousLights");
             excludeAttributes.Add("babylonTransparencyMode");
-            excludeAttributes.Add("babylonUseFactors");
-            excludeAttributes.Add("babylonDirectIntensity");
-            excludeAttributes.Add("babylonEmissiveIntensity");
-            excludeAttributes.Add("babylonEnvironmentIntensity");
-            excludeAttributes.Add("babylonSpecularIntensity");
 
             // Export the custom attributes of this material
             babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
