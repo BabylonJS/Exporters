@@ -349,44 +349,6 @@ namespace Max2Babylon
             Loader.Global.COREInterface.MenuManager.UpdateMenuBar();
         }
 
-        private void AddCallbacks()
-        {
-            // Retreive the material just created
-            string cmd = "maxMaterial = callbacks.notificationParam();";
-
-            // Easy syntax for a switch/case expression
-            cmd += "\r\n" + "if classof maxMaterial == StandardMaterial then";
-            cmd += "\r\n" + "(";
-            cmd += "\r\n" + BabylonExporter.GetStandardBabylonAttributesDataCA();
-            cmd += "\r\n" + "custAttributes.add maxMaterial babylonAttributesDataCA;";
-            cmd += "\r\n" + ")";
-            cmd += "\r\n" + "else if classof maxMaterial == PhysicalMaterial then";
-            cmd += "\r\n" + "(";
-            cmd += "\r\n" + BabylonExporter.GetPhysicalBabylonAttributesDataCA();
-            cmd += "\r\n" + "custAttributes.add maxMaterial babylonAttributesDataCA;";
-            cmd += "\r\n" + ")";
-            cmd += "\r\n" + "else if classof maxMaterial == ai_standard_surface then";
-            cmd += "\r\n" + "(";
-            cmd += "\r\n" + BabylonExporter.GetAiStandardSurfaceBabylonAttributesDataCA();
-            cmd += "\r\n" + "custAttributes.add maxMaterial babylonAttributesDataCA;";
-            cmd += "\r\n" + ")";
-
-            // Escape cmd
-            cmd = cmd.Replace("\"", "\\\"");
-
-            // Create cmd as string
-            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("cmd = \"" + cmd + "\"");
-
-            // Remove any definition of this callback
-            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("callbacks.removeScripts id:#BabylonAttributesMaterial;");
-
-            // Add a callback triggered when a new material is created
-            // Note:
-            // The callback is NOT persistent (default value is false).
-            // This means that it is not linked to a specific file.
-            // Rather, the callback is active for the current run of 3ds Max.
-            // See Autodesk documentation for more info: http://help.autodesk.com/view/3DSMAX/2015/ENU/?guid=__files_GUID_C1F6495F_5831_4FC8_A00C_667C5F2EAE36_htm
-            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("callbacks.addScript #mtlRefAdded cmd id:#BabylonAttributesMaterial;");
-        }
+        private void AddCallbacks() => ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCallback);
     }
 }
