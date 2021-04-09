@@ -6,6 +6,7 @@
 PHYSICAL_MATERIAL_CAT_DEF = attributes "Babylon Attributes" attribID:#(0x4f890715, 0x24da1759)
 version:2
 (
+    local description = "Babylon attributes support Babylon-specific parameters."
     parameters main rollout:params
     (
         babylonUnlit type:#boolean ui:babylonUnlit_ui
@@ -20,6 +21,7 @@ version:2
     )
     rollout params "Babylon Attributes"
     (
+        edittext lvl readOnly:true text:description height:20
         checkbox babylonUnlit_ui "Unlit" across:3
         checkbox babylonBackfaceCulling_ui "Backface Culling"
         checkbox babylonUseFactors_ui "Use Scalar Factors"

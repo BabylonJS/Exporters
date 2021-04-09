@@ -9,6 +9,7 @@
     <Import_RootNamespace>BabylonExport.Entities</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRSpecularGlossinessMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAbstractMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonActions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimation.cs" />
@@ -29,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMatrix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRBaseSimpleMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\BabylonMeshExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTargetManager.cs" />

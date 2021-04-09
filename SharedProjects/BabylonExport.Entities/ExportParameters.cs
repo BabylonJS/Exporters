@@ -68,7 +68,7 @@ namespace BabylonExport.Entities
         public bool exportTangents = true;
         public bool exportSkins = true;
         public long txtQuality = 100;
-        public bool mergeAOwithMR = true;
+        public bool mergeAO = true;
         public bool enableKHRLightsPunctual = false;
         public bool enableKHRTextureTransform = false;
         public bool enableKHRMaterialsUnlit = false;

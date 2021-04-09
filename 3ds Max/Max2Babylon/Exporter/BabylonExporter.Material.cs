@@ -220,8 +220,11 @@ namespace Max2Babylon
             }
             else if (isPbrMetalRoughMaterial(materialNode))
             {
-                 ExportPbrMetalRoughMaterial(materialNode, babylonScene);
-
+                ExportPbrMetalRoughMaterial(materialNode, babylonScene);
+            }
+            else if (isPbrSpecGlossMaterial(materialNode))
+            {
+                ExportPbrSpecGlossMaterial(materialNode, babylonScene);
             }
             else if (isArnoldMaterial(materialNode))
             {
@@ -233,7 +236,6 @@ namespace Max2Babylon
                 };
 
                 ExportArnoldMaterial(materialNode, attributesContainer, babylonScene, babylonMaterial);
-
             }
             else
             {
@@ -553,7 +555,7 @@ namespace Max2Babylon
 
                         if (sourcePathMetallic == sourcePathRoughness)
                         {
-                            if (ambientOcclusionTexmap != null && exportParameters.mergeAOwithMR)
+                            if (ambientOcclusionTexmap != null && exportParameters.mergeAO)
                             {
                                 string sourcePathAmbientOcclusion = getSourcePath(ambientOcclusionTexmap);
                                 if (sourcePathMetallic == sourcePathAmbientOcclusion)
@@ -582,12 +584,12 @@ namespace Max2Babylon
                         {
                             // Merge metallic, roughness and ambient occlusion
                             RaiseVerbose("Merge metallic and roughness (and ambient occlusion if `mergeAOwithMR` is enabled)", 2);
-                            BabylonTexture ormTexture = ExportORMTexture(exportParameters.mergeAOwithMR ? ambientOcclusionTexmap : null, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
+                            BabylonTexture ormTexture = ExportORMTexture(exportParameters.mergeAO ? ambientOcclusionTexmap : null, roughnessTexmap, metallicTexmap, babylonMaterial.metallic, babylonMaterial.roughness, babylonScene, invertRoughness);
                             babylonMaterial.metallicRoughnessTexture = ormTexture;
 
                             if (ambientOcclusionTexmap != null)
                             {
-                                if (exportParameters.mergeAOwithMR)
+                                if (exportParameters.mergeAO)
                                 {
                                     // if the ambient occlusion texture map uses a different set of texture coordinates than
                                     // metallic roughness, create a new instance of the ORM BabylonTexture with the different texture
@@ -619,7 +621,7 @@ namespace Max2Babylon
                             babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
                         }
                     }
-                    if (ambientOcclusionTexmap != null && !exportParameters.mergeAOwithMR && babylonMaterial.occlusionTexture == null)
+                    if (ambientOcclusionTexmap != null && !exportParameters.mergeAO && babylonMaterial.occlusionTexture == null)
                     {
                         RaiseVerbose("Exporting occlusion texture without merging with metallic roughness", 2);
                         babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
@@ -1062,8 +1064,8 @@ namespace Max2Babylon
                     return null;
                 }
 
-                // Physical material
-                if (isPhysicalMaterial(materialNode) || isPbrMetalRoughMaterial(materialNode))
+                // Physical materials
+                if (isPhysicalMaterial(materialNode) || isPbrMetalRoughMaterial(materialNode) || isPbrSpecGlossMaterial(materialNode))
                 {
                     return null;
                 }

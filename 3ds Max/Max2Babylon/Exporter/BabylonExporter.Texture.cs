@@ -766,6 +766,10 @@ namespace Max2Babylon
 
         private BabylonTexture ExportTexture(ITexmap texMap, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
         {
+            if(texMap == null)
+            {
+                return null;
+            }
             IBitmapTex texture = _getBitmapTex(texMap, false);
             if (texture == null)
             {

@@ -4,8 +4,6 @@ using GLTFExport.Entities;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Collections.Generic;
-using Utilities;
 
 namespace Babylon2GLTF
 {
@@ -18,18 +16,14 @@ namespace Babylon2GLTF
             logger.RaiseMessage("GLTFExporter.Material | Export material named: " + name, 1);
 
             GLTFMaterial gltfMaterial = null;
-            string message = null;
             IGLTFMaterialExporter customMaterialExporter = exportParameters.customGLTFMaterialExporter;
             if (customMaterialExporter != null && customMaterialExporter.GetGltfMaterial(babylonMaterial, gltf, logger, out gltfMaterial))
             {
                 gltfMaterial.index = gltf.MaterialsList.Count;
                 gltf.MaterialsList.Add(gltfMaterial);
             }
-            else if (babylonMaterial.GetType() == typeof(BabylonStandardMaterial))
+            else if (babylonMaterial is BabylonStandardMaterial babylonStandardMaterial)
             {
-                var babylonStandardMaterial = babylonMaterial as BabylonStandardMaterial;
-
-
                 // --- prints ---
                 #region prints
 
@@ -120,11 +114,9 @@ namespace Babylon2GLTF
                 }
                 #endregion
 
-
                 // --------------------------------
                 // --------- gltfMaterial ---------
                 // --------------------------------
-
                 logger.RaiseMessage("GLTFExporter.Material | create gltfMaterial", 2);
                 gltfMaterial = new GLTFMaterial
                 {
@@ -156,7 +148,7 @@ namespace Babylon2GLTF
                 // Normal
                 gltfMaterial.normalTexture = ExportTexture(babylonStandardMaterial.bumpTexture, gltf);
 
-                // Occulison
+                // Occlusion
                 gltfMaterial.occlusionTexture = ExportTexture(babylonStandardMaterial.ambientTexture, gltf);
 
                 // Emissive
@@ -387,9 +379,8 @@ namespace Babylon2GLTF
                     }
                 }
             }
-            else if (babylonMaterial.GetType() == typeof(BabylonPBRMetallicRoughnessMaterial))
+            else if (babylonMaterial is BabylonPBRMetallicRoughnessMaterial babylonPBRMetallicRoughnessMaterial)
             {
-                var babylonPBRMetallicRoughnessMaterial = babylonMaterial as BabylonPBRMetallicRoughnessMaterial;
                 // --- prints ---
                 #region prints
 
@@ -509,11 +500,9 @@ namespace Babylon2GLTF
                 gltfMaterial.emissiveFactor = babylonPBRMetallicRoughnessMaterial.emissive;
                 gltfMaterial.emissiveTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.emissiveTexture, gltf);
 
-
                 // --------------------------------
                 // --- gltfPbrMetallicRoughness ---
                 // --------------------------------
-
                 logger.RaiseMessage("GLTFExporter.Material | create gltfPbrMetallicRoughness", 2);
                 var gltfPbrMetallicRoughness = new GLTFPBRMetallicRoughness();
                 gltfMaterial.pbrMetallicRoughness = gltfPbrMetallicRoughness;
@@ -567,6 +556,10 @@ namespace Babylon2GLTF
                         }
                     }
                 }
+            }
+            else if (babylonMaterial is BabylonPBRSpecularGlossinessMaterial babylonPBRSpecularGlossinessMaterial)
+            {
+
             }
             else if (babylonMaterial.GetType() == typeof(BabylonFurMaterial))
             {
