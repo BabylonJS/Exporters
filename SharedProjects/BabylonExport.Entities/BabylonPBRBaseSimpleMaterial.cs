@@ -9,6 +9,7 @@ namespace BabylonExport.Entities
     public class BabylonPBRBaseSimpleMaterial : BabylonMaterial
     {
         public static float[] BlackColor() => new[] { 0f, 0f, 0f };
+        public static float[] WhiteColor() => new[] { 1f, 1f, 1f };
 
         public BabylonPBRBaseSimpleMaterial(string id) : base(id)
         {

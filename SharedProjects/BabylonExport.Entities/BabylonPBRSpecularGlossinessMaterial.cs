@@ -10,13 +10,13 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonPBRSpecularGlossinessMaterial : BabylonPBRBaseSimpleMaterial
     {
-        public static float GlossinessDefault = 0;
+        public static float GlossinessDefault = 1f;
 
         public BabylonPBRSpecularGlossinessMaterial(string id) : base(id)
         {
             customType = "BABYLON.PBRSpecularGlossinessMaterial";
             glossiness = GlossinessDefault;
-            specularColor = BlackColor();
+            specularColor = WhiteColor();
             specularGlossinessTexture = null;
         }
 
@@ -44,5 +44,8 @@ namespace BabylonExport.Entities
         /// </summary>
         [DataMember]
         public BabylonTexture specularGlossinessTexture { get; set; }
+        
+        [DataMember]
+        public BabylonTexture diffuseTexture { get; set; }
     }
 }
