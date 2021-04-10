@@ -377,8 +377,8 @@ namespace Max2Babylon
                     if (babylonMaterial.specularGlossinessTexture != null && !babylonDecorator.UseMaxFactor)
                     {
                         babylonMaterial.glossiness = glossinessTexMap != null ? 1.0f : 0.0f;
+                        babylonMaterial.specularColor = specularTexMap != null ? BabylonPBRBaseSimpleMaterial.WhiteColor() : BabylonPBRBaseSimpleMaterial.BlackColor();
                     }
-
                 }
             }
 

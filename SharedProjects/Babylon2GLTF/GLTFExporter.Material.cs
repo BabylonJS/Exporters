@@ -379,8 +379,10 @@ namespace Babylon2GLTF
                     }
                 }
             }
-            else if (babylonMaterial is BabylonPBRMetallicRoughnessMaterial babylonPBRMetallicRoughnessMaterial)
+            else if (typeof(BabylonPBRBaseSimpleMaterial).IsAssignableFrom(babylonMaterial.GetType()))
             {
+                var babylonPBRBaseSimpleMaterial = babylonMaterial as BabylonPBRBaseSimpleMaterial;
+
                 // --- prints ---
                 #region prints
 
@@ -391,57 +393,71 @@ namespace Babylon2GLTF
                 logger.RaiseVerbose("GLTFExporter.Material | babylonMaterial.wireframe=" + babylonMaterial.wireframe, 3);
 
                 // Global
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.maxSimultaneousLights=" + babylonPBRMetallicRoughnessMaterial.maxSimultaneousLights, 3);
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.disableLighting=" + babylonPBRMetallicRoughnessMaterial.disableLighting, 3);
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.alphaCutOff=" + babylonPBRMetallicRoughnessMaterial.alphaCutOff, 3);
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.transparencyMode=" + babylonPBRMetallicRoughnessMaterial.transparencyMode, 3);
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.doubleSided=" + babylonPBRMetallicRoughnessMaterial.doubleSided, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.maxSimultaneousLights=" + babylonPBRBaseSimpleMaterial.maxSimultaneousLights, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.disableLighting=" + babylonPBRBaseSimpleMaterial.disableLighting, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.alphaCutOff=" + babylonPBRBaseSimpleMaterial.alphaCutOff, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.transparencyMode=" + babylonPBRBaseSimpleMaterial.transparencyMode, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.doubleSided=" + babylonPBRBaseSimpleMaterial.doubleSided, 3);
 
                 // Base color
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseColor.Length=" + babylonPBRMetallicRoughnessMaterial.baseColor.Length, 3);
-                for (int i = 0; i < babylonPBRMetallicRoughnessMaterial.baseColor.Length; i++)
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.baseColor.Length=" + babylonPBRBaseSimpleMaterial.baseColor.Length, 3);
+                for (int i = 0; i < babylonPBRBaseSimpleMaterial.baseColor.Length; i++)
                 {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.baseColor[i], 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.baseColor[" + i + "]=" + babylonPBRBaseSimpleMaterial.baseColor[i], 3);
                 }
-                if (babylonPBRMetallicRoughnessMaterial.baseTexture == null)
+                if (babylonPBRBaseSimpleMaterial.baseTexture == null)
                 {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.baseTexture=null", 3);
-                }
-
-                // Metallic+roughness
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallic=" + babylonPBRMetallicRoughnessMaterial.metallic, 3);
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.roughness=" + babylonPBRMetallicRoughnessMaterial.roughness, 3);
-                if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture == null)
-                {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture=null", 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.baseTexture=null", 3);
                 }
 
+ 
                 // Normal / bump
-                if (babylonPBRMetallicRoughnessMaterial.normalTexture == null)
+                if (babylonPBRBaseSimpleMaterial.normalTexture == null)
                 {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.normalTexture=null", 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.normalTexture=null", 3);
                 }
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapX=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapX, 3);
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.invertNormalMapY=" + babylonPBRMetallicRoughnessMaterial.invertNormalMapY, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.invertNormalMapX=" + babylonPBRBaseSimpleMaterial.invertNormalMapX, 3);
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.invertNormalMapY=" + babylonPBRBaseSimpleMaterial.invertNormalMapY, 3);
 
                 // Emissive
-                for (int i = 0; i < babylonPBRMetallicRoughnessMaterial.emissive.Length; i++)
+                for (int i = 0; i < babylonPBRBaseSimpleMaterial.emissive.Length; i++)
                 {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveColor[" + i + "]=" + babylonPBRMetallicRoughnessMaterial.emissive[i], 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.emissiveColor[" + i + "]=" + babylonPBRBaseSimpleMaterial.emissive[i], 3);
                 }
-                if (babylonPBRMetallicRoughnessMaterial.emissiveTexture == null)
+                if (babylonPBRBaseSimpleMaterial.emissiveTexture == null)
                 {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.emissiveTexture=null", 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.emissiveTexture=null", 3);
                 }
 
                 // Ambient occlusion
-                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.occlusionStrength=" + babylonPBRMetallicRoughnessMaterial.occlusionStrength, 3);
-                if (babylonPBRMetallicRoughnessMaterial.occlusionTexture == null)
+                logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.occlusionStrength=" + babylonPBRBaseSimpleMaterial.occlusionStrength, 3);
+                if (babylonPBRBaseSimpleMaterial.occlusionTexture == null)
                 {
-                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.occlusionTexture=null", 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRBaseSimpleMaterial.occlusionTexture=null", 3);
                 }
-                #endregion
 
+                if (babylonMaterial is BabylonPBRMetallicRoughnessMaterial pbrMRMatPrint )
+                {
+                    // Metallic+roughness
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallic=" + pbrMRMatPrint.metallic, 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.roughness=" + pbrMRMatPrint.roughness, 3);
+                    if (pbrMRMatPrint.metallicRoughnessTexture == null)
+                    {
+                        logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture=null", 3);
+                    }
+                } 
+                else if (babylonMaterial is BabylonPBRSpecularGlossinessMaterial pbrSGMatPrint)
+                {
+                    // Metallic+roughness
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRSpecularGlossinessMaterial.specular=" + pbrSGMatPrint.specularColor, 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRSpecularGlossinessMaterial.glossiness=" + pbrSGMatPrint.glossiness, 3);
+                    if (pbrSGMatPrint.specularGlossinessTexture == null)
+                    {
+                        logger.RaiseVerbose("GLTFExporter.Material | babylonPBRSpecularGlossinessMaterial.specularGlossinessTexture=null", 3);
+                    }
+                }
+
+                #endregion
 
                 // --------------------------------
                 // --------- gltfMaterial ---------
@@ -465,7 +481,7 @@ namespace Babylon2GLTF
                 // Alpha
                 GLTFMaterial.AlphaMode alphaMode;
                 float? alphaCutoff;
-                getAlphaMode(babylonPBRMetallicRoughnessMaterial, out alphaMode, out alphaCutoff);
+                getAlphaMode(babylonPBRBaseSimpleMaterial, out alphaMode, out alphaCutoff);
                 gltfMaterial.alphaMode = alphaMode;
                 if (alphaCutoff.HasValue && alphaCutoff.Value != 0.5f) // do not export glTF default value
                 {
@@ -473,93 +489,113 @@ namespace Babylon2GLTF
                 }
 
                 // DoubleSided
-                gltfMaterial.doubleSided = babylonPBRMetallicRoughnessMaterial.doubleSided;
+                gltfMaterial.doubleSided = babylonPBRBaseSimpleMaterial.doubleSided;
 
                 // Normal
-                gltfMaterial.normalTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.normalTexture, gltf);
+                gltfMaterial.normalTexture = ExportTexture(babylonPBRBaseSimpleMaterial.normalTexture, gltf);
 
                 // Occlusion
-                if (babylonPBRMetallicRoughnessMaterial.occlusionTexture != null)
+                if (babylonPBRBaseSimpleMaterial.occlusionTexture != null)
                 {
-                    if (babylonPBRMetallicRoughnessMaterial.occlusionTexture.bitmap != null)
+                    if (babylonPBRBaseSimpleMaterial.occlusionTexture.bitmap != null)
                     {
                         // ORM texture has been merged manually by the exporter
                         // Occlusion is defined as well as metallic and/or roughness
                         logger.RaiseVerbose("Occlusion is defined as well as metallic and/or roughness", 2);
-                        gltfMaterial.occlusionTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.occlusionTexture);
+                        gltfMaterial.occlusionTexture = ExportBitmapTexture(gltf, babylonPBRBaseSimpleMaterial.occlusionTexture);
                     }
                     else
                     {
                         // ORM texture was already merged or only occlusion is defined
                         logger.RaiseVerbose("ORM texture was already merged or only occlusion is defined", 2);
-                        gltfMaterial.occlusionTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.occlusionTexture, gltf);
+                        gltfMaterial.occlusionTexture = ExportTexture(babylonPBRBaseSimpleMaterial.occlusionTexture, gltf);
                     }
                 }
 
                 // Emissive
-                gltfMaterial.emissiveFactor = babylonPBRMetallicRoughnessMaterial.emissive;
-                gltfMaterial.emissiveTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.emissiveTexture, gltf);
+                gltfMaterial.emissiveFactor = babylonPBRBaseSimpleMaterial.emissive;
+                gltfMaterial.emissiveTexture = ExportTexture(babylonPBRBaseSimpleMaterial.emissiveTexture, gltf);
 
                 // --------------------------------
                 // --- gltfPbrMetallicRoughness ---
                 // --------------------------------
-                logger.RaiseMessage("GLTFExporter.Material | create gltfPbrMetallicRoughness", 2);
-                var gltfPbrMetallicRoughness = new GLTFPBRMetallicRoughness();
-                gltfMaterial.pbrMetallicRoughness = gltfPbrMetallicRoughness;
-
-                // --- Global ---
-
-                // Base color
-                gltfPbrMetallicRoughness.baseColorFactor = new float[4]
+                if (babylonMaterial is BabylonPBRMetallicRoughnessMaterial pbrMRMat)
                 {
-                    babylonPBRMetallicRoughnessMaterial.baseColor[0],
-                    babylonPBRMetallicRoughnessMaterial.baseColor[1],
-                    babylonPBRMetallicRoughnessMaterial.baseColor[2],
-                    babylonPBRMetallicRoughnessMaterial.alpha
-                };
-                if (babylonPBRMetallicRoughnessMaterial.baseTexture != null)
-                {
-                    gltfPbrMetallicRoughness.baseColorTexture = ExportBaseColorTexture(gltf, babylonPBRMetallicRoughnessMaterial.baseTexture);
-                }
-
-                // Metallic roughness
-                gltfPbrMetallicRoughness.metallicFactor = babylonPBRMetallicRoughnessMaterial.metallic;
-                gltfPbrMetallicRoughness.roughnessFactor = babylonPBRMetallicRoughnessMaterial.roughness;
-                if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture != null)
-                {
-                    if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture == babylonPBRMetallicRoughnessMaterial.occlusionTexture)
+                    // Metallic+roughness
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallic=" + pbrMRMat.metallic, 3);
+                    logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.roughness=" + pbrMRMat.roughness, 3);
+                    if (pbrMRMat.metallicRoughnessTexture == null)
                     {
-                        // Occlusion is defined as well as metallic and/or roughness
-                        // Use same texture
-                        logger.RaiseVerbose("Occlusion is defined as well as metallic and/or roughness", 2);
-                        gltfPbrMetallicRoughness.metallicRoughnessTexture = gltfMaterial.occlusionTexture;
+                        logger.RaiseVerbose("GLTFExporter.Material | babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture=null", 3);
                     }
-                    else
-                    {
-                        // Occlusion is not defined, only metallic and/or roughness
-                        logger.RaiseVerbose("Occlusion is not defined, only metallic and/or roughness", 2);
 
-                        if (babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture.bitmap != null)
+                    logger.RaiseMessage("GLTFExporter.Material | create gltfPbrMetallicRoughness", 2);
+                    var gltfPbrMetallicRoughness = new GLTFPBRMetallicRoughness();
+                    gltfMaterial.pbrMetallicRoughness = gltfPbrMetallicRoughness;
+
+                    // --- Global ---
+
+                    // Base color
+                    gltfPbrMetallicRoughness.baseColorFactor = new float[4]
+                    {
+                        pbrMRMat.baseColor[0],
+                        pbrMRMat.baseColor[1],
+                        pbrMRMat.baseColor[2],
+                        pbrMRMat.alpha
+                    };
+                    if (pbrMRMat.baseTexture != null)
+                    {
+                        gltfPbrMetallicRoughness.baseColorTexture = ExportBaseColorTexture(gltf, pbrMRMat.baseTexture);
+                    }
+
+                    // Metallic roughness
+                    gltfPbrMetallicRoughness.metallicFactor = pbrMRMat.metallic;
+                    gltfPbrMetallicRoughness.roughnessFactor = pbrMRMat.roughness;
+                    if (pbrMRMat.metallicRoughnessTexture != null)
+                    {
+                        if (pbrMRMat.metallicRoughnessTexture == pbrMRMat.occlusionTexture)
                         {
-                            // Metallic & roughness texture has been merged manually by the exporter
-                            // Write bitmap file
-                            logger.RaiseVerbose("Metallic & roughness texture has been merged manually by the exporter", 2);
-                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture);
+                            // Occlusion is defined as well as metallic and/or roughness
+                            // Use same texture
+                            logger.RaiseVerbose("Occlusion is defined as well as metallic and/or roughness", 2);
+                            gltfPbrMetallicRoughness.metallicRoughnessTexture = gltfMaterial.occlusionTexture;
                         }
                         else
                         {
+                            // Occlusion is not defined, only metallic and/or roughness
+                            logger.RaiseVerbose("Occlusion is not defined, only metallic and/or roughness", 2);
 
-                            // Metallic & roughness texture was already merged
-                            // Copy file
-                            logger.RaiseVerbose("Metallic & roughness texture was already merged", 2);
-                            gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(babylonPBRMetallicRoughnessMaterial.metallicRoughnessTexture, gltf);
+                            if (pbrMRMat.metallicRoughnessTexture.bitmap != null)
+                            {
+                                // Metallic & roughness texture has been merged manually by the exporter
+                                // Write bitmap file
+                                logger.RaiseVerbose("Metallic & roughness texture has been merged manually by the exporter", 2);
+                                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportBitmapTexture(gltf, pbrMRMat.metallicRoughnessTexture);
+                            }
+                            else
+                            {
+
+                                // Metallic & roughness texture was already merged
+                                // Copy file
+                                logger.RaiseVerbose("Metallic & roughness texture was already merged", 2);
+                                gltfPbrMetallicRoughness.metallicRoughnessTexture = ExportTexture(pbrMRMat.metallicRoughnessTexture, gltf);
+                            }
                         }
                     }
                 }
-            }
-            else if (babylonMaterial is BabylonPBRSpecularGlossinessMaterial babylonPBRSpecularGlossinessMaterial)
-            {
+                else if (babylonMaterial is BabylonPBRSpecularGlossinessMaterial pbrSGMat)
+                {
+                    var ext = new KHR_materials_pbrSpecularGlossiness()
+                    {
+                        specularFactor = pbrSGMat.specularColor,
+                        glossinessFactor = pbrSGMat.glossiness,
+                        diffuseTexture = ExportTexture(pbrSGMat.diffuseTexture, gltf),
+                        specularGlossinessTexture = ExportTexture(pbrSGMat.specularGlossinessTexture, gltf)
+                    };
 
+                    gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                    gltfMaterial.extensions.AddExtension(gltf,"KHR_materials_pbrSpecularGlossiness",ext);
+                }
             }
             else if (babylonMaterial.GetType() == typeof(BabylonFurMaterial))
             {
@@ -639,7 +675,7 @@ namespace Babylon2GLTF
             }
         }
 
-        private void getAlphaMode(BabylonPBRMetallicRoughnessMaterial babylonMaterial, out GLTFMaterial.AlphaMode alphaMode, out float? alphaCutoff)
+        private void getAlphaMode(BabylonPBRBaseSimpleMaterial babylonMaterial, out GLTFMaterial.AlphaMode alphaMode, out float? alphaCutoff)
         {
             alphaMode = GLTFMaterial.AlphaMode.OPAQUE;
             alphaCutoff = 0.5f;
