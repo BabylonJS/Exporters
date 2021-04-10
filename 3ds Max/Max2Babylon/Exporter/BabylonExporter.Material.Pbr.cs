@@ -351,84 +351,19 @@ namespace Max2Babylon
                     ITexmap glossinessTexMap = maxDecorator.GlossinessMap;
                     ITexmap ambientOcclusionTexMap = maxDecorator.AmbientOcclusionMap;
 
-                    // Check if MR or ORM textures are already merged
-                    bool areTexturesAlreadyMerged = false;
-                    if (specularTexMap != null && glossinessTexMap != null)
+                    if (specularTexMap != null || glossinessTexMap != null)
                     {
-                        string sourcePathSpecular = getSourcePath(specularTexMap);
-                        string sourcePathGlossiness = getSourcePath(glossinessTexMap);
+                        // Merge Specular and Glossiness
+                        RaiseVerbose("Merge Specular and Glossiness", 2);
+                        BabylonTexture specularGlossinessTexture = ExportSpecularGlossinessTexture(babylonMaterial.specularColor, specularTexMap, babylonMaterial.glossiness, glossinessTexMap, babylonScene);
+                        babylonMaterial.specularGlossinessTexture = specularGlossinessTexture;
 
-                        if (sourcePathSpecular == sourcePathGlossiness)
-                        {
-                            if (ambientOcclusionTexMap != null && exportParameters.mergeAO)
-                            {
-                                string sourcePathAmbientOcclusion = getSourcePath(ambientOcclusionTexMap);
-                                if (sourcePathSpecular == sourcePathAmbientOcclusion)
-                                {
-                                    // Specular, glossiness and ambient occlusion are already merged
-                                    RaiseVerbose("Speculat, glossiness and ambient occlusion are already merged", 2);
-                                    BabylonTexture ormTexture = ExportTexture(glossinessTexMap, babylonScene);
-                                    babylonMaterial.specularGlossinessTexture = ormTexture;
-                                    babylonMaterial.occlusionTexture = ormTexture;
-                                    areTexturesAlreadyMerged = true;
-                                }
-                            }
-                            else
-                            {
-                                // Specular and glossiness are already merged
-                                RaiseVerbose("Specular and glossiness are already merged", 2);
-                                BabylonTexture ormTexture = ExportTexture(specularTexMap, babylonScene);
-                                babylonMaterial.specularGlossinessTexture = ormTexture;
-                                areTexturesAlreadyMerged = true;
-                            }
-                        }
                     }
-                    if (areTexturesAlreadyMerged == false)
+                    
+                    if (ambientOcclusionTexMap != null)
                     {
-                        if (specularTexMap != null || glossinessTexMap != null)
-                        {
-                            // Merge metallic, roughness and ambient occlusion
-                            RaiseVerbose("Merge metallic and roughness (and ambient occlusion if `mergeAOwithMR` is enabled)", 2);
-                            BabylonTexture specularGlossinessTexture = ExportSpecularGlossinessTexture(babylonMaterial.specularColor, specularTexMap, babylonMaterial.glossiness, glossinessTexMap, babylonScene) ;
-                            babylonMaterial.specularGlossinessTexture = specularGlossinessTexture;
-
-                            if (ambientOcclusionTexMap != null)
-                            {
-                                if (exportParameters.mergeAO)
-                                {
-                                    // if the ambient occlusion texture map uses a different set of texture coordinates than
-                                    // metallic roughness, create a new instance of the ORM BabylonTexture with the different texture
-                                    // coordinate indices
-                                    var ambientOcclusionTexture = _getBitmapTex(ambientOcclusionTexMap);
-                                    var texCoordIndex = ambientOcclusionTexture.UVGen.MapChannel - 1;
-                                    if (texCoordIndex != specularGlossinessTexture.coordinatesIndex)
-                                    {
-                                        babylonMaterial.occlusionTexture = new BabylonTexture(specularGlossinessTexture);
-                                        babylonMaterial.occlusionTexture.coordinatesIndex = texCoordIndex;
-                                        // Set UVs/texture transform for the ambient occlusion texture
-                                        var uvGen = _exportUV(ambientOcclusionTexture.UVGen, babylonMaterial.occlusionTexture);
-                                    }
-                                    else
-                                    {
-                                        babylonMaterial.occlusionTexture = specularGlossinessTexture;
-                                    }
-                                }
-                                else
-                                {
-                                    babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexMap, babylonScene);
-                                }
-                            }
-                        }
-                        else if (ambientOcclusionTexMap != null)
-                        {
-                            // Simply export occlusion texture
-                            RaiseVerbose("Simply export occlusion texture", 2);
-                            babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexMap, babylonScene);
-                        }
-                    }
-                    if (ambientOcclusionTexMap != null && !exportParameters.mergeAO && babylonMaterial.occlusionTexture == null)
-                    {
-                        RaiseVerbose("Exporting occlusion texture without merging with metallic roughness", 2);
+                        // Simply export occlusion texture
+                        RaiseVerbose("Export occlusion texture", 2);
                         babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexMap, babylonScene);
                     }
 
@@ -441,7 +376,7 @@ namespace Max2Babylon
 
                     if (babylonMaterial.specularGlossinessTexture != null && !babylonDecorator.UseMaxFactor)
                     {
-                        babylonMaterial.glossiness = areTexturesAlreadyMerged || glossinessTexMap != null ? 1.0f : 0.0f;
+                        babylonMaterial.glossiness = glossinessTexMap != null ? 1.0f : 0.0f;
                     }
 
                 }
