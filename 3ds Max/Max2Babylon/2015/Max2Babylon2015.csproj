@@ -296,6 +296,9 @@
     <Compile Include="..\MaxScriptManager.cs">
       <Link>MaxScriptManager.cs</Link>
     </Compile>
+    <Compile Include="..\MaterialScripts.cs">
+      <Link>MaterialScripts.cs</Link>
+    </Compile>
     <Compile Include="..\Tools\LayerUtilities.cs">
       <Link>Tools\LayerUtilities.cs</Link>
     </Compile>
@@ -386,6 +389,15 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Scripts\ARNOLD_MATERIAL_CAT_DEF.ms">
+      <Link>Scripts\ARNOLD_MATERIAL_CAT_DEF.ms</Link>
+    </None>
+    <None Include="..\Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms">
+      <Link>Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms</Link>
+    </None>
+    <None Include="..\Scripts\STANDARD_MATERIAL_CAT_DEF.ms">
+      <Link>Scripts\STANDARD_MATERIAL_CAT_DEF.ms</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
