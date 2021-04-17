@@ -24,6 +24,9 @@ namespace BabylonExport.Entities
         public bool backFaceCulling { get; set; }
 
         [DataMember]
+        public bool separateCullingPass { get; set; }
+
+        [DataMember]
         public bool wireframe { get; set; }
 
         [DataMember]

@@ -91,13 +91,16 @@ namespace Max2Babylon
             var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(maxDecorator.Id)
             {
                 maxGameMaterial = materialNode,
-                name = maxDecorator.Name
+                name = maxDecorator.Name,
+                backFaceCulling = babylonDecorator.BackFaceCulling,
+                doubleSided = !babylonDecorator.BackFaceCulling,
+                separateCullingPass = babylonDecorator.SeparateCullingPass,
+                isUnlit = babylonDecorator.IsUnlit,
+                _unlit = babylonDecorator.IsUnlit,
+                baseColor = maxDecorator.BaseColor.ToArray()
             };
 
             // --- Global ---
-            babylonMaterial.baseColor = maxDecorator.BaseColor.ToArray();
-            babylonMaterial.isUnlit = babylonDecorator.IsUnlit;
-
             if (babylonMaterial.isUnlit)
             {
                 // Ignore values
@@ -116,9 +119,10 @@ namespace Max2Babylon
             if (exportParameters.exportTextures)
             {
                 ITexmap baseColorTexMap = maxDecorator.BaseColorMap;
-                ITexmap alphaTexMap = null;
+                ITexmap alphaTexMap = maxDecorator.OpacityMap;
+                bool isOpacity = true;
+                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTexMap, alphaTexMap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor, isOpacity);
 
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTexMap, alphaTexMap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor);
                 if (multiplyColor != null)
                 {
                     babylonMaterial.baseColor = multiplyColor;
@@ -232,46 +236,33 @@ namespace Max2Babylon
 
             if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
             {
-                babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                babylonMaterial.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHABLEND;
             }
 
-            if (babylonMaterial.emissiveTexture != null)
-            {
-                babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
-            }
-
-            if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+            if (babylonMaterial.transparencyMode == (int)BabylonMaterial.TransparencyMode.ALPHATEST)
             {
                 // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
                 // Use the glTF default value rather than the babylon one
                 babylonMaterial.alphaCutOff = 0.5f;
             }
 
+
+            if (babylonMaterial.emissiveTexture != null)
+            {
+                babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
+            }
+
             // Add babylon attributes
-            if (maxDecorator.Properties == null)
+            if (babylonDecorator.Properties == null)
             {
                 AddPhysicalBabylonAttributes(materialNode.MaterialName, babylonMaterial);
             }
 
-            if (maxDecorator.Properties != null)
-            {
-                RaiseVerbose("Babylon Attributes of " + materialNode.MaterialName, 2);
-
-                // Common attributes
-                ExportCommonBabylonAttributes(maxDecorator.Properties, babylonMaterial);
-                babylonMaterial._unlit = babylonMaterial.isUnlit;
-
-                // Backface culling
-                bool backFaceCulling = babylonDecorator.BackFaceCulling;
-                RaiseVerbose($"backFaceCulling={backFaceCulling}", 3);
-                babylonMaterial.backFaceCulling = backFaceCulling;
-                babylonMaterial.doubleSided = !backFaceCulling;
-            }
 
             // List all babylon material attributes
             // Those attributes are currently stored into the native material
             // They should not be exported as extra attributes
-            var doNotExport = BabylonCustomAttributeDecorator.ListPropertyNames().ToList();
+            var doNotExport = BabylonCustomAttributeDecorator.ListPrivatePropertyNames().ToList();
 
             // Export the custom attributes of this material
             babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, doNotExport);
@@ -310,14 +301,16 @@ namespace Max2Babylon
             // the target material
             var babylonMaterial = new BabylonPBRSpecularGlossinessMaterial(maxDecorator.Id)
             {
-                maxGameMaterial = materialNode,
-                name = maxDecorator.Name
-            };
+                 maxGameMaterial = materialNode,
+                 name = maxDecorator.Name,
+                 backFaceCulling = babylonDecorator.BackFaceCulling,
+                 doubleSided = !babylonDecorator.BackFaceCulling,
+                 separateCullingPass = babylonDecorator.SeparateCullingPass,
+                 isUnlit = babylonDecorator.IsUnlit,
+                 baseColor = maxDecorator.BaseColor.ToArray(),
+             };
 
             // --- Global ---
-            babylonMaterial.baseColor = maxDecorator.BaseColor.ToArray();
-            babylonMaterial.isUnlit = babylonDecorator.IsUnlit;
-
             if (babylonMaterial.isUnlit)
             {
                 // Ignore values
@@ -336,9 +329,9 @@ namespace Max2Babylon
             if (exportParameters.exportTextures)
             {
                 ITexmap diffuseTexMap = maxDecorator.BaseColorMap;
-                ITexmap alphaTexMap = null;
-
-                babylonMaterial.diffuseTexture = ExportBaseColorAlphaTexture(diffuseTexMap, alphaTexMap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor);
+                ITexmap alphaTexMap = maxDecorator.OpacityMap;
+                bool isOpacity = true;
+                babylonMaterial.diffuseTexture = ExportBaseColorAlphaTexture(diffuseTexMap, alphaTexMap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out multiplyColor, isOpacity);
                 if (multiplyColor != null)
                 {
                     babylonMaterial.baseColor = multiplyColor;
@@ -384,9 +377,16 @@ namespace Max2Babylon
 
 
             // --- Finalize ---
-            if (babylonMaterial.alpha != 1.0f || (babylonMaterial.baseTexture != null && babylonMaterial.baseTexture.hasAlpha))
+            if (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha))
             {
-                babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                babylonMaterial.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHABLEND;
+            }
+
+            if (babylonMaterial.transparencyMode == (int)BabylonMaterial.TransparencyMode.ALPHATEST)
+            {
+                // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
+                // Use the glTF default value rather than the babylon one
+                babylonMaterial.alphaCutOff = 0.5f;
             }
 
             if (babylonMaterial.emissiveTexture != null)
@@ -394,17 +394,11 @@ namespace Max2Babylon
                 babylonMaterial.emissive = new[] { 1.0f, 1.0f, 1.0f };
             }
 
-            if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
-            {
-                // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
-                // Use the glTF default value rather than the babylon one
-                babylonMaterial.alphaCutOff = 0.5f;
-            }
 
             // List all babylon material attributes
             // Those attributes are currently stored into the native material
             // They should not be exported as extra attributes
-            var doNotExport = BabylonCustomAttributeDecorator.ListPropertyNames().ToList();
+            var doNotExport = BabylonCustomAttributeDecorator.ListPrivatePropertyNames().ToList();
 
             // Export the custom attributes of this material
             babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, doNotExport);

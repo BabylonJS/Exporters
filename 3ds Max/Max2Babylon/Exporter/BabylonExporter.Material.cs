@@ -40,6 +40,7 @@ namespace Max2Babylon
     {
         public const string UnlitStr = "babylonUnlit";
         public const string BackfaceCullingStr = "babylonBackfaceCulling";
+        public const string SepCullingPassStr = "babylonSeparateCullingPass";
         public const string MaxSimultaneousLightsStr = "babylonMaxSimultaneousLights";
         public const string UseFactorsStr = "babylonUseFactors";
         public const string DirectIntensityStr = "babylonDirectIntensity";
@@ -48,7 +49,7 @@ namespace Max2Babylon
         public const string SpecularIntensityStr = "babylonSpecularIntensity";
         public const string TransparencyModeStr = "babylonTransparencyMode";
 
-        public static IEnumerable<string> ListPropertyNames()
+        public static IEnumerable<string> ListPrivatePropertyNames()
         {
             yield return UnlitStr;
             yield return BackfaceCullingStr;
@@ -66,7 +67,8 @@ namespace Max2Babylon
         }
 
         public bool IsUnlit => Properties?.GetBoolProperty(UnlitStr, false) ?? false;
-        public bool BackFaceCulling => Properties?.GetBoolProperty(BackfaceCullingStr, false) ?? false;
+        public bool BackFaceCulling => Properties?.GetBoolProperty(BackfaceCullingStr, true) ?? true;
+        public bool SeparateCullingPass => Properties?.GetBoolProperty(SepCullingPassStr, false) ?? false;
         public int MaxSimultaneousLights => Properties?.GetIntProperty(MaxSimultaneousLightsStr, 4) ?? 4;
         public bool UseMaxFactor => Properties?.GetBoolProperty(UseFactorsStr, true) ?? true;
         public float DirectIntensity => Properties?.GetFloatProperty(DirectIntensityStr, 1.0f) ?? 1.0f;
