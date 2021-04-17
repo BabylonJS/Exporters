@@ -227,6 +227,7 @@ namespace Max2Babylon
             else if (isPbrSpecGlossMaterial(materialNode))
             {
                 ExportPbrSpecGlossMaterial(materialNode, babylonScene);
+
             }
             else if (isArnoldMaterial(materialNode))
             {
@@ -466,6 +467,7 @@ namespace Max2Babylon
 
             babylonScene.MaterialsList.Add(babylonMaterial);
         }
+
 
         private void ExportPhysicalMaterial(IIGameMaterial materialNode, IIPropertyContainer attributesContainer, BabylonScene babylonScene, BabylonPBRMetallicRoughnessMaterial babylonMaterial)
         {
@@ -1157,6 +1159,7 @@ namespace Max2Babylon
         private void AddAiStandardSurfaceBabylonAttributes(string attributesContainer, BabylonPBRMetallicRoughnessMaterial babylonMaterial = null) => AddCustomAttributes(attributesContainer, MaterialScripts.AIBabylonCAtDef, "ARNOLD_MATERIAL_CAT_DEF");
 
         private void AddCustomAttributes(string attributesContainer, string cmdCreateBabylonAttributes, string def) => ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def));
+
 
         private void ExportCommonBabylonAttributes(IIPropertyContainer babylonAttributesContainer, BabylonMaterial babylonMaterial)
         {
