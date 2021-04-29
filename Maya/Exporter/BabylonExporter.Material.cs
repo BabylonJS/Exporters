@@ -200,7 +200,7 @@ namespace Maya2Babylon
 
                 if (isTransparencyModeFromBabylonMaterialNode == false && (babylonMaterial.alpha != 1.0f || (babylonMaterial.diffuseTexture != null && babylonMaterial.diffuseTexture.hasAlpha) || babylonMaterial.opacityTexture != null))
                 {
-                    babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                    babylonMaterial.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHABLEND;
                 }
 
                 // Constraints
@@ -214,7 +214,7 @@ namespace Maya2Babylon
                     babylonMaterial.emissive = new float[] { 0, 0, 0 };
                 }
 
-                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                if (babylonMaterial.transparencyMode == (int)BabylonMaterial.TransparencyMode.ALPHATEST)
                 {
                     // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
                     // Use the glTF default value rather than the babylon one
@@ -259,7 +259,7 @@ namespace Maya2Babylon
                     }
                     // Special treatment for "Alpha test" transparency mode
                     if (exportParameters.exportTextures
-                        && babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST 
+                        && babylonMaterial.transparencyMode == (int)BabylonMaterial.TransparencyMode.ALPHATEST 
                         && ((babylonMaterial.diffuseTexture != null && babylonMaterial.opacityTexture != null && babylonMaterial.diffuseTexture.originalPath != babylonMaterial.opacityTexture.originalPath)
                             || (babylonMaterial.diffuseTexture == null && babylonMaterial.opacityTexture != null)))
                     {
@@ -380,7 +380,7 @@ namespace Maya2Babylon
                         }
                     }
 
-                    if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                    if (babylonMaterial.transparencyMode == (int)BabylonMaterial.TransparencyMode.ALPHATEST)
                     {
                         // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
                         // Use the glTF default value rather than the babylon one
@@ -484,11 +484,11 @@ namespace Maya2Babylon
                 {
                     if (materialDependencyNode.hasAttribute("mask_threshold"))
                     {
-                        babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST;
+                        babylonMaterial.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHATEST;
                     }
                     else
                     {
-                        babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                        babylonMaterial.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHABLEND;
                     }
                 }
                 if (useMetallicMap)
@@ -727,7 +727,7 @@ namespace Maya2Babylon
                 {
                     if (isTransparencyModeFromBabylonMaterialNode == false)
                     {
-                        babylonMaterial.transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHABLEND;
+                        babylonMaterial.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHABLEND;
                     }
 
                     // If this material is assigned to both Transparent and Opaque meshes (either directly or as a sub material)
@@ -741,7 +741,7 @@ namespace Maya2Babylon
                     }
                 }
 
-                if (babylonMaterial.transparencyMode == (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.ALPHATEST)
+                if (babylonMaterial.transparencyMode == (int)BabylonMaterial.TransparencyMode.ALPHATEST)
                 {
                     // Set the alphaCutOff value explicitely to avoid different interpretations on different engines
                     // Use the glTF default value rather than the babylon one

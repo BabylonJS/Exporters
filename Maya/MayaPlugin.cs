@@ -205,7 +205,7 @@ namespace Maya2Babylon
                         ScriptExportParameters.txtQuality = long.Parse(argExportParameters[i]);
                         break;
                     case 20:
-                        ScriptExportParameters.mergeAOwithMR = bool.Parse(argExportParameters[i]);
+                        ScriptExportParameters.mergeAO = bool.Parse(argExportParameters[i]);
                         break;
                     case 21:
                         ScriptExportParameters.dracoCompression = bool.Parse(argExportParameters[i]);
@@ -331,7 +331,7 @@ namespace Maya2Babylon
             result.append(ScriptExportParameters.exportMorphTangents.ToString());
             result.append(ScriptExportParameters.exportMorphNormals.ToString());
             result.append(ScriptExportParameters.txtQuality.ToString());
-            result.append(ScriptExportParameters.mergeAOwithMR.ToString());
+            result.append(ScriptExportParameters.mergeAO.ToString());
             result.append(ScriptExportParameters.dracoCompression.ToString());
             result.append(ScriptExportParameters.enableKHRLightsPunctual.ToString());
             result.append(ScriptExportParameters.enableKHRTextureTransform.ToString());

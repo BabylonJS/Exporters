@@ -6,12 +6,14 @@
 PHYSICAL_MATERIAL_CAT_DEF = attributes "Babylon Attributes" attribID:#(0x4f890715, 0x24da1759)
 version:2
 (
+    local description = "Babylon attributes support Babylon-specific parameters."
     parameters main rollout:params
     (
         babylonUnlit type:#boolean ui:babylonUnlit_ui
-        babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:true
-        babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4
+        babylonBackfaceCulling type:#boolean ui:babylonBackfaceCulling_ui default:false
+        babylonSeparateCullingPass type:#boolean ui:babylonSeparateCullingPass_ui default:false
         babylonUseFactors type:#boolean ui:babylonUseFactors_ui default:false
+        babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4
         babylonDirectIntensity type:#float ui:babylonDirectIntensity_ui default:1.0
         babylonEmissiveIntensity type:#float ui:babylonEmissiveIntensity_ui default:1.0
         babylonEnvironmentIntensity type:#float ui:babylonEnvironmentIntensity_ui default:1.0
@@ -20,8 +22,10 @@ version:2
     )
     rollout params "Babylon Attributes"
     (
+        edittext lvl readOnly:true text:description height:20
         checkbox babylonUnlit_ui "Unlit" across:3
         checkbox babylonBackfaceCulling_ui "Backface Culling"
+        checkbox babylonSeparateCullingPass_ui "Separate Culling Pass"
         checkbox babylonUseFactors_ui "Use Scalar Factors"
 
         label babylonMaxSimultaneousLights_label "Max Simultaneous Lights" Align: #Left across:2

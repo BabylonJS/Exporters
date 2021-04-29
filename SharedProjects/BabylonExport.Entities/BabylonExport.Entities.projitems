@@ -9,6 +9,8 @@
     <Import_RootNamespace>BabylonExport.Entities</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRBaseSimpleMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRSpecularGlossinessMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAbstractMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonActions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAnimation.cs" />
