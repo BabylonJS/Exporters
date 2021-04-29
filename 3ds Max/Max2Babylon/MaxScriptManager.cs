@@ -102,7 +102,7 @@ namespace Max2Babylon
             exportParameters.exportTangents = Loader.Core.RootNode.GetBoolProperty("babylonjs_exporttangents");
             exportParameters.scaleFactor = float.TryParse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtScaleFactor", "1"), out scaleFactor) ? scaleFactor : 1;
             exportParameters.txtQuality = long.TryParse(Loader.Core.RootNode.GetStringProperty("babylonjs_txtCompression", "100"), out txtQuality) ? txtQuality : 100;
-            exportParameters.mergeAOwithMR = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergeAOwithMR");
+            exportParameters.mergeAO = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergeAOwithMR");
             exportParameters.dracoCompression = Loader.Core.RootNode.GetBoolProperty("babylonjs_dracoCompression");
             exportParameters.enableKHRLightsPunctual = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrLightsPunctual");
             exportParameters.enableKHRTextureTransform = Loader.Core.RootNode.GetBoolProperty("babylonjs_khrTextureTransform");
