@@ -68,7 +68,7 @@ namespace Max2Babylon
             this.chkDoNotOptimizeAnimations = new System.Windows.Forms.CheckBox();
             this.chkAnimgroupExportNonAnimated = new System.Windows.Forms.CheckBox();
             this.chkDracoCompression = new System.Windows.Forms.CheckBox();
-            this.chkMergeAOwithMR = new System.Windows.Forms.CheckBox();
+            this.chkMergeAO = new System.Windows.Forms.CheckBox();
             this.txtQuality = new System.Windows.Forms.TextBox();
             this.labelQuality = new System.Windows.Forms.Label();
             this.chkExportMorphNormals = new System.Windows.Forms.CheckBox();
@@ -581,18 +581,18 @@ namespace Max2Babylon
             // 
             // chkMergeAOwithMR
             // 
-            this.chkMergeAOwithMR.AutoSize = true;
-            this.chkMergeAOwithMR.Checked = true;
-            this.chkMergeAOwithMR.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMergeAOwithMR.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkMergeAOwithMR.Location = new System.Drawing.Point(316, 180);
-            this.chkMergeAOwithMR.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chkMergeAOwithMR.Name = "chkMergeAOwithMR";
-            this.chkMergeAOwithMR.Size = new System.Drawing.Size(94, 17);
-            this.chkMergeAOwithMR.TabIndex = 17;
-            this.chkMergeAOwithMR.Text = "Merge AO map";
-            this.chkMergeAOwithMR.UseVisualStyleBackColor = true;
-            this.chkMergeAOwithMR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
+            this.chkMergeAO.AutoSize = true;
+            this.chkMergeAO.Checked = true;
+            this.chkMergeAO.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMergeAO.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkMergeAO.Location = new System.Drawing.Point(316, 180);
+            this.chkMergeAO.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chkMergeAO.Name = "chkMergeAOwithMR";
+            this.chkMergeAO.Size = new System.Drawing.Size(94, 17);
+            this.chkMergeAO.TabIndex = 17;
+            this.chkMergeAO.Text = "Merge AO map";
+            this.chkMergeAO.UseVisualStyleBackColor = true;
+            this.chkMergeAO.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
             // txtQuality
             // 
@@ -889,7 +889,7 @@ namespace Max2Babylon
             this.exportOptionsScrollPanel.Controls.Add(this.txtTexturesPath);
             this.exportOptionsScrollPanel.Controls.Add(this.txtQuality);
             this.exportOptionsScrollPanel.Controls.Add(this.btnTxtBrowse);
-            this.exportOptionsScrollPanel.Controls.Add(this.chkMergeAOwithMR);
+            this.exportOptionsScrollPanel.Controls.Add(this.chkMergeAO);
             this.exportOptionsScrollPanel.Controls.Add(this.chkExportMaterials);
             this.exportOptionsScrollPanel.Controls.Add(this.chkDracoCompression);
             this.exportOptionsScrollPanel.Controls.Add(this.chkKHRMaterialsUnlit);
@@ -1044,7 +1044,7 @@ namespace Max2Babylon
         private System.Windows.Forms.CheckBox chkExportTangents;
         private System.Windows.Forms.Label labelQuality;
         private System.Windows.Forms.TextBox txtQuality;
-        private System.Windows.Forms.CheckBox chkMergeAOwithMR;
+        private System.Windows.Forms.CheckBox chkMergeAO;
         private System.Windows.Forms.CheckBox chkDracoCompression;
         private System.Windows.Forms.ToolTip toolTipDracoCompression;
         private System.Windows.Forms.CheckBox chkOverwriteTextures;

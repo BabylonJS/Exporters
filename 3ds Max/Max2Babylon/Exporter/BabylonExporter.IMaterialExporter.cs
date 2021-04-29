@@ -58,7 +58,6 @@ namespace Max2Babylon
         public static readonly ClassIDWrapper Top_Bottom_Material = new ClassIDWrapper(0x00000100, 0x00000000);
         public static readonly ClassIDWrapper Composite_Material = new ClassIDWrapper(0x61dc0cd7, 0x13640af6);
         public static readonly ClassIDWrapper Shell_Material = new ClassIDWrapper(0x00000255, 0x00000000);
-        public static readonly ClassIDWrapper Physical_Material = new ClassIDWrapper(0x3d6b1cec, 0xdeadc001);
         public static readonly ClassIDWrapper Raytrace_Material = new ClassIDWrapper(0x27190ff4, 0x329b106e);
         public static readonly ClassIDWrapper Shellac_Material = new ClassIDWrapper(0x46ee536a, 0x00000000);
         public static readonly ClassIDWrapper mental_ray_Material = new ClassIDWrapper(0x6926ba21, 0x7a10aca5);
@@ -80,6 +79,14 @@ namespace Max2Babylon
         public static readonly ClassIDWrapper Passthrough_Material = new ClassIDWrapper(0x7e73161f, 0x625bb28f);
         public static readonly ClassIDWrapper Switch_Shader_Material = new ClassIDWrapper(0x7e73161f, 0xa844c228);
         public static readonly ClassIDWrapper Two_Sided_Material = new ClassIDWrapper(0x7e73161f, 0x7ffd6281);
+
+        /// <summary>
+        /// GamingMaterial are implemented as script standard extensions. The Magic ID is find at the beginning of each
+        /// script and identify it uniquely.
+        /// </summary>
+        public static readonly ClassIDWrapper Physical_Material = new ClassIDWrapper(0x3d6b1cec, 0xdeadc001);
+        public static readonly ClassIDWrapper PBR_MetalRough_Material = new ClassIDWrapper(0xd00f1e00, 0xbe77e500);
+        public static readonly ClassIDWrapper PBR_SpecGloss_Material = new ClassIDWrapper(0xd00f1e00, 0x01dbad33);
 
         public static readonly ClassIDWrapper Editable_Poly = new ClassIDWrapper(469250957, 422535320);
         public static readonly ClassIDWrapper Sphere = new ClassIDWrapper(17,0);

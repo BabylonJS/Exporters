@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text;
 
 namespace Max2Babylon
 {
@@ -336,7 +337,6 @@ namespace Max2Babylon
             // --- Babylon texture ---
             var baseColorTexture = _getBitmapTex(baseColorTexMap, out multiplyColor);
             var alphaTexture = _getBitmapTex(alphaTexMap);
-            string baseColorTextureMapExtension = null;
 
             // If we don't retrieve any textures from Max, return null.
             if (baseColorTexture == null && alphaTexture == null)
@@ -344,6 +344,7 @@ namespace Max2Babylon
                 return null;
             }
 
+            string baseColorTextureMapExtension = null;
             var baseColorSourcePath = baseColorTexture?.Map.FullFilePath;
             var alphaSourcePath = alphaTexture?.Map.FullFilePath;
 
@@ -532,6 +533,131 @@ namespace Max2Babylon
             return babylonTexture;
         }
 
+        /// <summary>
+        /// This texture Specifies both the specular color RGB and the glossiness A of the material per pixels.
+        /// </summary>
+        /// <param name="ambientOcclusionTexMap"></param>
+        /// <param name="glossinessTexMap"></param>
+        /// <param name="specularTexMap"></param>
+        /// <param name="glossiness"></param>
+        /// <param name="specularColor"></param>
+        /// <param name="babylonScene"></param>
+        /// <returns></returns>
+        private BabylonTexture ExportSpecularGlossinessTexture(float[] specularColor, ITexmap specularTexMap, float glossiness, ITexmap glossinessTexMap, BabylonScene babylonScene)
+        {
+            var specularTexture = _getBitmapTex(specularTexMap);
+            var glossinessTexture = _getBitmapTex(glossinessTexMap);
+             
+            // we are trying to get the best output format, function of source and policy.
+            var paths = new IBitmapTex[] { specularTexture, glossinessTexture}.Where(t => t != null).Select(t => t.Map.FileName);
+            var policy = exportParameters.textureFormatExportPolicy;
+            var preferredExtension = TextureUtilities.GetPreferredFormat(paths, false, policy);
+
+            // Use metallic or roughness texture as a reference for UVs parameters
+            var refTexture = specularTexture?? glossinessTexture;
+            if (refTexture == null)
+            {
+                return null;
+            }
+
+            RaiseMessage("Export Specular Glossiness texture", 2);
+
+            var textureID = refTexture.GetGuid().ToString();
+            if (textureMap.ContainsKey(textureID))
+            {
+                return textureMap[textureID];
+            }
+            var babylonTexture = new BabylonTexture(textureID)
+            {
+                name = BuildSpecularGlossinessTextureName(specularColor, specularTexture, glossiness, glossinessTexture) + "." + preferredExtension // TODO - unsafe name, may conflict with another texture name
+            };
+
+            // UVs
+            var uvGen = _exportUV(refTexture.UVGen, babylonTexture);
+            
+            // Is cube
+            _exportIsCube(refTexture.Map.FullFilePath, babylonTexture, false);
+
+            // --- Merge specular and gloossiness maps ---
+            if (!isTextureOk(specularTexMap) && !isTextureOk(glossinessTexMap))
+            {
+                return null;
+            }
+            if (exportParameters.writeTextures)
+            {
+                // Load bitmaps
+                var specularBitmap = _loadTexture(specularTexMap);
+                var glossinessBitmap = _loadTexture(glossinessTexMap);
+
+                // Retreive dimensions
+                int width = 0;
+                int height = 0;
+                var haveSameDimensions = TextureUtilities.GetMinimalBitmapDimensions(out width, out height, specularBitmap, glossinessBitmap);
+                if (!haveSameDimensions)
+                {
+                    RaiseError("Specular and glossiness maps should have same dimensions", 3);
+                }
+
+                // Create specular glossiness map
+                Bitmap newBitmap = new Bitmap(width, height);
+                int[] rgbColor = specularColor.Select(v => (int)(v * 255)).ToArray();
+                int glossinessFactor = (int)(glossiness * 255);
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        int alpha = glossinessBitmap?.GetPixel(x, y).R ?? glossinessFactor;
+                        float [] rgb = specularBitmap?.GetPixel(x, y).toArrayRGB()??specularColor;
+                        Color color = Color.FromArgb(alpha, (int)rgb[0], (int)rgb[1], (int)rgb[2]);
+                        newBitmap.SetPixel(x, y, color);
+                    }
+                }
+
+                // Write bitmap
+                if (isBabylonExported)
+                {
+                    RaiseMessage($"Texture | write image '{babylonTexture.name}'", 3);
+                    var imageFormat = TextureUtilities.GetImageFormat(Path.GetExtension(babylonTexture.name));
+                    TextureUtilities.SaveBitmap(newBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat, exportParameters.txtQuality, this);
+                }
+                else
+                {
+                    // Store created bitmap for further use in gltf export
+                    babylonTexture.bitmap = newBitmap;
+                }
+            }
+            textureMap[babylonTexture.Id] = babylonTexture;
+            return babylonTexture;
+        }
+
+        private static string BuildSpecularGlossinessTextureName(float[] specularColor, IBitmapTex specularMap, float glossiness, IBitmapTex glossinessMap)
+        {
+            var specPart = $"{GetFileNameWithoutExtension(specularMap)}_{GetColorCode(specularColor)}";
+            var glossPart = $"{GetFileNameWithoutExtension(glossinessMap)}_{glossiness*255}";
+            return $"{specPart}_{glossPart}";
+        }
+
+        private static string GetFileNameWithoutExtension(IBitmapTex text)
+        {
+            var str = text.Map?.FileName;
+            return str != null ? Path.GetFileNameWithoutExtension(str) : string.Empty;
+        }
+        private static string GetColorCode(float[] c)
+        {
+            if( c == null)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i < c.Length && i < 3; i++)
+            {
+                sb.Append(((int)(c[i]*255)).ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
         private BabylonTexture ExportORMTexture(ITexmap ambientOcclusionTexMap, ITexmap roughnessTexMap, ITexmap metallicTexMap, float metallic, float roughness, BabylonScene babylonScene, bool invertRoughness)
         {
             // --- Babylon texture ---
@@ -546,15 +672,15 @@ namespace Max2Babylon
             var preferredExtension = TextureUtilities.GetPreferredFormat(paths, false, policy);
 
             // Use metallic or roughness texture as a reference for UVs parameters
-            var texture = metallicTexture != null ? metallicTexture : roughnessTexture;
-            if (texture == null)
+            var refTexture = metallicTexture != null ? metallicTexture : roughnessTexture;
+            if (refTexture == null)
             {
                 return null;
             }
 
             RaiseMessage("Export ORM texture", 2);
 
-            var textureID = texture.GetGuid().ToString();
+            var textureID = refTexture.GetGuid().ToString();
             if (textureMap.ContainsKey(textureID))
             {
                 return textureMap[textureID];
@@ -568,10 +694,10 @@ namespace Max2Babylon
                 };
 
                 // UVs
-                var uvGen = _exportUV(texture.UVGen, babylonTexture);
+                var uvGen = _exportUV(refTexture.UVGen, babylonTexture);
 
                 // Is cube
-                _exportIsCube(texture.Map.FullFilePath, babylonTexture, false);
+                _exportIsCube(refTexture.Map.FullFilePath, babylonTexture, false);
 
                 // --- Merge metallic and roughness maps ---
 
@@ -766,6 +892,10 @@ namespace Max2Babylon
 
         private BabylonTexture ExportTexture(ITexmap texMap, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
         {
+            if(texMap == null)
+            {
+                return null;
+            }
             IBitmapTex texture = _getBitmapTex(texMap, false);
             if (texture == null)
             {

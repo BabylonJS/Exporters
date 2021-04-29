@@ -20,6 +20,12 @@ namespace Max2Babylon
         ) else  if classof maxMaterial == PhysicalMaterial then (
             {PhysicalBabylonCAtDef.AsInlineScript()}
             custAttributes.add maxMaterial PHYSICAL_MATERIAL_CAT_DEF;
+        ) else  if classof maxMaterial == PBRMetalRough then (
+            {PhysicalBabylonCAtDef.AsInlineScript()}
+            custAttributes.add maxMaterial PHYSICAL_MATERIAL_CAT_DEF;
+        ) else  if classof maxMaterial == PBRSpecGloss then (
+            {PhysicalBabylonCAtDef.AsInlineScript()}
+            custAttributes.add maxMaterial PHYSICAL_MATERIAL_CAT_DEF;
         ) else if classof maxMaterial == ai_standard_surface then (
             {AIBabylonCAtDef.AsInlineScript()}
             custAttributes.add maxMaterial babylonAttributesDataCA;

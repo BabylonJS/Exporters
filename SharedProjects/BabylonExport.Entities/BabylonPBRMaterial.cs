@@ -191,7 +191,7 @@ namespace BabylonExport.Entities
             clearCoat = new BabylonPBRClearCoat();
         }
 
-        public BabylonPBRMaterial(BabylonPBRMetallicRoughnessMaterial origin) : base(origin.id)
+        public BabylonPBRMaterial(BabylonPBRBaseSimpleMaterial origin) : base(origin.id)
         {
             SetCustomType("BABYLON.PBRMaterial");
             directIntensity = 1.0f;
@@ -206,11 +206,7 @@ namespace BabylonExport.Entities
             usePhysicalLightFalloff = true;
             useEmissiveAsIllumination = true;
 
-            useRoughnessFromMetallicTextureAlpha = false;
-            useRoughnessFromMetallicTextureGreen = true;
-            useMetallnessFromMetallicTextureBlue = true;
-
-            ambient = new[] { 0f, 0f, 0f };
+             ambient = new[] { 0f, 0f, 0f };
             reflectivity = new[] { 1f, 1f, 1f };
             reflection = new[] { 1f, 1f, 1f };
 
@@ -230,15 +226,26 @@ namespace BabylonExport.Entities
             invertNormalMapY = origin.invertNormalMapY;
             isUnlit = origin.isUnlit;
             maxSimultaneousLights = origin.maxSimultaneousLights;
-            metallic = origin.metallic;
-            reflectivityTexture = origin.metallicRoughnessTexture;
             name = origin.name;
             bumpTexture = origin.normalTexture;
             ambientTextureStrength = origin.occlusionStrength;
             ambientTexture = origin.occlusionTexture;
-            roughness = origin.roughness;
             transparencyMode = origin.transparencyMode;
             wireframe = origin.wireframe;
+        }
+        public BabylonPBRMaterial(BabylonPBRMetallicRoughnessMaterial origin) : this((BabylonPBRBaseSimpleMaterial)origin)
+        {
+            useRoughnessFromMetallicTextureAlpha = false;
+            useRoughnessFromMetallicTextureGreen = true;
+            useMetallnessFromMetallicTextureBlue = true;
+
+            roughness = origin.roughness;
+            metallic = origin.metallic;
+            reflectivityTexture = origin.metallicRoughnessTexture;
+        }
+
+        public BabylonPBRMaterial(BabylonPBRSpecularGlossinessMaterial origin) : this((BabylonPBRBaseSimpleMaterial)origin)
+        {
         }
 
         public void SetCustomType(string type)
