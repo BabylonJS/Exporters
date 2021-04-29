@@ -59,7 +59,7 @@ namespace Max2Babylon
             // the SDK do not return the name of the map anymore but a display name with camel style and space
             // Here a fix which maintain the old style and transform the name for a second try if failed.
             name = string.Join(" ", name.Split('_').Select(s => char.ToUpper(s[0]) + s.Substring(1)));
-            return _mapCaches.TryGetValue(name, out texmap) ? texmap : default;
+            return _mapCaches.TryGetValue(name, out texmap) ? texmap : null;
         }
 
         protected ITexmap _getTexMap(IIGameMaterial materialNode, string name, bool cache = true)
