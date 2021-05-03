@@ -419,7 +419,10 @@ namespace Max2Babylon
                 // Export tangents if option is checked and mesh has tangents
                 if (exportParameters.exportTangents)
                 {
-                    babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
+                    if (vertices.All(v => v.Tangent != null))
+                    {
+                        babylonMesh.tangents = vertices.SelectMany(v => v.Tangent).ToArray();
+                    }
                 }
 
                 if (hasUV)
