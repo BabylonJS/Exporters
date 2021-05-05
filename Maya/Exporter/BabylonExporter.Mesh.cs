@@ -37,7 +37,7 @@ namespace Maya2Babylon
             ExportNode(babylonMesh, mFnTransform, babylonScene);
 
             // Animations
-            if (exportParameters.exportAnimations)
+            if (exportParameters.exportAnimations && MAnimUtil.isAnimated(mDagPath))
             {
                 if (exportParameters.bakeAnimationFrames)
                 {
@@ -271,7 +271,7 @@ namespace Maya2Babylon
                 babylonInstanceMesh.metadata = ExportCustomAttributeFromTransform(mFnTransform);
 
                 // Animations
-                if (exportParameters.exportAnimations)
+                if (exportParameters.exportAnimations && MAnimUtil.isAnimated(mDagPath))
                 {
                     ExportNodeAnimation(babylonInstanceMesh, mFnTransform);
                 }
@@ -374,7 +374,7 @@ namespace Maya2Babylon
             }
 
             // Animations
-            if (exportParameters.exportAnimations)
+            if (exportParameters.exportAnimations && MAnimUtil.isAnimated(mDagPath))
             {
                 if (exportParameters.bakeAnimationFrames)
                 {
