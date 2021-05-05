@@ -125,7 +125,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Tools\JsonTextWriterBounded.cs" />
-    <Compile Include="Tools\JsonTextWriterOptimized.cs" />
     <Compile Include="Tools\Tools.cs" />
     <Compile Include="Tools\WebServer.cs" />
   </ItemGroup>
