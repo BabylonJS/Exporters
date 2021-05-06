@@ -509,14 +509,8 @@ namespace Maya2Babylon
             //var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
             //var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
-            // TODO - Add custom properties
-            //var optimizeVertices = false; // meshNode.MaxNode.GetBoolProperty("babylonjsexportParameters.optimizeVertices");
+            //var optimizeVertices = meshNode.MaxNode.GetBoolProperty("babylonjsexportParameters.optimizeVertices");
             var optimizeVertices = exportParameters.optimizeVertices; // global option
-            if (optimizeVertices && hasMorphTarget)
-            {
-                optimizeVertices = false;
-                RaiseWarning("Unable to optimize a mesh with morph targets. Disabling optimization for this mesh.", 2);
-            }
 
             // Compute normals
             var subMeshes = new List<BabylonSubMesh>();
