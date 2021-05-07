@@ -26,7 +26,9 @@ namespace GLTFExport.Entities
             TEXCOORD_1,
             COLOR_0,
             JOINTS_0,
-            WEIGHTS_0
+            JOINTS_1,
+            WEIGHTS_0,
+            WEIGHTS_1
         }
 
         [DataMember(IsRequired = true)]

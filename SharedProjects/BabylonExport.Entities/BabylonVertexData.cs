@@ -50,8 +50,14 @@ namespace BabylonExport.Entities
         public int[] matricesIndices { get; set; }
 
         [DataMember]
+        public int[] matricesIndicesExtra { get; set; }
+
+        [DataMember]
         public float[] matricesWeights { get; set; }
-       
+
+        [DataMember]
+        public float[] matricesWeightsExtra { get; set; }
+
         [DataMember]
         public int[] indices { get; set; }
         #endregion
@@ -76,7 +82,9 @@ namespace BabylonExport.Entities
             uvs6 = data.uvs6;
             colors = data.colors;
             matricesIndices = data.matricesIndices;
+            matricesIndicesExtra = data.matricesIndicesExtra;
             matricesWeights = data.matricesWeights;
+            matricesWeightsExtra = data.matricesWeightsExtra;
             indices = data.indices;
         }
     }

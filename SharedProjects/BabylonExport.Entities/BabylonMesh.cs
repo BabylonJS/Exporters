@@ -18,7 +18,9 @@ namespace BabylonExport.Entities
         float[] uvs6 { get; set; }
         float[] colors { get; set; }
         int[] matricesIndices { get; set; }
+        int[] matricesIndicesExtra { get; set; }
         float[] matricesWeights { get; set; }
+        float[] matricesWeightsExtra { get; set; }
         int[] indices { get; set; }
     }
 
