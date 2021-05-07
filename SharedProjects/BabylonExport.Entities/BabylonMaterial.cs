@@ -6,6 +6,14 @@ namespace BabylonExport.Entities
     [DataContract]
     public partial class BabylonMaterial
     {
+        public enum TransparencyMode
+        {
+            OPAQUE = 0,
+            ALPHATEST = 1,
+            ALPHABLEND = 2,
+            ALPHATESTANDBLEND = 3
+        }
+
         [DataMember]
         public string name { get; set; }
 
@@ -14,6 +22,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public bool backFaceCulling { get; set; }
+
+        [DataMember]
+        public bool separateCullingPass { get; set; }
 
         [DataMember]
         public bool wireframe { get; set; }
