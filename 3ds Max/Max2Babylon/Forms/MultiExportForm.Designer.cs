@@ -39,6 +39,7 @@ namespace Max2Babylon
             this.panel1 = new System.Windows.Forms.Panel();
             this.ExportItemGridView = new System.Windows.Forms.DataGridView();
             this.ColumnExportCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColumnKeepPositionCheckbox = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnLayers = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnNode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -182,6 +183,7 @@ namespace Max2Babylon
             this.ExportItemGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ExportItemGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnExportCheckbox,
+            this.ColumnKeepPositionCheckbox,
             this.ColumnLayers,
             this.ColumnNode,
             this.ColumnFilePath,
@@ -206,6 +208,14 @@ namespace Max2Babylon
             this.ColumnExportCheckbox.Name = "ColumnExportCheckbox";
             this.ColumnExportCheckbox.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.ColumnExportCheckbox.Width = 49;
+            // 
+            // ColumnKeepPositionCheckbox
+            // 
+            this.ColumnKeepPositionCheckbox.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.ColumnKeepPositionCheckbox.HeaderText = "Keep Pos";
+            this.ColumnKeepPositionCheckbox.Name = "ColumnKeepPositionCheckbox";
+            this.ColumnKeepPositionCheckbox.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ColumnKeepPositionCheckbox.Width = 49;
             // 
             // ColumnLayers
             // 
@@ -274,6 +284,7 @@ namespace Max2Babylon
         private System.Windows.Forms.SaveFileDialog SetPathFileDialog;
         private System.Windows.Forms.Button btn_change_path;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExportCheckbox;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnKeepPositionCheckbox;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLayers;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNode;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFilePath;
