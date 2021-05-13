@@ -314,15 +314,15 @@ namespace Max2Babylon
                 throw new Exception("Invalid number of properties, can't deserialize.");
 
             var i = 0;
-            if (!bool.TryParse(properties[i++], out selected))
-                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[0]));
+            if (!bool.TryParse(properties[i], out selected))
+                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[i]));
             
-            if (!bool.TryParse(properties[i++], out keepPosition))
-                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[0]));
+            if (!bool.TryParse(properties[++i], out keepPosition))
+                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[i]));
 
-            SetExportFilePath(properties[i++]);
-            SetExportTexturesFolderPath(properties[i++]);
-            List<IILayer> layers = StringToLayers(properties[i++]);
+            SetExportFilePath(properties[++i]);
+            SetExportTexturesFolderPath(properties[++i]);
+            List<IILayer> layers = StringToLayers(properties[++i]);
 
             if (layers.Count > 0)
             {
