@@ -349,6 +349,9 @@ namespace Max2Babylon
             Loader.Global.COREInterface.MenuManager.UpdateMenuBar();
         }
 
-        private void AddCallbacks() => ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCallback);
+        private void AddCallbacks() 
+        {
+            foreach (var s in MaterialScripts.AddCallbacks()) ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
+        }
     }
 }

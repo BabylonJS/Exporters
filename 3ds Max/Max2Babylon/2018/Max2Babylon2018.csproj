@@ -390,6 +390,9 @@
     <None Include="..\Scripts\ARNOLD_MATERIAL_CAT_DEF.ms">
       <Link>Scripts\ARNOLD_MATERIAL_CAT_DEF.ms</Link>
     </None>
+    <None Include="..\Scripts\BUMP_MAP_CAT_DEF.ms">
+      <Link>Scripts\BUMP_MAP_CAT_DEF.ms</Link>
+    </None>
     <None Include="..\Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms">
       <Link>Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms</Link>
     </None>

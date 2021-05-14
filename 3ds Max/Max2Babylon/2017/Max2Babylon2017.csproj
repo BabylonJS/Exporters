@@ -337,6 +337,9 @@
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
     <Content Include="Refs\ManagedServices.dll" />
+    <None Include="..\Scripts\BUMP_MAP_CAT_DEF.ms">
+      <Link>Scripts\BUMP_MAP_CAT_DEF.ms</Link>
+    </None>
     <None Include="Resources\MaxExporter.png" />
   </ItemGroup>
   <ItemGroup>
