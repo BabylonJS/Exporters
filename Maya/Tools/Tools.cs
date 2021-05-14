@@ -189,6 +189,26 @@ namespace Maya2Babylon
             }
         }
 
+        public static void GetProductVersion(out string product, out string version)
+        {
+            // The easy going solution is to relay on c# API MGlobal.mayaVersion, however, with miss the minor of the version
+            // and still have to set the name by hand.
+            string[] versionParts = null;
+            try
+            {
+                versionParts = MGlobal.executeCommandStringResult("about -iv").Split();
+            }
+            catch
+            {
+                // we anticipate possible error.
+            }
+            versionParts = versionParts ?? new string[] { "Maya", MGlobal.mayaVersion ?? string.Empty };
+            var l = versionParts.Length - 1;
+
+            product = String.Join(" ", versionParts, 0, l);
+            version = versionParts[l];
+        }
+
         // -------------------------
         // --------- Math ----------
         // -------------------------
