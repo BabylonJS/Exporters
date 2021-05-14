@@ -161,11 +161,13 @@ namespace Maya2Babylon
                 }
             }
 
+            Tools.GetProductVersion(out string product, out string version);
+
             // Producer
             babylonScene.producer = new BabylonProducer
             {
-                name = "Maya",
-                version = "2018",
+                name = product,
+                version = version,
                 exporter_version = exporterVersion,
                 file = outputFileName
             };
