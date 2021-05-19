@@ -15,6 +15,7 @@ namespace Max2Babylon
     public partial class MultiExportForm : Form
     {
         const bool Default_ExportItemSelected = true;
+        const bool Default_KeepPosition = false;
         private CommonOpenFileDialog setTexturesFolderDialog;
         private ExportItemList exportItemList;
 
@@ -34,6 +35,7 @@ namespace Max2Babylon
             {
                 DataGridViewRow row = new DataGridViewRow();
                 row.Cells.Add(new DataGridViewCheckBoxCell());
+                row.Cells.Add(new DataGridViewCheckBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
                 row.Cells.Add(new DataGridViewTextBoxCell());
@@ -49,11 +51,13 @@ namespace Max2Babylon
         private void SetRowData(DataGridViewRow row, ExportItem item)
         {
             row.Tag = item;
-            row.Cells[0].Value = item.Selected;
-            row.Cells[1].Value = item.LayersToString(item.Layers);
-            row.Cells[2].Value = item.NodeName;
-            row.Cells[3].Value = item.ExportFilePathAbsolute;
-            row.Cells[4].Value = item.ExportTexturesesFolderAbsolute;
+            var i = 0;
+            row.Cells[i++].Value = item.Selected;
+            row.Cells[i++].Value = item.KeepPosition;
+            row.Cells[i++].Value = item.LayersToString(item.Layers);
+            row.Cells[i++].Value = item.NodeName;
+            row.Cells[i++].Value = item.ExportFilePathAbsolute;
+            row.Cells[i  ].Value = item.ExportTexturesesFolderAbsolute;
             Refresh();
         }
 
@@ -168,8 +172,13 @@ namespace Max2Babylon
 
             if (e.ColumnIndex == ColumnExportCheckbox.Index)
             {
-                if(item != null)
+                if (item != null)
                     item.Selected = row.Cells[0].Value == null ? Default_ExportItemSelected : (bool)row.Cells[0].Value;
+            }
+            if (e.ColumnIndex == ColumnKeepPositionCheckbox.Index)
+            {
+                if (item != null)
+                    item.KeepPosition = row.Cells[e.ColumnIndex].Value == null ? Default_KeepPosition : (bool)row.Cells[e.ColumnIndex].Value;
             }
             if (e.ColumnIndex == ColumnFilePath.Index)
             {
@@ -321,7 +330,7 @@ namespace Max2Babylon
             if (e.RowIndex < 0) return;
 
             // necessary for checkboxes, problem with datagridview
-            if (e.ColumnIndex == ColumnExportCheckbox.Index)
+            if (e.ColumnIndex == ColumnExportCheckbox.Index || e.ColumnIndex == ColumnKeepPositionCheckbox.Index)
             {
                 ExportItemGridView.EndEdit();
             }
