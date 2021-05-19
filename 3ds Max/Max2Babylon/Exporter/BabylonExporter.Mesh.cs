@@ -839,7 +839,6 @@ namespace Max2Babylon
                 babylonInstanceMesh.physicsRestitution = maxNode.MaxNode.GetFloatProperty("babylonjs_restitution", 0.2f);
             }
 
-
             // Add instance to master mesh
             List<BabylonAbstractMesh> list = babylonMasterMesh.instances != null ? babylonMasterMesh.instances.ToList() : new List<BabylonAbstractMesh>();
             list.Add(babylonInstanceMesh);

@@ -488,6 +488,7 @@ namespace Max2Babylon
                     optimizeAnimations = !chkDoNotOptimizeAnimations.Checked,
                     animgroupExportNonAnimated = chkAnimgroupExportNonAnimated.Checked,
                     exportNode = exportItem?.Node,
+                    exportKeepNodePosition = exportItem?.KeepPosition??false,
                     exportLayers = exportItem?.Layers,
                     pbrNoLight = chkNoAutoLight.Checked,
                     pbrFull = chkFullPBR.Checked,

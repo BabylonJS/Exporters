@@ -102,11 +102,20 @@ namespace Max2Babylon
                 IsDirty = true;
             }
         }
+        public bool KeepPosition
+        {
+            get { return keepPosition; }
+            set
+            {
+                if (keepPosition == value) return;
+                keepPosition = value;
+                IsDirty = true;
+            }
+        }
 
-        const string s_DisplayNameFormat = "{0} | {1} | \"{2}\" | \"{3}\"| {4}";
-        const char s_PropertySeparator = ';';
+         const char s_PropertySeparator = ';';
         private const char s_ProperyLayerSeparator = '~';
-        const string s_PropertyFormat = "{0};{1};{2};{3}";
+        const string s_PropertyFormat = "{0};{1};{2};{3};{4}";
         const string s_PropertyNamePrefix = "babylonjs_ExportItem";
 
         private string outputFileExt;
@@ -114,6 +123,7 @@ namespace Max2Babylon
         private List<IILayer> exportLayers;
         private uint exportNodeHandle = uint.MaxValue; // 0 is the scene root node
         private bool selected = true;
+        private bool keepPosition = false;
         private string exportPathRelative = "";
         private string exportPathAbsolute = "";
         private string exportTexturesFolderRelative = "";
@@ -154,7 +164,7 @@ namespace Max2Babylon
             LoadFromData(propertyName);
         }
 
-        public override string ToString() { return string.Format(s_DisplayNameFormat, selected, NodeName, exportPathRelative, exportTexturesFolderRelative, LayersToString(exportLayers)); }
+        public override string ToString() { return $"{selected} | {keepPosition} | { NodeName} | \"{exportPathRelative}\" | \"{ exportTexturesFolderRelative}\" | { LayersToString(exportLayers)}"; }
 
         public void SetExportLayers(List<IILayer> layers)
         {
@@ -303,21 +313,21 @@ namespace Max2Babylon
             if (properties.Length < 2)
                 throw new Exception("Invalid number of properties, can't deserialize.");
 
-
-            if (!bool.TryParse(properties[0], out selected))
-                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[0]));
-
+            var i = 0;
+            if (!bool.TryParse(properties[i], out selected))
+                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[i]));
             
-            SetExportFilePath(properties[1]);
-            SetExportTexturesFolderPath(properties[2]);
-            List<IILayer> layers = StringToLayers(properties[3]);
+            if (!bool.TryParse(properties[++i], out keepPosition))
+                throw new Exception(string.Format("Failed to parse selected property from string {0}", properties[i]));
+
+            SetExportFilePath(properties[++i]);
+            SetExportTexturesFolderPath(properties[++i]);
+            List<IILayer> layers = StringToLayers(properties[++i]);
+
             if (layers.Count > 0)
             {
                 SetExportLayers(layers);
             }
-
-            
-
             IsDirty = false;
         }
 
@@ -333,7 +343,7 @@ namespace Max2Babylon
             IINode node = Node;
             if (node == null) return false;
 
-            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), exportPathRelative,exportTexturesFolderRelative,LayersToString(exportLayers)));
+            node.SetStringProperty(GetPropertyName(), string.Format(s_PropertyFormat, selected.ToString(), keepPosition.ToString(), exportPathRelative,exportTexturesFolderRelative,LayersToString(exportLayers)));
 
             IsDirty = false;
             return true;

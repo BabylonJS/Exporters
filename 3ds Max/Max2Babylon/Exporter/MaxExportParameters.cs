@@ -15,6 +15,7 @@ namespace Max2Babylon
     {
         public Autodesk.Max.IINode exportNode;
         public List<Autodesk.Max.IILayer> exportLayers;
+        public bool exportKeepNodePosition = false;
         public bool usePreExportProcess = false;
         public bool applyPreprocessToScene = false;
         public bool mergeContainersAndXRef = false;
