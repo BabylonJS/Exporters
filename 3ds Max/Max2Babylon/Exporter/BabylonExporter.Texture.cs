@@ -961,7 +961,7 @@ namespace Max2Babylon
                         // opengl norm
                         if (isBabylonExported)
                         {
-                            // texture source is OpenGL and babylon is DirectX, so we may invert Y coordinate. May void the Max operation.
+                            // texture source is OpenGL and babylon is DirectX, so we may invert Y coordinate.
                             mustInvertY = true;
                         }
                         break;
@@ -971,7 +971,7 @@ namespace Max2Babylon
                         // directx norm
                         if (isGltfExported)
                         {
-                            // texture source is DirectX and Gltf is OpenGL, so we may invert Y coordinate. May void the Max operation.
+                            // texture source is DirectX and Gltf is OpenGL, so we may invert Y coordinate.
                             mustInvertY = true;
                         }
                         break;
