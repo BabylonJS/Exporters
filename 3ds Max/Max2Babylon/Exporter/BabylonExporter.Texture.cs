@@ -120,9 +120,7 @@ namespace Max2Babylon
 
             RaiseMessage("Multiply specular color and level textures", 2);
 
-            string nameText = null;
-
-            nameText = (specularColorTexture != null ? Path.GetFileNameWithoutExtension(specularColorTexture.Map.FullFilePath) : TextureUtilities.ColorToStringName(specularColor)) +
+            string nameText = (specularColorTexture != null ? Path.GetFileNameWithoutExtension(specularColorTexture.Map.FullFilePath) : TextureUtilities.ColorToStringName(specularColor)) +
                         Path.GetFileNameWithoutExtension(specularLevelTexture.Map.FullFilePath) + "_specularColor";
 
             var textureID = texture.GetGuid().ToString();
@@ -825,11 +823,12 @@ namespace Max2Babylon
         // -- Export sub methods ---
         // -------------------------
 
-        private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount)
+        private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount, out IEnumerable<TextureOperation> operations)
         {
+            operations = default;
+            amount = 0.0f;
             if (texMap == null)
             {
-                amount = 0.0f;
                 return null;
             }
 
@@ -853,24 +852,8 @@ namespace Max2Babylon
                         RaiseError($"Only Normal Bump Texture in tangent space are supported.", 2);
                         return null;
                     }
-                    var flipR = block.GetInt(7, 0, 0);          // Normal texture Red chanel Flip
-                    if (flipR != 0)
-                    {
-                        RaiseError($"Only Normal Bump Texture without R flip are supported.", 2);
-                        return null;
-                    }
-                    var flipG = block.GetInt(8, 0, 0);          // Normal texture Green chanel Flip
-                    if (flipG != 0)
-                    {
-                        RaiseError($"Only Normal Bump Texture without G flip are supported.", 2);
-                        return null;
-                    }
-                    var swapRG = block.GetInt(9, 0, 0);         // Normal texture swap R and G channels
-                    if (swapRG != 0)
-                    {
-                        RaiseError($"Only Normal Bump Texture without R and G swap are supported.", 2);
-                        return null;
-                    }
+
+                    operations = GetNormalBump3DSMaxOperations(texMap, block);
 
                     var bumpAmount = block.GetFloat(1, 0, 0);   // Bump texture Mult Spin
                     var bumpMap = block.GetTexmap(3, 0, 0);     // Bump texture
@@ -885,9 +868,112 @@ namespace Max2Babylon
                 }
             }
 
-            amount = 0.0f;
             RaiseError($"Texture type is not supported. Use a Bitmap or Normal Bump map instead.", 2);
             return null;
+        }
+
+        /// <summary>
+        /// Create the list of operation to transform the NormalMap, according Max and Babylon attributes
+        /// </summary>
+        /// <param name="texMap"></param>
+        /// <param name="block"></param>
+        /// <returns></returns>
+        private IEnumerable<TextureOperation> GetNormalBump3DSMaxOperations(ITexmap texMap, IIParamBlock2 block)
+        {
+            var flipR = block.GetInt(7, 0, 0);          // Normal texture Red chanel Flip
+            var flipG = block.GetInt(8, 0, 0);          // Normal texture Green chanel Flip
+            var swapRG = block.GetInt(9, 0, 0);         // Normal texture swap R and G channels
+
+
+            // try to retreive the custom Babylon Attributes
+            IICustAttribContainer custAtt = texMap.CustAttribContainer;
+            var n = custAtt.NumCustAttribs;
+            ICustAttrib att = null;
+            for (int i = 0; i != n; i++)
+            {
+                var tmp = custAtt.GetCustAttrib(i);
+                if (tmp.ClassName == MaterialCustomBabylonAttributeName)
+                {
+                    att = tmp;
+                    break;
+                }
+            }
+
+            MaxNormalMapParameters global = (MaxNormalMapParameters)exportParameters.normalMapParams;
+            MaxNormalMapParameters parameters = new MaxNormalMapParameters();
+
+            IIParamBlock2 customBlock = att?.GetParamBlockByID(0);
+            if (customBlock != null)
+            {
+                var useMaxTransforms = customBlock.GetInt(0, 0, 0) != 0;
+                parameters.useMaxTransforms = customBlock.GetInt(0, 0, 0) != 0;
+                parameters.mapFormat = (NormalMapFormat)customBlock.GetInt(1, 0, 0);
+            }
+
+            if (!global.useMaxTransforms)
+            {
+                // global MUST be true to use local parameter 
+                parameters.useMaxTransforms = false;
+
+                // global local result
+                //   0      0     0
+                //   0      1     0 
+                //   1      0     0 
+                //   1      1     1 
+
+            }
+
+            if (parameters.mapFormat == NormalMapFormat.unknown)
+            {
+                // if local is unknown, then the global is take
+                parameters.mapFormat = global.mapFormat;
+
+                // global local result
+                //   1      1     1
+                //   2      1     2
+                //   3      1     3
+
+                //  any    y!=1   y
+            }
+
+            bool mustFlipG = parameters.useMaxTransforms && flipG != 0;
+            bool mustFlipR = parameters.useMaxTransforms && flipR != 0;
+            bool mustSwapRG = parameters.useMaxTransforms && swapRG != 0;
+
+            switch (parameters.mapFormat)
+            {
+                case NormalMapFormat.opengl:
+                    {
+                        if (isBabylonExported)
+                        {
+                            // texture source is OpenGL and babylon is DirectX, so we may flip G. May void the Max operation.
+                            mustFlipG = !mustFlipG;
+                        }
+                        break;
+                    }
+                case NormalMapFormat.directx:
+                    {
+                        if (isGltfExported)
+                        {
+                            // texture source is DirectX and Gltf is OpenGL, so we may flip G. May void the Max operation.
+                            mustFlipG = !mustFlipG;
+                        }
+                        break;
+                    }
+            }
+
+            if (mustFlipR)
+            {
+                yield return new FlipChannel(FlipChannel.ChannelRed);
+            }
+            if (mustFlipG)
+            {
+                yield return new FlipChannel(FlipChannel.ChannelGreen);
+            }
+            if (mustSwapRG)
+            {
+                yield return new SwapChannel(FlipChannel.ChannelRed, FlipChannel.ChannelGreen);
+            }
         }
 
         private BabylonTexture ExportTexture(ITexmap texMap, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
@@ -900,9 +986,10 @@ namespace Max2Babylon
             if (texture == null)
             {
                 float specialAmount;
-                var specialTexMap = _getSpecialTexmap(texMap, out specialAmount);
+                var specialTexMap = _getSpecialTexmap(texMap, out specialAmount, out var functions);
                 texture = _getBitmapTex(specialTexMap, false);
                 amount *= specialAmount;
+                return ExportBitmapTexture(texture, babylonScene, amount, allowCube, forceAlpha, functions);
             }
 
             return ExportBitmapTexture(texture, babylonScene, amount, allowCube, forceAlpha);
@@ -914,7 +1001,7 @@ namespace Max2Babylon
             return ExportBitmapTexture(texture, babylonScene, amount, allowCube, forceAlpha);
         }
 
-        private BabylonTexture ExportBitmapTexture(IBitmapTex texture, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false)
+        private BabylonTexture ExportBitmapTexture(IBitmapTex texture, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false, bool forceAlpha = false, IEnumerable<TextureOperation> transforms = null)
         {
             if (texture == null)
             {
@@ -944,10 +1031,14 @@ namespace Max2Babylon
                 return textureMap[textureID];
             }
             else
-            { 
+            {
+                TextureOperation[] operations = transforms.ToArray();
+                // combine transform to the destination name.
+                var operationsCodeStr = operations.Length != 0 ? $"_{operations.EncodeName()}" : string.Empty;
+
                 var babylonTexture = new BabylonTexture(textureID)
                 {
-                    name = Path.GetFileNameWithoutExtension(texture.MapName) + "." + validImageFormat
+                    name = $"{Path.GetFileNameWithoutExtension(texture.MapName)}{operationsCodeStr}.{validImageFormat}"
                 };
                 RaiseMessage($"texture id = {babylonTexture.Id}", 2);
 
@@ -984,13 +1075,17 @@ namespace Max2Babylon
                 if (isBabylonExported)
                 {
                     var destPath = Path.Combine(babylonScene.OutputPath, babylonTexture.name);
-                    TextureUtilities.CopyTexture(sourcePath, destPath, exportParameters.txtQuality, this);
+                    TextureUtilities.CopyTexture(sourcePath, operations, destPath, exportParameters.txtQuality, this);
 
                     // Is cube
                     _exportIsCube(Path.Combine(babylonScene.OutputPath, babylonTexture.name), babylonTexture, allowCube);
                 }
                 else
                 {
+                    if (operations.Length != 0)
+                    {
+                        babylonTexture.bitmap = TextureUtilities.GetBitmap(sourcePath, operations, this);
+                    }
                     babylonTexture.isCube = false;
                 }
                 babylonTexture.originalPath = sourcePath;
