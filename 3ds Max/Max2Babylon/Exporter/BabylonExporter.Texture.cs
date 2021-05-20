@@ -824,7 +824,7 @@ namespace Max2Babylon
         // -------------------------
         private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount, out IEnumerable<TextureOperation> operations)
         {
-            operations = default;
+            operations = null;
             amount = 0.0f;
             if (texMap == null)
             {
