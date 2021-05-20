@@ -822,7 +822,6 @@ namespace Max2Babylon
         // -------------------------
         // -- Export sub methods ---
         // -------------------------
-
         private ITexmap _getSpecialTexmap(ITexmap texMap, out float amount, out IEnumerable<TextureOperation> operations)
         {
             operations = default;
@@ -884,7 +883,6 @@ namespace Max2Babylon
             var flipG = block.GetInt(8, 0, 0);          // Normal texture Green chanel Flip
             var swapRG = block.GetInt(9, 0, 0);         // Normal texture swap R and G channels
 
-
             // try to retreive the custom Babylon Attributes
             IICustAttribContainer custAtt = texMap.CustAttribContainer;
             var n = custAtt.NumCustAttribs;
@@ -899,63 +897,41 @@ namespace Max2Babylon
                 }
             }
 
-            MaxNormalMapParameters global = (MaxNormalMapParameters)exportParameters.normalMapParams;
             MaxNormalMapParameters parameters = new MaxNormalMapParameters();
 
             IIParamBlock2 customBlock = att?.GetParamBlockByID(0);
             if (customBlock != null)
             {
-                var useMaxTransforms = customBlock.GetInt(0, 0, 0) != 0;
                 parameters.useMaxTransforms = customBlock.GetInt(0, 0, 0) != 0;
-                parameters.mapFormat = (NormalMapFormat)customBlock.GetInt(1, 0, 0);
+                parameters.Y = (NormalMapY)customBlock.GetInt(1, 0, 0);
+                parameters.Coordinate = (MapCoordinate)customBlock.GetInt(2, 0, 0);
             }
 
-            if (!global.useMaxTransforms)
-            {
-                // global MUST be true to use local parameter 
-                parameters.useMaxTransforms = false;
-
-                // global local result
-                //   0      0     0
-                //   0      1     0 
-                //   1      0     0 
-                //   1      1     1 
-
-            }
-
-            if (parameters.mapFormat == NormalMapFormat.unknown)
-            {
-                // if local is unknown, then the global is take
-                parameters.mapFormat = global.mapFormat;
-
-                // global local result
-                //   1      1     1
-                //   2      1     2
-                //   3      1     3
-
-                //  any    y!=1   y
-            }
-
-            bool mustFlipG = parameters.useMaxTransforms && flipG != 0;
             bool mustFlipR = parameters.useMaxTransforms && flipR != 0;
             bool mustSwapRG = parameters.useMaxTransforms && swapRG != 0;
 
-            switch (parameters.mapFormat)
+            // flip green G = 255-G (individual pixel values into the texture)
+            bool mustFlipG = parameters.useMaxTransforms && flipG != 0;
+            switch (parameters.Y)
             {
-                case NormalMapFormat.opengl:
+                case NormalMapY.positiv:
                     {
+                        // opengl norm
                         if (isBabylonExported)
                         {
-                            // texture source is OpenGL and babylon is DirectX, so we may flip G. May void the Max operation.
+                            // texture source is OpenGL and babylon is DirectX, so we may flip G.
+                            // May void the Max operation if selected.
                             mustFlipG = !mustFlipG;
                         }
                         break;
                     }
-                case NormalMapFormat.directx:
+                case NormalMapY.negativ:
                     {
+                        // directx norm
                         if (isGltfExported)
                         {
-                            // texture source is DirectX and Gltf is OpenGL, so we may flip G. May void the Max operation.
+                            // texture source is DirectX and Gltf is OpenGL, so we may flip G.
+                            // May void the Max operation if selected.
                             mustFlipG = !mustFlipG;
                         }
                         break;
@@ -973,6 +949,37 @@ namespace Max2Babylon
             if (mustSwapRG)
             {
                 yield return new SwapChannel(FlipChannel.ChannelRed, FlipChannel.ChannelGreen);
+            }
+
+            // Invert Y coordinate  Y = 1-Y (physical row layout into the texture)
+            bool mustInvertY = false;
+
+            switch (parameters.Coordinate)
+            {
+                case MapCoordinate.right:
+                    {
+                        // opengl norm
+                        if (isBabylonExported)
+                        {
+                            // texture source is OpenGL and babylon is DirectX, so we may invert Y coordinate. May void the Max operation.
+                            mustInvertY = true;
+                        }
+                        break;
+                    }
+                case MapCoordinate.left:
+                    {
+                        // directx norm
+                        if (isGltfExported)
+                        {
+                            // texture source is DirectX and Gltf is OpenGL, so we may invert Y coordinate. May void the Max operation.
+                            mustInvertY = true;
+                        }
+                        break;
+                    }
+            }
+            if (mustInvertY)
+            {
+                yield return new InvertY();
             }
         }
 

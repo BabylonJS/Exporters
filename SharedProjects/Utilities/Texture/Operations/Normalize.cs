@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Utilities.Texture.Operations
+namespace Utilities
 {
     public class Normalize : TextureOperation
     {
