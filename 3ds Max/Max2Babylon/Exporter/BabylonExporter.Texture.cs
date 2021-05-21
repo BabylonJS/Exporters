@@ -885,6 +885,10 @@ namespace Max2Babylon
 
             // try to retreive the custom Babylon Attributes
             IICustAttribContainer custAtt = texMap.CustAttribContainer;
+            if( custAtt == null)
+            {
+                yield break;
+            }
             var n = custAtt.NumCustAttribs;
             ICustAttrib att = null;
             for (int i = 0; i != n; i++)
@@ -1039,7 +1043,7 @@ namespace Max2Babylon
             }
             else
             {
-                TextureOperation[] operations = transforms.ToArray();
+                TextureOperation[] operations = transforms != null? transforms.ToArray(): new TextureOperation[]{ } ;
                 // combine transform to the destination name.
                 var operationsCodeStr = operations.Length != 0 ? $"_{operations.EncodeName()}" : string.Empty;
 
