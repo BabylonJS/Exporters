@@ -136,9 +136,6 @@ namespace Maya2Babylon
             // User custom attributes
             babylonLight.metadata = ExportCustomAttributeFromTransform(mFnLightTransform);
 
-            MVector vDir = new MVector(0, 0, -1);
-            MTransformationMatrix transformationMatrix;
-
             // Animations
             if (exportParameters.exportAnimations)
             {
@@ -186,13 +183,6 @@ namespace Maya2Babylon
                 ExportHierarchy(babylonLight, mFnLightTransform);
                 // Position / rotation / scaling
                 ExportTransform(babylonLight, mFnLightTransform);
-
-                // Direction
-                vDir = new MVector(0, 0, -1);
-                transformationMatrix = new MTransformationMatrix(mFnLightTransform.transformationMatrix);
-                vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
-                vDir.normalize();
-                babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
             }
 
             // Common fields 
@@ -211,6 +201,7 @@ namespace Maya2Babylon
                     babylonLight.type = 2;
                     babylonLight.angle = (float)mFnSpotLight.coneAngle;
                     babylonLight.exponent = 1;
+                    babylonLight.direction = ComputeDirection(mFnLightTransform, new MVector(0, 0, -1));
 
                     if (mFnSpotLight.useDecayRegions)
                     {
@@ -219,6 +210,7 @@ namespace Maya2Babylon
                     break;
                 case MFn.Type.kDirectionalLight:
                     babylonLight.type = 1;
+                    babylonLight.direction = ComputeDirection(mFnLightTransform, new MVector(0, 0, -1));
                     break;
                 case MFn.Type.kAmbientLight:
                     babylonLight.type = 3;
@@ -231,11 +223,7 @@ namespace Maya2Babylon
                     // Direction
                     if (!createDummy)
                     {
-                        vDir = new MVector(0, 1, 0);
-                        transformationMatrix = new MTransformationMatrix(mFnLightTransform.transformationMatrix);
-                        vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
-                        vDir.normalize();
-                        babylonLight.direction = new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
+                        babylonLight.direction = ComputeDirection(mFnLightTransform, new MVector(0, 1, 0));
                     }
                     break;
                 case MFn.Type.kAreaLight:
@@ -293,5 +281,14 @@ namespace Maya2Babylon
         {
             return IsNodeExportable(mFnDagNode, mDagPath);
         }
-    }
+
+        private float[] ComputeDirection(MFnTransform mFnLightTransform, MVector vDir)
+        {
+            var transformationMatrix = new MTransformationMatrix(mFnLightTransform.transformationMatrix);
+            vDir = vDir.multiply(transformationMatrix.asMatrixProperty);
+            vDir.normalize();
+            return new[] { (float)vDir.x, (float)vDir.y, -(float)vDir.z };
+        }
+
+}
 }
