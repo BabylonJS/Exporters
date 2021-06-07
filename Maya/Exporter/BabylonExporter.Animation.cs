@@ -44,13 +44,16 @@ namespace Maya2Babylon
         {
             try
             {
-                babylonNode.animations = getAnimationsFunc(mFnTransform).ToArray();
-
-                // TODO - Retreive from Maya
-                babylonNode.autoAnimate = true;
-                babylonNode.autoAnimateFrom = Loader.GetMinTime();
-                babylonNode.autoAnimateTo = Loader.GetMaxTime();
-                babylonNode.autoAnimateLoop = true;
+                var animations = getAnimationsFunc(mFnTransform).ToArray();
+                babylonNode.animations = animations != null && animations.Length != 0 ? animations : null;
+                if (babylonNode.animations != null)
+                {
+                    // TODO - Retreive from Maya
+                    babylonNode.autoAnimate = true;
+                    babylonNode.autoAnimateFrom = Loader.GetMinTime();
+                    babylonNode.autoAnimateTo = Loader.GetMaxTime();
+                    babylonNode.autoAnimateLoop = true;
+                }
             }
             catch (Exception e)
             {
