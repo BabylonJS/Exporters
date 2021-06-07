@@ -21,7 +21,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)JsonTextWriterOptimized.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MathUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathUtilities.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TextureUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Texture\Operations\FlipChannel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Texture\Operations\InvertY.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Texture\Operations\Normalize.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Texture\Operations\SwapChannel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Texture\TextureOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Texture\TextureUtilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeViewExtension.cs" />
   </ItemGroup>
   <ItemGroup>
