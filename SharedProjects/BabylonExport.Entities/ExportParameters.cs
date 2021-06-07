@@ -3,6 +3,38 @@ using GLTFExport.Entities;
 
 namespace BabylonExport.Entities
 {
+    public enum NormalMapFormat
+    {
+        unknown = 1,
+        directx = 2,
+        opengl = 3
+    }
+
+    public enum NormalMapY
+    {
+        unknown = 1, positiv = 2, negativ = 3
+    }
+
+    public enum MapCoordinate
+    {
+        unknown = 1, right = 2, left= 3
+    }
+
+
+    public class NormalMapParameters
+    {
+        public const NormalMapY YDefault = NormalMapY.unknown;
+        public const MapCoordinate CoordinateDefault = MapCoordinate.unknown;
+
+        public NormalMapY Y = YDefault;
+        public MapCoordinate Coordinate = CoordinateDefault;
+
+        public bool IsDirectX => Y == NormalMapY.negativ && Coordinate == MapCoordinate.left;
+        public bool IsOpenGL => Y == NormalMapY.positiv && Coordinate == MapCoordinate.right;
+        public bool IsBabylon => IsDirectX;
+        public bool IsGLTF => IsOpenGL;
+    }
+
     // Define the policy use to assign format to aggregated texture such ORM
     public enum TextureFormatExportPolicy
     {

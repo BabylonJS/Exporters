@@ -83,6 +83,8 @@ namespace Max2Babylon
     /// </summary>
     partial class BabylonExporter
     {
+        const string MaterialCustomBabylonAttributeName = "Babylon Attributes";
+
         // use as scale for GetSelfIllumColor to convert [0,PI] to [O,1]
         private const float selfIllumScale = (float)(1.0 / Math.PI);
 
