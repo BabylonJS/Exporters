@@ -52,7 +52,10 @@ version:2
         on BumpBtn pressed do
         (
             local activMaterial =  sme.GetMtlInParamEditor()
-            checkBumpMap(activMaterial.bump_map)
+            -- for PhysicalMaterial
+            if( hasProperty activMaterial "bump_map" ) then checkBumpMap(activMaterial.bump_map)
+            -- for PBRMetalRough and PBRSpecGloss
+            if( hasProperty activMaterial "norm_map" ) then checkBumpMap(activMaterial.norm_map)
         )
     )    
 )
