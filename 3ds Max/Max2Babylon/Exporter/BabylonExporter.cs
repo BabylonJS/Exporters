@@ -32,7 +32,6 @@ namespace Max2Babylon
 
         public const int MaxSceneTicksPerSecond = 4800; //https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/MAXScript-Help/files/GUID-141213A1-B5A8-457B-8838-E602022C8798-htm.html
 
-
         public void CheckCancelled()
         {
             Application.DoEvents();
@@ -567,41 +566,38 @@ namespace Max2Babylon
                 }
             }
 
-            if (exportParameters.scaleFactor != 1.0f)
+            RaiseMessage(String.Format("A root node is added to globally scale the scene by {0}", exportParameters.scaleFactor), 1);
+
+            // Create root node for scaling
+            BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
+            rootNode.isDummy = true;
+            float rootNodeScale = exportParameters.scaleFactor;
+            rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
+
+            if (ExportQuaternionsInsteadOfEulers)
             {
-                RaiseMessage(String.Format("A root node is added to globally scale the scene by {0}", exportParameters.scaleFactor), 1);
-
-                // Create root node for scaling
-                BabylonMesh rootNode = new BabylonMesh { name = "root", id = Guid.NewGuid().ToString() };
-                rootNode.isDummy = true;
-                float rootNodeScale = exportParameters.scaleFactor;
-                rootNode.scaling = new float[3] { rootNodeScale, rootNodeScale, rootNodeScale };
-
-                if (ExportQuaternionsInsteadOfEulers)
-                {
-                    rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
-                }
-                else
-                {
-                    rootNode.rotation = new float[] { 0, 0, 0 };
-                }
-
-                // Update all top nodes
-                var babylonNodes = new List<BabylonNode>();
-                babylonNodes.AddRange(babylonScene.MeshesList);
-                babylonNodes.AddRange(babylonScene.CamerasList);
-                babylonNodes.AddRange(babylonScene.LightsList);
-                foreach (BabylonNode babylonNode in babylonNodes)
-                {
-                    if (babylonNode.parentId == null)
-                    {
-                        babylonNode.parentId = rootNode.id;
-                    }
-                }
-
-                // Store root node
-                babylonScene.MeshesList.Add(rootNode);
+                rootNode.rotationQuaternion = new float[] { 0, 0, 0, 1 };
             }
+            else
+            {
+                rootNode.rotation = new float[] { 0, 0, 0 };
+            }
+
+            // Update all top nodes
+            var babylonNodes = new List<BabylonNode>();
+            babylonNodes.AddRange(babylonScene.MeshesList);
+            babylonNodes.AddRange(babylonScene.CamerasList);
+            babylonNodes.AddRange(babylonScene.LightsList);
+            foreach (BabylonNode babylonNode in babylonNodes)
+            {
+                if (babylonNode.parentId == null)
+                {
+                    babylonNode.parentId = rootNode.id;
+                }
+            }
+
+            // Store root node
+            babylonScene.MeshesList.Add(rootNode);
 #if DEBUG
             var nodesExportTime = watch.ElapsedMilliseconds / 1000.0 - flattenTime;
             RaiseMessage($"Nodes exported in {nodesExportTime:0.00}s", Color.Blue);

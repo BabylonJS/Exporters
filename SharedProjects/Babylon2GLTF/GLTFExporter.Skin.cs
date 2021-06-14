@@ -93,8 +93,10 @@ namespace Babylon2GLTF
             );
             gltfSkin.inverseBindMatrices = accessorInverseBindMatrices.index;
 
-            // World matrix of the node
-            var nodeWorldMatrix = _getNodeWorldMatrix(gltfNode);
+            // World matrix of the node. Tell the exporter to avoid the root, otherwise the 
+            // inverseBindMatrices will be corrupted by this transformation purpose only matrix
+            // added at Babylon tree level.
+            var nodeWorldMatrix = _getNodeWorldMatrix(gltfNode, true);
 
             var gltfJoints = new List<int>();
 
@@ -185,33 +187,32 @@ namespace Babylon2GLTF
             );
         }
 
-        private BabylonMatrix _getNodeWorldMatrix(GLTFNode gltfNode)
+        private BabylonMatrix _getNodeWorldMatrix(GLTFNode gltfNode, bool avoidRoot = false)
         {
             if (gltfNode.parent == null)
             {
-                return _getNodeLocalMatrix(gltfNode);
+                return avoidRoot? BabylonMatrix.Identity():_getNodeLocalMatrix(gltfNode);
             }
-            else
-            {
-                return _getNodeLocalMatrix(gltfNode) * _getNodeWorldMatrix(gltfNode.parent);
-            }
+            return _getNodeLocalMatrix(gltfNode) * _getNodeWorldMatrix(gltfNode.parent, avoidRoot);
         }
 
-        private BabylonMatrix _getBoneWorldMatrix(BabylonBone babylonBone, List<BabylonBone> bones)
-        {
-            var boneLocalMatrix = new BabylonMatrix();
-            boneLocalMatrix.m = babylonBone.matrix;
-            if (babylonBone.parentBoneIndex == -1)
-            {
-                return boneLocalMatrix;
-            }
-            else
-            {
-                var parentBabylonBone = bones.Find(bone => bone.index == babylonBone.parentBoneIndex);
-                var parentWorldMatrix = _getBoneWorldMatrix(parentBabylonBone, bones);
-                return boneLocalMatrix * parentWorldMatrix;
-            }
-        }
+        // TODO clean up
+
+        //private BabylonMatrix _getBoneWorldMatrix(BabylonBone babylonBone, List<BabylonBone> bones)
+        //{
+        //    var boneLocalMatrix = new BabylonMatrix();
+        //    boneLocalMatrix.m = babylonBone.matrix;
+        //    if (babylonBone.parentBoneIndex == -1)
+        //    {
+        //        return boneLocalMatrix;
+        //    }
+        //    else
+        //    {
+        //        var parentBabylonBone = bones.Find(bone => bone.index == babylonBone.parentBoneIndex);
+        //        var parentWorldMatrix = _getBoneWorldMatrix(parentBabylonBone, bones);
+        //        return boneLocalMatrix * parentWorldMatrix;
+        //    }
+        //}
 
         // TODO clean up
         private BabylonMatrix _removeScale(BabylonMatrix boneWorldMatrix)
