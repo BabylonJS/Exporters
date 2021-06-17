@@ -47,5 +47,15 @@ version:2
         label babylonTransparencyMode_label "Transparency Mode " Align: #Left across:2
         dropdownlist babylonTransparencyMode_dd  items:# ("Opaque","Cutoff","Blend") selection:(babylonTransparencyMode+1) Align: #Right
         on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1
+
+        button BumpBtn  "Add Normal bump(s) attributes" tooltip:"Adds additional attributes to normal maps to help the exporter manage the input format."
+        on BumpBtn pressed do
+        (
+            local activMaterial =  sme.GetMtlInParamEditor()
+            -- for PhysicalMaterial
+            if( hasProperty activMaterial "bump_map" ) then checkBumpMap(activMaterial.bump_map)
+            -- for PBRMetalRough and PBRSpecGloss
+            if( hasProperty activMaterial "norm_map" ) then checkBumpMap(activMaterial.norm_map)
+        )
     )    
 )
