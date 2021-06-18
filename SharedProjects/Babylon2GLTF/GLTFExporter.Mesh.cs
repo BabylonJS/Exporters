@@ -63,7 +63,6 @@ namespace Babylon2GLTF
 
                 // Switch coordinate system at object level
                 globalVertex.Position.Z *= -1;
-                globalVertex.Position *= exportParameters.scaleFactor;
 
                 if (hasNormals)
                 {
