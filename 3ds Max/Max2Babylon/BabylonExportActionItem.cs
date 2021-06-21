@@ -39,10 +39,7 @@ namespace Max2Babylon
             form = null;
         }
 
-        public override int Id_
-        {
-            get { return 1; }
-        }
+        public override int Id_ => 1;
 
         public override string ButtonText
         {
@@ -56,7 +53,7 @@ namespace Max2Babylon
 
         public override string DescriptionText
         {
-            get { return "Generate a babylon.js scene file2"; }
+            get { return "Babylon - Generate a babylon.js scene file2"; }
         }
 
         public override string CategoryText

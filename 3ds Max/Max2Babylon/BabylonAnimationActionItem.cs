@@ -59,10 +59,7 @@ namespace Max2Babylon
             }
         }
 
-		public override int Id_
-		{
-			get { return 2; }
-		}
+		public override int Id_ => 3;
 
 		public override string ButtonText
 		{
@@ -76,7 +73,7 @@ namespace Max2Babylon
 
 		public override string DescriptionText
 		{
-			get { return "UI to manage babylon animation groups for this scene"; }
+			get { return "Babylon - manage animation groups for this scene"; }
 		}
 
 		public override string CategoryText
