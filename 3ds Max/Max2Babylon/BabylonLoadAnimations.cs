@@ -31,11 +31,7 @@ namespace Max2Babylon
             return;
         }
 
-        public override int Id_
-        {
-            get { return 1; }
-        }
-
+        public override int Id_ => 5;
         public override string ButtonText
         {
             get { return "Babylon Load AnimationGroups"; }
@@ -59,7 +55,7 @@ namespace Max2Babylon
 
         public override string DescriptionText
         {
-            get { return "Load AnimationGroups from Scnene or selected Containers"; }
+            get { return "Babylon - Load AnimationGroups from Scnene or selected Containers"; }
         }
 
         public override string CategoryText

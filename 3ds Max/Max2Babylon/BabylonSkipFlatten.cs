@@ -22,10 +22,7 @@ namespace Max2Babylon
             return;
         }
 
-        public override int Id_
-        {
-            get { return 1; }
-        }
+        public override int Id_ => 6;
 
         public override string ButtonText
         {
@@ -53,7 +50,7 @@ namespace Max2Babylon
 
         public override string DescriptionText
         {
-            get { return "Toggle skip flatten status"; }
+            get { return "Babylon - Toggle skip flatten status"; }
         }
 
         public override string CategoryText

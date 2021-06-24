@@ -33,10 +33,7 @@ namespace Max2Babylon
             return;
         }
 
-        public override int Id_
-        {
-            get { return 1; }
-        }
+        public override int Id_ => 4;
 
         public override string ButtonText
         {
@@ -61,7 +58,7 @@ namespace Max2Babylon
 
         public override string DescriptionText
         {
-            get { return "Copy AnimationGroups into a BabylonAnimationHelper or a BabylonContainerHelper"; }
+            get { return "Babylon - Copy AnimationGroups into a BabylonAnimationHelper or a BabylonContainerHelper"; }
         }
 
         public override string CategoryText
