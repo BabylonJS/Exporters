@@ -48,10 +48,7 @@ namespace Max2Babylon
 
         }
 
-        public override int Id_
-        {
-            get { return 1; }
-        }
+        public override int Id_ => 2;
 
         public override string ButtonText
         {
@@ -65,7 +62,7 @@ namespace Max2Babylon
 
         public override string DescriptionText
         {
-            get { return "UI for setting Babylon.js specific properties"; }
+            get { return "Babylon - setting specific properties"; }
         }
 
         public override string CategoryText
