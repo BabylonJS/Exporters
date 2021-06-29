@@ -390,7 +390,7 @@ namespace Max2Babylon
                 var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
                 var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
-                var optimizeVertices = meshNode.MaxNode.GetBoolProperty("babylonjs_optimizevertices");
+                var optimizeVertices = !meshNode.MaxNode.GetBoolProperty("babylonjs_quickexport");
 
                 var invertedWorldMatrix = GetInvertWorldTM(meshNode, 0);
                 var offsetTM = GetOffsetTM(meshNode, 0);
