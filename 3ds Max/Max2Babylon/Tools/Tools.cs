@@ -225,7 +225,7 @@ namespace Max2Babylon
             return (IIGameMorpher)constructor.Invoke(new object[] { obj.GetNativeHandle(), false });
         }
 
-        public const float Epsilon = 0.001f;
+        public const float Epsilon = 0.000001f;
 
         public static IPoint3 XAxis { get { return Loader.Global.Point3.Create(1, 0, 0); } }
         public static IPoint3 YAxis { get { return Loader.Global.Point3.Create(0, 1, 0); } }
