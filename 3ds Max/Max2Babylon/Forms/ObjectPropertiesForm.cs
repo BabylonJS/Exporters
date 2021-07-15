@@ -19,7 +19,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkNoExport, objects, "babylonjs_noexport");
             Tools.UpdateCheckBox(chkCollisions, objects, "babylonjs_checkcollisions");
             Tools.UpdateCheckBox(chkPickable, objects, "babylonjs_checkpickable");
-            Tools.UpdateCheckBox(chkOptimize, objects, "babylonjs_optimizevertices");
+            Tools.UpdateCheckBox(chkOptimize, objects, "babylonjs_quickexport");
             Tools.UpdateCheckBox(chkShowBoundingBox, objects, "babylonjs_showboundingbox");
             Tools.UpdateCheckBox(chkShowSubMeshesBoundingBox, objects, "babylonjs_showsubmeshesboundingbox");
 
@@ -75,7 +75,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkNoExport, objects, "babylonjs_noexport");
             Tools.PrepareCheckBox(chkCollisions, objects, "babylonjs_checkcollisions");
             Tools.PrepareCheckBox(chkPickable, objects, "babylonjs_checkpickable");
-            Tools.PrepareCheckBox(chkOptimize, objects, "babylonjs_optimizevertices");
+            Tools.PrepareCheckBox(chkOptimize, objects, "babylonjs_quickexport", 1);
             Tools.PrepareCheckBox(chkShowBoundingBox, objects, "babylonjs_showboundingbox");
             Tools.PrepareCheckBox(chkShowSubMeshesBoundingBox, objects, "babylonjs_showsubmeshesboundingbox");
 
