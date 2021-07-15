@@ -259,7 +259,7 @@ namespace Max2Babylon
             this.chkOptimize.Name = "chkOptimize";
             this.chkOptimize.Size = new System.Drawing.Size(131, 17);
             this.chkOptimize.TabIndex = 14;
-            this.chkOptimize.Text = "Try to optimize vertices";
+            this.chkOptimize.Text = "Quick Export (unoptimized)";
             this.chkOptimize.ThreeState = true;
             this.chkOptimize.UseVisualStyleBackColor = true;
             // 
