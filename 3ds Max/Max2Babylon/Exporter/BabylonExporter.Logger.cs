@@ -88,7 +88,11 @@ namespace Max2Babylon
                 {
                     ParamType2 paramType = paramBlock.GetParameterType(i);
 
+#if MAX2022
+                    RaiseVerbose("paramBlock.GetLocalName(" + i + ")=" + paramBlock.GetLocalName(i, 0, false) + ", type=" + paramType, logRank + 1);
+#else
                     RaiseVerbose("paramBlock.GetLocalName(" + i + ")=" + paramBlock.GetLocalName(i, 0) + ", type=" + paramType, logRank + 1);
+#endif
                     switch (paramType)
                     {
                         case ParamType2.String:

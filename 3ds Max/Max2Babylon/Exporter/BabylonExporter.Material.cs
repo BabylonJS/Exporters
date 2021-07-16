@@ -1160,7 +1160,12 @@ namespace Max2Babylon
 
         private void AddAiStandardSurfaceBabylonAttributes(string attributesContainer, BabylonPBRMetallicRoughnessMaterial babylonMaterial = null) => AddCustomAttributes(attributesContainer, MaterialScripts.AIBabylonCAtDef, "ARNOLD_MATERIAL_CAT_DEF");
 
-        private void AddCustomAttributes(string attributesContainer, string cmdCreateBabylonAttributes, string def) => ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def));
+        private void AddCustomAttributes(string attributesContainer, string cmdCreateBabylonAttributes, string def) =>
+#if MAX2022
+            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def), ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
+#else
+        ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def));
+#endif
 
 
         private void ExportCommonBabylonAttributes(IIPropertyContainer babylonAttributesContainer, BabylonMaterial babylonMaterial)
