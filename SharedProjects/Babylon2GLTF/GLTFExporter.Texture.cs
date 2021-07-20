@@ -259,7 +259,7 @@ namespace Babylon2GLTF
                     gltfTextureInfo.scale = babylonTexture.level;
                 }
 
-                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == 1) || !(babylonTexture.wAng == 0))
+                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == -1) || !(babylonTexture.wAng == 0))
                 {
                     // Add texture extension if enabled in the export settings
                     if (exportParameters.enableKHRTextureTransform)
@@ -268,7 +268,6 @@ namespace Babylon2GLTF
                     }
                     else
                     {
-                        logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                         logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                     }
                 }
