@@ -259,18 +259,8 @@ namespace Babylon2GLTF
                     gltfTextureInfo.scale = babylonTexture.level;
                 }
 
-                if (!(babylonTexture.uOffset == 0) || !(babylonTexture.vOffset == 0) || !(babylonTexture.uScale == 1) || !(babylonTexture.vScale == -1) || !(babylonTexture.wAng == 0))
-                {
-                    // Add texture extension if enabled in the export settings
-                    if (exportParameters.enableKHRTextureTransform)
-                    {
-                        AddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
-                    }
-                    else
-                    {
-                        logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
-                    }
-                }
+                TryAddTextureTransformExtension(ref gltf, ref gltfTextureInfo, babylonTexture);
+
                 var textureID = name + TextureTransformID(gltfTextureInfo);
                 // Check for texture optimization.  This is done here after the texture transform has been potentially applied to the texture extension
                 if (CheckIfImageIsRegistered(textureID))
@@ -292,18 +282,17 @@ namespace Babylon2GLTF
         {
             if (gltfTextureInfo.extensions == null || !gltfTextureInfo.extensions.ContainsKey(KHR_texture_transform))
             {
-                return "";
+                return string.Empty;
             }
-            else { 
-                // Set an id for the texture transform and append to the name
-                KHR_texture_transform textureTransform = gltfTextureInfo.extensions[GLTFExporter.KHR_texture_transform] as KHR_texture_transform;
-                var offsetID = textureTransform.offset[0] + "_" + textureTransform.offset[1];
-                var rotationID = textureTransform.rotation.ToString();
-                var scaleID = textureTransform.scale[0] + "_" + textureTransform.scale[1];
-                var textureTransformID = offsetID + "_" + rotationID + "_" + scaleID;
 
-                return textureTransformID;
-            }
+            // Set an id for the texture transform and append to the name
+            KHR_texture_transform textureTransform = gltfTextureInfo.extensions[GLTFExporter.KHR_texture_transform] as KHR_texture_transform;
+            var offsetID = textureTransform.offset[0] + "_" + textureTransform.offset[1];
+            var rotationID = textureTransform.rotation.ToString();
+            var scaleID = textureTransform.scale[0] + "_" + textureTransform.scale[1];
+            var textureTransformID = offsetID + "_" + rotationID + "_" + scaleID;
+
+            return textureTransformID;
         }
 
         private GLTFTextureInfo ExportEmissiveTexture(BabylonStandardMaterial babylonMaterial, GLTF gltf, float[] defaultEmissive, float[] defaultDiffuse)
@@ -467,8 +456,28 @@ namespace Babylon2GLTF
         /// </summary>
         /// <param name="gltf"></param>
         /// <param name="babylonMaterial"></param>
-        private void AddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
+        private bool TryAddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
         {
+            var uOffset = babylonTexture.uOffset;
+            var vOffset = -babylonTexture.vOffset;
+            var uScale = babylonTexture.uScale;
+            var vScale = -babylonTexture.vScale;
+            var wAng =  babylonTexture.wAng;
+
+            // Add texture extension only if needed
+            if (uOffset == 0 && vOffset == 0 && uScale == 1 && vScale == 1 && babylonTexture.wAng == 0)
+            {
+                return false;
+            }
+
+            // Add texture extension if enabled in the export settings
+            if (!exportParameters.enableKHRTextureTransform)
+            {
+                logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
+                return false;
+            }
+ 
+            // finally add texture extension
             if (!gltf.extensionsUsed.Contains(KHR_texture_transform))
             {
                 gltf.extensionsUsed.Add(KHR_texture_transform);
@@ -478,23 +487,20 @@ namespace Babylon2GLTF
                 gltf.extensionsRequired.Add(KHR_texture_transform);
             }
 
-            float angle = babylonTexture.wAng;
-            float angleDirect = -babylonTexture.wAng;
-
             KHR_texture_transform textureTransform = new KHR_texture_transform
             {
-                offset = new float[] { babylonTexture.uOffset, -babylonTexture.vOffset },
-                rotation = angle,
-                scale = new float[] { babylonTexture.uScale, -babylonTexture.vScale },
+                offset = new float[] { uOffset, vOffset },
+                rotation = wAng,
+                scale = new float[] { uScale, vScale },
                 texCoord = babylonTexture.coordinatesIndex
             };
-
 
             if (gltfTextureInfo.extensions == null)
             {
                 gltfTextureInfo.extensions = new GLTFExtensions();
             }
             gltfTextureInfo.extensions[KHR_texture_transform] = textureTransform;
+            return true;
         }
 
         private GLTFBufferView WriteImageToGltfBuffer(GLTF gltf, GLTFImage gltfImage, string imageSourcePath = null, Bitmap imageBitmap = null, long textureQuality = 100)
