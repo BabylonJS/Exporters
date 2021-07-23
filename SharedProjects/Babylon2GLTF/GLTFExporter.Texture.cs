@@ -177,7 +177,7 @@ namespace Babylon2GLTF
                     if (!string.IsNullOrWhiteSpace(exportParameters.textureFolder))
                     {
                         textureUri = PathUtilities.GetRelativePath( exportParameters.outputPath,exportParameters.textureFolder);
-                        textureUri = IsLocalRootPath(textureUri) ? ImageName : Path.Combine(textureUri, ImageName);
+                        textureUri = PathUtilities.IsLocalRootPath(textureUri) ? ImageName : Path.Combine(textureUri, ImageName);
                     }
                     gltfImage = new GLTFImage
                     {
@@ -277,7 +277,6 @@ namespace Babylon2GLTF
             }
         }
 
-        private bool IsLocalRootPath(string path) => string.IsNullOrEmpty(path) || path.CompareTo("./") == 0 || path.CompareTo(".") == 0;
 
         private string TextureTransformID(GLTFTextureInfo gltfTextureInfo)
         {

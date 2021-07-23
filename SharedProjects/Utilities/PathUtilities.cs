@@ -66,6 +66,8 @@ namespace Utilities
             return r.Replace(fileName, "_");
             //source: https://stackoverflow.com/a/146162/301388
         }
+
+        public static bool IsLocalRootPath(string path) => string.IsNullOrEmpty(path) || path.CompareTo("./") == 0 || path.CompareTo(".") == 0;
     }
 
 
