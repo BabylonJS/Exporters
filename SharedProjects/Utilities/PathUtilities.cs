@@ -6,6 +6,8 @@ namespace Utilities
 {
     static class PathUtilities
     {
+        public static string LocalDir = ".";
+        public static string LocalDirPath = $"{LocalDir}{Path.DirectorySeparatorChar}";
 
         /// <summary>
         /// Creates a relative path from one file or folder to another. Input paths that are directories should have a trailing slash.
@@ -67,7 +69,7 @@ namespace Utilities
             //source: https://stackoverflow.com/a/146162/301388
         }
 
-        public static bool IsLocalRootPath(string path) => string.IsNullOrEmpty(path) || path.CompareTo("./") == 0 || path.CompareTo(".") == 0;
+        public static bool IsLocalRootPath(string path) => string.IsNullOrEmpty(path) || path.CompareTo(LocalDirPath) == 0 || path.CompareTo(LocalDir) == 0;
     }
 
 
