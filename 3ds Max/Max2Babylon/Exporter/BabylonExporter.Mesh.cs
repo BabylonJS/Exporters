@@ -96,7 +96,7 @@ namespace Max2Babylon
             RaiseMessage(meshNode.Name, 1);
 
             // Instances
-#if MAX2020 || MAX2021
+#if MAX2020 || MAX2021 || MAX2022
             var tabs = Loader.Global.INodeTab.Create();
 #else
             var tabs = Loader.Global.NodeTab.Create();
@@ -112,7 +112,7 @@ namespace Max2Babylon
                 // Check if this mesh has already been exported
                 for (int index = 0; index < tabs.Count; index++)
                 {
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022
                     var tab = tabs[index];
 #else
                     var tab = tabs[new IntPtr(index)];
@@ -212,7 +212,7 @@ namespace Max2Babylon
             }
 
             // Misc.
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022
             babylonMesh.isVisible = meshNode.MaxNode.Renderable;
             babylonMesh.receiveShadows = meshNode.MaxNode.RcvShadows;
             babylonMesh.applyFog = meshNode.MaxNode.ApplyAtmospherics;
@@ -373,7 +373,7 @@ namespace Max2Babylon
                 bool hasUV2 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022
                     var channelNum = mappingChannels[i];
 #else
                     var channelNum = mappingChannels[new IntPtr(i)];
@@ -642,7 +642,11 @@ namespace Max2Babylon
             // the needed function is not available on the .net SDK, then we have to use Max Script.
             // TODO : use direct instance instead of manipulate string
             var script = $"with printAllElements on (for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)) as string";
+#if MAX2022
+            var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script, ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
+#else
             var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script);
+#endif
             if (!String.IsNullOrEmpty(str))
             {
                 // we obtain a list of Point3 as string in a format of #([5.69523,-58.2409,65.1479],...)
@@ -934,7 +938,7 @@ namespace Max2Babylon
                             if (storeFaceIndexes)
                             {
                                 // Retreive face
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022
                                 face = materialFaces[j];
 #else
                                 face = materialFaces[new IntPtr(j)];
