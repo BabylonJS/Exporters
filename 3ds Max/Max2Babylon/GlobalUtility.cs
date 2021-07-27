@@ -181,7 +181,11 @@ namespace Max2Babylon
                 idActionTable = (uint)actionManager.NumActionTables;
 
                 string actionTableName = "Babylon Actions";
+#if MAX2022
+                actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, actionTableName);
+#else
                 actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, ref actionTableName);
+#endif
                 babylonExportActionItem = new BabylonExportActionItem();
                 actionTable.AppendOperation(babylonExportActionItem);
                 actionTable.AppendOperation(new BabylonPropertiesActionItem()); // Babylon Properties forms are modals => no need to store reference
@@ -351,7 +355,12 @@ namespace Max2Babylon
 
         private void AddCallbacks() 
         {
-            foreach (var s in MaterialScripts.AddCallbacks()) ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
-        }
+            foreach (var s in MaterialScripts.AddCallbacks())
+#if MAX2022
+                ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s,ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
+#else
+                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
+#endif
+       }
     }
 }

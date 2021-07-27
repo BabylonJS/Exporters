@@ -65,8 +65,6 @@ COPY %source_dir%\Microsoft.WindowsAPICodePack.ShellExtensions.dll %dest_dir%\Mi
 if exist %dest_dir%\Max2Babylon.dll del /f /q %dest_dir%\Max2Babylon.dll
 COPY %source_dir%\Max2Babylon.dll %dest_dir%\Max2Babylon.dll
 
-
-
 IF %1=="Debug" GOTO DebugOnMax
 GOTO Close
 
