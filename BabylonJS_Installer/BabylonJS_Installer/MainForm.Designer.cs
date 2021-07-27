@@ -189,6 +189,7 @@ namespace BabylonJS_Installer
             this.button_Max22_Locate.TabIndex = 1;
             this.button_Max22_Locate.Text = "(re)Locate";
             this.button_Max22_Locate.UseVisualStyleBackColor = true;
+            this.button_Max22_Locate.Click += new System.EventHandler(this.Button_Max22_Locate_Click);
             // 
             // button_Max22_Delete
             // 
@@ -199,6 +200,7 @@ namespace BabylonJS_Installer
             this.button_Max22_Delete.TabIndex = 3;
             this.button_Max22_Delete.Text = "Uninstall";
             this.button_Max22_Delete.UseVisualStyleBackColor = true;
+            this.button_Max22_Delete.Click += new System.EventHandler(this.Button_Max22_Delete_Click);
             // 
             // label_Max22_ExpDate
             // 
@@ -219,6 +221,7 @@ namespace BabylonJS_Installer
             this.button_Max22_Update.TabIndex = 2;
             this.button_Max22_Update.Text = "Update";
             this.button_Max22_Update.UseVisualStyleBackColor = true;
+            this.button_Max22_Update.Click += new System.EventHandler(this.Button_Max22_Update_Click);
             // 
             // label_Max22_Info
             // 
