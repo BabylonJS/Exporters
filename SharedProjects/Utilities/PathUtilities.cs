@@ -6,6 +6,9 @@ namespace Utilities
 {
     static class PathUtilities
     {
+        public static string LocalDir = ".";
+        public static string LocalDirPath = $"{LocalDir}{Path.DirectorySeparatorChar}";
+        public static string AltLocalDirPath = $"{LocalDir}{Path.AltDirectorySeparatorChar}";
 
         /// <summary>
         /// Creates a relative path from one file or folder to another. Input paths that are directories should have a trailing slash.
@@ -66,6 +69,8 @@ namespace Utilities
             return r.Replace(fileName, "_");
             //source: https://stackoverflow.com/a/146162/301388
         }
+
+        public static bool IsLocalRootPath(string path) => string.IsNullOrEmpty(path) || path.CompareTo(AltLocalDirPath) == 0 || path.CompareTo(LocalDirPath) == 0 || path.CompareTo(LocalDir) == 0;
     }
 
 
