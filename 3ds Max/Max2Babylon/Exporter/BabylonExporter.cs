@@ -291,7 +291,7 @@ namespace Max2Babylon
             var gameScene = Loader.Global.IGameInterface;
             if (exportNode == null || exportNode.IsRootNode)
             {
-                gameScene.InitialiseIGame(false);
+                gameScene.InitialiseIGame(exportParameters.exportOnlySelected);
             }
             else
             {
