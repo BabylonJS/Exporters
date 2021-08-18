@@ -530,9 +530,16 @@ namespace Max2Babylon
                             bool mustRebuildMorphTarget = (maxMorphTarget == null || optimizeVertices );
                             if (mustRebuildMorphTarget)
                             {
-                                maxMorphTarget = null; // force target to be null anyway ie- when optimize on.
                                 string actionStr = exportParameters.rebuildMorphTarget ? $" trying to rebuild {i}." : string.Empty;
-                                RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}",3);
+                                if (maxMorphTarget == null)
+                                {
+                                    RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}", 3);
+                                } 
+                                else
+                                {
+                                    RaiseWarning($"Morph target [{i}] MUST be rebuilt to avoid artifacts, using the vertices export process.{actionStr}", 3);
+                                    maxMorphTarget = null; // force target to be null anyway ie- when optimize on.
+                                }
                             }
 
                             // Target geometry - this is where we rebuild the target if necessary
