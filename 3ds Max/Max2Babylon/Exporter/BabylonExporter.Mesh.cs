@@ -390,7 +390,8 @@ namespace Max2Babylon
                 var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
                 var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
-                var optimizeVertices = !meshNode.MaxNode.GetBoolProperty("babylonjs_quickexport");
+                bool quickExport = meshNode.MaxNode.GetBoolProperty("babylonjs_quickexport");
+                bool optimizeVertices = !quickExport;
 
                 var invertedWorldMatrix = GetInvertWorldTM(meshNode, 0);
                 var offsetTM = GetOffsetTM(meshNode, 0);
@@ -524,11 +525,21 @@ namespace Max2Babylon
                         {
                             // Morph target
                             var maxMorphTarget = morpher.GetMorphTarget(i);
-                            bool mustRebuildMorphTarget = maxMorphTarget == null;
+                            // here we avoid to extract vertices in an optimize way, du to the fact that the actual optimize process is NOT garanty to keep a one to one relationship
+                            // with the source and target vertices.
+                            bool mustRebuildMorphTarget = (maxMorphTarget == null || optimizeVertices );
                             if (mustRebuildMorphTarget)
                             {
                                 string actionStr = exportParameters.rebuildMorphTarget ? $" trying to rebuild {i}." : string.Empty;
-                                RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}",3);
+                                if (maxMorphTarget == null)
+                                {
+                                    RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}", 3);
+                                } 
+                                else
+                                {
+                                    RaiseWarning($"Morph target [{i}] MUST be rebuilt to avoid artifacts, using the vertices export process.{actionStr}", 3);
+                                    maxMorphTarget = null; // force target to be null anyway ie- when optimize on.
+                                }
                             }
 
                             // Target geometry - this is where we rebuild the target if necessary
@@ -612,7 +623,7 @@ namespace Max2Babylon
 
         private IEnumerable<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
         {
-            if (maxMorphTarget != null)
+            if (maxMorphTarget != null )
             {
                 foreach(var v in ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes))
                 {
