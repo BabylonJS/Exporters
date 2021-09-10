@@ -1173,6 +1173,24 @@ namespace Max2Babylon
             return texMap;
         }
 
+#if DEBUG
+        private string MaxTextureTransformToString(IStdUVGen uvGen, int t = 0)
+        {
+            var offsetStr = $"offset:{{u:{uvGen.GetUOffs(t)}, v:{uvGen.GetVOffs(t)}}}";
+            var scaleStr = $"scale:{{u:{uvGen.GetUScl(t)}, v:{uvGen.GetVScl(t)}}}";
+            var rotStr = $"rotation:{{u:{uvGen.GetUAng(t)}, v:{uvGen.GetVAng(t)}, w:{uvGen.GetWAng(t)}}}";
+            return $"MAX:{{{offsetStr},{scaleStr},{rotStr}}}";
+        }
+        private string BabylonTextureTransformToString(BabylonTexture babylonTexture)
+        {
+            var offsetStr = $"offset:{{u:{babylonTexture.uOffset}, v:{babylonTexture.vOffset}}}";
+            var scaleStr = $"scale:{{u:{babylonTexture.uScale}, v:{babylonTexture.vScale}}}";
+            var rotStr = $"rotation:{{u:{babylonTexture.uAng}, v:{babylonTexture.vAng}, w:{babylonTexture.wAng}}}";
+            var rotCenterStr = $"rotationCenter:{{u:{babylonTexture.uRotationCenter}, v:{babylonTexture.vRotationCenter}, w:{babylonTexture.wRotationCenter}}}";
+            return $"BABYLON:{{{offsetStr},{scaleStr},{rotStr},{rotCenterStr}}}";
+        }
+#endif
+
         private IStdUVGen _exportUV(IStdUVGen uvGen, BabylonTexture babylonTexture)
         {
             switch (uvGen.GetCoordMapping(0))
@@ -1194,33 +1212,53 @@ namespace Max2Babylon
                 RaiseWarning(string.Format("Unsupported map channel, Only channel 1 and 2 are supported."), 3);
             }
 
-            babylonTexture.uOffset = uvGen.GetUOffs(0);
-            babylonTexture.vOffset = -uvGen.GetVOffs(0);
+#if DEBUG
+            RaiseMessage(MaxTextureTransformToString(uvGen));
+#endif 
 
-            babylonTexture.uScale = uvGen.GetUScl(0);
-            babylonTexture.vScale = uvGen.GetVScl(0);
-
-            var offset = new BabylonVector3(babylonTexture.uOffset, -babylonTexture.vOffset, 0);
-            var scale = new BabylonVector3(babylonTexture.uScale, babylonTexture.vScale, 1);
-            var rotationEuler = new BabylonVector3(uvGen.GetUAng(0), uvGen.GetVAng(0), uvGen.GetWAng(0));
-            var rotation = BabylonQuaternion.FromEulerAngles(rotationEuler.X, rotationEuler.Y, rotationEuler.Z);
-            var pivotCenter = new BabylonVector3(-0.5f, -0.5f, 0);
-            var transformMatrix = MathUtilities.ComputeTextureTransformMatrix(pivotCenter, offset, rotation, scale);
-
-            transformMatrix.decompose(scale, rotation, offset);
-            var texTransformRotationEuler = rotation.toEulerAngles();
-
-            babylonTexture.uOffset = -offset.X;
-            babylonTexture.vOffset = -offset.Y;
+     
+ 
+            //note: Max is defining offset displacement when Babylon is defining origin of the texture
+            //positiv offset in Max mean Negative offset in Babylon(Inverse transform)
+            var offset = new BabylonVector3(-uvGen.GetUOffs(0), -uvGen.GetVOffs(0), 0);
+            var scale = new BabylonVector3(uvGen.GetUScl(0), uvGen.GetVScl(0), 1);
+            //max rotation is horlogic, while here we move using trigonometric, so anti - horlogic
+            var rotationEuler = new BabylonVector3(-uvGen.GetUAng(0), -uvGen.GetVAng(0), -uvGen.GetWAng(0));
+            
+            var center = new BabylonVector3(0.5f, 0.5f, 0); // max ref is center of the texture
+            var pivot = center - offset;
+            
+            if (this.isBabylonExported)
+            {
+                 // rotation center is very specific to webGL, so using lower left corner as reference 
+                babylonTexture.uRotationCenter = pivot.X;
+                babylonTexture.vRotationCenter = pivot.Y;
+            } 
+            else
+            {
+                // might be something it did not support RotationCenter
+                // update offset accordingly
+                var origin = new BabylonVector3(0, 1f, 0); // upper left corner
+                // inverse transfoorms to change reference 
+                var translateToOrigin = BabylonMatrix.Translation(-pivot);
+                var rotate = BabylonMatrix.RotationZ(-rotationEuler.Z);
+                // because we want to keep the offset, so bring back to the center
+                var translateBack = BabylonMatrix.Translation(center);
+                var t = translateToOrigin * rotate * translateBack ;
+                offset = origin * t;
+            }
+            babylonTexture.uOffset = offset.X;
+            babylonTexture.vOffset = 1 - offset.Y;
             babylonTexture.uScale = scale.X;
-            babylonTexture.vScale = -scale.Y;
-            babylonTexture.uRotationCenter = 0.0f;
-            babylonTexture.vRotationCenter = 0.0f;
-            babylonTexture.invertY = false;
-            babylonTexture.uAng = texTransformRotationEuler.X;
-            babylonTexture.vAng = texTransformRotationEuler.Y;
-            babylonTexture.wAng = texTransformRotationEuler.Z;
+            babylonTexture.vScale = -scale.Y; // reverse V - Max to Babylon 
+            babylonTexture.invertY = false; // do not use invert y which is very Babylon specific, keep the math as it.
+            babylonTexture.uAng = rotationEuler.X;
+            babylonTexture.vAng = rotationEuler.Y;
+            babylonTexture.wAng = rotationEuler.Z;
 
+#if DEBUG
+            RaiseMessage(BabylonTextureTransformToString(babylonTexture));
+#endif
             if (Path.GetExtension(babylonTexture.name).ToLower() == ".dds")
             {
                 babylonTexture.vScale *= -1; // Need to invert Y-axis for DDS texture
