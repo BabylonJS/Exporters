@@ -1242,9 +1242,10 @@ namespace Max2Babylon
                 // inverse transforms to change reference 
                 var translateToOrigin = BabylonMatrix.Translation(-pivot);
                 var rotate = BabylonMatrix.RotationZ(-rotationEuler.Z);
+                var scaling = BabylonMatrix.Scale(scale);
                 // because we want to keep the offset, so bring back to the center
                 var translateBack = BabylonMatrix.Translation(center);
-                var t = translateToOrigin * rotate * translateBack ;
+                var t = translateToOrigin * scaling * rotate * translateBack ;
                 offset = origin * t;
             }
             babylonTexture.uOffset = offset.X;

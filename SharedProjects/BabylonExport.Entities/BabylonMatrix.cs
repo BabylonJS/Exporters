@@ -31,6 +31,15 @@ namespace BabylonExport.Entities
             var q = BabylonQuaternion.FromEulerAngles(0, 0, rad).toRotationMatrix(rotate);
             return rotate;
         }
+        public static BabylonMatrix Scale(BabylonVector3 scale)
+        {
+            var result = Identity();
+            BabylonMatrix.FromValuesToRef(scale.X, 0, 0, 0,
+                            0, scale.Y, 0, 0,
+                            0, 0, scale.Z, 0,
+                            0, 0, 0, 1, result);
+            return result;
+        }
         /**
          * Inverts in place the Matrix.  
          * Returns the Matrix inverted.  
