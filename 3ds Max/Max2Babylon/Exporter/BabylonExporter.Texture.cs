@@ -1227,13 +1227,13 @@ namespace Max2Babylon
             
             var center = new BabylonVector3(0.5f, 0.5f, 0); // max ref is center of the texture
             var pivot = center - offset;
-            
+
             if (this.isBabylonExported)
             {
-                 // rotation center is very specific to webGL, so using lower left corner as reference 
+                // rotation center is very specific to babylon
                 babylonTexture.uRotationCenter = pivot.X;
                 babylonTexture.vRotationCenter = pivot.Y;
-            } 
+            }
             else
             {
                 // might be something it did not support RotationCenter
@@ -1249,7 +1249,7 @@ namespace Max2Babylon
                 offset = origin * t;
             }
             babylonTexture.uOffset = offset.X;
-            babylonTexture.vOffset = 1 - offset.Y;
+            babylonTexture.vOffset = 1-offset.Y;
             babylonTexture.uScale = scale.X;
             babylonTexture.vScale = -scale.Y; // reverse V - Max to Babylon 
             babylonTexture.invertY = false; // do not use invert y which is very Babylon specific, keep the math as it.
