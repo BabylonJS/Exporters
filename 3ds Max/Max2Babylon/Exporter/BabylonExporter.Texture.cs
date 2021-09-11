@@ -1239,7 +1239,7 @@ namespace Max2Babylon
                 // might be something it did not support RotationCenter
                 // update offset accordingly
                 var origin = new BabylonVector3(0, 1f, 0); // upper left corner
-                // inverse transfoorms to change reference 
+                // inverse transforms to change reference 
                 var translateToOrigin = BabylonMatrix.Translation(-pivot);
                 var rotate = BabylonMatrix.RotationZ(-rotationEuler.Z);
                 // because we want to keep the offset, so bring back to the center
