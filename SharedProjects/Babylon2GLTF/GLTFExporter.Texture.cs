@@ -465,8 +465,8 @@ namespace Babylon2GLTF
                 return false;
             }
 
-            var uOffset = babylonTexture.uOffset % 1;
             // according to specification (https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#images) : The origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+            var uOffset = babylonTexture.uOffset % 1;
             var vOffset = babylonTexture.vOffset % 1;
             var uScale  = babylonTexture.uScale;
             var vScale  = -babylonTexture.vScale;

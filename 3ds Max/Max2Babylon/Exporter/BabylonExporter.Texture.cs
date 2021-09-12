@@ -1218,21 +1218,29 @@ namespace Max2Babylon
 
      
  
-            //note: Max is defining offset displacement when Babylon is defining origin of the texture
-            //positiv offset in Max mean Negative offset in Babylon(Inverse transform)
-            var offset = new BabylonVector3(-uvGen.GetUOffs(0), -uvGen.GetVOffs(0), 0);
+            var offset = new BabylonVector3(uvGen.GetUOffs(0), uvGen.GetVOffs(0), 0);
             var scale = new BabylonVector3(uvGen.GetUScl(0), uvGen.GetVScl(0), 1);
-            //max rotation is horlogic, while here we move using trigonometric, so anti - horlogic
+            //max rotation is horlogic, here we move using trigonometric, so anti - horlogic
             var rotationEuler = new BabylonVector3(-uvGen.GetUAng(0), -uvGen.GetVAng(0), -uvGen.GetWAng(0));
             
             var center = new BabylonVector3(0.5f, 0.5f, 0); // max ref is center of the texture
-            var pivot = center - offset;
+            var pivot = center + offset;
 
             if (this.isBabylonExported)
             {
                 // rotation center is very specific to babylon
                 babylonTexture.uRotationCenter = pivot.X;
                 babylonTexture.vRotationCenter = pivot.Y;
+                if( Math.Abs(scale.X) != 1 || Math.Abs(scale.Y) != 1)
+                {
+                    var translate = BabylonMatrix.Translation(-center);
+                    var scaling = BabylonMatrix.Scale(scale);
+                    var t = translate * scaling ;
+                    offset = offset * t;
+                }
+                //note: Max is defining offset displacement when Babylon is defining origin of the texture
+                //positiv offset in Max mean Negative offset in Babylon(Inverse transform)
+                offset = -offset;
             }
             else
             {
@@ -1249,7 +1257,7 @@ namespace Max2Babylon
                 offset = origin * t;
             }
             babylonTexture.uOffset = offset.X;
-            babylonTexture.vOffset = 1-offset.Y;
+            babylonTexture.vOffset = (1 - offset.Y);
             babylonTexture.uScale = scale.X;
             babylonTexture.vScale = -scale.Y; // reverse V - Max to Babylon 
             babylonTexture.invertY = false; // do not use invert y which is very Babylon specific, keep the math as it.
