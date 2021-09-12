@@ -1228,7 +1228,8 @@ namespace Max2Babylon
 
             if (this.isBabylonExported)
             {
-                // rotation center is very specific to babylon
+                // fast and optimized track for Babylon format. using Matrix transform
+                // https://github.com/BabylonJS/Babylon.js/blob/master/src/Materials/Textures/texture.ts#L561-L640
                 babylonTexture.uRotationCenter = pivot.X;
                 babylonTexture.vRotationCenter = pivot.Y;
                 if( Math.Abs(scale.X) != 1 || Math.Abs(scale.Y) != 1)
@@ -1241,11 +1242,11 @@ namespace Max2Babylon
                 //note: Max is defining offset displacement when Babylon is defining origin of the texture
                 //positiv offset in Max mean Negative offset in Babylon(Inverse transform)
                 offset = -offset;
+                scale.Y = -scale.Y;
             }
-            else
+            else 
             {
-                // might be something it did not support RotationCenter
-                // update offset accordingly
+                // lets define we have to set the offset manually without the help of rotation center
                 var origin = new BabylonVector3(0, 1f, 0); // upper left corner
                 // inverse transforms to change reference 
                 var translateToOrigin = BabylonMatrix.Translation(-pivot);
@@ -1255,12 +1256,13 @@ namespace Max2Babylon
                 var translateBack = BabylonMatrix.Translation(center);
                 var t = translateToOrigin * scaling * rotate * translateBack ;
                 offset = origin * t;
-            }
-            babylonTexture.uOffset = offset.X;
-            babylonTexture.vOffset = (1 - offset.Y);
+             }
+
+            babylonTexture.uOffset = offset.X%1;
+            babylonTexture.vOffset = (1 - offset.Y) % 1;
             babylonTexture.uScale = scale.X;
-            babylonTexture.vScale = -scale.Y; // reverse V - Max to Babylon 
-            babylonTexture.invertY = false; // do not use invert y which is very Babylon specific, keep the math as it.
+            babylonTexture.vScale = scale.Y; 
+            babylonTexture.invertY = false; 
             babylonTexture.uAng = rotationEuler.X;
             babylonTexture.vAng = rotationEuler.Y;
             babylonTexture.wAng = rotationEuler.Z;
