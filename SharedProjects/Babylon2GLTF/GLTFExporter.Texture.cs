@@ -458,25 +458,26 @@ namespace Babylon2GLTF
         /// <param name="babylonMaterial"></param>
         private bool TryAddTextureTransformExtension(ref GLTF gltf, ref GLTFTextureInfo gltfTextureInfo, BabylonTexture babylonTexture)
         {
-            var uOffset = babylonTexture.uOffset;
-            var vOffset = -babylonTexture.vOffset;
-            var uScale = babylonTexture.uScale;
-            var vScale = -babylonTexture.vScale;
-            var wAng =  babylonTexture.wAng;
-
-            // Add texture extension only if needed
-            if (uOffset == 0 && vOffset == 0 && uScale == 1 && vScale == 1 && babylonTexture.wAng == 0)
-            {
-                return false;
-            }
-
             // Add texture extension if enabled in the export settings
             if (!exportParameters.enableKHRTextureTransform)
             {
                 logger.RaiseWarning("GLTFExporter.Texture | KHR_texture_transform is not enabled, so the texture may look incorrect at runtime!", 3);
                 return false;
             }
- 
+
+            // according to specification (https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#images) : The origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+            var uOffset = babylonTexture.uOffset ;
+            var vOffset = babylonTexture.vOffset ;
+            var uScale  = babylonTexture.uScale;
+            var vScale  = babylonTexture.vScale;
+            var wAng    = -babylonTexture.wAng; // trigo to horlogic
+
+            // Add texture extension only if needed
+            if (uOffset == 0 && vOffset == 0 && uScale == 1 && Math.Abs(vScale) == 1 && Math.Abs(wAng) == 0)
+            {
+                return false;
+            }
+
             // finally add texture extension
             if (!gltf.extensionsUsed.Contains(KHR_texture_transform))
             {

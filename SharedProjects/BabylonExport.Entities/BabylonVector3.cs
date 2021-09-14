@@ -51,7 +51,10 @@ namespace BabylonExport.Entities
         {
             return new BabylonVector3 { X = a.X * b, Y = a.Y * b, Z = a.Z * b };
         }
-
+        public static BabylonVector3 operator -(BabylonVector3 a)
+        {
+            return new BabylonVector3 { X = -a.X , Y = -a.Y , Z = -a.Z};
+        }
         public enum EulerRotationOrder
         {
             XYZ,
