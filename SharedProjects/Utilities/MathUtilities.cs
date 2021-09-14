@@ -82,18 +82,13 @@ namespace Utilities
 
 
         /**
-         * Computes a texture transform matrix with a pre-transformation
+         * Computes a texture transform matrix with a pre-transformation 
          */
         public static BabylonMatrix ComputeTextureTransformMatrix(BabylonVector3 pivotCenter, BabylonVector3 offset, BabylonQuaternion rotation, BabylonVector3 scale)
         {
-            var dOffset = new BabylonVector3();
-            var dRotation = new BabylonQuaternion();
-            var dScale = new BabylonVector3();
-            offset.X *= scale.X;
-            offset.Y *= scale.Y;
-            offset.Z *= 0;
-
-            var transformMatrix = BabylonMatrix.Translation(new BabylonVector3(-pivotCenter.X, -pivotCenter.Y, 0)).multiply(BabylonMatrix.Compose(scale, rotation, offset)).multiply(BabylonMatrix.Translation(pivotCenter));
+            var transformMatrix = BabylonMatrix.Translation(new BabylonVector3(-pivotCenter.X, -pivotCenter.Y, 0))
+                                               .multiply(BabylonMatrix.Compose(scale, rotation, offset))
+                                               .multiply(BabylonMatrix.Translation(pivotCenter));
             return transformMatrix;
         }
     }
