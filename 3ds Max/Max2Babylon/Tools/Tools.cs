@@ -430,10 +430,30 @@ namespace Max2Babylon
             {
                 return false;
             }
-
-            return !value.Where((t, i) => Math.Abs(t - other[i]) > Epsilon).Any();
+            for(int i=0; i!= value.Length; i++)
+            {
+                if( value[i] != other[i])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
-
+        public static bool IsAlmostEqualTo(this float[] value, float[] other, float epsilon = Epsilon)
+        {
+            if (value.Length != other.Length)
+            {
+                return false;
+            }
+            for (int i = 0; i != value.Length; i++)
+            {
+                if (Math.Abs(value[i] - other[i]) > Epsilon)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         public static float[] ToArray(this IMatrix3 value)
         {
 
