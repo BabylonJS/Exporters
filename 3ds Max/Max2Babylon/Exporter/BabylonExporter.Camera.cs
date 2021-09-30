@@ -177,7 +177,7 @@ namespace Max2Babylon
                     animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
                     if (animationRotationQuaternion != null)
                     {
-                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keysFull)
                         {
                             key.values = FixCameraQuaternion(key.values, angle);
                         }
@@ -191,7 +191,7 @@ namespace Max2Babylon
                     animationRotationQuaternion = extraAnimations.Find(animation => animation.property.Equals("rotationQuaternion"));
                     if (animationRotationQuaternion != null)
                     {
-                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                        foreach (BabylonAnimationKey key in animationRotationQuaternion.keysFull)
                         {
                             key.values = FixCameraQuaternion(key.values, angle);
                         }
@@ -228,7 +228,7 @@ namespace Max2Babylon
                         BabylonAnimation animationPosition = animations.Find(animation => animation.property.Equals("position"));
                         if (animationPosition != null)
                         {
-                            foreach (BabylonAnimationKey key in animationPosition.keys)
+                            foreach (BabylonAnimationKey key in animationPosition.keysFull)
                             {
                                 key.values = new float[] { key.values[0], key.values[2], -key.values[1] };
                             }
@@ -238,7 +238,7 @@ namespace Max2Babylon
                         animationRotationQuaternion = animations.Find(animation => animation.property.Equals("rotationQuaternion"));
                         if (animationRotationQuaternion != null)
                         {
-                            foreach (BabylonAnimationKey key in animationRotationQuaternion.keys)
+                            foreach (BabylonAnimationKey key in animationRotationQuaternion.keysFull)
                             {
                                 key.values = FixChildQuaternion(key.values, angle);
                             }
@@ -247,8 +247,6 @@ namespace Max2Babylon
                 }
             }
         }
-
-
 
         private BabylonQuaternion FixCameraQuaternion(BabylonNode node, double angle)
         {

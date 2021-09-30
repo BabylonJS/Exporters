@@ -484,14 +484,13 @@ namespace Max2Babylon
 
         private void OptimizeAnimations(List<BabylonAnimationKey> keys, bool removeLinearAnimationKeys)
         {
-            for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
+            // 2 frames can not beeing optimized
+            if (keys.Count > 2)
             {
-                while (keys.Count - ixFirst >= 3)
+                // take the frame by block of 3, descending
+                for (int ixFirst = keys.Count - 3; ixFirst >= 0; --ixFirst)
                 {
-                    if (!RemoveAnimationKey(keys, ixFirst, removeLinearAnimationKeys))
-                    {
-                        break;
-                    }
+                    RemoveAnimationKey(keys, ixFirst, removeLinearAnimationKeys);
                 }
             }
         }
