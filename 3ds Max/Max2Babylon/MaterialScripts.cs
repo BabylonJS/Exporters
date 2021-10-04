@@ -56,7 +56,7 @@ namespace Max2Babylon
             {AddPhysicalBabylonUI.AsInlineScript()}
         ) else if classof maxMaterial == ai_standard_surface then (
             {AIBabylonCAtDef.AsInlineScript()}
-            custAttributes.add maxMaterial babylonAttributesDataCA;
+            custAttributes.add maxMaterial ARNOLD_MATERIAL_CAT_DEF;
         )"";
 
         -- Remove any definition of this callback
