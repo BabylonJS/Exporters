@@ -1070,9 +1070,6 @@ namespace Max2Babylon
 
             Action<Autodesk.Max.IGameObject.ObjectTypes> addMaxRootNodes = delegate (Autodesk.Max.IGameObject.ObjectTypes type)
             {
-                IIGameNode n = maxGameScene.GetTopLevelNode(0);
-                n = maxGameScene.GetTopLevelNode(1);
-                n = maxGameScene.GetTopLevelNode(2);
                 ITab<IIGameNode> maxGameNodesOfType = maxGameScene.GetIGameNodeByType(type);
                 var tmp = TabToList(maxGameNodesOfType);
                 // filter on selected here to optimize performance for complexes scenes, and keep the hierarchy consistent.
