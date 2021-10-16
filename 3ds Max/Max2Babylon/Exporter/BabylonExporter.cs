@@ -467,6 +467,7 @@ namespace Max2Babylon
 
             // Root nodes
             RaiseMessage("Exporting nodes");
+            // prepare all the hierarchy branch, or the branch where we have selected nodes (if Export Only Selected options set to true)
             HashSet<IIGameNode> maxRootNodes = getRootNodes(gameScene);
             var progressionStep = 80.0f / maxRootNodes.Count;
             var progression = 10.0f;
@@ -477,25 +478,18 @@ namespace Max2Babylon
             BabylonMorphTargetManager.Reset();
             foreach (var maxRootNode in maxRootNodes)
             {
-                if(!exportParameters.exportOnlySelected || maxRootNode.MaxNode.Selected)
+                BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
+                if (node != null)
                 {
-                    BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
-                    if (node != null)
+                    // if we're exporting from a specific node, reset the pivot to {0,0,0}
+                    if (exportNode != null && !exportNode.IsRootNode)
                     {
-                        // we suppose to get Root Node ONLY, force parentId to be null in the case of exporting "only selected" and broke the hierarchy
-                        node.parentId = null;
-
-                        // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                        if (exportNode != null && !exportNode.IsRootNode)
+                        if (!exportParameters.exportKeepNodePosition)
                         {
-                            if (!exportParameters.exportKeepNodePosition)
-                            {
-                                SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
-                            }
+                            SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
                         }
                     }
                 }
-
                 progression += progressionStep;
                 ReportProgressChanged((int)progression);
                 CheckCancelled();
@@ -1069,13 +1063,7 @@ namespace Max2Babylon
             {
                 while (maxGameNode.NodeParent != null)
                 {
-                    var n = maxGameNode.NodeParent;
-                    if (exportParameters.exportOnlySelected && !n.MaxNode.Selected)
-                    {
-                        // do not continue to walk the hierarchy is the parent is NOT selected.
-                        break;
-                    }
-                    maxGameNode = n;
+                    maxGameNode = maxGameNode.NodeParent;
                 }
                 return maxGameNode;
             };
@@ -1087,7 +1075,8 @@ namespace Max2Babylon
                 n = maxGameScene.GetTopLevelNode(2);
                 ITab<IIGameNode> maxGameNodesOfType = maxGameScene.GetIGameNodeByType(type);
                 var tmp = TabToList(maxGameNodesOfType);
-                tmp?.ForEach(maxGameNode =>
+                // filter on selected here to optimize performance for complexes scenes, and keep the hierarchy consistent.
+                tmp?.Where(node => !exportParameters.exportOnlySelected || node.MaxNode.Selected).ToList().ForEach(maxGameNode =>
                 {
                     var maxRootNode = getMaxRootNode(maxGameNode);
                     maxGameNodes.Add(maxRootNode);
