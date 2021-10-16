@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Utilities;
@@ -289,13 +290,14 @@ namespace Max2Babylon
             gameConversionManger.CoordSystem = Autodesk.Max.IGameConversionManager.CoordSystem.D3d;
 
             var gameScene = Loader.Global.IGameInterface;
-            if (exportNode == null || exportNode.IsRootNode)
+            // NOTE : we might use gameScene.InitialiseIGame(exportParameters.exportOnlySelected) instead of gameScene.InitialiseIGame(false),
+            // but the SDK do NOT return linked object as part of the selection. see issue #1008.
+            var initResult = exportNode == null ? gameScene.InitialiseIGame(false): 
+                                                  gameScene.InitialiseIGame(exportNode, true);
+            if (!initResult)
             {
-                gameScene.InitialiseIGame(exportParameters.exportOnlySelected);
-            }
-            else
-            {
-                gameScene.InitialiseIGame(exportNode, true);
+                    RaiseError("Scene was NOT enumerated. A Possible reason for failure is that the Parameter IGameProp.XML file was not found or parsed correctly");
+                    return;
             }
             
             gameScene.SetStaticFrame(0);
@@ -465,6 +467,7 @@ namespace Max2Babylon
 
             // Root nodes
             RaiseMessage("Exporting nodes");
+            // prepare all the hierarchy branch, or the branch where we have selected nodes (if Export Only Selected options set to true)
             HashSet<IIGameNode> maxRootNodes = getRootNodes(gameScene);
             var progressionStep = 80.0f / maxRootNodes.Count;
             var progression = 10.0f;
@@ -476,15 +479,17 @@ namespace Max2Babylon
             foreach (var maxRootNode in maxRootNodes)
             {
                 BabylonNode node = exportNodeRec(maxRootNode, babylonScene, gameScene);
-                // if we're exporting from a specific node, reset the pivot to {0,0,0}
-                if (node != null && exportNode != null && !exportNode.IsRootNode)
+                if (node != null)
                 {
-                    if (!exportParameters.exportKeepNodePosition)
+                    // if we're exporting from a specific node, reset the pivot to {0,0,0}
+                    if (exportNode != null && !exportNode.IsRootNode)
                     {
-                        SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
+                        if (!exportParameters.exportKeepNodePosition)
+                        {
+                            SetNodePosition(ref node, ref babylonScene, new float[] { 0, 0, 0 });
+                        }
                     }
                 }
-
                 progression += progressionStep;
                 ReportProgressChanged((int)progression);
                 CheckCancelled();
@@ -1066,14 +1071,13 @@ namespace Max2Babylon
             Action<Autodesk.Max.IGameObject.ObjectTypes> addMaxRootNodes = delegate (Autodesk.Max.IGameObject.ObjectTypes type)
             {
                 ITab<IIGameNode> maxGameNodesOfType = maxGameScene.GetIGameNodeByType(type);
-                if (maxGameNodesOfType != null)
+                var tmp = TabToList(maxGameNodesOfType);
+                // filter on selected here to optimize performance for complexes scenes, and keep the hierarchy consistent.
+                tmp?.Where(node => !exportParameters.exportOnlySelected || node.MaxNode.Selected).ToList().ForEach(maxGameNode =>
                 {
-                    TabToList(maxGameNodesOfType).ForEach(maxGameNode =>
-                    {
-                        var maxRootNode = getMaxRootNode(maxGameNode);
-                        maxGameNodes.Add(maxRootNode);
-                    });
-                }
+                    var maxRootNode = getMaxRootNode(maxGameNode);
+                    maxGameNodes.Add(maxRootNode);
+                });
             };
 
             addMaxRootNodes(Autodesk.Max.IGameObject.ObjectTypes.Mesh);
@@ -1090,20 +1094,17 @@ namespace Max2Babylon
             {
                 return null;
             }
-            else
+            List<T> list = new List<T>();
+            for (int i = 0; i < tab.Count; i++)
             {
-                List<T> list = new List<T>();
-                for (int i = 0; i < tab.Count; i++)
-                {
 #if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022
-                    var item = tab[i];
+                var item = tab[i];
 #else
                     var item = tab[new IntPtr(i)];
 #endif
-                    list.Add(item);
-                }
-                return list;
+                list.Add(item);
             }
+            return list;
         }
 
         private bool IsNodeExportable(IIGameNode gameNode)
