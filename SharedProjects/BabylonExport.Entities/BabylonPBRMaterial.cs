@@ -96,6 +96,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public bool useMetallnessFromMetallicTextureBlue { get; set; }
+        
+        [DataMember]
+        public bool useAmbientOcclusionFromMetallicTextureRed { get; set; }
 
         [DataMember]
         public bool useAlphaFromAlbedoTexture { get; set; }
@@ -114,6 +117,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public bool usePhysicalLightFalloff { get; set; }
+
+        [DataMember]
+        public bool useAmbientInGrayScale { get; set; }
 
         [DataMember]
         public float indexOfRefraction { get; set; }
@@ -238,10 +244,11 @@ namespace BabylonExport.Entities
             useRoughnessFromMetallicTextureAlpha = false;
             useRoughnessFromMetallicTextureGreen = true;
             useMetallnessFromMetallicTextureBlue = true;
+            useAmbientInGrayScale = true;
 
             roughness = origin.roughness;
             metallic = origin.metallic;
-            reflectivityTexture = origin.metallicRoughnessTexture;
+            metallicTexture = origin.metallicRoughnessTexture;
         }
 
         public BabylonPBRMaterial(BabylonPBRSpecularGlossinessMaterial origin) : this((BabylonPBRBaseSimpleMaterial)origin)
