@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+<<<<<<< Updated upstream
 
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.12
 
+=======
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+>>>>>>> Stashed changes
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2017", "Maya2Babylon2017.csproj", "{50780553-6248-463B-A0F3-F82C6CCEC703}"
 EndProject
@@ -20,6 +25,8 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Babylon2GLTF", "..\SharedProjects\Babylon2GLTF\Babylon2GLTF.shproj", "{CC8BFA12-AFF1-4F9F-9EE4-C4A3A5D86237}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2020", "Maya2Babylon2020.csproj", "{9383CDB8-3A6B-4897-BA46-12241E6BB42D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2022", "Maya2Babylon2022.csproj", "{CCCE1B88-0BB5-4D0C-BD2F-3E9F6E7DF180}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -41,6 +48,11 @@ Global
 		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
 		..\SharedProjects\Utilities\Extensions.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
 		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{cc8bfa12-aff1-4f9f-9ee4-c4a3a5d86237}*SharedItemsImports = 13
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
 		..\SharedProjects\Utilities\Extensions.projitems*{daed1281-4757-4a4e-b252-b879b43193a3}*SharedItemsImports = 13
 		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
 	EndGlobalSection
@@ -61,6 +73,10 @@ Global
 		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9383CDB8-3A6B-4897-BA46-12241E6BB42D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCE1B88-0BB5-4D0C-BD2F-3E9F6E7DF180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCE1B88-0BB5-4D0C-BD2F-3E9F6E7DF180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCE1B88-0BB5-4D0C-BD2F-3E9F6E7DF180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCE1B88-0BB5-4D0C-BD2F-3E9F6E7DF180}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
