@@ -71,7 +71,6 @@ namespace Maya2Babylon
 
             string[] babylonAnimationProperties = new string[] { "scaling", "rotationQuaternion", "position", "visibility" };
 
-
             Dictionary<string, List<BabylonAnimationKey>> keysPerProperty = new Dictionary<string, List<BabylonAnimationKey>>();
             keysPerProperty.Add("scaling", new List<BabylonAnimationKey>());
             keysPerProperty.Add("rotationQuaternion", new List<BabylonAnimationKey>());
