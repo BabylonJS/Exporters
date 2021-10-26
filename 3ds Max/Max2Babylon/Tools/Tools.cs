@@ -1307,10 +1307,9 @@ namespace Max2Babylon
 
 #region UserProperties
 
-        public static void SetStringProperty(this IINode node, string propertyName, string defaultState)
+        public static void SetStringProperty(this IINode node, string propertyName, string state)
         {
-            string state = defaultState;
-            node.SetUserPropString(propertyName, state);
+            node.SetUserPropString(propertyName, state?.EncodeSpace());
         }
 
         public static bool GetBoolProperty(this IINode node, string propertyName, int defaultState = 0)
@@ -1322,9 +1321,12 @@ namespace Max2Babylon
 
         public static string GetStringProperty(this IINode node, string propertyName, string defaultState)
         {
-            string state = defaultState;
-            node.GetUserPropString(propertyName, ref state);
-            return state;
+            string state = null;
+            if (node.GetUserPropString(propertyName, ref state))
+            {
+                return state?.DecodeSpace() ?? defaultState;
+            }
+            return defaultState;
         }
 
         public static float GetFloatProperty(this IINode node, string propertyName, float defaultState = 0)
@@ -1366,7 +1368,7 @@ namespace Max2Babylon
                 return new string[] { };
             }
 
-            return animationListString.Split(itemSeparator);
+            return animationListString.Split(itemSeparator).Select(s=>s.DecodeSpace()).ToArray();
         }
 
         public static Dictionary<string, string> UserPropToDictionary(this IINode node)
@@ -1386,13 +1388,13 @@ namespace Max2Babylon
             string itemSeparatorString = itemSeparator.ToString();
             foreach (string str in stringEnumerable)
             {
-                if (str.Contains(" ") || str.Contains("="))
-                    throw new Exception("Illegal character(s) in string array. Spaces and equal signs are not allowed by the max sdk.");
+                 if (str.Contains("="))
+                    throw new Exception("Illegal character(s) in string array. Equal signs are not allowed by the max sdk.");
 
                 if (str.Contains(itemSeparatorString))
                     throw new Exception("Illegal character(s) in string array. Found a separator ('" + itemSeparatorString + "') character.");
             }
-
+ 
             StringBuilder builder = new StringBuilder();
 
             bool first = true;
@@ -1401,7 +1403,7 @@ namespace Max2Babylon
                 if (first) first = false;
                 else builder.Append(itemSeparator);
 
-                builder.Append(str);
+                builder.Append(str.EncodeSpace());
             }
 
             node.SetStringProperty(propertyName, builder.ToString());
@@ -1419,7 +1421,7 @@ namespace Max2Babylon
                 if (first) first = false;
                 else builder.Append(';');
 
-                builder.AppendFormat("{0}:{1}",keyValue.Key.ToString(),keyValue.Value.ToString());
+                builder.AppendFormat("{0}:{1}",keyValue.Key.ToString().EncodeSpace(),keyValue.Value.ToString().EncodeSpace());
             }
 
             node.SetStringProperty(propertyName, builder.ToString());
@@ -1433,7 +1435,7 @@ namespace Max2Babylon
             foreach (string pair in stringkeyValuePairs)
             {
                 string[] p = pair.Split(':');
-                result.Add(p[0], p[1]);
+                result.Add(p[0].DecodeSpace(), p[1].DecodeSpace());
             }
             return result;
         }
@@ -1481,9 +1483,12 @@ namespace Max2Babylon
             return false;
         }
 
-#endregion
+        public static string EncodeSpace(this string src) => src?.Replace(" ", "%20");
+        public static string DecodeSpace(this string src) => src?.Replace("%20", " ");
 
-#region AnimationGroup Helpers
+        #endregion
+
+        #region AnimationGroup Helpers
         public static int CalculateEndFrameFromAnimationGroupNodes(AnimationGroup animationGroup)
         {
             int endFrame = 0;
