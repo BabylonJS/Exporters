@@ -201,7 +201,7 @@ namespace Max2Babylon
                     return;
             }
 
-            string[] properties = propertiesString.Split(s_PropertySeparator).Select(s=>s.DecodeSpace()).ToArray();
+            string[] properties = propertiesString.DecodeSpace().Split(s_PropertySeparator);
 
             if (properties.Length < 4)
                 throw new Exception("Invalid number of properties, can't deserialize.");

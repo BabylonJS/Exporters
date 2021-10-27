@@ -1321,7 +1321,7 @@ namespace Max2Babylon
 
         public static string GetStringProperty(this IINode node, string propertyName, string defaultState)
         {
-            string state = null;
+            string state = defaultState??string.Empty;
             if (node.GetUserPropString(propertyName, ref state))
             {
                 return state?.DecodeSpace() ?? defaultState;
@@ -1368,7 +1368,7 @@ namespace Max2Babylon
                 return new string[] { };
             }
 
-            return animationListString.Split(itemSeparator).Select(s=>s.DecodeSpace()).ToArray();
+            return animationListString.DecodeSpace().Split(itemSeparator);
         }
 
         public static Dictionary<string, string> UserPropToDictionary(this IINode node)
@@ -1434,8 +1434,8 @@ namespace Max2Babylon
             string[] stringkeyValuePairs = stringDictionaryProp.Split(';');
             foreach (string pair in stringkeyValuePairs)
             {
-                string[] p = pair.Split(':');
-                result.Add(p[0].DecodeSpace(), p[1].DecodeSpace());
+                string[] p = pair.DecodeSpace().Split(':');
+                result.Add(p[0], p[1]);
             }
             return result;
         }
