@@ -201,9 +201,7 @@ namespace Max2Babylon
                     return;
             }
 
-            
-
-            string[] properties = propertiesString.Split(s_PropertySeparator);
+            string[] properties = propertiesString.DecodeSpace().Split(s_PropertySeparator);
 
             if (properties.Length < 4)
                 throw new Exception("Invalid number of properties, can't deserialize.");
@@ -270,9 +268,9 @@ namespace Max2Babylon
         public void SaveToData(IINode dataNode = null)
         {
             dataNode = dataNode ?? Loader.Core.RootNode;
-            // ' ' and '=' are not allowed by max, ';' is our data separator
-            if (name.Contains(' ') || name.Contains('=') || name.Contains(s_PropertySeparator))
-                throw new FormatException("Invalid character(s) in animation Name: " + name + ". Spaces, equal signs and the separator '" + s_PropertySeparator + "' are not allowed.");
+            // '=' is not allowed by max, ';' is our data separator
+            if (name.Contains('=') || name.Contains(s_PropertySeparator))
+                throw new FormatException("Invalid character(s) in animation Name: " + name + ". Equal signs and the separator '" + s_PropertySeparator + "' are not allowed.");
 
             string nodes = string.Join(s_PropertySeparator.ToString(), nodeGuids);
             StringBuilder stringBuilder = new StringBuilder();
