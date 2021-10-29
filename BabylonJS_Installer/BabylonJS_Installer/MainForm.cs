@@ -34,6 +34,7 @@ namespace BabylonJS_Installer
             this.versions["Max"].Add("2017", "19");
             this.versions["Max"].Add("2015", "17");
             this.versions["Maya"] = new Dictionary<string, string>();
+            this.versions["Maya"].Add("2022", "22");
             this.versions["Maya"].Add("2020", "21");
             this.versions["Maya"].Add("2019", "20");
             this.versions["Maya"].Add("2018", "19");
@@ -59,6 +60,7 @@ namespace BabylonJS_Installer
             this.labels["Max"].Add("2017", new[] { this.label_Max17_Info, this.label_Max17_ExpDate });
             this.labels["Max"].Add("2015", new[] { this.label_Max15_Info, this.label_Max15_ExpDate });
             this.labels["Maya"] = new Dictionary<string, Label[]>();
+            this.labels["Maya"].Add("2022", new[] { this.label_Maya22_Info, this.label_Maya22_ExpDate });
             this.labels["Maya"].Add("2020", new[] { this.label_Maya20_Info, this.label_Maya20_ExpDate });
             this.labels["Maya"].Add("2019", new[] { this.label_Maya19_Info, this.label_Maya19_ExpDate });
             this.labels["Maya"].Add("2018", new[] { this.label_Maya18_Info, this.label_Maya18_ExpDate });
@@ -74,6 +76,7 @@ namespace BabylonJS_Installer
             this.buttons["Max"].Add("2017", new[] { this.button_Max17_Update, this.button_Max17_Delete, this.button_Max17_Locate });
             this.buttons["Max"].Add("2015", new[] { this.button_Max15_Update, this.button_Max15_Delete, this.button_Max15_Locate });
             this.buttons["Maya"] = new Dictionary<string, Button[]>();
+            this.buttons["Maya"].Add("2022", new[] { this.button_Maya22_Update, this.button_Maya22_Delete, this.button_Maya22_Locate });
             this.buttons["Maya"].Add("2020", new[] { this.button_Maya20_Update, this.button_Maya20_Delete, this.button_Maya20_Locate });
             this.buttons["Maya"].Add("2019", new[] { this.button_Maya19_Update, this.button_Maya19_Delete, this.button_Maya19_Locate });
             this.buttons["Maya"].Add("2018", new[] { this.button_Maya18_Update, this.button_Maya18_Delete, this.button_Maya18_Locate });
@@ -263,6 +266,10 @@ namespace BabylonJS_Installer
             this.button_update("Max", "2015");
         }
 
+        private void Button_Maya22_Update_Click(object sender, EventArgs e)
+        {
+            this.button_update("Maya", "2022");
+        }
         private void Button_Maya20_Update_Click(object sender, EventArgs e)
         {
             this.button_update("Maya", "2020");
@@ -338,6 +345,10 @@ namespace BabylonJS_Installer
             this.button_delete("Max", "2015");
         }
 
+        private void Button_Maya22_Delete_Click(object sender, EventArgs e)
+        {
+            this.button_delete("Maya", "2022");
+        }
         private void Button_Maya20_Delete_Click(object sender, EventArgs e)
         {
             this.button_delete("Maya", "2020");
@@ -416,6 +427,11 @@ namespace BabylonJS_Installer
             this.button_locate("Maya", "2020");
         }
 
+        private void Button_Maya22_Locate_Click(object sender, EventArgs e)
+        {
+            this.button_locate("Maya", "2022");
+        }
+
         private void Button_Maya19_Locate_Click(object sender, EventArgs e)
         {
             this.button_locate("Maya", "2019");
@@ -432,6 +448,5 @@ namespace BabylonJS_Installer
         }
 
         #endregion
-
     }
 }
