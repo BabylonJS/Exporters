@@ -303,9 +303,9 @@ namespace Max2Babylon
 #else
                 var gameKey = gameKeyTab[new IntPtr(indexKey)];
 #endif
-
                 var key = new BabylonAnimationKey()
                 {
+                    // ensure the frame if not negative.
                     frame = gameKey.T / Loader.Global.TicksPerFrame,
                     values = extractValueFunc(gameKey)
                 };
