@@ -176,7 +176,7 @@ copy "$(TargetPath)" "$(SolutionDir)assemblies\2022\$(TargetName).nll.dll"
 if exist "D:\Programmes\Autodesk\Maya2022\bin\plug-ins\" copy "$(SolutionDir)assemblies\2022\*.dll" "D:\Programmes\Autodesk\Maya2022\bin\plug-ins\"
 if exist "C:\Program Files\Autodesk\Maya2022\bin\plug-ins\" copy "$(SolutionDir)assemblies\2022\*.dll" "C:\Program Files\Autodesk\Maya2022\bin\plug-ins\"
 
-IF "%25configurationName%25"=="Debug" GOTO DebugOnMaya
+IF "%25configurationName%25"=="Debug" GOTO DebugOnMaya 
 GOTO Close
 
 :DebugOnMaya
