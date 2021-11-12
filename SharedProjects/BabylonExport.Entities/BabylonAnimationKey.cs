@@ -8,8 +8,11 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonAnimationKey : IComparable<BabylonAnimationKey>, ICloneable
     {
+        private float _f;
+
         [DataMember]
-        public float frame { get; set; }
+        // guard for negative value.
+        public float frame { get => _f; set => _f = value < 0 ? 0 : value; }
 
         [DataMember]
         public float[] values { get; set; }
