@@ -94,15 +94,18 @@ namespace Max2Babylon
             }
 
             // Babylon format assumes skeleton root is at origin, add any additional node parents from the lowest common ancestor to the scene root to the skeleton hierarchy.
-            while (lowestCommonAncestor.NodeParent != null)
+            allHierarchyNodes.Add(lowestCommonAncestor);
+            if (lowestCommonAncestor.NodeParent != null)
             {
-                lowestCommonAncestor = lowestCommonAncestor.NodeParent;
-                allHierarchyNodes.Add(lowestCommonAncestor);
-            }
+                do {
+                    lowestCommonAncestor = lowestCommonAncestor.NodeParent;
+                    allHierarchyNodes.Add(lowestCommonAncestor);
+                } while (lowestCommonAncestor.NodeParent != null) ;
+            } 
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
-            Stack<IIGameNode> siblings = new Stack<IIGameNode>();   // keep the siblings in a LIFO list to add them after the children
+            Stack<IIGameNode> siblings = new Stack<IIGameNode>();  // keep the siblings in a LIFO list to add them after the children
             siblings.Push(lowestCommonAncestor);
 
             // add the skeletonroot:
