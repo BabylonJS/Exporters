@@ -669,10 +669,8 @@ namespace Max2Babylon
                         int j = str.IndexOf(']', i++);
                         var p3Str = str.Substring(i, j - i);
                         var xyz = p3Str.Split(',').Select(s => float.Parse(s, CultureInfo.InvariantCulture)).ToArray();
-                        var p = Loader.Global.Point3.Create(xyz[0], xyz[1], xyz[2]);
-                        p = offsetTM.PointTransform(p);
-                        // we have to reverse y and z
-                        p = Loader.Global.Point3.Create(p[0] * scaleFactorToMeters, p[2] * scaleFactorToMeters, p[1] * scaleFactorToMeters);
+                        // conversion: Max to Directx(Babylon) (swap Y and Z).
+                        var p = Loader.Global.Point3.Create(xyz[0] * scaleFactorToMeters, xyz[2] * scaleFactorToMeters, xyz[1] * scaleFactorToMeters);
                         yield return p;
                         i = str.IndexOf('[', j);
                     } while (i != -1);
