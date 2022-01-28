@@ -50,13 +50,13 @@ namespace Max2Babylon
         /// <returns>
         /// All nodes needed for the skeleton hierarchy
         /// </returns>
-        private Dictionary<IIGameSkin, List<IIGameNode>> relevantNodesBySkin = new Dictionary<IIGameSkin, List<IIGameNode>>();
-        private List<IIGameNode> GetSkinnedBones(IIGameSkin skin)
+        private Dictionary<IIGameSkin, (List<IIGameNode>, float[])> relevantNodesBySkin = new Dictionary<IIGameSkin, (List<IIGameNode>,float[])>();
+        private (List<IIGameNode>, float[]) GetSkinnedBones(IIGameSkin skin)
         {
 
             if (skin == null)
             {
-                return new List<IIGameNode>();
+                return (new List<IIGameNode>(),null);
             }
 
             int logRank = 2;
@@ -72,14 +72,14 @@ namespace Max2Babylon
             if (bones.Count == 0)
             {
                 RaiseWarning("Skin has no bones.", logRank);
-                return new List<IIGameNode>();
+                return (new List<IIGameNode>(), null);
             }
 
             if (bones.Contains(null))
             {
                 RaiseError("Skin has bones that are outside of the exported hierarchy.", logRank);
                 RaiseError("The skin cannot be exported", logRank);
-                return new List<IIGameNode>();
+                return (new List<IIGameNode>(), null);
             }
 
             List<IIGameNode> allHierarchyNodes = null;
@@ -90,18 +90,31 @@ namespace Max2Babylon
                 RaiseError($"More than one root node for the skin. The skeleton bones need to be part of the same hierarchy.", logRank);
                 RaiseError($"The skin cannot be exported", logRank);
 
-                return new List<IIGameNode>();
+                return (new List<IIGameNode>(), null);
             }
 
-            // Babylon format assumes skeleton root is at origin, add any additional node parents from the lowest common ancestor to the scene root to the skeleton hierarchy.
             allHierarchyNodes.Add(lowestCommonAncestor);
+
+            float[] rootTransformation = null;
+
+            // Babylon format assumes skeleton root is at origin, add any additional node parents from the lowest common ancestor to the scene root to the skeleton hierarchy.
             if (lowestCommonAncestor.NodeParent != null)
             {
-                do {
+                do
+                {
+                    // we need to check if the ancestor has the current skin as child (anywhere down the hierarchy)
+                    // in this case, we stop to stack commonAncestor and we set the root transformation Matrix as Local.
+                    if(HasSkinAsChild(lowestCommonAncestor.NodeParent, skin))
+                    {
+                        rootTransformation = lowestCommonAncestor.GetLocalTM(0).ToArray();
+                        break;
+                    }
                     lowestCommonAncestor = lowestCommonAncestor.NodeParent;
                     allHierarchyNodes.Add(lowestCommonAncestor);
-                } while (lowestCommonAncestor.NodeParent != null) ;
-            } 
+                } while (lowestCommonAncestor.NodeParent != null);
+            }
+
+            rootTransformation = rootTransformation ?? lowestCommonAncestor.GetWorldTM(0).ToArray();
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
@@ -133,10 +146,11 @@ namespace Max2Babylon
                     }
                 }
             }
+            var result = (sorted, rootTransformation);
+            
+            relevantNodesBySkin.Add(skin, result);   // Stock the result for optimization
 
-            relevantNodesBySkin.Add(skin, sorted);   // Stock the result for optimization
-
-            return sorted;
+            return result;
         }
 
         private IIGameNode GetLowestCommonAncestor(List<IIGameNode> nodes, ref List<IIGameNode> allHierarchyNodes)
@@ -168,6 +182,29 @@ namespace Max2Babylon
 
             return commonAncestor;
         }
+
+        private bool HasSkinAsChild(IIGameNode node, IIGameSkin skin)
+        {
+            if( skin == null)
+            {
+                return false;
+            }
+
+            if(node.IGameObject.IGameSkin != null && skin.Equals(node.IGameObject.IGameSkin))
+            {
+                return true;
+            }
+
+            for( var i=0; i != node.ChildCount; i++)
+            {
+                var n = node.GetNodeChild(i);
+                if (HasSkinAsChild(n, skin)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         private IIGameNode GetLowestCommonAncestor(IIGameNode nodeA, IIGameNode nodeB, List<IIGameNode> nodeHierarchyA = null, List<IIGameNode> nodeHierarchyB = null)
         {
@@ -272,7 +309,7 @@ namespace Max2Babylon
             }
 
             List<int> nodeIndex = new List<int>();
-            List<IIGameNode> revelantNodes = GetSkinnedBones(skin);
+            List<IIGameNode> revelantNodes = GetSkinnedBones(skin).Item1;
 
             for (int index = 0; index < revelantNodes.Count; index++)
             {
@@ -316,9 +353,11 @@ namespace Max2Babylon
         {
             List<BabylonBone> bones = new List<BabylonBone>();
             List<int> nodeIndices = GetNodeIndices(skin);
-            List<IIGameNode> revelantNodes = GetSkinnedBones(skin);
+            (List<IIGameNode>,float[]) revelantNodes = GetSkinnedBones(skin);
+            
+            var rootMatrix = revelantNodes.Item2;
 
-            foreach (IIGameNode node in revelantNodes)
+            foreach (IIGameNode node in revelantNodes.Item1)
             {
                 int parentIndex = (node.NodeParent == null) ? -1 : nodeIndices.IndexOf(node.NodeParent.NodeID);
 
@@ -331,7 +370,7 @@ namespace Max2Babylon
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
-                    matrix = (parentIndex==-1)?node.GetWorldTM(0).ToArray():node.GetLocalTM(0).ToArray()
+                    matrix = (parentIndex == -1) ? rootMatrix : node.GetLocalTM(0).ToArray()
                 };
 
                 // Apply unit conversion factor to meter
