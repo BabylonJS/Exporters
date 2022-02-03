@@ -183,6 +183,9 @@ namespace Max2Babylon
             return commonAncestor;
         }
 
+        // fetch recursively the childrens to see if any of it, reference the skin.
+        // the fetch stop at the first node passing the test.
+        // down search is deep first.
         private bool HasSkinAsChild(IIGameNode node, IIGameSkin skin)
         {
             if( skin == null)
