@@ -50,13 +50,13 @@ namespace Max2Babylon
         /// <returns>
         /// All nodes needed for the skeleton hierarchy
         /// </returns>
-        private Dictionary<IIGameSkin, (List<IIGameNode>, float[])> relevantNodesBySkin = new Dictionary<IIGameSkin, (List<IIGameNode>,float[])>();
-        private (List<IIGameNode>, float[]) GetSkinnedBones(IIGameSkin skin)
+        private Dictionary<IIGameSkin, Tuple<List<IIGameNode>, float[]>> relevantNodesBySkin = new Dictionary<IIGameSkin, Tuple<List<IIGameNode>, float[]>>();
+        private Tuple<List<IIGameNode>, float[]> GetSkinnedBones(IIGameSkin skin)
         {
 
             if (skin == null)
             {
-                return (new List<IIGameNode>(),null);
+                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(),null);
             }
 
             int logRank = 2;
@@ -72,14 +72,14 @@ namespace Max2Babylon
             if (bones.Count == 0)
             {
                 RaiseWarning("Skin has no bones.", logRank);
-                return (new List<IIGameNode>(), null);
+                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(), null);
             }
 
             if (bones.Contains(null))
             {
                 RaiseError("Skin has bones that are outside of the exported hierarchy.", logRank);
                 RaiseError("The skin cannot be exported", logRank);
-                return (new List<IIGameNode>(), null);
+                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(), null);
             }
 
             List<IIGameNode> allHierarchyNodes = null;
@@ -90,7 +90,7 @@ namespace Max2Babylon
                 RaiseError($"More than one root node for the skin. The skeleton bones need to be part of the same hierarchy.", logRank);
                 RaiseError($"The skin cannot be exported", logRank);
 
-                return (new List<IIGameNode>(), null);
+                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(), null);
             }
 
             allHierarchyNodes.Add(lowestCommonAncestor);
@@ -146,7 +146,7 @@ namespace Max2Babylon
                     }
                 }
             }
-            var result = (sorted, rootTransformation);
+            var result = new Tuple<List<IIGameNode>, float[]>(sorted, rootTransformation);
             
             relevantNodesBySkin.Add(skin, result);   // Stock the result for optimization
 
@@ -356,7 +356,7 @@ namespace Max2Babylon
         {
             List<BabylonBone> bones = new List<BabylonBone>();
             List<int> nodeIndices = GetNodeIndices(skin);
-            (List<IIGameNode>,float[]) revelantNodes = GetSkinnedBones(skin);
+            Tuple<List<IIGameNode>,float[]> revelantNodes = GetSkinnedBones(skin);
             
             var rootMatrix = revelantNodes.Item2;
 
