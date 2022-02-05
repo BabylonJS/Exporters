@@ -9,13 +9,23 @@ namespace BabylonExport.Entities
     public class BabylonAnimationKey : IComparable<BabylonAnimationKey>, ICloneable
     {
         private float _f;
+        private float[] _values;
 
         [DataMember]
         // guard for negative value.
         public float frame { get => _f; set => _f = value < 0 ? 0 : value; }
 
         [DataMember]
-        public float[] values { get; set; }
+        public float[] values {
+            get
+            {
+                return _values;
+            }
+            set
+            {
+                _values = MathUtilities.CleanEpsilon(value);
+            } 
+        }
 
         public object Clone()
         {

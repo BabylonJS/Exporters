@@ -91,5 +91,16 @@ namespace Utilities
                                                .multiply(BabylonMatrix.Translation(pivotCenter));
             return transformMatrix;
         }
+
+
+        public static float[] CleanEpsilon(float[] data)
+        {
+            for (int i = 0; i != data.Length; i++)
+            {
+                data[i] = Math.Abs(data[i]) <= MathUtilities.Epsilon ? 0 : data[i];
+                data[i] = Math.Abs(1.0 - data[i]) <= MathUtilities.Epsilon ? 1 : data[i];
+            }
+            return data;
+        }
     }
 }
