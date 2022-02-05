@@ -2,11 +2,24 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
+using Utilities;
+
 
 namespace Max2Babylon
 {
+    using BoneSearchResult = Tuple<List<IIGameNode>, RootBoneTransformationType>;
+
+    internal enum RootBoneTransformationType
+    {
+        unknown, local,world
+    }
+
+
+
     partial class BabylonExporter
     {
+        internal static readonly BoneSearchResult EmptyBoneSearchResult = new BoneSearchResult(new List<IIGameNode>(), RootBoneTransformationType.unknown);
+
         readonly List<IIGameSkin> skins = new List<IIGameSkin>();
 
         private bool IsSkinEqualTo(IIGameSkin skin1, IIGameSkin skin2)
@@ -50,13 +63,13 @@ namespace Max2Babylon
         /// <returns>
         /// All nodes needed for the skeleton hierarchy
         /// </returns>
-        private Dictionary<IIGameSkin, Tuple<List<IIGameNode>, float[]>> relevantNodesBySkin = new Dictionary<IIGameSkin, Tuple<List<IIGameNode>, float[]>>();
-        private Tuple<List<IIGameNode>, float[]> GetSkinnedBones(IIGameSkin skin)
+        private Dictionary<IIGameSkin, BoneSearchResult> relevantNodesBySkin = new Dictionary<IIGameSkin, BoneSearchResult>();
+        private Tuple<List<IIGameNode>, RootBoneTransformationType> GetSkinnedBones(IIGameSkin skin)
         {
 
             if (skin == null)
             {
-                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(),null);
+                return EmptyBoneSearchResult;
             }
 
             int logRank = 2;
@@ -72,14 +85,14 @@ namespace Max2Babylon
             if (bones.Count == 0)
             {
                 RaiseWarning("Skin has no bones.", logRank);
-                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(), null);
+                return EmptyBoneSearchResult;
             }
 
             if (bones.Contains(null))
             {
                 RaiseError("Skin has bones that are outside of the exported hierarchy.", logRank);
                 RaiseError("The skin cannot be exported", logRank);
-                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(), null);
+                return EmptyBoneSearchResult;
             }
 
             List<IIGameNode> allHierarchyNodes = null;
@@ -90,12 +103,12 @@ namespace Max2Babylon
                 RaiseError($"More than one root node for the skin. The skeleton bones need to be part of the same hierarchy.", logRank);
                 RaiseError($"The skin cannot be exported", logRank);
 
-                return new Tuple<List<IIGameNode>, float[]>(new List<IIGameNode>(), null);
+                return EmptyBoneSearchResult;
             }
 
             allHierarchyNodes.Add(lowestCommonAncestor);
 
-            float[] rootTransformation = null;
+            RootBoneTransformationType tt = RootBoneTransformationType.world;
 
             // Babylon format assumes skeleton root is at origin, add any additional node parents from the lowest common ancestor to the scene root to the skeleton hierarchy.
             if (lowestCommonAncestor.NodeParent != null)
@@ -106,15 +119,13 @@ namespace Max2Babylon
                     // in this case, we stop to stack commonAncestor and we set the root transformation Matrix as Local.
                     if(HasSkinAsChild(lowestCommonAncestor.NodeParent, skin))
                     {
-                        rootTransformation = lowestCommonAncestor.GetLocalTM(0).ToArray();
+                        tt = RootBoneTransformationType.local;
                         break;
                     }
                     lowestCommonAncestor = lowestCommonAncestor.NodeParent;
                     allHierarchyNodes.Add(lowestCommonAncestor);
                 } while (lowestCommonAncestor.NodeParent != null);
             }
-
-            rootTransformation = rootTransformation ?? lowestCommonAncestor.GetWorldTM(0).ToArray();
 
             // starting from the root, sort the nodes by depth first (add the children before the siblings)
             List<IIGameNode> sorted = new List<IIGameNode>();
@@ -146,7 +157,7 @@ namespace Max2Babylon
                     }
                 }
             }
-            var result = new Tuple<List<IIGameNode>, float[]>(sorted, rootTransformation);
+            var result = new BoneSearchResult(sorted, tt);
             
             relevantNodesBySkin.Add(skin, result);   // Stock the result for optimization
 
@@ -356,7 +367,7 @@ namespace Max2Babylon
         {
             List<BabylonBone> bones = new List<BabylonBone>();
             List<int> nodeIndices = GetNodeIndices(skin);
-            Tuple<List<IIGameNode>,float[]> revelantNodes = GetSkinnedBones(skin);
+            BoneSearchResult revelantNodes = GetSkinnedBones(skin);
             
             var rootMatrix = revelantNodes.Item2;
 
@@ -365,15 +376,19 @@ namespace Max2Babylon
                 int parentIndex = (node.NodeParent == null) ? -1 : nodeIndices.IndexOf(node.NodeParent.NodeID);
 
                 string boneId = node.MaxNode.GetGuid().ToString();
+
+                // this function is select the correct matrix depending hierarchy case 
+                Func<int, float[]> getMatrix = (i) => parentIndex == -1 ? (revelantNodes.Item2 == RootBoneTransformationType.world ? node.GetWorldTM(i).ToArray() : node.GetLocalTM(i).ToArray()) : node.GetLocalTM(i).ToArray();
+                
                 // create the bone
                 BabylonBone bone = new BabylonBone()
                 {
-                    id = (isGltfExported)?boneId:boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
-                    parentNodeId = (parentIndex!=-1)?node.NodeParent.MaxNode.GetGuid().ToString():null,
+                    id = (isGltfExported) ? boneId : boneId + "-bone",// the suffix "-bone" is added in babylon export format to assure the uniqueness of IDs
+                    parentNodeId = (parentIndex != -1) ? node.NodeParent.MaxNode.GetGuid().ToString() : null,
                     name = node.Name,
                     index = nodeIndices.IndexOf(node.NodeID),
                     parentBoneIndex = parentIndex,
-                    matrix = (parentIndex == -1) ? rootMatrix : node.GetLocalTM(0).ToArray()
+                    matrix = MathUtilities.CleanEpsilon(getMatrix(0))
                 };
 
                 // Apply unit conversion factor to meter
@@ -387,9 +402,7 @@ namespace Max2Babylon
                     // export its animation
                     var babylonAnimation = ExportMatrixAnimation("_matrix", key =>
                     {
-                        IGMatrix mat = node.GetLocalTM(key);
-
-                        float[] matrix = mat.ToArray();
+                        float[] matrix = MathUtilities.CleanEpsilon(getMatrix(key));
 
                         // Apply unit conversion factor to meter
                         // Affect translation only
