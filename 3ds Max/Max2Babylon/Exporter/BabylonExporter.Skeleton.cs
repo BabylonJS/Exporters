@@ -424,6 +424,28 @@ namespace Max2Babylon
                 bones.Add(bone);
             }
 
+            // Babylon, nor GLTF do not support single bone skeleton, we may add a root node  with no transform.
+            if( bones.Count == 1)
+            {
+                var root  = new BabylonBone()
+                {
+                    id = Guid.NewGuid().ToString(),
+                    parentNodeId = null,
+                    name = "root-bone-added",
+                    index = 0,
+                    parentBoneIndex = -1,
+                    matrix = BabylonMatrix.Identity().m
+                };
+
+                var bone = bones[0];
+                bone.parentNodeId = root.id;
+                bone.index = 1;
+                bone.parentBoneIndex = 0;
+
+                bones.Insert(0, root);
+            }
+
+            // finally return the bones.
             return bones.ToArray();
         }
     }
