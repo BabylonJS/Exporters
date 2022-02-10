@@ -1183,7 +1183,7 @@ namespace Max2Babylon
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
                 // Babylon, nor GLTF do not support single bone skeleton, we may add a root node  with no transform.
                 // this is echoing the process into BabylonExporter.Skeleton ExportBones(Skin)
-                var offset = nbBones == 1 ? 1 : 0;
+                var offset = skin.TotalBoneCount == 1 ? 1 : 0;
 
                 int currentVtxBone = 0;
                 int currentSkinBone = 0;
