@@ -1228,7 +1228,7 @@ namespace Max2Babylon
                             break;
                         }
 
-                        bone[currentVtxBone - 4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                        bone[currentVtxBone - 4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset; // add optional offset
                         weight[currentVtxBone - 4] = skin.GetWeight(vertexIndex, currentSkinBone);
                         ++currentVtxBone;
                     }
