@@ -12,8 +12,7 @@ namespace BabylonExport.Entities
         private float[] _values;
 
         [DataMember]
-        // guard for negative value.
-        public float frame { get => _f; set => _f = value < 0 ? 0 : value; }
+        public float frame { get => _f; set => _f = value; }
 
         [DataMember]
         public float[] values {
