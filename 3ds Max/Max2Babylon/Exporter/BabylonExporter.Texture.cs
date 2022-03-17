@@ -831,7 +831,7 @@ namespace Max2Babylon
                 return null;
             }
 
-#if MAX2022            
+#if MAX2022 || MAX2023            
             if (texMap.ClassName(false) == "Normal Bump")
 #else
             if (texMap.ClassName == "Normal Bump")
@@ -898,7 +898,7 @@ namespace Max2Babylon
             for (int i = 0; i != n; i++)
             {
                 var tmp = custAtt.GetCustAttrib(i);
-#if MAX2022                
+#if MAX2022 || MAX2023                
                 if (tmp.ClassName(false) == MaterialCustomBabylonAttributeName)
 #else
                 if (tmp.ClassName == MaterialCustomBabylonAttributeName)
@@ -1118,7 +1118,7 @@ namespace Max2Babylon
             fresnelParameters = null;
 
             // Fallout
-#if MAX2022  
+#if MAX2022 || MAX2023  
             if (texMap.ClassName(false) == "Falloff") // This is the only way I found to detect it. This is crappy but it works
 #else
             if (texMap.ClassName == "Falloff") // This is the only way I found to detect it. This is crappy but it works
@@ -1431,7 +1431,7 @@ namespace Max2Babylon
                 return null;
             }
 
-#if MAX2022  
+#if MAX2022 || MAX2023  
             if (texMap.ClassName(false) == "RGB Multiply")
 #else
             if (texMap.ClassName == "RGB Multiply")

@@ -25,7 +25,7 @@ namespace Max2Babylon
         {
             if (!string.IsNullOrEmpty(maxScriptCmd))
             {
-#if MAX2022                
+#if MAX2022 || MAX2023                
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(maxScriptCmd, ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(maxScriptCmd);
