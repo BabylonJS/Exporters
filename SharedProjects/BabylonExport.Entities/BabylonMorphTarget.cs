@@ -25,5 +25,17 @@ namespace BabylonExport.Entities
 
         [DataMember(EmitDefaultValue = false)]
         public BabylonAnimation[] animations { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public bool autoAnimate { get; set; }
+        
+        [DataMember(EmitDefaultValue = false)]
+        public bool autoAnimateLoop { get; set; }
+        
+        [DataMember(EmitDefaultValue = false)]
+        public int? autoAnimateFrom { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public int? autoAnimateTo { get; set; }
     }
 }
