@@ -88,6 +88,12 @@ namespace Max2Babylon
         public static readonly ClassIDWrapper PBR_MetalRough_Material = new ClassIDWrapper(0xd00f1e00, 0xbe77e500);
         public static readonly ClassIDWrapper PBR_SpecGloss_Material = new ClassIDWrapper(0xd00f1e00, 0x01dbad33);
 
+        /// <summary>
+        /// GLTFMaterial is implemented as script standard extensions. The Magic ID is find at the beginning of each
+        /// script and identify it uniquely.
+        /// </summary>
+        public static readonly ClassIDWrapper Gltf_Material = new ClassIDWrapper(0x38420192, 0x45fe4e1b);
+
         public static readonly ClassIDWrapper Editable_Poly = new ClassIDWrapper(469250957, 422535320);
         public static readonly ClassIDWrapper Sphere = new ClassIDWrapper(17,0);
 

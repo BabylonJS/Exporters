@@ -229,8 +229,13 @@ namespace Max2Babylon
             else if (isPbrSpecGlossMaterial(materialNode))
             {
                 ExportPbrSpecGlossMaterial(materialNode, babylonScene);
-
             }
+#if MAX2023
+            else if (isGLTFMaterial(materialNode))
+            {
+                ExportGLTFMaterial(materialNode, babylonScene);
+            }
+#endif
             else if (isArnoldMaterial(materialNode))
             {
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)

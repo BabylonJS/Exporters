@@ -179,6 +179,9 @@
     <Compile Include="..\Exporter\BabylonExporter.Material.cs">
       <Link>Exporter\BabylonExporter.Material.cs</Link>
     </Compile>
+    <Compile Include="..\Exporter\BabylonExporter.Material.GLTF.cs">
+      <Link>Exporter\BabylonExporter.Material.GLTF.cs</Link>
+    </Compile>
     <Compile Include="..\Exporter\BabylonExporter.Material.Pbr.cs">
       <Link>Exporter\BabylonExporter.Material.Pbr.cs</Link>
     </Compile>
