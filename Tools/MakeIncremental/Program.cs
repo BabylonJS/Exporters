@@ -211,7 +211,7 @@ namespace MakeIncremental
                 }
 
                 dynamic scene;
-                var outputDir = Path.GetDirectoryName(dstPath);
+                var outputDir = (dstPath != null && dstPath != "") ? Path.GetDirectoryName(dstPath) : Path.GetDirectoryName(input);
                 var rootFilename = Path.GetFileNameWithoutExtension(input);
 
                 // Loading
@@ -238,7 +238,7 @@ namespace MakeIncremental
                 var meshes = (JArray)scene.meshes;
                 foreach (dynamic mesh in meshes)
                 {
-                    if (mesh.checkCollisions.Value) // Do not delay load collisions object
+                    if ((mesh?.checkCollisions?.Value) ?? false) // Do not delay load collisions object
                     {
                         if (mesh.geometryId != null) doNotDelayLoadingForGeometries.Add(mesh.geometryId.Value);                       
                     }
