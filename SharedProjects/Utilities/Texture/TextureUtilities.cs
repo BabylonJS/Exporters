@@ -117,7 +117,6 @@ namespace Utilities
                         case ".tiff":
                             {
                                 return (Bitmap)_imageConverter.ConvertFrom(File.ReadAllBytes(absolutePath));
-                                // return new Bitmap(absolutePath).Clone;
                             }
                         default:
                             logger.RaiseError(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), 3);
