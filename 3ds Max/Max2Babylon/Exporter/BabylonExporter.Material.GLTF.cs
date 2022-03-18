@@ -74,29 +74,48 @@ namespace Max2Babylon
         //sheenColorMap type:#TextureMap ui:btnSheenColorMap localizedname:~GLTF_MATERIAL_PARAM_SHEEN_COLOR_MAP~ nonlocalizedName:"Sheen Color Map"
         //sheenRoughness type:#float default:0.0 ui:spnSheenRoughness localizedname:~GLTF_MATERIAL_PARAM_SHEEN_ROUGHNESS~ nonlocalizedName:"Sheen Roughness"
         //sheenRoughnessMap type:#TextureMap ui:btnSheenRoughnessMap localizedname:~GLTF_MATERIAL_PARAM_SHEEN_ROUGHNESS_MAP~ nonlocalizedName:"Sheen Roughness Map"
+        public bool EnableSheen => Properties?.GetBoolProperty("enableSheen", false) ?? false;
+        public IColor SheenColor => throw new NotImplementedException();
+        public ITexmap SheenColorMap => _getTexMap(_node, "sheenColorMap");
+        public float SheenRoughness => Properties?.GetFloatProperty("sheenRoughness", 0.0f) ?? 0.0f;
+        public ITexmap SheenRoughnessMap => _getTexMap(_node, "sheenRoughnessMap");
 
         //enableSpecular type:#boolean default:false ui:cbEnableSpecular localizedname:~GLTF_MATERIAL_PARAM_ENABLE_SPECULAR~ nonlocalizedName:"Enable Specular"
         //specular type:#float default:1.0 ui:spnSpecularFactor localizedname:~GLTF_MATERIAL_PARAM_SPECULAR~
         //specularMap type:#TextureMap ui:btnSpecularMap localizedname:~GLTF_MATERIAL_PARAM_SPECULAR_MAP~ nonlocalizedName:"Specular Map"
         //specularColor type:#frgba default:white ui:cpSpecularColor localizedname:~GLTF_MATERIAL_PARAM_SPECULAR_COLOR~ nonlocalizedName:"Specular Color"
         //specularColorMap type:#TextureMap ui:btnSpecularColorMap localizedname:~GLTF_MATERIAL_PARAM_SPECULAR_COLOR_MAP~ nonlocalizedName:"Specular Color Map"
+        public bool EnableSpecular => Properties?.GetBoolProperty("enableSpecular", false) ?? false;
+        public float Specular => Properties?.GetFloatProperty("specular", 1.0f) ?? 1.0f;
+        public ITexmap SpecularMap => _getTexMap(_node, "specularMap");
+        public IColor specularColor => throw new NotImplementedException();
+        public ITexmap SpecularColorMap => _getTexMap(_node, "specularColorMap");
 
         //enableTransmission type:#boolean default:false ui:cbEnableTransmission localizedname:~GLTF_MATERIAL_PARAM_ENABLE_TRANSMISSION~ nonlocalizedName:"Enable Transmission"
         //transmission type:#float default:1.0 ui:spnTransmissionFactor localizedname:~GLTF_MATERIAL_PARAM_TRANSMISSION~
         //transmissionMap type:#TextureMap ui:btnTransmissionMap localizedname:~GLTF_MATERIAL_PARAM_TRANSMISSION_MAP~ nonlocalizedName:"Transmission Map"
+        public bool EnableTransmission => Properties?.GetBoolProperty("enableTransmission", false) ?? false;
+        public float Transmission => Properties?.GetFloatProperty("transmission", 1.0f) ?? 1.0f;
+        public ITexmap TransmissionMap => _getTexMap(_node, "transmissionMap");
 
         //enableVolume type:#boolean default:false ui:cbEnableVolume localizedname:~GLTF_MATERIAL_PARAM_ENABLE_VOLUME~ nonlocalizedName:"Enable Volume"
         //volumeThickness type:#float default:0.0 ui:spnVolumeThickness localizedname:~GLTF_MATERIAL_PARAM_VOLUME_THICKNESS~ nonlocalizedName:"Volume Thickness"
         //volumeThicknessMap type:#TextureMap ui:btnVolumeThicknessMap localizedname:~GLTF_MATERIAL_PARAM_VOLUME_THICKNESS_MAP~ nonlocalizedName:"Volume Thickness Map"
         //volumeDistance type:#float default:0.0 ui:spnVolumeDistance localizedname:~GLTF_MATERIAL_PARAM_VOLUME_DISTANCE~ nonlocalizedName:"Volume Distance"
         //volumeColor type:#frgba default:white ui:cpVolumeColor localizedname:~GLTF_MATERIAL_PARAM_VOLUME_COLOR~ nonlocalizedName:"Volume Color"
+        public bool EnableVolume => Properties?.GetBoolProperty("enableVolume", false) ?? false;
+        public float VolumeThickness => Properties?.GetFloatProperty("volumeThickness", 0.0f) ?? 0.0f;
+        public ITexmap VolumeThicknessMap => _getTexMap(_node, "volumeThicknessMap");
+        public float VolumeDistance => Properties?.GetFloatProperty("volumeDistance", 0.0f) ?? 0.0f;
+        public IColor VolumeColor => throw new NotImplementedException();
 
         //enableIndexOfRefraction type:#boolean default:false ui:cbEnableIOR localizedname:~GLTF_MATERIAL_PARAM_ENABLE_IOR~ nonlocalizedName:"Enable IOR"
         //indexOfRefraction type:#float default:1.5 ui:spnIOR localizedname:~GLTF_MATERIAL_PARAM_IOR~ nonlocalizedName:"IOR"
+        public bool EnableIndexOfRefraction => Properties?.GetBoolProperty("enableIndexOfRefraction", false) ?? false;
+        public float indexOfRefraction => Properties?.GetFloatProperty("indexOfRefraction", 1.5f) ?? 1.5f;
 
-
-        // For information, using the folowing script
-        // fn showSelectedProperties = ( node = SME.GetMtlinParamEditor(); print (classof node) ; showProperties node ;)
+        // For additional information, using the folowing script
+        //      fn showSelectedProperties = ( node = SME.GetMtlinParamEditor(); print (classof node) ; showProperties node ;)
         // we obtain also the list of the properties as seen by the SDK
         //.baseColor(Base_Color) : color
         //.baseColorMap(Base_Color_Map) : texturemap
