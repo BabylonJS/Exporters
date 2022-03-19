@@ -60,7 +60,6 @@ namespace Max2Babylon
         //clearcoatRoughnessMap type:#TextureMap ui:btnClearcoatRoughnessMap localizedname:~GLTF_MATERIAL_PARAM_CLEARCOAT_ROUGHNESS_MAP~ nonlocalizedName:"Clearcoat Roughness Map"
         //clearcoatNormal type:#float default:1.0 ui:spnClearcoatNormal localizedname:~GLTF_MATERIAL_PARAM_CLEARCOAT_NORMAL~ nonlocalizedName:"Clearcoat Normal"
         //clearcoatNormalMap type:#TextureMap ui:btnClearcoatNormalMap localizedname:~GLTF_MATERIAL_PARAM_CLEARCOAT_NORMAL_MAP~ nonlocalizedName:"Clearcoat Normal Map"
-
         public bool EnableClearcoat => Properties?.GetBoolProperty("enableClearcoat", false) ?? false;
         public float Clearcoat => Properties?.GetFloatProperty("clearcoat", 1.0f) ?? 1.0f;
         public ITexmap ClearcoatMap => _getTexMap(_node, "clearcoatMap");
@@ -175,8 +174,8 @@ namespace Max2Babylon
         /// <param name="babylonScene">the scene to export the material</param>
         private void ExportGLTFMaterial(IIGameMaterial materialNode, BabylonScene babylonScene)
         {
-            // the not obvious part is that we MUST first export the material as Babylon to allow
-            // the Babylon2GLTF export rebuild the coresponding material and extensions.
+            // the unobvious part is that we MUST first export the material as Babylon to allow
+            // the Babylon2GLTF export to rebuild the coresponding material and extensions.
             GltfMaterialDecorator decorator = new GltfMaterialDecorator(materialNode);
         }
 
