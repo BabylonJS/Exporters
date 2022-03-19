@@ -38,8 +38,7 @@ namespace Maya2Babylon
             BabylonSkeleton babylonSkeleton = new BabylonSkeleton {
                 id = skinIndex,
                 name = name,
-                bones = ExportBones(skin),
-                needInitialSkinMatrix = true
+                bones = ExportBones(skin)
             };
             
             babylonScene.SkeletonsList.Add(babylonSkeleton);
