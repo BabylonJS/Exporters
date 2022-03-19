@@ -89,6 +89,7 @@ namespace Utilities
             return haveSameDimensions;
         }
 
+        private static readonly ImageConverter _imageConverter = new ImageConverter();
         public static Bitmap LoadTexture(string absolutePath, ILoggingProvider logger)
         {
             if (File.Exists(absolutePath))
@@ -114,7 +115,9 @@ namespace Utilities
                         case ".png":
                         case ".tif":
                         case ".tiff":
-                            return new Bitmap(absolutePath);
+                            {
+                                return (Bitmap)_imageConverter.ConvertFrom(File.ReadAllBytes(absolutePath));
+                            }
                         default:
                             logger.RaiseError(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(absolutePath)), 3);
                             return null;
