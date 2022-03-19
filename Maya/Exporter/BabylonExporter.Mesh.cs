@@ -1204,7 +1204,7 @@ namespace Maya2Babylon
                 MObject source = connection.source.node;
                 if (source != null)
                 {
-                    if (source.hasFn(MFn.Type.kSet))
+                    if (source.hasFn(MFn.Type.kSet) || source.hasFn(MFn.Type.kSkinClusterFilter))
                     {
                         blendShapeDeformers.AddRange(GetBlendShapeSub(source));
                     }
