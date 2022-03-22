@@ -599,6 +599,8 @@ namespace Max2Babylon
                                     if (animations.Count > 0)
                                     {
                                         babylonMorphTarget.animations = animations.ToArray();
+                                        babylonMorphTarget.autoAnimate = true;
+                                        babylonMorphTarget.autoAnimateLoop = true;
                                     }
                                 }
                             }
