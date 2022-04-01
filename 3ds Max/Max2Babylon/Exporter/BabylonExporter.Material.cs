@@ -33,7 +33,8 @@ namespace Max2Babylon
 
         public IIPropertyContainer Properties => _node.IPropertyContainer;
         public string Id => _node.MaxMaterial.GetGuid().ToString();
-        public string Name => _node.MaterialName;
+        public string Name => _node.MaterialName; 
+        public IIGameMaterial Node => _node;
 
         protected ITexmap _getTexMapWithCache(IIGameMaterial materialNode, string name)
         {
@@ -43,7 +44,12 @@ namespace Max2Babylon
                 _mapCaches = new Dictionary<string, ITexmap>();
                 for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
                 {
-                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i);
+                    // according to https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=Max_Developer_Help_what_s_new_whats_new_3dsmax_2022_sdk_localization_html
+#if MAX2022 || MAX2023
+                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i, false); // Non localized, then en-US
+#else
+                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i); // en-US
+#endif
                     _mapCaches.Add(mn, materialNode.MaxMaterial.GetSubTexmap(i));
                 }
             }
@@ -159,7 +165,7 @@ namespace Max2Babylon
             RaiseMessage(name, 1);
 
             // --- prints ---
-            #region prints
+#region prints
             {
                 RaiseVerbose("materialNode.MaterialClass=" + materialNode.MaterialClass, 2);
                 RaiseVerbose("materialNode.NumberOfTextureMaps=" + materialNode.NumberOfTextureMaps, 2);
@@ -170,7 +176,7 @@ namespace Max2Babylon
                     RaiseVerbose("Texture[" + i + "] is named '" + materialNode.MaxMaterial.GetSubTexmapSlotName(i) + "'", 2);
                 }
             }
-            #endregion
+#endregion
 
             if (materialNode.SubMaterialCount > 0)
             {
@@ -562,9 +568,9 @@ namespace Max2Babylon
             var invertRoughness = propertyContainer.GetBoolProperty(5);
             if (babylonMaterial.isUnlit == false)
             {
-                babylonMaterial.metallic = propertyContainer.GetFloatProperty(6);
+                babylonMaterial.metallic = propertyContainer?.GetFloatProperty("metalness", 0.0f) ?? 0.0f;
 
-                babylonMaterial.roughness = propertyContainer.GetFloatProperty(4);
+                babylonMaterial.roughness = propertyContainer?.GetFloatProperty("roughness", 0.0f) ?? 0.0f;
                 if (invertRoughness)
                 {
                     // Inverse roughness

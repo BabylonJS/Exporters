@@ -23,6 +23,7 @@ IF %1=="Debug" GOTO OnDebug
 IF %1=="Release" GOTO OnRelease
 
 :OnDebug
+REM GOTO Close
 SET dest_dir="%max_location%bin\assemblies"
 GOTO CopyFiles
 
@@ -73,7 +74,7 @@ ECHO "No Configuaration"
 GOTO Close
 
 :DebugOnMax
-START /d "%max_location%" 3dsmax.exe
+START /d "%max_location%" 3dsmax.exe /Language=ENU
 GOTO Close
 
 :Close

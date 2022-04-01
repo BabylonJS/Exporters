@@ -212,11 +212,12 @@ namespace Max2Babylon
         private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, int index, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false)
         {
             var texMap = _getTexMap(materialNode, index);
-            if (texMap != null)
-            {
-                return ExportTexture(texMap, babylonScene, amount, allowCube);
-            }
-            return null;
+            return texMap != null ? ExportTexture(texMap, babylonScene, amount, allowCube) : null;
+        }
+        private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, string name, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false)
+        {
+            var texMap = _getTexMap(materialNode, name);
+            return texMap != null?ExportTexture(texMap, babylonScene, amount, allowCube):null;
         }
 
         private BabylonTexture ExportClearCoatTexture(ITexmap intensityTexMap, ITexmap roughnessTexMap, float coatWeight, float coatRoughness, BabylonScene babylonScene, string materialName, bool invertRoughness)

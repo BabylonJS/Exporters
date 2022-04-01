@@ -156,6 +156,12 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonPBRClearCoat clearCoat { get; set; }
+        
+        [DataMember]
+        public BabylonPBRSheenConfiguration sheen { get; set; }
+        
+        [DataMember]
+        public BabylonPBRSubSurfaceConfiguration subSurface { get; set; }
 
         public BabylonPBRMaterial(string id) : base(id)
         {
@@ -195,6 +201,8 @@ namespace BabylonExport.Entities
             transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE;
 
             clearCoat = new BabylonPBRClearCoat();
+            sheen = new BabylonPBRSheenConfiguration();
+            subSurface = new BabylonPBRSubSurfaceConfiguration();
         }
 
         public BabylonPBRMaterial(BabylonPBRBaseSimpleMaterial origin) : base(origin.id)
@@ -224,6 +232,7 @@ namespace BabylonExport.Entities
             albedo = origin.baseColor;
             albedoTexture = origin.baseTexture;
             clearCoat = origin.clearCoat;
+            sheen = origin.sheen;
             disableLighting = origin.disableLighting;
             twoSidedLighting = origin.doubleSided;
             emissive = origin.emissive;

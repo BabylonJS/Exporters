@@ -582,6 +582,85 @@ namespace Babylon2GLTF
                             }
                         }
                     }
+
+                    // extensions
+                    if (pbrMRMat.clearCoat.isEnabled)
+                    {
+                        var cc = pbrMRMat.clearCoat;
+                        var ext = new KHR_materials_clearcoat()
+                        {
+                            clearcoatFactor = cc.intensity,
+                            clearcoatTexture = cc.texture != null ? ExportTexture(cc.texture, gltf) : null,
+                            clearcoatRoughnessFactor = cc.roughness,
+                            clearcoatRoughnessTexture = cc.textureRoughness != null ? ExportTexture(cc.textureRoughness, gltf) : null,
+                            clearcoatNormalTexture = cc.bumpTexture != null ? ExportTexture(cc.bumpTexture, gltf) : null 
+                        };
+
+                        gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                        gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_clearcoat", ext);
+                    }
+                    if (pbrMRMat.sheen.isEnabled)
+                    {
+                        var s = pbrMRMat.sheen;
+                        var ext = new KHR_materials_sheen()
+                        {
+                            sheenColorFactor = s.color,
+                            sheenColorTexture = s.texture != null ? ExportTexture(s.texture, gltf) : null,
+                            sheenRoughnessFactor = s.roughness,
+                            sheenRoughnessTexture = s.textureRoughness != null ? ExportTexture(s.textureRoughness, gltf) : null
+                        };
+
+                        gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                        gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_sheen", ext);
+                    }
+                    if (pbrMRMat.IsIorEnabled())
+                    {
+                        var ext = new KHR_materials_ior()
+                        {
+                            ior = pbrMRMat.indexOfRefraction
+                        };
+                        gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                        gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_ior", ext);
+                    }
+                    if (pbrMRMat.IsSpecularEnabled())
+                    {
+                        var ext = new KHR_materials_specular()
+                        {
+                            specularFactor = pbrMRMat.metallicF0Factor,
+                            specularTexture = pbrMRMat.metallicReflectanceTexture != null ? ExportTexture(pbrMRMat.metallicReflectanceTexture, gltf) : null,
+                            specularColorFactor = pbrMRMat.metallicReflectanceColor,
+                            specularColorTexture = pbrMRMat.metallicReflectanceColorTexture != null ? ExportTexture(pbrMRMat.metallicReflectanceColorTexture, gltf) : null
+                        };
+                        gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                        gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_specular", ext);
+                    }
+                    if (pbrMRMat.subSurface.isRefractionEnabled)
+                    {
+                        var s = pbrMRMat.subSurface;
+                        var ext = new KHR_materials_transmission()
+                        {
+                            transmissionFactor = s.refractionIntensity,
+                            transmissionTexture = s.refractionIntensityTexture != null ? ExportTexture(s.refractionIntensityTexture, gltf) : null
+                        };
+                        gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                        gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_transmission", ext);
+                    }
+                    if (pbrMRMat.IsVolumeEnabled())
+                    {
+                        var s = pbrMRMat.subSurface;
+                        var ext = new KHR_materials_volume()
+                        {
+                            thicknessFactor = s.maximumThickness,
+                            thicknessTexture = s.thicknessTexture != null ? ExportTexture(s.thicknessTexture, gltf) : null,
+                            attenuationColor = s.tintColor
+                        };
+                        if (s.tintColorAtDistance != 0 && s.tintColorAtDistance != float.PositiveInfinity)
+                        {
+                            ext.attenuationDistance = s.tintColorAtDistance;
+                        }
+                        gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
+                        gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_volume", ext);
+                    }
                 }
                 else if (babylonMaterial is BabylonPBRSpecularGlossinessMaterial pbrSGMat)
                 {

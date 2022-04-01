@@ -84,6 +84,8 @@ namespace Max2Babylon
             return value;
         }
 
+        public static IColor ToColor(this IPoint4 p) => Loader.Global.Color.Create(p.X, p.Y, p.Z);
+
         #endregion
 
         #region IIPropertyContainer
@@ -123,7 +125,12 @@ namespace Max2Babylon
             IIGameProperty gameProperty = propertyContainer.QueryProperty(propName);
             return gameProperty != null ? gameProperty.GetPoint4Property() : defaultValue;
         }
+        public static IColor GetColorProperty(this IIPropertyContainer propertyContainer, string propName, IColor defaultValue = null)
+        {
+            IPoint4 p4 = GetPoint4Property(propertyContainer, propName);
+            return p4 != null ? p4.ToColor() : defaultValue;
 
+        }
         // ---
 
         public static string GetStringProperty(this IIPropertyContainer propertyContainer, int indexProperty)
