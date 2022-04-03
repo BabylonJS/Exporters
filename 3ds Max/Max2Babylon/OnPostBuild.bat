@@ -23,7 +23,6 @@ IF %1=="Debug" GOTO OnDebug
 IF %1=="Release" GOTO OnRelease
 
 :OnDebug
-REM GOTO Close
 SET dest_dir="%max_location%bin\assemblies"
 GOTO CopyFiles
 
