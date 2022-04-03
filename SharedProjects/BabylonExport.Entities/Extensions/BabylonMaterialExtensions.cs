@@ -7,5 +7,6 @@
         public static bool IsIorEnabled(this BabylonPBRMaterial mat) => mat.indexOfRefraction != null;
         public static bool IsSpecularEnabled(this BabylonPBRMaterial mat) => mat.metallicF0Factor != null;
         public static bool IsVolumeEnabled(this BabylonPBRMaterial mat) => mat.subSurface.maximumThickness != null;
+        public static bool IsMetallicWorkflow(this BabylonPBRMaterial mat) => mat.metallic != null || mat.roughness != null || mat.metallicTexture != null;
     }
 }
