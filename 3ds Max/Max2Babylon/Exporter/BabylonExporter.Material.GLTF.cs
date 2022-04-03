@@ -187,11 +187,11 @@ namespace Max2Babylon
             ///////////////////////////////////////////
             // The target Metallic Rougness material //
             ///////////////////////////////////////////
-            var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(maxDecorator.Id)
+            var babylonMaterial = new BabylonPBRMaterial(maxDecorator.Id)
             {
                 maxGameMaterial = materialNode,
                 name = maxDecorator.Name,
-                baseColor = maxDecorator.BaseColor.ToArray(),
+                albedo = maxDecorator.BaseColor.ToArray(),
                 isUnlit = maxDecorator.Unlit
             };
 
@@ -221,7 +221,7 @@ namespace Max2Babylon
             }
         }
         public bool isGLTFMaterial(IIGameMaterial materialNode) => ClassIDWrapper.Gltf_Material.Equals(materialNode.MaxMaterial.ClassID);
-        internal void ExportPhysicalBase(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial babylonMaterial, BabylonScene babylonScene, bool invertRoughness = false)
+        internal void ExportPhysicalBase(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial babylonMaterial, BabylonScene babylonScene, bool invertRoughness = false)
         {
             if (!babylonMaterial.isUnlit)
             {
@@ -241,10 +241,10 @@ namespace Max2Babylon
                 ITexmap baseColorTexMap = maxDecorator.BaseColorMap;
                 ITexmap alphaTexMap = maxDecorator.AlphaMap;
                 bool isOpacity = true;
-                babylonMaterial.baseTexture = ExportBaseColorAlphaTexture(baseColorTexMap, alphaTexMap, babylonMaterial.baseColor, babylonMaterial.alpha, babylonScene, out float[] multiplyColor, isOpacity);
+                babylonMaterial.albedoTexture = ExportBaseColorAlphaTexture(baseColorTexMap, alphaTexMap, babylonMaterial.albedo, babylonMaterial.alpha, babylonScene, out float[] multiplyColor, isOpacity);
                 if (multiplyColor != null)
                 {
-                    babylonMaterial.baseColor = multiplyColor;
+                    babylonMaterial.albedo = multiplyColor;
                 }
 
                 if (!babylonMaterial.isUnlit)
@@ -271,8 +271,8 @@ namespace Max2Babylon
                                     // Metallic, roughness and ambient occlusion are already merged
                                     RaiseVerbose("Metallic, roughness and ambient occlusion are already merged", 2);
                                     BabylonTexture ormTexture = ExportTexture(metalnessTexMap, babylonScene);
-                                    babylonMaterial.metallicRoughnessTexture = ormTexture;
-                                    babylonMaterial.occlusionTexture = ormTexture;
+                                    babylonMaterial.metallicTexture = ormTexture;
+                                    babylonMaterial.ambientTexture = ormTexture;
                                     areTexturesAlreadyMerged = true;
                                 }
                             }
@@ -281,7 +281,7 @@ namespace Max2Babylon
                                 // Metallic and roughness are already merged
                                 RaiseVerbose("Metallic and roughness are already merged", 2);
                                 BabylonTexture ormTexture = ExportTexture(metalnessTexMap, babylonScene);
-                                babylonMaterial.metallicRoughnessTexture = ormTexture;
+                                babylonMaterial.metallicTexture = ormTexture;
                                 areTexturesAlreadyMerged = true;
                             }
                         }
@@ -295,11 +295,11 @@ namespace Max2Babylon
                             BabylonTexture ormTexture = ExportORMTexture(exportParameters.mergeAO ? ambientOcclusionTexmap : null, 
                                 roughnessTexMap, 
                                 metalnessTexMap, 
-                                babylonMaterial.metallic, 
-                                babylonMaterial.roughness, 
+                                babylonMaterial.metallic.Value, 
+                                babylonMaterial.roughness.Value, 
                                 babylonScene, 
                                 invertRoughness);
-                            babylonMaterial.metallicRoughnessTexture = ormTexture;
+                            babylonMaterial.metallicTexture = ormTexture;
 
                             if (ambientOcclusionTexmap != null)
                             {
@@ -312,19 +312,19 @@ namespace Max2Babylon
                                     var texCoordIndex = ambientOcclusionTexture.UVGen.MapChannel - 1;
                                     if (texCoordIndex != ormTexture.coordinatesIndex)
                                     {
-                                        babylonMaterial.occlusionTexture = new BabylonTexture(ormTexture);
-                                        babylonMaterial.occlusionTexture.coordinatesIndex = texCoordIndex;
+                                        babylonMaterial.ambientTexture = new BabylonTexture(ormTexture);
+                                        babylonMaterial.ambientTexture.coordinatesIndex = texCoordIndex;
                                         // Set UVs/texture transform for the ambient occlusion texture
-                                        _exportUV(ambientOcclusionTexture.UVGen, babylonMaterial.occlusionTexture);
+                                        _exportUV(ambientOcclusionTexture.UVGen, babylonMaterial.ambientTexture);
                                     }
                                     else
                                     {
-                                        babylonMaterial.occlusionTexture = ormTexture;
+                                        babylonMaterial.ambientTexture = ormTexture;
                                     }
                                 }
                                 else
                                 {
-                                    babylonMaterial.occlusionTexture = ExportPBRTexture(maxDecorator.Node, 6, babylonScene);
+                                    babylonMaterial.ambientTexture = ExportPBRTexture(maxDecorator.Node, 6, babylonScene);
                                 }
                             }
                         }
@@ -332,13 +332,13 @@ namespace Max2Babylon
                         {
                             // Simply export occlusion texture
                             RaiseVerbose("Simply export occlusion texture", 2);
-                            babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
+                            babylonMaterial.ambientTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
                         }
                     }
-                    if (ambientOcclusionTexmap != null && !exportParameters.mergeAO && babylonMaterial.occlusionTexture == null)
+                    if (ambientOcclusionTexmap != null && !exportParameters.mergeAO && babylonMaterial.ambientTexture == null)
                     {
                         RaiseVerbose("Exporting occlusion texture without merging with metallic roughness", 2);
-                        babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
+                        babylonMaterial.ambientTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
                     }
 
                     // Normal
@@ -346,7 +346,7 @@ namespace Max2Babylon
                     if (NormalMap != null)
                     {
                         var normalMapAmount = maxDecorator.Normal;
-                        babylonMaterial.normalTexture = ExportTexture(NormalMap, babylonScene, normalMapAmount);
+                        babylonMaterial.bumpTexture = ExportTexture(NormalMap, babylonScene, normalMapAmount);
                     }
                 }
 
@@ -359,7 +359,7 @@ namespace Max2Babylon
             }
 
         }
-        internal void ExportClearCoat(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial material, BabylonScene babylonScene)
+        internal void ExportClearCoat(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial material, BabylonScene babylonScene)
         {
             if (maxDecorator.EnableClearcoat)
             {
@@ -404,7 +404,7 @@ namespace Max2Babylon
                 }
             }
         }
-        internal void ExportSheen(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial material, BabylonScene babylonScene)
+        internal void ExportSheen(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial material, BabylonScene babylonScene)
         {
             if (maxDecorator.EnableSheen)
             {
@@ -436,7 +436,7 @@ namespace Max2Babylon
                 }
             }
         }
-        internal void ExportTransmission(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial target, BabylonScene babylonScene)
+        internal void ExportTransmission(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial target, BabylonScene babylonScene)
         {
             if (maxDecorator.EnableTransmission)
             {
@@ -456,7 +456,7 @@ namespace Max2Babylon
                 }
             }
         }
-        internal void ExportIOR(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial target, BabylonScene babylonScene)
+        internal void ExportIOR(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial target, BabylonScene babylonScene)
         {
             if (maxDecorator.EnableIndexOfRefraction)
             {
@@ -466,7 +466,7 @@ namespace Max2Babylon
                 target.indexOfRefraction = maxDecorator.indexOfRefraction;
             }
         }
-        internal void ExportVolume(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial target, BabylonScene babylonScene)
+        internal void ExportVolume(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial target, BabylonScene babylonScene)
         {
             if (maxDecorator.EnableVolume)
             {
@@ -489,7 +489,7 @@ namespace Max2Babylon
                 }
             }
         }
-        internal void ExportSpecular(GltfMaterialDecorator maxDecorator, BabylonPBRMetallicRoughnessMaterial target, BabylonScene babylonScene)
+        internal void ExportSpecular(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial target, BabylonScene babylonScene)
         {
             if (maxDecorator.EnableSpecular)
             {

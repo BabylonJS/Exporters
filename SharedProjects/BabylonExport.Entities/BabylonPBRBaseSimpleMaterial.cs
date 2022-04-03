@@ -22,7 +22,6 @@ namespace BabylonExport.Entities
             _unlit = false;
             clearCoat = new BabylonPBRClearCoat();
             sheen = new BabylonPBRSheenConfiguration();
-            subSurface = new BabylonPBRSubSurfaceConfiguration();
         }
         public BabylonPBRBaseSimpleMaterial(BabylonPBRBaseSimpleMaterial original) : base(original)
         {
@@ -96,23 +95,5 @@ namespace BabylonExport.Entities
 
         [DataMember(EmitDefaultValue = false)]
         public bool _unlit { get; set; }
-
-
-        // WARNING -TEMPORARY, MUST BE SWITCHED WITH THE USE OF PBRMaterial
-        #region WARNING
-
-        // IOR
-        public float? indexOfRefraction { get; set; }
-
-        // SPECULAR
-        public float? metallicF0Factor { get; set; }
-        public BabylonTexture metallicReflectanceTexture { get; set; }
-        public float[] metallicReflectanceColor { get; set; } = WhiteColor();
-
-        // note this following property does NOT even exits into Babylon (vesrion 4.2.1)
-        public BabylonTexture metallicReflectanceColorTexture { get; set; }
-
-        public BabylonPBRSubSurfaceConfiguration subSurface { get; set; }
-        #endregion
     }
 }
