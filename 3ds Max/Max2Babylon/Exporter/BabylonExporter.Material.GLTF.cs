@@ -511,7 +511,7 @@ namespace Max2Babylon
 
                     if (maxDecorator.SpecularColorMap != null)
                     {
-                        target.metallicReflectanceColorTexture = ExportTexture(maxDecorator.SpecularColorMap, babylonScene);
+                        target.reflectanceTexture = ExportTexture(maxDecorator.SpecularColorMap, babylonScene);
                     }
                 }
 

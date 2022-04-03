@@ -178,8 +178,7 @@ namespace BabylonExport.Entities
         [DataMember]
         public float[] metallicReflectanceColor { get; set; } = WhiteColor();
 
-        // note this following property does NOT even exits into Babylon (version 4.2.1)
-        public BabylonTexture metallicReflectanceColorTexture { get; set; }
+        public BabylonTexture reflectanceTexture { get; set; }
 
         public BabylonPBRMaterial(string id) : base(id)
         {

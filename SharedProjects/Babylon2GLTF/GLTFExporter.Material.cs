@@ -595,7 +595,7 @@ namespace Babylon2GLTF
                         specularFactor = pbrMRMat.metallicF0Factor,
                         specularTexture = pbrMRMat.metallicReflectanceTexture != null ? ExportTexture(pbrMRMat.metallicReflectanceTexture, gltf) : null,
                         specularColorFactor = pbrMRMat.metallicReflectanceColor,
-                        specularColorTexture = pbrMRMat.metallicReflectanceColorTexture != null ? ExportTexture(pbrMRMat.metallicReflectanceColorTexture, gltf) : null
+                        specularColorTexture = pbrMRMat.reflectanceTexture != null ? ExportTexture(pbrMRMat.reflectanceTexture, gltf) : null
                     };
                     gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
                     gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_specular", ext);
