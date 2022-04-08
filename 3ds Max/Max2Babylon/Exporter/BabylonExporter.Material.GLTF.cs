@@ -9,6 +9,16 @@ namespace Max2Babylon
     /// </summary>
     public class GltfMaterialDecorator : MaterialDecorator
     {
+        /// <summary>
+        /// the Alpha mode as defined into the GltfMaterial
+        /// </summary>
+        public enum AlphaModeCode
+        {
+            OPAQUE = 1, // Max indices always start at 1.
+            MASK = 2,
+            BLEND = 3
+        }
+
         // use as scale for GetSelfIllumColor to convert [0,PI] to [O,1]
         private const float selfIllumScale = (float)(1.0 / Math.PI);
 
@@ -235,6 +245,8 @@ namespace Max2Babylon
                 babylonMaterial.metallic = 0;
                 babylonMaterial.roughness = 0.9f;
             }
+
+            ExportAlphaMode(maxDecorator, babylonMaterial);
 
             if (exportParameters.exportTextures)
             {
@@ -516,6 +528,31 @@ namespace Max2Babylon
                 }
 
             }
+        }
+
+        private void ExportAlphaMode(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial target)
+        {
+            var a = maxDecorator.AlphaMode;
+            switch (a)
+            {
+                case ((int)GltfMaterialDecorator.AlphaModeCode.OPAQUE):
+                    {
+                        target.transparencyMode = (int)BabylonMaterial.TransparencyMode.OPAQUE;
+                        break;
+                    }
+                case ((int)GltfMaterialDecorator.AlphaModeCode.BLEND):
+                    {
+                        target.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHABLEND;
+                        break;
+                    }
+                case ((int)GltfMaterialDecorator.AlphaModeCode.MASK):
+                    {
+                        target.transparencyMode = (int)BabylonMaterial.TransparencyMode.ALPHATEST;
+                        break;
+                    }
+            }
+            // GltfMaterial default value is 0.5
+            target.alphaCutOff = maxDecorator.AlphaCutOff;
         }
     }
 }
