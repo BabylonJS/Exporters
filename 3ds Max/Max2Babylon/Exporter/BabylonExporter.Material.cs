@@ -22,6 +22,9 @@ namespace Max2Babylon
     public class MaterialDecorator
     {
         protected IIGameMaterial _node;
+        // add temporary cache to optimize the map access.
+        IDictionary<string, ITexmap> _mapCaches;
+
 
         public MaterialDecorator(IIGameMaterial node)
         {
@@ -30,7 +33,61 @@ namespace Max2Babylon
 
         public IIPropertyContainer Properties => _node.IPropertyContainer;
         public string Id => _node.MaxMaterial.GetGuid().ToString();
-        public string Name => _node.MaterialName;
+        public string Name => _node.MaterialName; 
+        public IIGameMaterial Node => _node;
+
+        protected ITexmap _getTexMapWithCache(IIGameMaterial materialNode, string name)
+        {
+            var materialName = materialNode.MaterialName;
+            if (_mapCaches == null)
+            {
+                _mapCaches = new Dictionary<string, ITexmap>();
+                for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
+                {
+                    // according to https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=Max_Developer_Help_what_s_new_whats_new_3dsmax_2022_sdk_localization_html
+#if MAX2022 || MAX2023
+                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i, false); // Non localized, then en-US
+#else
+                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i); // en-US
+#endif
+                    _mapCaches.Add(mn, materialNode.MaxMaterial.GetSubTexmap(i));
+                }
+            }
+            if (_mapCaches.TryGetValue(name, out ITexmap texmap))
+            {
+                return texmap;
+            }
+            // max 2022 maj introduce a change into the naming of the map.
+            // the SDK do not return the name of the map anymore but a display name with camel style and space
+            // Here a fix which maintain the old style and transform the name for a second try if failed.
+            name = string.Join(" ", name.Split('_').Select(s => char.ToUpper(s[0]) + s.Substring(1)));
+            return _mapCaches.TryGetValue(name, out texmap) ? texmap : null;
+        }
+
+        protected ITexmap _getTexMap(IIGameMaterial materialNode, string name, bool cache = true)
+        {
+            if (cache)
+            {
+                return _getTexMapWithCache(materialNode, name);
+            }
+
+            for (int k = 0; k < 2; k++)
+            {
+                for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
+                {
+                    if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == name)
+                    {
+                        return materialNode.MaxMaterial.GetSubTexmap(i);
+                    }
+                }
+                // max 2022 maj introduce a change into the naming of the map.
+                // the SDK do not return the name of the map anymore but a display name with camel style and space
+                // Here a fix which maintain the old style and transform the name for a second try if failed.
+                name = string.Join(" ", name.Split('_').Select(s => char.ToUpper(s[0]) + s.Substring(1)));
+            }
+            return null;
+        }
+
     }
 
     /// <summary>
@@ -108,7 +165,7 @@ namespace Max2Babylon
             RaiseMessage(name, 1);
 
             // --- prints ---
-            #region prints
+#region prints
             {
                 RaiseVerbose("materialNode.MaterialClass=" + materialNode.MaterialClass, 2);
                 RaiseVerbose("materialNode.NumberOfTextureMaps=" + materialNode.NumberOfTextureMaps, 2);
@@ -119,7 +176,7 @@ namespace Max2Babylon
                     RaiseVerbose("Texture[" + i + "] is named '" + materialNode.MaxMaterial.GetSubTexmapSlotName(i) + "'", 2);
                 }
             }
-            #endregion
+#endregion
 
             if (materialNode.SubMaterialCount > 0)
             {
@@ -229,8 +286,13 @@ namespace Max2Babylon
             else if (isPbrSpecGlossMaterial(materialNode))
             {
                 ExportPbrSpecGlossMaterial(materialNode, babylonScene);
-
             }
+#if MAX2023
+            else if (isGLTFMaterial(materialNode))
+            {
+                ExportGLTFMaterial(materialNode, babylonScene);
+            }
+#endif
             else if (isArnoldMaterial(materialNode))
             {
                 var babylonMaterial = new BabylonPBRMetallicRoughnessMaterial(id)
@@ -506,9 +568,9 @@ namespace Max2Babylon
             var invertRoughness = propertyContainer.GetBoolProperty(5);
             if (babylonMaterial.isUnlit == false)
             {
-                babylonMaterial.metallic = propertyContainer.GetFloatProperty(6);
+                babylonMaterial.metallic = propertyContainer?.GetFloatProperty("metalness", 0.0f) ?? 0.0f;
 
-                babylonMaterial.roughness = propertyContainer.GetFloatProperty(4);
+                babylonMaterial.roughness = propertyContainer?.GetFloatProperty("roughness", 0.0f) ?? 0.0f;
                 if (invertRoughness)
                 {
                     // Inverse roughness
@@ -1071,7 +1133,11 @@ namespace Max2Babylon
                 }
 
                 // Physical materials
-                if (isPhysicalMaterial(materialNode) || isPbrMetalRoughMaterial(materialNode) || isPbrSpecGlossMaterial(materialNode))
+                if (isPhysicalMaterial(materialNode) || isPbrMetalRoughMaterial(materialNode) || isPbrSpecGlossMaterial(materialNode)
+#if MAX2023
+                    || isGLTFMaterial(materialNode)
+#endif
+                    )
                 {
                     return null;
                 }
@@ -1161,7 +1227,7 @@ namespace Max2Babylon
         private void AddAiStandardSurfaceBabylonAttributes(string attributesContainer, BabylonPBRMetallicRoughnessMaterial babylonMaterial = null) => AddCustomAttributes(attributesContainer, MaterialScripts.AIBabylonCAtDef, "ARNOLD_MATERIAL_CAT_DEF");
 
         private void AddCustomAttributes(string attributesContainer, string cmdCreateBabylonAttributes, string def) =>
-#if MAX2022
+#if MAX2022 || MAX2023
             ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def), ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
         ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def));

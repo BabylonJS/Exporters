@@ -73,7 +73,7 @@ ECHO "No Configuaration"
 GOTO Close
 
 :DebugOnMax
-START /d "%max_location%" 3dsmax.exe
+START /d "%max_location%" 3dsmax.exe /Language=ENU
 GOTO Close
 
 :Close

@@ -8,6 +8,9 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonPBRBaseSimpleMaterial : BabylonMaterial
     {
+        public const float DefaultIOR = 1.5f;
+        public const float DefaultSpecularFactor = 1.0f;
+
         public static float[] BlackColor() => new[] { 0f, 0f, 0f };
         public static float[] WhiteColor() => new[] { 1f, 1f, 1f };
 
@@ -18,6 +21,7 @@ namespace BabylonExport.Entities
             transparencyMode = (int)TransparencyMode.OPAQUE;
             _unlit = false;
             clearCoat = new BabylonPBRClearCoat();
+            sheen = new BabylonPBRSheenConfiguration();
         }
         public BabylonPBRBaseSimpleMaterial(BabylonPBRBaseSimpleMaterial original) : base(original)
         {
@@ -85,6 +89,9 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonPBRClearCoat clearCoat { get; set; }
+        
+        [DataMember]
+        public BabylonPBRSheenConfiguration sheen { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public bool _unlit { get; set; }
