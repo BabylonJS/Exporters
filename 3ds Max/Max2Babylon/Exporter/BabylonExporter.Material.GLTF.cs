@@ -184,14 +184,14 @@ namespace Max2Babylon
     partial class BabylonExporter
     {
         /// <summary>
-        /// Export dedicated to Autodesk GLTF Material
+        /// Export dedicated to Autodesk GLTF Material.
+        /// the unobvious part is that we MUST first export the material as Babylon to allow
+        /// the Babylon2GLTF export to rebuild the coresponding material and extensions.
         /// </summary>
         /// <param name="materialNode">the material node interface</param>
         /// <param name="babylonScene">the scene to export the material</param>
         private void ExportGLTFMaterial(IIGameMaterial materialNode, BabylonScene babylonScene)
         {
-            // the unobvious part is that we MUST first export the material as Babylon to allow
-            // the Babylon2GLTF export to rebuild the coresponding material and extensions.
             GltfMaterialDecorator maxDecorator = new GltfMaterialDecorator(materialNode);
 
             ///////////////////////////////////////////
@@ -532,8 +532,7 @@ namespace Max2Babylon
 
         private void ExportAlphaMode(GltfMaterialDecorator maxDecorator, BabylonPBRMaterial target)
         {
-            var a = maxDecorator.AlphaMode;
-            switch (a)
+            switch (maxDecorator.AlphaMode)
             {
                 case ((int)GltfMaterialDecorator.AlphaModeCode.OPAQUE):
                     {
