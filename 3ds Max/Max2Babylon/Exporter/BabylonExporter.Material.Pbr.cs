@@ -10,11 +10,6 @@ namespace Max2Babylon
     /// </summary>
     public class PbrGameMaterialDecorator : MaterialDecorator
     {
-
-
-        // add temporary cache to optimize the map access.
-        IDictionary<string, ITexmap> _mapCaches ;
-        
         BabylonCustomAttributeDecorator _babylonCAT;
 
         public PbrGameMaterialDecorator(IIGameMaterial node) : base(node)
@@ -38,53 +33,6 @@ namespace Max2Babylon
 
         public BabylonCustomAttributeDecorator BabylonCustomAttributes => _babylonCAT;
 
-
-        protected ITexmap _getTexMapWithCache(IIGameMaterial materialNode, string name)
-        {
-            var materialName = materialNode.MaterialName;
-            if(_mapCaches == null)
-            {
-                _mapCaches = new Dictionary<string, ITexmap>();
-                for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
-                {
-                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i);
-                    _mapCaches.Add(mn, materialNode.MaxMaterial.GetSubTexmap(i));
-                }
-            }
-            if (_mapCaches.TryGetValue(name, out ITexmap texmap))
-            {
-                return texmap;
-            }
-            // max 2022 maj introduce a change into the naming of the map.
-            // the SDK do not return the name of the map anymore but a display name with camel style and space
-            // Here a fix which maintain the old style and transform the name for a second try if failed.
-            name = string.Join(" ", name.Split('_').Select(s => char.ToUpper(s[0]) + s.Substring(1)));
-            return _mapCaches.TryGetValue(name, out texmap) ? texmap : null;
-        }
-
-        protected ITexmap _getTexMap(IIGameMaterial materialNode, string name, bool cache = true)
-        {
-            if (cache)
-            {
-                return _getTexMapWithCache(materialNode, name);
-            }
-
-            for (int k = 0; k < 2; k++)
-            {
-                for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
-                {
-                    if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == name)
-                    {
-                        return materialNode.MaxMaterial.GetSubTexmap(i);
-                    }
-                }
-                // max 2022 maj introduce a change into the naming of the map.
-                // the SDK do not return the name of the map anymore but a display name with camel style and space
-                // Here a fix which maintain the old style and transform the name for a second try if failed.
-                name = string.Join(" ", name.Split('_').Select(s => char.ToUpper(s[0]) + s.Substring(1)));
-            }
-            return null;
-        }
     }
 
     public class PbrMetalRoughDecorator : PbrGameMaterialDecorator

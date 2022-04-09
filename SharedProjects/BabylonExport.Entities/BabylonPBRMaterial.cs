@@ -4,6 +4,13 @@ namespace BabylonExport.Entities
     [DataContract]
     public class BabylonPBRMaterial : BabylonMaterial
     {
+        public const float DefaultIOR = 1.5f;
+        public const float DefaultSpecularFactor = 1.0f;
+
+        public static float[] BlackColor() => new[] { 0f, 0f, 0f };
+        public static float[] GreyColor() => new[] { 0.5f, 0.5f, 0.5f };
+        public static float[] WhiteColor() => new[] { 1f, 1f, 1f };
+
         [DataMember]
         public string customType { get; private set; }
 
@@ -122,7 +129,7 @@ namespace BabylonExport.Entities
         public bool useAmbientInGrayScale { get; set; }
 
         [DataMember]
-        public float indexOfRefraction { get; set; }
+        public float? indexOfRefraction { get; set; }
 
         [DataMember]
         public bool invertRefractionY { get; set; }
@@ -156,6 +163,22 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonPBRClearCoat clearCoat { get; set; }
+        
+        [DataMember]
+        public BabylonPBRSheenConfiguration sheen { get; set; }
+        
+        [DataMember]
+        public BabylonPBRSubSurfaceConfiguration subSurface { get; set; }
+
+        // SPECULAR
+        [DataMember]
+        public float? metallicF0Factor { get; set; }
+        [DataMember]
+        public BabylonTexture metallicReflectanceTexture { get; set; }
+        [DataMember]
+        public float[] metallicReflectanceColor { get; set; } = WhiteColor();
+
+        public BabylonTexture reflectanceTexture { get; set; }
 
         public BabylonPBRMaterial(string id) : base(id)
         {
@@ -166,7 +189,7 @@ namespace BabylonExport.Entities
             specularIntensity = 1.0f;
             cameraExposure = 1.0f;
             cameraContrast = 1.0f;
-            indexOfRefraction = 0.66f;
+            indexOfRefraction = null;
             twoSidedLighting = false;
             useRadianceOverAlpha = true;
             useSpecularOverAlpha = true;
@@ -183,11 +206,11 @@ namespace BabylonExport.Entities
             microSurface = 0.9f;
             useMicroSurfaceFromReflectivityMapAplha = false;
 
-            ambient = new[] { 0f, 0f, 0f };
-            albedo = new[] { 1f, 1f, 1f };
-            reflectivity = new[] { 1f, 1f, 1f };
-            reflection = new[] { 0.5f, 0.5f, 0.5f };
-            emissive = new[] { 0f, 0f, 0f };
+            ambient = BlackColor();
+            albedo = WhiteColor();
+            reflectivity = WhiteColor();
+            reflection = GreyColor();
+            emissive = BlackColor();
 
             invertNormalMapX = false;
             invertNormalMapY = false;
@@ -195,6 +218,8 @@ namespace BabylonExport.Entities
             transparencyMode = (int)BabylonPBRMetallicRoughnessMaterial.TransparencyMode.OPAQUE;
 
             clearCoat = new BabylonPBRClearCoat();
+            sheen = new BabylonPBRSheenConfiguration();
+            subSurface = new BabylonPBRSubSurfaceConfiguration();
         }
 
         public BabylonPBRMaterial(BabylonPBRBaseSimpleMaterial origin) : base(origin.id)
@@ -212,9 +237,9 @@ namespace BabylonExport.Entities
             usePhysicalLightFalloff = true;
             useEmissiveAsIllumination = true;
 
-             ambient = new[] { 0f, 0f, 0f };
-            reflectivity = new[] { 1f, 1f, 1f };
-            reflection = new[] { 1f, 1f, 1f };
+            ambient = BlackColor();
+            reflectivity = WhiteColor();
+            reflection = WhiteColor();
 
             albedoTexture = origin.baseTexture;
             alpha = origin.alpha;
@@ -224,6 +249,7 @@ namespace BabylonExport.Entities
             albedo = origin.baseColor;
             albedoTexture = origin.baseTexture;
             clearCoat = origin.clearCoat;
+            sheen = origin.sheen;
             disableLighting = origin.disableLighting;
             twoSidedLighting = origin.doubleSided;
             emissive = origin.emissive;

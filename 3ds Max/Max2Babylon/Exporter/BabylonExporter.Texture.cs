@@ -212,11 +212,12 @@ namespace Max2Babylon
         private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, int index, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false)
         {
             var texMap = _getTexMap(materialNode, index);
-            if (texMap != null)
-            {
-                return ExportTexture(texMap, babylonScene, amount, allowCube);
-            }
-            return null;
+            return texMap != null ? ExportTexture(texMap, babylonScene, amount, allowCube) : null;
+        }
+        private BabylonTexture ExportPBRTexture(IIGameMaterial materialNode, string name, BabylonScene babylonScene, float amount = 1.0f, bool allowCube = false)
+        {
+            var texMap = _getTexMap(materialNode, name);
+            return texMap != null?ExportTexture(texMap, babylonScene, amount, allowCube):null;
         }
 
         private BabylonTexture ExportClearCoatTexture(ITexmap intensityTexMap, ITexmap roughnessTexMap, float coatWeight, float coatRoughness, BabylonScene babylonScene, string materialName, bool invertRoughness)
@@ -831,7 +832,7 @@ namespace Max2Babylon
                 return null;
             }
 
-#if MAX2022            
+#if MAX2022 || MAX2023            
             if (texMap.ClassName(false) == "Normal Bump")
 #else
             if (texMap.ClassName == "Normal Bump")
@@ -898,7 +899,7 @@ namespace Max2Babylon
             for (int i = 0; i != n; i++)
             {
                 var tmp = custAtt.GetCustAttrib(i);
-#if MAX2022                
+#if MAX2022 || MAX2023                
                 if (tmp.ClassName(false) == MaterialCustomBabylonAttributeName)
 #else
                 if (tmp.ClassName == MaterialCustomBabylonAttributeName)
@@ -1118,7 +1119,7 @@ namespace Max2Babylon
             fresnelParameters = null;
 
             // Fallout
-#if MAX2022  
+#if MAX2022 || MAX2023  
             if (texMap.ClassName(false) == "Falloff") // This is the only way I found to detect it. This is crappy but it works
 #else
             if (texMap.ClassName == "Falloff") // This is the only way I found to detect it. This is crappy but it works
@@ -1431,7 +1432,7 @@ namespace Max2Babylon
                 return null;
             }
 
-#if MAX2022  
+#if MAX2022 || MAX2023  
             if (texMap.ClassName(false) == "RGB Multiply")
 #else
             if (texMap.ClassName == "RGB Multiply")

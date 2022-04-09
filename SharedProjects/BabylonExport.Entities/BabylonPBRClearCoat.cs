@@ -13,6 +13,8 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public float roughness { get; set; } = 0.0f;
+        [DataMember]
+        public BabylonTexture textureRoughness { get; set; }
 
         [DataMember]
         public float indexOfRefraction { get; set; } = 1.5f;
@@ -34,5 +36,8 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public BabylonTexture tintTexture { get; set; }
+
+        [DataMember]
+        public bool useRoughnessFromMainTexture { get; set; } = false;
     }
 }

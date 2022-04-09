@@ -39,6 +39,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)GLTFTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GLTFTextureInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IGLTFMaterialExporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KHRExtensions\KHR_materials_volume.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KHRExtensions\KHR_materials_specular.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KHRExtensions\KHR_materials_ior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KHRExtensions\KHR_materials_clearcoat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KHRExtensions\KHR_materials_pbrSpecularGlossiness.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KHRExtensions\KHR_materials_sheen.cs" />

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRBaseSimpleMaterial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRSheenConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRSpecularGlossinessMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonAbstractMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonActions.cs" />
@@ -31,6 +32,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMatrix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BabylonPBRSubSurfaceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\BabylonMaterialExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\BabylonMeshExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonMorphTargetManager.cs" />
@@ -55,8 +58,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVector3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BabylonVertexData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExportParameters.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Extensions\" />
   </ItemGroup>
 </Project>

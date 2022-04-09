@@ -181,7 +181,7 @@ namespace Max2Babylon
                 idActionTable = (uint)actionManager.NumActionTables;
 
                 string actionTableName = "Babylon Actions";
-#if MAX2022
+#if MAX2022 || MAX2023
                 actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, actionTableName);
 #else
                 actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, ref actionTableName);
@@ -356,7 +356,7 @@ namespace Max2Babylon
         private void AddCallbacks() 
         {
             foreach (var s in MaterialScripts.AddCallbacks())
-#if MAX2022
+#if MAX2022 || MAX2023
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s,ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
                  ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
