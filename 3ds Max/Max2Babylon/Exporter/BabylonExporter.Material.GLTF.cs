@@ -238,6 +238,7 @@ namespace Max2Babylon
                 babylonMaterial.metallic = maxDecorator.Metalness;
                 babylonMaterial.roughness = maxDecorator.Roughness;
                 babylonMaterial.emissive = maxDecorator.EmissionColor?.ToArray();
+                babylonMaterial.twoSidedLighting = maxDecorator.DoubleSided;
             }
             else
             {

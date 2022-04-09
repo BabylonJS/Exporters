@@ -237,7 +237,7 @@ namespace BabylonExport.Entities
             usePhysicalLightFalloff = true;
             useEmissiveAsIllumination = true;
 
-             ambient = BlackColor();
+            ambient = BlackColor();
             reflectivity = WhiteColor();
             reflection = WhiteColor();
 
