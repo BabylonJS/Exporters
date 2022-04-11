@@ -1183,6 +1183,9 @@ namespace Max2Babylon
                 float[] weight = new float[4] { 0, 0, 0, 0 };
                 int[] bone = new int[4] { 0, 0, 0, 0 };
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
+                // Babylon, nor GLTF do not support single bone skeleton, we may add a root node  with no transform.
+                // this is echoing the process into BabylonExporter.Skeleton ExportBones(Skin)
+                var offset = skin.TotalBoneCount == 1 ? 1 : 0;
 
                 int currentVtxBone = 0;
                 int currentSkinBone = 0;
@@ -1194,7 +1197,7 @@ namespace Max2Babylon
                     if (boneWeight <= 0)
                         continue;
 
-                    bone[currentVtxBone] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                    bone[currentVtxBone] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset; // add optional offset
                     weight[currentVtxBone] = skin.GetWeight(vertexIndex, currentSkinBone);
                     ++currentVtxBone;
                 }
@@ -1227,7 +1230,7 @@ namespace Max2Babylon
                             break;
                         }
 
-                        bone[currentVtxBone - 4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID);
+                        bone[currentVtxBone - 4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset; // add optional offset
                         weight[currentVtxBone - 4] = skin.GetWeight(vertexIndex, currentSkinBone);
                         ++currentVtxBone;
                     }
