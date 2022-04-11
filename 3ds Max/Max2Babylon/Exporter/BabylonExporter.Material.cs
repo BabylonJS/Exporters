@@ -705,8 +705,8 @@ namespace Max2Babylon
                         // Change the factor to zero if combining partial channel to avoid issue (in case of image compression).
                         // ie - if no metallic map, then b MUSt be fully black. However channel of jpeg MAY not beeing fully black 
                         // cause of the compression algorithm. Keeping MetallicFactor to 1 will make visible artifact onto texture. So set to Zero instead.
-                        babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null ? 1.0f : 0.0f;
-                        babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null ? 1.0f : 0.0f;
+                        babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null || (metallicTexmap == null && babylonMaterial.metallic != 0) ? 1.0f : 0.0f;
+                        babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null || (roughnessTexmap == null && babylonMaterial.roughness != 0) ? 1.0f : 0.0f;
                     }
                 }
             }
@@ -959,8 +959,8 @@ namespace Max2Babylon
                         // Change the factor to zero if combining partial channel to avoid issue (in case of image compression).
                         // ie - if no metallic map, then b MUSt be fully black. However channel of jpeg MAY not beeing fully black 
                         // cause of the compression algorithm. Keeping MetallicFactor to 1 will make visible artifact onto texture. So set to Zero instead.
-                        babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null ? 1.0f : 0.0f;
-                        babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null ? 1.0f : 0.0f;
+                        babylonMaterial.metallic = areTexturesAlreadyMerged || metallicTexmap != null || (metallicTexmap == null && babylonMaterial.metallic != 0) ? 1.0f : 0.0f;
+                        babylonMaterial.roughness = areTexturesAlreadyMerged || roughnessTexmap != null || (roughnessTexmap == null && babylonMaterial.roughness != 0) ? 1.0f : 0.0f;
                     }
                 }
             }
