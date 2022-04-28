@@ -4,6 +4,10 @@ namespace BabylonExport.Entities
 {
     public class BabylonQuaternion
     {
+        public static BabylonQuaternion operator +(BabylonQuaternion a, BabylonQuaternion b) => a.Add(b);
+        public static BabylonQuaternion operator -(BabylonQuaternion a, BabylonQuaternion b) => a.Subtract(b);
+        public static BabylonQuaternion operator -(BabylonQuaternion a) => a.Negate();
+
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
@@ -28,6 +32,10 @@ namespace BabylonExport.Entities
             return new[] { X, Y, Z, W };
         }
 
+        public BabylonQuaternion Add(BabylonQuaternion other)=> new BabylonQuaternion(this.X + other.X, this.Y + other.Y, this.Z + other.Z, this.W + other.W);
+        public BabylonQuaternion Subtract(BabylonQuaternion other) => new BabylonQuaternion(this.X - other.X, this.Y - other.Y, this.Z - other.Z, this.W - other.W);
+        public BabylonQuaternion Negate() => new BabylonQuaternion(-this.X, -this.Y, -this.Z, -this.W);
+        public double SquaredNorm() => X * X + Y * Y + Z * Z + W * W;
         /**
          * Copy / pasted from babylon 
          */
