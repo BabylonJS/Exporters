@@ -695,7 +695,11 @@ namespace Max2Babylon
                         babylonMaterial.occlusionTexture = ExportTexture(ambientOcclusionTexmap, babylonScene);
                     }
 
+#if MAX2023
+                    var normalMapAmount = propertyContainer.GetFloatProperty("bump_map_amt");
+#else
                     var normalMapAmount = propertyContainer.GetFloatProperty(91);
+#endif
                     babylonMaterial.normalTexture = ExportPBRTexture(materialNode, 30, babylonScene, normalMapAmount);
 
                     babylonMaterial.emissiveTexture = ExportPBRTexture(materialNode, 17, babylonScene);
