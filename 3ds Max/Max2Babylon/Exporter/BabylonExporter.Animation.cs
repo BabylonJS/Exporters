@@ -678,6 +678,10 @@ namespace Max2Babylon
         {
             if (isRotationAnimated(gameNode) || force)
             {
+                BabylonQuaternion q_previous = null;
+                var s_babylon = new BabylonVector3();
+                var t_babylon = new BabylonVector3();
+
                 ExportQuaternionAnimation("rotationQuaternion", animations, key =>
                 {
                     var localMatrix = gameNode.GetLocalTM(key);
@@ -688,17 +692,28 @@ namespace Max2Babylon
                     }
 
                     var tm_babylon = new BabylonMatrix();
-                    tm_babylon.m = localMatrix.ToArray();
-
-                    var s_babylon = new BabylonVector3();
                     var q_babylon = new BabylonQuaternion();
-                    var t_babylon = new BabylonVector3();
 
+                    tm_babylon.m = localMatrix.ToArray();
+                    
                     tm_babylon.decompose(s_babylon, q_babylon, t_babylon);
 
+                    if (q_previous != null)
+                    {
+                        // avoid jump 
+                        // flip the sign of the current quaternion if it makes the distance between the quaternions in the 4D vector space smaller.
+                        // any given rotation has two possible quaternion representations, and then the sign is ambigous.
+                        // If one is known, the other can be found by taking the negative of all four terms.This has the effect of reversing both the rotation
+                        // angle and the axis of rotation.So for all rotation quaternions, (q 0, q 1, q 2, q 3) and(− q 0, − q 1, − q 2, − q 3) produce identical rotations
+                        if ((q_babylon - q_previous).SquaredNorm() > (q_babylon + q_previous).SquaredNorm())
+                        {
+                            q_babylon = -q_babylon;
+                        }
+                    }
+                    q_previous = q_babylon;
                     // normalize
                     var q = q_babylon;
-                    float q_length = (float)Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W);
+                    float q_length = (float)Math.Sqrt(q.SquaredNorm());
 
                     return new[] { q_babylon.X / q_length, q_babylon.Y / q_length, q_babylon.Z / q_length, q_babylon.W / q_length };
                 });
