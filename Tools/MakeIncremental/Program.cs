@@ -211,7 +211,7 @@ namespace MakeIncremental
                 }
 
                 dynamic scene;
-                var outputDir = (dstPath != null && dstPath != "") ? Path.GetDirectoryName(dstPath) : Path.GetDirectoryName(input);
+                var outputDir = String.IsNullOrEmpty(dstPath) ? Path.GetDirectoryName(input) : Path.GetDirectoryName(dstPath);
                 var rootFilename = Path.GetFileNameWithoutExtension(input);
 
                 // Loading
