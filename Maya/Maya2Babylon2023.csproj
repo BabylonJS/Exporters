@@ -167,7 +167,7 @@
 
 SET configurationName=$(ConfigurationName)
 ECHO %25configurationName%25
-
+ 
 if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
 if not exist "$(SolutionDir)assemblies\2023" mkdir "$(SolutionDir)assemblies\2023"
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2023\"
