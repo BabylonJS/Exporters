@@ -148,6 +148,7 @@ namespace BabylonJS_Installer
                         if (entry.IsDirectory()) continue;
                         if (entry.Name.Substring(0, 9) == "AEbabylon") entry.ExtractToFile(this.installDir + "scripts\\AETemplates" + "/" + entry.Name, true);
                         else if (entry.Name.Substring(0, 9) == "NEbabylon") entry.ExtractToFile(this.installDir + "scripts\\NETemplates" + "/" + entry.Name, true);
+                        else if (entry.Name == "Maya2Babylon.dll") entry.ExtractToFile(this.installDir + this.installLibSubDir + "/Maya2Babylon.nll.dll", true); // force renaming the dll in case of maya plug-in
                         else entry.ExtractToFile(this.installDir + this.installLibSubDir + "/" + entry.Name, true);
                     }
                 }
