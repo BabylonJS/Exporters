@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Maya2Babylon</RootNamespace>
-    <AssemblyName>Maya2Babylon</AssemblyName>
+    <AssemblyName>Maya2Babylon.nll</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -171,8 +171,6 @@ ECHO %25configurationName%25
 if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
 if not exist "$(SolutionDir)assemblies\2020" mkdir "$(SolutionDir)assemblies\2020"
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2020\"
-del "$(SolutionDir)assemblies\2020\$(TargetName).dll"
-copy "$(TargetPath)" "$(SolutionDir)assemblies\2020\$(TargetName).nll.dll"
 if exist "D:\Programmes\Autodesk\Maya2020\bin\plug-ins\" copy "$(SolutionDir)assemblies\2020\*.dll" "D:\Programmes\Autodesk\Maya2020\bin\plug-ins\"
 if exist "C:\Program Files\Autodesk\Maya2020\bin\plug-ins\" copy "$(SolutionDir)assemblies\2020\*.dll" "C:\Program Files\Autodesk\Maya2020\bin\plug-ins\"
 
