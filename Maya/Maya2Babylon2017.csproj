@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Maya2Babylon</RootNamespace>
-    <AssemblyName>Maya2Babylon</AssemblyName>
+    <AssemblyName>Maya2Babylon.nll</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -160,12 +160,28 @@
   <Import Project="..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
+    <PostBuildEvent>
+setlocal enabledelayedexpansion
+
+SET configurationName=$(ConfigurationName)
+ECHO %25configurationName%25
+
+if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
 if not exist "$(SolutionDir)assemblies\2017-2018" mkdir "$(SolutionDir)assemblies\2017-2018"
 copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2017-2018\"
-del "$(SolutionDir)assemblies\2017-2018\$(TargetName).dll"
-copy "$(TargetPath)" "$(SolutionDir)assemblies\2017-2018\$(TargetName).nll.dll"
-if exist "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\2017-2018\*.dll" "D:\Programmes\Autodesk\Maya2018\bin\plug-ins\"
-if exist "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\2017-2018\*.dll" "C:\Program Files\Autodesk\Maya2018\bin\plug-ins\"</PostBuildEvent>
+if exist "D:\Programmes\Autodesk\Maya2017-2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\2017-2018\*.dll" "D:\Programmes\Autodesk\Maya2017-2018\bin\plug-ins\"
+if exist "C:\Program Files\Autodesk\Maya2017-2018\bin\plug-ins\" copy "$(SolutionDir)assemblies\2017-2018\*.dll" "C:\Program Files\Autodesk\Maya2017-2018\bin\plug-ins\"
+
+IF "%25configurationName%25"=="Debug" GOTO DebugOnMaya
+GOTO Close
+
+:DebugOnMaya
+if exist "C:\Program Files\Autodesk\Maya2018\bin\maya.exe" START /d "C:\Program Files\Autodesk\Maya2018\bin" maya.exe
+GOTO Close
+
+:Close
+PAUSE
+EXIT
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
