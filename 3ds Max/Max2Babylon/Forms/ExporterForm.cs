@@ -102,6 +102,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkExportTextures, Loader.Core.RootNode, "babylonjs_export_Textures", 1);
             Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
             Tools.PrepareCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess", 0);
+            Tools.PrepareComboBox(comboTexturePolicy, Loader.Core.RootNode, "babylonjs_textureFormatExportPolicy", (int)TextureFormatExportPolicy.CONSERVATIV);
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
@@ -334,6 +335,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkExportTextures, Loader.Core.RootNode, "babylonjs_export_Textures");
             Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
             Tools.UpdateCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess");
+            Tools.UpdateComboBoxByIndex(comboTexturePolicy, Loader.Core.RootNode, "babylonjs_textureFormatExportPolicy");
 
             Loader.Core.RootNode.SetStringProperty(ExportParameters.ModelFilePathProperty, Tools.RelativePathStore(txtModelPath.Text));
             Loader.Core.RootNode.SetStringProperty(ExportParameters.TextureFolderPathProperty, Tools.RelativePathStore(txtTexturesPath.Text));
@@ -365,6 +367,7 @@ namespace Max2Babylon
         private async Task<bool> DoExport(ExportItem exportItem, bool multiExport = false, bool clearLogs = true)
         {
             new BabylonAnimationActionItem().Close();
+
             SaveOptions();
 
             //store layer visibility status and force visibility on
@@ -498,7 +501,8 @@ namespace Max2Babylon
                     mergeContainersAndXRef = chkMrgContainersAndXref.Checked,
                     useMultiExporter = multiExport,
                     tryToReuseOpaqueAndBlendTexture = chkTryReuseTexture.Checked,
-                    useClone = chkUseClone.Checked
+                    useClone = chkUseClone.Checked,
+                    textureFormatExportPolicy = (TextureFormatExportPolicy)comboTexturePolicy.SelectedIndex
                 };
 
                 if (exportParameters.dracoCompression)

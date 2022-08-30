@@ -119,6 +119,7 @@ namespace Max2Babylon
             exportParameters.flattenScene = Loader.Core.RootNode.GetBoolProperty("babylonjs_flattenScene");
             exportParameters.mergeContainersAndXRef = Loader.Core.RootNode.GetBoolProperty("babylonjs_mergecontainersandxref");
             exportParameters.bakeAnimationType = (BakeAnimationType) Loader.Core.RootNode.GetFloatProperty("babylonjs_bakeAnimationsType", 0);
+            exportParameters.textureFormatExportPolicy = (TextureFormatExportPolicy)Loader.Core.RootNode.GetFloatProperty("babylonjs_textureFormatExportPolicy", 1);
 
             exportParameters.pbrFull = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRFullPropertyName);
             exportParameters.pbrNoLight = Loader.Core.RootNode.GetBoolProperty(ExportParameters.PBRNoLightPropertyName);
