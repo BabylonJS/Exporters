@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Utilities;
 
 namespace Maya2Babylon
 {
@@ -274,11 +275,16 @@ namespace Maya2Babylon
 
             var id = textureDependencyNode.uuid().asString();
 
+            // we are trying to get the best output format, function of source and policy.
+            string textureDependencyPath = getSourcePathFromFileTexture(textureDependencyNode);
+            var policy = exportParameters.textureFormatExportPolicy;
+            var preferredExtension = TextureUtilities.GetPreferredFormat(textureDependencyPath, false, policy);
+
             var babylonTexture = new BabylonTexture(id)
             {
                 name = (ambientOcclusionTextureDependencyNode != null ? ambientOcclusionTextureDependencyNode.name : "") +
                        (roughnessTextureDependencyNode != null ? roughnessTextureDependencyNode.name : ("" + (int)(defaultRoughness * 255))) +
-                       (metallicTextureDependencyNode != null ? metallicTextureDependencyNode.name : ("" + (int)(defaultMetallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                       (metallicTextureDependencyNode != null ? metallicTextureDependencyNode.name : ("" + (int)(defaultMetallic * 255))) + "." + preferredExtension // TODO - unsafe name, may conflict with another texture name
             };
             babylonTexture.name = babylonTexture.name.Replace(":", "_");
 
@@ -312,14 +318,15 @@ namespace Maya2Babylon
                 // The roughness values are sampled from the G channel.
                 // The metalness values are sampled from the B channel.
                 Bitmap[] bitmaps = new Bitmap[] { ambientOcclusionBitmap, roughnessBitmap, metallicBitmap, null };
-                int[] defaultValues = new int[] { 0, (int)(defaultRoughness * 255), (int)(defaultMetallic * 255), 0 };
+                int[] defaultValues = new int[] { 0, (int)(defaultRoughness * 255), (int)(defaultMetallic * 255), 255 };
                 Bitmap ormBitmap = MergeBitmaps(bitmaps, defaultValues, ambientOcclusionBitmap != null ? "Occlusion, metallic and roughness" : "Metallic and roughness");
                 
                 // Write bitmap
                 if (isBabylonExported)
                 {
                     RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
-                    SaveBitmap(ormBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    var imageFormat = TextureUtilities.GetImageFormat(Path.GetExtension(babylonTexture.name));
+                    SaveBitmap(ormBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat);
                 }
                 else
                 {
@@ -351,9 +358,15 @@ namespace Maya2Babylon
             }
 
             var id = textureDependencyNode.uuid().asString();
+
+            // we are trying to get the best output format, function of source and policy.
+            string textureDependencyPath = getSourcePathFromFileTexture(textureDependencyNode);
+            var policy = exportParameters.textureFormatExportPolicy;
+            var preferredExtension = TextureUtilities.GetPreferredFormat(textureDependencyPath, false, policy);
+
             var babylonTexture = new BabylonTexture(id)
             {
-                name = materialName + "_coat" + ".jpg" // TODO - unsafe name, may conflict with another texture name
+                name = materialName + "_coat" + "." + preferredExtension // TODO - unsafe name, may conflict with another texture name
             };
             babylonTexture.name = babylonTexture.name.Replace(":", "_");
 
@@ -391,14 +404,15 @@ namespace Maya2Babylon
 
                 // Merge bitmaps
                 Bitmap[] bitmaps = new Bitmap[] { intensityBitmap, roughnessBitmap, null, null };
-                int[] defaultValues = new int[] { (int)(intensity * 255), (int)(roughness * 255), 0, 1 };
+                int[] defaultValues = new int[] { (int)(intensity * 255), (int)(roughness * 255), 0, 255 };
                 Bitmap coatBitmap = MergeBitmaps(bitmaps, defaultValues, "Coat intensity and roughness");
                 
                 // Write bitmap
                 if (isBabylonExported)
                 {
                     RaiseMessage($"Texture | write image '{babylonTexture.name}'", logRankTexture + 1);
-                    SaveBitmap(coatBitmap, babylonScene.OutputPath, babylonTexture.name, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    var imageFormat = TextureUtilities.GetImageFormat(Path.GetExtension(babylonTexture.name));
+                    SaveBitmap(coatBitmap, babylonScene.OutputPath, babylonTexture.name, imageFormat);
                 }
                 else
                 {
