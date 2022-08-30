@@ -29,7 +29,6 @@ namespace Max2Babylon
         public bool mergeContainersAndXRef = false;
         public bool flattenScene = false;
         public BakeAnimationType bakeAnimationType = BakeAnimationType.DoNotBakeAnimation;
-        //public TextureFormatExportPolicy textureFormatExportPolicy = TextureFormatExportPolicy.CONSERVATIV;
         // export as clone when node's material are not identical
         public bool useClone = false;
     }
