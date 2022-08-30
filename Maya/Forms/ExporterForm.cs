@@ -34,11 +34,14 @@ namespace Maya2Babylon.Forms
         const string chkExportAnimationsProperty = "babylonjs_exportAnimations";
         const string chkExportAnimationsOnlyProperty = "babylonjs_exportAnimationsOnly";
         const string chkExportTexturesProperty = "babylonjs_exportTextures";
+        const string comboTexturePolicyProperty = "babylonjs_textureFormatExportPolicy";
 
         const string PBRFullPropertyName = "babylonjs_pbr_full";
         const string PBRNoLightPropertyName = "babylonjs_pbr_nolight";
         const string PBREnvironmentPathPropertyName = "babylonjs_pbr_environmentPathProperty";
         const string PBRDefaultSkyboxName = "babylonjs_pbr_defaultSkybox";
+
+        
 
         TreeNode currentNode;
         int currentRank;
@@ -57,6 +60,7 @@ namespace Maya2Babylon.Forms
         private void ExporterForm_Load(object sender, EventArgs e)
         {
             comboOutputFormat.SelectedIndex = 0;
+            comboTexturePolicy.SelectedIndex = 1;
 
             chkCopyTextures.Checked = Loader.GetBoolProperty(chkCopyTexturesProperty, true);
             chkHidden.Checked = Loader.GetBoolProperty(chkHiddenProperty, false);
@@ -79,6 +83,7 @@ namespace Maya2Babylon.Forms
             chkExportTextures.Checked = Loader.GetBoolProperty(chkExportTexturesProperty, true);
             /* txtFilename.Text = Loader.Core.RootNode.GetLocalData();
             Tools.PrepareComboBox(comboOutputFormat, Loader.Core.RootNode, "babylonjs_outputFormat", "babylon");*/
+            
 
             chkFullPBR.Checked = Loader.GetBoolProperty(PBRFullPropertyName, false);
             chkNoAutoLight.Checked = Loader.GetBoolProperty(PBRNoLightPropertyName, false);
@@ -253,7 +258,8 @@ namespace Maya2Babylon.Forms
                     pbrFull = chkFullPBR.Checked,
                     pbrNoLight = chkNoAutoLight.Checked,
                     createDefaultSkybox = chkDefaultSkybox.Checked,
-                    pbrEnvironment = txtEnvironmentName.Text
+                    pbrEnvironment = txtEnvironmentName.Text,
+                    textureFormatExportPolicy = (TextureFormatExportPolicy)comboTexturePolicy.SelectedIndex
                 };
                 exporter.Export(exportParameters);
             }

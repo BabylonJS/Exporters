@@ -276,9 +276,9 @@ namespace Maya2Babylon
             var id = textureDependencyNode.uuid().asString();
 
             // we are trying to get the best output format, function of source and policy.
-            string textureDependencyPath = getSourcePathFromFileTexture(textureDependencyNode);
+            string textureDependencyExt = Path.GetExtension(getSourcePathFromFileTexture(textureDependencyNode));
             var policy = exportParameters.textureFormatExportPolicy;
-            var preferredExtension = TextureUtilities.GetPreferredFormat(textureDependencyPath, false, policy);
+            var preferredExtension = TextureUtilities.GetPreferredFormat(textureDependencyExt, false, policy);
 
             var babylonTexture = new BabylonTexture(id)
             {
@@ -360,9 +360,9 @@ namespace Maya2Babylon
             var id = textureDependencyNode.uuid().asString();
 
             // we are trying to get the best output format, function of source and policy.
-            string textureDependencyPath = getSourcePathFromFileTexture(textureDependencyNode);
+            string textureDependencyExt = Path.GetExtension(getSourcePathFromFileTexture(textureDependencyNode));
             var policy = exportParameters.textureFormatExportPolicy;
-            var preferredExtension = TextureUtilities.GetPreferredFormat(textureDependencyPath, false, policy);
+            var preferredExtension = TextureUtilities.GetPreferredFormat(textureDependencyExt, false, policy);
 
             var babylonTexture = new BabylonTexture(id)
             {
@@ -1033,7 +1033,9 @@ namespace Maya2Babylon
                     break;
                 case "jpeg":
                 case "png":
+                    RaiseMessage("Before File copy " + destPath, 0);
                     File.Copy(sourcePath, destPath, true);
+                    RaiseMessage("After File copy " + destPath, 0);
                     break;
                 default:
                     RaiseWarning(string.Format("Format of texture {0} is not supported by the exporter. Consider using a standard image format like jpg or png.", Path.GetFileName(sourcePath)), logRankTexture + 1);
