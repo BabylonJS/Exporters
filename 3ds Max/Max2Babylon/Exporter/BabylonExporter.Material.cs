@@ -57,6 +57,14 @@ namespace Max2Babylon
             {
                 return texmap;
             }
+
+            // sometime the name of the material changed - plugin side effect with script material
+            // so give a second chance with lowercase to be more resilient
+            if (_mapCaches.TryGetValue(name.ToLower(), out texmap))
+            {
+                return texmap;
+            }
+
             // max 2022 maj introduce a change into the naming of the map.
             // the SDK do not return the name of the map anymore but a display name with camel style and space
             // Here a fix which maintain the old style and transform the name for a second try if failed.
@@ -75,7 +83,10 @@ namespace Max2Babylon
             {
                 for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
                 {
-                    if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == name)
+                    var slotName = materialNode.MaxMaterial.GetSubTexmapSlotName(i);
+                    // sometime the name of the material changed - plugin side effect with script material
+                    // so give a second chance with lowercase to be more resilient
+                    if (slotName == name || slotName == name.ToLower())
                     {
                         return materialNode.MaxMaterial.GetSubTexmap(i);
                     }
@@ -89,6 +100,7 @@ namespace Max2Babylon
         }
 
     }
+
 
     /// <summary>
     /// Babylon custom attribute decorator
