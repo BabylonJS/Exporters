@@ -175,8 +175,8 @@ namespace Max2Babylon
                     tmp = Point()
                     --store anim to a point
                     for t = animationRange.start to animationRange.end do (
-                       with animate on at time t tmp.transform = obj.transform
-                       )
+                        with animate on at time t tmp.transform = obj.transform
+                        )
 
                     --remove constraint on original object
                     obj.pos.controller = Position_XYZ ()
@@ -186,11 +186,11 @@ namespace Max2Babylon
 
                     --copy back anim from point
                     for t = animationRange.start to animationRange.end do (
-                       with animate on at time t obj.transform = tmp.transform
-                       )
+                        with animate on at time t obj.transform = tmp.transform
+                        )
                     delete tmp
                 )
-             ");
+            ");
         }
 
         public void ExportClosedContainers()
@@ -333,7 +333,7 @@ namespace Max2Babylon
 
             var rawScene = Loader.Core.RootNode;
 
-             string outputFormat = exportParameters.outputFormat;
+            string outputFormat = exportParameters.outputFormat;
             isBabylonExported = outputFormat == "babylon" || outputFormat == "binary babylon";
             isGltfExported = outputFormat == "gltf" || outputFormat == "glb";
 

@@ -1380,7 +1380,7 @@ namespace Max2Babylon
             {
                 return 1;
             }
- 
+
             float nx = MathUtilities.RoundToIfAlmostEqualTo(normal.X, 0, Tools.Epsilon);
             float ny = MathUtilities.RoundToIfAlmostEqualTo(normal.Y, 0, Tools.Epsilon);
             float nz = MathUtilities.RoundToIfAlmostEqualTo(normal.Z, 0, Tools.Epsilon);
@@ -1393,7 +1393,7 @@ namespace Max2Babylon
 
             // theorical bittangent
             MathUtilities.CrossProduct(nx, ny, nz, tx, ty, tz, out float x, out float y, out float z);
- 
+
             // Speaking in broadest terms, if the dot product of two non-zero vectors is positive, 
             // then the two vectors point in the same general direction, meaning less than 90 degrees. 
             // If the dot product is negative, then the two vectors point in opposite directions, 
