@@ -1021,11 +1021,6 @@ namespace Max2Babylon
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
-
-            // fix for cesium: currently, cesium does not expect a reversed winding order for negative scales
-            //if (false)
-
-            // for threejs and babylonjs (handle negative scales correctly (reversed winding order expected)
             if (invertedWorldMatrix.Parity)
             {
                 // flipped case: reverse winding order
