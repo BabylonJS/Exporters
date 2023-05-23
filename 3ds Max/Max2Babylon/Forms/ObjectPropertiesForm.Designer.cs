@@ -43,6 +43,7 @@ namespace Max2Babylon
             this.chkOptimize = new System.Windows.Forms.CheckBox();
             this.chkPickable = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkBakeAnimationNode = new System.Windows.Forms.CheckBox();
             this.grpAutoAnimate = new System.Windows.Forms.GroupBox();
             this.chkLoop = new System.Windows.Forms.CheckBox();
             this.nupTo = new System.Windows.Forms.NumericUpDown();
@@ -86,7 +87,6 @@ namespace Max2Babylon
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chkAutoPlay = new System.Windows.Forms.CheckBox();
             this.ofdOpenSound = new System.Windows.Forms.OpenFileDialog();
-            this.chkBakeAnimationNode = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupAlphaIndex)).BeginInit();
@@ -115,9 +115,9 @@ namespace Max2Babylon
             // 
             this.groupBox1.Controls.Add(this.chkCollisions);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 11);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(319, 59);
+            this.groupBox1.Size = new System.Drawing.Size(319, 54);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Collisions";
@@ -126,9 +126,9 @@ namespace Max2Babylon
             // 
             this.chkCollisions.AutoSize = true;
             this.chkCollisions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkCollisions.Location = new System.Drawing.Point(21, 28);
+            this.chkCollisions.Location = new System.Drawing.Point(21, 26);
             this.chkCollisions.Name = "chkCollisions";
-            this.chkCollisions.Size = new System.Drawing.Size(99, 17);
+            this.chkCollisions.Size = new System.Drawing.Size(117, 16);
             this.chkCollisions.TabIndex = 1;
             this.chkCollisions.Text = "Check collisions";
             this.chkCollisions.ThreeState = true;
@@ -139,9 +139,9 @@ namespace Max2Babylon
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(508, 488);
+            this.butCancel.Location = new System.Drawing.Point(502, 450);
             this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(75, 23);
+            this.butCancel.Size = new System.Drawing.Size(75, 21);
             this.butCancel.TabIndex = 101;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
@@ -151,9 +151,9 @@ namespace Max2Babylon
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(415, 488);
+            this.butOK.Location = new System.Drawing.Point(415, 450);
             this.butOK.Name = "butOK";
-            this.butOK.Size = new System.Drawing.Size(75, 23);
+            this.butOK.Size = new System.Drawing.Size(75, 21);
             this.butOK.TabIndex = 100;
             this.butOK.Text = "OK";
             this.butOK.UseVisualStyleBackColor = true;
@@ -171,9 +171,9 @@ namespace Max2Babylon
             this.groupBox2.Controls.Add(this.chkOptimize);
             this.groupBox2.Controls.Add(this.chkPickable);
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox2.Location = new System.Drawing.Point(12, 77);
+            this.groupBox2.Location = new System.Drawing.Point(12, 71);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(319, 154);
+            this.groupBox2.Size = new System.Drawing.Size(319, 142);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc.";
@@ -181,37 +181,37 @@ namespace Max2Babylon
             // tagLabel
             // 
             this.tagLabel.AutoSize = true;
-            this.tagLabel.Location = new System.Drawing.Point(18, 124);
+            this.tagLabel.Location = new System.Drawing.Point(18, 114);
             this.tagLabel.Name = "tagLabel";
-            this.tagLabel.Size = new System.Drawing.Size(29, 13);
+            this.tagLabel.Size = new System.Drawing.Size(29, 12);
             this.tagLabel.TabIndex = 18;
             this.tagLabel.Text = "Tag:";
             // 
             // tagInput
             // 
-            this.tagInput.Location = new System.Drawing.Point(89, 121);
+            this.tagInput.Location = new System.Drawing.Point(89, 112);
             this.tagInput.Name = "tagInput";
-            this.tagInput.Size = new System.Drawing.Size(100, 20);
+            this.tagInput.Size = new System.Drawing.Size(100, 21);
             this.tagInput.TabIndex = 19;
             // 
             // nupAlphaIndex
             // 
-            this.nupAlphaIndex.Location = new System.Drawing.Point(89, 95);
+            this.nupAlphaIndex.Location = new System.Drawing.Point(89, 88);
             this.nupAlphaIndex.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.nupAlphaIndex.Name = "nupAlphaIndex";
-            this.nupAlphaIndex.Size = new System.Drawing.Size(120, 20);
+            this.nupAlphaIndex.Size = new System.Drawing.Size(120, 21);
             this.nupAlphaIndex.TabIndex = 17;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 97);
+            this.label3.Location = new System.Drawing.Point(18, 90);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 13);
+            this.label3.Size = new System.Drawing.Size(77, 12);
             this.label3.TabIndex = 16;
             this.label3.Text = "Alpha index:";
             // 
@@ -219,9 +219,9 @@ namespace Max2Babylon
             // 
             this.chkNoExport.AutoSize = true;
             this.chkNoExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkNoExport.Location = new System.Drawing.Point(21, 28);
+            this.chkNoExport.Location = new System.Drawing.Point(21, 26);
             this.chkNoExport.Name = "chkNoExport";
-            this.chkNoExport.Size = new System.Drawing.Size(87, 17);
+            this.chkNoExport.Size = new System.Drawing.Size(99, 16);
             this.chkNoExport.TabIndex = 11;
             this.chkNoExport.Text = "Do not export";
             this.chkNoExport.ThreeState = true;
@@ -231,9 +231,9 @@ namespace Max2Babylon
             // 
             this.chkShowSubMeshesBoundingBox.AutoSize = true;
             this.chkShowSubMeshesBoundingBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkShowSubMeshesBoundingBox.Location = new System.Drawing.Point(21, 74);
+            this.chkShowSubMeshesBoundingBox.Location = new System.Drawing.Point(21, 68);
             this.chkShowSubMeshesBoundingBox.Name = "chkShowSubMeshesBoundingBox";
-            this.chkShowSubMeshesBoundingBox.Size = new System.Drawing.Size(184, 17);
+            this.chkShowSubMeshesBoundingBox.Size = new System.Drawing.Size(195, 16);
             this.chkShowSubMeshesBoundingBox.TabIndex = 15;
             this.chkShowSubMeshesBoundingBox.Text = "Show submeshes bounding boxes";
             this.chkShowSubMeshesBoundingBox.ThreeState = true;
@@ -243,9 +243,9 @@ namespace Max2Babylon
             // 
             this.chkShowBoundingBox.AutoSize = true;
             this.chkShowBoundingBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkShowBoundingBox.Location = new System.Drawing.Point(21, 51);
+            this.chkShowBoundingBox.Location = new System.Drawing.Point(21, 47);
             this.chkShowBoundingBox.Name = "chkShowBoundingBox";
-            this.chkShowBoundingBox.Size = new System.Drawing.Size(117, 17);
+            this.chkShowBoundingBox.Size = new System.Drawing.Size(123, 16);
             this.chkShowBoundingBox.TabIndex = 13;
             this.chkShowBoundingBox.Text = "Show bounding box";
             this.chkShowBoundingBox.ThreeState = true;
@@ -255,9 +255,9 @@ namespace Max2Babylon
             // 
             this.chkOptimize.AutoSize = true;
             this.chkOptimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkOptimize.Location = new System.Drawing.Point(182, 51);
+            this.chkOptimize.Location = new System.Drawing.Point(182, 47);
             this.chkOptimize.Name = "chkOptimize";
-            this.chkOptimize.Size = new System.Drawing.Size(131, 17);
+            this.chkOptimize.Size = new System.Drawing.Size(177, 16);
             this.chkOptimize.TabIndex = 14;
             this.chkOptimize.Text = "Quick Export (unoptimized)";
             this.chkOptimize.ThreeState = true;
@@ -267,9 +267,9 @@ namespace Max2Babylon
             // 
             this.chkPickable.AutoSize = true;
             this.chkPickable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkPickable.Location = new System.Drawing.Point(182, 28);
+            this.chkPickable.Location = new System.Drawing.Point(182, 26);
             this.chkPickable.Name = "chkPickable";
-            this.chkPickable.Size = new System.Drawing.Size(64, 17);
+            this.chkPickable.Size = new System.Drawing.Size(69, 16);
             this.chkPickable.TabIndex = 12;
             this.chkPickable.Text = "Pickable";
             this.chkPickable.ThreeState = true;
@@ -281,12 +281,23 @@ namespace Max2Babylon
             this.groupBox3.Controls.Add(this.grpAutoAnimate);
             this.groupBox3.Controls.Add(this.chkAutoAnimate);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox3.Location = new System.Drawing.Point(12, 237);
+            this.groupBox3.Location = new System.Drawing.Point(12, 219);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(319, 156);
+            this.groupBox3.Size = new System.Drawing.Size(319, 144);
             this.groupBox3.TabIndex = 20;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Animations";
+            // 
+            // chkBakeAnimationNode
+            // 
+            this.chkBakeAnimationNode.AutoSize = true;
+            this.chkBakeAnimationNode.Location = new System.Drawing.Point(121, 26);
+            this.chkBakeAnimationNode.Name = "chkBakeAnimationNode";
+            this.chkBakeAnimationNode.Size = new System.Drawing.Size(138, 16);
+            this.chkBakeAnimationNode.TabIndex = 24;
+            this.chkBakeAnimationNode.Text = "Bake Node Animation";
+            this.chkBakeAnimationNode.ThreeState = true;
+            this.chkBakeAnimationNode.UseVisualStyleBackColor = true;
             // 
             // grpAutoAnimate
             // 
@@ -297,9 +308,9 @@ namespace Max2Babylon
             this.grpAutoAnimate.Controls.Add(this.label1);
             this.grpAutoAnimate.Enabled = false;
             this.grpAutoAnimate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grpAutoAnimate.Location = new System.Drawing.Point(21, 51);
+            this.grpAutoAnimate.Location = new System.Drawing.Point(21, 47);
             this.grpAutoAnimate.Name = "grpAutoAnimate";
-            this.grpAutoAnimate.Size = new System.Drawing.Size(292, 99);
+            this.grpAutoAnimate.Size = new System.Drawing.Size(292, 91);
             this.grpAutoAnimate.TabIndex = 23;
             this.grpAutoAnimate.TabStop = false;
             // 
@@ -307,9 +318,9 @@ namespace Max2Babylon
             // 
             this.chkLoop.AutoSize = true;
             this.chkLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkLoop.Location = new System.Drawing.Point(9, 66);
+            this.chkLoop.Location = new System.Drawing.Point(9, 61);
             this.chkLoop.Name = "chkLoop";
-            this.chkLoop.Size = new System.Drawing.Size(47, 17);
+            this.chkLoop.Size = new System.Drawing.Size(45, 16);
             this.chkLoop.TabIndex = 28;
             this.chkLoop.Text = "Loop";
             this.chkLoop.ThreeState = true;
@@ -317,52 +328,52 @@ namespace Max2Babylon
             // 
             // nupTo
             // 
-            this.nupTo.Location = new System.Drawing.Point(47, 40);
+            this.nupTo.Location = new System.Drawing.Point(47, 37);
             this.nupTo.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
             this.nupTo.Name = "nupTo";
-            this.nupTo.Size = new System.Drawing.Size(120, 20);
+            this.nupTo.Size = new System.Drawing.Size(120, 21);
             this.nupTo.TabIndex = 27;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 42);
+            this.label2.Location = new System.Drawing.Point(6, 39);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(23, 13);
+            this.label2.Size = new System.Drawing.Size(23, 12);
             this.label2.TabIndex = 26;
             this.label2.Text = "To:";
             // 
             // nupFrom
             // 
-            this.nupFrom.Location = new System.Drawing.Point(47, 14);
+            this.nupFrom.Location = new System.Drawing.Point(47, 13);
             this.nupFrom.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
             this.nupFrom.Name = "nupFrom";
-            this.nupFrom.Size = new System.Drawing.Size(120, 20);
+            this.nupFrom.Size = new System.Drawing.Size(120, 21);
             this.nupFrom.TabIndex = 25;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 16);
+            this.label1.Location = new System.Drawing.Point(6, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(33, 13);
+            this.label1.Size = new System.Drawing.Size(35, 12);
             this.label1.TabIndex = 24;
             this.label1.Text = "From:";
             // 
             // chkAutoAnimate
             // 
             this.chkAutoAnimate.AutoSize = true;
-            this.chkAutoAnimate.Location = new System.Drawing.Point(21, 28);
+            this.chkAutoAnimate.Location = new System.Drawing.Point(21, 26);
             this.chkAutoAnimate.Name = "chkAutoAnimate";
-            this.chkAutoAnimate.Size = new System.Drawing.Size(88, 17);
+            this.chkAutoAnimate.Size = new System.Drawing.Size(96, 16);
             this.chkAutoAnimate.TabIndex = 21;
             this.chkAutoAnimate.Text = "Auto animate";
             this.chkAutoAnimate.ThreeState = true;
@@ -380,9 +391,9 @@ namespace Max2Babylon
             this.groupBox4.Controls.Add(this.nupMass);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox4.Location = new System.Drawing.Point(12, 399);
+            this.groupBox4.Location = new System.Drawing.Point(12, 368);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(319, 156);
+            this.groupBox4.Size = new System.Drawing.Size(319, 144);
             this.groupBox4.TabIndex = 30;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Physics";
@@ -390,53 +401,53 @@ namespace Max2Babylon
             // nupRestitution
             // 
             this.nupRestitution.DecimalPlaces = 2;
-            this.nupRestitution.Location = new System.Drawing.Point(89, 122);
+            this.nupRestitution.Location = new System.Drawing.Point(89, 113);
             this.nupRestitution.Maximum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nupRestitution.Name = "nupRestitution";
-            this.nupRestitution.Size = new System.Drawing.Size(120, 20);
+            this.nupRestitution.Size = new System.Drawing.Size(120, 21);
             this.nupRestitution.TabIndex = 38;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(18, 122);
+            this.label7.Location = new System.Drawing.Point(18, 113);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(60, 13);
+            this.label7.Size = new System.Drawing.Size(77, 12);
             this.label7.TabIndex = 37;
             this.label7.Text = "Restitution:";
             // 
             // nupFriction
             // 
             this.nupFriction.DecimalPlaces = 2;
-            this.nupFriction.Location = new System.Drawing.Point(89, 96);
+            this.nupFriction.Location = new System.Drawing.Point(89, 89);
             this.nupFriction.Maximum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nupFriction.Name = "nupFriction";
-            this.nupFriction.Size = new System.Drawing.Size(120, 20);
+            this.nupFriction.Size = new System.Drawing.Size(120, 21);
             this.nupFriction.TabIndex = 36;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(18, 96);
+            this.label5.Location = new System.Drawing.Point(18, 89);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 13);
+            this.label5.Size = new System.Drawing.Size(59, 12);
             this.label5.TabIndex = 35;
             this.label5.Text = "Friction:";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 26);
+            this.label6.Location = new System.Drawing.Point(18, 24);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 13);
+            this.label6.Size = new System.Drawing.Size(59, 12);
             this.label6.TabIndex = 31;
             this.label6.Text = "Impostor:";
             // 
@@ -449,30 +460,30 @@ namespace Max2Babylon
             "Sphere",
             "Box",
             "Plane"});
-            this.cbImpostor.Location = new System.Drawing.Point(25, 43);
+            this.cbImpostor.Location = new System.Drawing.Point(25, 40);
             this.cbImpostor.Name = "cbImpostor";
-            this.cbImpostor.Size = new System.Drawing.Size(290, 21);
+            this.cbImpostor.Size = new System.Drawing.Size(290, 20);
             this.cbImpostor.TabIndex = 32;
             // 
             // nupMass
             // 
             this.nupMass.DecimalPlaces = 2;
-            this.nupMass.Location = new System.Drawing.Point(89, 70);
+            this.nupMass.Location = new System.Drawing.Point(89, 65);
             this.nupMass.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.nupMass.Name = "nupMass";
-            this.nupMass.Size = new System.Drawing.Size(120, 20);
+            this.nupMass.Size = new System.Drawing.Size(120, 21);
             this.nupMass.TabIndex = 34;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 70);
+            this.label4.Location = new System.Drawing.Point(18, 65);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.Size = new System.Drawing.Size(35, 12);
             this.label4.TabIndex = 33;
             this.label4.Text = "Mass:";
             // 
@@ -490,9 +501,9 @@ namespace Max2Babylon
             this.groupBox5.Controls.Add(this.checkBox1);
             this.groupBox5.Controls.Add(this.chkAutoPlay);
             this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox5.Location = new System.Drawing.Point(337, 12);
+            this.groupBox5.Location = new System.Drawing.Point(337, 11);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(319, 399);
+            this.groupBox5.Size = new System.Drawing.Size(319, 368);
             this.groupBox5.TabIndex = 40;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Sound";
@@ -501,11 +512,12 @@ namespace Max2Babylon
             // 
             this.cmdFileBrowse.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.cmdFileBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmdFileBrowse.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cmdFileBrowse.Location = new System.Drawing.Point(277, 26);
             this.cmdFileBrowse.Name = "cmdFileBrowse";
-            this.cmdFileBrowse.Size = new System.Drawing.Size(37, 22);
+            this.cmdFileBrowse.Size = new System.Drawing.Size(20, 20);
             this.cmdFileBrowse.TabIndex = 42;
-            this.cmdFileBrowse.Text = "...";
+            this.cmdFileBrowse.Text = "бн";
             this.cmdFileBrowse.UseVisualStyleBackColor = true;
             this.cmdFileBrowse.Click += new System.EventHandler(this.cmdFileBrowse_Click);
             // 
@@ -519,9 +531,9 @@ namespace Max2Babylon
             this.grpDirectional.Controls.Add(this.lblConeInnerAngle);
             this.grpDirectional.Enabled = false;
             this.grpDirectional.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grpDirectional.Location = new System.Drawing.Point(22, 288);
+            this.grpDirectional.Location = new System.Drawing.Point(22, 266);
             this.grpDirectional.Name = "grpDirectional";
-            this.grpDirectional.Size = new System.Drawing.Size(292, 102);
+            this.grpDirectional.Size = new System.Drawing.Size(292, 94);
             this.grpDirectional.TabIndex = 60;
             this.grpDirectional.TabStop = false;
             // 
@@ -533,36 +545,36 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupConeOuterGain.Location = new System.Drawing.Point(105, 69);
+            this.nupConeOuterGain.Location = new System.Drawing.Point(105, 64);
             this.nupConeOuterGain.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.nupConeOuterGain.Name = "nupConeOuterGain";
-            this.nupConeOuterGain.Size = new System.Drawing.Size(121, 20);
+            this.nupConeOuterGain.Size = new System.Drawing.Size(121, 21);
             this.nupConeOuterGain.TabIndex = 66;
             // 
             // lblConeOuterGain
             // 
             this.lblConeOuterGain.AutoSize = true;
-            this.lblConeOuterGain.Location = new System.Drawing.Point(8, 71);
+            this.lblConeOuterGain.Location = new System.Drawing.Point(8, 66);
             this.lblConeOuterGain.Name = "lblConeOuterGain";
-            this.lblConeOuterGain.Size = new System.Drawing.Size(85, 13);
+            this.lblConeOuterGain.Size = new System.Drawing.Size(101, 12);
             this.lblConeOuterGain.TabIndex = 65;
             this.lblConeOuterGain.Text = "Cone outer gain:";
             // 
             // nupConeOuterAngle
             // 
             this.nupConeOuterAngle.DecimalPlaces = 2;
-            this.nupConeOuterAngle.Location = new System.Drawing.Point(105, 43);
+            this.nupConeOuterAngle.Location = new System.Drawing.Point(105, 40);
             this.nupConeOuterAngle.Maximum = new decimal(new int[] {
             360,
             0,
             0,
             0});
             this.nupConeOuterAngle.Name = "nupConeOuterAngle";
-            this.nupConeOuterAngle.Size = new System.Drawing.Size(121, 20);
+            this.nupConeOuterAngle.Size = new System.Drawing.Size(121, 21);
             this.nupConeOuterAngle.TabIndex = 64;
             this.nupConeOuterAngle.Value = new decimal(new int[] {
             360,
@@ -573,23 +585,23 @@ namespace Max2Babylon
             // lblConeOuterAngle
             // 
             this.lblConeOuterAngle.AutoSize = true;
-            this.lblConeOuterAngle.Location = new System.Drawing.Point(8, 45);
+            this.lblConeOuterAngle.Location = new System.Drawing.Point(8, 42);
             this.lblConeOuterAngle.Name = "lblConeOuterAngle";
-            this.lblConeOuterAngle.Size = new System.Drawing.Size(91, 13);
+            this.lblConeOuterAngle.Size = new System.Drawing.Size(107, 12);
             this.lblConeOuterAngle.TabIndex = 63;
             this.lblConeOuterAngle.Text = "Cone outer angle:";
             // 
             // nupConeInnerAngle
             // 
             this.nupConeInnerAngle.DecimalPlaces = 2;
-            this.nupConeInnerAngle.Location = new System.Drawing.Point(105, 17);
+            this.nupConeInnerAngle.Location = new System.Drawing.Point(105, 16);
             this.nupConeInnerAngle.Maximum = new decimal(new int[] {
             360,
             0,
             0,
             0});
             this.nupConeInnerAngle.Name = "nupConeInnerAngle";
-            this.nupConeInnerAngle.Size = new System.Drawing.Size(121, 20);
+            this.nupConeInnerAngle.Size = new System.Drawing.Size(121, 21);
             this.nupConeInnerAngle.TabIndex = 62;
             this.nupConeInnerAngle.Value = new decimal(new int[] {
             360,
@@ -600,9 +612,9 @@ namespace Max2Babylon
             // lblConeInnerAngle
             // 
             this.lblConeInnerAngle.AutoSize = true;
-            this.lblConeInnerAngle.Location = new System.Drawing.Point(7, 19);
+            this.lblConeInnerAngle.Location = new System.Drawing.Point(7, 18);
             this.lblConeInnerAngle.Name = "lblConeInnerAngle";
-            this.lblConeInnerAngle.Size = new System.Drawing.Size(90, 13);
+            this.lblConeInnerAngle.Size = new System.Drawing.Size(107, 12);
             this.lblConeInnerAngle.TabIndex = 61;
             this.lblConeInnerAngle.Text = "Cone inner angle:";
             // 
@@ -610,9 +622,9 @@ namespace Max2Babylon
             // 
             this.chkDirectional.AutoSize = true;
             this.chkDirectional.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkDirectional.Location = new System.Drawing.Point(22, 265);
+            this.chkDirectional.Location = new System.Drawing.Point(22, 245);
             this.chkDirectional.Name = "chkDirectional";
-            this.chkDirectional.Size = new System.Drawing.Size(73, 17);
+            this.chkDirectional.Size = new System.Drawing.Size(87, 16);
             this.chkDirectional.TabIndex = 59;
             this.chkDirectional.Text = "Directional";
             this.chkDirectional.UseVisualStyleBackColor = true;
@@ -626,14 +638,14 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupPlaybackRate.Location = new System.Drawing.Point(126, 107);
+            this.nupPlaybackRate.Location = new System.Drawing.Point(126, 99);
             this.nupPlaybackRate.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.nupPlaybackRate.Name = "nupPlaybackRate";
-            this.nupPlaybackRate.Size = new System.Drawing.Size(120, 20);
+            this.nupPlaybackRate.Size = new System.Drawing.Size(120, 21);
             this.nupPlaybackRate.TabIndex = 48;
             this.nupPlaybackRate.Value = new decimal(new int[] {
             1,
@@ -644,9 +656,9 @@ namespace Max2Babylon
             // lblPlaybackRate
             // 
             this.lblPlaybackRate.AutoSize = true;
-            this.lblPlaybackRate.Location = new System.Drawing.Point(18, 109);
+            this.lblPlaybackRate.Location = new System.Drawing.Point(18, 101);
             this.lblPlaybackRate.Name = "lblPlaybackRate";
-            this.lblPlaybackRate.Size = new System.Drawing.Size(75, 13);
+            this.lblPlaybackRate.Size = new System.Drawing.Size(89, 12);
             this.lblPlaybackRate.TabIndex = 47;
             this.lblPlaybackRate.Text = "Playback rate:";
             // 
@@ -658,14 +670,14 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupVolume.Location = new System.Drawing.Point(126, 81);
+            this.nupVolume.Location = new System.Drawing.Point(126, 75);
             this.nupVolume.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.nupVolume.Name = "nupVolume";
-            this.nupVolume.Size = new System.Drawing.Size(120, 20);
+            this.nupVolume.Size = new System.Drawing.Size(120, 21);
             this.nupVolume.TabIndex = 46;
             this.nupVolume.Value = new decimal(new int[] {
             1,
@@ -676,9 +688,9 @@ namespace Max2Babylon
             // lblVolume
             // 
             this.lblVolume.AutoSize = true;
-            this.lblVolume.Location = new System.Drawing.Point(18, 83);
+            this.lblVolume.Location = new System.Drawing.Point(18, 77);
             this.lblVolume.Name = "lblVolume";
-            this.lblVolume.Size = new System.Drawing.Size(45, 13);
+            this.lblVolume.Size = new System.Drawing.Size(47, 12);
             this.lblVolume.TabIndex = 45;
             this.lblVolume.Text = "Volume:";
             // 
@@ -693,9 +705,9 @@ namespace Max2Babylon
             this.grpSpatialSound.Controls.Add(this.nupMaxDistance);
             this.grpSpatialSound.Controls.Add(this.lblMaxDistance);
             this.grpSpatialSound.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grpSpatialSound.Location = new System.Drawing.Point(20, 139);
+            this.grpSpatialSound.Location = new System.Drawing.Point(20, 128);
             this.grpSpatialSound.Name = "grpSpatialSound";
-            this.grpSpatialSound.Size = new System.Drawing.Size(292, 116);
+            this.grpSpatialSound.Size = new System.Drawing.Size(292, 107);
             this.grpSpatialSound.TabIndex = 50;
             this.grpSpatialSound.TabStop = false;
             // 
@@ -707,17 +719,17 @@ namespace Max2Babylon
             "linear",
             "inverse",
             "exponential"});
-            this.cbDistanceModel.Location = new System.Drawing.Point(105, 15);
+            this.cbDistanceModel.Location = new System.Drawing.Point(105, 14);
             this.cbDistanceModel.Name = "cbDistanceModel";
-            this.cbDistanceModel.Size = new System.Drawing.Size(123, 21);
+            this.cbDistanceModel.Size = new System.Drawing.Size(123, 20);
             this.cbDistanceModel.TabIndex = 52;
             // 
             // lblDistanceModel
             // 
             this.lblDistanceModel.AutoSize = true;
-            this.lblDistanceModel.Location = new System.Drawing.Point(6, 16);
+            this.lblDistanceModel.Location = new System.Drawing.Point(6, 15);
             this.lblDistanceModel.Name = "lblDistanceModel";
-            this.lblDistanceModel.Size = new System.Drawing.Size(83, 13);
+            this.lblDistanceModel.Size = new System.Drawing.Size(95, 12);
             this.lblDistanceModel.TabIndex = 51;
             this.lblDistanceModel.Text = "Distance model:";
             // 
@@ -729,14 +741,14 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupRefDistance.Location = new System.Drawing.Point(105, 90);
+            this.nupRefDistance.Location = new System.Drawing.Point(105, 83);
             this.nupRefDistance.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.nupRefDistance.Name = "nupRefDistance";
-            this.nupRefDistance.Size = new System.Drawing.Size(121, 20);
+            this.nupRefDistance.Size = new System.Drawing.Size(121, 21);
             this.nupRefDistance.TabIndex = 58;
             this.nupRefDistance.Value = new decimal(new int[] {
             1,
@@ -747,9 +759,9 @@ namespace Max2Babylon
             // lblRefDistance
             // 
             this.lblRefDistance.AutoSize = true;
-            this.lblRefDistance.Location = new System.Drawing.Point(7, 93);
+            this.lblRefDistance.Location = new System.Drawing.Point(7, 86);
             this.lblRefDistance.Name = "lblRefDistance";
-            this.lblRefDistance.Size = new System.Drawing.Size(70, 13);
+            this.lblRefDistance.Size = new System.Drawing.Size(83, 12);
             this.lblRefDistance.TabIndex = 57;
             this.lblRefDistance.Text = "Ref distance:";
             // 
@@ -761,14 +773,14 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupRolloff.Location = new System.Drawing.Point(105, 64);
+            this.nupRolloff.Location = new System.Drawing.Point(105, 59);
             this.nupRolloff.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.nupRolloff.Name = "nupRolloff";
-            this.nupRolloff.Size = new System.Drawing.Size(121, 20);
+            this.nupRolloff.Size = new System.Drawing.Size(121, 21);
             this.nupRolloff.TabIndex = 56;
             this.nupRolloff.Value = new decimal(new int[] {
             1,
@@ -779,23 +791,23 @@ namespace Max2Babylon
             // lblRolloff
             // 
             this.lblRolloff.AutoSize = true;
-            this.lblRolloff.Location = new System.Drawing.Point(7, 67);
+            this.lblRolloff.Location = new System.Drawing.Point(7, 62);
             this.lblRolloff.Name = "lblRolloff";
-            this.lblRolloff.Size = new System.Drawing.Size(40, 13);
+            this.lblRolloff.Size = new System.Drawing.Size(53, 12);
             this.lblRolloff.TabIndex = 55;
             this.lblRolloff.Text = "Rolloff:";
             // 
             // nupMaxDistance
             // 
             this.nupMaxDistance.DecimalPlaces = 2;
-            this.nupMaxDistance.Location = new System.Drawing.Point(105, 38);
+            this.nupMaxDistance.Location = new System.Drawing.Point(105, 35);
             this.nupMaxDistance.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
             this.nupMaxDistance.Name = "nupMaxDistance";
-            this.nupMaxDistance.Size = new System.Drawing.Size(121, 20);
+            this.nupMaxDistance.Size = new System.Drawing.Size(121, 21);
             this.nupMaxDistance.TabIndex = 54;
             this.nupMaxDistance.Value = new decimal(new int[] {
             100,
@@ -806,17 +818,17 @@ namespace Max2Babylon
             // lblMaxDistance
             // 
             this.lblMaxDistance.AutoSize = true;
-            this.lblMaxDistance.Location = new System.Drawing.Point(6, 41);
+            this.lblMaxDistance.Location = new System.Drawing.Point(6, 38);
             this.lblMaxDistance.Name = "lblMaxDistance";
-            this.lblMaxDistance.Size = new System.Drawing.Size(73, 13);
+            this.lblMaxDistance.Size = new System.Drawing.Size(83, 12);
             this.lblMaxDistance.TabIndex = 53;
             this.lblMaxDistance.Text = "Max distance:";
             // 
             // txtSound
             // 
-            this.txtSound.Location = new System.Drawing.Point(21, 28);
+            this.txtSound.Location = new System.Drawing.Point(21, 26);
             this.txtSound.Name = "txtSound";
-            this.txtSound.Size = new System.Drawing.Size(249, 20);
+            this.txtSound.Size = new System.Drawing.Size(249, 21);
             this.txtSound.TabIndex = 41;
             // 
             // checkBox1
@@ -825,9 +837,9 @@ namespace Max2Babylon
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.checkBox1.Location = new System.Drawing.Point(94, 54);
+            this.checkBox1.Location = new System.Drawing.Point(94, 50);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(47, 17);
+            this.checkBox1.Size = new System.Drawing.Size(45, 16);
             this.checkBox1.TabIndex = 44;
             this.checkBox1.Text = "Loop";
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -838,9 +850,9 @@ namespace Max2Babylon
             this.chkAutoPlay.Checked = true;
             this.chkAutoPlay.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAutoPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkAutoPlay.Location = new System.Drawing.Point(21, 54);
+            this.chkAutoPlay.Location = new System.Drawing.Point(21, 50);
             this.chkAutoPlay.Name = "chkAutoPlay";
-            this.chkAutoPlay.Size = new System.Drawing.Size(67, 17);
+            this.chkAutoPlay.Size = new System.Drawing.Size(75, 16);
             this.chkAutoPlay.TabIndex = 43;
             this.chkAutoPlay.Text = "Auto play";
             this.chkAutoPlay.UseVisualStyleBackColor = true;
@@ -849,24 +861,13 @@ namespace Max2Babylon
             // 
             this.ofdOpenSound.Filter = "Sound files|*.wav;*.mp3";
             // 
-            // chkBakeAnimationNode
-            // 
-            this.chkBakeAnimationNode.AutoSize = true;
-            this.chkBakeAnimationNode.Location = new System.Drawing.Point(121, 28);
-            this.chkBakeAnimationNode.Name = "chkBakeAnimationNode";
-            this.chkBakeAnimationNode.Size = new System.Drawing.Size(129, 17);
-            this.chkBakeAnimationNode.TabIndex = 24;
-            this.chkBakeAnimationNode.Text = "Bake Node Animation";
-            this.chkBakeAnimationNode.ThreeState = true;
-            this.chkBakeAnimationNode.UseVisualStyleBackColor = true;
-            // 
             // ObjectPropertiesForm
             // 
             this.AcceptButton = this.butOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(667, 567);
+            this.ClientSize = new System.Drawing.Size(667, 523);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
