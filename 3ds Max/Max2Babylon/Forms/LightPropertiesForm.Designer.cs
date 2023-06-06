@@ -39,6 +39,8 @@ namespace Max2Babylon
             this.label5 = new System.Windows.Forms.Label();
             this.chkAutoAnimate = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.tagInput = new System.Windows.Forms.TextBox();
+            this.tagLabel = new System.Windows.Forms.Label();
             this.chkNoExport = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ckForceBackFaces = new System.Windows.Forms.CheckBox();
@@ -51,8 +53,6 @@ namespace Max2Babylon
             this.label6 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbCameraType = new System.Windows.Forms.ComboBox();
-            this.tagLabel = new System.Windows.Forms.Label();
-            this.tagInput = new System.Windows.Forms.TextBox();
             this.groupBox3.SuspendLayout();
             this.grpAutoAnimate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nupTo)).BeginInit();
@@ -70,9 +70,9 @@ namespace Max2Babylon
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(93, 484);
+            this.butOK.Location = new System.Drawing.Point(93, 447);
             this.butOK.Name = "butOK";
-            this.butOK.Size = new System.Drawing.Size(75, 23);
+            this.butOK.Size = new System.Drawing.Size(75, 21);
             this.butOK.TabIndex = 100;
             this.butOK.Text = "OK";
             this.butOK.UseVisualStyleBackColor = true;
@@ -83,9 +83,9 @@ namespace Max2Babylon
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(174, 484);
+            this.butCancel.Location = new System.Drawing.Point(174, 447);
             this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(75, 23);
+            this.butCancel.Size = new System.Drawing.Size(75, 21);
             this.butCancel.TabIndex = 101;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
@@ -95,9 +95,9 @@ namespace Max2Babylon
             this.groupBox3.Controls.Add(this.grpAutoAnimate);
             this.groupBox3.Controls.Add(this.chkAutoAnimate);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox3.Location = new System.Drawing.Point(12, 319);
+            this.groupBox3.Location = new System.Drawing.Point(12, 294);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(319, 156);
+            this.groupBox3.Size = new System.Drawing.Size(319, 144);
             this.groupBox3.TabIndex = 30;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Animations";
@@ -111,9 +111,9 @@ namespace Max2Babylon
             this.grpAutoAnimate.Controls.Add(this.label5);
             this.grpAutoAnimate.Enabled = false;
             this.grpAutoAnimate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grpAutoAnimate.Location = new System.Drawing.Point(21, 51);
+            this.grpAutoAnimate.Location = new System.Drawing.Point(21, 47);
             this.grpAutoAnimate.Name = "grpAutoAnimate";
-            this.grpAutoAnimate.Size = new System.Drawing.Size(292, 99);
+            this.grpAutoAnimate.Size = new System.Drawing.Size(292, 91);
             this.grpAutoAnimate.TabIndex = 32;
             this.grpAutoAnimate.TabStop = false;
             // 
@@ -121,9 +121,9 @@ namespace Max2Babylon
             // 
             this.chkLoop.AutoSize = true;
             this.chkLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkLoop.Location = new System.Drawing.Point(9, 66);
+            this.chkLoop.Location = new System.Drawing.Point(9, 61);
             this.chkLoop.Name = "chkLoop";
-            this.chkLoop.Size = new System.Drawing.Size(47, 17);
+            this.chkLoop.Size = new System.Drawing.Size(45, 16);
             this.chkLoop.TabIndex = 37;
             this.chkLoop.Text = "Loop";
             this.chkLoop.ThreeState = true;
@@ -131,52 +131,52 @@ namespace Max2Babylon
             // 
             // nupTo
             // 
-            this.nupTo.Location = new System.Drawing.Point(47, 40);
+            this.nupTo.Location = new System.Drawing.Point(47, 37);
             this.nupTo.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
             this.nupTo.Name = "nupTo";
-            this.nupTo.Size = new System.Drawing.Size(120, 20);
+            this.nupTo.Size = new System.Drawing.Size(120, 21);
             this.nupTo.TabIndex = 36;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 42);
+            this.label4.Location = new System.Drawing.Point(18, 39);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(23, 13);
+            this.label4.Size = new System.Drawing.Size(23, 12);
             this.label4.TabIndex = 35;
             this.label4.Text = "To:";
             // 
             // nupFrom
             // 
-            this.nupFrom.Location = new System.Drawing.Point(47, 14);
+            this.nupFrom.Location = new System.Drawing.Point(47, 13);
             this.nupFrom.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
             this.nupFrom.Name = "nupFrom";
-            this.nupFrom.Size = new System.Drawing.Size(120, 20);
+            this.nupFrom.Size = new System.Drawing.Size(120, 21);
             this.nupFrom.TabIndex = 34;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 16);
+            this.label5.Location = new System.Drawing.Point(6, 15);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(33, 13);
+            this.label5.Size = new System.Drawing.Size(35, 12);
             this.label5.TabIndex = 33;
             this.label5.Text = "From:";
             // 
             // chkAutoAnimate
             // 
             this.chkAutoAnimate.AutoSize = true;
-            this.chkAutoAnimate.Location = new System.Drawing.Point(21, 28);
+            this.chkAutoAnimate.Location = new System.Drawing.Point(21, 26);
             this.chkAutoAnimate.Name = "chkAutoAnimate";
-            this.chkAutoAnimate.Size = new System.Drawing.Size(88, 17);
+            this.chkAutoAnimate.Size = new System.Drawing.Size(96, 16);
             this.chkAutoAnimate.TabIndex = 31;
             this.chkAutoAnimate.Text = "Auto animate";
             this.chkAutoAnimate.ThreeState = true;
@@ -189,20 +189,36 @@ namespace Max2Babylon
             this.groupBox4.Controls.Add(this.tagLabel);
             this.groupBox4.Controls.Add(this.chkNoExport);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox4.Location = new System.Drawing.Point(12, 12);
+            this.groupBox4.Location = new System.Drawing.Point(12, 11);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(319, 59);
+            this.groupBox4.Size = new System.Drawing.Size(319, 54);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Misc.";
+            // 
+            // tagInput
+            // 
+            this.tagInput.Location = new System.Drawing.Point(194, 23);
+            this.tagInput.Name = "tagInput";
+            this.tagInput.Size = new System.Drawing.Size(100, 21);
+            this.tagInput.TabIndex = 0;
+            // 
+            // tagLabel
+            // 
+            this.tagLabel.AutoSize = true;
+            this.tagLabel.Location = new System.Drawing.Point(159, 26);
+            this.tagLabel.Name = "tagLabel";
+            this.tagLabel.Size = new System.Drawing.Size(29, 12);
+            this.tagLabel.TabIndex = 2;
+            this.tagLabel.Text = "Tag:";
             // 
             // chkNoExport
             // 
             this.chkNoExport.AutoSize = true;
             this.chkNoExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkNoExport.Location = new System.Drawing.Point(21, 28);
+            this.chkNoExport.Location = new System.Drawing.Point(21, 26);
             this.chkNoExport.Name = "chkNoExport";
-            this.chkNoExport.Size = new System.Drawing.Size(87, 17);
+            this.chkNoExport.Size = new System.Drawing.Size(99, 16);
             this.chkNoExport.TabIndex = 1;
             this.chkNoExport.Text = "Do not export";
             this.chkNoExport.ThreeState = true;
@@ -217,9 +233,9 @@ namespace Max2Babylon
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cbCameraType);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox1.Location = new System.Drawing.Point(12, 77);
+            this.groupBox1.Location = new System.Drawing.Point(12, 71);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(319, 236);
+            this.groupBox1.Size = new System.Drawing.Size(319, 218);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Shadows";
@@ -227,9 +243,9 @@ namespace Max2Babylon
             // ckForceBackFaces
             // 
             this.ckForceBackFaces.AutoSize = true;
-            this.ckForceBackFaces.Location = new System.Drawing.Point(24, 61);
+            this.ckForceBackFaces.Location = new System.Drawing.Point(24, 56);
             this.ckForceBackFaces.Name = "ckForceBackFaces";
-            this.ckForceBackFaces.Size = new System.Drawing.Size(135, 17);
+            this.ckForceBackFaces.Size = new System.Drawing.Size(150, 16);
             this.ckForceBackFaces.TabIndex = 13;
             this.ckForceBackFaces.Text = "Force Back Faces only";
             this.ckForceBackFaces.ThreeState = true;
@@ -243,16 +259,16 @@ namespace Max2Babylon
             this.grpBlurInfo.Controls.Add(this.label2);
             this.grpBlurInfo.Enabled = false;
             this.grpBlurInfo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grpBlurInfo.Location = new System.Drawing.Point(18, 144);
+            this.grpBlurInfo.Location = new System.Drawing.Point(18, 133);
             this.grpBlurInfo.Name = "grpBlurInfo";
-            this.grpBlurInfo.Size = new System.Drawing.Size(292, 87);
+            this.grpBlurInfo.Size = new System.Drawing.Size(292, 80);
             this.grpBlurInfo.TabIndex = 20;
             this.grpBlurInfo.TabStop = false;
             this.grpBlurInfo.Text = "Blur info";
             // 
             // nupBlurBoxOffset
             // 
-            this.nupBlurBoxOffset.Location = new System.Drawing.Point(89, 50);
+            this.nupBlurBoxOffset.Location = new System.Drawing.Point(110, 46);
             this.nupBlurBoxOffset.Maximum = new decimal(new int[] {
             3,
             0,
@@ -264,7 +280,7 @@ namespace Max2Babylon
             0,
             0});
             this.nupBlurBoxOffset.Name = "nupBlurBoxOffset";
-            this.nupBlurBoxOffset.Size = new System.Drawing.Size(120, 20);
+            this.nupBlurBoxOffset.Size = new System.Drawing.Size(120, 21);
             this.nupBlurBoxOffset.TabIndex = 24;
             this.nupBlurBoxOffset.Value = new decimal(new int[] {
             1,
@@ -275,15 +291,15 @@ namespace Max2Babylon
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 52);
+            this.label3.Location = new System.Drawing.Point(6, 48);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 13);
+            this.label3.Size = new System.Drawing.Size(101, 12);
             this.label3.TabIndex = 23;
             this.label3.Text = "Blur box offset:";
             // 
             // nupBlurScale
             // 
-            this.nupBlurScale.Location = new System.Drawing.Point(89, 24);
+            this.nupBlurScale.Location = new System.Drawing.Point(110, 22);
             this.nupBlurScale.Maximum = new decimal(new int[] {
             10,
             0,
@@ -295,7 +311,7 @@ namespace Max2Babylon
             0,
             0});
             this.nupBlurScale.Name = "nupBlurScale";
-            this.nupBlurScale.Size = new System.Drawing.Size(120, 20);
+            this.nupBlurScale.Size = new System.Drawing.Size(120, 21);
             this.nupBlurScale.TabIndex = 22;
             this.nupBlurScale.Value = new decimal(new int[] {
             1,
@@ -306,40 +322,40 @@ namespace Max2Babylon
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 26);
+            this.label2.Location = new System.Drawing.Point(6, 24);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.Size = new System.Drawing.Size(71, 12);
             this.label2.TabIndex = 21;
             this.label2.Text = "Blur scale:";
             // 
             // nupBias
             // 
             this.nupBias.DecimalPlaces = 5;
-            this.nupBias.Location = new System.Drawing.Point(57, 26);
+            this.nupBias.Location = new System.Drawing.Point(57, 24);
             this.nupBias.Maximum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nupBias.Name = "nupBias";
-            this.nupBias.Size = new System.Drawing.Size(120, 20);
+            this.nupBias.Size = new System.Drawing.Size(120, 21);
             this.nupBias.TabIndex = 12;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 91);
+            this.label6.Location = new System.Drawing.Point(18, 84);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(34, 13);
+            this.label6.Size = new System.Drawing.Size(35, 12);
             this.label6.TabIndex = 14;
             this.label6.Text = "Type:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 28);
+            this.label1.Location = new System.Drawing.Point(21, 26);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 13);
+            this.label1.Size = new System.Drawing.Size(35, 12);
             this.label1.TabIndex = 11;
             this.label1.Text = "Bias:";
             // 
@@ -352,35 +368,19 @@ namespace Max2Babylon
             "Poisson Sampling",
             "ESM",
             "Blurred ESM"});
-            this.cbCameraType.Location = new System.Drawing.Point(21, 108);
+            this.cbCameraType.Location = new System.Drawing.Point(21, 100);
             this.cbCameraType.Name = "cbCameraType";
-            this.cbCameraType.Size = new System.Drawing.Size(289, 21);
+            this.cbCameraType.Size = new System.Drawing.Size(289, 20);
             this.cbCameraType.TabIndex = 15;
             this.cbCameraType.SelectedIndexChanged += new System.EventHandler(this.cbCameraType_SelectedIndexChanged);
-            // 
-            // tagLabel
-            // 
-            this.tagLabel.AutoSize = true;
-            this.tagLabel.Location = new System.Drawing.Point(159, 28);
-            this.tagLabel.Name = "tagLabel";
-            this.tagLabel.Size = new System.Drawing.Size(29, 13);
-            this.tagLabel.TabIndex = 2;
-            this.tagLabel.Text = "Tag:";
-            // 
-            // tagInput
-            // 
-            this.tagInput.Location = new System.Drawing.Point(194, 25);
-            this.tagInput.Name = "tagInput";
-            this.tagInput.Size = new System.Drawing.Size(100, 20);
-            this.tagInput.TabIndex = 3;
             // 
             // LightPropertiesForm
             // 
             this.AcceptButton = this.butOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(343, 519);
+            this.ClientSize = new System.Drawing.Size(343, 479);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);

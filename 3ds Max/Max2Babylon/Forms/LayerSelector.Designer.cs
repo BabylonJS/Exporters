@@ -41,9 +41,9 @@ namespace Max2Babylon.Forms
             // 
             this.confirmButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.confirmButton.Dock = System.Windows.Forms.DockStyle.Left;
-            this.confirmButton.Location = new System.Drawing.Point(0, 0);
+            this.confirmButton.Location = new System.Drawing.Point(6, 6);
             this.confirmButton.Name = "confirmButton";
-            this.confirmButton.Size = new System.Drawing.Size(150, 38);
+            this.confirmButton.Size = new System.Drawing.Size(150, 23);
             this.confirmButton.TabIndex = 1;
             this.confirmButton.Text = "Confirm";
             this.confirmButton.UseVisualStyleBackColor = true;
@@ -53,9 +53,9 @@ namespace Max2Babylon.Forms
             // 
             this.cancelBtnClick.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelBtnClick.Dock = System.Windows.Forms.DockStyle.Right;
-            this.cancelBtnClick.Location = new System.Drawing.Point(179, 0);
+            this.cancelBtnClick.Location = new System.Drawing.Point(173, 6);
             this.cancelBtnClick.Name = "cancelBtnClick";
-            this.cancelBtnClick.Size = new System.Drawing.Size(150, 38);
+            this.cancelBtnClick.Size = new System.Drawing.Size(150, 23);
             this.cancelBtnClick.TabIndex = 2;
             this.cancelBtnClick.Text = "Cancel";
             this.cancelBtnClick.UseVisualStyleBackColor = true;
@@ -67,7 +67,7 @@ namespace Max2Babylon.Forms
             this.layerTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layerTreeView.Location = new System.Drawing.Point(0, 0);
             this.layerTreeView.Name = "layerTreeView";
-            this.layerTreeView.Size = new System.Drawing.Size(329, 634);
+            this.layerTreeView.Size = new System.Drawing.Size(329, 585);
             this.layerTreeView.TabIndex = 3;
             // 
             // panel1
@@ -75,9 +75,10 @@ namespace Max2Babylon.Forms
             this.panel1.Controls.Add(this.confirmButton);
             this.panel1.Controls.Add(this.cancelBtnClick);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 634);
+            this.panel1.Location = new System.Drawing.Point(0, 585);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(329, 38);
+            this.panel1.Padding = new System.Windows.Forms.Padding(6);
+            this.panel1.Size = new System.Drawing.Size(329, 35);
             this.panel1.TabIndex = 4;
             // 
             // panel2
@@ -86,14 +87,14 @@ namespace Max2Babylon.Forms
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(329, 634);
+            this.panel2.Size = new System.Drawing.Size(329, 585);
             this.panel2.TabIndex = 5;
             // 
             // LayerSelector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(329, 672);
+            this.ClientSize = new System.Drawing.Size(329, 620);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "LayerSelector";

@@ -76,9 +76,9 @@ namespace Max2Babylon
             nameFieldPanel.Controls.Add(this.nameTextBox);
             nameFieldPanel.Controls.Add(this.nameLabel);
             nameFieldPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            nameFieldPanel.Location = new System.Drawing.Point(3, 16);
+            nameFieldPanel.Location = new System.Drawing.Point(3, 17);
             nameFieldPanel.Name = "nameFieldPanel";
-            nameFieldPanel.Size = new System.Drawing.Size(184, 26);
+            nameFieldPanel.Size = new System.Drawing.Size(184, 27);
             nameFieldPanel.TabIndex = 0;
             // 
             // nameTextBox
@@ -86,7 +86,7 @@ namespace Max2Babylon
             this.nameTextBox.Location = new System.Drawing.Point(39, 3);
             this.nameTextBox.MinimumSize = new System.Drawing.Size(20, 20);
             this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.Size = new System.Drawing.Size(134, 20);
+            this.nameTextBox.Size = new System.Drawing.Size(134, 21);
             this.nameTextBox.TabIndex = 0;
             this.nameTextBox.WordWrap = false;
             this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
@@ -96,7 +96,7 @@ namespace Max2Babylon
             this.nameLabel.AutoSize = true;
             this.nameLabel.Location = new System.Drawing.Point(4, 6);
             this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(35, 13);
+            this.nameLabel.Size = new System.Drawing.Size(29, 12);
             this.nameLabel.TabIndex = 0;
             this.nameLabel.Text = "Name";
             // 
@@ -109,14 +109,14 @@ namespace Max2Babylon
             optionsButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             optionsButtonsPanel.Location = new System.Drawing.Point(3, 143);
             optionsButtonsPanel.Name = "optionsButtonsPanel";
-            optionsButtonsPanel.Size = new System.Drawing.Size(184, 29);
+            optionsButtonsPanel.Size = new System.Drawing.Size(184, 27);
             optionsButtonsPanel.TabIndex = 0;
             // 
             // ConfirmButton
             // 
-            this.ConfirmButton.Location = new System.Drawing.Point(3, 3);
+            this.ConfirmButton.Location = new System.Drawing.Point(28, 3);
             this.ConfirmButton.Name = "ConfirmButton";
-            this.ConfirmButton.Size = new System.Drawing.Size(60, 23);
+            this.ConfirmButton.Size = new System.Drawing.Size(60, 21);
             this.ConfirmButton.TabIndex = 5;
             this.ConfirmButton.Text = "Confirm";
             this.ConfirmButton.UseVisualStyleBackColor = true;
@@ -124,9 +124,9 @@ namespace Max2Babylon
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(69, 3);
+            this.cancelButton.Location = new System.Drawing.Point(94, 3);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(60, 23);
+            this.cancelButton.Size = new System.Drawing.Size(60, 21);
             this.cancelButton.TabIndex = 6;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -140,10 +140,10 @@ namespace Max2Babylon
             nodeButtonsPanel.Controls.Add(this.removeNodeButton);
             nodeButtonsPanel.Controls.Add(this.addSelectedButton);
             nodeButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            nodeButtonsPanel.Location = new System.Drawing.Point(3, 68);
+            nodeButtonsPanel.Location = new System.Drawing.Point(3, 71);
             nodeButtonsPanel.Name = "nodeButtonsPanel";
             nodeButtonsPanel.Padding = new System.Windows.Forms.Padding(3);
-            nodeButtonsPanel.Size = new System.Drawing.Size(184, 75);
+            nodeButtonsPanel.Size = new System.Drawing.Size(184, 72);
             nodeButtonsPanel.TabIndex = 0;
             // 
             // calculateTimeRangeBtn
@@ -151,9 +151,9 @@ namespace Max2Babylon
             this.calculateTimeRangeBtn.AutoSize = true;
             this.calculateTimeRangeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.calculateTimeRangeBtn.Dock = System.Windows.Forms.DockStyle.Top;
-            this.calculateTimeRangeBtn.Location = new System.Drawing.Point(3, 49);
+            this.calculateTimeRangeBtn.Location = new System.Drawing.Point(3, 47);
             this.calculateTimeRangeBtn.Name = "calculateTimeRangeBtn";
-            this.calculateTimeRangeBtn.Size = new System.Drawing.Size(178, 23);
+            this.calculateTimeRangeBtn.Size = new System.Drawing.Size(178, 22);
             this.calculateTimeRangeBtn.TabIndex = 5;
             this.calculateTimeRangeBtn.Text = "Calculate Time Range";
             this.calculateTimeRangeBtn.UseVisualStyleBackColor = true;
@@ -164,9 +164,9 @@ namespace Max2Babylon
             this.removeNodeButton.AutoSize = true;
             this.removeNodeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.removeNodeButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.removeNodeButton.Location = new System.Drawing.Point(3, 26);
+            this.removeNodeButton.Location = new System.Drawing.Point(3, 25);
             this.removeNodeButton.Name = "removeNodeButton";
-            this.removeNodeButton.Size = new System.Drawing.Size(178, 23);
+            this.removeNodeButton.Size = new System.Drawing.Size(178, 22);
             this.removeNodeButton.TabIndex = 4;
             this.removeNodeButton.Text = "Remove Viewport Selection";
             this.removeNodeButton.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@ namespace Max2Babylon
             this.addSelectedButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.addSelectedButton.Location = new System.Drawing.Point(3, 3);
             this.addSelectedButton.Name = "addSelectedButton";
-            this.addSelectedButton.Size = new System.Drawing.Size(178, 23);
+            this.addSelectedButton.Size = new System.Drawing.Size(178, 22);
             this.addSelectedButton.TabIndex = 3;
             this.addSelectedButton.Text = "Add Viewport Selection";
             this.addSelectedButton.UseVisualStyleBackColor = true;
@@ -192,7 +192,7 @@ namespace Max2Babylon
             warningLabel.ForeColor = System.Drawing.SystemColors.GrayText;
             warningLabel.Location = new System.Drawing.Point(3, 3);
             warningLabel.Name = "warningLabel";
-            warningLabel.Size = new System.Drawing.Size(178, 97);
+            warningLabel.Size = new System.Drawing.Size(178, 89);
             warningLabel.TabIndex = 0;
             warningLabel.Text = "\r\n*NOTE*\r\n\r\nChanging the 3dsMax scene node hierarchy with this window open may le" +
     "ad to undefined behavior.";
@@ -203,29 +203,29 @@ namespace Max2Babylon
             startEndPanel.AutoSize = true;
             startEndPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             startEndPanel.Controls.Add(this.endTextBox);
-            startEndPanel.Controls.Add(this.endLabel);
             startEndPanel.Controls.Add(this.startTextBox);
+            startEndPanel.Controls.Add(this.endLabel);
             startEndPanel.Controls.Add(this.startLabel);
             startEndPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            startEndPanel.Location = new System.Drawing.Point(3, 42);
+            startEndPanel.Location = new System.Drawing.Point(3, 44);
             startEndPanel.Name = "startEndPanel";
-            startEndPanel.Size = new System.Drawing.Size(184, 26);
+            startEndPanel.Size = new System.Drawing.Size(184, 27);
             startEndPanel.TabIndex = 0;
             // 
             // endTextBox
             // 
-            this.endTextBox.Location = new System.Drawing.Point(124, 3);
+            this.endTextBox.Location = new System.Drawing.Point(133, 3);
             this.endTextBox.Name = "endTextBox";
-            this.endTextBox.Size = new System.Drawing.Size(40, 20);
+            this.endTextBox.Size = new System.Drawing.Size(40, 21);
             this.endTextBox.TabIndex = 2;
             this.endTextBox.TextChanged += new System.EventHandler(this.endTextBox_TextChanged);
             // 
             // endLabel
             // 
             this.endLabel.AutoSize = true;
-            this.endLabel.Location = new System.Drawing.Point(92, 6);
+            this.endLabel.Location = new System.Drawing.Point(104, 6);
             this.endLabel.Name = "endLabel";
-            this.endLabel.Size = new System.Drawing.Size(26, 13);
+            this.endLabel.Size = new System.Drawing.Size(23, 12);
             this.endLabel.TabIndex = 0;
             this.endLabel.Text = "End";
             // 
@@ -233,7 +233,7 @@ namespace Max2Babylon
             // 
             this.startTextBox.Location = new System.Drawing.Point(39, 3);
             this.startTextBox.Name = "startTextBox";
-            this.startTextBox.Size = new System.Drawing.Size(40, 20);
+            this.startTextBox.Size = new System.Drawing.Size(40, 21);
             this.startTextBox.TabIndex = 1;
             this.startTextBox.TextChanged += new System.EventHandler(this.startTextBox_TextChanged);
             // 
@@ -242,7 +242,7 @@ namespace Max2Babylon
             this.startLabel.AutoSize = true;
             this.startLabel.Location = new System.Drawing.Point(4, 6);
             this.startLabel.Name = "startLabel";
-            this.startLabel.Size = new System.Drawing.Size(29, 13);
+            this.startLabel.Size = new System.Drawing.Size(35, 12);
             this.startLabel.TabIndex = 0;
             this.startLabel.Text = "Start";
             // 
@@ -250,10 +250,10 @@ namespace Max2Babylon
             // 
             warningLabelPanel.Controls.Add(warningLabel);
             warningLabelPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            warningLabelPanel.Location = new System.Drawing.Point(3, 376);
+            warningLabelPanel.Location = new System.Drawing.Point(3, 347);
             warningLabelPanel.Name = "warningLabelPanel";
             warningLabelPanel.Padding = new System.Windows.Forms.Padding(3);
-            warningLabelPanel.Size = new System.Drawing.Size(184, 103);
+            warningLabelPanel.Size = new System.Drawing.Size(184, 95);
             warningLabelPanel.TabIndex = 0;
             // 
             // optionsGroupBox
@@ -268,7 +268,7 @@ namespace Max2Babylon
             this.optionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.optionsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(190, 482);
+            this.optionsGroupBox.Size = new System.Drawing.Size(190, 445);
             this.optionsGroupBox.TabIndex = 0;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Animation Options";
@@ -282,7 +282,7 @@ namespace Max2Babylon
             this.nodesGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.nodesGroupBox.Location = new System.Drawing.Point(0, 0);
             this.nodesGroupBox.Name = "nodesGroupBox";
-            this.nodesGroupBox.Size = new System.Drawing.Size(481, 482);
+            this.nodesGroupBox.Size = new System.Drawing.Size(481, 445);
             this.nodesGroupBox.TabIndex = 0;
             this.nodesGroupBox.TabStop = false;
             this.nodesGroupBox.Text = "Animation Nodes";
@@ -299,7 +299,7 @@ namespace Max2Babylon
             this.MaxNodeTree.DummyRemovedForeColor = System.Drawing.SystemColors.ControlText;
             this.MaxNodeTree.DummyUpgradedBackColor = System.Drawing.Color.PaleGreen;
             this.MaxNodeTree.DummyUpgradedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.Location = new System.Drawing.Point(3, 16);
+            this.MaxNodeTree.Location = new System.Drawing.Point(3, 17);
             this.MaxNodeTree.Name = "MaxNodeTree";
             this.MaxNodeTree.NodeAddedBackColor = System.Drawing.Color.PaleGreen;
             this.MaxNodeTree.NodeAddedForeColor = System.Drawing.SystemColors.ControlText;
@@ -309,7 +309,7 @@ namespace Max2Babylon
             this.MaxNodeTree.NodeDowngradedForeColor = System.Drawing.SystemColors.GrayText;
             this.MaxNodeTree.NodeRemovedBackColor = System.Drawing.Color.IndianRed;
             this.MaxNodeTree.NodeRemovedForeColor = System.Drawing.SystemColors.ControlText;
-            this.MaxNodeTree.Size = new System.Drawing.Size(475, 463);
+            this.MaxNodeTree.Size = new System.Drawing.Size(475, 425);
             this.MaxNodeTree.TabIndex = 7;
             // 
             // splitContainer1
@@ -326,19 +326,19 @@ namespace Max2Babylon
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.nodesGroupBox);
-            this.splitContainer1.Size = new System.Drawing.Size(675, 482);
+            this.splitContainer1.Size = new System.Drawing.Size(675, 445);
             this.splitContainer1.SplitterDistance = 190;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.TabStop = false;
             // 
             // AnimationGroupControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.splitContainer1);
             this.Name = "AnimationGroupControl";
-            this.Size = new System.Drawing.Size(675, 482);
+            this.Size = new System.Drawing.Size(675, 445);
             nameFieldPanel.ResumeLayout(false);
             nameFieldPanel.PerformLayout();
             optionsButtonsPanel.ResumeLayout(false);

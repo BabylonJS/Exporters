@@ -68,18 +68,18 @@ namespace Max2Babylon
             this.groupBox1.Controls.Add(this.gravityControl);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 11);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(319, 87);
+            this.groupBox1.Size = new System.Drawing.Size(319, 80);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Collisions";
             // 
             // gravityControl
             // 
-            this.gravityControl.Location = new System.Drawing.Point(21, 44);
+            this.gravityControl.Location = new System.Drawing.Point(21, 41);
             this.gravityControl.Name = "gravityControl";
-            this.gravityControl.Size = new System.Drawing.Size(294, 28);
+            this.gravityControl.Size = new System.Drawing.Size(294, 26);
             this.gravityControl.TabIndex = 2;
             this.gravityControl.X = 0F;
             this.gravityControl.Y = 0F;
@@ -88,9 +88,9 @@ namespace Max2Babylon
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 28);
+            this.label3.Location = new System.Drawing.Point(18, 26);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(43, 13);
+            this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 1;
             this.label3.Text = "Gravity:";
             // 
@@ -99,9 +99,9 @@ namespace Max2Babylon
             this.butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.butCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCancel.Location = new System.Drawing.Point(174, 569);
+            this.butCancel.Location = new System.Drawing.Point(174, 525);
             this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(75, 23);
+            this.butCancel.Size = new System.Drawing.Size(75, 21);
             this.butCancel.TabIndex = 101;
             this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
@@ -111,9 +111,9 @@ namespace Max2Babylon
             this.butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.butOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.butOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butOK.Location = new System.Drawing.Point(93, 569);
+            this.butOK.Location = new System.Drawing.Point(93, 525);
             this.butOK.Name = "butOK";
-            this.butOK.Size = new System.Drawing.Size(75, 23);
+            this.butOK.Size = new System.Drawing.Size(75, 21);
             this.butOK.TabIndex = 100;
             this.butOK.Text = "OK";
             this.butOK.UseVisualStyleBackColor = true;
@@ -124,9 +124,9 @@ namespace Max2Babylon
             this.groupBox2.Controls.Add(this.chkAnimations);
             this.groupBox2.Controls.Add(this.chkQuaternions);
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox2.Location = new System.Drawing.Point(12, 105);
+            this.groupBox2.Location = new System.Drawing.Point(12, 97);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(319, 87);
+            this.groupBox2.Size = new System.Drawing.Size(319, 80);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Advanced";
@@ -135,9 +135,9 @@ namespace Max2Babylon
             // 
             this.chkAnimations.AutoSize = true;
             this.chkAnimations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkAnimations.Location = new System.Drawing.Point(21, 51);
+            this.chkAnimations.Location = new System.Drawing.Point(21, 47);
             this.chkAnimations.Name = "chkAnimations";
-            this.chkAnimations.Size = new System.Drawing.Size(149, 17);
+            this.chkAnimations.Size = new System.Drawing.Size(177, 16);
             this.chkAnimations.TabIndex = 2;
             this.chkAnimations.Text = "Do not optimize animations";
             this.chkAnimations.UseVisualStyleBackColor = true;
@@ -146,9 +146,9 @@ namespace Max2Babylon
             // 
             this.chkQuaternions.AutoSize = true;
             this.chkQuaternions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkQuaternions.Location = new System.Drawing.Point(21, 28);
+            this.chkQuaternions.Location = new System.Drawing.Point(21, 26);
             this.chkQuaternions.Name = "chkQuaternions";
-            this.chkQuaternions.Size = new System.Drawing.Size(221, 17);
+            this.chkQuaternions.Size = new System.Drawing.Size(273, 16);
             this.chkQuaternions.TabIndex = 1;
             this.chkQuaternions.Text = "Export quaternions instead of Euler angles";
             this.chkQuaternions.UseVisualStyleBackColor = true;
@@ -162,9 +162,9 @@ namespace Max2Babylon
             this.groupBox3.Controls.Add(this.chkLoop);
             this.groupBox3.Controls.Add(this.chkAutoPlay);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox3.Location = new System.Drawing.Point(12, 357);
+            this.groupBox3.Location = new System.Drawing.Point(12, 330);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(319, 136);
+            this.groupBox3.Size = new System.Drawing.Size(319, 126);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Sound";
@@ -177,14 +177,14 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupVolume.Location = new System.Drawing.Point(150, 108);
+            this.nupVolume.Location = new System.Drawing.Point(150, 100);
             this.nupVolume.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.nupVolume.Name = "nupVolume";
-            this.nupVolume.Size = new System.Drawing.Size(120, 20);
+            this.nupVolume.Size = new System.Drawing.Size(120, 21);
             this.nupVolume.TabIndex = 6;
             this.nupVolume.Value = new decimal(new int[] {
             1,
@@ -195,9 +195,9 @@ namespace Max2Babylon
             // lblVolume
             // 
             this.lblVolume.AutoSize = true;
-            this.lblVolume.Location = new System.Drawing.Point(18, 110);
+            this.lblVolume.Location = new System.Drawing.Point(18, 102);
             this.lblVolume.Name = "lblVolume";
-            this.lblVolume.Size = new System.Drawing.Size(45, 13);
+            this.lblVolume.Size = new System.Drawing.Size(47, 12);
             this.lblVolume.TabIndex = 5;
             this.lblVolume.Text = "Volume:";
             // 
@@ -205,19 +205,20 @@ namespace Max2Babylon
             // 
             this.cmdBrowse.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.cmdBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmdBrowse.Location = new System.Drawing.Point(276, 28);
+            this.cmdBrowse.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cmdBrowse.Location = new System.Drawing.Point(276, 26);
             this.cmdBrowse.Name = "cmdBrowse";
-            this.cmdBrowse.Size = new System.Drawing.Size(37, 23);
+            this.cmdBrowse.Size = new System.Drawing.Size(20, 20);
             this.cmdBrowse.TabIndex = 2;
-            this.cmdBrowse.Text = "...";
+            this.cmdBrowse.Text = "бн";
             this.cmdBrowse.UseVisualStyleBackColor = true;
             this.cmdBrowse.Click += new System.EventHandler(this.cmdBrowse_Click);
             // 
             // txtSound
             // 
-            this.txtSound.Location = new System.Drawing.Point(21, 28);
+            this.txtSound.Location = new System.Drawing.Point(21, 26);
             this.txtSound.Name = "txtSound";
-            this.txtSound.Size = new System.Drawing.Size(249, 20);
+            this.txtSound.Size = new System.Drawing.Size(249, 21);
             this.txtSound.TabIndex = 1;
             // 
             // chkLoop
@@ -226,9 +227,9 @@ namespace Max2Babylon
             this.chkLoop.Checked = true;
             this.chkLoop.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkLoop.Location = new System.Drawing.Point(21, 77);
+            this.chkLoop.Location = new System.Drawing.Point(21, 71);
             this.chkLoop.Name = "chkLoop";
-            this.chkLoop.Size = new System.Drawing.Size(47, 17);
+            this.chkLoop.Size = new System.Drawing.Size(45, 16);
             this.chkLoop.TabIndex = 4;
             this.chkLoop.Text = "Loop";
             this.chkLoop.UseVisualStyleBackColor = true;
@@ -239,9 +240,9 @@ namespace Max2Babylon
             this.chkAutoPlay.Checked = true;
             this.chkAutoPlay.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAutoPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkAutoPlay.Location = new System.Drawing.Point(21, 54);
+            this.chkAutoPlay.Location = new System.Drawing.Point(21, 50);
             this.chkAutoPlay.Name = "chkAutoPlay";
-            this.chkAutoPlay.Size = new System.Drawing.Size(67, 17);
+            this.chkAutoPlay.Size = new System.Drawing.Size(75, 16);
             this.chkAutoPlay.TabIndex = 3;
             this.chkAutoPlay.Text = "Auto play";
             this.chkAutoPlay.UseVisualStyleBackColor = true;
@@ -256,9 +257,9 @@ namespace Max2Babylon
             this.groupBox4.Controls.Add(this.lblSkyboxBlurLevel);
             this.groupBox4.Controls.Add(this.chkCreateDefaultSkybox);
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox4.Location = new System.Drawing.Point(12, 198);
+            this.groupBox4.Location = new System.Drawing.Point(12, 183);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(319, 87);
+            this.groupBox4.Size = new System.Drawing.Size(319, 80);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Skybox";
@@ -271,14 +272,14 @@ namespace Max2Babylon
             0,
             0,
             65536});
-            this.nupSkyboxBlurLevel.Location = new System.Drawing.Point(150, 61);
+            this.nupSkyboxBlurLevel.Location = new System.Drawing.Point(150, 54);
             this.nupSkyboxBlurLevel.Maximum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nupSkyboxBlurLevel.Name = "nupSkyboxBlurLevel";
-            this.nupSkyboxBlurLevel.Size = new System.Drawing.Size(120, 20);
+            this.nupSkyboxBlurLevel.Size = new System.Drawing.Size(120, 21);
             this.nupSkyboxBlurLevel.TabIndex = 3;
             this.nupSkyboxBlurLevel.Value = new decimal(new int[] {
             3,
@@ -289,9 +290,9 @@ namespace Max2Babylon
             // lblSkyboxBlurLevel
             // 
             this.lblSkyboxBlurLevel.AutoSize = true;
-            this.lblSkyboxBlurLevel.Location = new System.Drawing.Point(18, 63);
+            this.lblSkyboxBlurLevel.Location = new System.Drawing.Point(18, 58);
             this.lblSkyboxBlurLevel.Name = "lblSkyboxBlurLevel";
-            this.lblSkyboxBlurLevel.Size = new System.Drawing.Size(90, 13);
+            this.lblSkyboxBlurLevel.Size = new System.Drawing.Size(113, 12);
             this.lblSkyboxBlurLevel.TabIndex = 2;
             this.lblSkyboxBlurLevel.Text = "Skybox blur level:";
             // 
@@ -299,9 +300,9 @@ namespace Max2Babylon
             // 
             this.chkCreateDefaultSkybox.AutoSize = true;
             this.chkCreateDefaultSkybox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkCreateDefaultSkybox.Location = new System.Drawing.Point(21, 28);
+            this.chkCreateDefaultSkybox.Location = new System.Drawing.Point(21, 26);
             this.chkCreateDefaultSkybox.Name = "chkCreateDefaultSkybox";
-            this.chkCreateDefaultSkybox.Size = new System.Drawing.Size(125, 17);
+            this.chkCreateDefaultSkybox.Size = new System.Drawing.Size(147, 16);
             this.chkCreateDefaultSkybox.TabIndex = 1;
             this.chkCreateDefaultSkybox.Text = "Create default skybox";
             this.chkCreateDefaultSkybox.UseVisualStyleBackColor = true;
@@ -309,9 +310,9 @@ namespace Max2Babylon
             // groupBoxDefaultLight
             // 
             this.groupBoxDefaultLight.Controls.Add(this.chkAddDefaultLight);
-            this.groupBoxDefaultLight.Location = new System.Drawing.Point(12, 291);
+            this.groupBoxDefaultLight.Location = new System.Drawing.Point(12, 269);
             this.groupBoxDefaultLight.Name = "groupBoxDefaultLight";
-            this.groupBoxDefaultLight.Size = new System.Drawing.Size(319, 60);
+            this.groupBoxDefaultLight.Size = new System.Drawing.Size(319, 55);
             this.groupBoxDefaultLight.TabIndex = 4;
             this.groupBoxDefaultLight.TabStop = false;
             this.groupBoxDefaultLight.Text = "Default hemispheric light";
@@ -321,9 +322,9 @@ namespace Max2Babylon
             this.chkAddDefaultLight.AutoSize = true;
             this.chkAddDefaultLight.Checked = true;
             this.chkAddDefaultLight.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAddDefaultLight.Location = new System.Drawing.Point(21, 28);
+            this.chkAddDefaultLight.Location = new System.Drawing.Point(21, 26);
             this.chkAddDefaultLight.Name = "chkAddDefaultLight";
-            this.chkAddDefaultLight.Size = new System.Drawing.Size(213, 17);
+            this.chkAddDefaultLight.Size = new System.Drawing.Size(288, 16);
             this.chkAddDefaultLight.TabIndex = 1;
             this.chkAddDefaultLight.Text = "Add a default light, if no light is exported";
             this.chkAddDefaultLight.UseVisualStyleBackColor = true;
@@ -333,9 +334,9 @@ namespace Max2Babylon
             this.groupBox5.Controls.Add(this.chkMorphExportTangent);
             this.groupBox5.Controls.Add(this.ckkMorphExportNormals);
             this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox5.Location = new System.Drawing.Point(12, 499);
+            this.groupBox5.Location = new System.Drawing.Point(12, 461);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(319, 61);
+            this.groupBox5.Size = new System.Drawing.Size(319, 56);
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "MorphTarget options";
@@ -344,9 +345,9 @@ namespace Max2Babylon
             // 
             this.chkMorphExportTangent.AutoSize = true;
             this.chkMorphExportTangent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkMorphExportTangent.Location = new System.Drawing.Point(187, 30);
+            this.chkMorphExportTangent.Location = new System.Drawing.Point(187, 28);
             this.chkMorphExportTangent.Name = "chkMorphExportTangent";
-            this.chkMorphExportTangent.Size = new System.Drawing.Size(97, 17);
+            this.chkMorphExportTangent.Size = new System.Drawing.Size(111, 16);
             this.chkMorphExportTangent.TabIndex = 2;
             this.chkMorphExportTangent.Text = "Export tangents";
             this.chkMorphExportTangent.UseVisualStyleBackColor = true;
@@ -357,9 +358,9 @@ namespace Max2Babylon
             this.ckkMorphExportNormals.Checked = true;
             this.ckkMorphExportNormals.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ckkMorphExportNormals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ckkMorphExportNormals.Location = new System.Drawing.Point(21, 30);
+            this.ckkMorphExportNormals.Location = new System.Drawing.Point(21, 28);
             this.ckkMorphExportNormals.Name = "ckkMorphExportNormals";
-            this.ckkMorphExportNormals.Size = new System.Drawing.Size(92, 17);
+            this.ckkMorphExportNormals.Size = new System.Drawing.Size(105, 16);
             this.ckkMorphExportNormals.TabIndex = 1;
             this.ckkMorphExportNormals.Text = "Export normals";
             this.ckkMorphExportNormals.UseVisualStyleBackColor = true;
@@ -367,10 +368,10 @@ namespace Max2Babylon
             // ScenePropertiesForm
             // 
             this.AcceptButton = this.butOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(343, 604);
+            this.ClientSize = new System.Drawing.Size(343, 558);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBoxDefaultLight);
             this.Controls.Add(this.groupBox4);
