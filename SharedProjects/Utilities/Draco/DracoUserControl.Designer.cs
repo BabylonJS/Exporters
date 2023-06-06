@@ -391,7 +391,7 @@ namespace Utilities
             this.UnifiedCheckBox.Location = new System.Drawing.Point(2, 202);
             this.UnifiedCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.UnifiedCheckBox.Name = "UnifiedCheckBox";
-            this.UnifiedCheckBox.Size = new System.Drawing.Size(68, 41);
+            this.UnifiedCheckBox.Size = new System.Drawing.Size(68, 22);
             this.UnifiedCheckBox.TabIndex = 17;
             this.UnifiedCheckBox.Text = "Unified";
             this.UnifiedCheckBox.UseVisualStyleBackColor = true;
@@ -400,7 +400,7 @@ namespace Utilities
             // 
             this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ResetButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ResetButton.Location = new System.Drawing.Point(213, 220);
+            this.ResetButton.Location = new System.Drawing.Point(213, 202);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(69, 22);
             this.ResetButton.TabIndex = 18;
