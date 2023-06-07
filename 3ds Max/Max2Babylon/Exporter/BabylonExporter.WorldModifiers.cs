@@ -20,9 +20,15 @@ namespace Max2Babylon
                 foreach (var modifier in derivedObject.Modifiers)
                 {
                     // TODO - Find another way to detect if modifier is a HairAndFur
-                    if (modifier.Name == "Hair and Fur" || // English
-                        modifier.Name == "Haar und Fell" || // German
-                        modifier.Name == "Chevelure et Pelage") // French
+
+#if MAX2024
+                    var modifierName = modifier.GetName(false);
+#else
+                    var modifierName = modifier.Name;
+#endif
+                    if (modifierName == "Hair and Fur" || // English
+                        modifierName == "Haar und Fell" || // German
+                        modifierName == "Chevelure et Pelage") // French
                     {
                         var babylonFurMaterial = ExportFurModifier(modifier, babylonMesh.name, babylonScene);
                         babylonScene.MaterialsList.Add(babylonFurMaterial);
@@ -30,7 +36,7 @@ namespace Max2Babylon
                     }
                     else
                     {
-                        RaiseWarning("Modifier or Language '" + modifier.Name + "' is not supported", 2);
+                        RaiseWarning("Modifier or Language '" + modifierName + "' is not supported", 2);
                     }
                 }
             }
