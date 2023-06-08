@@ -45,7 +45,7 @@ namespace Max2Babylon
         public ITexmap MetalnessMap => _getTexMap(_node, "metalness_map");
         public float Roughness => Properties?.GetFloatProperty("roughness", 0) ?? 0;
         public ITexmap RoughnessMap => _getTexMap(_node, "roughness_map");
-     }
+    }
 
     public class PbrSpecGlossDecorator : PbrGameMaterialDecorator
     {
@@ -290,14 +290,14 @@ namespace Max2Babylon
             // the target material
             var babylonMaterial = new BabylonPBRSpecularGlossinessMaterial(maxDecorator.Id)
             {
-                 maxGameMaterial = materialNode,
-                 name = maxDecorator.Name,
-                 backFaceCulling = babylonDecorator.BackFaceCulling,
-                 doubleSided = !babylonDecorator.BackFaceCulling,
-                 separateCullingPass = babylonDecorator.SeparateCullingPass,
-                 isUnlit = babylonDecorator.IsUnlit,
-                 baseColor = maxDecorator.BaseColor.ToArray(),
-             };
+                maxGameMaterial = materialNode,
+                name = maxDecorator.Name,
+                backFaceCulling = babylonDecorator.BackFaceCulling,
+                doubleSided = !babylonDecorator.BackFaceCulling,
+                separateCullingPass = babylonDecorator.SeparateCullingPass,
+                isUnlit = babylonDecorator.IsUnlit,
+                baseColor = maxDecorator.BaseColor.ToArray(),
+            };
 
             // --- Global ---
             if (babylonMaterial.isUnlit)

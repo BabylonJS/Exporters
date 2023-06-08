@@ -37,7 +37,7 @@ namespace Max2Babylon
 #if MAX2022 || MAX2023
             ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = maxOps.getNodeByHandle " + gameNode.MaxNode.Handle + ";", ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
-           ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = maxOps.getNodeByHandle " + gameNode.MaxNode.Handle + ";");
+            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = maxOps.getNodeByHandle " + gameNode.MaxNode.Handle + ";");
 #endif
 
             return _ExportExtraAttributes(gameNode.IGameObject.IPropertyContainer, babylonScene, excludeAttributes);

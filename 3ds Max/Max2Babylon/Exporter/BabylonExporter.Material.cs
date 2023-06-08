@@ -406,7 +406,7 @@ namespace Max2Babylon
                 {
                     babylonMaterial.opacityFresnelParameters = fresnelParameters;
                     if (babylonMaterial.alpha == 1 &&
-                         babylonMaterial.opacityTexture == null)
+                        babylonMaterial.opacityTexture == null)
                     {
                         babylonMaterial.alpha = 0;
                     }
@@ -589,7 +589,6 @@ namespace Max2Babylon
                     babylonMaterial.roughness = 1 - babylonMaterial.roughness;
                 }
 
- 
                 // Self illumination is computed from emission color, luminance, temperature and weight
                 babylonMaterial.emissive = materialNode.MaxMaterial.GetSelfIllumColorOn(0, false)
                                                 ? materialNode.MaxMaterial.GetSelfIllumColor(0, false).Scale(selfIllumScale).ToArray()
