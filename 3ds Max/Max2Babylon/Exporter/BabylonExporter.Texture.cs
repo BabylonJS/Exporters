@@ -546,7 +546,7 @@ namespace Max2Babylon
         {
             var specularTexture = _getBitmapTex(specularTexMap);
             var glossinessTexture = _getBitmapTex(glossinessTexMap);
-             
+
             // we are trying to get the best output format, function of source and policy.
             var paths = new IBitmapTex[] { specularTexture, glossinessTexture}.Where(t => t != null).Select(t => t.Map.FileName);
             var policy = exportParameters.textureFormatExportPolicy;
@@ -1217,8 +1217,6 @@ namespace Max2Babylon
             RaiseMessage(MaxTextureTransformToString(uvGen));
 #endif 
 
-     
- 
             var offset = new BabylonVector3(uvGen.GetUOffs(0), uvGen.GetVOffs(0), 0);
             var scale = new BabylonVector3(uvGen.GetUScl(0), uvGen.GetVScl(0), 1);
             //max rotation is horlogic, here we move using trigonometric, so anti - horlogic
@@ -1257,7 +1255,7 @@ namespace Max2Babylon
                 var translateBack = BabylonMatrix.Translation(center);
                 var t = translateToOrigin * scaling * rotate * translateBack ;
                 offset = origin * t;
-             }
+            }
 
             babylonTexture.uOffset = offset.X%1;
             babylonTexture.vOffset = (1 - offset.Y) % 1;

@@ -113,7 +113,7 @@ namespace Max2Babylon
             }
         }
 
-         const char s_PropertySeparator = ';';
+        const char s_PropertySeparator = ';';
         private const char s_ProperyLayerSeparator = '~';
         const string s_PropertyFormat = "{0};{1};{2};{3};{4}";
         const string s_PropertyNamePrefix = "babylonjs_ExportItem";
@@ -282,10 +282,8 @@ namespace Max2Babylon
             {
                 throw new Exception("Invalid property name, can't deserialize.");
             }
-       
             
             string itemGuidStr = propertyName.Remove(0, s_PropertyNamePrefix.Length);
-
 
             if (!Guid.TryParse(itemGuidStr, out itemGuid))
             {   
