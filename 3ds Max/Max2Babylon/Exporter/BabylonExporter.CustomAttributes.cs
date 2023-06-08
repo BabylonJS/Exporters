@@ -16,7 +16,7 @@ namespace Max2Babylon
         public Dictionary<string, object> ExportExtraAttributes(IIGameMaterial gameMaterial, BabylonScene babylonScene, List<string> excludeAttributes = null)
         {
             // Retreive the max object
-#if MAX2022 || MAX2023
+#if MAX2022 || MAX2023 || MAX2024
             ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = sceneMaterials[\"" + gameMaterial.MaterialName + "\"];", ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
             ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = sceneMaterials[\"" + gameMaterial.MaterialName + "\"];");
@@ -34,12 +34,11 @@ namespace Max2Babylon
         public Dictionary<string, object> ExportExtraAttributes(IIGameNode gameNode, BabylonScene babylonScene, List<string> excludeAttributes = null)
         {
             // Retreive the max object
-#if MAX2022 || MAX2023
+#if MAX2022 || MAX2023 || MAX2024
             ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = maxOps.getNodeByHandle " + gameNode.MaxNode.Handle + ";", ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
             ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand("obj = maxOps.getNodeByHandle " + gameNode.MaxNode.Handle + ";");
 #endif
-
             return _ExportExtraAttributes(gameNode.IGameObject.IPropertyContainer, babylonScene, excludeAttributes);
         }
 
@@ -79,7 +78,7 @@ namespace Max2Babylon
                     + "\r\n" + ")"
                 + "\r\n" + ")"
                 + "\r\n" + "s";
-#if MAX2022 || MAX2023
+#if MAX2022 || MAX2023 || MAX2024
             string result = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(cmd, ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
             string result = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(cmd);
