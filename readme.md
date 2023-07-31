@@ -9,10 +9,10 @@ For alternative export options, please see this doc: https://doc.babylonjs.com/p
 
 **Get the latest installer for our exporters here: https://github.com/BabylonJS/Exporters/releases**
 
-Documentation on the 3ds Max exporter is available here: https://doc.babylonjs.com/resources/3dsmax<br />
-Documentation for exporting from 3ds Max to glTF is available here: https://doc.babylonjs.com/resources/3dsmax_to_gltf
+Documentation on the 3ds Max exporter is available here: https://doc.babylonjs.com/features/featuresDeepDive/Exporters/3DSMax<br />
+Documentation for exporting from 3ds Max to glTF is available here: https://doc.babylonjs.com/features/featuresDeepDive/Exporters/3DSMax_to_glTF
 
-Documentation on the Maya exporter is available here: https://doc.babylonjs.com/resources/maya<br />
-Documentation for exporting from Maya to glTF is available here: https://doc.babylonjs.com/resources/maya_to_gltf
+Documentation on the Maya exporter is available here: https://doc.babylonjs.com/features/featuresDeepDive/Exporters/Maya<br />
+Documentation for exporting from Maya to glTF is available here: https://doc.babylonjs.com/features/featuresDeepDive/Exporters/Maya_to_glTF
 
 **Any questions?** Here is our official [forum](https://forum.babylonjs.com/).
