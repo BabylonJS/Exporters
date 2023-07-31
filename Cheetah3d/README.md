@@ -1,4 +1,4 @@
 Cheetah to Babylon.js exporter
 ==============================
 
-Documentation: http://doc.babylonjs.com/exporters/cheetah3d
+Documentation: http://doc.babylonjs.com/features/featuresDeepDive/Exporters/Cheetah3D
