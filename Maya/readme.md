@@ -1,7 +1,7 @@
 Maya to Babylon.js exporter
 ==============================
 
-Documentation: http://doc.babylonjs.com/resources/maya
+Documentation: https://doc.babylonjs.com/features/featuresDeepDive/Exporters/Maya
 
 # How to contribute:
 ## Requirements:
