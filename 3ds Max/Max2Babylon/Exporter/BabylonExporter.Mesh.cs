@@ -623,31 +623,33 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
-        private IEnumerable<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+        private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
         {
             if (maxMorphTarget != null )
             {
-                foreach(var v in ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes))
-                {
-                    yield return v;
-                }
-                yield break;
+                return ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes);
             }
-            // rebuild Morph Target
-            if (exportParameters.rebuildMorphTarget)
+
+			var result = new List<GlobalVertex>();
+
+			if (!exportParameters.rebuildMorphTarget)
             {
-                var points = ExtractMorphTargetPoints(babylonAbstractMesh, morphIndex, offsetTM).ToList();
-                for (int i = 0; i != vertices.Count; i++)
+                return result;
+			}
+			
+            var points = ExtractMorphTargetPoints(babylonAbstractMesh, morphIndex, offsetTM).ToList();
+            for (int i = 0; i != vertices.Count; i++)
+            {
+                int bi = vertices[i].BaseIndex;
+				result.Add(new GlobalVertex()
                 {
-                    int bi = vertices[i].BaseIndex;
-                    yield return new GlobalVertex()
-                    {
-                        BaseIndex = bi,
-                        Position = points[bi]
-                    };
-                }
+                    BaseIndex = bi,
+                    Position = points[bi]
+                });
             }
-        }
+
+            return result;
+		}
 
         private IEnumerable<IPoint3> ExtractMorphTargetPoints(BabylonAbstractMesh babylonAbstractMesh, int morphIndex, IMatrix3 offsetTM)
         {
