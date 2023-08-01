@@ -623,35 +623,35 @@ namespace Max2Babylon
             return babylonMesh;
         }
 
-        private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
-        {
-            if (maxMorphTarget != null )
-            {
-                return ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes);
-            }
+		private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+		{
+			if (maxMorphTarget != null)
+			{
+				return ExtractVertices(babylonAbstractMesh, maxMorphTarget, optimizeVertices, faceIndexes);
+			}
 
 			var result = new List<GlobalVertex>();
 
 			if (!exportParameters.rebuildMorphTarget)
-            {
-                return result;
+			{
+				return result;
 			}
-			
-            var points = ExtractMorphTargetPoints(babylonAbstractMesh, morphIndex, offsetTM).ToList();
-            for (int i = 0; i != vertices.Count; i++)
-            {
-                int bi = vertices[i].BaseIndex;
-				result.Add(new GlobalVertex()
-                {
-                    BaseIndex = bi,
-                    Position = points[bi]
-                });
-            }
 
-            return result;
+			var points = ExtractMorphTargetPoints(babylonAbstractMesh, morphIndex, offsetTM).ToList();
+			for (int i = 0; i != vertices.Count; i++)
+			{
+				int bi = vertices[i].BaseIndex;
+				result.Add(new GlobalVertex()
+				{
+					BaseIndex = bi,
+					Position = points[bi]
+				});
+			}
+
+			return result;
 		}
 
-        private IEnumerable<IPoint3> ExtractMorphTargetPoints(BabylonAbstractMesh babylonAbstractMesh, int morphIndex, IMatrix3 offsetTM)
+		private IEnumerable<IPoint3> ExtractMorphTargetPoints(BabylonAbstractMesh babylonAbstractMesh, int morphIndex, IMatrix3 offsetTM)
         {
             // this is the place where we reconstruct the vertices. 
             // the needed function is not available on the .net SDK, then we have to use Max Script.
