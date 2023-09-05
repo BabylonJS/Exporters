@@ -184,7 +184,7 @@ namespace Max2Babylon
             this.logTreeView.Location = new System.Drawing.Point(4, 5);
             this.logTreeView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.logTreeView.Name = "logTreeView";
-            this.logTreeView.Size = new System.Drawing.Size(0, 0);
+            this.logTreeView.Size = new System.Drawing.Size(917, 459);
             this.logTreeView.TabIndex = 103;
             this.logTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ExporterForm_KeyDown);
             // 
