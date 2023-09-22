@@ -109,7 +109,8 @@ namespace Babylon2GLTF
                         else
                         {
                             // if the node isn't found in the scene id map, check if it is the id for a morph target
-                            BabylonMorphTargetManager morphTargetManager = babylonScene.morphTargetManagers.FirstOrDefault(mtm => mtm.targets.Any(target => target.animations != null && target.animations.Length > 0 && target.animations[0] != null));
+                            BabylonMorphTargetManager morphTargetManager = babylonScene.morphTargetManagers.FirstOrDefault(mtm => mtm.targets.Any(target => target.animations != null && target.animations.Length > 0 && target.animations[0] != null && target.id == id));
+                            
                             if (morphTargetManager != null)
                             {
                                 BabylonMesh mesh = morphTargetManager.sourceMesh;
