@@ -125,11 +125,11 @@ namespace Max2Babylon
                         {
                             bool isShareMat = masterMeshPair.Key.materialId == null || (meshNode.NodeMaterial != null && meshNode.NodeMaterial.MaxMaterial.GetGuid().ToString().Equals(masterMeshPair.Value.NodeMaterial.MaxMaterial.GetGuid().ToString()));
 
-                            BabylonNode n = isShareMat?
+                            BabylonNode n = isShareMat ?
                                 ExportInstanceMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) :
                                 exportParameters.useClone ? ExportCloneMesh(scene, meshNode, babylonScene, masterMeshPair.Key, masterMeshPair.Value) : null;
-                            
-                            if( n != null)
+
+                            if (n != null)
                             {
                                 return n;
                             }
@@ -469,7 +469,7 @@ namespace Max2Babylon
                         babylonMesh.colors = colors;
                         babylonMesh.hasVertexAlpha = hasAlpha;
                     }
-                    
+
                 }
 
                 babylonMesh.subMeshes = subMeshes.ToArray();
@@ -525,16 +525,16 @@ namespace Max2Babylon
                         {
                             // Morph target
                             var maxMorphTarget = morpher.GetMorphTarget(i);
-							// here we avoid to extract vertices in an optimize way, du to the fact that the actual optimize process is NOT garanty to keep a one to one relationship
-							// with the source and target vertices.
-							bool mustRebuildMorphTarget = (maxMorphTarget == null || optimizeVertices );
+                            // here we avoid to extract vertices in an optimize way, du to the fact that the actual optimize process is NOT garanty to keep a one to one relationship
+                            // with the source and target vertices.
+                            bool mustRebuildMorphTarget = (maxMorphTarget == null || optimizeVertices);
                             if (mustRebuildMorphTarget)
                             {
                                 string actionStr = exportParameters.rebuildMorphTarget ? $" trying to rebuild {i}." : string.Empty;
                                 if (maxMorphTarget == null)
                                 {
                                     RaiseWarning($"Morph target [{i}] is not available anymore - ie: has been deleted in max and is baked into the scene.{actionStr}", 3);
-                                } 
+                                }
                                 else
                                 {
                                     RaiseWarning($"Morph target [{i}] MUST be rebuilt to avoid artifacts, using the vertices export process.{actionStr}", 3);
@@ -545,18 +545,18 @@ namespace Max2Babylon
                             // Target geometry - this is where we rebuild the target if necessary
                             var targetVertices = ExtractMorphTargetVertices(babylonMesh, vertices, offsetTM, i, maxMorphTarget, optimizeVertices, faceIndexes);
 
-							if (targetVertices != null && targetVertices.Any())
+                            if (targetVertices != null && targetVertices.Any())
                             {
                                 var babylonMorphTarget = new BabylonMorphTarget
                                 {
-									// the name is reconstructed if we have to rebuild the target
-									name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})"
-								};
+                                    // the name is reconstructed if we have to rebuild the target
+                                    name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})"
+                                };
                                 babylonMorphTargets.Add(babylonMorphTarget);
-                                RaiseMessage($"Morph target {babylonMorphTarget.name} added.",3);
+                                RaiseMessage($"Morph target {babylonMorphTarget.name} added.", 3);
 
                                 // TODO - Influence
-                                babylonMorphTarget.influence = 0f; 
+                                babylonMorphTarget.influence = 0f;
 
                                 // Target geometry
                                 babylonMorphTarget.positions = targetVertices.SelectMany(v => new[] { v.Position.X, v.Position.Y, v.Position.Z }).ToArray();
@@ -566,7 +566,7 @@ namespace Max2Babylon
                                     if (mustRebuildMorphTarget)
                                     {
                                         // we do not recontruct the normals
-                                        RaiseWarning("we do not have morph normals when morph target has been rebuilded.",4);
+                                        RaiseWarning("we do not have morph normals when morph target has been rebuilded.", 4);
                                         babylonMorphTarget.normals = null;
                                     }
                                     else
@@ -622,8 +622,8 @@ namespace Max2Babylon
             masterMeshMap[babylonMesh] = meshNode;
             return babylonMesh;
         }
-    
-		private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+
+        private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
         {
             if (maxMorphTarget != null)
             {
@@ -920,7 +920,7 @@ namespace Max2Babylon
                 // Material Id is 0 if normal material, and GetMaterialID if multi-material
                 // default is [1,n] increment by 1 but user can decide to change the id (still an int) and set for example [4,3,9,1]
                 // note that GetMaterialID return the user id minus 1
-                int materialId = multiMatsCount == 1? i : meshNode.NodeMaterial.GetMaterialID(i);
+                int materialId = multiMatsCount == 1 ? i : meshNode.NodeMaterial.GetMaterialID(i);
                 var subMesh = new BabylonSubMesh { indexStart = indexStart, materialIndex = i };
                 if (multiMatsCount == 1)
                 {
@@ -1135,7 +1135,7 @@ namespace Max2Babylon
                     }
                 }
                 var texCoord = mesh.GetMapVertex(1, indices[facePart]);
-                vertex.UV = Loader.Global.Point2.Create(texCoord.X, 1 -texCoord.Y);
+                vertex.UV = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
             }
 
             if (hasUV2)
@@ -1149,7 +1149,7 @@ namespace Max2Babylon
                     }
                 }
                 var texCoord = mesh.GetMapVertex(2, indices[facePart]);
-                vertex.UV2 = Loader.Global.Point2.Create(texCoord.X, 1 -texCoord.Y);
+                vertex.UV2 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
             }
 
             if (hasColor)
@@ -1330,9 +1330,9 @@ namespace Max2Babylon
             if (exportParameters.exportAnimations)
             {
                 var animations = new List<BabylonAnimation>();
-                
+
                 GenerateCoordinatesAnimations(maxGameNode, animations);
-                
+
                 if (!ExportFloatController(maxGameNode.MaxNode.VisController, "visibility", animations))
                 {
                     ExportFloatAnimation("visibility", animations, key => new[] { maxGameNode.MaxNode.GetVisibility(key, Tools.Forever) });
@@ -1373,7 +1373,7 @@ namespace Max2Babylon
             float bty = MathUtilities.RoundToIfAlmostEqualTo(bitangent.Y, 0, Tools.Epsilon);
             float btz = MathUtilities.RoundToIfAlmostEqualTo(bitangent.Z, 0, Tools.Epsilon);
 
-            if( btx == 0 && bty == 0 && btz == 0)
+            if (btx == 0 && bty == 0 && btz == 0)
             {
                 return 1;
             }
@@ -1395,7 +1395,7 @@ namespace Max2Babylon
             // then the two vectors point in the same general direction, meaning less than 90 degrees. 
             // If the dot product is negative, then the two vectors point in opposite directions, 
             // or above 90 and less than or equal to 180 degrees.
-            var dot = MathUtilities.DotProduct(btx, bty,btz, x,y,z);
+            var dot = MathUtilities.DotProduct(btx, bty, btz, x, y, z);
             return dot < 0 ? -1 : 1;
         }
 
