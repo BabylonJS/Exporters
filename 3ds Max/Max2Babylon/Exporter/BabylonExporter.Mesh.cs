@@ -525,9 +525,9 @@ namespace Max2Babylon
                         {
                             // Morph target
                             var maxMorphTarget = morpher.GetMorphTarget(i);
-                            // here we avoid to extract vertices in an optimize way, du to the fact that the actual optimize process is NOT garanty to keep a one to one relationship
-                            // with the source and target vertices.
-                            bool mustRebuildMorphTarget = (maxMorphTarget == null || optimizeVertices );
+							// here we avoid to extract vertices in an optimize way, du to the fact that the actual optimize process is NOT garanty to keep a one to one relationship
+							// with the source and target vertices.
+							bool mustRebuildMorphTarget = (maxMorphTarget == null || optimizeVertices );
                             if (mustRebuildMorphTarget)
                             {
                                 string actionStr = exportParameters.rebuildMorphTarget ? $" trying to rebuild {i}." : string.Empty;
@@ -545,13 +545,13 @@ namespace Max2Babylon
                             // Target geometry - this is where we rebuild the target if necessary
                             var targetVertices = ExtractMorphTargetVertices(babylonMesh, vertices, offsetTM, i, maxMorphTarget, optimizeVertices, faceIndexes);
 
-                            if (targetVertices != null && targetVertices.Any())
+							if (targetVertices != null && targetVertices.Any())
                             {
                                 var babylonMorphTarget = new BabylonMorphTarget
                                 {
-                                    // the name is reconstructed if we have to rebuild the target
-                                    name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})" 
-                                };
+									// the name is reconstructed if we have to rebuild the target
+									name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})"
+								};
                                 babylonMorphTargets.Add(babylonMorphTarget);
                                 RaiseMessage($"Morph target {babylonMorphTarget.name} added.",3);
 
@@ -622,8 +622,8 @@ namespace Max2Babylon
             masterMeshMap[babylonMesh] = meshNode;
             return babylonMesh;
         }
-
-        private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
+    
+		private IList<GlobalVertex> ExtractMorphTargetVertices(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, IMatrix3 offsetTM, int morphIndex, IIGameNode maxMorphTarget, bool optimizeVertices, List<int> faceIndexes)
         {
             if (maxMorphTarget != null)
             {
@@ -656,7 +656,7 @@ namespace Max2Babylon
             // this is the place where we reconstruct the vertices. 
             // the needed function is not available on the .net SDK, then we have to use Max Script.
             // TODO : use direct instance instead of manipulate string
-            var script = $"with printAllElements on (for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex} k)) as string";
+            var script = $"with printAllElements on (for k in 0 to (WM3_MC_NumMPts ${babylonAbstractMesh.name}.Morpher {morphIndex + 1}) collect (WM3_MC_GetMorphPoint ${babylonAbstractMesh.name}.morpher {morphIndex + 1} k)) as string";
 #if MAX2022 || MAX2023 || MAX2024
             var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script, ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
