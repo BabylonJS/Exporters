@@ -15,7 +15,7 @@ namespace Maya2Babylon
         private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -496,7 +496,7 @@ namespace Maya2Babylon
 
             var uvSetNames = new MStringArray();
             mFnMesh.getUVSetNames(uvSetNames);
-            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, 2)];
+            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, 8)];
             for (int indexUVSet = 0; indexUVSet < isUVExportSuccess.Length; indexUVSet++)
             {
                 isUVExportSuccess[indexUVSet] = true;
@@ -584,12 +584,35 @@ namespace Maya2Babylon
             // UVs
             if (uvSetNames.Count > 0 && isUVExportSuccess[0])
             {
-                
                 babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
             }
             if (uvSetNames.Count > 1 && isUVExportSuccess[1])
             {
                 babylonMesh.uvs2 = vertices.SelectMany(v => v.UV2).ToArray();
+            }
+            if (uvSetNames.Count > 2 && isUVExportSuccess[2])
+            {
+                babylonMesh.uvs3 = vertices.SelectMany(v => v.UV3).ToArray();
+            }
+            if (uvSetNames.Count > 3 && isUVExportSuccess[3])
+            {
+                babylonMesh.uvs4 = vertices.SelectMany(v => v.UV4).ToArray();
+            }
+            if (uvSetNames.Count > 4 && isUVExportSuccess[4])
+            {
+                babylonMesh.uvs5 = vertices.SelectMany(v => v.UV5).ToArray();
+            }
+            if (uvSetNames.Count > 5 && isUVExportSuccess[5])
+            {
+                babylonMesh.uvs6 = vertices.SelectMany(v => v.UV6).ToArray();
+            }
+            if (uvSetNames.Count > 6 && isUVExportSuccess[6])
+            {
+                babylonMesh.uvs7 = vertices.SelectMany(v => v.UV7).ToArray();
+            }
+            if (uvSetNames.Count > 7 && isUVExportSuccess[7])
+            {
+                babylonMesh.uvs8 = vertices.SelectMany(v => v.UV8).ToArray();
             }
 
             babylonMesh.subMeshes = subMeshes.ToArray();
@@ -825,6 +848,37 @@ namespace Maya2Babylon
         }
 
         /// <summary>
+        /// Extract vertex UV for the given UV channel.
+        /// </summary>
+        /// <param name="mFnMesh"></param>
+        /// <param name="polygonId">The polygon (face) to examine</param>
+        /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
+        /// <param name="indexUVSet">Index of the target UV set.</param>
+        /// <param name="uvSetNames"></param>
+        /// <param name="isUVExportSuccess"></param>
+        /// <returns></returns>
+        private float[] ExtractVertexUV(MFnMesh mFnMesh, int polygonId, int vertexIndexLocal, int indexUVSet, MStringArray uvSetNames,ref bool[] isUVExportSuccess)
+        {
+            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
+            {
+                try
+                {
+                    float u = 0, v = 0;
+                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
+                    return new float[] { u, v };
+                }
+                catch
+                {
+                    // An exception is raised when a vertex isn't mapped to an UV coordinate
+                    isUVExportSuccess[indexUVSet] = false;
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Extract geometry (position, normal, UVs...) for a specific vertex
         /// </summary>
         /// <param name="mFnMesh"></param>
@@ -907,37 +961,14 @@ namespace Maya2Babylon
                 }
             }
 
-            // UV
-            int indexUVSet = 0;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-            indexUVSet = 1;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV2 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
+            vertex.UV  = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 0, uvSetNames, ref isUVExportSuccess); // UV
+            vertex.UV2 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 1, uvSetNames, ref isUVExportSuccess); // UV2
+            vertex.UV3 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 2, uvSetNames, ref isUVExportSuccess); // UV3
+            vertex.UV4 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 3, uvSetNames, ref isUVExportSuccess); // UV4
+            vertex.UV5 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 4, uvSetNames, ref isUVExportSuccess); // UV5
+            vertex.UV6 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 5, uvSetNames, ref isUVExportSuccess); // UV6
+            vertex.UV7 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 6, uvSetNames, ref isUVExportSuccess); // UV7
+            vertex.UV8 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 7, uvSetNames, ref isUVExportSuccess); // UV8
 
             // skin
             if (mFnSkinCluster != null)

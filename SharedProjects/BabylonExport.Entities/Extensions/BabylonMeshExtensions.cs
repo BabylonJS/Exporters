@@ -43,6 +43,8 @@ namespace BabylonExport.Entities
             data.uvs4 = null;
             data.uvs5 = null;
             data.uvs6 = null;
+            data.uvs7 = null;
+            data.uvs8 = null;
             data.colors = null;
             data.matricesIndices = null;
             data.matricesWeights = null;
