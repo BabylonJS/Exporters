@@ -15,7 +15,7 @@ namespace Maya2Babylon
         private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
-
+        private const int MAX_UV_EXPORTS = 8; // Maximum number of UVs to export.
         /// <summary>
         /// 
         /// </summary>
@@ -496,7 +496,7 @@ namespace Maya2Babylon
 
             var uvSetNames = new MStringArray();
             mFnMesh.getUVSetNames(uvSetNames);
-            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, 2)];
+            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, MAX_UV_EXPORTS)];
             for (int indexUVSet = 0; indexUVSet < isUVExportSuccess.Length; indexUVSet++)
             {
                 isUVExportSuccess[indexUVSet] = true;
@@ -590,6 +590,30 @@ namespace Maya2Babylon
             if (uvSetNames.Count > 1 && isUVExportSuccess[1])
             {
                 babylonMesh.uvs2 = vertices.SelectMany(v => v.UV2).ToArray();
+            }
+            if (uvSetNames.Count > 2 && isUVExportSuccess[2])
+            {
+                babylonMesh.uvs3 = vertices.SelectMany(v => v.UV3).ToArray();
+            }
+            if (uvSetNames.Count > 3 && isUVExportSuccess[3])
+            {
+                babylonMesh.uvs4 = vertices.SelectMany(v => v.UV4).ToArray();
+            }
+            if (uvSetNames.Count > 4 && isUVExportSuccess[4])
+            {
+                babylonMesh.uvs5 = vertices.SelectMany(v => v.UV5).ToArray();
+            }
+            if (uvSetNames.Count > 5 && isUVExportSuccess[5])
+            {
+                babylonMesh.uvs6 = vertices.SelectMany(v => v.UV6).ToArray();
+            }
+            if (uvSetNames.Count > 6 && isUVExportSuccess[6])
+            {
+                babylonMesh.uvs7 = vertices.SelectMany(v => v.UV7).ToArray();
+            }
+            if (uvSetNames.Count > 7 && isUVExportSuccess[7])
+            {
+                babylonMesh.uvs8 = vertices.SelectMany(v => v.UV8).ToArray();
             }
 
             babylonMesh.subMeshes = subMeshes.ToArray();

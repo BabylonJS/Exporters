@@ -35,8 +35,16 @@ namespace Babylon2GLTF
             logger.RaiseMessage("GLTFExporter.Mesh | Mesh from babylon", 2);
             // Retreive general data from babylon mesh
             int nbVertices = meshData.positions.Length / 3;
+
             bool hasUV = meshData.uvs != null && meshData.uvs.Length > 0;
             bool hasUV2 = meshData.uvs2 != null && meshData.uvs2.Length > 0;
+            bool hasUV3 = meshData.uvs3 != null && meshData.uvs3.Length > 0;
+            bool hasUV4 = meshData.uvs4 != null && meshData.uvs4.Length > 0;
+            bool hasUV5 = meshData.uvs5 != null && meshData.uvs5.Length > 0;
+            bool hasUV6 = meshData.uvs6 != null && meshData.uvs6.Length > 0;
+            bool hasUV7 = meshData.uvs7 != null && meshData.uvs7.Length > 0;
+            bool hasUV8 = meshData.uvs8 != null && meshData.uvs8.Length > 0;
+
             bool hasColor = meshData.colors != null && meshData.colors.Length > 0;
             bool hasBones = meshData.matricesIndices != null && meshData.matricesIndices.Length > 0;
             bool hasTangents = meshData.tangents != null && meshData.tangents.Length > 0;
@@ -46,8 +54,16 @@ namespace Babylon2GLTF
             bool hasMetadata = babylonMesh.metadata != null && babylonMesh.metadata.Count > 0;
 
             logger.RaiseMessage("GLTFExporter.Mesh | nbVertices=" + nbVertices, 3);
+
             logger.RaiseMessage("GLTFExporter.Mesh | hasUV=" + hasUV, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasUV2=" + hasUV2, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV3=" + hasUV3, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV4=" + hasUV4, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV5=" + hasUV5, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV6=" + hasUV6, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV7=" + hasUV7, 3);
+            logger.RaiseMessage("GLTFExporter.Mesh | hasUV8=" + hasUV8, 3);
+
             logger.RaiseMessage("GLTFExporter.Mesh | hasColor=" + hasColor, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasBones=" + hasBones, 3);
             logger.RaiseMessage("GLTFExporter.Mesh | hasBonesExtra=" + hasBonesExtra, 3);
@@ -94,6 +110,48 @@ namespace Babylon2GLTF
                     // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
                     // While for Babylon, it corresponds to the lower left corner of a texture image
                     globalVertex.UV2.Y = 1 - globalVertex.UV2.Y;
+                }
+                if (hasUV3)
+                {
+                    globalVertex.UV3 = BabylonVector2.FromArray(meshData.uvs3, indexVertex);
+                    // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+                    // While for Babylon, it corresponds to the lower left corner of a texture image
+                    globalVertex.UV3.Y = 1 - globalVertex.UV3.Y;
+                }
+                if (hasUV4)
+                {
+                    globalVertex.UV4 = BabylonVector2.FromArray(meshData.uvs4, indexVertex);
+                    // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+                    // While for Babylon, it corresponds to the lower left corner of a texture image
+                    globalVertex.UV4.Y = 1 - globalVertex.UV4.Y;
+                }
+                if (hasUV5)
+                {
+                    globalVertex.UV5 = BabylonVector2.FromArray(meshData.uvs5, indexVertex);
+                    // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+                    // While for Babylon, it corresponds to the lower left corner of a texture image
+                    globalVertex.UV5.Y = 1 - globalVertex.UV5.Y;
+                }
+                if (hasUV6)
+                {
+                    globalVertex.UV6 = BabylonVector2.FromArray(meshData.uvs6, indexVertex);
+                    // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+                    // While for Babylon, it corresponds to the lower left corner of a texture image
+                    globalVertex.UV6.Y = 1 - globalVertex.UV6.Y;
+                }
+                if (hasUV7)
+                {
+                    globalVertex.UV7 = BabylonVector2.FromArray(meshData.uvs7, indexVertex);
+                    // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+                    // While for Babylon, it corresponds to the lower left corner of a texture image
+                    globalVertex.UV7.Y = 1 - globalVertex.UV7.Y;
+                }
+                if (hasUV8)
+                {
+                    globalVertex.UV8 = BabylonVector2.FromArray(meshData.uvs8, indexVertex);
+                    // For glTF, the origin of the UV coordinates (0, 0) corresponds to the upper left corner of a texture image
+                    // While for Babylon, it corresponds to the lower left corner of a texture image
+                    globalVertex.UV8.Y = 1 - globalVertex.UV8.Y;
                 }
                 if (hasColor)
                 {
@@ -375,6 +433,108 @@ namespace Babylon2GLTF
                         List<float> uvs2 = globalVerticesSubMesh.SelectMany(v => v.UV2.ToArray()).ToList();
                         uvs2.ForEach(n => accessorUV2s.bytesList.AddRange(BitConverter.GetBytes(n)));
                         accessorUV2s.count = globalVerticesSubMesh.Count;
+                    }
+
+                    // --- UV3 ---
+                    if (hasUV3)
+                    {
+                        var accessorUV3s = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec2(gltf, buffer),
+                            "accessorUV3s",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC2
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_2.ToString(), accessorUV3s.index);
+                        // Populate accessor
+                        List<float> uvs3 = globalVerticesSubMesh.SelectMany(v => v.UV3.ToArray()).ToList();
+                        uvs3.ForEach(n => accessorUV3s.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorUV3s.count = globalVerticesSubMesh.Count;
+                    }
+
+                    // --- UV4 ---
+                    if (hasUV4)
+                    {
+                        var accessorUV4s = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec2(gltf, buffer),
+                            "accessorUV4s",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC2
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_3.ToString(), accessorUV4s.index);
+                        // Populate accessor
+                        List<float> uvs4 = globalVerticesSubMesh.SelectMany(v => v.UV4.ToArray()).ToList();
+                        uvs4.ForEach(n => accessorUV4s.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorUV4s.count = globalVerticesSubMesh.Count;
+                    }
+
+                    // --- UV5 ---
+                    if (hasUV5)
+                    {
+                        var accessorUV5s = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec2(gltf, buffer),
+                            "accessorUV5s",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC2
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_4.ToString(), accessorUV5s.index);
+                        // Populate accessor
+                        List<float> uvs5 = globalVerticesSubMesh.SelectMany(v => v.UV5.ToArray()).ToList();
+                        uvs5.ForEach(n => accessorUV5s.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorUV5s.count = globalVerticesSubMesh.Count;
+                    }
+
+                    // --- UV6 ---
+                    if (hasUV6)
+                    {
+                        var accessorUV6s = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec2(gltf, buffer),
+                            "accessorUV6s",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC2
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_5.ToString(), accessorUV6s.index);
+                        // Populate accessor
+                        List<float> uvs6 = globalVerticesSubMesh.SelectMany(v => v.UV6.ToArray()).ToList();
+                        uvs6.ForEach(n => accessorUV6s.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorUV6s.count = globalVerticesSubMesh.Count;
+                    }
+
+                    // --- UV7 ---
+                    if (hasUV7)
+                    {
+                        var accessorUV7s = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec2(gltf, buffer),
+                            "accessorUV7s",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC2
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_6.ToString(), accessorUV7s.index);
+                        // Populate accessor
+                        List<float> uvs7 = globalVerticesSubMesh.SelectMany(v => v.UV7.ToArray()).ToList();
+                        uvs7.ForEach(n => accessorUV7s.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorUV7s.count = globalVerticesSubMesh.Count;
+                    }
+
+                    // --- UV8 ---
+                    if (hasUV8)
+                    {
+                        var accessorUV8s = GLTFBufferService.Instance.CreateAccessor(
+                            gltf,
+                            GLTFBufferService.Instance.GetBufferViewFloatVec2(gltf, buffer),
+                            "accessorUV8s",
+                            GLTFAccessor.ComponentType.FLOAT,
+                            GLTFAccessor.TypeEnum.VEC2
+                        );
+                        meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.TEXCOORD_7.ToString(), accessorUV8s.index);
+                        // Populate accessor
+                        List<float> uvs8 = globalVerticesSubMesh.SelectMany(v => v.UV8.ToArray()).ToList();
+                        uvs8.ForEach(n => accessorUV8s.bytesList.AddRange(BitConverter.GetBytes(n)));
+                        accessorUV8s.count = globalVerticesSubMesh.Count;
                     }
 
                     // --- Bones ---
