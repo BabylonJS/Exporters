@@ -584,7 +584,6 @@ namespace Maya2Babylon
             // UVs
             if (uvSetNames.Count > 0 && isUVExportSuccess[0])
             {
-                
                 babylonMesh.uvs = vertices.SelectMany(v => v.UV).ToArray();
             }
             if (uvSetNames.Count > 1 && isUVExportSuccess[1])
