@@ -16,6 +16,8 @@ namespace BabylonExport.Entities
         float[] uvs4 { get; set; }
         float[] uvs5 { get; set; }
         float[] uvs6 { get; set; }
+        float[] uvs7 { get; set; }
+        float[] uvs8 { get; set; }
         float[] colors { get; set; }
         int[] matricesIndices { get; set; }
         int[] matricesIndicesExtra { get; set; }
@@ -68,6 +70,12 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public float[] uvs6 { get; set; }
+
+        [DataMember]
+        public float[] uvs7 { get; set; }
+
+        [DataMember]
+        public float[] uvs8 { get; set; }
 
         [DataMember]
         public float[] colors { get; set; }

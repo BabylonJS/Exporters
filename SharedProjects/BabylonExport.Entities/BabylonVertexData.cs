@@ -42,6 +42,12 @@ namespace BabylonExport.Entities
         
         [DataMember]
         public float[] uvs6 { get; set; }
+        
+        [DataMember]
+        public float[] uvs7 { get; set; }
+
+        [DataMember]
+        public float[] uvs8 { get; set; }
 
         [DataMember]
         public float[] colors { get; set; }
@@ -71,7 +77,7 @@ namespace BabylonExport.Entities
 
         public BabylonVertexData(IBabylonMeshData data)
         {
-             positions = data.positions;
+            positions = data.positions;
             normals = data.normals;
             tangents = data.tangents;
             uvs = data.uvs;
@@ -80,6 +86,8 @@ namespace BabylonExport.Entities
             uvs4 = data.uvs4;
             uvs5 = data.uvs5;
             uvs6 = data.uvs6;
+            uvs7 = data.uvs7;
+            uvs8 = data.uvs8;
             colors = data.colors;
             matricesIndices = data.matricesIndices;
             matricesIndicesExtra = data.matricesIndicesExtra;
