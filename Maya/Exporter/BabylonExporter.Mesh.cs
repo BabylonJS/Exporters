@@ -15,7 +15,7 @@ namespace Maya2Babylon
         private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
-        private const int MAX_UV_EXPORTS = 8; // Maximum number of UVs to export.
+        
         /// <summary>
         /// 
         /// </summary>
@@ -496,7 +496,7 @@ namespace Maya2Babylon
 
             var uvSetNames = new MStringArray();
             mFnMesh.getUVSetNames(uvSetNames);
-            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, MAX_UV_EXPORTS)];
+            bool[] isUVExportSuccess = new bool[Math.Min(uvSetNames.Count, 8)];
             for (int indexUVSet = 0; indexUVSet < isUVExportSuccess.Length; indexUVSet++)
             {
                 isUVExportSuccess[indexUVSet] = true;
