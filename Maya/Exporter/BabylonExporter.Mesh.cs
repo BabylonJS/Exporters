@@ -848,6 +848,37 @@ namespace Maya2Babylon
         }
 
         /// <summary>
+        /// Extract vertex UV for the given UV channel.
+        /// </summary>
+        /// <param name="mFnMesh"></param>
+        /// <param name="polygonId">The polygon (face) to examine</param>
+        /// <param name="vertexIndexLocal">The face-relative (local) vertex id to examine</param>
+        /// <param name="indexUVSet">Index of the target UV set.</param>
+        /// <param name="uvSetNames"></param>
+        /// <param name="isUVExportSuccess"></param>
+        /// <returns></returns>
+        private float[] ExtractVertexUV(MFnMesh mFnMesh, int polygonId, int vertexIndexLocal, int indexUVSet, MStringArray uvSetNames,ref bool[] isUVExportSuccess)
+        {
+            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
+            {
+                try
+                {
+                    float u = 0, v = 0;
+                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
+                    return new float[] { u, v };
+                }
+                catch
+                {
+                    // An exception is raised when a vertex isn't mapped to an UV coordinate
+                    isUVExportSuccess[indexUVSet] = false;
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Extract geometry (position, normal, UVs...) for a specific vertex
         /// </summary>
         /// <param name="mFnMesh"></param>
@@ -930,134 +961,14 @@ namespace Maya2Babylon
                 }
             }
 
-            // UV
-            int indexUVSet = 0;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 1;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV2 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 2;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV3 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 3;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV4 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 4;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV5 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 5;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV6 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 6;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV7 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
-
-            indexUVSet = 7;
-            if (uvSetNames.Count > indexUVSet && isUVExportSuccess[indexUVSet])
-            {
-                try
-                {
-                    float u = 0, v = 0;
-                    mFnMesh.getPolygonUV(polygonId, vertexIndexLocal, ref u, ref v, uvSetNames[indexUVSet]);
-                    vertex.UV8 = new float[] { u, v };
-                }
-                catch
-                {
-                    // An exception is raised when a vertex isn't mapped to an UV coordinate
-                    isUVExportSuccess[indexUVSet] = false;
-                }
-            }
+            vertex.UV  = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 0, uvSetNames, ref isUVExportSuccess); // UV
+            vertex.UV2 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 1, uvSetNames, ref isUVExportSuccess); // UV2
+            vertex.UV3 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 2, uvSetNames, ref isUVExportSuccess); // UV3
+            vertex.UV4 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 3, uvSetNames, ref isUVExportSuccess); // UV4
+            vertex.UV5 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 4, uvSetNames, ref isUVExportSuccess); // UV5
+            vertex.UV6 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 5, uvSetNames, ref isUVExportSuccess); // UV6
+            vertex.UV7 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 6, uvSetNames, ref isUVExportSuccess); // UV7
+            vertex.UV8 = ExtractVertexUV(mFnMesh, polygonId, vertexIndexLocal, 7, uvSetNames, ref isUVExportSuccess); // UV8
 
             // skin
             if (mFnSkinCluster != null)
