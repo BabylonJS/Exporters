@@ -647,6 +647,40 @@ namespace Maya2Babylon
                     babylonMaterial.clearCoat.bumpTexture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "coatNormal", babylonScene) : null;
                 }
 
+                // --- Sheen ---
+                float sheenWeight = materialDependencyNode.findPlug("sheen").asFloat();
+                MFnDependencyNode intensitySheenTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "sheen");
+                if (sheenWeight > 0.0f || intensitySheenTextureDependencyNode != null)
+                {
+                    // Texture RGB is sheen color, Texture Alpha is sheen roughness
+                    babylonMaterial.sheen.isEnabled = true;
+
+                    var sheenRoughness = materialDependencyNode.findPlug("sheenRoughness").asFloat();
+                    babylonMaterial.sheen.textureRoughness = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "sheenRoughness", babylonScene) : null;
+                    if (babylonMaterial.sheen.textureRoughness != null)
+                    {
+                        // When a texture is given, set the roughness to 1.0
+                        babylonMaterial.sheen.roughness = 1.0f;
+                    }
+                    else
+                    {
+                        babylonMaterial.sheen.roughness = sheenRoughness;
+                    }
+
+                    float[] sheenColor = materialDependencyNode.findPlug("sheenColor").asFloatArray();
+                    if (sheenColor != null && sheenColor.Length == 3)
+                    {
+                        babylonMaterial.sheen.color = sheenColor;
+                    }
+
+                    babylonMaterial.sheen.texture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "sheenColor", babylonScene) : null;
+                    if (babylonMaterial.sheen.texture != null)
+                    {
+                        // When a texture is given, set sheen color to white
+                        babylonMaterial.sheen.color = new[] { 1.0f, 1.0f, 1.0f };
+                    }
+                }
+
                 // --- Textures ---
 
                 if (exportParameters.exportTextures)
@@ -774,6 +808,13 @@ namespace Maya2Babylon
                 {
                     var fullPBRMaterial = new BabylonPBRMaterial(babylonMaterial);
 
+                    // --- IOR ---
+                    float indexOfRefraction = materialDependencyNode.findPlug("specularIOR").asFloat();
+                    if (indexOfRefraction != 1.5f)
+                    {
+                        fullPBRMaterial.indexOfRefraction = indexOfRefraction;
+                    }
+
                     // --- Transmission ---
                     float transmissionWeight = materialDependencyNode.findPlug("transmission").asFloat();
                     MFnDependencyNode transmissionTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "transmission");
@@ -788,7 +829,6 @@ namespace Maya2Babylon
                         }
                         else
                         {
-                            // When no texture is given, apply the weight value to the factor
                             fullPBRMaterial.subSurface.refractionIntensity = transmissionWeight;
                         }
                     }
