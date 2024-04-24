@@ -264,6 +264,8 @@ namespace BabylonExport.Entities
             ambientTexture = origin.occlusionTexture;
             transparencyMode = origin.transparencyMode;
             wireframe = origin.wireframe;
+
+            subSurface = new BabylonPBRSubSurfaceConfiguration();
         }
         public BabylonPBRMaterial(BabylonPBRMetallicRoughnessMaterial origin) : this((BabylonPBRBaseSimpleMaterial)origin)
         {

@@ -21,6 +21,5 @@ namespace BabylonExport.Entities
         public float tintColorAtDistance { get; set; }
         [DataMember]
         public float[] tintColor { get; set; }
-
     }
 }

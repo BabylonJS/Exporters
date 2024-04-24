@@ -16,7 +16,8 @@ namespace BabylonExport.Entities
                     mat.metallicReflectanceTexture != null ||
                     mat.reflectanceTexture != null;
         }
-        public static bool IsVolumeEnabled(this BabylonPBRMaterial mat) => mat.subSurface.maximumThickness != null;
+        public static bool IsVolumeEnabled(this BabylonPBRMaterial mat) => mat.subSurface != null && mat.subSurface.maximumThickness != null;
         public static bool IsMetallicWorkflow(this BabylonPBRMaterial mat) => mat.metallic != null || mat.roughness != null || mat.metallicTexture != null;
+        public static bool IsRefractionEnabled(this BabylonPBRMaterial mat) => mat.subSurface != null && mat.subSurface.isRefractionEnabled;
     }
 }

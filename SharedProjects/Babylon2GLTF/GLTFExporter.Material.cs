@@ -600,7 +600,7 @@ namespace Babylon2GLTF
                     gltfMaterial.extensions = gltfMaterial.extensions ?? new GLTFExtensions(); // ensure extensions exist
                     gltfMaterial.extensions.AddExtension(gltf, "KHR_materials_specular", ext);
                 }
-                if (pbrMRMat.subSurface.isRefractionEnabled)
+                if (pbrMRMat.IsRefractionEnabled())
                 {
                     var s = pbrMRMat.subSurface;
                     var ext = new KHR_materials_transmission()

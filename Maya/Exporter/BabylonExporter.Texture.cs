@@ -40,7 +40,7 @@ namespace Maya2Babylon
             return _ExportTexture(textureDependencyNode, babylonScene, textureModifiers, allowCube, forceAlpha, updateCoordinatesMode, amount);
         }
 
-        private BabylonTexture _ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, List<MFnDependencyNode>  textureModifiers = null, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
+        private BabylonTexture _ExportTexture(MFnDependencyNode textureDependencyNode, BabylonScene babylonScene, List<MFnDependencyNode> textureModifiers = null, bool allowCube = false, bool forceAlpha = false, bool updateCoordinatesMode = false, float amount = 1.0f)
         {
             if (textureDependencyNode == null)
             {

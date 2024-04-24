@@ -773,6 +773,26 @@ namespace Maya2Babylon
                 if (fullPBR)
                 {
                     var fullPBRMaterial = new BabylonPBRMaterial(babylonMaterial);
+
+                    // --- Transmission ---
+                    float transmissionWeight = materialDependencyNode.findPlug("transmission").asFloat();
+                    MFnDependencyNode transmissionTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "transmission");
+                    if (transmissionWeight > 0.0f || transmissionTextureDependencyNode != null)
+                    {
+                        fullPBRMaterial.subSurface.isRefractionEnabled = true;
+                        fullPBRMaterial.subSurface.refractionIntensityTexture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "transmission", babylonScene) : null;
+                        if (fullPBRMaterial.subSurface.refractionIntensityTexture != null)
+                        {
+                            // When a texture is given, set the factor to 1.0
+                            fullPBRMaterial.subSurface.refractionIntensity = 1.0f;
+                        }
+                        else
+                        {
+                            // When no texture is given, apply the weight value to the factor
+                            fullPBRMaterial.subSurface.refractionIntensity = transmissionWeight;
+                        }
+                    }
+
                     babylonScene.MaterialsList.Add(fullPBRMaterial);
                 }
                 else
