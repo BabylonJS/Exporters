@@ -411,7 +411,7 @@ namespace Maya2Babylon.Forms
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkNoAutoLight.Enabled = false;
                     chkNoAutoLight.Checked = true;
-                    chkFullPBR.Enabled = false;
+                    chkFullPBR.Enabled = true;
                     chkFullPBR.Checked = false;
                     chkDefaultSkybox.Enabled = false;
                     chkDefaultSkybox.Checked = false;
@@ -425,7 +425,7 @@ namespace Maya2Babylon.Forms
                     chkDracoCompression.Enabled = gltfPipelineInstalled;
                     chkNoAutoLight.Enabled = false;
                     chkNoAutoLight.Checked = true;
-                    chkFullPBR.Enabled = false;
+                    chkFullPBR.Enabled = true;
                     chkFullPBR.Checked = false;
                     chkDefaultSkybox.Enabled = false;
                     chkDefaultSkybox.Checked = false;
