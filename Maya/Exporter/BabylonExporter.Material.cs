@@ -593,8 +593,6 @@ namespace Maya2Babylon
                 float emissionWeight = materialDependencyNode.findPlug("emission").asFloat();
                 babylonMaterial.emissive = materialDependencyNode.findPlug("emissionColor").asFloatArray().Multiply(emissionWeight);
 
-                var list = new List<string>();
-
                 for (int i = 0; i < materialDependencyNode.attributeCount; i++)
                 {
                     var attr = materialDependencyNode.attribute((uint)i);
@@ -649,35 +647,25 @@ namespace Maya2Babylon
 
                 // --- Sheen ---
                 float sheenWeight = materialDependencyNode.findPlug("sheen").asFloat();
-                MFnDependencyNode intensitySheenTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "sheen");
-                if (sheenWeight > 0.0f || intensitySheenTextureDependencyNode != null)
+                if (sheenWeight > 0.0f)
                 {
                     // Texture RGB is sheen color, Texture Alpha is sheen roughness
                     babylonMaterial.sheen.isEnabled = true;
 
                     var sheenRoughness = materialDependencyNode.findPlug("sheenRoughness").asFloat();
                     babylonMaterial.sheen.textureRoughness = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "sheenRoughness", babylonScene) : null;
-                    if (babylonMaterial.sheen.textureRoughness != null)
-                    {
-                        // When a texture is given, set the roughness to 1.0
-                        babylonMaterial.sheen.roughness = 1.0f;
-                    }
-                    else
-                    {
-                        babylonMaterial.sheen.roughness = sheenRoughness;
-                    }
+                    babylonMaterial.sheen.roughness = sheenRoughness;
 
                     float[] sheenColor = materialDependencyNode.findPlug("sheenColor").asFloatArray();
-                    if (sheenColor != null && sheenColor.Length == 3)
-                    {
-                        babylonMaterial.sheen.color = sheenColor;
-                    }
-
                     babylonMaterial.sheen.texture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "sheenColor", babylonScene) : null;
                     if (babylonMaterial.sheen.texture != null)
                     {
                         // When a texture is given, set sheen color to white
                         babylonMaterial.sheen.color = new[] { 1.0f, 1.0f, 1.0f };
+                    }
+                    else if (sheenColor != null && sheenColor.Length == 3)
+                    {
+                        babylonMaterial.sheen.color = sheenColor;
                     }
                 }
 
@@ -815,17 +803,36 @@ namespace Maya2Babylon
                         fullPBRMaterial.indexOfRefraction = indexOfRefraction;
                     }
 
+                    // --- Specular ---
+                    float specularWeight = materialDependencyNode.findPlug("specular").asFloat();
+                    BabylonTexture specularTextureDependency = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "specular", babylonScene) : null;
+                    if (specularWeight > 0.0f || specularTextureDependency != null)
+                    {
+                        fullPBRMaterial.metallicReflectanceTexture = specularTextureDependency;
+                        fullPBRMaterial.metallicF0Factor = specularWeight;
+
+                        float[] specularColor = materialDependencyNode.findPlug("specularColor").asFloatArray();
+                        fullPBRMaterial.reflectanceTexture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "specularColor", babylonScene) : null;
+                        if (fullPBRMaterial.reflectanceTexture == null)
+                        {
+                            if (specularColor != null && specularColor.Length == 3)
+                            {
+                                fullPBRMaterial.metallicReflectanceColor = specularColor;
+                            }
+                        }
+                    }
+
                     // --- Transmission ---
                     float transmissionWeight = materialDependencyNode.findPlug("transmission").asFloat();
-                    MFnDependencyNode transmissionTextureDependencyNode = getTextureDependencyNode(materialDependencyNode, "transmission");
-                    if (transmissionWeight > 0.0f || transmissionTextureDependencyNode != null)
+                    BabylonTexture transmissionTexture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "transmission", babylonScene) : null;
+                    if (transmissionWeight > 0.0f || transmissionTexture != null)
                     {
                         fullPBRMaterial.subSurface.isRefractionEnabled = true;
-                        fullPBRMaterial.subSurface.refractionIntensityTexture = exportParameters.exportTextures ? ExportTexture(materialDependencyNode, "transmission", babylonScene) : null;
-                        if (fullPBRMaterial.subSurface.refractionIntensityTexture != null)
+                        if (transmissionTexture != null)
                         {
                             // When a texture is given, set the factor to 1.0
                             fullPBRMaterial.subSurface.refractionIntensity = 1.0f;
+                            fullPBRMaterial.subSurface.refractionIntensityTexture = transmissionTexture;
                         }
                         else
                         {
