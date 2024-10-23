@@ -124,6 +124,10 @@
     <Reference Include="TQ.Texture">
       <HintPath>..\..\Refs\TQ.Texture.dll</HintPath>
     </Reference>
+    <Reference Include="UiViewModels">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Refs\UiViewModels.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\BabylonActionCallback.cs">
@@ -405,9 +409,11 @@
       <Link>Scripts\STANDARD_MATERIAL_CAT_DEF.ms</Link>
     </None>
     <None Include="packages.config" />
+    <None Include="Scripts\CreateBabylonMenus.ms" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
+    <Content Include="Refs\UiViewModels.dll" />
     <None Include="Resources\MaxExporter.png" />
   </ItemGroup>
   <ItemGroup />
