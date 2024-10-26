@@ -52,7 +52,7 @@ namespace Utilities
                 else
                 {
                     string outputGltfFile = Path.ChangeExtension(outputFile, "gltf");
-                    arg = $"/C gltf-pipeline -i {outputGltfFile} -o {outputGltfFile} -d -s";
+                    arg = $"/C gltf-pipeline -i {outputGltfFile} -o {outputGltfFile} -d -s --keepUnusedElements";
                 }
 
                 gltfPipeline.StartInfo.FileName = "cmd.exe";
