@@ -350,7 +350,9 @@ namespace Max2Babylon
             babylonScene.producer = new BabylonProducer
             {
                 name = "3dsmax",
-#if MAX2025
+#if MAX2026
+                version = "2026",
+#elif MAX2025
                 version = "2025",
 #elif MAX2024
                 version = "2024",
