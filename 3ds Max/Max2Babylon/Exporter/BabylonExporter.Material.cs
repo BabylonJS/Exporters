@@ -44,9 +44,9 @@ namespace Max2Babylon
                 _mapCaches = new Dictionary<string, ITexmap>();
                 for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
                 {
-					// according to https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=Max_Developer_Help_what_s_new_whats_new_3dsmax_2022_sdk_localization_html
+                    // according to https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=Max_Developer_Help_what_s_new_whats_new_3dsmax_2022_sdk_localization_html
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-					var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i, false); // Non localized, then en-US
+                    var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i, false); // Non localized, then en-US
 #else
                     var mn = materialNode.MaxMaterial.GetSubTexmapSlotName(i); // en-US
 #endif
@@ -84,8 +84,8 @@ namespace Max2Babylon
                 for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
                 {
 #if MAX2024 || MAX2025 || MAX2026
-					// 3dsMax2024+ introduced new localized flag
-					var slotName = materialNode.MaxMaterial.GetSubTexmapSlotName(i, false);   
+                    // 3dsMax2024+ introduced new localized flag
+                    var slotName = materialNode.MaxMaterial.GetSubTexmapSlotName(i, false);   
 #else
                     var slotName = materialNode.MaxMaterial.GetSubTexmapSlotName(i);
 #endif
@@ -192,8 +192,8 @@ namespace Max2Babylon
                 for (int i = 0; i < materialNode.MaxMaterial.NumSubTexmaps; i++)
                 {
 #if MAX2024 || MAX2025 || MAX2026
-					// 3dsMax2024+ introduced new localized flag
-					RaiseVerbose("Texture[" + i + "] is named '" + materialNode.MaxMaterial.GetSubTexmapSlotName(i, false) + "'", 2);
+                    // 3dsMax2024+ introduced new localized flag
+                    RaiseVerbose("Texture[" + i + "] is named '" + materialNode.MaxMaterial.GetSubTexmapSlotName(i, false) + "'", 2);
 #else
                     RaiseVerbose("Texture[" + i + "] is named '" + materialNode.MaxMaterial.GetSubTexmapSlotName(i) + "'", 2);
 #endif
@@ -311,7 +311,7 @@ namespace Max2Babylon
                 ExportPbrSpecGlossMaterial(materialNode, babylonScene);
             }
 #if MAX2023 || MAX2024 || MAX2025 || MAX2026
-			else if (isGLTFMaterial(materialNode))
+            else if (isGLTFMaterial(materialNode))
             {
                 ExportGLTFMaterial(materialNode, babylonScene);
             }
@@ -718,7 +718,7 @@ namespace Max2Babylon
                     }
 
 #if MAX2023 || MAX2024 || MAX2025 || MAX2026
-					var normalMapAmount = propertyContainer.GetFloatProperty("bump_map_amt");
+                    var normalMapAmount = propertyContainer.GetFloatProperty("bump_map_amt");
 #else
                     var normalMapAmount = propertyContainer.GetFloatProperty(91);
 #endif
@@ -971,8 +971,8 @@ namespace Max2Babylon
                     {
 
 #if MAX2024 || MAX2025 || MAX2026
-						// 3dsMax2024+ introduced new localized flag
-						if (materialNode.MaxMaterial.GetSubTexmapSlotName(i,false) == "normal")
+                        // 3dsMax2024+ introduced new localized flag
+                        if (materialNode.MaxMaterial.GetSubTexmapSlotName(i,false) == "normal")
 #else
                         if(materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "normal")
 #endif
@@ -982,8 +982,8 @@ namespace Max2Babylon
                         }
 
 #if MAX2024 || MAX2025 || MAX2026
-						// 3dsMax2024+ introduced new localized flag
-						else if (materialNode.MaxMaterial.GetSubTexmapSlotName(i,false) == "emission")
+                        // 3dsMax2024+ introduced new localized flag
+                        else if (materialNode.MaxMaterial.GetSubTexmapSlotName(i,false) == "emission")
 #else
                         else if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == "emission")
 #endif
@@ -1173,7 +1173,7 @@ namespace Max2Babylon
                 // Physical materials
                 if (isPhysicalMaterial(materialNode) || isPbrMetalRoughMaterial(materialNode) || isPbrSpecGlossMaterial(materialNode)
 #if MAX2023 || MAX2024 || MAX2025 || MAX2026
-					|| isGLTFMaterial(materialNode)
+                    || isGLTFMaterial(materialNode)
 #endif
                     )
                 {
@@ -1266,7 +1266,7 @@ namespace Max2Babylon
 
         private void AddCustomAttributes(string attributesContainer, string cmdCreateBabylonAttributes, string def) =>
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-			ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def), ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
+            ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def), ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
         ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(MaterialScripts.AddCustomAttribute(cmdCreateBabylonAttributes, attributesContainer, def));
 #endif

@@ -833,7 +833,7 @@ namespace Max2Babylon
             }
 
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-			if (texMap.ClassName(false) == "Normal Bump")
+            if (texMap.ClassName(false) == "Normal Bump")
 #else
             if (texMap.ClassName == "Normal Bump")
 #endif
@@ -900,7 +900,7 @@ namespace Max2Babylon
             {
                 var tmp = custAtt.GetCustAttrib(i);
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-				if (tmp.ClassName(false) == MaterialCustomBabylonAttributeName)
+                if (tmp.ClassName(false) == MaterialCustomBabylonAttributeName)
 #else
                 if (tmp.ClassName == MaterialCustomBabylonAttributeName)
 #endif
@@ -1118,9 +1118,9 @@ namespace Max2Babylon
         {
             fresnelParameters = null;
 
-			// Fallout
+            // Fallout
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-			if (texMap.ClassName(false) == "Falloff") // This is the only way I found to detect it. This is crappy but it works
+            if (texMap.ClassName(false) == "Falloff") // This is the only way I found to detect it. This is crappy but it works
 #else
             if (texMap.ClassName == "Falloff") // This is the only way I found to detect it. This is crappy but it works
 #endif
@@ -1431,7 +1431,7 @@ namespace Max2Babylon
             }
 
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-			if (texMap.ClassName(false) == "RGB Multiply")
+            if (texMap.ClassName(false) == "RGB Multiply")
 #else
             if (texMap.ClassName == "RGB Multiply")
 #endif
@@ -1531,7 +1531,7 @@ namespace Max2Babylon
 #if MAX2024 || MAX2025 || MAX2026
                 if (materialNode.MaxMaterial.GetSubTexmapSlotName(i,false) == name)
 #else
-				if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == name)
+                if (materialNode.MaxMaterial.GetSubTexmapSlotName(i) == name)
 #endif
                 {
                     return _getTexMap(materialNode, i);

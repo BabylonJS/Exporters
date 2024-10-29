@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Autodesk.Max;
 using BabylonExport.Entities;
@@ -22,7 +22,7 @@ namespace Max2Babylon
                     // TODO - Find another way to detect if modifier is a HairAndFur
 
 #if MAX2024 || MAX2025 || MAX2026
-					var modifierName = modifier.GetName(false);
+                    var modifierName = modifier.GetName(false);
 #else
                     var modifierName = modifier.Name;
 #endif

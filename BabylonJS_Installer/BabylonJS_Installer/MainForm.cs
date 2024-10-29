@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -508,6 +508,6 @@ namespace BabylonJS_Installer
             this.button_locate("Maya", "2017");
         }
 
-		#endregion
-	}
+        #endregion
+    }
 }

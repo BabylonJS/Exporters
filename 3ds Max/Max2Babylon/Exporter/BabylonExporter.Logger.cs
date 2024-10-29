@@ -1,4 +1,4 @@
-using Autodesk.Max;
+﻿using Autodesk.Max;
 using System;
 using System.Drawing;
 
@@ -89,7 +89,7 @@ namespace Max2Babylon
                     ParamType2 paramType = paramBlock.GetParameterType(i);
 
 #if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
-					RaiseVerbose("paramBlock.GetLocalName(" + i + ")=" + paramBlock.GetLocalName(i, 0, false) + ", type=" + paramType, logRank + 1);
+                    RaiseVerbose("paramBlock.GetLocalName(" + i + ")=" + paramBlock.GetLocalName(i, 0, false) + ", type=" + paramType, logRank + 1);
 #else
                     RaiseVerbose("paramBlock.GetLocalName(" + i + ")=" + paramBlock.GetLocalName(i, 0) + ", type=" + paramType, logRank + 1);
 #endif
