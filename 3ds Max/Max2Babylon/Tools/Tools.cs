@@ -1,4 +1,4 @@
-using Autodesk.Max;
+﻿using Autodesk.Max;
 using Max2Babylon.Extensions;
 using SharpDX;
 using System;
@@ -190,7 +190,7 @@ namespace Max2Babylon
         public static VersionNumber GetMaxVersion()
         {
             // https://getcoreinterface.typepad.com/blog/2017/02/querying-the-3ds-max-version.html
-#if MAX2022 || MAX2023 || MAX2024
+#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
             var versionString = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery("getFileVersion \"$max/3dsmax.exe\"", ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
             var versionString = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery("getFileVersion \"$max/3dsmax.exe\"");
@@ -317,7 +317,7 @@ namespace Max2Babylon
                 //public abstract void GetSystemUnitInfo(IntPtr type, IntPtr scale);
                 //public abstract double GetSystemUnitScale(int type);
 
-#if MAX2022 || MAX2023 || MAX2024
+#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
                 GlobalInterface.Instance.GetSystemUnitInfo(pType, pScale);
             }
             float masterScale = (float)Loader.Global.GetSystemUnitScale(unitType);
@@ -408,7 +408,7 @@ namespace Max2Babylon
 
             for (var index = 0; index < mesh.NumFaces; index++)
             {
-#if MAX2024
+#if MAX2024 || MAX2025 || MAX2026
                 var face = mesh.GetFace(index);
                 Vector3 v0 = mesh.GetVert((int)face.V[0]).ToVector3();
                 Vector3 v1 = mesh.GetVert((int)face.V[1]).ToVector3();
@@ -862,7 +862,7 @@ namespace Max2Babylon
             IPolyObject polyObject = result.GetPolyObjectFromNode();
             IEPoly nodeEPoly = (IEPoly)polyObject.GetInterface(Loader.EditablePoly);
 
-#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024
+#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
             IINodeTab toflatten = Loader.Global.INodeTab.Create();
             IINodeTab resultTarget = Loader.Global.INodeTab.Create();
 #else
@@ -934,7 +934,7 @@ namespace Max2Babylon
 
         public static bool IsNodeSelected(this IINode node)
         {
-#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024
+#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
             IINodeTab selection = Loader.Global.INodeTab.Create();
 #else
             IINodeTab selection = Loader.Global.INodeTabNS.Create();
@@ -984,7 +984,7 @@ namespace Max2Babylon
 
         public static List<IIContainerObject> GetContainerInSelection()
         {
-#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024
+#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
             IINodeTab selection = Loader.Global.INodeTab.Create();
 #else
             IINodeTab selection = Loader.Global.INodeTabNS.Create();

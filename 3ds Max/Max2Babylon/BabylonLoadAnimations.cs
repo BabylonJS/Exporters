@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Autodesk.Max;
@@ -55,7 +55,7 @@ namespace Max2Babylon
 
         public override string DescriptionText
         {
-            get { return "Babylon - Load AnimationGroups from Scnene or selected Containers"; }
+            get { return "Babylon - Load AnimationGroups from Scene or selected Containers"; }
         }
 
         public override string CategoryText

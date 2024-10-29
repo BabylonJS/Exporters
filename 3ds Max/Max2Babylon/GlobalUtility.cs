@@ -1,16 +1,88 @@
-using Autodesk.Max;
-using Autodesk.Max.IQuadMenuContext;
+﻿using Autodesk.Max;
 using Autodesk.Max.Plugins;
+
+#if MAX2025 || MAX2026
+using UiViewModels.Actions;
+#else
+using Autodesk.Max.IQuadMenuContext;
+#endif
+
 using System;
 using System.Collections.Generic;
 
 namespace Max2Babylon
 {
+    static class CuiTitles
+    {
+        public const string MenuTitle = "Babylon...";
+        public const string GlobalTitle = "Babylon";
+        public const string PropertiesTitle = "Babylon Properties";
+        public const string AnimationGroupsTitle = "Babylon Animation Groups";
+        public const string ActionsBuilderTitle = "Babylon Actions Builder";
+        public const string SkipFlattenTitle = "Babylon Toggle Skip Flatten Status";
+        public const string LoadAnimationTitle = "Babylon Load Animation From Containers";
+        public const string SaveAnimationTitle = "Babylon Save Animation To Containers";
+        public const string FileExporterTitle = "File Exporter";
+    }
+
+#if MAX2025 || MAX2026
+    public class DummyCommandAdapter : CuiActionCommandAdapter
+    {
+        public const string DummyActionTitle = "BabylonDummyAction";
+        public override string InternalActionText => DummyActionTitle;
+        public override string InternalCategory => CuiTitles.GlobalTitle;
+        public override string ActionText => InternalActionText;
+        public override string Category => InternalCategory;
+        public override void Execute(object parameter)
+        {
+            Loader.Global.COREInterface.DisplayTempPrompt("Babylon Dummy Action Adapter", 10);
+        }
+
+        // Clear and return ActionTable registered by the DummyAdapter
+        public static IActionTable GetDummyActionTable()
+        {
+            var actionManager = Loader.Core.ActionManager;
+            //actionManager.FindTable();
+            for(int actionTableIndex = 0; actionTableIndex < actionManager.NumActionTables; ++actionTableIndex)
+            {
+                var theTable = actionManager.GetTable(actionTableIndex);
+
+                for(int i = 0; i < theTable.Count; ++i)
+                {
+                    // if we found our known dummy action, remove it and return the table
+                    var action = theTable[i];
+                    if(action?.DescriptionText == DummyActionTitle)
+                    {
+                        theTable.DeleteOperation(action);
+                        return theTable;
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
+#endif
+
     class GlobalUtility : GUP
     {
+        public const string ActionTableName = "Babylon Actions";
+        public const string GUIDPropertyName = "babylonjs_GUID";
+
+
+#if MAX2025 || MAX2026
+        // Placeholder
+        public static readonly string CreateMenuScript= System.Text.Encoding.UTF8.GetString(Properties.Resources.CreateBabylonMenus);
+
+        private static bool registerMenusCallback = false;
+        private GlobalDelegates.Delegate5 m_registerMenuDelegate;
+        private GlobalDelegates.Delegate5 m_registerQuadMenuDelegate;
+#else
         IIMenu menu;
         IIMenuItem menuItem;
         IIMenuItem menuItemBabylon;
+#endif
         uint idActionTable;
         IActionTable actionTable;
         IActionCallback actionCallback;
@@ -62,7 +134,7 @@ namespace Max2Babylon
                 IINode n = (IINode) obj.CallParam;
                 //todo replace this with something like isXREFNODE
                 //to have a distinction between added xref node and max node
-                string guid = n.GetStringProperty("babylonjs_GUID", string.Empty);
+                string guid = n.GetStringProperty( GUIDPropertyName, string.Empty);
                 if (string.IsNullOrEmpty(guid))
                 {
                     n.GetGuid(); // force to assigne a new guid if not exist yet for this node
@@ -80,9 +152,7 @@ namespace Max2Babylon
                 // Fails silently
             }
         }
-#endif
 
-#if MAX2015
         private void OnNodeDeleted(IntPtr objPtr, IntPtr param1)
         {
             try
@@ -99,6 +169,25 @@ namespace Max2Babylon
         }
 #endif
 
+#if MAX2025 || MAX2026
+
+        /// <summary>
+        /// Force 3ds Max 2025.0 menusystem refresh, required for pre 2025.3 versions
+        /// </summary>
+        public static void ForceICuiMenuRefresh()
+        {
+            string script = "(\n" +
+                                "local menuMgr = maxops.GetICuiMenuMgr()\n" +
+                                "menuMgr.LoadConfiguration(menuMgr.GetCurrentConfiguration())\n" +
+
+                                "local quadMenuMgr = maxOps.GetICuiQuadMenuMgr()\n" +
+                                "quadMenuMgr.LoadConfiguration(quadMenuMgr.GetCurrentConfiguration())\n" +
+                            ")\n";
+
+            ScriptsUtilities.ExecuteMaxScriptCommand(script);
+        }
+#endif
+
         private void OnNodeAdded(IntPtr objPtr, INotifyInfo infoPtr)
         {
             try
@@ -106,7 +195,7 @@ namespace Max2Babylon
                 IINode n = (IINode)infoPtr.CallParam;
                 //todo replace this with something like isXREFNODE
                 //to have a distinction between added xref node and max node
-                string guid = n.GetStringProperty("babylonjs_GUID", string.Empty);
+                string guid = n.GetStringProperty( GUIDPropertyName, string.Empty);
                 if (string.IsNullOrEmpty(guid))
                 {
                     n.GetGuid(); // force to assigne a new guid if not exist yet for this node
@@ -152,7 +241,10 @@ namespace Max2Babylon
                 {
                     Loader.Global.COREInterface.ActionManager.DeactivateActionTable(actionCallback, idActionTable);
                 }
-
+#if MAX2025 || MAX2026
+                // Placeholder
+                // no cleanup necessary for the new menu system
+#else
                 // Clean up menu
                 if (menu != null)
                 {
@@ -164,6 +256,7 @@ namespace Max2Babylon
                     menu = null;
                     menuItem = null;
                 }
+#endif
             }
             catch
             {
@@ -179,13 +272,23 @@ namespace Max2Babylon
 
                 // Set up global actions
                 idActionTable = (uint)actionManager.NumActionTables;
+                
+#if MAX2025 || MAX2026
+                actionTable = DummyCommandAdapter.GetDummyActionTable();
 
-                string actionTableName = "Babylon Actions";
-#if MAX2022 || MAX2023 || MAX2024
-                actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, actionTableName);
+                if(actionTable != null)
+                    idActionTable = actionTable.Id_;
+
+#elif MAX2022 || MAX2023 || MAX2024
+                actionTable = Loader.Global.ActionTable.Create(idActionTable, 0 , ActionTableName);
 #else
+                string actionTableName = ActionTableName;
                 actionTable = Loader.Global.ActionTable.Create(idActionTable, 0, ref actionTableName);
 #endif
+                // prevent null exceptions 
+                if(actionTable == null)
+                    return 0;
+
                 babylonExportActionItem = new BabylonExportActionItem();
                 actionTable.AppendOperation(babylonExportActionItem);
                 actionTable.AppendOperation(new BabylonPropertiesActionItem()); // Babylon Properties forms are modals => no need to store reference
@@ -193,25 +296,22 @@ namespace Max2Babylon
                 actionTable.AppendOperation(new BabylonSaveAnimations());
                 actionTable.AppendOperation(new BabylonLoadAnimations());
                 actionTable.AppendOperation(new BabylonSkipFlattenToggle());
-
+                
                 actionCallback = new BabylonActionCallback();
 
                 actionManager.RegisterActionTable(actionTable);
                 actionManager.ActivateActionTable(actionCallback as ActionCallback, idActionTable);
-
-
 
                 // Set up menus
 #if MAX2018 || MAX2019
                 var global = GlobalInterface.Instance;
                 m_SystemStartupDelegate = new GlobalDelegates.Delegate5(MenuSystemStartupHandler);
                 global.RegisterNotification(m_SystemStartupDelegate, null, SystemNotificationCode.SystemStartup);
-
-
 #else
                 InstallMenus();
                 AddCallbacks();
 #endif
+
                 RegisterFilePreOpen();
                 RegisterPostSceneReset();
                 RegisterNodeAddedCallback();
@@ -242,7 +342,6 @@ namespace Max2Babylon
             }
         }
 
-
         public void RegisterNodeAddedCallback()
         {
             if (!nodeAddedCallback)
@@ -270,10 +369,23 @@ namespace Max2Babylon
 
         private void InstallMenus()
         {
+#if MAX2025 || MAX2026
+            var maxVer = Tools.GetMaxVersion();
+
+            // with 2025.3 and up we could also use ICUIMenuManager ( Loader.Core.ICuiMenuManager / ICuiQuadMEnuManager )
+            ScriptsUtilities.ExecuteMaxScriptCommand(CreateMenuScript);
+            
+            // force menu refresh, as this is broken in 3dsMax versions 2025.0, 2025.1 and 2025.2
+            if( maxVer.Major==27 && maxVer.Minor < 3 )
+            {
+                ForceICuiMenuRefresh();
+                ScriptsUtilities.ExecuteMaxScriptCommand($"format \"Max2Babylon: forced menu refresh...\n\"");
+            }
+#else
             IIMenuManager menuManager = Loader.Core.MenuManager;
 
             // Set up menu
-            menu = menuManager.FindMenu("Babylon");
+            menu = menuManager.FindMenu( CuiTitles.GlobalTitle ); // "Babylon"
 
             if (menu != null)
             {
@@ -284,12 +396,12 @@ namespace Max2Babylon
 
             // Main menu
             menu = Loader.Global.IMenu;
-            menu.Title = "Babylon";
+            menu.Title = CuiTitles.GlobalTitle; // "Babylon"
             menuManager.RegisterMenu(menu, 0);
 
             // Launch option
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "&File Exporter";
+            menuItemBabylon.Title = CuiTitles.FileExporterTitle; // "&File Exporter";
             menuItemBabylon.ActionItem = actionTable[0];
             menu.AddItem(menuItemBabylon, -1);
 
@@ -302,7 +414,7 @@ namespace Max2Babylon
             var rootQuadMenu = menuManager.GetViewportRightClickMenu(RightClickContext.NonePressed);
             var quadMenu = rootQuadMenu.GetMenu(0);
 
-            menu = menuManager.FindMenu("Babylon...");
+            menu = menuManager.FindMenu( CuiTitles.MenuTitle ) ; // "Babylon...");
 
             if (menu != null)
             {
@@ -312,36 +424,36 @@ namespace Max2Babylon
             }
 
             menu = Loader.Global.IMenu;
-            menu.Title = "Babylon...";
+            menu.Title = CuiTitles.MenuTitle; // "Babylon...";
             menuManager.RegisterMenu(menu, 0);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Properties";
+            menuItemBabylon.Title = CuiTitles.PropertiesTitle; // "Babylon Properties";
             menuItemBabylon.ActionItem = actionTable[1];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Animation Groups";
+            menuItemBabylon.Title = CuiTitles.AnimationGroupsTitle; // "Babylon Animation Groups";
             menuItemBabylon.ActionItem = actionTable[2];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Save Animation To Containers";
+            menuItemBabylon.Title = CuiTitles.SaveAnimationTitle; // "Babylon Save Animation To Containers";
             menuItemBabylon.ActionItem = actionTable[3];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Load Animation From Containers";
+            menuItemBabylon.Title = CuiTitles.LoadAnimationTitle; // "Babylon Load Animation From Containers";
             menuItemBabylon.ActionItem = actionTable[4];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Toggle Skip Flatten Status";
+            menuItemBabylon.Title = CuiTitles.SkipFlattenTitle; // "Babylon Toggle Skip Flatten Status";
             menuItemBabylon.ActionItem = actionTable[5];
             menu.AddItem(menuItemBabylon, -1);
 
             menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Actions Builder";
+            menuItemBabylon.Title = CuiTitles.ActionsBuilderTitle; // "Babylon Actions Builder";
             menuItemBabylon.ActionItem = actionTable[6];
             menu.AddItem(menuItemBabylon, -1);
 
@@ -351,15 +463,16 @@ namespace Max2Babylon
             quadMenu.AddItem(menuItem, -1);
 
             Loader.Global.COREInterface.MenuManager.UpdateMenuBar();
-        }
+#endif
+            }
 
         private void AddCallbacks() 
         {
             foreach (var s in MaterialScripts.AddCallbacks())
-#if MAX2022 || MAX2023 || MAX2024
+#if MAX2022 || MAX2023 || MAX2024 || MAX2025|| MAX2026
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s,ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
-                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
+                ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
 #endif
        }
     }
