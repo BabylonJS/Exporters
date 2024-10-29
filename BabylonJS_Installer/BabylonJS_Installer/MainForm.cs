@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -26,6 +26,8 @@ namespace BabylonJS_Installer
 
             this.versions = new Dictionary<string, Dictionary<string, string>>();
             this.versions["Max"] = new Dictionary<string, string>();
+            this.versions["Max"].Add("2025", "27");
+            this.versions["Max"].Add("2024", "26");
             this.versions["Max"].Add("2023", "25");
             this.versions["Max"].Add("2022", "24");
             this.versions["Max"].Add("2021", "23");
@@ -54,6 +56,8 @@ namespace BabylonJS_Installer
 
             this.labels = new Dictionary<string, Dictionary<string, Label[]>>();
             this.labels["Max"] = new Dictionary<string, Label[]>();
+            this.labels["Max"].Add("2025", new[] { this.label_Max25_Info, this.label_Max25_ExpDate });
+            this.labels["Max"].Add("2024", new[] { this.label_Max24_Info, this.label_Max24_ExpDate });
             this.labels["Max"].Add("2023", new[] { this.label_Max23_Info, this.label_Max23_ExpDate });
             this.labels["Max"].Add("2022", new[] { this.label_Max22_Info, this.label_Max22_ExpDate });
             this.labels["Max"].Add("2021", new[] { this.label_Max21_Info, this.label_Max21_ExpDate });
@@ -72,6 +76,8 @@ namespace BabylonJS_Installer
 
             this.buttons = new Dictionary<string, Dictionary<string, Button[]>>();
             this.buttons["Max"] = new Dictionary<string, Button[]>();
+            this.buttons["Max"].Add("2025", new[] { this.button_Max25_Update, this.button_Max25_Delete, this.button_Max25_Locate });
+            this.buttons["Max"].Add("2024", new[] { this.button_Max24_Update, this.button_Max24_Delete, this.button_Max24_Locate });
             this.buttons["Max"].Add("2023", new[] { this.button_Max23_Update, this.button_Max23_Delete, this.button_Max23_Locate });
             this.buttons["Max"].Add("2022", new[] { this.button_Max22_Update, this.button_Max22_Delete, this.button_Max22_Locate });
             this.buttons["Max"].Add("2021", new[] { this.button_Max21_Update, this.button_Max21_Delete, this.button_Max21_Locate });
@@ -238,6 +244,14 @@ namespace BabylonJS_Installer
             }
         }
 
+        private void Button_Max25_Update_Click(object sender, EventArgs e)
+        {
+            this.button_update("Max", "2025");
+        }
+        private void Button_Max24_Update_Click(object sender, EventArgs e)
+        {
+            this.button_update("Max", "2024");
+        }
         private void Button_Max23_Update_Click(object sender, EventArgs e)
         {
             this.button_update("Max", "2023");
@@ -325,6 +339,14 @@ namespace BabylonJS_Installer
             }
         }
 
+        private void Button_Max25_Delete_Click(object sender, EventArgs e)
+        {
+            this.button_delete("Max", "2025");
+        }
+        private void Button_Max24_Delete_Click(object sender, EventArgs e)
+        {
+            this.button_delete("Max", "2024");
+        }
         private void Button_Max23_Delete_Click(object sender, EventArgs e)
         {
             this.button_delete("Max", "2023");
@@ -411,6 +433,14 @@ namespace BabylonJS_Installer
             }
         }
 
+        private void Button_Max25_Locate_Click(object sender, EventArgs e)
+        {
+            this.button_locate("Max", "2025");
+        }
+        private void Button_Max24_Locate_Click(object sender, EventArgs e)
+        {
+            this.button_locate("Max", "2024");
+        }
         private void Button_Max23_Locate_Click(object sender, EventArgs e)
         {
             this.button_locate("Max", "2023");

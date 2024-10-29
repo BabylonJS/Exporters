@@ -1,4 +1,4 @@
-using Autodesk.Max;
+﻿using Autodesk.Max;
 
 namespace Max2Babylon
 {
@@ -49,7 +49,7 @@ namespace Max2Babylon
             }
         }
 
-#if MAX2022 || MAX2023 || MAX2024
+#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
         public override string NonLocalizedClassName => "Babylon File Exporter";
 #endif
     }

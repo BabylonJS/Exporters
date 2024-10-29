@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +39,7 @@ namespace Max2Babylon
 
         public static bool HasNode(this IILayer layer,IINode node,bool checkInChild = true)
         {
-#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024
+#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
             ITab<IINode> nodes = Loader.Global.INodeTab.Create();
 #else
             ITab<IINode> nodes = Loader.Global.INodeTabNS.Create();
@@ -106,7 +106,7 @@ namespace Max2Babylon
         public static IEnumerable<IINode> LayerNodes(this IILayer layer)
         {
             IILayerProperties layerProp = Loader.IIFPLayerManager.GetLayer(layer.Name);
-#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024
+#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
             ITab<IINode> nodes = Loader.Global.INodeTab.Create();
 #else
             ITab<IINode> nodes = Loader.Global.INodeTabNS.Create();
