@@ -415,8 +415,8 @@ namespace Max2Babylon
                 alphaPath = alphaSourcePath
             };
 
-			// Alpha
-			babylonTexture.hasAlpha = hasAlpha || (hasBaseColor && (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE || baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB)) || alpha < 1.0f;
+            // Alpha
+            babylonTexture.hasAlpha = hasAlpha || (hasBaseColor && (baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_FILE || baseColorTexture.AlphaSource == MaxConstants.IMAGE_ALPHA_RGB)) || alpha < 1.0f;
             babylonTexture.getAlphaFromRGB = false;
 
             if (!hasBaseColor && !hasAlpha)
