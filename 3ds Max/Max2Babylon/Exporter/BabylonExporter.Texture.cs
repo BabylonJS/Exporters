@@ -411,7 +411,7 @@ namespace Max2Babylon
                 baseColorPath = baseColorSourcePath,
 
                 // GLTF export relies on this property
-				originalPath = baseColorSourcePath,
+                originalPath = baseColorSourcePath,
                 alphaPath = alphaSourcePath
             };
 
