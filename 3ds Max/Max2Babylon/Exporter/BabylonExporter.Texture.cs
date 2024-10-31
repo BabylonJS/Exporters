@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Autodesk.Max;
@@ -409,6 +409,9 @@ namespace Max2Babylon
                 name = nameText,
                 // used to keep trace of the base + apha merge sources
                 baseColorPath = baseColorSourcePath,
+
+                // GLTF export relies on this property
+                originalPath = baseColorSourcePath,
                 alphaPath = alphaSourcePath
             };
 

@@ -1,4 +1,4 @@
-﻿using Autodesk.Max;
+using Autodesk.Max;
 using Autodesk.Max.Plugins;
 
 #if MAX2025 || MAX2026
