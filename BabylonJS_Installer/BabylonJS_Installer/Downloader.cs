@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -205,8 +205,15 @@ namespace BabylonJS_Installer
         {
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "BJS_Installer");
-            HttpResponseMessage response = await client.GetAsync(requestURI);
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(requestURI);
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch(Exception ex)
+            {
+                return string.Empty;
+            }
         }
 
         public string GetURLGitHubAPI()

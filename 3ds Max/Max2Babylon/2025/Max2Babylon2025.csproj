@@ -127,6 +127,7 @@
     <Reference Include="UiViewModels">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Refs\UiViewModels.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

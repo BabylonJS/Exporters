@@ -1,4 +1,4 @@
-﻿(
+(
     function createBabylonMenuCB =
     (
         local actionTableId=47368
