@@ -371,6 +371,12 @@ namespace Max2Babylon
                 var mappingChannels = unskinnedMesh.ActiveMapChannelNum;
                 bool hasUV = false;
                 bool hasUV2 = false;
+                bool hasUV3 = false;
+                bool hasUV4 = false;
+                bool hasUV5 = false;
+                bool hasUV6 = false;
+                bool hasUV7 = false;
+                bool hasUV8 = false;
                 for (int i = 0; i < mappingChannels.Count; ++i)
                 {
 #if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
@@ -386,6 +392,30 @@ namespace Max2Babylon
                     {
                         hasUV2 = true;
                     }
+                    else if (channelNum == 3)
+                    {
+                        hasUV3 = true;
+                    }
+                    else if (channelNum == 4)
+                    {
+                        hasUV4 = true;
+                    }
+                    else if (channelNum == 5)
+                    {
+                        hasUV5 = true;
+                    }
+                    else if (channelNum == 6)
+                    {
+                        hasUV6 = true;
+                    }
+                    else if (channelNum == 7)
+                    {
+                        hasUV7 = true;
+                    }
+                    else if (channelNum == 8)
+                    {
+                        hasUV8 = true;
+                    }
                 }
                 var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
                 var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
@@ -399,7 +429,7 @@ namespace Max2Babylon
                 // Compute normals
                 var subMeshes = new List<BabylonSubMesh>();
                 List<int> faceIndexes = null;
-                ExtractGeometry(babylonMesh, vertices, indices, subMeshes, boneIds, skin, unskinnedMesh, invertedWorldMatrix, offsetTM, hasUV, hasUV2, hasColor, hasAlpha, optimizeVertices, multiMatsCount, meshNode, ref faceIndexes);
+                ExtractGeometry(babylonMesh, vertices, indices, subMeshes, boneIds, skin, unskinnedMesh, invertedWorldMatrix, offsetTM, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, optimizeVertices, multiMatsCount, meshNode, ref faceIndexes);
 
                 if (vertices.Count >= 65536)
                 {
@@ -434,9 +464,32 @@ namespace Max2Babylon
                 {
                     babylonMesh.uvs2 = vertices.SelectMany(v => new[] { v.UV2.X, 1 - v.UV2.Y }).ToArray();
                 }
+                if (hasUV3)
+                {
+                    babylonMesh.uvs3 = vertices.SelectMany(v => new[] { v.UV3.X, 1 - v.UV3.Y }).ToArray();
+                }
+                if (hasUV4)
+                {
+                    babylonMesh.uvs4 = vertices.SelectMany(v => new[] { v.UV4.X, 1 - v.UV4.Y }).ToArray();
+                }
+                if (hasUV5)
+                {
+                    babylonMesh.uvs5 = vertices.SelectMany(v => new[] { v.UV5.X, 1 - v.UV5.Y }).ToArray();
+                }
+                if (hasUV6)
+                {
+                    babylonMesh.uvs6 = vertices.SelectMany(v => new[] { v.UV6.X, 1 - v.UV6.Y }).ToArray();
+                }
+                if (hasUV7)
+                {
+                    babylonMesh.uvs7 = vertices.SelectMany(v => new[] { v.UV7.X, 1 - v.UV7.Y }).ToArray();
+                }
+                if (hasUV8)
+                {
+                    babylonMesh.uvs8 = vertices.SelectMany(v => new[] { v.UV8.X, 1 - v.UV8.Y }).ToArray();
+                }
 
                 if (skin != null)
-                {
                     babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
                     babylonMesh.matricesIndices = vertices.Select(v => v.BonesIndices).ToArray();
 
@@ -892,7 +945,7 @@ namespace Max2Babylon
             return vertices;
         }
 
-        private void ExtractGeometry(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, List<int> boneIds, IIGameSkin skin, IIGameMesh unskinnedMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, bool optimizeVertices, int multiMatsCount, IIGameNode meshNode, ref List<int> faceIndexes)
+        private void ExtractGeometry(BabylonAbstractMesh babylonAbstractMesh, List<GlobalVertex> vertices, List<int> indices, List<BabylonSubMesh> subMeshes, List<int> boneIds, IIGameSkin skin, IIGameMesh unskinnedMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, bool hasUV, bool hasUV2, bool hasUV3, bool hasUV4, bool hasUV5, bool hasUV6, bool hasUV7, bool hasUV8, bool hasColor, bool hasAlpha, bool optimizeVertices, int multiMatsCount, IIGameNode meshNode, ref List<int> faceIndexes)
         {
             Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported = null;
 
@@ -937,7 +990,7 @@ namespace Max2Babylon
                         {
                             face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                         }
-                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                        ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, vertices, indices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                     }
                 }
                 else
@@ -964,7 +1017,7 @@ namespace Max2Babylon
                             {
                                 face = unskinnedMesh.GetFace(faceIndexes[indexInFaceIndexesArray++]);
                             }
-                            ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, vertices, indices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
+                            ExtractFace(skin, unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, vertices, indices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, ref indexCount, ref minVertexIndex, ref maxVertexIndex, face, boneIds);
                         }
                     }
                     else
@@ -1018,24 +1071,23 @@ namespace Max2Babylon
                 }
             }
         }
-
-        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
+        private void ExtractFace(IIGameSkin skin, IIGameMesh unskinnedMesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, List<GlobalVertex> vertices, List<int> indices, bool hasUV, bool hasUV2, bool hasUV3, bool hasUV4, bool hasUV5, bool hasUV6, bool hasUV7, bool hasUV8, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported, ref int indexCount, ref int minVertexIndex, ref int maxVertexIndex, IFaceEx face, List<int> boneIds)
         {
             int a, b, c;
             // parity is TRUE, if determinant negative ( counter-intuitive convention of 3ds max, see docs... :/ )
             if (invertedWorldMatrix.Parity)
             {
-                // flipped case: reverse winding order
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            // flipped case: reverse winding order
+            a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
             else
             {
-                // normal case
-                a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
-                c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            // normal case
+            a = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 0, vertices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            b = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 2, vertices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
+            c = CreateGlobalVertex(unskinnedMesh, babylonAbstractMesh, invertedWorldMatrix, offsetTM, face, 1, vertices, hasUV, hasUV2, hasUV3, hasUV4, hasUV5, hasUV6, hasUV7, hasUV8, hasColor, hasAlpha, verticesAlreadyExported, skin, boneIds);
             }
 
             indices.Add(a);
@@ -1077,7 +1129,7 @@ namespace Max2Babylon
             CheckCancelled();
         }
 
-        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
+        int CreateGlobalVertex(IIGameMesh mesh, BabylonAbstractMesh babylonAbstractMesh, IMatrix3 invertedWorldMatrix, IMatrix3 offsetTM, IFaceEx face, int facePart, List<GlobalVertex> vertices, bool hasUV, bool hasUV2, bool hasUV3, bool hasUV4, bool hasUV5, bool hasUV6, bool hasUV7, bool hasUV8, bool hasColor, bool hasAlpha, Dictionary<GlobalVertex, List<GlobalVertex>> verticesAlreadyExported, IIGameSkin skin, List<int> boneIds)
         {
             var vertexIndex = (int)face.Vert[facePart];
 
@@ -1150,6 +1202,90 @@ namespace Max2Babylon
                 }
                 var texCoord = mesh.GetMapVertex(2, indices[facePart]);
                 vertex.UV2 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
+            }
+
+            if (hasUV3)
+            {
+                var indices = new int[3];
+                unsafe
+                {
+                    fixed (int* indicesPtr = indices)
+                    {
+                        mesh.GetMapFaceIndex(3, face.MeshFaceIndex, new IntPtr(indicesPtr));
+                    }
+                }
+                var texCoord = mesh.GetMapVertex(3, indices[facePart]);
+                vertex.UV3 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
+            }
+
+            if (hasUV4)
+            {
+                var indices = new int[3];
+                unsafe
+                {
+                    fixed (int* indicesPtr = indices)
+                    {
+                        mesh.GetMapFaceIndex(4, face.MeshFaceIndex, new IntPtr(indicesPtr));
+                    }
+                }
+                var texCoord = mesh.GetMapVertex(4, indices[facePart]);
+                vertex.UV4 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
+            }
+
+            if (hasUV5)
+            {
+                var indices = new int[3];
+                unsafe
+                {
+                    fixed (int* indicesPtr = indices)
+                    {
+                        mesh.GetMapFaceIndex(5, face.MeshFaceIndex, new IntPtr(indicesPtr));
+                    }
+                }
+                var texCoord = mesh.GetMapVertex(5, indices[facePart]);
+                vertex.UV5 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
+            }
+
+            if (hasUV6)
+            {
+                var indices = new int[3];
+                unsafe
+                {
+                    fixed (int* indicesPtr = indices)
+                    {
+                        mesh.GetMapFaceIndex(6, face.MeshFaceIndex, new IntPtr(indicesPtr));
+                    }
+                }
+                var texCoord = mesh.GetMapVertex(6, indices[facePart]);
+                vertex.UV6 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
+            }
+
+            if (hasUV7)
+            {
+                var indices = new int[3];
+                unsafe
+                {
+                    fixed (int* indicesPtr = indices)
+                    {
+                        mesh.GetMapFaceIndex(7, face.MeshFaceIndex, new IntPtr(indicesPtr));
+                    }
+                }
+                var texCoord = mesh.GetMapVertex(7, indices[facePart]);
+                vertex.UV7 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
+            }
+
+            if (hasUV8)
+            {
+                var indices = new int[3];
+                unsafe
+                {
+                    fixed (int* indicesPtr = indices)
+                    {
+                        mesh.GetMapFaceIndex(8, face.MeshFaceIndex, new IntPtr(indicesPtr));
+                    }
+                }
+                var texCoord = mesh.GetMapVertex(8, indices[facePart]);
+                vertex.UV8 = Loader.Global.Point2.Create(texCoord.X, 1 - texCoord.Y);
             }
 
             if (hasColor)
