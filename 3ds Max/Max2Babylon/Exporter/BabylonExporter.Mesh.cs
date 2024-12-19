@@ -417,6 +417,8 @@ namespace Max2Babylon
                         hasUV8 = true;
                     }
                 }
+
+                
                 var hasColor = unskinnedMesh.NumberOfColorVerts > 0;
                 var hasAlpha = unskinnedMesh.GetNumberOfMapVerts(-2) > 0;
 
@@ -489,7 +491,8 @@ namespace Max2Babylon
                     babylonMesh.uvs8 = vertices.SelectMany(v => new[] { v.UV8.X, 1 - v.UV8.Y }).ToArray();
                 }
 
-                if (skin != null)
+                if (skin != null) 
+                {
                     babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
                     babylonMesh.matricesIndices = vertices.Select(v => v.BonesIndices).ToArray();
 
@@ -941,7 +944,7 @@ namespace Max2Babylon
             var offsetTM = GetOffsetTM(maxMorphTarget, 0);
 
             var vertices = new List<GlobalVertex>();
-            ExtractGeometry(babylonAbstractMesh, vertices, new List<int>(), new List<BabylonSubMesh>(), null, null, gameMesh, invertedWorldMatrix, offsetTM, false, false, false, false, optimizeVertices, multiMatsCount, maxMorphTarget, ref faceIndexes);
+            ExtractGeometry(babylonAbstractMesh, vertices, new List<int>(), new List<BabylonSubMesh>(), null, null, gameMesh, invertedWorldMatrix, offsetTM, false, false, false, false, false, false, false, false, false, false, optimizeVertices, multiMatsCount, maxMorphTarget, ref faceIndexes);
             return vertices;
         }
 
