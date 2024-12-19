@@ -13,6 +13,12 @@ namespace Max2Babylon
         public float[] Tangent { get; set; }
         public IPoint2 UV { get; set; }
         public IPoint2 UV2 { get; set; }
+        public IPoint2 UV3 { get; set; }
+        public IPoint2 UV4 { get; set; }
+        public IPoint2 UV5 { get; set; }
+        public IPoint2 UV6 { get; set; }
+        public IPoint2 UV7 { get; set; }
+        public IPoint2 UV8 { get; set; }
         public int BonesIndices { get; set; }
         public IPoint4 Weights { get; set; }
         public int BonesIndicesExtra { get; set; }
@@ -28,6 +34,12 @@ namespace Max2Babylon
             this.Tangent = other.Tangent != null ? other.Tangent.Clone2() : null;
             this.UV = other.UV != null ? other.UV.Clone() : null;
             this.UV2 = other.UV2 != null ? other.UV2.Clone() : null;
+            this.UV3 = other.UV3 != null ? other.UV3.Clone() : null;
+            this.UV4 = other.UV4 != null ? other.UV4.Clone() : null;
+            this.UV5 = other.UV5 != null ? other.UV5.Clone() : null;
+            this.UV6 = other.UV6 != null ? other.UV6.Clone() : null;
+            this.UV7 = other.UV7 != null ? other.UV7.Clone() : null;
+            this.UV8 = other.UV8 != null ? other.UV8.Clone() : null;
             this.BonesIndices = other.BonesIndices;
             this.Weights = other.Weights != null ? other.Weights.Clone() : null;
             this.BonesIndicesExtra = other.BonesIndicesExtra;
@@ -84,6 +96,36 @@ namespace Max2Babylon
             }
 
             if (UV2 != null && !other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon))
+            {
+                return false;
+            }
+
+            if (UV3 != null && !other.UV3.IsAlmostEqualTo(UV3, Tools.Epsilon))
+            {
+                return false;
+            }
+
+            if (UV4 != null && !other.UV4.IsAlmostEqualTo(UV4, Tools.Epsilon))
+            {
+                return false;
+            }
+
+            if (UV5 != null && !other.UV5.IsAlmostEqualTo(UV5, Tools.Epsilon))
+            {
+                return false;
+            }
+
+            if (UV6 != null && !other.UV6.IsAlmostEqualTo(UV6, Tools.Epsilon))
+            {
+                return false;
+            }
+
+            if (UV7 != null && !other.UV7.IsAlmostEqualTo(UV7, Tools.Epsilon))
+            {
+                return false;
+            }
+
+            if (UV8 != null && !other.UV8.IsAlmostEqualTo(UV8, Tools.Epsilon))
             {
                 return false;
             }
