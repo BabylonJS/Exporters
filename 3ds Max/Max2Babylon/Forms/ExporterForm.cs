@@ -99,6 +99,7 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkExportAnimationsOnly, Loader.Core.RootNode, "babylonjs_export_animations_only");
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
+            Tools.PrepareCheckBox(chkExportMorphNames, Loader.Core.RootNode, "babylonjs_export_Morph_Names", 1);
             Tools.PrepareCheckBox(chkExportTextures, Loader.Core.RootNode, "babylonjs_export_Textures", 1);
             Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
             Tools.PrepareCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess", 0);
@@ -901,6 +902,11 @@ namespace Max2Babylon
         private void chkDracoCompression_CheckedChanged(object sender, EventArgs e)
         {
             dracoGroupBox.Enabled = chkDracoCompression.Checked;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
