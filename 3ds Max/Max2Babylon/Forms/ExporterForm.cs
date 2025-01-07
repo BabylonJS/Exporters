@@ -478,6 +478,7 @@ namespace Max2Babylon
                     exportTangents = chkExportTangents.Checked,
                     exportMorphTangents = chkExportMorphTangents.Checked,
                     exportMorphNormals = chkExportMorphNormals.Checked,
+                    exportMorphTargetsNames = chkExportMorphNames.Checked,
                     txtQuality = textureQualityParsed,
                     mergeAO = chkMergeAO.Checked,
                     bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
