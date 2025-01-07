@@ -91,17 +91,19 @@ namespace Max2Babylon
             this.exporterTabControl = new System.Windows.Forms.TabControl();
             this.exportOptionsTabPage = new System.Windows.Forms.TabPage();
             this.exportOptionsScrollPanel = new System.Windows.Forms.Panel();
+            this.chkExportMorphNames = new System.Windows.Forms.CheckBox();
             this.chkUseClone = new System.Windows.Forms.CheckBox();
             this.chkTryReuseTexture = new System.Windows.Forms.CheckBox();
             this.advancedTabPage = new System.Windows.Forms.TabPage();
             this.dracoGroupBox = new System.Windows.Forms.GroupBox();
+            this.dracoUserControl = new Utilities.DracoUserControl();
             this.logTabPage = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.chkExportMorphNames = new System.Windows.Forms.CheckBox();
             this.exporterTabControl.SuspendLayout();
             this.exportOptionsTabPage.SuspendLayout();
             this.exportOptionsScrollPanel.SuspendLayout();
             this.advancedTabPage.SuspendLayout();
+            this.dracoGroupBox.SuspendLayout();
             this.logTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -809,7 +811,7 @@ namespace Max2Babylon
             // 
             this.butCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.butCopyToClipboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.butCopyToClipboard.Location = new System.Drawing.Point(4, -1510);
+            this.butCopyToClipboard.Location = new System.Drawing.Point(4, -2282);
             this.butCopyToClipboard.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.butCopyToClipboard.Name = "butCopyToClipboard";
             this.butCopyToClipboard.Size = new System.Drawing.Size(111, 23);
@@ -904,6 +906,19 @@ namespace Max2Babylon
             this.exportOptionsScrollPanel.Size = new System.Drawing.Size(911, 456);
             this.exportOptionsScrollPanel.TabIndex = 44;
             // 
+            // chkExportMorphNames
+            // 
+            this.chkExportMorphNames.AutoSize = true;
+            this.chkExportMorphNames.Checked = true;
+            this.chkExportMorphNames.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportMorphNames.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkExportMorphNames.Location = new System.Drawing.Point(304, 337);
+            this.chkExportMorphNames.Name = "chkExportMorphNames";
+            this.chkExportMorphNames.Size = new System.Drawing.Size(119, 17);
+            this.chkExportMorphNames.TabIndex = 46;
+            this.chkExportMorphNames.Text = "Export morph names";
+            this.chkExportMorphNames.UseVisualStyleBackColor = true;
+            // 
             // chkUseClone
             // 
             this.chkUseClone.AutoSize = true;
@@ -941,6 +956,7 @@ namespace Max2Babylon
             // 
             // dracoGroupBox
             // 
+            this.dracoGroupBox.Controls.Add(this.dracoUserControl);
             this.dracoGroupBox.Location = new System.Drawing.Point(10, 10);
             this.dracoGroupBox.Margin = new System.Windows.Forms.Padding(2);
             this.dracoGroupBox.Name = "dracoGroupBox";
@@ -949,6 +965,16 @@ namespace Max2Babylon
             this.dracoGroupBox.TabIndex = 0;
             this.dracoGroupBox.TabStop = false;
             this.dracoGroupBox.Text = "Draco settings";
+            // 
+            // dracoUserControl
+            // 
+            this.dracoUserControl.AutoSize = true;
+            this.dracoUserControl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.dracoUserControl.Location = new System.Drawing.Point(4, 16);
+            this.dracoUserControl.Margin = new System.Windows.Forms.Padding(1);
+            this.dracoUserControl.Name = "dracoUserControl";
+            this.dracoUserControl.Size = new System.Drawing.Size(373, 382);
+            this.dracoUserControl.TabIndex = 0;
             // 
             // logTabPage
             // 
@@ -970,18 +996,6 @@ namespace Max2Babylon
             this.pictureBox1.Size = new System.Drawing.Size(513, 80);
             this.pictureBox1.TabIndex = 113;
             this.pictureBox1.TabStop = false;
-            // 
-            // chkExportMorphNames
-            // 
-            this.chkExportMorphNames.AutoSize = true;
-            this.chkExportMorphNames.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkExportMorphNames.Location = new System.Drawing.Point(292, 337);
-            this.chkExportMorphNames.Name = "chkExportMorphNames";
-            this.chkExportMorphNames.Size = new System.Drawing.Size(119, 17);
-            this.chkExportMorphNames.TabIndex = 46;
-            this.chkExportMorphNames.Text = "Export morph names";
-            this.chkExportMorphNames.UseVisualStyleBackColor = true;
-            this.chkExportMorphNames.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // ExporterForm
             // 
@@ -1012,6 +1026,8 @@ namespace Max2Babylon
             this.exportOptionsScrollPanel.ResumeLayout(false);
             this.exportOptionsScrollPanel.PerformLayout();
             this.advancedTabPage.ResumeLayout(false);
+            this.dracoGroupBox.ResumeLayout(false);
+            this.dracoGroupBox.PerformLayout();
             this.logTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
