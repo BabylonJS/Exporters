@@ -606,8 +606,9 @@ namespace Max2Babylon
                                 var babylonMorphTarget = new BabylonMorphTarget
                                 {
                                     // the name is reconstructed if we have to rebuild the target
-                                    name = maxMorphTarget?.Name ?? $"{meshNode.Name}.morpher({m}).target({i})"
+                                    name = maxMorphTarget?.Name ?? (exportParameters.exportMorphTargetsNames ? ExtractMorphTargetName(babylonMesh, i) : $"{meshNode.Name}.morpher({m}).target({i})")
                                 };
+
                                 babylonMorphTargets.Add(babylonMorphTarget);
                                 RaiseMessage($"Morph target {babylonMorphTarget.name} added.", 3);
 
@@ -705,6 +706,17 @@ namespace Max2Babylon
             }
 
             return result;
+        }
+
+        private string ExtractMorphTargetName(BabylonAbstractMesh babylonAbstractMesh, int morphIndex)
+        {
+            var script = $"WM3_MC_GetName ${babylonAbstractMesh.name}.Morpher {morphIndex + 1}";
+#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
+            var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script, ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
+#else
+            var str = ManagedServices.MaxscriptSDK.ExecuteStringMaxscriptQuery(script);
+#endif
+            return str;
         }
 
         private IEnumerable<IPoint3> ExtractMorphTargetPoints(BabylonAbstractMesh babylonAbstractMesh, int morphIndex, IMatrix3 offsetTM)
