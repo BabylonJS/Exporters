@@ -134,6 +134,7 @@ namespace BabylonExport.Entities
         public bool rebuildMorphTarget = true;
         public bool exportMorphTangents = true;
         public bool exportMorphNormals = true;
+        public bool exportMorphTargetsNames = false;
         #endregion
     }
 }

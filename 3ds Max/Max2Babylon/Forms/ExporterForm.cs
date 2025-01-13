@@ -99,9 +99,11 @@ namespace Max2Babylon
             Tools.PrepareCheckBox(chkExportAnimationsOnly, Loader.Core.RootNode, "babylonjs_export_animations_only");
             Tools.PrepareCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents", 0);
             Tools.PrepareCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals", 1);
+            Tools.PrepareCheckBox(chkExportMorphNames, Loader.Core.RootNode, "babylonjs_export_Morph_Names", 0);
             Tools.PrepareCheckBox(chkExportTextures, Loader.Core.RootNode, "babylonjs_export_Textures", 1);
             Tools.PrepareComboBox(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType", (int)BakeAnimationType.DoNotBakeAnimation);
             Tools.PrepareCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess", 0);
+            
 
             if (comboOutputFormat.SelectedText == "babylon" || comboOutputFormat.SelectedText == "binary babylon" || !gltfPipelineInstalled)
             {
@@ -331,6 +333,7 @@ namespace Max2Babylon
             Tools.UpdateCheckBox(chkDoNotOptimizeAnimations, Loader.Core.RootNode, "babylonjs_donotoptimizeanimations");
             Tools.UpdateCheckBox(chkExportMorphTangents, Loader.Core.RootNode, "babylonjs_export_Morph_Tangents");
             Tools.UpdateCheckBox(chkExportMorphNormals, Loader.Core.RootNode, "babylonjs_export_Morph_Normals");
+            Tools.UpdateCheckBox(chkExportMorphNames, Loader.Core.RootNode, "babylonjs_export_Morph_Names");
             Tools.UpdateCheckBox(chkExportTextures, Loader.Core.RootNode, "babylonjs_export_Textures");
             Tools.UpdateComboBoxByIndex(cmbBakeAnimationOptions, Loader.Core.RootNode, "babylonjs_bakeAnimationsType");
             Tools.UpdateCheckBox(chkApplyPreprocessToScene, Loader.Core.RootNode, "babylonjs_applyPreprocess");
@@ -475,6 +478,7 @@ namespace Max2Babylon
                     exportTangents = chkExportTangents.Checked,
                     exportMorphTangents = chkExportMorphTangents.Checked,
                     exportMorphNormals = chkExportMorphNormals.Checked,
+                    exportMorphTargetsNames = chkExportMorphNames.Checked,
                     txtQuality = textureQualityParsed,
                     mergeAO = chkMergeAO.Checked,
                     bakeAnimationType = (BakeAnimationType)cmbBakeAnimationOptions.SelectedIndex,
