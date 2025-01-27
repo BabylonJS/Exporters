@@ -15,7 +15,7 @@ namespace Maya2Babylon
         private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -919,15 +919,16 @@ namespace Maya2Babylon
                 {
                     MVector tangent = new MVector();
                     mFnMesh.getFaceVertexTangent(polygonId, vertexIndexGlobal, tangent);
-                    tangent.normalize();
                     
-                    if (tangent.length < 0.1)
+                    if (tangent.isEquivalent(MVector.zero))
                     {
                         isTangentExportSuccess = false;
                         RaiseWarning($"Mesh has invalid tangent data. Exporter will not export tangets for the mesh {mFnMesh?.name ?? "Unknown"}");
                     }
                     else
                     {
+                        tangent.normalize();
+
                         // Switch coordinate system at object level
                         tangent.z *= -1;
 
@@ -1350,15 +1351,16 @@ namespace Maya2Babylon
                                     {
                                         MVector tangent = new MVector();
                                         targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
-                                        tangent.normalize();
 
-                                        if (tangent.length < 0.1)
+                                        if (tangent.isEquivalent(MVector.zero))
                                         {
                                             isTangentExportSuccess = false;
                                             RaiseWarning($"Mesh has invalid tangent data. Exporter will not export tangets for the mesh {mesh?.name ?? "Unknown"}");
                                         }
                                         else
                                         {
+                                            tangent.normalize();
+                                            
                                             // Switch coordinate system at object level
                                             tangent.z *= -1;
 
