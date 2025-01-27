@@ -919,15 +919,24 @@ namespace Maya2Babylon
                 {
                     MVector tangent = new MVector();
                     mFnMesh.getFaceVertexTangent(polygonId, vertexIndexGlobal, tangent);
+                    tangent.normalize();
+                    
+                    if (tangent.length < 0.1)
+                    {
+                        isTangentExportSuccess = false;
+                        RaiseWarning($"Mesh has invalid tangent data. Exporter will not export tangets for the mesh {mFnMesh?.name ?? "Unknown"}");
+                    }
+                    else
+                    {
+                        // Switch coordinate system at object level
+                        tangent.z *= -1;
 
-                    // Switch coordinate system at object level
-                    tangent.z *= -1;
+                        int tangentId = mFnMesh.getTangentId(polygonId, vertexIndexGlobal);
+                        bool isRightHandedTangent = mFnMesh.isRightHandedTangent(tangentId);
 
-                    int tangentId = mFnMesh.getTangentId(polygonId, vertexIndexGlobal);
-                    bool isRightHandedTangent = mFnMesh.isRightHandedTangent(tangentId);
-
-                    // Invert W to switch to left handed system
-                    vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                        // Invert W to switch to left handed system
+                        vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                    }
                 }
                 catch
                 {
@@ -1341,15 +1350,24 @@ namespace Maya2Babylon
                                     {
                                         MVector tangent = new MVector();
                                         targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
+                                        tangent.normalize();
 
-                                        // Switch coordinate system at object level
-                                        tangent.z *= -1;
+                                        if (tangent.length < 0.1)
+                                        {
+                                            isTangentExportSuccess = false;
+                                            RaiseWarning($"Mesh has invalid tangent data. Exporter will not export tangets for the mesh {mesh?.name ?? "Unknown"}");
+                                        }
+                                        else
+                                        {
+                                            // Switch coordinate system at object level
+                                            tangent.z *= -1;
 
-                                        int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
-                                        bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
+                                            int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
+                                            bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
 
-                                        // Invert W to switch to left handed system
-                                        vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                            // Invert W to switch to left handed system
+                                            vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                        }
                                     }
                                     catch
                                     {
