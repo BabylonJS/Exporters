@@ -15,7 +15,7 @@ namespace Maya2Babylon
         private MStringArray allMayaInfluenceNames;     // the joint names that influence the mesh (joint with 0 weight included)
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -919,15 +919,25 @@ namespace Maya2Babylon
                 {
                     MVector tangent = new MVector();
                     mFnMesh.getFaceVertexTangent(polygonId, vertexIndexGlobal, tangent);
+                    
+                    if (tangent.isEquivalent(MVector.zero))
+                    {
+                        isTangentExportSuccess = false;
+                        RaiseWarning($"Mesh has invalid tangent data. Exporter will not export tangets for the mesh {mFnMesh?.name ?? "Unknown"}");
+                    }
+                    else
+                    {
+                        tangent.normalize();
 
-                    // Switch coordinate system at object level
-                    tangent.z *= -1;
+                        // Switch coordinate system at object level
+                        tangent.z *= -1;
 
-                    int tangentId = mFnMesh.getTangentId(polygonId, vertexIndexGlobal);
-                    bool isRightHandedTangent = mFnMesh.isRightHandedTangent(tangentId);
+                        int tangentId = mFnMesh.getTangentId(polygonId, vertexIndexGlobal);
+                        bool isRightHandedTangent = mFnMesh.isRightHandedTangent(tangentId);
 
-                    // Invert W to switch to left handed system
-                    vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                        // Invert W to switch to left handed system
+                        vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                    }
                 }
                 catch
                 {
@@ -1342,14 +1352,24 @@ namespace Maya2Babylon
                                         MVector tangent = new MVector();
                                         targetMesh.getFaceVertexTangent(vertexData.polygonId, vertexData.vertexIndexGlobal, tangent);
 
-                                        // Switch coordinate system at object level
-                                        tangent.z *= -1;
+                                        if (tangent.isEquivalent(MVector.zero))
+                                        {
+                                            isTangentExportSuccess = false;
+                                            RaiseWarning($"Mesh has invalid tangent data. Exporter will not export tangets for the mesh {mesh?.name ?? "Unknown"}");
+                                        }
+                                        else
+                                        {
+                                            tangent.normalize();
+                                            
+                                            // Switch coordinate system at object level
+                                            tangent.z *= -1;
 
-                                        int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
-                                        bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
+                                            int tangentId = targetMesh.getTangentId(vertexData.polygonId, vertexData.vertexIndexGlobal);
+                                            bool isRightHandedTangent = targetMesh.isRightHandedTangent(tangentId);
 
-                                        // Invert W to switch to left handed system
-                                        vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                            // Invert W to switch to left handed system
+                                            vertex.Tangent = new float[] { (float)tangent.x, (float)tangent.y, (float)tangent.z, isRightHandedTangent ? -1 : 1 };
+                                        }
                                     }
                                     catch
                                     {
