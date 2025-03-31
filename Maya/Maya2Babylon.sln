@@ -1,8 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31613.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2017", "Maya2Babylon2017.csproj", "{50780553-6248-463B-A0F3-F82C6CCEC703}"
 EndProject
@@ -24,39 +23,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2022", "Maya2Ba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2023", "Maya2Babylon2023.csproj", "{074CCED5-52D1-4CB3-94D8-B8B117D452E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maya2Babylon2024", "Maya2Babylon2024.csproj", "{63FF7F8B-1802-4990-A252-6CAF3D7C406D}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{00356433-4277-48bb-ac33-92d3c47fe28b}*SharedItemsImports = 13
-		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
-		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
-		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
-		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
-		..\SharedProjects\Utilities\Extensions.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
-		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
-		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
-		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
-		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
-		..\SharedProjects\Utilities\Extensions.projitems*{0ac46a8e-8c0d-4ebe-b64a-4cc274e0ff38}*SharedItemsImports = 4
-		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2a678a75-f8c2-41ba-814a-53e611f5eb96}*SharedItemsImports = 13
-		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
-		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
-		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
-		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
-		..\SharedProjects\Utilities\Extensions.projitems*{50780553-6248-463b-a0f3-f82c6ccec703}*SharedItemsImports = 4
-		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
-		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
-		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
-		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
-		..\SharedProjects\Utilities\Extensions.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
-		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{cc8bfa12-aff1-4f9f-9ee4-c4a3a5d86237}*SharedItemsImports = 13
-		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
-		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
-		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
-		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
-		..\SharedProjects\Utilities\Extensions.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
-		..\SharedProjects\Utilities\Extensions.projitems*{daed1281-4757-4a4e-b252-b879b43193a3}*SharedItemsImports = 13
-		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -82,11 +51,42 @@ Global
 		{074CCED5-52D1-4CB3-94D8-B8B117D452E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{074CCED5-52D1-4CB3-94D8-B8B117D452E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{074CCED5-52D1-4CB3-94D8-B8B117D452E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63FF7F8B-1802-4990-A252-6CAF3D7C406D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63FF7F8B-1802-4990-A252-6CAF3D7C406D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63FF7F8B-1802-4990-A252-6CAF3D7C406D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63FF7F8B-1802-4990-A252-6CAF3D7C406D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5F45A55-6CB6-4317-92EF-686443DBFFE0}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{00356433-4277-48bb-ac33-92d3c47fe28b}*SharedItemsImports = 13
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{074cced5-52d1-4cb3-94d8-b8b117d452e1}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{2a678a75-f8c2-41ba-814a-53e611f5eb96}*SharedItemsImports = 13
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{63ff7f8b-1802-4990-a252-6caf3d7c406d}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{63ff7f8b-1802-4990-a252-6caf3d7c406d}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{63ff7f8b-1802-4990-a252-6caf3d7c406d}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{63ff7f8b-1802-4990-a252-6caf3d7c406d}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{63ff7f8b-1802-4990-a252-6caf3d7c406d}*SharedItemsImports = 4
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{9383cdb8-3a6b-4897-ba46-12241e6bb42d}*SharedItemsImports = 4
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{cc8bfa12-aff1-4f9f-9ee4-c4a3a5d86237}*SharedItemsImports = 13
+		..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{ccce1b88-0bb5-4d0c-bd2f-3e9f6e7df180}*SharedItemsImports = 4
+		..\SharedProjects\Utilities\Extensions.projitems*{daed1281-4757-4a4e-b252-b879b43193a3}*SharedItemsImports = 13
+		..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems*{fc25673f-b984-4261-b266-9bc8b874079f}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
