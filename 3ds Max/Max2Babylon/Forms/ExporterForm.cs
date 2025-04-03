@@ -708,8 +708,14 @@ namespace Max2Babylon
                     WebServer.SceneFilename = Path.GetFileName(txtModelPath.Text);
                     WebServer.SceneFolder = Path.GetDirectoryName(txtModelPath.Text);
 
-                    Process.Start(WebServer.url + WebServer.SceneFilename);
-
+                    var startInfo = new ProcessStartInfo(WebServer.url + WebServer.SceneFilename)
+                    {
+                        // defaults to false on netcore
+                        UseShellExecute=true,
+                        // just a safety precaution
+                        WorkingDirectory= WebServer.SceneFolder
+                    };
+                    Process.Start(startInfo);
                     WindowState = FormWindowState.Minimized;
                 }
             }

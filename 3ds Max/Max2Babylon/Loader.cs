@@ -21,7 +21,7 @@ namespace Max2Babylon
         {
             get
             {
-                return  Global.Interface_ID.Create(0x092779, 0x634020);
+                return Global.Interface_ID.Create(0x092779, 0x634020);
             }
         }
 
@@ -42,10 +42,10 @@ namespace Max2Babylon
         /// </summary>
         public static IIFPLayerManager IIFPLayerManager
         {
-            get 
+            get
             {
-                IInterface_ID iIFPLayerManagerID = Global.Interface_ID.Create((uint)BuiltInInterfaceIDA.LAYERMANAGER_INTERFACE,(uint)BuiltInInterfaceIDB.LAYERMANAGER_INTERFACE);
-                return (IIFPLayerManager) Global.GetCOREInterface(iIFPLayerManagerID);
+                IInterface_ID iIFPLayerManagerID = Global.Interface_ID.Create((uint)BuiltInInterfaceIDA.LAYERMANAGER_INTERFACE, (uint)BuiltInInterfaceIDB.LAYERMANAGER_INTERFACE);
+                return (IIFPLayerManager)Global.GetCOREInterface(iIFPLayerManagerID);
             }
         }
 
