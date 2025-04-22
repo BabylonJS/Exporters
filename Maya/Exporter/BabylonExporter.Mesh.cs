@@ -16,15 +16,6 @@ namespace Maya2Babylon
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
 
-        private int CheckBoneBoundaries(int boneValue)
-        {
-            if (boneValue >= 255)
-            {
-                //throw new ArgumentOutOfRangeException("Bone out of byte range");
-            }
-
-            return boneValue;
-        }
 
         /// <summary>
         /// 
@@ -1047,22 +1038,22 @@ namespace Maya2Babylon
 
                 if (nbBones > 0)
                 {
-                    bone0 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(0).Key);
+                    bone0 = weightByInfluenceIndex.ElementAt(0).Key;
                     weight0 = (float)weightByInfluenceIndex.ElementAt(0).Value;
 
                     if (nbBones > 1)
                     {
-                        bone1 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(1).Key);
+                        bone1 = weightByInfluenceIndex.ElementAt(1).Key;
                         weight1 = (float)weightByInfluenceIndex.ElementAt(1).Value;
 
                         if (nbBones > 2)
                         {
-                            bone2 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(2).Key);
+                            bone2 = weightByInfluenceIndex.ElementAt(2).Key;
                             weight2 = (float)weightByInfluenceIndex.ElementAt(2).Value;
 
                             if (nbBones > 3)
                             {
-                                bone3 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(3).Key);
+                                bone3 = weightByInfluenceIndex.ElementAt(3).Key;
                                 weight3 = (float)weightByInfluenceIndex.ElementAt(3).Value;
                             }
                         }
@@ -1075,7 +1066,7 @@ namespace Maya2Babylon
 
                 if (nbBones > 4)
                 {
-                    bone0 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(4).Key);
+                    bone0 = weightByInfluenceIndex.ElementAt(4).Key;
                     weight0 = (float)weightByInfluenceIndex.ElementAt(4).Value;
                     weight1 = 0;
                     weight2 = 0;
@@ -1083,17 +1074,17 @@ namespace Maya2Babylon
 
                     if (nbBones > 5)
                     {
-                        bone1 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(5).Key);
+                        bone1 = weightByInfluenceIndex.ElementAt(5).Key;
                         weight1 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                         if (nbBones > 6)
                         {
-                            bone2 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(6).Key);
+                            bone2 = weightByInfluenceIndex.ElementAt(6).Key;
                             weight2 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                             if (nbBones > 7)
                             {
-                                bone3 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(7).Key);
+                                bone3 = weightByInfluenceIndex.ElementAt(7).Key;
                                 weight3 = (float)weightByInfluenceIndex.ElementAt(7).Value;
                             }
                         }
