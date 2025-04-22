@@ -1358,7 +1358,7 @@ namespace Max2Babylon
                 }
 
                 vertex.Weights = Loader.Global.Point4.Create(weight);
-                vertex.BonesIndices = (bone[3] << 24) | (bone[2] << 16) | (bone[1] << 8) | bone[0];
+                vertex.BonesIndices = (bone[3] << 48) | (bone[2] << 32) | (bone[1] << 16) | bone[0];
 
                 if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
@@ -1387,7 +1387,7 @@ namespace Max2Babylon
                     if (currentVtxBone > 4)
                     {
                         vertex.WeightsExtra = Loader.Global.Point4.Create(weight);
-                        vertex.BonesIndicesExtra = (bone[3] << 24) | (bone[2] << 16) | (bone[1] << 8) | bone[0];
+                        vertex.BonesIndicesExtra = (bone[3] << 48) | (bone[2] << 32) | (bone[1] << 16) | bone[0];
 
                         if (currentSkinBone < nbBones)
                         {

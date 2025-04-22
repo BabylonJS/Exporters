@@ -53,10 +53,10 @@ namespace BabylonExport.Entities
         public float[] colors { get; set; }
 
         [DataMember]
-        public int[] matricesIndices { get; set; }
+        public long[] matricesIndices { get; set; }
 
         [DataMember]
-        public int[] matricesIndicesExtra { get; set; }
+        public long[] matricesIndicesExtra { get; set; }
 
         [DataMember]
         public float[] matricesWeights { get; set; }

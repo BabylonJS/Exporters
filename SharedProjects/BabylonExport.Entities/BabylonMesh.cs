@@ -19,8 +19,8 @@ namespace BabylonExport.Entities
         float[] uvs7 { get; set; }
         float[] uvs8 { get; set; }
         float[] colors { get; set; }
-        int[] matricesIndices { get; set; }
-        int[] matricesIndicesExtra { get; set; }
+        long[] matricesIndices { get; set; }
+        long[] matricesIndicesExtra { get; set; }
         float[] matricesWeights { get; set; }
         float[] matricesWeightsExtra { get; set; }
         int[] indices { get; set; }
@@ -84,13 +84,13 @@ namespace BabylonExport.Entities
         public bool hasVertexAlpha { get; set; }
 
         [DataMember]
-        public int[] matricesIndices { get; set; }
+        public long[] matricesIndices { get; set; }
 
         [DataMember]
         public float[] matricesWeights { get; set; }
 
         [DataMember]
-        public int[] matricesIndicesExtra { get; set; }
+        public long[] matricesIndicesExtra { get; set; }
 
         [DataMember]
         public float[] matricesWeightsExtra { get; set; }

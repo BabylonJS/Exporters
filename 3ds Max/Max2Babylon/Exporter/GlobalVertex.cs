@@ -19,9 +19,9 @@ namespace Max2Babylon
         public IPoint2 UV6 { get; set; }
         public IPoint2 UV7 { get; set; }
         public IPoint2 UV8 { get; set; }
-        public int BonesIndices { get; set; }
+        public long BonesIndices { get; set; }
         public IPoint4 Weights { get; set; }
-        public int BonesIndicesExtra { get; set; }
+        public long BonesIndicesExtra { get; set; }
         public IPoint4 WeightsExtra { get; set; }
         public float[] Color { get; set; }
 

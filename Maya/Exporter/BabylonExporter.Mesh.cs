@@ -16,6 +16,16 @@ namespace Maya2Babylon
         private MDoubleArray allMayaInfluenceWeights;   // the joint weights for the vertex (0 weight included)
         private Dictionary<string, int> indexByNodeName = new Dictionary<string, int>();    // contains the node (joint and parents of the current skin) fullPathName and its index
 
+        private int CheckBoneBoundaries(int boneValue)
+        {
+            if (boneValue >= 255)
+            {
+                //throw new ArgumentOutOfRangeException("Bone out of byte range");
+            }
+
+            return boneValue;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1018,15 +1028,15 @@ namespace Maya2Babylon
                 // decreasing sort
                 OrderByDescending(ref weightByInfluenceIndex);
 
-                int bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
+                long bonesCount = indexByNodeName.Count; // number total of bones/influences for the mesh
                 float weight0 = 0;
                 float weight1 = 0;
                 float weight2 = 0;
                 float weight3 = 0;
-                int bone0 = 0;
-                int bone1 = 0;
-                int bone2 = 0;
-                int bone3 = 0;
+                long bone0 = 0;
+                long bone1 = 0;
+                long bone2 = 0;
+                long bone3 = 0;
                 int nbBones = weightByInfluenceIndex.Count; // number of bones/influences for this vertex
 
                 if (nbBones == 0)
@@ -1037,22 +1047,22 @@ namespace Maya2Babylon
 
                 if (nbBones > 0)
                 {
-                    bone0 = weightByInfluenceIndex.ElementAt(0).Key;
+                    bone0 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(0).Key);
                     weight0 = (float)weightByInfluenceIndex.ElementAt(0).Value;
 
                     if (nbBones > 1)
                     {
-                        bone1 = weightByInfluenceIndex.ElementAt(1).Key;
+                        bone1 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(1).Key);
                         weight1 = (float)weightByInfluenceIndex.ElementAt(1).Value;
 
                         if (nbBones > 2)
                         {
-                            bone2 = weightByInfluenceIndex.ElementAt(2).Key;
+                            bone2 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(2).Key);
                             weight2 = (float)weightByInfluenceIndex.ElementAt(2).Value;
 
                             if (nbBones > 3)
                             {
-                                bone3 = weightByInfluenceIndex.ElementAt(3).Key;
+                                bone3 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(3).Key);
                                 weight3 = (float)weightByInfluenceIndex.ElementAt(3).Value;
                             }
                         }
@@ -1061,11 +1071,11 @@ namespace Maya2Babylon
 
                 float[] weights = { weight0, weight1, weight2, weight3 };
                 vertex.Weights = weights;
-                vertex.BonesIndices = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+                vertex.BonesIndices = (bone3 << 48) | (bone2 << 32) | (bone1 << 16) | bone0;
 
                 if (nbBones > 4)
                 {
-                    bone0 = weightByInfluenceIndex.ElementAt(4).Key;
+                    bone0 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(4).Key);
                     weight0 = (float)weightByInfluenceIndex.ElementAt(4).Value;
                     weight1 = 0;
                     weight2 = 0;
@@ -1073,17 +1083,17 @@ namespace Maya2Babylon
 
                     if (nbBones > 5)
                     {
-                        bone1 = weightByInfluenceIndex.ElementAt(5).Key;
+                        bone1 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(5).Key);
                         weight1 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                         if (nbBones > 6)
                         {
-                            bone2 = weightByInfluenceIndex.ElementAt(6).Key;
+                            bone2 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(6).Key);
                             weight2 = (float)weightByInfluenceIndex.ElementAt(4).Value;
 
                             if (nbBones > 7)
                             {
-                                bone3 = weightByInfluenceIndex.ElementAt(7).Key;
+                                bone3 = CheckBoneBoundaries(weightByInfluenceIndex.ElementAt(7).Key);
                                 weight3 = (float)weightByInfluenceIndex.ElementAt(7).Value;
                             }
                         }
@@ -1091,7 +1101,7 @@ namespace Maya2Babylon
 
                     float[] weightsExtra = { weight0, weight1, weight2, weight3 };
                     vertex.WeightsExtra = weightsExtra;
-                    vertex.BonesIndicesExtra = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+                    vertex.BonesIndicesExtra = (bone3 << 48) | (bone2 << 32) | (bone1 << 16) | bone0;
                 }
             }
             return vertex;
