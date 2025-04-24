@@ -218,5 +218,17 @@ namespace BabylonExport.Entities
                 animationGroups = null;
             }
         }
+
+        internal bool PackIndexArrays()
+        {
+            bool result = true;
+
+            foreach (var mesh  in meshes)
+            {
+                result &= mesh.TryPackIndexArrays();
+            }
+
+            return result;
+        }
     }
 }

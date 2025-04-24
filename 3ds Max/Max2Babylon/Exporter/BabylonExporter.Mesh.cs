@@ -494,13 +494,14 @@ namespace Max2Babylon
                 if (skin != null) 
                 {
                     babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
-                    babylonMesh.matricesIndices = vertices.Select(v => v.BonesIndices).ToArray();
+                    babylonMesh.matricesIndices = vertices.SelectMany(v => v.BonesIndices.ToArray()).ToArray();
 
                     babylonMesh.numBoneInfluencers = maxNbBones;
+
                     if (maxNbBones > 4)
                     {
                         babylonMesh.matricesWeightsExtra = vertices.SelectMany(v => v.WeightsExtra != null ? v.WeightsExtra.ToArray() : new[] { 0.0f, 0.0f, 0.0f, 0.0f }).ToArray();
-                        babylonMesh.matricesIndicesExtra = vertices.Select(v => v.BonesIndicesExtra).ToArray();
+                        babylonMesh.matricesIndicesExtra = vertices.SelectMany(v => v.BonesIndicesExtra.ToArray()).ToArray();
                     }
                 }
 
@@ -1358,7 +1359,7 @@ namespace Max2Babylon
                 }
 
                 vertex.Weights = Loader.Global.Point4.Create(weight);
-                vertex.BonesIndices = (bone[3] << 48) | (bone[2] << 32) | (bone[1] << 16) | bone[0];
+                vertex.BonesIndices = bone;
 
                 if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
@@ -1387,7 +1388,7 @@ namespace Max2Babylon
                     if (currentVtxBone > 4)
                     {
                         vertex.WeightsExtra = Loader.Global.Point4.Create(weight);
-                        vertex.BonesIndicesExtra = (bone[3] << 48) | (bone[2] << 32) | (bone[1] << 16) | bone[0];
+                        vertex.BonesIndicesExtra = bone;
 
                         if (currentSkinBone < nbBones)
                         {

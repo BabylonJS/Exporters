@@ -513,6 +513,11 @@ namespace Maya2Babylon
 
             if (isBabylonExported)
             {
+                if (!babylonScene.PackIndexArrays())
+                {
+                    RaiseWarning("Model has too many skeleton joints. The .babylon file will store joint indicies using expandanded form, this will only load properly using Babylon.js >= 8.5.0.");
+                }
+
                 Write(babylonScene, outputBabylonDirectory, outputFileName, exportParameters.outputFormat, exportParameters.generateManifest);
             }
 

@@ -561,13 +561,13 @@ namespace Maya2Babylon
             if (mFnSkinCluster != null)
             {
                 babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
-                babylonMesh.matricesIndices = vertices.Select(v => v.BonesIndices).ToArray();
+                babylonMesh.matricesIndices = vertices.SelectMany(v => v.BonesIndices.ToArray()).ToArray();
 
                 babylonMesh.numBoneInfluencers = maxNbBones;
                 if (maxNbBones > 4)
                 {
                     babylonMesh.matricesWeightsExtra = vertices.SelectMany(v => v.WeightsExtra != null ? v.WeightsExtra.ToArray() : new[] { 0.0f, 0.0f, 0.0f, 0.0f }).ToArray();
-                    babylonMesh.matricesIndicesExtra = vertices.Select(v => v.BonesIndicesExtra).ToArray();
+                    babylonMesh.matricesIndicesExtra = vertices.SelectMany(v => v.BonesIndicesExtra != null ? v.BonesIndicesExtra.ToArray() : new int[] { 0, 0, 0, 0 }).ToArray();
                 }
             }
 
@@ -1062,7 +1062,8 @@ namespace Maya2Babylon
 
                 float[] weights = { weight0, weight1, weight2, weight3 };
                 vertex.Weights = weights;
-                vertex.BonesIndices = (bone3 << 48) | (bone2 << 32) | (bone1 << 16) | bone0;
+                int[] boneIndexes = { (int)bone0, (int)bone1, (int)bone2, (int)bone3 };
+                vertex.BonesIndices = boneIndexes;
 
                 if (nbBones > 4)
                 {
@@ -1092,7 +1093,8 @@ namespace Maya2Babylon
 
                     float[] weightsExtra = { weight0, weight1, weight2, weight3 };
                     vertex.WeightsExtra = weightsExtra;
-                    vertex.BonesIndicesExtra = (bone3 << 48) | (bone2 << 32) | (bone1 << 16) | bone0;
+                    int[] boneIndexesExtra = { (int)bone0, (int)bone1, (int)bone2, (int)bone3 };
+                    vertex.BonesIndicesExtra = boneIndexesExtra;
                 }
             }
             return vertex;
