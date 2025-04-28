@@ -769,7 +769,7 @@ namespace Max2Babylon
             {
                 if (!babylonScene.TryPackIndexArrays())
                 {
-                    RaiseWarning("Model has too many skeleton joints. The .babylon file will store joint indicies using expandanded form, this will only load properly using Babylon.js >= 8.5.0.");
+                    RaiseWarning("Model has too many skeleton joints. The .babylon file will store joint indices using expanded form, this will only load properly using Babylon.js >= 8.5.0.");
                 }
                 
                 RaiseMessage("Saving to output file");
