@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Linq;
+using System.Runtime.Serialization;
 
 namespace BabylonExport.Entities
 {
@@ -53,10 +54,10 @@ namespace BabylonExport.Entities
         public float[] colors { get; set; }
 
         [DataMember]
-        public int[] matricesIndices { get; set; }
+        public uint[] matricesIndices { get; set; }
 
         [DataMember]
-        public int[] matricesIndicesExtra { get; set; }
+        public uint[] matricesIndicesExtra { get; set; }
 
         [DataMember]
         public float[] matricesWeights { get; set; }
@@ -66,6 +67,13 @@ namespace BabylonExport.Entities
 
         [DataMember]
         public int[] indices { get; set; }
+
+        [DataMember]
+        public bool matricesIndicesExpanded { get; set; }
+
+        [DataMember]
+        public bool matricesIndicesExtraExpanded { get; set; }
+
         #endregion
 
         public BabylonVertexData() { }
@@ -94,6 +102,58 @@ namespace BabylonExport.Entities
             matricesWeights = data.matricesWeights;
             matricesWeightsExtra = data.matricesWeightsExtra;
             indices = data.indices;
+            matricesIndicesExpanded = false;
+            matricesIndicesExtraExpanded = false;
+        }
+
+        private uint[] CreatePackedArray(uint[] rawArray)
+        {
+            var arrayReplacement = new uint[rawArray.Length / 4];
+
+            for (int i = 0; i < arrayReplacement.Length; i++)
+            {
+                int rawIndex = i * 4;
+                uint bone0 = rawArray[rawIndex];
+                uint bone1 = rawArray[rawIndex + 1];
+                uint bone2 = rawArray[rawIndex + 2];
+                uint bone3 = rawArray[rawIndex + 3];
+                arrayReplacement[i] = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+            }
+
+            return arrayReplacement;
+        }
+
+        public bool TryPackIndexArrays()
+        {
+            bool result = true;
+
+            if (matricesIndices != null && matricesIndices.Length != 0)
+            {
+                if (matricesIndices != null && matricesIndices.Any(a => a > 255))
+                {
+                    matricesIndicesExpanded = true;
+                    result = false;
+                }
+                else
+                {
+                    matricesIndices = CreatePackedArray(matricesIndices);
+                }
+            }
+
+            if (matricesIndicesExtra != null && matricesIndicesExtra.Length != 0)
+            {
+                if (matricesIndicesExtra != null && matricesIndicesExtra.Any(a => a > 255))
+                {
+                    matricesIndicesExtraExpanded = true;
+                    result = false;
+                }
+                else
+                {
+                    matricesIndicesExtra = CreatePackedArray(matricesIndicesExtra);
+                }
+            }
+
+            return result;
         }
     }
 }
