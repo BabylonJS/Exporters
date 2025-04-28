@@ -54,10 +54,10 @@ namespace BabylonExport.Entities
         public float[] colors { get; set; }
 
         [DataMember]
-        public int[] matricesIndices { get; set; }
+        public uint[] matricesIndices { get; set; }
 
         [DataMember]
-        public int[] matricesIndicesExtra { get; set; }
+        public uint[] matricesIndicesExtra { get; set; }
 
         [DataMember]
         public float[] matricesWeights { get; set; }
@@ -106,17 +106,17 @@ namespace BabylonExport.Entities
             matricesIndicesExtraExpanded = false;
         }
 
-        private int[] CreatePackedArray(int[] rawArray)
+        private uint[] CreatePackedArray(uint[] rawArray)
         {
-            var arrayReplacement = new int[rawArray.Length / 4];
+            var arrayReplacement = new uint[rawArray.Length / 4];
 
             for (int i = 0; i < arrayReplacement.Length; i++)
             {
                 int rawIndex = i * 4;
-                int bone0 = rawArray[rawIndex];
-                int bone1 = rawArray[rawIndex + 1];
-                int bone2 = rawArray[rawIndex + 2];
-                int bone3 = rawArray[rawIndex + 3];
+                uint bone0 = rawArray[rawIndex];
+                uint bone1 = rawArray[rawIndex + 1];
+                uint bone2 = rawArray[rawIndex + 2];
+                uint bone3 = rawArray[rawIndex + 3];
                 arrayReplacement[i] = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
             }
 

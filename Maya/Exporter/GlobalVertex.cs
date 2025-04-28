@@ -18,9 +18,9 @@ namespace MayaBabylon
         public float[] UV6 { get; set; } // Vec2
         public float[] UV7 { get; set; } // Vec2
         public float[] UV8 { get; set; } // Vec2
-        public int[] BonesIndices { get; set; }
+        public ushort[] BonesIndices { get; set; }
         public float[] Weights { get; set; } // Vec4
-        public int[] BonesIndicesExtra { get; set; }
+        public ushort[] BonesIndicesExtra { get; set; }
         public float[] WeightsExtra { get; set; } // Vec4
         public float[] Color { get; set; } // Vec4
 

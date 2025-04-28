@@ -28,7 +28,7 @@ namespace Max2Babylon
                     bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
                                                                 // translated into a property because it has no parameters
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     RaiseWarning($"Mesh {meshNode.Name} failed to initialize.", 2);
                 }
@@ -148,7 +148,7 @@ namespace Max2Babylon
                 bool initialized = gameMesh.InitializeData; // needed, the property is in fact a method initializing the exporter that has wrongly been auto 
                                                             // translated into a property because it has no parameters
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 RaiseWarning($"Mesh {meshNode.Name} failed to initialize. Mesh is exported as dummy.", 2);
                 return ExportDummy(scene, meshNode, babylonScene);
@@ -494,14 +494,14 @@ namespace Max2Babylon
                 if (skin != null) 
                 {
                     babylonMesh.matricesWeights = vertices.SelectMany(v => v.Weights.ToArray()).ToArray();
-                    babylonMesh.matricesIndices = vertices.SelectMany(v => v.BonesIndices.ToArray()).ToArray();
+                    babylonMesh.matricesIndices = vertices.SelectMany(v => v.BonesIndices.Select(a => (uint)a)).ToArray();
 
                     babylonMesh.numBoneInfluencers = maxNbBones;
 
                     if (maxNbBones > 4)
                     {
                         babylonMesh.matricesWeightsExtra = vertices.SelectMany(v => v.WeightsExtra != null ? v.WeightsExtra.ToArray() : new[] { 0.0f, 0.0f, 0.0f, 0.0f }).ToArray();
-                        babylonMesh.matricesIndicesExtra = vertices.SelectMany(v => v.BonesIndicesExtra.ToArray()).ToArray();
+                        babylonMesh.matricesIndicesExtra = vertices.SelectMany(v => v.BonesIndicesExtra != null ? v.BonesIndicesExtra.Select(a => (uint)a) : new uint[] { 0, 0, 0, 0}).ToArray();
                     }
                 }
 
@@ -776,7 +776,7 @@ namespace Max2Babylon
                     }
                     RaiseMessage(d.Count + " User defined properties", 2);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     RaiseWarning("Failed to parse user defined properties: " + userProp, 2);
                 }
@@ -1330,7 +1330,7 @@ namespace Max2Babylon
             if (skin != null)
             {
                 float[] weight = new float[4] { 0, 0, 0, 0 };
-                int[] bone = new int[4] { 0, 0, 0, 0 };
+                ushort[] bone = new ushort[4] { 0, 0, 0, 0 };
                 var nbBones = skin.GetNumberOfBones(vertexIndex);
                 // Babylon, nor GLTF do not support single bone skeleton, we may add a root node  with no transform.
                 // this is echoing the process into BabylonExporter.Skeleton ExportBones(Skin)
@@ -1346,7 +1346,7 @@ namespace Max2Babylon
                     if (boneWeight <= 0)
                         continue;
 
-                    bone[currentVtxBone] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset; // add optional offset
+                    bone[currentVtxBone] = (ushort)(boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset); // add optional offset
                     weight[currentVtxBone] = skin.GetWeight(vertexIndex, currentSkinBone);
                     ++currentVtxBone;
                 }
@@ -1364,7 +1364,7 @@ namespace Max2Babylon
                 if (currentVtxBone >= 4 && currentSkinBone < nbBones)
                 {
                     weight = new float[4] { 0, 0, 0, 0 };
-                    bone = new int[4] { 0, 0, 0, 0 };
+                    bone = new ushort[4] { 0, 0, 0, 0 };
 
                     // process remaining skin bones until we have a total of 8 bones for this vertex or we run out of skin bones
                     for (; currentSkinBone < nbBones && currentVtxBone < 8; ++currentSkinBone)
@@ -1379,7 +1379,7 @@ namespace Max2Babylon
                             break;
                         }
 
-                        bone[currentVtxBone - 4] = boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset; // add optional offset
+                        bone[currentVtxBone - 4] = (ushort)(boneIds.IndexOf(skin.GetIGameBone(vertexIndex, currentSkinBone).NodeID) + offset); // add optional offset
                         weight[currentVtxBone - 4] = skin.GetWeight(vertexIndex, currentSkinBone);
                         ++currentVtxBone;
                     }

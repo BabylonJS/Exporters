@@ -159,9 +159,10 @@ namespace Babylon2GLTF
                 }
                 if (hasBones)
                 {
-                    globalVertex.BonesIndices = ArrayExtension.SubArrayFromEntity(meshData.matricesIndices, indexVertex, 4); ;
+                    uint[] bonesIndices = ArrayExtension.SubArrayFromEntity(meshData.matricesIndices, indexVertex, 4); ;
+                    globalVertex.BonesIndices = bonesIndices.Select(a => (ushort)a).ToArray();
                     globalVertex.BonesWeights = ArrayExtension.SubArrayFromEntity(meshData.matricesWeights, indexVertex, 4);
-                    void clearBoneUnusedIndices(int[] indices, float[] weights)
+                    void clearBoneUnusedIndices(ushort[] indices, float[] weights)
                     {
                         for (int i = 0; i < indices.Length; ++i)
                         {
@@ -177,7 +178,8 @@ namespace Babylon2GLTF
 
                     if (hasBonesExtra)
                     {
-                        globalVertex.BonesIndicesExtra = ArrayExtension.SubArrayFromEntity(meshData.matricesIndicesExtra, indexVertex, 4);
+                        uint[] bonesIndicesExtra = ArrayExtension.SubArrayFromEntity(meshData.matricesIndicesExtra, indexVertex, 4);
+                        globalVertex.BonesIndicesExtra = bonesIndicesExtra.Select(a => (ushort)a).ToArray();
                         globalVertex.BonesWeightsExtra = ArrayExtension.SubArrayFromEntity(meshData.matricesWeightsExtra, indexVertex, 4);
                         
                         clearBoneUnusedIndices(globalVertex.BonesIndicesExtra, globalVertex.BonesWeightsExtra);
