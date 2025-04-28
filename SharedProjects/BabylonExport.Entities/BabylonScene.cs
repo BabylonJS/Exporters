@@ -223,7 +223,7 @@ namespace BabylonExport.Entities
         {
             bool result = true;
 
-            foreach (var mesh  in meshes)
+            foreach (var mesh in meshes)
             {
                 result &= mesh.TryPackIndexArrays();
             }
