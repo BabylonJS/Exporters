@@ -219,7 +219,7 @@ namespace BabylonExport.Entities
             }
         }
 
-        internal bool PackIndexArrays()
+        internal bool TryPackIndexArrays()
         {
             bool result = true;
 
