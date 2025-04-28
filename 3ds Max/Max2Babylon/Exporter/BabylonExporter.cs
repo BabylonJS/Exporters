@@ -767,6 +767,11 @@ namespace Max2Babylon
             babylonScene.Prepare(false, false);
             if (isBabylonExported)
             {
+                if (!babylonScene.TryPackIndexArrays())
+                {
+                    RaiseWarning("Model has too many skeleton joints. The .babylon file will store joint indices using expanded form, this will only load properly using Babylon.js >= 8.5.0.");
+                }
+                
                 RaiseMessage("Saving to output file");
 
                 var outputFile = Path.Combine(outputBabylonDirectory, outputFileName);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
+
 namespace BabylonExport.Entities
 {
     public interface IBabylonMeshData
@@ -19,11 +20,13 @@ namespace BabylonExport.Entities
         float[] uvs7 { get; set; }
         float[] uvs8 { get; set; }
         float[] colors { get; set; }
-        int[] matricesIndices { get; set; }
-        int[] matricesIndicesExtra { get; set; }
+        uint[] matricesIndices { get; set; }
+        uint[] matricesIndicesExtra { get; set; }
         float[] matricesWeights { get; set; }
         float[] matricesWeightsExtra { get; set; }
         int[] indices { get; set; }
+
+        bool TryPackIndexArrays();
     }
 
     [DataContract]
@@ -84,13 +87,13 @@ namespace BabylonExport.Entities
         public bool hasVertexAlpha { get; set; }
 
         [DataMember]
-        public int[] matricesIndices { get; set; }
+        public uint[] matricesIndices { get; set; }
 
         [DataMember]
         public float[] matricesWeights { get; set; }
 
         [DataMember]
-        public int[] matricesIndicesExtra { get; set; }
+        public uint[] matricesIndicesExtra { get; set; }
 
         [DataMember]
         public float[] matricesWeightsExtra { get; set; }
@@ -137,6 +140,12 @@ namespace BabylonExport.Entities
         [DataMember]
         public float[] lodCoverages { get; set; }
 
+        [DataMember]
+        public bool matricesIndicesExpanded { get; set; }
+
+        [DataMember]
+        public bool matricesIndicesExtraExpanded { get; set; }
+
         public bool isDummy = false;
 
         public List<VertexData> VertexDatas { get; set; } = new List<VertexData>();
@@ -145,6 +154,8 @@ namespace BabylonExport.Entities
         {
             isEnabled = true;
             isVisible = true;
+            matricesIndicesExpanded = false;
+            matricesIndicesExtraExpanded = false;
 
             billboardMode = 0;
 
@@ -178,6 +189,56 @@ namespace BabylonExport.Entities
             // finally, compare the skinning matrix weights within a tolerance threshold.
             var skinDifference = babylonMesh.matricesWeights.Zip(matchingSkinnedMesh.matricesWeights, (first, second) => first - second).ToArray();
             return skinDifference.All(value => Math.Abs(value) < BabylonMesh.SkinningWeightToleranceThreshold);
+        }
+
+        private uint[] CreatePackedArray(uint[] rawArray)
+        {
+            var arrayReplacement = new uint[rawArray.Length / 4];
+
+            for (int i = 0; i < arrayReplacement.Length; i++)
+            {
+                int rawIndex = i * 4;
+                uint bone0 = rawArray[rawIndex];
+                uint bone1 = rawArray[rawIndex + 1];
+                uint bone2 = rawArray[rawIndex + 2];
+                uint bone3 = rawArray[rawIndex + 3];
+                arrayReplacement[i] = (bone3 << 24) | (bone2 << 16) | (bone1 << 8) | bone0;
+            }
+
+            return arrayReplacement;
+        }
+
+        public bool TryPackIndexArrays()
+        {
+            bool result = true;
+
+            if (matricesIndices != null && matricesIndices.Length != 0)
+            {
+                if (matricesIndices != null && matricesIndices.Any(a => a > 255))
+                {
+                    matricesIndicesExpanded = true;
+                    result = false;
+                }
+                else
+                {
+                    matricesIndices = CreatePackedArray(matricesIndices);
+                }
+            }
+
+            if (matricesIndicesExtra != null && matricesIndicesExtra.Length != 0)
+            {
+                if (matricesIndicesExtra != null && matricesIndicesExtra.Any(a => a > 255))
+                {
+                    matricesIndicesExtraExpanded = true;
+                    result = false;
+                }
+                else
+                {
+                    matricesIndicesExtra = CreatePackedArray(matricesIndicesExtra);
+                }
+            }
+
+            return result;
         }
     }
 

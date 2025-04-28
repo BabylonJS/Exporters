@@ -159,20 +159,8 @@ namespace Babylon2GLTF
                 }
                 if (hasBones)
                 {
-                    // In babylon, the 4 bones indices are stored in a single int
-                    // Each bone index is 8-bit offset from the next
-                    ushort[] unpackBabylonBonesToArray (uint babylonBoneIndices)
-                    {
-                        uint bone3 = babylonBoneIndices >> 24;
-                        uint bone2 = (babylonBoneIndices << 8) >> 24;
-                        uint bone1 = (babylonBoneIndices << 16) >> 24;
-                        uint bone0 = (babylonBoneIndices << 24) >> 24;
-                        babylonBoneIndices -= bone0 << 0;
-                        return new ushort[] { (ushort)bone0, (ushort)bone1, (ushort)bone2, (ushort)bone3 };
-                    }
-
-                    uint bonesIndicesMerged = (uint)meshData.matricesIndices[indexVertex];
-                    globalVertex.BonesIndices = unpackBabylonBonesToArray(bonesIndicesMerged);
+                    uint[] bonesIndices = ArrayExtension.SubArrayFromEntity(meshData.matricesIndices, indexVertex, 4); ;
+                    globalVertex.BonesIndices = bonesIndices.Select(a => (ushort)a).ToArray();
                     globalVertex.BonesWeights = ArrayExtension.SubArrayFromEntity(meshData.matricesWeights, indexVertex, 4);
                     void clearBoneUnusedIndices(ushort[] indices, float[] weights)
                     {
@@ -190,8 +178,8 @@ namespace Babylon2GLTF
 
                     if (hasBonesExtra)
                     {
-                        uint bonesIndicesExtraMerged = (uint)meshData.matricesIndicesExtra[indexVertex];
-                        globalVertex.BonesIndicesExtra = unpackBabylonBonesToArray(bonesIndicesExtraMerged);
+                        uint[] bonesIndicesExtra = ArrayExtension.SubArrayFromEntity(meshData.matricesIndicesExtra, indexVertex, 4);
+                        globalVertex.BonesIndicesExtra = bonesIndicesExtra.Select(a => (ushort)a).ToArray();
                         globalVertex.BonesWeightsExtra = ArrayExtension.SubArrayFromEntity(meshData.matricesWeightsExtra, indexVertex, 4);
                         
                         clearBoneUnusedIndices(globalVertex.BonesIndicesExtra, globalVertex.BonesWeightsExtra);
@@ -573,7 +561,7 @@ namespace Babylon2GLTF
                             );
                             meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.JOINTS_0.ToString(), accessorJoints.index);
                             // Populate accessor
-                            List<ushort> joints = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesIndices[0], v.BonesIndices[1], v.BonesIndices[2], v.BonesIndices[3] }).ToList();
+                            List<ushort> joints = globalVerticesSubMesh.SelectMany(v => new[] { (ushort)v.BonesIndices[0], (ushort)v.BonesIndices[1], (ushort)v.BonesIndices[2], (ushort)v.BonesIndices[3] }).ToList();
                             joints.ForEach(n => accessorJoints.bytesList.AddRange(BitConverter.GetBytes(n)));
                             accessorJoints.count = globalVerticesSubMesh.Count;
 
@@ -589,7 +577,7 @@ namespace Babylon2GLTF
                                 );
                                 meshPrimitive.attributes.Add(GLTFMeshPrimitive.Attribute.JOINTS_1.ToString(), accessorJointsExtra.index);
                                 // Populate accessor
-                                List<ushort> jointsExtra = globalVerticesSubMesh.SelectMany(v => new[] { v.BonesIndicesExtra[0], v.BonesIndicesExtra[1], v.BonesIndicesExtra[2], v.BonesIndicesExtra[3] }).ToList();
+                                List<ushort> jointsExtra = globalVerticesSubMesh.SelectMany(v => new[] { (ushort)v.BonesIndicesExtra[0], (ushort)v.BonesIndicesExtra[1], (ushort)v.BonesIndicesExtra[2], (ushort)v.BonesIndicesExtra[3] }).ToList();
                                 jointsExtra.ForEach(n => accessorJointsExtra.bytesList.AddRange(BitConverter.GetBytes(n)));
                                 accessorJointsExtra.count = globalVerticesSubMesh.Count;
                             }
