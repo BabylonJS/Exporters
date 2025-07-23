@@ -9,6 +9,7 @@ version:2
     parameters main rollout:params
     (
         babylonUnlit type:#boolean ui:babylonUnlit_ui
+        babylonUseAlphaFromDiffuseTexture type:#boolean ui:babylonUseAlphaFromDiffuseTexture_ui
         babylonMaxSimultaneousLights type:#integer ui:babylonMaxSimultaneousLights_ui default:4
         babylonTransparencyMode type:#integer default:0
     )
@@ -20,5 +21,6 @@ version:2
         label babylonTransparencyMode_label "Transparency Mode " Align: #Left across:2
         dropdownlist babylonTransparencyMode_dd  items:# ("Opaque","Cutoff","Blend") selection:(babylonTransparencyMode+1) Align: #Right
         on babylonTransparencyMode_dd selected i do babylonTransparencyMode = i-1
-    )    
+        checkbox babylonUseAlphaFromDiffuseTexture_ui "Use alpha from diffuse texture" Align: #Left across:3
+    )
 )
