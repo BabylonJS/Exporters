@@ -77,6 +77,9 @@ namespace BabylonExport.Entities
         [DataMember]
         public bool useGlossinessFromSpecularMapAlpha { get; set; }
 
+        [DataMember]
+        public bool useAlphaFromDiffuseTexture { get; set; }
+
         [DataMember(EmitDefaultValue = false)]
         public float? alphaCutOff { get; set; }
 

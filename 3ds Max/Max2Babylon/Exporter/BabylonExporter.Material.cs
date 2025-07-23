@@ -123,6 +123,7 @@ namespace Max2Babylon
         public const string EnvironmentIntensityStr = "babylonEnvironmentIntensity";
         public const string SpecularIntensityStr = "babylonSpecularIntensity";
         public const string TransparencyModeStr = "babylonTransparencyMode";
+        public const string UseAlphaFromDiffuseTextureStr = "babylonUseAlphaFromDiffuseTexture";
 
         public static IEnumerable<string> ListPrivatePropertyNames()
         {
@@ -135,6 +136,7 @@ namespace Max2Babylon
             yield return EnvironmentIntensityStr;
             yield return SpecularIntensityStr;
             yield return TransparencyModeStr;
+            yield return UseAlphaFromDiffuseTextureStr;
         }
 
         public BabylonCustomAttributeDecorator(IIGameMaterial node) : base(node)
@@ -151,6 +153,7 @@ namespace Max2Babylon
         public float EnvironementIntensity => Properties?.GetFloatProperty(EnvironmentIntensityStr, 1.0f) ?? 1.0f;
         public float SpecularIntensity => Properties?.GetFloatProperty(SpecularIntensityStr, 1.0f) ?? 1.0f;
         public int TransparencyMode => Properties?.GetIntProperty(TransparencyModeStr, 0) ?? 0;
+        public bool UseAlphaFromDiffuseTexture => Properties?.GetBoolProperty(UseAlphaFromDiffuseTextureStr, false) ?? false;
     }
 
     /// <summary>
@@ -337,6 +340,7 @@ namespace Max2Babylon
         private void ExportStandardMaterial(IIGameMaterial materialNode, IIPropertyContainer attributesContainer, IStdMat2 stdMat, BabylonScene babylonScene, BabylonStandardMaterial babylonMaterial)
         {
             bool isTransparencyModeFromBabylonAttributes = false;
+            bool useAlphaFromDiffuseTexture = false;
             if (attributesContainer != null)
             {
                 IIGameProperty babylonTransparencyModeGameProperty = attributesContainer.QueryProperty("babylonTransparencyMode");
@@ -345,7 +349,15 @@ namespace Max2Babylon
                     babylonMaterial.transparencyMode = babylonTransparencyModeGameProperty.GetIntValue();
                     isTransparencyModeFromBabylonAttributes = true;
                 }
+
+                IIGameProperty babylonUseAlphaFromDiffuseTextureGameProperty = attributesContainer.QueryProperty("babylonUseAlphaFromDiffuseTexture");
+                if (babylonUseAlphaFromDiffuseTextureGameProperty != null)
+                {
+                    useAlphaFromDiffuseTexture = babylonUseAlphaFromDiffuseTextureGameProperty.GetBoolValue();
+                }
             }
+
+            babylonMaterial.useAlphaFromDiffuseTexture = useAlphaFromDiffuseTexture;
 
             if (isTransparencyModeFromBabylonAttributes == false || babylonMaterial.transparencyMode != 0)
             {
@@ -548,6 +560,7 @@ namespace Max2Babylon
             excludeAttributes.Add("babylonUnlit");
             excludeAttributes.Add("babylonMaxSimultaneousLights");
             excludeAttributes.Add("babylonTransparencyMode");
+            excludeAttributes.Add("babylonUseAlphaFromDiffuseTexture");
 
             // Export the custom attributes of this material
             babylonMaterial.metadata = ExportExtraAttributes(materialNode, babylonScene, excludeAttributes);
