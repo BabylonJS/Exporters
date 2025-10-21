@@ -4,6 +4,7 @@ using BabylonExport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utilities;
 
 namespace Maya2Babylon
 {
@@ -397,7 +398,6 @@ namespace Maya2Babylon
             return bones.ToArray();
         }
 
-
         /// <summary>
         /// Normalize the value in the dictionary.
         /// </summary>
@@ -408,7 +408,8 @@ namespace Maya2Babylon
             if (intByDouble.Count != 0)
             {
                 double totalValue = intByDouble.Values.Sum();
-                if (totalValue != 1)
+
+                if (!MathUtilities.IsAlmostEqualTo(totalValue, 1.00))
                 {
                     for (int index = 0; index < intByDouble.Count; index++)
                     {
