@@ -6,6 +6,8 @@ namespace Utilities
     static class MathUtilities
     {
         public const float Epsilon = 1E-7f;
+        public const double EpsilonDouble = 1E-7;
+
         public static float GetLerpFactor(float from, float to, float value)
         {
             return (value - from) / (to - from);
@@ -53,6 +55,11 @@ namespace Utilities
         }
 
         public static bool IsAlmostEqualTo(float first, float second, float epsilon = Epsilon)
+        {
+            return Math.Abs(first - second) <= epsilon;
+        }
+
+        public static bool IsAlmostEqualTo(double first, double second, double epsilon = EpsilonDouble)
         {
             return Math.Abs(first - second) <= epsilon;
         }
