@@ -120,6 +120,21 @@ namespace Maya2Babylon
             return true;
         }
 
+        public static bool IsArrayEqual<T>(IEnumerable<T> current, IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                return current == null;
+            }
+
+            if (current == null)
+            {
+                return other == null;
+            }
+
+            return current.SequenceEqual(other);
+        }
+
         public static string toString<T>(this T[] array, bool withBrackets = true)
         {
             if (array == null)

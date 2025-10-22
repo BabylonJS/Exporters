@@ -59,7 +59,7 @@ namespace MayaBabylon
                 return 
                     other.BaseIndex == BaseIndex &&
                     other.Position.IsAlmostEqualTo(Position, Tools.Epsilon) &&
-                    other.Normal.IsAlmostEqualTo(Normal, Tools.Epsilon) &
+                    other.Normal.IsAlmostEqualTo(Normal, Tools.Epsilon) &&
                     other.UV.IsAlmostEqualTo(UV, Tools.Epsilon) &&
                     other.UV2.IsAlmostEqualTo(UV2, Tools.Epsilon) &&
                     other.UV3.IsAlmostEqualTo(UV3, Tools.Epsilon) &&
@@ -71,7 +71,8 @@ namespace MayaBabylon
                     other.Weights.IsAlmostEqualTo(Weights, Tools.Epsilon) &&
                     other.WeightsExtra.IsAlmostEqualTo(WeightsExtra, Tools.Epsilon) &&
                     other.Color.IsAlmostEqualTo(Color, Tools.Epsilon) && 
-                    other.BonesIndices == BonesIndices;
+                    Tools.IsArrayEqual(other.BonesIndices, BonesIndices) &&
+                    Tools.IsArrayEqual(other.BonesIndicesExtra, BonesIndicesExtra);
             }
             return false;
         }
