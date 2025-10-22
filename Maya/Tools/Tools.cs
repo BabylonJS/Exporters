@@ -120,6 +120,34 @@ namespace Maya2Babylon
             return true;
         }
 
+        public static bool IsArrayEqual(ushort[] current, ushort[] other)
+        {
+            if (other == null)
+            {
+                return current == null;
+            }
+
+            if (current == null)
+            {
+                return other == null;
+            }
+
+            if (current.Length != other.Length)
+            {
+                return false;
+            }
+
+            for (int index = 0; index < current.Length; index++)
+            {
+                if (current[index] != other[index])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static string toString<T>(this T[] array, bool withBrackets = true)
         {
             if (array == null)
