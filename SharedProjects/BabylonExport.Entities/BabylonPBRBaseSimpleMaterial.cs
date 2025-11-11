@@ -41,6 +41,7 @@ namespace BabylonExport.Entities
             transparencyMode = original.transparencyMode;
             doubleSided = original.doubleSided;
             clearCoat = original.clearCoat;
+            sheen = original.sheen;
             _unlit = original._unlit;
         }
     
