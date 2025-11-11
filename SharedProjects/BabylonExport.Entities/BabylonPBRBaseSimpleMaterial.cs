@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using System.Windows.Forms;
 
 namespace BabylonExport.Entities
 {
