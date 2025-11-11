@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Windows.Forms;
 
 namespace BabylonExport.Entities
 {
@@ -41,6 +42,7 @@ namespace BabylonExport.Entities
             transparencyMode = original.transparencyMode;
             doubleSided = original.doubleSided;
             clearCoat = original.clearCoat;
+            sheen = original.sheen;
             _unlit = original._unlit;
         }
     
