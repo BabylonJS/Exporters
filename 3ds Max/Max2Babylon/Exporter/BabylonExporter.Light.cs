@@ -185,7 +185,7 @@ namespace Max2Babylon
 
                         foreach (var meshNode in maxScene.NodesListBySuperClass(SClass_ID.Geomobject))
                         {
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027
                             if (meshNode.CastShadows)
 #else
                             if (meshNode.CastShadows == 1)

@@ -21,7 +21,7 @@ namespace Max2Babylon
                 {
                     // TODO - Find another way to detect if modifier is a HairAndFur
 
-#if MAX2024 || MAX2025 || MAX2026
+#if MAX2024 || MAX2025 || MAX2026 || MAX2027
                     var modifierName = modifier.GetName(false);
 #else
                     var modifierName = modifier.Name;
