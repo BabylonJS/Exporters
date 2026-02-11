@@ -145,6 +145,7 @@
     </Compile>
     <Compile Include="Tools\VNormal.cs" />
     <Compile Include="Tools\WebServer.cs" />
+    <Compile Include="ResourceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />

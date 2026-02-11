@@ -990,7 +990,7 @@ namespace Max2Babylon
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::Max2Babylon.Properties.Resources.MaxExporter;
+            this.pictureBox1.Image = ResourceHelper.LoadImage("Max2Babylon.Resources.MaxExporter.png");
             this.pictureBox1.Location = new System.Drawing.Point(6, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(513, 80);

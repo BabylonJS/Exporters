@@ -342,6 +342,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="..\ResourceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Forms\AnimationForm.resx">
@@ -359,6 +360,7 @@
     <EmbeddedResource Include="..\Forms\ExporterForm.resx">
       <Link>Forms\ExporterForm.resx</Link>
       <DependentUpon>ExporterForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\LayerSelector.resx">
       <Link>Forms\LayerSelector.resx</Link>
@@ -415,7 +417,7 @@
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
     <Content Include="Refs\UiViewModels.dll" />
-    <None Include="Resources\MaxExporter.png" />
+    <EmbeddedResource Include="Resources\MaxExporter.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />

@@ -334,6 +334,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="..\ResourceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Forms\AnimationForm.resx">
@@ -405,7 +406,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Refs\Autodesk.Max.dll" />
-    <None Include="Resources\MaxExporter.png" />
+    <EmbeddedResource Include="Resources\MaxExporter.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
