@@ -76,8 +76,10 @@ namespace Max2Babylon
         public static readonly string CreateMenuScript= System.Text.Encoding.UTF8.GetString(Properties.Resources.CreateBabylonMenus);
 
         private static bool registerMenusCallback = false;
-        private GlobalDelegates.Delegate5 m_registerMenuDelegate;
-        private GlobalDelegates.Delegate5 m_registerQuadMenuDelegate;
+
+        // Not Used
+        // private GlobalDelegates.Delegate5 m_registerMenuDelegate;
+        // private GlobalDelegates.Delegate5 m_registerQuadMenuDelegate;
 #else
         IIMenu menu;
         IIMenuItem menuItem;
