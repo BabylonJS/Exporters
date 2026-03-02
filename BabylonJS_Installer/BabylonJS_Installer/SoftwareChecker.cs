@@ -149,7 +149,7 @@ namespace BabylonJS_Installer
                     File.Delete(fileFullPath);
                     this.form.log(file + " deleted.");
                 }
-                catch (UnauthorizedAccessException ex)
+                catch (UnauthorizedAccessException)
                 {
                     needElevatedProgram = true;
                     errors++;
