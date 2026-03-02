@@ -186,7 +186,7 @@ namespace Max2Babylon
             public int Revision;
             public int BuildNumber;
         }
- 
+
         public static VersionNumber GetMaxVersion()
         {
             // https://getcoreinterface.typepad.com/blog/2017/02/querying-the-3ds-max-version.html
@@ -445,9 +445,9 @@ namespace Max2Babylon
             {
                 return false;
             }
-            for(int i=0; i!= value.Length; i++)
+            for (int i = 0; i != value.Length; i++)
             {
-                if( value[i] != other[i])
+                if (value[i] != other[i])
                 {
                     return false;
                 }
@@ -675,7 +675,7 @@ namespace Max2Babylon
         {
             node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, new byte[] { 1 });
         }
-        
+
         public static string GetLocalData(this IAnimatable node)
         {
             var uidData = node.GetAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1);
@@ -696,7 +696,7 @@ namespace Max2Babylon
             {
                 node.RemoveAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1);
             }
-            
+
             if (!string.IsNullOrEmpty(value))
             {
                 node.AddAppDataChunk(Loader.Class_ID, SClass_ID.Basenode, 1, System.Text.Encoding.UTF8.GetBytes(value));
@@ -750,7 +750,7 @@ namespace Max2Babylon
 
             return obj.ConvertToType(0, triObjectClassId) as ITriObject;
         }
-        
+
         public static bool IsAlmostEqualTo(this IPoint4 current, IPoint4 other, float epsilon)
         {
             if (Math.Abs(current.X - other.X) > epsilon)
@@ -844,10 +844,10 @@ namespace Max2Babylon
 
         public static IINode FlattenHierarchy(this IINode node)
         {
-            string activeLayer =$"(LayerManager.getLayerFromName (maxOps.getNodeByHandle {node.Handle}).layer.name).current = true";
+            string activeLayer = $"(LayerManager.getLayerFromName (maxOps.getNodeByHandle {node.Handle}).layer.name).current = true";
             ScriptsUtilities.ExecuteMaxScriptCommand(activeLayer);
             node.SetUserPropBool("babylonjs_flattened", true);
-            node.NodeTree().ToList().ForEach(x => x.SetUserPropBool("babylonjs_flattened",true));
+            node.NodeTree().ToList().ForEach(x => x.SetUserPropBool("babylonjs_flattened", true));
             IClass_ID cid = Loader.Global.Class_ID.Create((uint)BuiltInClassIDA.SPHERE_CLASS_ID, 0);
             object obj = Loader.Core.CreateInstance(SClass_ID.Geomobject, cid as IClass_ID);
             IINode result = Loader.Core.CreateObjectNode((IObject)obj);
@@ -855,7 +855,7 @@ namespace Max2Babylon
             result.SetTMController(node.TMController);
             string scale = $"scale (maxOps.getNodeByHandle {result.Handle}) [0.1,0.1,0.1]";
             ScriptsUtilities.ExecuteMaxScriptCommand(scale);
-            result.ResetTransform(Loader.Core.Time,true);
+            result.ResetTransform(Loader.Core.Time, true);
             string convertToEditablePoly = $"ConvertTo (maxOps.getNodeByHandle {result.Handle}) Editable_Poly";
             ScriptsUtilities.ExecuteMaxScriptCommand(convertToEditablePoly);
 
@@ -869,7 +869,7 @@ namespace Max2Babylon
             IINodeTab toflatten = Loader.Global.NodeTab.Create();
             IINodeTab resultTarget = Loader.Global.NodeTab.Create();
 #endif
-            toflatten.AppendNode(node,false,1);
+            toflatten.AppendNode(node, false, 1);
 
             var offset = Loader.Global.Point3.Create(0, 0, 0);
             Loader.Core.CloneNodes(toflatten, offset, true, CloneType.Copy, null, resultTarget);
@@ -882,7 +882,7 @@ namespace Max2Babylon
 #else
                 IINode n = resultTarget[i];
 #endif
-                Loader.Core.RootNode.AttachChild(n,true);
+                Loader.Core.RootNode.AttachChild(n, true);
                 if (n.GetPolyObjectFromNode() == null)
                 {
                     Loader.Core.DeleteNode(n, false, false);
@@ -892,7 +892,7 @@ namespace Max2Babylon
                 nodeEPoly.EpfnAttach(n, ref undo, result, Loader.Core.Time);
             }
 
-            result.SetUserPropBool("babylonjs_flatteningTemp",true);
+            result.SetUserPropBool("babylonjs_flatteningTemp", true);
 
             return result;
         }
@@ -918,9 +918,9 @@ namespace Max2Babylon
             return false;
         }
 
-#endregion
+        #endregion
 
-#region GUID
+        #region GUID
 
         public static void UnloadAllContainers()
         {
@@ -930,7 +930,7 @@ namespace Max2Babylon
             }
         }
 
-        
+
 
         public static bool IsNodeSelected(this IINode node)
         {
@@ -954,7 +954,7 @@ namespace Max2Babylon
             return node.GetBoolProperty("babylonjs_BakeAnimation");
         }
 
-        public static  IIContainerObject GetContainer(this IList<Guid> guids)
+        public static IIContainerObject GetContainer(this IList<Guid> guids)
         {
             foreach (Guid guid in guids)
             {
@@ -968,7 +968,7 @@ namespace Max2Babylon
             return null;
         }
 
-        public static  IIContainerObject GetContainer(this IList<uint> handles)
+        public static IIContainerObject GetContainer(this IList<uint> handles)
         {
             foreach (uint handle in handles)
             {
@@ -1053,7 +1053,7 @@ namespace Max2Babylon
 
             foreach (IINode x in containerNode.Nodes())
             {
-                IIContainerObject nestedContainerObject =Loader.Global.ContainerManagerInterface.IsContainerNode(x);
+                IIContainerObject nestedContainerObject = Loader.Global.ContainerManagerInterface.IsContainerNode(x);
                 if (nestedContainerObject != null)
                 {
                     if (includeSubContainer)
@@ -1064,7 +1064,7 @@ namespace Max2Babylon
                 else
                 {
                     containersChildren.Add(x);
-                    containersChildren.AddRange(ContainerNodeTree(x,includeSubContainer));
+                    containersChildren.AddRange(ContainerNodeTree(x, includeSubContainer));
                 }
             }
 
@@ -1074,32 +1074,32 @@ namespace Max2Babylon
         private static int GetNextAvailableContainerID(this IIContainerObject container)
         {
             int id = 1;
-            string guidStr = container.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
+            string guidStr = container.ContainerNode.GetStringProperty("babylonjs_GUID", Guid.NewGuid().ToString());
             List<IIContainerObject> containers = GetAllContainers();
             foreach (IIContainerObject iContainerObject in containers)
             {
                 if (container.ContainerNode.Handle == iContainerObject.ContainerNode.Handle) continue;
                 //string compareGuid = iContainerObject.ContainerNode.GetStringProperty("babylonjs_GUID",Guid.NewGuid().ToString());
-                string defaultName = Regex.Replace(iContainerObject.ContainerNode.Name, @"_\d+","");
+                string defaultName = Regex.Replace(iContainerObject.ContainerNode.Name, @"_\d+", "");
                 if (defaultName == container.ContainerNode.Name)
                 {
                     int containerID = 1;
-                    iContainerObject.ContainerNode.GetUserPropInt("babylonjs_ContainerID",ref containerID);
-                    id = Math.Max(id, containerID+1);
+                    iContainerObject.ContainerNode.GetUserPropInt("babylonjs_ContainerID", ref containerID);
+                    id = Math.Max(id, containerID + 1);
                 }
             }
             return id;
-        }   
+        }
 
 
         public static void ResolveContainer(this IIContainerObject container)
         {
             guids = new Dictionary<Guid, IAnimatable>();
             int id = container.GetNextAvailableContainerID();
-            string defaultName = Regex.Replace(container.ContainerNode.Name, @"_\d+","");
+            string defaultName = Regex.Replace(container.ContainerNode.Name, @"_\d+", "");
             container.ContainerNode.Name = defaultName + "_" + id;
-                container.ContainerNode.SetUserPropInt("babylonjs_ContainerID",id);
-           
+            container.ContainerNode.SetUserPropInt("babylonjs_ContainerID", id);
+
         }
 
         public static IINode BabylonAnimationHelper()
@@ -1116,8 +1116,8 @@ namespace Max2Babylon
             if (babylonHelper == null)
             {
                 IDummyObject dummy = Loader.Global.DummyObject.Create();
-                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonAnimationHelper_{Random.Next(0,99999)}");
-                babylonHelper.SetUserPropBool("babylonjs_AnimationHelper",true);
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonAnimationHelper_{Random.Next(0, 99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_AnimationHelper", true);
             }
 
             return babylonHelper;
@@ -1138,11 +1138,11 @@ namespace Max2Babylon
             if (babylonHelper == null)
             {
                 IDummyObject dummy = Loader.Global.DummyObject.Create();
-                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonContainerHelper_{Random.Next(0,99999)}");
-                babylonHelper.SetUserPropBool("babylonjs_ContainerHelper",true);
+                babylonHelper = Loader.Core.CreateObjectNode(dummy, $"BabylonContainerHelper_{Random.Next(0, 99999)}");
+                babylonHelper.SetUserPropBool("babylonjs_ContainerHelper", true);
 
                 Loader.Core.SetQuietMode(true);
-                containerObject.ContainerNode.AttachChild(babylonHelper,false);
+                containerObject.ContainerNode.AttachChild(babylonHelper, false);
                 Loader.Core.SetQuietMode(false);
                 containerObject.AddNodeToContent(babylonHelper);
             }
@@ -1160,7 +1160,7 @@ namespace Max2Babylon
             if (node.Name == "BabylonAnimationHelper")
             {
                 node.Name = $"BabylonContainerHelper_{Random.Next(0, 99999)}";
-                node.SetUserPropBool("babylonjs_ContainerHelper",true);
+                node.SetUserPropBool("babylonjs_ContainerHelper", true);
             }
 
             return node.GetBoolProperty("babylonjs_ContainerHelper", 0);
@@ -1198,7 +1198,7 @@ namespace Max2Babylon
         {
             if (guid.Equals(Guid.Empty)) return null;
             IAnimatable result = null;
-            guids.TryGetValue(guid,out result);
+            guids.TryGetValue(guid, out result);
             return result as IINode;
         }
 
@@ -1211,11 +1211,11 @@ namespace Max2Babylon
             }
         }
 
-        public static Guid GetGuid<T>(this T animatable) where T: IAnimatable
+        public static Guid GetGuid<T>(this T animatable) where T : IAnimatable
         {
             if (animatable is IINode)
             {
-                IINode node = (IINode) animatable;
+                IINode node = (IINode)animatable;
                 return node.GetIINodeGuid();
             }
 
@@ -1317,10 +1317,10 @@ namespace Max2Babylon
             }
             return uid;
         }
-#endregion
+        #endregion
 
 
-#region UserProperties
+        #region UserProperties
 
         public static void SetStringProperty(this IINode node, string propertyName, string state)
         {
@@ -1336,7 +1336,7 @@ namespace Max2Babylon
 
         public static string GetStringProperty(this IINode node, string propertyName, string defaultState)
         {
-            string state = defaultState??string.Empty;
+            string state = defaultState ?? string.Empty;
             if (node.GetUserPropString(propertyName, ref state))
             {
                 return state?.DecodeSpace() ?? defaultState;
@@ -1391,8 +1391,8 @@ namespace Max2Babylon
             string[] propArray = new string[] { };
             string userProp = string.Empty;
             node.GetUserPropBuffer(ref userProp);
-            string[] userProperties = userProp.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
-            return userProperties.Select(item => item.Replace(" = ","=").Split('=')).ToDictionary(s => s[0], s => s[1]);
+            string[] userProperties = userProp.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            return userProperties.Select(item => item.Replace(" = ", "=").Split('=')).ToDictionary(s => s[0], s => s[1]);
         }
 
         public static void SetStringArrayProperty(this IINode node, string propertyName, IEnumerable<string> stringEnumerable, char itemSeparator = ';')
@@ -1403,13 +1403,13 @@ namespace Max2Babylon
             string itemSeparatorString = itemSeparator.ToString();
             foreach (string str in stringEnumerable)
             {
-                 if (str.Contains("="))
+                if (str.Contains("="))
                     throw new Exception("Illegal character(s) in string array. Equal signs are not allowed by the max sdk.");
 
                 if (str.Contains(itemSeparatorString))
                     throw new Exception("Illegal character(s) in string array. Found a separator ('" + itemSeparatorString + "') character.");
             }
- 
+
             StringBuilder builder = new StringBuilder();
 
             bool first = true;
@@ -1425,18 +1425,18 @@ namespace Max2Babylon
         }
 
 
-        public static void SetDictionaryProperty<T1, T2>(this IINode node, string propertyName, IDictionary<T1,T2> stringDictionary)
+        public static void SetDictionaryProperty<T1, T2>(this IINode node, string propertyName, IDictionary<T1, T2> stringDictionary)
         {
             //myProp = "key:value";"key:value"
             StringBuilder builder = new StringBuilder();
-            bool first = true;           
+            bool first = true;
 
             foreach (KeyValuePair<T1, T2> keyValue in stringDictionary)
             {
                 if (first) first = false;
                 else builder.Append(';');
 
-                builder.AppendFormat("{0}:{1}",keyValue.Key.ToString().EncodeSpace(),keyValue.Value.ToString().EncodeSpace());
+                builder.AppendFormat("{0}:{1}", keyValue.Key.ToString().EncodeSpace(), keyValue.Value.ToString().EncodeSpace());
             }
 
             node.SetStringProperty(propertyName, builder.ToString());
@@ -1474,7 +1474,7 @@ namespace Max2Babylon
                 {
                     // simply read all lines and write them back into the ouput
                     // skip the lines that have a matching property name
-                    for(string line = reader.ReadLine(); line != null; line = reader.ReadLine())
+                    for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
                     {
                         string[] propValuePair = line.Split('=');
                         string currentPropertyName = propValuePair[0].Trim();
@@ -1513,20 +1513,20 @@ namespace Max2Babylon
                 if (node.IsAnimated && node.TMController != null)
                 {
                     int lastKey = 0;
-                    if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys>0 )
+                    if (node.TMController.PositionController != null && node.TMController.PositionController.NumKeys > 0)
                     {
                         int posKeys = node.TMController.PositionController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.PositionController.GetKeyTime(posKeys - 1));
-                        
+
                     }
 
-                    if (node.TMController.RotationController != null && node.TMController.RotationController.NumKeys>0)
+                    if (node.TMController.RotationController != null && node.TMController.RotationController.NumKeys > 0)
                     {
                         int rotKeys = node.TMController.RotationController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.RotationController.GetKeyTime(rotKeys - 1));
                     }
 
-                    if (node.TMController.ScaleController != null && node.TMController.ScaleController.NumKeys>0)
+                    if (node.TMController.ScaleController != null && node.TMController.ScaleController.NumKeys > 0)
                     {
                         int scaleKeys = node.TMController.ScaleController.NumKeys;
                         lastKey = Math.Max(lastKey, node.TMController.ScaleController.GetKeyTime(scaleKeys - 1));
@@ -1536,7 +1536,7 @@ namespace Max2Babylon
                 }
             }
 
-            return (endFrame!=0)? endFrame : animationGroup.FrameEnd;
+            return (endFrame != 0) ? endFrame : animationGroup.FrameEnd;
         }
 
         public static bool IsInAnimationGroups(this IINode node, AnimationGroupList animationGroupList)
@@ -1549,10 +1549,10 @@ namespace Max2Babylon
             return false;
         }
 
-#endregion
+        #endregion
 
 
-#region Windows.Forms.Control Serialization
+        #region Windows.Forms.Control Serialization
 
         public static bool PrepareCheckBox(CheckBox checkBox, IINode node, string propertyName, int defaultState = 0)
         {
@@ -1603,7 +1603,7 @@ namespace Max2Babylon
 
         public static void PrepareTextBox(TextBox textBox, List<IINode> nodes, string propertyName, string defaultValue = "")
         {
-            foreach(IINode node in nodes)
+            foreach (IINode node in nodes)
             {
                 PrepareTextBox(textBox, node, propertyName, defaultValue);
             }
@@ -1616,7 +1616,7 @@ namespace Max2Babylon
 
         public static void PrepareComboBox(ComboBox comboBox, IINode node, string propertyName, int defaultValue)
         {
-            comboBox.SelectedIndex = (int)node.GetFloatProperty(propertyName,defaultValue);
+            comboBox.SelectedIndex = (int)node.GetFloatProperty(propertyName, defaultValue);
         }
 
         public static void UpdateCheckBox(CheckBox checkBox, IINode node, string propertyName)
@@ -1676,7 +1676,7 @@ namespace Max2Babylon
         }
         public static void UpdateNumericUpDown(NumericUpDown nup, IINode node, string propertyName)
         {
-           node.SetUserPropFloat(propertyName, (float)nup.Value);
+            node.SetUserPropFloat(propertyName, (float)nup.Value);
         }
 
         public static void PrepareVector3Control(Vector3Control vector3Control, IINode node, string propertyName, float defaultX = 0, float defaultY = 0, float defaultZ = 0)
@@ -1725,10 +1725,10 @@ namespace Max2Babylon
                 UpdateComboBox(comboBox, node, propertyName);
             }
         }
-#endregion
+        #endregion
 
 
-#region Windows.Forms Helpers
+        #region Windows.Forms Helpers
 
         /// <summary>
         /// Enumerates the whole tree, excluding the given node.
@@ -1743,9 +1743,9 @@ namespace Max2Babylon
             }
         }
 
-#endregion
+        #endregion
 
-#region File Path
+        #region File Path
 
         public static string RelativePathStore(string path)
         {
@@ -1762,7 +1762,7 @@ namespace Max2Babylon
                 return path;
             }
 
-            return path.Remove(0,dirName.Length);
+            return path.Remove(0, dirName.Length);
         }
 
         public static string ResolveRelativePath(string path)
@@ -1775,7 +1775,7 @@ namespace Max2Babylon
 
             string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
 
-            if(!path.StartsWith("\\"))
+            if (!path.StartsWith("\\"))
             {
                 return path;
             }
@@ -1787,19 +1787,19 @@ namespace Max2Babylon
         {
             if (!box.IsDisposed)
             {
-            string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
-            box.ResetText();
+                string dirName = Loader.Core.GetDir((int)MaxDirectory.ProjectFolder);
+                box.ResetText();
 
-            box.Text = path;
-            box.ForeColor = Color.Black;
+                box.Text = path;
+                box.ForeColor = Color.Black;
 
-            if (path.StartsWith(dirName))
-            {
-                box.SelectionStart = 0;
-                box.SelectionLength = dirName.Length;
-                box.SelectionColor = Color.Blue;
+                if (path.StartsWith(dirName))
+                {
+                    box.SelectionStart = 0;
+                    box.SelectionLength = dirName.Length;
+                    box.SelectionColor = Color.Blue;
+                }
             }
-        }
         }
 
         public static int GetMaterialProperty(IMtl mat, string propName)
@@ -1830,13 +1830,13 @@ namespace Max2Babylon
         }
 
 
-#endregion
+        #endregion
 
-/// <summary>
-/// Converts the ITab to a more convenient IEnumerable.
-/// </summary>
-public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
-{
+        /// <summary>
+        /// Converts the ITab to a more convenient IEnumerable.
+        /// </summary>
+        public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
+        {
 #if MAX2015
             for (int i = 0; i < tab.Count; i++)
             {
@@ -1848,8 +1848,22 @@ public static IEnumerable<T> ITabToIEnumerable<T>(ITab<T> tab)
         yield return tab[i];
     }
 #endif
-                
-}
-        
+
+        }
+
+        public static bool IsArrayEqual<T>(IEnumerable<T> current, IEnumerable<T> other)
+        {
+            if (other == null)
+            {
+                return current == null;
+            }
+
+            if (current == null)
+            {
+                return other == null;
+            }
+
+            return current.SequenceEqual(other);
+        }
     }
 }

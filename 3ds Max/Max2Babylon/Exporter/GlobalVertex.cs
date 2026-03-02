@@ -145,7 +145,17 @@ namespace Max2Babylon
                 return false;
             }
 
-            return other.BonesIndices == BonesIndices;
+            if (BonesIndices != null && !Tools.IsArrayEqual(other.BonesIndices, BonesIndices))
+            {
+                return false;
+            }
+
+            if (BonesIndicesExtra != null && !Tools.IsArrayEqual(other.BonesIndicesExtra, BonesIndicesExtra))
+            {
+                return false;
+            }
+
+            return  true;
         }
     }
 }
