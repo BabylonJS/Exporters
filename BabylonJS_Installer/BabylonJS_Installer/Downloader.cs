@@ -210,7 +210,7 @@ namespace BabylonJS_Installer
                 HttpResponseMessage response = await client.GetAsync(requestURI);
                 return await response.Content.ReadAsStringAsync();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return string.Empty;
             }
