@@ -137,7 +137,7 @@ namespace Max2Babylon
 
             IINode hierachyRoot = (node != null) ? node : Loader.Core.RootNode;
 
-#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027
+#if MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027_OR_NEWER
             var tobake = Loader.Global.INodeTab.Create();
 #else
             var tobake = Loader.Global.NodeTab.Create();
@@ -649,7 +649,7 @@ namespace Max2Babylon
                 for (var index = 0; index < Loader.Core.NumAtmospheric; index++)
                 {
                     var atmospheric = Loader.Core.GetAtmospheric(index);
-#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027
+#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027_OR_NEWER
                     if (atmospheric != null && atmospheric.Active(0) && atmospheric.ClassName(false) == "Fog")
 #else
                     if (atmospheric != null && atmospheric.Active(0) && atmospheric.ClassName == "Fog")
@@ -1112,7 +1112,7 @@ namespace Max2Babylon
             List<T> list = new List<T>();
             for (int i = 0; i < tab.Count; i++)
             {
-#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027
+#if MAX2017 || MAX2018 || MAX2019 || MAX2020 || MAX2021 || MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027_OR_NEWER
                 var item = tab[i];
 #else
                 var item = tab[new IntPtr(i)];
