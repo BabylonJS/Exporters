@@ -49,7 +49,7 @@ namespace Max2Babylon
             }
         }
 
-#if MAX2022 || MAX2023 || MAX2024 || MAX2025 || MAX2026 || MAX2027_OR_NEWER
+#if MAX2022_OR_NEWER
         public override string NonLocalizedClassName => "Babylon File Exporter";
 #endif
     }

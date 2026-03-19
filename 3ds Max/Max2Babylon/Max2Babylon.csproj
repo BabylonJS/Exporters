@@ -52,104 +52,120 @@
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2020'">
     <MaxVersion>2020</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2020;MAX2020_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2020</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER</DefineConstants>
     <TargetFramework>net47</TargetFramework>    
     <OutputPath>bin\Debug\2020\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2020'">
     <MaxVersion>2020</MaxVersion>    
-    <DefineConstants>TRACE;MAX2020;MAX2020_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2020</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER</DefineConstants>
     <TargetFramework>net47</TargetFramework>    
     <OutputPath>bin\Release\2020\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2021'">
     <MaxVersion>2021</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2021;MAX2021_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2021</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER</DefineConstants>
     <TargetFramework>net47</TargetFramework>    
     <OutputPath>bin\Debug\2021\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2021'">
     <MaxVersion>2021</MaxVersion>    
-    <DefineConstants>TRACE;MAX2021;MAX2021_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2021</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER</DefineConstants>
     <TargetFramework>net47</TargetFramework>    
     <OutputPath>bin\Release\2021\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2022'">
     <MaxVersion>2022</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2022;MAX2022_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2022</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Debug\2022\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2022'">
     <MaxVersion>2022</MaxVersion>    
-    <DefineConstants>TRACE;MAX2022;MAX2022_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2022</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Release\2022\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2023'">
     <MaxVersion>2023</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2023;MAX2023_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2023</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Debug\2023\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2023'">
     <MaxVersion>2023</MaxVersion>    
-    <DefineConstants>TRACE;MAX2023;MAX2023_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2023</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Release\2023\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2024'">
     <MaxVersion>2024</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2024;MAX2024_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2024</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Debug\2024\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2024'">
     <MaxVersion>2024</MaxVersion>    
-    <DefineConstants>TRACE;MAX2024;MAX2024_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2024</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Release\2024\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2025'">
     <MaxVersion>2025</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2025;MAX2025_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2025</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Debug\2025\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2025'">
     <MaxVersion>2025</MaxVersion>    
-    <DefineConstants>TRACE;MAX2025;MAX2025_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2025</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER</DefineConstants>
     <TargetFramework>net48</TargetFramework>    
     <OutputPath>bin\Release\2025\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2026'">
     <MaxVersion>2026</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2026;MAX2026_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2026</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
     <TargetFramework>net8.0-windows</TargetFramework>    
     <OutputPath>bin\Debug\2026\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2026'">
     <MaxVersion>2026</MaxVersion>    
-    <DefineConstants>TRACE;MAX2026;MAX2026_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2026</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
     <TargetFramework>net8.0-windows</TargetFramework>    
     <OutputPath>bin\Release\2026\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2027'">
     <MaxVersion>2027</MaxVersion>    
-    <DefineConstants>TRACE;DEBUG;MAX2027;MAX2027_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2027</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER;MAX2027_OR_NEWER</DefineConstants>
     <TargetFramework>net10.0-windows</TargetFramework>    
     <OutputPath>bin\Debug\2027\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2027'">
     <MaxVersion>2027</MaxVersion>    
-    <DefineConstants>TRACE;MAX2027;MAX2027_OR_NEWER</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;MAX2027</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER;MAX2027_OR_NEWER</DefineConstants>
     <TargetFramework>net10.0-windows</TargetFramework>    
     <OutputPath>bin\Release\2027\</OutputPath>
   </PropertyGroup>
