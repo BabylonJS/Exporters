@@ -89,6 +89,12 @@ namespace BabylonJS_Installer
             this.button_Max23_Delete = new System.Windows.Forms.Button();
             this.button_Max23_Locate = new System.Windows.Forms.Button();
             this.max2023 = new System.Windows.Forms.GroupBox();
+            this.max2022 = new System.Windows.Forms.GroupBox();
+            this.button_Max22_Locate = new System.Windows.Forms.Button();
+            this.button_Max22_Delete = new System.Windows.Forms.Button();
+            this.label_Max22_ExpDate = new System.Windows.Forms.Label();
+            this.button_Max22_Update = new System.Windows.Forms.Button();
+            this.label_Max22_Info = new System.Windows.Forms.Label();
             this.mainTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -104,6 +110,7 @@ namespace BabylonJS_Installer
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bjs_logo)).BeginInit();
             this.max2023.SuspendLayout();
+            this.max2022.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainTabControl
@@ -145,7 +152,8 @@ namespace BabylonJS_Installer
             this.panel1.Controls.Add(this.max2025);
             this.panel1.Controls.Add(this.max2024);
             this.panel1.Controls.Add(this.max2023);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Controls.Add(this.max2022);
+            this.panel1.Location= new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(533, 436);
@@ -788,6 +796,72 @@ namespace BabylonJS_Installer
             this.max2023.TabStop = false;
             this.max2023.Text = "3ds Max 2023";
             // 
+            // max2022
+            // 
+            this.max2022.Controls.Add(this.button_Max22_Locate);
+            this.max2022.Controls.Add(this.button_Max22_Delete);
+            this.max2022.Controls.Add(this.label_Max22_ExpDate);
+            this.max2022.Controls.Add(this.button_Max22_Update);
+            this.max2022.Controls.Add(this.label_Max22_Info);
+            this.max2022.Location = new System.Drawing.Point(4, 356);
+            this.max2022.Name = "max2022";
+            this.max2022.Size = new System.Drawing.Size(506, 80);
+            this.max2022.TabIndex = 7;
+            this.max2022.TabStop = false;
+            this.max2022.Text = "3ds Max 2022";
+            // 
+            // button_Max22_Locate
+            // 
+            this.button_Max22_Locate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_Max22_Locate.Location = new System.Drawing.Point(352, 50);
+            this.button_Max22_Locate.Name = "button_Max22_Locate";
+            this.button_Max22_Locate.Size = new System.Drawing.Size(71, 25);
+            this.button_Max22_Locate.TabIndex = 1;
+            this.button_Max22_Locate.Text = "(re)Locate";
+            this.button_Max22_Locate.UseVisualStyleBackColor = true;
+            this.button_Max22_Locate.Click += new System.EventHandler(this.Button_Max22_Locate_Click);
+            // 
+            // button_Max22_Delete
+            // 
+            this.button_Max22_Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_Max22_Delete.Location = new System.Drawing.Point(430, 50);
+            this.button_Max22_Delete.Name = "button_Max22_Delete";
+            this.button_Max22_Delete.Size = new System.Drawing.Size(71, 25);
+            this.button_Max22_Delete.TabIndex = 3;
+            this.button_Max22_Delete.Text = "Uninstall";
+            this.button_Max22_Delete.UseVisualStyleBackColor = true;
+            this.button_Max22_Delete.Click += new System.EventHandler(this.Button_Max22_Delete_Click);
+            // 
+            // label_Max22_ExpDate
+            // 
+            this.label_Max22_ExpDate.AutoSize = true;
+            this.label_Max22_ExpDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.label_Max22_ExpDate.Location = new System.Drawing.Point(6, 50);
+            this.label_Max22_ExpDate.Name = "label_Max22_ExpDate";
+            this.label_Max22_ExpDate.Size = new System.Drawing.Size(53, 15);
+            this.label_Max22_ExpDate.TabIndex = 5;
+            this.label_Max22_ExpDate.Text = "Exporter";
+            // 
+            // button_Max22_Update
+            // 
+            this.button_Max22_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
+            this.button_Max22_Update.Location = new System.Drawing.Point(275, 50);
+            this.button_Max22_Update.Name = "button_Max22_Update";
+            this.button_Max22_Update.Size = new System.Drawing.Size(71, 25);
+            this.button_Max22_Update.TabIndex = 2;
+            this.button_Max22_Update.Text = "Update";
+            this.button_Max22_Update.UseVisualStyleBackColor = true;
+            this.button_Max22_Update.Click += new System.EventHandler(this.Button_Max22_Update_Click);
+            // 
+            // label_Max22_Info
+            // 
+            this.label_Max22_Info.AutoSize = true;
+            this.label_Max22_Info.Location = new System.Drawing.Point(6, 20);
+            this.label_Max22_Info.Name = "label_Max22_Info";
+            this.label_Max22_Info.Size = new System.Drawing.Size(165, 18);
+            this.label_Max22_Info.TabIndex = 3;
+            this.label_Max22_Info.Text = "No installation detected.";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -830,6 +904,8 @@ namespace BabylonJS_Installer
             ((System.ComponentModel.ISupportInitialize)(this.bjs_logo)).EndInit();
             this.max2023.ResumeLayout(false);
             this.max2023.PerformLayout();
+            this.max2022.ResumeLayout(false);
+            this.max2022.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -901,6 +977,13 @@ namespace BabylonJS_Installer
         private System.Windows.Forms.Label label_Max23_ExpDate;
         private System.Windows.Forms.Button button_Max23_Update;
         private System.Windows.Forms.Label label_Max23_Info;
+
+        private System.Windows.Forms.GroupBox max2022;
+        private System.Windows.Forms.Button button_Max22_Locate;
+        private System.Windows.Forms.Button button_Max22_Delete;
+        private System.Windows.Forms.Label label_Max22_ExpDate;
+        private System.Windows.Forms.Button button_Max22_Update;
+        private System.Windows.Forms.Label label_Max22_Info;
     }
 }
 
