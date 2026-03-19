@@ -73,7 +73,7 @@ namespace Max2Babylon
 
 #if MAX2025 || MAX2026 || MAX2027_OR_NEWER
         // Placeholder
-        public static readonly string CreateMenuScript= System.Text.Encoding.UTF8.GetString(Properties.Resources.CreateBabylonMenus);
+        public static readonly string CreateMenuScript= System.Text.Encoding.UTF8.GetString(Resources.Resources.CreateBabylonMenus);
 
         private static bool registerMenusCallback = false;
 

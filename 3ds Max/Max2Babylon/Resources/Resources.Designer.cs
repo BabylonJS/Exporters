@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Max2Babylon.Properties {
+namespace Max2Babylon.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Max2Babylon.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Max2Babylon.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Max2Babylon.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -80,6 +80,16 @@ namespace Max2Babylon.Properties {
             }
         }
         
+		/// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] CreateBabylonMenus {
+            get {
+                object obj = ResourceManager.GetObject("CreateBabylonMenus", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+		
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>

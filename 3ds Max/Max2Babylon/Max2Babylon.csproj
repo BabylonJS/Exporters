@@ -1,19 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Max2Babylon</RootNamespace>
     <AssemblyName>Max2Babylon</AssemblyName>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <OutputType>Library</OutputType>
+    <UseWindowsForms>true</UseWindowsForms>
     <RestorePackages>true</RestorePackages>
-    <Configurations>Debug;Profile;Release</Configurations>
-	<Platforms>AnyCPU;x64;x86</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Configurations>Debug;Release;
+      Debug_MAX2027;Release_MAX2027;
+      Debug_MAX2026;Release_MAX2026;
+      Debug_MAX2025;Release_MAX2025;
+      Debug_MAX2024;Release_MAX2024;
+      Debug_MAX2023;Release_MAX2023;
+      Debug_MAX2022;Release_MAX2022;
+      Debug_MAX2021;Release_MAX2021;
+      Debug_MAX2020;Release_MAX2020;
+    </Configurations>
+	  <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <!--keep output foldername the same structure as with legacy vcproj-->
-    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
-	<!-- ensure nuget packetreference files are copied to output -->
-	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!--dont add framwork to output foldername-->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <!-- ensure nuget packetreference files are copied to output -->
+	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <!-- from legacy Assembly info -->
@@ -24,30 +33,138 @@
     <FileVersion>1.0.0.0</FileVersion>
     <ComVisible>false</ComVisible>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;DEBUG;MAX2027;MAX2027_OR_NEWER</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants>TRACE;MAX2027;MAX2027_OR_NEWER</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DefineConstants>TRACE;DEBUG;MAX2027;MAX2027_OR_NEWER</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <DefineConstants>TRACE;MAX2027;MAX2027_OR_NEWER</DefineConstants>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-	<PropertyGroup>
-	  <!-- disable formdesigner serialization error  -->
+
+  <PropertyGroup>
+    <!-- disable formdesigner serialization error  -->
     <NoWarn>$(NoWarn);WFO1000</NoWarn>
-		<!-- disable no official NET10 support in VS2022 warning -->
-		<NoWarn>$(NoWarn);NETSDK1233</NoWarn>
+    <!-- disable no official NET10 support in VS2022 warning -->
+    <NoWarn>$(NoWarn);NETSDK1233</NoWarn>
   </PropertyGroup>
+  
+  <!--Conditionals-->
+  <PropertyGroup Condition="$(Configuration.ToLower().Contains('debug'))">
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.ToLower().Contains('release'))">
+    <DefineConstants>$(DefineConstants);RELEASE;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2020'">
+    <MaxVersion>2020</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2020;MAX2020_OR_NEWER</DefineConstants>
+    <TargetFramework>net47</TargetFramework>    
+    <OutputPath>bin\Debug\2020\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2020'">
+    <MaxVersion>2020</MaxVersion>    
+    <DefineConstants>TRACE;MAX2020;MAX2020_OR_NEWER</DefineConstants>
+    <TargetFramework>net47</TargetFramework>    
+    <OutputPath>bin\Release\2020\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2021'">
+    <MaxVersion>2021</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2021;MAX2021_OR_NEWER</DefineConstants>
+    <TargetFramework>net47</TargetFramework>    
+    <OutputPath>bin\Debug\2021\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2021'">
+    <MaxVersion>2021</MaxVersion>    
+    <DefineConstants>TRACE;MAX2021;MAX2021_OR_NEWER</DefineConstants>
+    <TargetFramework>net47</TargetFramework>    
+    <OutputPath>bin\Release\2021\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2022'">
+    <MaxVersion>2022</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2022;MAX2022_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Debug\2022\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2022'">
+    <MaxVersion>2022</MaxVersion>    
+    <DefineConstants>TRACE;MAX2022;MAX2022_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Release\2022\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2023'">
+    <MaxVersion>2023</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2023;MAX2023_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Debug\2023\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2023'">
+    <MaxVersion>2023</MaxVersion>    
+    <DefineConstants>TRACE;MAX2023;MAX2023_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Release\2023\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2024'">
+    <MaxVersion>2024</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2024;MAX2024_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Debug\2024\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2024'">
+    <MaxVersion>2024</MaxVersion>    
+    <DefineConstants>TRACE;MAX2024;MAX2024_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Release\2024\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2025'">
+    <MaxVersion>2025</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2025;MAX2025_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Debug\2025\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2025'">
+    <MaxVersion>2025</MaxVersion>    
+    <DefineConstants>TRACE;MAX2025;MAX2025_OR_NEWER</DefineConstants>
+    <TargetFramework>net48</TargetFramework>    
+    <OutputPath>bin\Release\2025\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2026'">
+    <MaxVersion>2026</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2026;MAX2026_OR_NEWER</DefineConstants>
+    <TargetFramework>net8.0-windows</TargetFramework>    
+    <OutputPath>bin\Debug\2026\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2026'">
+    <MaxVersion>2026</MaxVersion>    
+    <DefineConstants>TRACE;MAX2026;MAX2026_OR_NEWER</DefineConstants>
+    <TargetFramework>net8.0-windows</TargetFramework>    
+    <OutputPath>bin\Release\2026\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2027'">
+    <MaxVersion>2027</MaxVersion>    
+    <DefineConstants>TRACE;DEBUG;MAX2027;MAX2027_OR_NEWER</DefineConstants>
+    <TargetFramework>net10.0-windows</TargetFramework>    
+    <OutputPath>bin\Debug\2027\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2027'">
+    <MaxVersion>2027</MaxVersion>    
+    <DefineConstants>TRACE;MAX2027;MAX2027_OR_NEWER</DefineConstants>
+    <TargetFramework>net10.0-windows</TargetFramework>    
+    <OutputPath>bin\Release\2027\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MaxVersion Condition="'$(MaxVersion)' == ''">2026</MaxVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\BUMP_MAP_CAT_DEF.ms" />
+    <None Remove="Scripts\CreateBabylonMenus.ms" />
+    <None Remove="Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms" />
+    <None Remove="Scripts\STANDARD_MATERIAL_CAT_DEF.ms" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAPICodePack-Core" Version="1.1.0.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0.0" />
@@ -58,49 +175,32 @@
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Scripts\ARNOLD_MATERIAL_CAT_DEF.ms">
-      <Link>Scripts\ARNOLD_MATERIAL_CAT_DEF.ms</Link>
-    </None>
-    <None Include="..\Scripts\BUMP_MAP_CAT_DEF.ms">
-      <Link>Scripts\BUMP_MAP_CAT_DEF.ms</Link>
-    </None>
-    <None Include="..\Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms">
-      <Link>Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms</Link>
-    </None>
-    <None Include="..\Scripts\STANDARD_MATERIAL_CAT_DEF.ms">
-      <Link>Scripts\STANDARD_MATERIAL_CAT_DEF.ms</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web" />
     <Reference Include="Autodesk.Max">
-      <HintPath>..\2027\Refs\Autodesk.Max.dll</HintPath>
-			<Private>False</Private>			
+      <HintPath>..\Refs\$(MaxVersion)\Autodesk.Max.dll</HintPath>
+	  <Private>False</Private>			
     </Reference>
     <Reference Include="ExplorerFramework">
-      <HintPath>..\2027\Refs\ExplorerFramework.dll</HintPath>
-			<Private>False</Private>			
+      <HintPath>..\Refs\$(MaxVersion)\ExplorerFramework.dll</HintPath>
+	  <Private>False</Private>			
     </Reference>
     <Reference Include="ManagedServices">
-      <HintPath>..\2027\Refs\ManagedServices.dll</HintPath>
+      <HintPath>..\Refs\$(MaxVersion)\ManagedServices.dll</HintPath>
 			<Private>False</Private>			
     </Reference>
     <Reference Include="MaxCustomControls">
-      <HintPath>..\2027\Refs\MaxCustomControls.dll</HintPath>
+      <HintPath>..\Refs\$(MaxVersion)\MaxCustomControls.dll</HintPath>
 			<Private>False</Private>			
     </Reference>
     <Reference Include="SceneExplorer">
-      <HintPath>..\2027\Refs\SceneExplorer.dll</HintPath>
+      <HintPath>..\Refs\$(MaxVersion)\SceneExplorer.dll</HintPath>
 			<Private>False</Private>
     </Reference>
-    <Reference Include="UiViewModels">
-      <HintPath>..\2027\Refs\UiViewModels.dll</HintPath>
+    <Reference Include="UiViewModels" Condition="$([System.Int32]::Parse('$(MaxVersion)')) &gt;= 2025">
+      <HintPath>..\Refs\$(MaxVersion)\UiViewModels.dll</HintPath>
 			<Private>False</Private>			
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="GDImageLibrary">
       <HintPath>..\Refs\GDImageLibrary.dll</HintPath>
     </Reference>
@@ -111,13 +211,22 @@
       <HintPath>..\Refs\TQ.Texture.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\ARNOLD_MATERIAL_CAT_DEF.ms" />
+    <EmbeddedResource Include="Scripts\BUMP_MAP_CAT_DEF.ms" />
+    <EmbeddedResource Include="Scripts\PHYSICAL_MATERIAL_CAT_DEF.ms" />
+    <EmbeddedResource Include="Scripts\STANDARD_MATERIAL_CAT_DEF.ms" />
+    <EmbeddedResource Include="Scripts\CreateBabylonMenus.ms" />
+    <EmbeddedResource Include="Resources\MaxExporter.png" />
+  </ItemGroup>
+  
   <Import Project="..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems" Label="Shared" />
   <Import Project="..\..\SharedProjects\Utilities\Extensions.projitems" Label="Shared" />
   <PropertyGroup>
-		<PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" $(TargetDir) "$(Configuration)" 2027 </PostBuildEvent>
-		<PreBuildEvent>call "$(SolutionDir)Max2Babylon\OnPreBuild.bat" "$(Configuration)"</PreBuildEvent>
+	  <PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" $(TargetDir) "$(Configuration)" $(MaxVersion) </PostBuildEvent>
+	  <PreBuildEvent>call "$(SolutionDir)Max2Babylon\OnPreBuild.bat" "$(Configuration)"</PreBuildEvent>
   </PropertyGroup>
 </Project>
