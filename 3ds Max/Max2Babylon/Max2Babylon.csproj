@@ -13,8 +13,6 @@
       Debug_MAX2024;Release_MAX2024;
       Debug_MAX2023;Release_MAX2023;
       Debug_MAX2022;Release_MAX2022;
-      Debug_MAX2021;Release_MAX2021;
-      Debug_MAX2020;Release_MAX2020;
     </Configurations>
 	  <Platforms>x64</Platforms>
     <PlatformTarget>x64</PlatformTarget>
@@ -48,36 +46,6 @@
 
   <PropertyGroup Condition="$(Configuration.ToLower().Contains('release'))">
     <DefineConstants>$(DefineConstants);RELEASE;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2020'">
-    <MaxVersion>2020</MaxVersion>    
-    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2020</DefineConstants>
-    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER</DefineConstants>
-    <TargetFramework>net47</TargetFramework>    
-    <OutputPath>bin\Debug\2020\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2020'">
-    <MaxVersion>2020</MaxVersion>    
-    <DefineConstants>$(DefineConstants);TRACE;MAX2020</DefineConstants>
-    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER</DefineConstants>
-    <TargetFramework>net47</TargetFramework>    
-    <OutputPath>bin\Release\2020\</OutputPath>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2021'">
-    <MaxVersion>2021</MaxVersion>    
-    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2021</DefineConstants>
-    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER</DefineConstants>
-    <TargetFramework>net47</TargetFramework>    
-    <OutputPath>bin\Debug\2021\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2021'">
-    <MaxVersion>2021</MaxVersion>    
-    <DefineConstants>$(DefineConstants);TRACE;MAX2021</DefineConstants>
-    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER</DefineConstants>
-    <TargetFramework>net47</TargetFramework>    
-    <OutputPath>bin\Release\2021\</OutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2022'">
