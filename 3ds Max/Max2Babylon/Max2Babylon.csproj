@@ -140,6 +140,11 @@
 
   <PropertyGroup>
     <MaxVersion Condition="'$(MaxVersion)' == ''">2026</MaxVersion>
+      <!--Missing Max version postfix ? -> let "Debug" or "Release" configurations default to 2026 build-->
+      <DefineConstants>$(DefineConstants);TRACE;MAX2026</DefineConstants>
+      <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
+      <TargetFramework>net8.0-windows</TargetFramework>
+      <OutputPath>bin\$(Configuration)\2026\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
