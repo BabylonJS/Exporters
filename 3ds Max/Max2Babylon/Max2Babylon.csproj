@@ -107,28 +107,20 @@
     <OutputPath>bin\Release\2025\</OutputPath>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2026'">
+	<!--Default Config-->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2026' or '$(Configuration)'=='Debug'">
     <MaxVersion>2026</MaxVersion>    
     <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2026</DefineConstants>
     <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
     <TargetFramework>net8.0-windows</TargetFramework>    
     <OutputPath>bin\Debug\2026\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2026'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2026' or '$(Configuration)'=='Release'">
     <MaxVersion>2026</MaxVersion>    
     <DefineConstants>$(DefineConstants);TRACE;MAX2026</DefineConstants>
     <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
     <TargetFramework>net8.0-windows</TargetFramework>    
     <OutputPath>bin\Release\2026\</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <MaxVersion Condition="'$(MaxVersion)' == ''">2026</MaxVersion>
-      <!--Missing Max version postfix ? -> let "Debug" or "Release" configurations default to 2026 build-->
-      <DefineConstants>$(DefineConstants);TRACE;MAX2026</DefineConstants>
-      <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
-      <TargetFramework>net8.0-windows</TargetFramework>
-      <OutputPath>bin\$(Configuration)\2026\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -201,7 +193,7 @@
   <Import Project="..\..\SharedProjects\Babylon2GLTF\Babylon2GLTF.projitems" Label="Shared" />
   <Import Project="..\..\SharedProjects\Utilities\Extensions.projitems" Label="Shared" />
   <PropertyGroup>
-	  <PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" $(TargetDir) "$(Configuration)" $(MaxVersion) </PostBuildEvent>
+	  <PostBuildEvent>call "$(SolutionDir)Max2Babylon\OnPostBuild.bat" $(TargetDir) "$(Configuration)" $(MaxVersion)</PostBuildEvent>
 	  <PreBuildEvent>call "$(SolutionDir)Max2Babylon\OnPreBuild.bat" "$(Configuration)"</PreBuildEvent>
   </PropertyGroup>
 </Project>
