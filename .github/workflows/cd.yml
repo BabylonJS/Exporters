@@ -1,0 +1,151 @@
+name: CD Release
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build All
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+        with:
+          nuget-version: '6.x'
+
+      - name: Version Update - Max
+        shell: pwsh
+        run: |
+          $content = Get-Content -Path '3ds Max\Max2Babylon\Exporter\BabylonExporter.cs' -Raw
+          $content = $content -replace 'Custom\.Build\.Version', "${{ github.run_number }}"
+          Set-Content -Path '3ds Max\Max2Babylon\Exporter\BabylonExporter.cs' -Value $content
+
+      - name: Version Update - Maya
+        shell: pwsh
+        run: |
+          $content = Get-Content -Path 'Maya\Exporter\BabylonExporter.cs' -Raw
+          $content = $content -replace 'Custom\.Build\.Version', "${{ github.run_number }}"
+          Set-Content -Path 'Maya\Exporter\BabylonExporter.cs' -Value $content
+
+      # ── 3ds Max ──
+      - name: NuGet Restore - Max
+        run: nuget restore "3ds Max\Max2Babylon.sln"
+
+      - name: Build Max
+        run: msbuild "3ds Max\Max2Babylon.sln" /p:Configuration=Release /p:Platform=x64 /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+
+      # ── Maya ──
+      - name: NuGet Restore - Maya
+        run: nuget restore "Maya\Maya2Babylon.sln"
+
+      - name: Build Maya
+        run: msbuild "Maya\Maya2Babylon.sln" /p:Configuration=Release "/p:Platform=Any CPU" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+
+      - name: Copy Maya Templates
+        shell: pwsh
+        run: |
+          foreach ($year in @('2020','2022','2023','2024')) {
+            $dest = "Maya\bin\Release\$year"
+            if (Test-Path $dest) {
+              Copy-Item -Path "Maya\AETemplates\*" -Destination $dest -Force -ErrorAction SilentlyContinue
+              Copy-Item -Path "Maya\NETemplates\*" -Destination $dest -Force -ErrorAction SilentlyContinue
+            }
+          }
+
+      # ── Installer ──
+      - name: NuGet Restore - Installer
+        run: nuget restore "BabylonJS_Installer\BabylonJS_Installer.sln"
+
+      - name: Build Installer
+        run: msbuild "BabylonJS_Installer\BabylonJS_Installer.sln" /p:Configuration=Release "/p:Platform=Any CPU" /p:PostBuildEvent= /v:minimal
+
+      # ── Package release zips ──
+      - name: Package Artifacts
+        shell: pwsh
+        run: |
+          $staging = "release-staging"
+          New-Item -ItemType Directory -Path $staging -Force | Out-Null
+
+          # Max zips
+          foreach ($year in @('2022','2023','2024','2025','2026')) {
+            $src = "3ds Max\Max2Babylon\$year\bin\Release"
+            if (Test-Path $src) {
+              Compress-Archive -Path "$src\*" -DestinationPath "$staging\Max_$year.zip" -Force
+            }
+          }
+
+          # Maya zips
+          foreach ($year in @('2020','2022','2023','2024')) {
+            $src = "Maya\bin\Release\$year"
+            if (Test-Path $src) {
+              Compress-Archive -Path "$src\*" -DestinationPath "$staging\Maya_$year.zip" -Force
+            }
+          }
+
+          # Installer zip
+          $installerDir = "BabylonJS_Installer\BabylonJS_Installer\bin\Release"
+          if (Test-Path $installerDir) {
+            Compress-Archive -Path "$installerDir\BabylonJS_Exporters.exe" -DestinationPath "$staging\Installer.zip" -Force
+          }
+
+          # Print manifest
+          Get-ChildItem $staging -Filter *.zip | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+            $size = [math]::Round($_.Length / 1KB)
+            Write-Host "$($_.Name)  sha256:$hash  ${size} KB"
+          }
+
+      # ── Create Release ──
+      - name: Generate Release Info
+        id: release_info
+        shell: pwsh
+        run: |
+          $date = Get-Date -Format "yyyyMMdd"
+          $patch = "${{ github.run_number }}"
+          $tag = "v${date}.${patch}"
+          $title = "CD Release ${date}.${patch}"
+
+          # Get commits since last tag
+          $lastTag = git describe --tags --abbrev=0 2>$null
+          if ($lastTag) {
+            $log = git log --pretty=format:"- %s (%h)" "${lastTag}..HEAD" | Out-String
+          } else {
+            $log = git log --pretty=format:"- %s (%h)" -20 | Out-String
+          }
+
+          $notes = "## What's Changed`n`n${log}"
+
+          # Write outputs
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "title=$title" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+          # Write body to a file to preserve multiline
+          $notes | Out-File -FilePath "release-notes.md" -Encoding utf8
+
+      - name: Create Tag
+        run: |
+          git tag ${{ steps.release_info.outputs.tag }}
+          git push origin ${{ steps.release_info.outputs.tag }}
+
+      - name: Create GitHub Release and Upload Assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.release_info.outputs.tag }}"
+          $title = "${{ steps.release_info.outputs.title }}"
+          $assets = Get-ChildItem "release-staging\*.zip" | ForEach-Object { $_.FullName }
+
+          gh release create $tag @assets --title $title --notes-file "release-notes.md" --latest
