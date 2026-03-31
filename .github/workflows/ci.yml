@@ -9,6 +9,8 @@ on:
 env:
   BuildConfiguration: Release
   BuildPlatform: Any CPU
+  MAX_VERSIONS: '2022 2023 2024 2025 2026'
+  MAYA_VERSIONS: '2020 2022 2023 2024'
 
 jobs:
   build-max:
@@ -76,32 +78,16 @@ jobs:
       - name: Build
         run: msbuild "Maya\Maya2Babylon.sln" /p:Configuration=${{ env.BuildConfiguration }} "/p:Platform=${{ env.BuildPlatform }}" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
 
-      - name: Copy Templates to 2022
+      - name: Copy Maya Templates
         if: always()
         shell: pwsh
         run: |
-          $dest = "${{ github.workspace }}\artifacts\Maya\bin\Release\2022"
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          Copy-Item -Path "Maya\AETemplates\**\*.mel" -Destination $dest -Force -ErrorAction SilentlyContinue
-          Copy-Item -Path "Maya\NETemplates\**\*.xml" -Destination $dest -Force -ErrorAction SilentlyContinue
-
-      - name: Copy Templates to 2023
-        if: always()
-        shell: pwsh
-        run: |
-          $dest = "${{ github.workspace }}\artifacts\Maya\bin\Release\2023"
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          Copy-Item -Path "Maya\AETemplates\**\*.mel" -Destination $dest -Force -ErrorAction SilentlyContinue
-          Copy-Item -Path "Maya\NETemplates\**\*.xml" -Destination $dest -Force -ErrorAction SilentlyContinue
-
-      - name: Copy Templates to 2024
-        if: always()
-        shell: pwsh
-        run: |
-          $dest = "${{ github.workspace }}\artifacts\Maya\bin\Release\2024"
-          New-Item -ItemType Directory -Path $dest -Force | Out-Null
-          Copy-Item -Path "Maya\AETemplates\**\*.mel" -Destination $dest -Force -ErrorAction SilentlyContinue
-          Copy-Item -Path "Maya\NETemplates\**\*.xml" -Destination $dest -Force -ErrorAction SilentlyContinue
+          foreach ($year in "${{ env.MAYA_VERSIONS }}".Split(' ')) {
+            $dest = "${{ github.workspace }}\artifacts\Maya\bin\Release\$year"
+            New-Item -ItemType Directory -Path $dest -Force | Out-Null
+            Copy-Item -Path "Maya\AETemplates\**\*.mel" -Destination $dest -Force -ErrorAction SilentlyContinue
+            Copy-Item -Path "Maya\NETemplates\**\*.xml" -Destination $dest -Force -ErrorAction SilentlyContinue
+          }
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
