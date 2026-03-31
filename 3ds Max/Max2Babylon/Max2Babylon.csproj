@@ -7,6 +7,7 @@
     <RestorePackages>true</RestorePackages>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release;
+      Debug_MAX2027;Release_MAX2027;
       Debug_MAX2026;Release_MAX2026;
       Debug_MAX2025;Release_MAX2025;
       Debug_MAX2024;Release_MAX2024;
@@ -121,6 +122,21 @@
     <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER</DefineConstants>
     <TargetFramework>net8.0-windows</TargetFramework>    
     <OutputPath>bin\Release\2026\</OutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug_MAX2027'">
+    <MaxVersion>2027</MaxVersion>    
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;MAX2027</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER;MAX2027_OR_NEWER</DefineConstants>
+    <TargetFramework>net10.0-windows</TargetFramework>    
+    <OutputPath>bin\Debug\2027\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release_MAX2027'">
+    <MaxVersion>2027</MaxVersion>    
+    <DefineConstants>$(DefineConstants);TRACE;MAX2027</DefineConstants>
+    <DefineConstants>$(DefineConstants);MAX2020_OR_NEWER;MAX2021_OR_NEWER;MAX2022_OR_NEWER;MAX2023_OR_NEWER;MAX2024_OR_NEWER;MAX2025_OR_NEWER;MAX2026_OR_NEWER;MAX2027_OR_NEWER</DefineConstants>
+    <TargetFramework>net10.0-windows</TargetFramework>    
+    <OutputPath>bin\Release\2027\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
