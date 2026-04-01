@@ -101,7 +101,7 @@ jobs:
           # Installer zip
           $installerDir = "BabylonJS_Installer\BabylonJS_Installer\bin\Release"
           if (Test-Path $installerDir) {
-            Compress-Archive -Path "$installerDir\BabylonJS_Exporters.exe" -DestinationPath "$staging\Installer.zip" -Force
+            Compress-Archive -Path "$installerDir\BabylonJS_Exporters.exe","BabylonJS_Installer\README.md" -DestinationPath "$staging\Installer.zip" -Force
           }
 
           # Print manifest
