@@ -86,7 +86,11 @@ jobs:
           foreach ($year in "${{ env.MAX_VERSIONS }}".Split(' ')) {
             $src = "3ds Max\Max2Babylon\$year\bin\Release"
             if (Test-Path $src) {
-              Compress-Archive -Path "$src\*" -DestinationPath "$staging\Max_$year.zip" -Force
+              $tmp = "$staging\tmp\Release"
+              New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+              Copy-Item -Path "$src\*.dll" -Destination $tmp -Force
+              Compress-Archive -Path "$staging\tmp\Release" -DestinationPath "$staging\Max_$year.zip" -Force
+              Remove-Item -Path "$staging\tmp" -Recurse -Force
             }
           }
 
@@ -94,14 +98,20 @@ jobs:
           foreach ($year in "${{ env.MAYA_VERSIONS }}".Split(' ')) {
             $src = "Maya\bin\Release\$year"
             if (Test-Path $src) {
-              Compress-Archive -Path "$src\*" -DestinationPath "$staging\Maya_$year.zip" -Force
+              $tmp = "$staging\tmp"
+              New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+              Copy-Item -Path "$src\*.dll" -Destination $tmp -Force
+              Copy-Item -Path "Maya\AETemplates" -Destination "$tmp\Maya\AETemplates" -Recurse -Force -ErrorAction SilentlyContinue
+              Copy-Item -Path "Maya\NETemplates" -Destination "$tmp\Maya\NETemplates" -Recurse -Force -ErrorAction SilentlyContinue
+              Compress-Archive -Path "$tmp\*" -DestinationPath "$staging\Maya_$year.zip" -Force
+              Remove-Item -Path $tmp -Recurse -Force
             }
           }
 
           # Installer zip
           $installerDir = "BabylonJS_Installer\BabylonJS_Installer\bin\Release"
           if (Test-Path $installerDir) {
-            Compress-Archive -Path "$installerDir\BabylonJS_Exporters.exe" -DestinationPath "$staging\Installer.zip" -Force
+            Compress-Archive -Path "$installerDir\BabylonJS_Exporters.exe","BabylonJS_Installer\README.md" -DestinationPath "$staging\Installer.zip" -Force
           }
 
           # Print manifest
