@@ -98,11 +98,13 @@ jobs:
           foreach ($year in "${{ env.MAYA_VERSIONS }}".Split(' ')) {
             $src = "Maya\bin\Release\$year"
             if (Test-Path $src) {
-              $tmp = "$staging\tmp\Release"
+              $tmp = "$staging\tmp"
               New-Item -ItemType Directory -Path $tmp -Force | Out-Null
               Copy-Item -Path "$src\*.dll" -Destination $tmp -Force
-              Compress-Archive -Path "$staging\tmp\Release" -DestinationPath "$staging\Maya_$year.zip" -Force
-              Remove-Item -Path "$staging\tmp" -Recurse -Force
+              Copy-Item -Path "Maya\AETemplates" -Destination "$tmp\Maya\AETemplates" -Recurse -Force -ErrorAction SilentlyContinue
+              Copy-Item -Path "Maya\NETemplates" -Destination "$tmp\Maya\NETemplates" -Recurse -Force -ErrorAction SilentlyContinue
+              Compress-Archive -Path "$tmp\*" -DestinationPath "$staging\Maya_$year.zip" -Force
+              Remove-Item -Path $tmp -Recurse -Force
             }
           }
 
