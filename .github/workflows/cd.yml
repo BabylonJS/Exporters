@@ -86,7 +86,11 @@ jobs:
           foreach ($year in "${{ env.MAX_VERSIONS }}".Split(' ')) {
             $src = "3ds Max\Max2Babylon\$year\bin\Release"
             if (Test-Path $src) {
-              Compress-Archive -Path "$src\*.dll" -DestinationPath "$staging\Max_$year.zip" -Force
+              $tmp = "$staging\tmp\Release"
+              New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+              Copy-Item -Path "$src\*.dll" -Destination $tmp -Force
+              Compress-Archive -Path "$staging\tmp\Release" -DestinationPath "$staging\Max_$year.zip" -Force
+              Remove-Item -Path "$staging\tmp" -Recurse -Force
             }
           }
 
@@ -94,7 +98,11 @@ jobs:
           foreach ($year in "${{ env.MAYA_VERSIONS }}".Split(' ')) {
             $src = "Maya\bin\Release\$year"
             if (Test-Path $src) {
-              Compress-Archive -Path "$src\*.dll" -DestinationPath "$staging\Maya_$year.zip" -Force
+              $tmp = "$staging\tmp\Release"
+              New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+              Copy-Item -Path "$src\*.dll" -Destination $tmp -Force
+              Compress-Archive -Path "$staging\tmp\Release" -DestinationPath "$staging\Maya_$year.zip" -Force
+              Remove-Item -Path "$staging\tmp" -Recurse -Force
             }
           }
 
