@@ -1,0 +1,126 @@
+name: Exporters CI
+
+on:
+  pull_request:
+    branches: [master]
+
+env:
+  BuildConfiguration: Release
+  BuildPlatform: Any CPU
+  MAX_VERSIONS: '2022 2023 2024 2025 2026'
+  MAYA_VERSIONS: '2020 2022 2023 2024'
+
+jobs:
+  build-max:
+    name: Build Max
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+        with:
+          nuget-version: '6.x'
+
+      - name: Version Update
+        shell: pwsh
+        run: |
+          $content = Get-Content -Path '3ds Max\Max2Babylon\Exporter\BabylonExporter.cs' -Raw
+          $content = $content -replace 'Custom\.Build\.Version', "${{ github.run_number }}"
+          Set-Content -Path '3ds Max\Max2Babylon\Exporter\BabylonExporter.cs' -Value $content
+
+      - name: NuGet Restore
+        run: nuget restore "3ds Max\Max2Babylon.sln"
+
+      - name: Build
+        run: msbuild "3ds Max\Max2Babylon.sln" /p:Configuration=${{ env.BuildConfiguration }} /p:Platform=x64 /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: max-binaries
+          path: 3ds Max/**/bin/**/*.dll
+
+  build-maya:
+    name: Build Maya
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+        with:
+          nuget-version: '6.x'
+
+      - name: Version Update
+        shell: pwsh
+        run: |
+          $content = Get-Content -Path 'Maya\Exporter\BabylonExporter.cs' -Raw
+          $content = $content -replace 'Custom\.Build\.Version', "${{ github.run_number }}"
+          Set-Content -Path 'Maya\Exporter\BabylonExporter.cs' -Value $content
+
+      - name: NuGet Restore
+        run: nuget restore "Maya\Maya2Babylon.sln"
+
+      - name: Build
+        run: msbuild "Maya\Maya2Babylon.sln" /p:Configuration=${{ env.BuildConfiguration }} "/p:Platform=${{ env.BuildPlatform }}" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+
+      - name: Copy Maya Templates
+        if: always()
+        shell: pwsh
+        run: |
+          foreach ($year in "${{ env.MAYA_VERSIONS }}".Split(' ')) {
+            $dest = "${{ github.workspace }}\artifacts\Maya\bin\Release\$year"
+            New-Item -ItemType Directory -Path $dest -Force | Out-Null
+            Copy-Item -Path "Maya\AETemplates\**\*.mel" -Destination $dest -Force -ErrorAction SilentlyContinue
+            Copy-Item -Path "Maya\NETemplates\**\*.xml" -Destination $dest -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maya-binaries
+          path: |
+            Maya/**/bin/**/*.dll
+            artifacts/
+
+  build-installer:
+    name: Build Installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+        with:
+          nuget-version: '6.x'
+
+      - name: NuGet Restore
+        run: nuget restore "BabylonJS_Installer\BabylonJS_Installer.sln"
+
+      - name: Build
+        run: msbuild "BabylonJS_Installer\BabylonJS_Installer.sln" /p:Configuration=${{ env.BuildConfiguration }} "/p:Platform=${{ env.BuildPlatform }}" /p:PostBuildEvent= /v:minimal
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installer-binaries
+          path: BabylonJS_Installer/Dist/**/*
