@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  MAX_VERSIONS: '2022 2023 2024 2025 2026'
+  MAX_VERSIONS: '2022 2023 2024 2025 2026 2027'
   MAYA_VERSIONS: '2020 2022 2023 2024'
 
 jobs:
@@ -47,8 +47,15 @@ jobs:
       - name: NuGet Restore - Max
         run: nuget restore "3ds Max\Max2Babylon.sln"
 
-      - name: Build Max
-        run: msbuild "3ds Max\Max2Babylon.sln" /p:Configuration=Release /p:Platform=x64 /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+      - name: Build Max (All Versions)
+        shell: pwsh
+        run: |
+          $years = "${{ env.MAX_VERSIONS }}".Split(' ')
+          foreach ($year in $years) {
+              $fullConfig = "Release_${year}"
+              Write-Host "Building $fullConfig"
+              msbuild "3ds Max\Max2Babylon.sln" /p:Configuration=$fullConfig /p:Platform=x64 /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+          }
 
       # ── Maya ──
       - name: NuGet Restore - Maya
