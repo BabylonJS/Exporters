@@ -44,17 +44,16 @@ jobs:
           Set-Content -Path 'Maya\Exporter\BabylonExporter.cs' -Value $content
 
       # ── 3ds Max ──
-      - name: NuGet Restore - Max
-        run: nuget restore "3ds Max\Max2Babylon.sln"
-
       - name: Build Max
         shell: pwsh
         run: |
           $years = "${{ env.MAX_VERSIONS }}".Split(' ')
           foreach ($year in $years) {
               $fullConfig = "Release_MAX${year}"
+              Write-Host "Restoring $fullConfig"
+              msbuild "3ds Max\Max2Babylon.sln" /t:Restore /p:Configuration=$fullConfig 
               Write-Host "Building $fullConfig"
-              msbuild "3ds Max\Max2Babylon.sln" /p:Configuration="$fullConfig" "/p:Platform=x64" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+              msbuild "3ds Max\Max2Babylon.sln" /p:Configuration="$fullConfig" "/p:Platform=x64" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal							
           }
 
       # ── Maya ──
