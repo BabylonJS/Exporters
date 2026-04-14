@@ -52,9 +52,9 @@ jobs:
         run: |
           $years = "${{ env.MAX_VERSIONS }}".Split(' ')
           foreach ($year in $years) {
-              $fullConfig = "Release_${year}"
+              $fullConfig = "Release_MAX${year}"
               Write-Host "Building $fullConfig"
-              msbuild "3ds Max\Max2Babylon.sln" /p:Configuration="$fullConfig" /p:Platform=x64 /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
+              msbuild "3ds Max\Max2Babylon.sln" /p:Configuration="$fullConfig" "/p:Platform=x64" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
           }
 
       # ── Maya ──

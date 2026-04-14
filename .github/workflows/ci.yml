@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-max:
-    name: Build Max (${{ matrix.max_version }} / ${{ matrix.config }})
+    name: Build Max (${{ matrix.max_version }})
     runs-on: windows-latest
   
     strategy:
@@ -43,12 +43,7 @@ jobs:
         run: nuget restore "3ds Max\Max2Babylon.sln"
   
       - name: Build
-        run: msbuild "3ds Max\Max2Babylon.sln" `
-          /p:Configuration=${{ env.BuildConfiguration }}_${{ matrix.max_version }} `
-          /p:Platform=x64 `
-          /p:PostBuildEvent= `
-          /p:PreBuildEvent= `
-          /v:minimal
+        run: msbuild "3ds Max\Max2Babylon.sln" "/p:Configuration=${{ env.BuildConfiguration }}_MAX${{ matrix.max_version }}" "/p:Platform=x64" /p:PostBuildEvent= /p:PreBuildEvent= /v:minimal
   
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
