@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-max:
-    name: Build Max (${{ matrix.max_version }})
+    name: Build Max
     runs-on: windows-latest
   
     strategy:
