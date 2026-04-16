@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Fallback: when built directly via dotnet build (not through .sln), SolutionDir is undefined -->
+  <PropertyGroup Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">
+    <SolutionDir>$(MSBuildProjectDirectory)\..\</SolutionDir>
+  </PropertyGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
@@ -152,12 +157,17 @@
     <Copy SourceFiles="$(TargetDir)$(TargetName).deps.json" DestinationFolder="$(SolutionDir)assemblies\2026" SkipUnchangedFiles="true" Condition="Exists('$(TargetDir)$(TargetName).deps.json')" />
   </Target>
 
-  <!-- Post-build: deploy to Maya 2026 plug-ins directory -->
+  <!-- Post-build: deploy as Maya module -->
   <PropertyGroup>
-    <Maya2026PluginsDir>$(USERPROFILE)\Documents\maya\2026\plug-ins\</Maya2026PluginsDir>
+    <Maya2026ModulesDir>$(USERPROFILE)\Documents\maya\2026\modules</Maya2026ModulesDir>
+    <Maya2026ModuleRootDir>$(Maya2026ModulesDir)\Maya2Babylon</Maya2026ModuleRootDir>
+    <Maya2026PluginsDir>$(Maya2026ModuleRootDir)\plug-ins\</Maya2026PluginsDir>
+    <Maya2026ModFile>$(Maya2026ModulesDir)\Maya2Babylon.mod</Maya2026ModFile>
     <MayaBinDir>C:\Program Files\Autodesk\Maya2026\bin\</MayaBinDir>
   </PropertyGroup>
-  <Target Name="DeployToMaya2026" AfterTargets="Build" Condition="Exists('$(Maya2026PluginsDir)')">
+  <Target Name="DeployToMaya2026" AfterTargets="Build" Condition="Exists('$(USERPROFILE)\Documents\maya\2026\')">
+    <MakeDir Directories="$(Maya2026ModulesDir)" />
+    <MakeDir Directories="$(Maya2026PluginsDir)" />
     <!-- Plugin DLL and deps -->
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(Maya2026PluginsDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(TargetDir)$(TargetName).deps.json" DestinationFolder="$(Maya2026PluginsDir)" SkipUnchangedFiles="true" Condition="Exists('$(TargetDir)$(TargetName).deps.json')" />
@@ -169,7 +179,10 @@
     <!-- Maya 2026 .NET 8 runtime files -->
     <Copy SourceFiles="$(MayaBinDir)openmayacs.dll" DestinationFolder="$(Maya2026PluginsDir)" SkipUnchangedFiles="true" Condition="Exists('$(MayaBinDir)openmayacs.dll')" />
     <Copy SourceFiles="$(ProjectDir)Refs\2026\openmayacs.runtimeconfig.json" DestinationFolder="$(Maya2026PluginsDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Message Text="Deployed Maya2Babylon to $(Maya2026PluginsDir)" Importance="high" />
+    <!-- Write Maya module descriptor (.mod) -->
+    <!-- Use relative path so the .mod file is portable across machines -->
+    <WriteLinesToFile File="$(Maya2026ModFile)" Lines="+ Maya2Babylon 1.0 ./Maya2Babylon;plug-ins: plug-ins" Overwrite="true" Encoding="ASCII" />
+    <Message Text="Deployed Maya2Babylon module to $(Maya2026ModuleRootDir)" Importance="high" />
   </Target>
 
 </Project>
