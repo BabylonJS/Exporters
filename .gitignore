@@ -180,4 +180,4 @@ assemblies
 __pycache__
 .pytest_cache
 
-BabylonJS_Installer/Dist/*
+BabylonJS_Installer/Dist/*.claude/
