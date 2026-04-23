@@ -52,6 +52,19 @@ jobs:
           name: max-${{ matrix.max_version }}
           path: 3ds Max/**/bin/**/*.dll
 
+  build-max-required:
+    name: Build Max (Required)
+    if: always()
+    needs: [build-max]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix results
+        run: |
+          if [[ "${{ needs.build-max.result }}" != "success" ]]; then
+            echo "::error::Build Max matrix failed with result: ${{ needs.build-max.result }}"
+            exit 1
+          fi
+
   build-maya:
     name: Build Maya
     runs-on: windows-latest

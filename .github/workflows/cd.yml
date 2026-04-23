@@ -90,7 +90,7 @@ jobs:
 
           # Max zips
           foreach ($year in "${{ env.MAX_VERSIONS }}".Split(' ')) {
-            $src = "3ds Max\Max2Babylon\$year\bin\Release"
+            $src = "3ds Max\Max2Babylon\bin\Release\$year"
             if (Test-Path $src) {
               $tmp = "$staging\tmp\Release"
               New-Item -ItemType Directory -Path $tmp -Force | Out-Null
