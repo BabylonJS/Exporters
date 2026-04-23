@@ -54,7 +54,7 @@ namespace Max2Babylon
             InitializeComponent();
             RegisterFilePostOpen();
 
-
+            this.pictureBox1.Image = ResourceHelper.LoadImage("Max2Babylon.Resources.MaxExporter.png");
             this.Text = $"Babylon.js - Export scene to babylon or glTF format v{BabylonExporter.exporterVersion}";
 
             this.babylonExportAction = babylonExportAction;
@@ -64,6 +64,7 @@ namespace Max2Babylon
 
             exportOptionsScrollPanel.MouseMove += exportOptionsScrollPanel_MouseMove;
         }
+
 
         private void LoadOptions()
         {

@@ -1,7 +1,7 @@
 using Autodesk.Max;
 using Autodesk.Max.Plugins;
 
-#if MAX2025 || MAX2026
+#if MAX2025_OR_NEWER
 using UiViewModels.Actions;
 #else
 using Autodesk.Max.IQuadMenuContext;
@@ -25,7 +25,7 @@ namespace Max2Babylon
         public const string FileExporterTitle = "File Exporter";
     }
 
-#if MAX2025 || MAX2026
+#if MAX2025_OR_NEWER
     public class DummyCommandAdapter : CuiActionCommandAdapter
     {
         public const string DummyActionTitle = "BabylonDummyAction";
@@ -71,13 +71,15 @@ namespace Max2Babylon
         public const string GUIDPropertyName = "babylonjs_GUID";
 
 
-#if MAX2025 || MAX2026
+#if MAX2025_OR_NEWER
         // Placeholder
-        public static readonly string CreateMenuScript= System.Text.Encoding.UTF8.GetString(Properties.Resources.CreateBabylonMenus);
+        public static readonly string CreateMenuScript= System.Text.Encoding.UTF8.GetString(Resources.Resources.CreateBabylonMenus);
 
         private static bool registerMenusCallback = false;
-        private GlobalDelegates.Delegate5 m_registerMenuDelegate;
-        private GlobalDelegates.Delegate5 m_registerQuadMenuDelegate;
+
+        // Not Used
+        // private GlobalDelegates.Delegate5 m_registerMenuDelegate;
+        // private GlobalDelegates.Delegate5 m_registerQuadMenuDelegate;
 #else
         IIMenu menu;
         IIMenuItem menuItem;
@@ -169,7 +171,7 @@ namespace Max2Babylon
         }
 #endif
 
-#if MAX2025 || MAX2026
+#if MAX2025_OR_NEWER
 
         /// <summary>
         /// Force 3ds Max 2025.0 menusystem refresh, required for pre 2025.3 versions
@@ -241,7 +243,7 @@ namespace Max2Babylon
                 {
                     Loader.Global.COREInterface.ActionManager.DeactivateActionTable(actionCallback, idActionTable);
                 }
-#if MAX2025 || MAX2026
+#if MAX2025_OR_NEWER
                 // Placeholder
                 // no cleanup necessary for the new menu system
 #else
@@ -272,14 +274,14 @@ namespace Max2Babylon
 
                 // Set up global actions
                 idActionTable = (uint)actionManager.NumActionTables;
-                
-#if MAX2025 || MAX2026
+
+#if MAX2025_OR_NEWER
                 actionTable = DummyCommandAdapter.GetDummyActionTable();
 
                 if(actionTable != null)
                     idActionTable = actionTable.Id_;
 
-#elif MAX2022 || MAX2023 || MAX2024
+#elif MAX2022_OR_NEWER
                 actionTable = Loader.Global.ActionTable.Create(idActionTable, 0 , ActionTableName);
 #else
                 string actionTableName = ActionTableName;
@@ -369,7 +371,7 @@ namespace Max2Babylon
 
         private void InstallMenus()
         {
-#if MAX2025 || MAX2026
+#if MAX2025_OR_NEWER
             var maxVer = Tools.GetMaxVersion();
 
             // with 2025.3 and up we could also use ICUIMenuManager ( Loader.Core.ICuiMenuManager / ICuiQuadMEnuManager )
@@ -469,7 +471,7 @@ namespace Max2Babylon
         private void AddCallbacks() 
         {
             foreach (var s in MaterialScripts.AddCallbacks())
-#if MAX2022 || MAX2023 || MAX2024 || MAX2025|| MAX2026
+#if MAX2022_OR_NEWER
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s,ManagedServices.MaxscriptSDK.ScriptSource.NotSpecified);
 #else
                 ManagedServices.MaxscriptSDK.ExecuteMaxscriptCommand(s);
