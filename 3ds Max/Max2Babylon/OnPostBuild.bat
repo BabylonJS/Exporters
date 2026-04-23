@@ -1,7 +1,14 @@
 SETLOCAL enabledelayedexpansion
 @ECHO off
 
+SET config=%~1
+SET build_config=NoConfiguration
 
+if /i "%config:~0,5%"=="Debug" (
+	SET build_config=Debug
+) else if /i "%config:~0,7%"=="Release" (
+	SET build_config=Release
+)
 SET max_version=%2
 SET exporter_version=%max_version%
 SET max_location=!ADSK_3DSMAX_x64_%max_version%!
@@ -10,8 +17,9 @@ IF %exporter_version%==2016 SET exporter_version=2015
 
 ECHO "Max version is %max_version%"
 ECHO "Exporter version is %exporter_version%"
+ECHO "Build config is %build_config%"
 
-SET source_dir="%~dp0%exporter_version%\bin\%1"
+SET source_dir="%~dp0bin\%build_config%\%exporter_version%"
 ECHO %source_dir%
 
 IF "%max_location%"=="" (
@@ -19,8 +27,8 @@ IF "%max_location%"=="" (
 	GOTO Close
 )
 
-IF %1=="Debug" GOTO OnDebug
-IF %1=="Release" GOTO OnRelease
+IF build_config=="Debug" GOTO OnDebug
+IF build_config=="Release" GOTO OnRelease
 
 :OnDebug
 SET dest_dir="%max_location%bin\assemblies"
@@ -65,14 +73,15 @@ COPY %source_dir%\Microsoft.WindowsAPICodePack.ShellExtensions.dll %dest_dir%\Mi
 if exist %dest_dir%\Max2Babylon.dll del /f /q %dest_dir%\Max2Babylon.dll
 COPY %source_dir%\Max2Babylon.dll %dest_dir%\Max2Babylon.dll
 
-IF %1=="Debug" GOTO DebugOnMax
+IF %build_config%==Debug GOTO DebugOnMax
 GOTO Close
 
 :NoConfiguration
-ECHO "No Configuaration"
+ECHO "No Configuration"
 GOTO Close
 
 :DebugOnMax
+ECHO "Launching 3ds Max"
 START /d "%max_location%" 3dsmax.exe /Language=ENU
 GOTO Close
 

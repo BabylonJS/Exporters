@@ -11,10 +11,10 @@ namespace Max2Babylon
         maxMaterial = sceneMaterials[""{container}""]
         custAttributes.add maxMaterial {def};";
 
-        public static string StandardBabylonCAtDef => Encoding.UTF8.GetString(Properties.Resources.STANDARD_MATERIAL_CAT_DEF);
-        public static string AIBabylonCAtDef => Encoding.UTF8.GetString(Properties.Resources.ARNOLD_MATERIAL_CAT_DEF);
-        public static string PhysicalBabylonCAtDef => Encoding.UTF8.GetString(Properties.Resources.PHYSICAL_MATERIAL_CAT_DEF);
-        public static string BumpMapCAtDef => Encoding.UTF8.GetString(Properties.Resources.BUMP_MAP_CAT_DEF);
+        public static string StandardBabylonCAtDef => Encoding.UTF8.GetString(Resources.Resources.STANDARD_MATERIAL_CAT_DEF);
+        public static string AIBabylonCAtDef => Encoding.UTF8.GetString(Resources.Resources.ARNOLD_MATERIAL_CAT_DEF);
+        public static string PhysicalBabylonCAtDef => Encoding.UTF8.GetString(Resources.Resources.PHYSICAL_MATERIAL_CAT_DEF);
+        public static string BumpMapCAtDef => Encoding.UTF8.GetString(Resources.Resources.BUMP_MAP_CAT_DEF);
 
         public static string HasBabylonAttribute => @"fn hasBabylonCustomAttribute mat attName = ( 
           l = custAttributes.count mat; 

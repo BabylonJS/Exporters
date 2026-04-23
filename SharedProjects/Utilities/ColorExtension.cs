@@ -44,7 +44,7 @@ namespace Utilities
 
         public static string toString(this Color color)
         {
-            return color == null ? "" : color.toArray().ToString();
+            return color.toArray().ToString();
         }
     }
 }
