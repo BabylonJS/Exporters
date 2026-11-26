@@ -988,6 +988,13 @@ namespace Max2Babylon
             {
                 // Create a dummy (empty mesh)
                 babylonNode = ExportDummy(maxGameScene, maxGameNode, babylonScene);
+
+                // Export the custom attributes of point helpers (fallback helpers only; other node types keep their existing behaviour)
+                if (maxGameNode.IGameObject.IGameType == Autodesk.Max.IGameObject.ObjectTypes.Helper &&
+                    babylonNode is BabylonMesh babylonDummy)
+                {
+                    babylonDummy.metadata = ExportExtraAttributes(maxGameNode, babylonScene);
+                }
             };
             
             if (babylonNode != null)
